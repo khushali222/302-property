@@ -31,12 +31,14 @@ import '../../Model/properties.dart';
 import '../../constant/geolocation_data_filter.dart';
 import '../../model/properties_workorders.dart';
 import '../../screens/Dashboard/dashboard_sample.dart';
+import 'Dashboard/dashboard_leaseExpiring_staff.dart';
 import '../../screens/Rental/Properties/summery_page.dart';
 import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
+import '../../repository/RentPastDue.dart';
 import '../../provider/dateProvider.dart';
 import '../widgets/drawer_tiles.dart';
 import '../widgets/custom_drawer.dart';
@@ -144,6 +146,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
+      print('DEBUG [Dashboard Staff]: Staff ID: $id');
+      print('DEBUG [Dashboard Staff]: Admin ID: $admin_id');
+
       final response = await http.get(
           Uri.parse('${Api_url}/api/staffmember/count/${id!}/${admin_id}'),
           headers: {
@@ -161,7 +166,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           countList[3] = jsonData['vendor_staffMember'] ?? 0;
           loading = false;
         });
-        // Unpaid Properties count from admin balance API
+        // Rent balance data from admin balance API
         try {
           final balanceRes = await http.get(
             Uri.parse('${Api_url}/api/payment/admin_balance/$admin_id'),
@@ -174,9 +179,15 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           if (balanceRes.statusCode == 200) {
             final balanceJson = json.decode(balanceRes.body);
             if (balanceJson["statusCode"] == 200 && balanceJson["data"] != null) {
-              final totalUnpaidRentLeases =
-                  balanceJson["data"]["totalUnpaidRentLeases"] as int? ?? 0;
-              setState(() => countList[4] = totalUnpaidRentLeases);
+              final data = balanceJson["data"];
+              setState(() {
+                countList[4] = data["totalUnpaidRentLeases"] as int? ?? 0;
+                currentMonthRentDue = (data["currentMonthRentDue"] as num?)?.toDouble() ?? 0.0;
+                lastMonthRentDue = (data["lastMonthRentDue"] as num?)?.toDouble() ?? 0.0;
+                currentMonthRentPaid = (data["currentMonthRentPaid"] as num?)?.toDouble() ?? 0.0;
+                lastMonthRentPaid = (data["lastMonthRentPaid"] as num?)?.toDouble() ?? 0.0;
+                totalRentPastDue = (data["totalRentPastDue"] as num?)?.toDouble() ?? 0.0;
+              });
             }
           }
         } catch (_) {}
@@ -1344,6 +1355,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 ),
 
                 // Dynamically build Column items from properties list
+                // const SizedBox(height: 15),
+                Dashboard_leaseExpiringStaff(),
               ],
             ),
           ),
@@ -1362,7 +1375,11 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 newWorkOrder: newworkorder,
                 overdueWorkOrder: overdueworkorder,
                 totalWorkOrders: totalWorkOrders,
-                // Add payment data as needed
+                currentMonthRentDue: currentMonthRentDue,
+                lastMonthRentDue: lastMonthRentDue,
+                currentMonthRentPaid: currentMonthRentPaid,
+                lastMonthRentPaid: lastMonthRentPaid,
+                totalRentPastDue: totalRentPastDue,
               )
               /*  LayoutBuilder(
                 builder:

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'RentPastDueReport.dart';
 
 import '../../StaffModule/model/staffpermission.dart';
 import '../../StaffModule/repository/staffpermission_provider.dart';
@@ -15,12 +16,13 @@ import '../../StaffModule/screen/Dashboard/Unpaid_Properties.dart';
 import '../../StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
 import '../../StaffModule/screen/Rental/Properties/Properties_table.dart';
 import '../../StaffModule/screen/Rental/Tenants/Tenants_table.dart';
+import '../../StaffModule/screen/Dashboard/dashboard_leaseExpiring_staff.dart';
 import '../../screens/Profile/Settings_screen.dart';
 import '../../constant/constant.dart';
 
 // Add your StaffModule table screens here
 
-class DashboardMobileSimple extends StatelessWidget {
+class DashboardMobileSimple extends StatefulWidget {
   final int propertyCount;
   final int tenantCount;
   final int applicantCount;
@@ -29,6 +31,11 @@ class DashboardMobileSimple extends StatelessWidget {
   final int newWorkOrder;
   final int overdueWorkOrder;
   final int totalWorkOrders;
+  final double currentMonthRentDue;
+  final double lastMonthRentDue;
+  final double currentMonthRentPaid;
+  final double lastMonthRentPaid;
+  final double totalRentPastDue;
 
   const DashboardMobileSimple({
     Key? key,
@@ -40,7 +47,81 @@ class DashboardMobileSimple extends StatelessWidget {
     required this.newWorkOrder,
     required this.overdueWorkOrder,
     required this.totalWorkOrders,
+    this.currentMonthRentDue = 0.0,
+    this.lastMonthRentDue = 0.0,
+    this.currentMonthRentPaid = 0.0,
+    this.lastMonthRentPaid = 0.0,
+    this.totalRentPastDue = 0.0,
   }) : super(key: key);
+
+  @override
+  State<DashboardMobileSimple> createState() => _DashboardMobileSimpleState();
+}
+
+class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
+  String selectedRentType = 'Rent Due';
+  final GlobalKey _dropdownKey = GlobalKey();
+
+  void _showRentTypeMenu(BuildContext context) async {
+    final RenderBox button =
+        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final Offset position =
+        button.localToGlobal(Offset.zero, ancestor: overlay);
+
+    final result = await showDialog<String>(
+      context: context,
+      barrierColor: Colors.transparent,
+      builder: (context) {
+        return Stack(
+          children: [
+            Positioned(
+              left: position.dx,
+              top: position.dy + 8,
+              child: Material(
+                color: Colors.transparent,
+                child: _RentTypePopup(
+                  selected: selectedRentType,
+                  onSelect: (val) {
+                    Navigator.of(context).pop(val);
+                  },
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    if (result != null && result != selectedRentType) {
+      setState(() {
+        selectedRentType = result;
+      });
+    }
+  }
+
+  void _navigateToRespectiveScreen(
+      BuildContext context, String rentType, String monthType) {
+    String chargeType = 'Charges';
+    bool isRentdue = false;
+    String title = rentType;
+    if (rentType == 'Rent Paid') {
+      chargeType = 'Payment';
+      isRentdue = true;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RentPastDueReports(
+          isRentdue: isRentdue,
+          title: title,
+        ),
+        settings: RouteSettings(
+          arguments: {'monthType': monthType, 'chargeType': chargeType},
+        ),
+      ),
+    );
+  }
 
   void _navigateToTable(BuildContext context, String label) {
     // Add navigation logic for each table
@@ -185,6 +266,211 @@ class DashboardMobileSimple extends StatelessWidget {
     );
   }
 
+  Widget _rentDataSection(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double screenWidth = constraints.maxWidth;
+
+        // Consistent responsive font sizing across dashboard
+        double dropdownFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+        double sectionFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+        double valueFont = screenWidth < 600
+            ? 16
+            : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 10, 24, 0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      key: _dropdownKey,
+                      onTap: () => _showRentTypeMenu(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: const Color(0xFFE5E5E5), width: 2),
+                          borderRadius: BorderRadius.circular(32),
+                          color: Colors.transparent,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              selectedRentType,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: dropdownFont,
+                                color: const Color(0xFF3B4256),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.keyboard_arrow_down_rounded,
+                                color: Color(0xFF1A2746), size: 28),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Divider(thickness: 2, color: Color(0xFFE5E5E5)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      selectedRentType,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: sectionFont,
+                        color: const Color(0xFF1A2746),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    if (selectedRentType == 'Rent Past Due')
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RentPastDueReports(title: 'Rent Past Due'),
+                              settings: RouteSettings(
+                                arguments: {
+                                  'monthType': 'All',
+                                  'chargeType': 'Charges'
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              formatCurrency(widget.totalRentPastDue),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else ...[
+                      GestureDetector(
+                        onTap: () {
+                          _navigateToRespectiveScreen(
+                              context, selectedRentType, "Current Month");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Current Month',
+                                style: TextStyle(
+                                  fontSize: valueFont,
+                                  color: const Color(0xFF7B7F87),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              selectedRentType == 'Rent Due'
+                                  ? formatCurrency(widget.currentMonthRentDue)
+                                  : selectedRentType == 'Rent Paid'
+                                      ? formatCurrency(
+                                          widget.currentMonthRentPaid)
+                                      : formatCurrency(0.0),
+                              style: TextStyle(
+                                fontSize: valueFont,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: () {
+                          _navigateToRespectiveScreen(
+                              context, selectedRentType, "Last Month");
+                        },
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Last Month',
+                                style: TextStyle(
+                                  fontSize: valueFont,
+                                  color: const Color(0xFF7B7F87),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              selectedRentType == 'Rent Due'
+                                  ? formatCurrency(widget.lastMonthRentDue)
+                                  : selectedRentType == 'Rent Paid'
+                                      ? formatCurrency(widget.lastMonthRentPaid)
+                                      : formatCurrency(0.0),
+                              style: TextStyle(
+                                fontSize: valueFont,
+                                color: const Color(0xFF7B7F87),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              // Bottom bar
+              Container(
+                height: 18,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1A2746),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(28),
+                    bottomRight: Radius.circular(28),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardTextStyle =
@@ -221,14 +507,22 @@ class DashboardMobileSimple extends StatelessWidget {
                   child: Icon(icon, color: blueColor),
                 ),
                 const SizedBox(width: 5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(count, style: cardTextStyle),
-                    Text(label, style: subTextStyle),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(count, style: cardTextStyle),
+                      Text(
+                        label,
+                        style: subTextStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 4),
                 const Icon(Icons.arrow_forward_ios,
                     size: 16, color: Colors.grey),
               ],
@@ -326,30 +620,6 @@ class DashboardMobileSimple extends StatelessWidget {
       );
     }
 
-    // --- Future use: work order chart (commented, do not remove) ---
-    // Widget analyticCard() {
-    //   final List<PieChartSectionData> pieChartData = [
-    //     PieChartSectionData(
-    //       color: blueColor,
-    //       value: newWorkOrder.toDouble(),
-    //       title: '',
-    //       radius: 50,
-    //     ),
-    //     PieChartSectionData(
-    //       color: Color.fromRGBO(90, 134, 213, 1),
-    //       value: overdueWorkOrder.toDouble(),
-    //       title: '',
-    //       radius: 50,
-    //     ),
-    //   ];
-    //   return Container(
-    //     margin: const EdgeInsets.symmetric(vertical: 8),
-    //     padding: const EdgeInsets.all(16),
-    //     decoration: BoxDecoration(...),
-    //     child: Row(children: [PieChart(...), Column(New Work Orders, Overdue Work Orders, Total Work orders)]),
-    //   );
-    // }
-
     StaffPermission? permissions;
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     permissions = permissionProvider.permissions;
@@ -380,23 +650,23 @@ class DashboardMobileSimple extends StatelessWidget {
 
                 if (showAllCards || permissions.propertyView == true) {
                   cards.add(dashboardCard(
-                      Icons.home, propertyCount.toString(), 'Properties'));
+                      Icons.home, widget.propertyCount.toString(), 'Properties'));
                 }
                 if (showAllCards || permissions.tenantView == true) {
                   cards.add(dashboardCard(
-                      Icons.people, tenantCount.toString(), 'Tenants'));
+                      Icons.people, widget.tenantCount.toString(), 'Tenants'));
                 }
                 if (showAllCards || permissions.applicantView == true) {
                   cards.add(dashboardCard(Icons.assignment_ind,
-                      applicantCount.toString(), 'Applicants'));
+                      widget.applicantCount.toString(), 'Applicants'));
                 }
-                if (showAllCards || permissions.vendorView == true) {
-                  cards.add(dashboardCard(
-                      Icons.store, vendorCount.toString(), 'Vendors'));
-                }
+                // if (showAllCards || permissions.vendorView == true) {
+                //   cards.add(dashboardCard(
+                //       Icons.store, widget.vendorCount.toString(), 'Vendors'));
+                // }
                 if (showAllCards || permissions.workorderView == true) {
                   cards.add(dashboardCard(Icons.layers_outlined,
-                      unpaidPropertiesCount.toString(), 'Unpaid Properties'));
+                      widget.unpaidPropertiesCount.toString(), 'Unpaid Properties'));
                 }
 
                 List<Widget> rows = [];
@@ -432,11 +702,16 @@ class DashboardMobileSimple extends StatelessWidget {
                 );
               },
             ),
-            workOrderCard(context, 'New Work Orders', newWorkOrder),
-            workOrderCard(context, 'Overdue Work Orders', overdueWorkOrder),
+            const SizedBox(height: 15),
+            _rentDataSection(context),
+            const SizedBox(height: 15),
+            workOrderCard(context, 'New Work Orders', widget.newWorkOrder),
+            workOrderCard(context, 'Overdue Work Orders', widget.overdueWorkOrder),
             UnpaidRentChartCard(),
             const SizedBox(height: 16),
             Cronjob_payment_table(),
+            // const SizedBox(height: 15),
+            Dashboard_leaseExpiringStaff(),
             SizedBox(
               height: 10,
             ),
@@ -446,7 +721,7 @@ class DashboardMobileSimple extends StatelessWidget {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     double screenWidth = constraints.maxWidth;
-                    double imageHeight =
+                    double imageSize =
                         screenWidth < 400 ? 32 : (screenWidth < 600 ? 40 : 48);
 
                     return Column(
@@ -462,7 +737,7 @@ class DashboardMobileSimple extends StatelessWidget {
                         SizedBox(height: 6),
                         Image.asset(
                           "assets/images/logo.png",
-                          height: imageHeight,
+                          height: imageSize,
                           fit: BoxFit.contain,
                         ),
                       ],
@@ -473,9 +748,129 @@ class DashboardMobileSimple extends StatelessWidget {
             ),
           ],
         ),
-      ),
+
+        ),
+      );
+  }
+}
+
+class _RentTypePopup extends StatelessWidget {
+  final String selected;
+  final ValueChanged<String> onSelect;
+  const _RentTypePopup({required this.selected, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = ['Rent Due', 'Rent Paid', 'Rent Past Due'];
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double popupWidth = screenWidth < 450
+        ? screenWidth * 0.45
+        : (screenWidth < 500 ? screenWidth * 0.20 : 320);
+    // Consistent responsive font sizing
+    final double fontSize = screenWidth < 600
+        ? 16
+        : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+    final double verticalPad = screenWidth < 600
+        ? 16
+        : (screenWidth < 900 ? 18 : (screenWidth < 1200 ? 20 : 22));
+    final double horizontalPad = screenWidth < 600
+        ? 10
+        : (screenWidth < 900 ? 12 : (screenWidth < 1200 ? 14 : 18));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Pointer
+        Container(
+          // color: Colors.redAccent,
+          padding: EdgeInsets.only(left: popupWidth * 0.45),
+          child: CustomPaint(
+            size: const Size(20, 10),
+            painter: _TrianglePainter(),
+          ),
+        ),
+        Container(
+          width: popupWidth,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF9FAFB),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.10),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: horizontalPad),
+          child: Column(
+            children: List.generate(items.length, (i) {
+              final isSelected = items[i] == selected;
+              return Column(
+                children: [
+                  if (i != 0)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Divider(
+                        color: Color(0xFFE5E5E5),
+                        thickness: 1,
+                        height: 1,
+                      ),
+                    ),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => onSelect(items[i]),
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      padding: EdgeInsets.symmetric(
+                        vertical: verticalPad,
+                        horizontal: 0,
+                      ),
+                      decoration: isSelected
+                          ? BoxDecoration(
+                              color: const Color(0xFFE6EEF8),
+                              borderRadius: BorderRadius.circular(10),
+                            )
+                          : null,
+                      child: Center(
+                        child: Text(
+                          items[i],
+                          style: TextStyle(
+                            fontWeight:
+                                isSelected ? FontWeight.bold : FontWeight.w600,
+                            fontSize: fontSize,
+                            color: const Color(0xFF1A2746),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
+}
+
+class _TrianglePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = const Color(0xFFAAA5A5);
+    final path = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawShadow(path, Colors.black.withOpacity(0.18), 6, true);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Fetches admin_balance + rentals APIs and shows "Percentage of Unpaid Rent" pie chart and legend.
