@@ -2119,7 +2119,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   static const List<String> _settingsTabTitles = [
     'Accounts',
     'Categories',
-    'Charges',
+    // 'Charges',
     'Date Format',
     'Late Fee Charge',
     'Manage Template',

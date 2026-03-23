@@ -180,49 +180,32 @@ Widget buildCommunicationsSection(
     final Color c = active ? Colors.white : blueColor;
     switch (page) {
       case 'Send E-mail':
-        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 20, color: c);
       case 'E-mail Logs':
-        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 20, color: c);
       case 'Templates':
-        return FaIcon(FontAwesomeIcons.fileLines, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.fileLines, size: 20, color: c);
       default:
-        return FaIcon(FontAwesomeIcons.circle, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.circle, size: 20, color: c);
     }
   }
 
-  Widget drawerLeadingIcon(IconData icon, {double size = 18}) {
-    return SizedBox(
-      width: 36,
-      height: 36,
-      child: Center(
-        child: FaIcon(icon, size: size, color: blueColor),
-      ),
-    );
-  }
-
+  /// Same row layout as staff [buildDropdownListTile] children.
   Widget emailLeafTile(String title) {
     final bool active = currentpage == title;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: Container(
         decoration: BoxDecoration(
           color: active ? blueColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: ListTile(
-          dense: true,
-          visualDensity: VisualDensity.compact,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-          minLeadingWidth: 36,
-          horizontalTitleGap: 10,
-          leading: SizedBox(
-            width: 36,
-            child: Center(child: iconForPage(title, active)),
-          ),
+          leading: iconForPage(title, active),
           title: Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               color: active ? Colors.white : blueColor,
             ),
           ),
@@ -235,15 +218,7 @@ Widget buildCommunicationsSection(
     );
   }
 
-  final ThemeData innerTheme = Theme.of(context).copyWith(
-    dividerColor: Colors.transparent,
-    listTileTheme: const ListTileThemeData(
-      dense: true,
-      visualDensity: VisualDensity.compact,
-      minLeadingWidth: 36,
-      horizontalTitleGap: 10,
-    ),
-  );
+  final Color chevronCollapsed = Colors.grey.shade600;
 
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 14),
@@ -254,45 +229,56 @@ Widget buildCommunicationsSection(
         initiallyExpanded: commOpen,
         maintainState: true,
         childrenPadding: EdgeInsets.zero,
-        leading: drawerLeadingIcon(FontAwesomeIcons.comments),
+        iconColor: blueColor,
+        collapsedIconColor: chevronCollapsed,
+        leading: FaIcon(
+          FontAwesomeIcons.comments,
+          size: 20,
+          color: blueColor,
+        ),
         title: Text(
           'Communications',
-          style: TextStyle(color: blueColor),
+          style: TextStyle(
+            color: blueColor,
+            fontSize: 15,
+          ),
         ),
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: const Color(0xFFF0F2F5),
+                color:  Color(0xFFF7F8FA),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Theme(
-                data: innerTheme,
+                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ExpansionTile(
                       initiallyExpanded: emailOpen,
-                      tilePadding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
                       childrenPadding: EdgeInsets.zero,
-                      leading: drawerLeadingIcon(FontAwesomeIcons.envelope),
+                      iconColor: blueColor,
+                      collapsedIconColor: chevronCollapsed,
+                      leading: FaIcon(
+                        FontAwesomeIcons.envelope,
+                        size: 20,
+                        color: blueColor,
+                      ),
                       title: Text(
                         'Email',
                         style: TextStyle(
                           color: blueColor,
-                          fontSize: 14,
+                          fontSize: 15,
                         ),
                       ),
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(6, 0, 6, 2),
+                          padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF7F8FA),
+                              color:Color(0xFFF0F2F5),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Column(
@@ -305,73 +291,63 @@ Widget buildCommunicationsSection(
                         ),
                       ],
                     ),
-                    ExpansionTile(
-                      initiallyExpanded: false,
-                      tilePadding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 0,
-                      ),
-                      childrenPadding: EdgeInsets.zero,
-                      leading: drawerLeadingIcon(FontAwesomeIcons.comment),
-                      title: Text(
-                        'SMS',
-                        style: TextStyle(
-                          color: blueColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 0, 14, 4),
-                          child: Text(
-                            'Coming soon',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // ExpansionTile(
+                    //   initiallyExpanded: false,
+                    //   childrenPadding: EdgeInsets.zero,
+                    //   iconColor: blueColor,
+                    //   collapsedIconColor: chevronCollapsed,
+                    //   leading: FaIcon(
+                    //     FontAwesomeIcons.comment,
+                    //     size: 20,
+                    //     color: blueColor,
+                    //   ),
+                    //   title: Text(
+                    //     'SMS',
+                    //     style: TextStyle(
+                    //       color: blueColor,
+                    //       fontSize: 15,
+                    //     ),
+                    //   ),
+                    //   children: [
+                    //     Padding(
+                    //       padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                    //       child: Text(
+                    //         'Coming soon',
+                    //         style: TextStyle(
+                    //           fontSize: 13,
+                    //           color: Colors.grey.shade600,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 4),
                       child: () {
                         final bool active = currentpage == 'Templates';
-                        return Material(
-                          color: Colors.transparent,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: active ? blueColor : Colors.transparent,
-                              borderRadius: BorderRadius.circular(8),
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: active ? blueColor : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            leading: iconForPage('Templates', active),
+                            title: Text(
+                              'Templates',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: active ? Colors.white : blueColor,
+                              ),
                             ),
-                            child: ListTile(
-                              dense: true,
-                              visualDensity: VisualDensity.compact,
-                              contentPadding: EdgeInsets.zero,
-                              minLeadingWidth: 36,
-                              horizontalTitleGap: 10,
-                              leading: SizedBox(
-                                width: 36,
-                                child: Center(
-                                  child: iconForPage('Templates', active),
-                                ),
-                              ),
-                              title: Text(
-                                'Templates',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: active ? Colors.white : blueColor,
-                                ),
-                              ),
-                              trailing: const SizedBox(
-                                width: 24,
-                                height: 24,
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                                navigateToOption(context, 'Templates', active);
-                              },
+                            trailing: const SizedBox(
+                              width: 24,
+                              height: 24,
                             ),
+                            onTap: () {
+                              Navigator.pop(context);
+                              navigateToOption(context, 'Templates', active);
+                            },
                           ),
                         );
                       }(),
