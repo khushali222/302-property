@@ -1380,6 +1380,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 currentMonthRentPaid: currentMonthRentPaid,
                 lastMonthRentPaid: lastMonthRentPaid,
                 totalRentPastDue: totalRentPastDue,
+                fromStaffModule: true,
               )
               /*  LayoutBuilder(
                 builder:

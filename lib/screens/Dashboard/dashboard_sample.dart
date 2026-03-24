@@ -36,6 +36,8 @@ class DashboardMobileSimple extends StatefulWidget {
   final double currentMonthRentPaid;
   final double lastMonthRentPaid;
   final double totalRentPastDue;
+  /// When true, rent-detail screens use staff app bar and staff drawer (Dashboard selected).
+  final bool fromStaffModule;
 
   const DashboardMobileSimple({
     Key? key,
@@ -52,6 +54,7 @@ class DashboardMobileSimple extends StatefulWidget {
     this.currentMonthRentPaid = 0.0,
     this.lastMonthRentPaid = 0.0,
     this.totalRentPastDue = 0.0,
+    this.fromStaffModule = false,
   }) : super(key: key);
 
   @override
@@ -115,6 +118,7 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
         builder: (context) => RentPastDueReports(
           isRentdue: isRentdue,
           title: title,
+          fromStaffModule: widget.fromStaffModule,
         ),
         settings: RouteSettings(
           arguments: {'monthType': monthType, 'chargeType': chargeType},
@@ -356,8 +360,10 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  RentPastDueReports(title: 'Rent Past Due'),
+                              builder: (context) => RentPastDueReports(
+                                title: 'Rent Past Due',
+                                fromStaffModule: widget.fromStaffModule,
+                              ),
                               settings: RouteSettings(
                                 arguments: {
                                   'monthType': 'All',
@@ -481,13 +487,24 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
         fontSize: 14);
 
     Widget dashboardCard(IconData icon, String count, String label) {
+      final staff = widget.fromStaffModule;
+      final labelStyle = staff
+          ? subTextStyle.copyWith(fontSize: 12, height: 1.2)
+          : subTextStyle;
+      final avatarRadius = staff ? 17.0 : 20.0;
+      final iconSize = staff ? 20.0 : 24.0;
+      final chevronSize = staff ? 12.0 : 16.0;
+      final hPad = staff ? 6.0 : 10.0;
+      final vPad = staff ? 12.0 : 18.0;
+      final labelMinH = staff ? 30.0 : 36.0;
+
       return Expanded(
         child: InkWell(
           onTap: () => _navigateToTable(context, label),
           borderRadius: BorderRadius.circular(18),
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: staff ? 1 : 2),
+            padding: EdgeInsets.symmetric(vertical: vPad, horizontal: hPad),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(18),
@@ -500,31 +517,45 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundColor: blueColor.withOpacity(.1),
-                  child: Icon(icon, color: blueColor),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: CircleAvatar(
+                    radius: avatarRadius,
+                    backgroundColor: blueColor.withOpacity(.1),
+                    child: Icon(icon, color: blueColor, size: iconSize),
+                  ),
                 ),
-                const SizedBox(width: 5),
+                SizedBox(width: staff ? 4 : 5),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(count, style: cardTextStyle),
-                      Text(
-                        label,
-                        style: subTextStyle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: labelMinH),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            label,
+                            style: labelStyle,
+                            maxLines: 2,
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 4),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: Colors.grey),
+                SizedBox(width: staff ? 2 : 4),
+                Padding(
+                  padding: EdgeInsets.only(top: staff ? 10 : 12),
+                  child: Icon(Icons.arrow_forward_ios,
+                      size: chevronSize, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -676,6 +707,7 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             cards[i],
                             SizedBox(width: 8),
@@ -689,6 +721,7 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             cards[i],
                           ],
@@ -711,7 +744,7 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
             const SizedBox(height: 16),
             Cronjob_payment_table(),
             // const SizedBox(height: 15),
-            Dashboard_leaseExpiringStaff(),
+           // Dashboard_leaseExpiringStaff(),
             SizedBox(
               height: 10,
             ),
