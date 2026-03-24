@@ -291,6 +291,52 @@ class WorkOrderRepository {
     }
   }
 
+  Future<Map<String, dynamic>> closeWorkOrder({
+    required String workOrderId,
+    String message = '',
+    String publicNotes = '',
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final String? staffId = prefs.getString("staff_id");
+    final String headerUserId = (staffId != null && staffId.isNotEmpty)
+        ? staffId
+        : (adminId ?? '');
+
+    final Map<String, dynamic> payload = {
+      "workOrder": {
+        "admin_id": adminId,
+        "workOrder_id": workOrderId,
+        "status": "Closed",
+        "message": message,
+        "public_notes": publicNotes,
+      },
+    };
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/work-order/work-order/$workOrderId'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $headerUserId",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(payload),
+    );
+
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(
+          msg: responseData["message"]?.toString() ??
+              "Work-Order updated Successfully");
+      return responseData;
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"]?.toString() ?? "Failed to close work order");
+      throw Exception('Failed to close work order');
+    }
+  }
+
   Future<Map<String, dynamic>> DeleteWorkOrder(
       {required String? workOrderid}) async {
     //print('$apiUrl/$id');

@@ -540,7 +540,83 @@ class _Workorder_tableState extends State<Workorder_table> {
       ],
     ).show();
   }
+ 
+  void handleClose(Data workorder) {
+    _showCloseAlert(context, workorder.workOrderData!.workOrderId!);
+  }
 
+  void _showCloseAlert(BuildContext context, String workOrderId) {
+    final reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Close Work Order?",
+      desc:
+          "This work order will be marked as closed. You can add a reason below.",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: [
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for closing',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text("Close",
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () async {
+            final text = reason.text.trim();
+            if (text.isEmpty) {
+              Fluttertoast.showToast(
+                  msg: "Please enter a reason for closing");
+              return;
+            }
+            Navigator.pop(context);
+            try {
+              await WorkOrderRepository().closeWorkOrder(
+                workOrderId: workOrderId,
+                message: text,
+                publicNotes: text,
+              );
+              if (mounted) _loadWorkOrders();
+            } catch (_) {}
+          },
+          color: blueColor,
+          radius: BorderRadius.circular(8),
+          border: Border.all(
+            color: blueColor,
+            width: 1.5,
+          ),
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(
+            color: blueColor,
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
   List<Data> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
@@ -1080,6 +1156,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             VoidCallback onEdit,
                             VoidCallback onDelete,
                             VoidCallback onViewSummary,
+                            VoidCallback? onClose,
                           ) {
                             return GestureDetector(
                               onTap: onExpandTap,
@@ -1314,16 +1391,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 MainAxisAlignment.end,
                                             children: [
                                               GestureDetector(
-                                                onTap: onDelete,
+                                                onTap: onViewSummary,
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          Colors.red.shade50),
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1333,11 +1410,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons
-                                                            .trashCan,
+                                                        FontAwesomeIcons.eye,
                                                         size: 15,
-                                                        color: Colors.red,
+                                                        color: Colors.black,
                                                       ),
+                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
@@ -1377,16 +1454,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 width: 5,
                                               ),
                                               GestureDetector(
-                                                onTap: onViewSummary,
+                                                onTap: onDelete,
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.shade200,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1396,15 +1473,49 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.eye,
+                                                        FontAwesomeIcons
+                                                            .trashCan,
                                                         size: 15,
-                                                        color: Colors.black,
+                                                        color: Colors.red,
                                                       ),
-                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
                                               ),
+                                            if (onClose != null) ...[
+                                                const SizedBox(width: 5),
+                                                GestureDetector(
+                                                  onTap: onClose,
+                                                  child: Container(
+                                                    height: 35,
+                                                    width: 35,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.shade200,
+                                                      borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .arrowRightFromBracket,
+                                                          size: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                              ],
                                             ],
                                           ),
                                         ],
@@ -1510,6 +1621,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         ),
                                       );
                                     },
+                                    (workOrder.workOrderData?.status ?? '')
+                                            .trim()
+                                            .toLowerCase() ==
+                                        'closed'
+                                        ? null
+                                        : () => handleClose(workOrder),
                                   );
                                 }).toList(),
                                 if (paginationInfo != null &&
