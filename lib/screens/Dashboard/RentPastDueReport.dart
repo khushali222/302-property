@@ -562,6 +562,42 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   bool istenantDataLoading = false;
   bool customdate = false;
 
+  bool _profileFieldNonEmpty(String? s) =>
+      s != null && s.trim().isNotEmpty;
+
+  /// Rent Due / past-due PDF header (top-right): only non-empty fields — no N/A lines.
+  List<pw.Widget> _buildPdfCompanyHeaderWidgets(profile? p) {
+    if (p == null) return [];
+    final style = pw.TextStyle(
+      fontSize: 10,
+      fontWeight: pw.FontWeight.bold,
+    );
+    final children = <pw.Widget>[];
+    if (_profileFieldNonEmpty(p.companyName)) {
+      children.add(pw.Text(p.companyName!.trim(), style: style));
+    }
+    if (_profileFieldNonEmpty(p.companyAddress)) {
+      children.add(pw.Text(p.companyAddress!.trim(), style: style));
+    }
+    final cityStateCountry = <String>[];
+    if (_profileFieldNonEmpty(p.companyCity)) {
+      cityStateCountry.add(p.companyCity!.trim());
+    }
+    if (_profileFieldNonEmpty(p.companyState)) {
+      cityStateCountry.add(p.companyState!.trim());
+    }
+    if (_profileFieldNonEmpty(p.companyCountry)) {
+      cityStateCountry.add(p.companyCountry!.trim());
+    }
+    if (cityStateCountry.isNotEmpty) {
+      children.add(pw.Text(cityStateCountry.join(', '), style: style));
+    }
+    if (_profileFieldNonEmpty(p.companyPostalCode)) {
+      children.add(pw.Text(p.companyPostalCode!.trim(), style: style));
+    }
+    return children;
+  }
+
   Future<void> generateDelinquentTenantsPdf(
       List<Transaction>? delinquentTenantsData) async {
     final GetAddressAdminPdfService service = GetAddressAdminPdfService();
@@ -630,45 +666,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  //  pw.SizedBox(height: 30)
-                ],
+                children: _buildPdfCompanyHeaderWidgets(profileData),
               ),
             ],
           ),
