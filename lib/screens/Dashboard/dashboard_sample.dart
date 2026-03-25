@@ -744,7 +744,7 @@ class _DashboardMobileSimpleState extends State<DashboardMobileSimple> {
             const SizedBox(height: 16),
             Cronjob_payment_table(),
             // const SizedBox(height: 15),
-           // Dashboard_leaseExpiringStaff(),
+           Dashboard_leaseExpiringStaff(),
             SizedBox(
               height: 10,
             ),

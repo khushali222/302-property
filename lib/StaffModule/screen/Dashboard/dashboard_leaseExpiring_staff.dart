@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../../../Model/Dashbord_table/lease_expiring_table.dart';
 import '../../../constant/constant.dart';
 import '../../../provider/dateProvider.dart';
 import '../../repository/lease_expiry_service.dart';
+import '../../repository/tenants.dart';
+import '../Rental/Tenants/Tenant_summary.dart';
 
 class Dashboard_leaseExpiringStaff extends StatefulWidget {
   @override
@@ -117,7 +120,7 @@ class _LeaseExpiryTableState extends State<LeaseExpiryTable> {
             ),
           ),
           if (isLoading)
-            Center(child: CircularProgressIndicator())
+            Center(child: SpinKitFadingCircle(color: blueColor, size: 20))
           else if (data.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -195,27 +198,50 @@ class _LeaseExpiryTableState extends State<LeaseExpiryTable> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InkWell(
-            onTap: onExpandTap,
-            child: Row(
-              children: [
-                Icon(
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onExpandTap,
+                child: Icon(
                   isExpanded ? Icons.expand_less : Icons.expand_more,
                   color: blueColor,
                 ),
-                SizedBox(width: 8),
-                Expanded(
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () async {
+                    final id = lease.tenantId;
+                    if (id == null || id.isEmpty) return;
+                    final tenantData =
+                        await TenantsRepository().fetchTenantsummery(id) ?? [];
+                    if (!mounted || tenantData.isEmpty) return;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResponsiveTenantSummary(
+                          tenants: tenantData.first,
+                          tenantId: id,
+                          initialSummaryTabIndex: 1,
+                        ),
+                      ),
+                    );
+                  },
                   child: Text(
                     lease.rentalAddress ?? 'N/A',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: blueColor,
+                      decoration: (lease.tenantId != null &&
+                              lease.tenantId!.isNotEmpty)
+                          ? TextDecoration.underline
+                          : TextDecoration.none,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           if (isExpanded) ...[
             Padding(

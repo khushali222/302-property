@@ -48,7 +48,14 @@ import '../../../../enums/history_type.dart';
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
   String tenantId;
-  ResponsiveTenantSummary({super.key, required this.tenantId, this.tenants});
+  /// When set, mobile opens this tab (0=Details, 1=Leases, …). Tablet scrolls to lease section if 1.
+  final int? initialSummaryTabIndex;
+  ResponsiveTenantSummary({
+    super.key,
+    required this.tenantId,
+    this.tenants,
+    this.initialSummaryTabIndex,
+  });
   @override
   State<ResponsiveTenantSummary> createState() =>
       _ResponsiveTenantSummaryState();
@@ -64,11 +71,13 @@ class _ResponsiveTenantSummaryState extends State<ResponsiveTenantSummary> {
             return TenantSummaryTablet(
               tenants: widget.tenants,
               tenantId: widget.tenantId,
+              initialSummaryTabIndex: widget.initialSummaryTabIndex,
             );
           } else {
             return TenantSummaryMobile(
               tenants: widget.tenants,
               tenantId: widget.tenantId,
+              initialSummaryTabIndex: widget.initialSummaryTabIndex,
             );
           }
         },
@@ -80,7 +89,13 @@ class _ResponsiveTenantSummaryState extends State<ResponsiveTenantSummary> {
 class TenantSummaryMobile extends StatefulWidget {
   Tenant? tenants;
   String tenantId;
-  TenantSummaryMobile({super.key, required this.tenantId, this.tenants});
+  final int? initialSummaryTabIndex;
+  TenantSummaryMobile({
+    super.key,
+    required this.tenantId,
+    this.tenants,
+    this.initialSummaryTabIndex,
+  });
   @override
   State<TenantSummaryMobile> createState() => _TenantSummaryMobileState();
 }
@@ -460,6 +475,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   @override
   void initState() {
     super.initState();
+    final tab = widget.initialSummaryTabIndex;
+    if (tab != null) {
+      _selectedIndex = tab.clamp(0, 3);
+    }
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -1820,22 +1839,36 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       );
     }
     final activeLeaseId = _firstActiveLeaseId;
-    if (activeLeaseId == null || activeLeaseId.isEmpty) {
-      return SizedBox(
-        height: MediaQuery.sizeOf(context).height - 300,
-        child: const Center(
-          child: Text(
-            'No active lease. All leases are expired or not yet started.',
-            style: TextStyle(fontSize: 13),
-          ),
-        ),
+    // TEMPORARY: previously showed empty state when no lease fell in the active
+    // date window. Uncomment to restore "expired / not yet started" behavior.
+    // if (activeLeaseId == null || activeLeaseId.isEmpty) {
+    //   return SizedBox(
+    //     height: MediaQuery.sizeOf(context).height - 300,
+    //     child: const Center(
+    //       child: Text(
+    //         'No active lease. All leases are expired or not yet started.',
+    //         style: TextStyle(fontSize: 13),
+    //       ),
+    //     ),
+    //   );
+    // }
+    final TenantLeaseData activeLease;
+    final String resolvedLeaseId;
+    if (activeLeaseId != null && activeLeaseId.isNotEmpty) {
+      activeLease = list.firstWhere((l) => l.leaseId == activeLeaseId);
+      resolvedLeaseId = activeLeaseId;
+    } else {
+      // No "active" lease: still open lease summary (e.g. expired) for debugging / UX.
+      activeLease = list.firstWhere(
+        (l) => (l.leaseId ?? '').isNotEmpty,
+        orElse: () => list.first,
       );
+      resolvedLeaseId = activeLease.leaseId ?? widget.tenantId;
     }
-    final activeLease = list.firstWhere((l) => l.leaseId == activeLeaseId);
     return SizedBox(
       height: MediaQuery.sizeOf(context).height - 300,
       child: SummeryPageLease(
-        leaseId: activeLeaseId,
+        leaseId: resolvedLeaseId,
         enddate: activeLease.endDate,
         isredirectpayment: false,
         embeddedInTenantSummary: true,
@@ -3858,12 +3891,21 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
 class TenantSummaryTablet extends StatefulWidget {
   Tenant? tenants;
   String tenantId;
-  TenantSummaryTablet({super.key, required this.tenantId, this.tenants});
+  final int? initialSummaryTabIndex;
+  TenantSummaryTablet({
+    super.key,
+    required this.tenantId,
+    this.tenants,
+    this.initialSummaryTabIndex,
+  });
   @override
   State<TenantSummaryTablet> createState() => _TenantSummaryTabletState();
 }
 
 class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
+  final GlobalKey _leaseDetailsSectionKey = GlobalKey();
+  bool _scheduledLeaseSectionScroll = false;
+
   Future<List<TenantLeaseData>> fetchLeaseData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -4755,6 +4797,23 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                     List<Tenant> tenantsummery = snapshot.data ?? [];
                     print("tenant${tenantsummery}");
                     print("Leangth of the tenant${snapshot.data!.length}");
+                    if (widget.initialSummaryTabIndex == 1 &&
+                        tenantsummery.isNotEmpty &&
+                        !_scheduledLeaseSectionScroll) {
+                      _scheduledLeaseSectionScroll = true;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted) return;
+                        final ctx = _leaseDetailsSectionKey.currentContext;
+                        if (ctx != null) {
+                          Scrollable.ensureVisible(
+                            ctx,
+                            alignment: 0.05,
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      });
+                    }
                     //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
                     return ListView(
                       scrollDirection: Axis.vertical,
@@ -5674,6 +5733,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           height: 16,
                         ),
                         Padding(
+                          key: _leaseDetailsSectionKey,
                           padding: const EdgeInsets.all(25.0),
                           child: Material(
                             borderRadius: BorderRadius.circular(10),

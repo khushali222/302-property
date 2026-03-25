@@ -68,6 +68,13 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
+
+  String _displayOrNA(String? value) {
+    final t = value?.trim();
+    if (t == null || t.isEmpty) return 'N/A';
+    return t;
+  }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -129,7 +136,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           )
@@ -137,7 +144,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           ),
@@ -168,7 +175,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                 },
                 child: Row(
                   children: [
-                    Text("    Account",
+                    Text("     Account",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
                     SizedBox(width: 5),
@@ -177,7 +184,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           )
@@ -185,7 +192,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           ),
@@ -225,7 +232,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           )
@@ -233,7 +240,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
-                              size: 20,
+                              size: 16,
                               color: blueColor,
                             ),
                           ),
@@ -816,11 +823,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text(charge.description ?? ''),
+                            child: pw.Text(_displayOrNA(charge.description)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text(charge.account ?? ''),
+                            child: pw.Text(_displayOrNA(charge.account)),
                           ),
                           pw.Padding(
                             padding: const pw.EdgeInsets.all(6),
@@ -859,8 +866,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             ? dateProvider.formatCurrentDate(charge.actionDate!)
             : '',
         charge.rentalAddress ?? '',
-        charge.description ?? '',
-        charge.account ?? '',
+        _displayOrNA(charge.description),
+        _displayOrNA(charge.account),
         "\$${charge.amount != null ? charge.amount.toString() : ""}"
       ].map((e) => '"${e.replaceAll('"', '""')}"').join(','));
     }
@@ -910,8 +917,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
           ? dateProvider.formatCurrentDate(charge.actionDate!)
           : '');
       sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
-      sheet.getRangeByIndex(row + 2, 3).setText(charge.description ?? '');
-      sheet.getRangeByIndex(row + 2, 4).setText(charge.account ?? '');
+      sheet.getRangeByIndex(row + 2, 3).setText(_displayOrNA(charge.description));
+      sheet.getRangeByIndex(row + 2, 4).setText(_displayOrNA(charge.account));
       sheet
           .getRangeByIndex(row + 2, 5)
           .setText(charge.amount != null ? charge.amount.toString() : '');
@@ -1394,7 +1401,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                        '${Propertytype.account}',
+                                                        _displayOrNA(
+                                                            Propertytype
+                                                                .account),
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1493,9 +1502,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                               TextSpan(
                                                                 // text: formatDate(
                                                                 //     '${Propertytype.updatedAt}'),
-                                                                text: Propertytype
-                                                                        .description ??
-                                                                    "-",
+                                                                text: _displayOrNA(
+                                                                    Propertytype
+                                                                        .description),
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
@@ -1589,166 +1598,130 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                       ),
                                                       Row(
                                                         //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment: MainAxisAlignment.end,
                                                         children: [
                                                           if (widget.leaseID ==
                                                               null)
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  setState(() {
-                                                                    dateController
-                                                                            .text =
-                                                                        Propertytype
-                                                                            .actionDate!;
-                                                                    amountController
-                                                                            .text =
-                                                                        Propertytype
-                                                                            .amount!
-                                                                            .toString();
-                                                                    memoController
-                                                                            .text =
-                                                                        Propertytype.description ??
-                                                                            "";
-                                                                    selectedAccount =
-                                                                        Propertytype
-                                                                            .account!;
-                                                                    if (!accountOptions.any((account) =>
-                                                                        account[
-                                                                            "account"] ==
-                                                                        selectedAccount)) {
-                                                                      accountOptions
-                                                                          .add({
-                                                                        "account":
-                                                                            selectedAccount,
-                                                                        "value":
-                                                                            selectedAccount,
-                                                                      });
-                                                                    }
-                                                                    charge_id =
-                                                                        Propertytype
-                                                                            .taskId;
-                                                                  });
-
-                                                                  EditCharge();
-                                                                  // Navigator.push(
-                                                                  //     context,
-                                                                  //     MaterialPageRoute(
-                                                                  //         builder: (context) => SummeryPageLease(
-                                                                  //           leaseId: Propertytype.leaseId!,
-                                                                  //           enddate: Propertytype.date,
-                                                                  //           isredirectpayment: true,
-                                                                  //         )));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .green,
-                                                                        width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ), // color:Colors.grey[100],
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .edit,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .green,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Edit",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.green,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
+                                                            GestureDetector(
+                                                                                                                            onTap:
+                                                              () async {
+                                                            setState(() {
+                                                              dateController
+                                                                      .text =
+                                                                  Propertytype
+                                                                      .actionDate!;
+                                                              amountController
+                                                                      .text =
+                                                                  Propertytype
+                                                                      .amount!
+                                                                      .toString();
+                                                              memoController
+                                                                      .text =
+                                                                  Propertytype.description ??
+                                                                      "";
+                                                              selectedAccount = (Propertytype
+                                                                          .account
+                                                                          ?.trim()
+                                                                          .isNotEmpty ==
+                                                                      true)
+                                                                  ? Propertytype
+                                                                      .account
+                                                                  : null;
+                                                              if (selectedAccount !=
+                                                                      null &&
+                                                                  !accountOptions.any((account) =>
+                                                                      account["account"] ==
+                                                                      selectedAccount)) {
+                                                                accountOptions
+                                                                    .add({
+                                                                  "account":
+                                                                      selectedAccount,
+                                                                  "value":
+                                                                      selectedAccount,
+                                                                });
+                                                              }
+                                                              charge_id =
+                                                                  Propertytype
+                                                                      .taskId;
+                                                            });
+                                                            
+                                                            EditCharge();
+                                                            // Navigator.push(
+                                                            //     context,
+                                                            //     MaterialPageRoute(
+                                                            //         builder: (context) => SummeryPageLease(
+                                                            //           leaseId: Propertytype.leaseId!,
+                                                            //           enddate: Propertytype.date,
+                                                            //           isredirectpayment: true,
+                                                            //         )));
+                                                                                                                            },
+                                                                                                                            child: 
+                                                                                                                             Container(
+                                                                                                                            height: 35,
+                                                                                                                            width: 35,
+                                                                                                                            decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              color: Colors
+                                                                  .green
+                                                                  .shade50), // color:Colors.grey[100],
+                                                                                                                            child:
+                                                              const Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .edit,
+                                                                size: 15,
+                                                                color: Colors
+                                                                    .green,
                                                               ),
-                                                            ),
+                                                            ],
+                                                                                                                            ),
+                                                                                                                          ),
+                                                                                                                         
+                                                                                                                          ),
+
                                                           if (widget.leaseID ==
                                                               null)
                                                             SizedBox(
                                                               width: 5,
                                                             ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .taskId!,
-                                                                    Propertytype);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .red,
-                                                                      width:
-                                                                          1.5),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                ), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .red,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
+                                                          GestureDetector(
+                                                                                                                        onTap: () async {
+                                                          _showAlert(
+                                                              context,
+                                                              Propertytype
+                                                                  .taskId!,
+                                                              Propertytype);
+                                                                                                                        },
+                                                                                                                        child: 
+                                                                                                                        Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                              color: Colors.red.shade50),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              FaIcon(FontAwesomeIcons.trashCan, size: 16, color: Colors.red),
+                                                            ],
                                                           ),
+                                                                                                                        ),
+                                                                                                                      ),
+                                                          SizedBox(width: 15),
                                                         ],
                                                       ),
+                                                      SizedBox(height: 10),
                                                     ],
                                                   ),
                                                 ),
