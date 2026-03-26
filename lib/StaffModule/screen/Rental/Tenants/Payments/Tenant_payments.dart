@@ -461,7 +461,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
-    return Container(
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Container(
       decoration: BoxDecoration(
           color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
@@ -597,7 +598,7 @@ class _FinancialTableState extends State<FinancialTable> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   final List<String> items = ['Residential', "Commercial", "All"];
@@ -1872,7 +1873,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                       data.entry?.toSet().toList() ?? [];
                                   return Container(
                                     margin:
-                                        const EdgeInsets.symmetric(vertical: 6),
+                                        const EdgeInsets.symmetric(vertical: 6,horizontal: 5),
                                     decoration: BoxDecoration(
                                       color: index % 2 != 0
                                           ? const Color(0xFFF4F8FF)

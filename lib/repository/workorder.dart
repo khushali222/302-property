@@ -50,6 +50,7 @@ class WorkOrderRepository {
     List<String>? status,
     String? search,
     bool? billable,
+    String? rentalId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -76,6 +77,10 @@ class WorkOrderRepository {
     // Add billable filter if provided (e.g. billable=true)
     if (billable != null) {
       queryParams['billable'] = billable.toString();
+    }
+
+    if (rentalId != null && rentalId.isNotEmpty) {
+      queryParams['rental_id'] = rentalId;
     }
 
     final uri = Uri.parse('$Api_url/api/work-order/work-orders/$id')

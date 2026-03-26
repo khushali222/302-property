@@ -23,7 +23,21 @@ import '../../../widgets/CustomTableShimmer.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Workorder_table extends StatefulWidget {
-  const Workorder_table({super.key});
+  const Workorder_table({
+    super.key,
+    this.embeddedMode = false,
+    this.rentalIdFilter,
+    this.showAddButton = true,
+  });
+
+  /// When true, renders only the list/search (no scaffold, app bar, or drawer).
+  final bool embeddedMode;
+
+  /// When set, work orders are limited to this rental (API `rental_id`).
+  final String? rentalIdFilter;
+
+  /// Hidden in tenant summary and similar embedded contexts.
+  final bool showAddButton;
 
   @override
   State<Workorder_table> createState() => _Workorder_tableState();
@@ -251,6 +265,75 @@ class _Workorder_tableState extends State<Workorder_table> {
   ConnectivityResult? _connectivityResult;
   String searchvalue = "";
 
+  Widget _mobileWorkOrderColumnHeader() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+      margin: const EdgeInsets.only(bottom: 2),
+      child: Row(
+        children: [
+          const SizedBox(width: 25),
+          Expanded(
+            flex: 3,
+            child: Text(
+              "Work Order",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 2,
+            child: Text(
+              "Ticket #",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.start,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _workOrdersEmptyPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/no_data.jpg",
+              height: 160,
+              width: 160,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "No Data Available",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _loadWorkOrders() async {
     setState(() {
       futureworkorders = WorkOrderRepository().fetchWorkOrdersPaginated(
@@ -261,6 +344,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         status: selectedStatuses.contains('All') ? null : selectedStatuses,
         search: searchvalue.isEmpty ? null : searchvalue,
         billable: isChecked ? true : null,
+        rentalId: widget.rentalIdFilter,
       );
     });
     final result = await futureworkorders;
@@ -679,7 +763,7 @@ class _Workorder_tableState extends State<Workorder_table> {
 
   Widget _buildMultiSelectDropdown() {
     return Material(
-      elevation: 3,
+    //  elevation: 3,
       borderRadius: BorderRadius.circular(8),
       child: Container(
         height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
@@ -689,7 +773,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFF8A95A8)),
+          border: Border.all(color: Color(0xFFDBE0E5)),
           color: Colors.white,
         ),
         child: PopupMenuButton<String>(
@@ -806,40 +890,61 @@ class _Workorder_tableState extends State<Workorder_table> {
   }
 
   final _scrollController = ScrollController();
+
+  Widget _noInternetBody() {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            'assets/no_internet.json',
+            width: 200,
+            height: 200,
+            fit: BoxFit.fill,
+          ),
+          const Text(
+            'No Internet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Check your internet connection',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
-    return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Work Orders",
-        dropdown: true,
-      ),
-      body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
+    final scrollBody = SingleChildScrollView(
+      child: Column(
+        children: [
+          if (!widget.embeddedMode) const SizedBox(height: 20),
+          // if (widget.embeddedMode) const SizedBox(height: 4),
+          // Header Section with Title and Add Button
+          if (!widget.embeddedMode)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14.0, vertical: 8.0),
+              child: Row(
                 children: [
-                  const SizedBox(height: 20),
-                  // Header Section with Title and Add Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(
-                            width: 13,
-                          ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: titleBar(
-                              width: double.infinity,
-                              title: 'Work Orders',
-                            ),
-                          ),
-                        ),
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(
+                      width: 13,
+                    ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Work Orders',
+                      ),
+                    ),
+                  ),
                         // Flexible(
                         //   flex: 1,
                         //   child: Padding(
@@ -880,51 +985,54 @@ class _Workorder_tableState extends State<Workorder_table> {
                         //   ),
                         // ),
 
-                        Flexible(
-                          flex: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final result = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ResponsiveAddWorkOrder()));
-                                if (result == true) {
-                                  _loadWorkOrders();
-                                }
-                              },
-                              child: Container(
-                                height:
-                                    (MediaQuery.of(context).size.width < 768)
-                                        ? 50
-                                        : 60,
-                                decoration: BoxDecoration(
-                                  color: blueColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "+ Add",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                  if (widget.showAddButton)
+                    Flexible(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ResponsiveAddWorkOrder()));
+                            if (result == true) {
+                              _loadWorkOrders();
+                            }
+                          },
+                          child: Container(
+                            height: (MediaQuery.of(context).size.width < 768)
+                                ? 50
+                                : 60,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                "+ Add",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 3),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 18),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                  if (widget.showAddButton &&
+                      MediaQuery.of(context).size.width < 500)
+                    const SizedBox(width: 3),
+                  if (widget.showAddButton &&
+                      MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 18),
+                ],
+              ),
+            ),
+          if (!widget.embeddedMode) const SizedBox(height: 10),
+          if (widget.embeddedMode) const SizedBox(height: 6),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
@@ -935,7 +1043,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         if (MediaQuery.of(context).size.width > 500)
                           const SizedBox(width: 18),
                         Material(
-                          elevation: 3,
+                         // elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -951,7 +1059,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
                                 border:
-                                    Border.all(color: const Color(0xFF8A95A8))),
+                                    Border.all(color: Color(0xFFDBE0E5))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -1024,7 +1132,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             Text(
                               "Billable To Tenants",
                               style: TextStyle(
-                                  color: Colors.grey,
+                                  color: Colors.grey.shade900,
                                   fontSize:
                                       MediaQuery.of(context).size.width > 500
                                           ? 20
@@ -1059,38 +1167,28 @@ class _Workorder_tableState extends State<Workorder_table> {
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
                     child: FutureBuilder<Map<String, dynamic>>(
                       future: futureworkorders,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return ColabShimmerLoadingWidget();
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _mobileWorkOrderColumnHeader(),
+                              const SizedBox(height: 8),
+                              ColabShimmerLoadingWidget(),
+                            ],
+                          );
                         } else if (!snapshot.hasData ||
                             (snapshot.data!['data'] as List).isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _mobileWorkOrderColumnHeader(),
+                              _workOrdersEmptyPlaceholder(),
+                            ],
                           );
                         } else {
                           final List<Data> data =
@@ -1124,6 +1222,18 @@ class _Workorder_tableState extends State<Workorder_table> {
 
                           // Billable filter is applied via API (billable=true param)
                           final List<Data> filteredData = searchFilteredData;
+
+                          if (filteredData.isEmpty) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _mobileWorkOrderColumnHeader(),
+                                  _workOrdersEmptyPlaceholder(),
+                                ],
+                              ),
+                            );
+                          }
 
                           final currentPageData = filteredData;
                           final totalPages = paginationInfo != null
@@ -1312,15 +1422,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(
-                                                width: 35,
-                                              ),
-                                              // Spacer(),
+                                              const SizedBox(width: 12),
                                               Expanded(
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 42),
+                                                          left: 4),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -1368,8 +1475,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(height: 15),
-                                          Row(
+                                          const SizedBox(height: 12),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
@@ -1501,6 +1611,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             //   ],
                                             ],
                                           ),
+                                          ),
                                         ],
                                       ),
                                   ],
@@ -1512,50 +1623,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFF7F9FC),
-                                      border: Border.all(
-                                          color: const Color(0xFFDBE0E5)),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 8),
-                                  margin: const EdgeInsets.only(bottom: 2),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 25,
-                                      ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          "Work Order",
-                                          style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "Ticket #",
-                                          style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                _mobileWorkOrderColumnHeader(),
                                 ...currentPageData.asMap().entries.map((entry) {
                                   int index = entry.key;
                                   Data workOrder = entry.value;
@@ -1716,30 +1784,24 @@ class _Workorder_tableState extends State<Workorder_table> {
                   ),
                 ],
               ),
-            )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+            );
+
+    if (widget.embeddedMode) {
+      return _connectivityResult != ConnectivityResult.none
+          ? scrollBody
+          : _noInternetBody();
+    }
+
+    return Scaffold(
+      appBar: widget_302.App_Bar(context: context),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawer(
+        currentpage: "Work Orders",
+        dropdown: true,
+      ),
+      body: _connectivityResult != ConnectivityResult.none
+          ? scrollBody
+          : _noInternetBody(),
     );
   }
 

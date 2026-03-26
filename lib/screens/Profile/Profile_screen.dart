@@ -2571,7 +2571,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                             changePassword(); // Call the function to change the password
                                           }
                                         },
-                                        child: Row(
+                                        child: 
+                                        Row(
                                           children: [
                                             Container(
                                               height: 40,
@@ -2618,6 +2619,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             ),
                                           ],
                                         ),
+                                     
                                       ),
                                       SizedBox(
                                         height:
