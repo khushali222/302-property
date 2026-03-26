@@ -310,7 +310,7 @@ class _Workorder_tableState extends State<Workorder_table> {
               ),
             ),
           ),
-          const Spacer(),
+         SizedBox(width: 8),
           Expanded(
             flex: 2,
             child: Text(
@@ -1320,7 +1320,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        const Spacer(),
+                                        SizedBox(width: 8),
                                         Expanded(
                                           flex: 2,
                                           child: Text(
@@ -1436,12 +1436,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ],
                                                 ),
                                               ),
-                                              const SizedBox(width: 12),
+                                              const SizedBox(width: 35),
                                               Expanded(
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 4),
+                                                          left: 18),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
