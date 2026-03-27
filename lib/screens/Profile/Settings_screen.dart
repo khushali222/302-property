@@ -1815,37 +1815,47 @@ class _TabBarExampleState extends State<TabBarExample> {
                     (_cpSaving || !_hasCompanyProfileChanges()) ? 0.5 : 1.0,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                 
-            height: 45,
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          offset: Offset(0, 1),
-                          blurRadius: 6,
-                        ),
-                      ],
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 48,
+                      minWidth: w < 500 ? 228 : 268,
                     ),
-                    child: _cpSaving
-                        ?  Center(child: SpinKitFadingCircle(color: Colors.white,size: 20,))
-                        : Center(child: Padding(padding: const EdgeInsets.all(4.0), child: Text(
-                            '    Save Company Profile    ',
-                            style: TextStyle(
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: w < 500 ? 20 : 24,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0, 1),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                      child: _cpSaving
+                          ? SpinKitFadingCircle(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: w < 500 ? 14 : 16,
+                              size: 24,
+                            )
+                          : Text(
+                              'Save Company Profile',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: w < 500 ? 14 : 16,
+                              ),
                             ),
-                          ),
-                        ),
-                          ),
+                    ),
                   ),
                 ),
               ),
             ),
-          
           ],
         ),
         const SizedBox(height: 10),
@@ -3099,7 +3109,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   static const List<String> _settingsTabTitles = [
     'Accounts',
-  //  'Company Profile',
+    'Company Profile',
     'Categories',
     // 'Charges',
     'Date Format',

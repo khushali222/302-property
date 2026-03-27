@@ -1575,40 +1575,40 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ),
                                                 ),
                                               ),
-                                            //  if (onClose != null) ...[
-                                            //     const SizedBox(width: 5),
-                                            //     GestureDetector(
-                                            //       onTap: onClose,
-                                            //       child: Container(
-                                            //         height: 35,
-                                            //         width: 35,
-                                            //         decoration: BoxDecoration(
-                                            //           color:
-                                            //               Colors.grey.shade200,
-                                            //           borderRadius:
-                                            //               BorderRadius.circular(
-                                            //                   8),
-                                            //         ),
-                                            //         child: Row(
-                                            //           mainAxisAlignment:
-                                            //               MainAxisAlignment
-                                            //                   .center,
-                                            //           crossAxisAlignment:
-                                            //               CrossAxisAlignment
-                                            //                   .center,
-                                            //           children: [
-                                            //             FaIcon(
-                                            //               FontAwesomeIcons
-                                            //                   .arrowRightFromBracket,
-                                            //               size: 15,
-                                            //               color: Colors.black,
-                                            //             ),
-                                            //           ],
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //     const SizedBox(width: 5),
-                                            //   ],
+                                             if (onClose != null) ...[
+                                                const SizedBox(width: 5),
+                                                GestureDetector(
+                                                  onTap: onClose,
+                                                  child: Container(
+                                                    height: 35,
+                                                    width: 35,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.shade200,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .arrowRightFromBracket,
+                                                          size: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                              ],
                                             ],
                                           ),
                                           ),
