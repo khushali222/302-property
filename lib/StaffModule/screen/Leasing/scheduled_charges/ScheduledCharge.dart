@@ -992,13 +992,13 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   //search
                   Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width > 500 ? 25 : 14,
+                        left: MediaQuery.of(context).size.width > 500 ? 25 : 16,
                         right:
-                            MediaQuery.of(context).size.width > 500 ? 26 : 20),
+                            MediaQuery.of(context).size.width > 500 ? 26 : 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Material(
+                        Material(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                           elevation: 2,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
@@ -1116,7 +1116,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 12 : 28),
                     child: FutureBuilder<List<ScheduledCharges>>(
                       future: futurescheduledpayment,
                       builder: (context, snapshot) {
