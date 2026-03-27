@@ -2338,8 +2338,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                               ),
                                             ],
                                           ),
-                                          items:
-                                              staffs.keys.map((staffmember_id) {
+                                          items: (staffs.keys.toList()
+                                                ..sort((a, b) => (staffs[a] ?? '')
+                                                    .toLowerCase()
+                                                    .compareTo((staffs[b] ?? '')
+                                                        .toLowerCase())))
+                                              .map((staffmember_id) {
                                             return DropdownMenuItem<String>(
                                               value: staffmember_id,
                                               child: Text(
@@ -2368,7 +2372,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 160,
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
@@ -2389,17 +2392,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
-                                            maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
+                                            maxHeight: 250,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
-                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -5234,7 +5232,14 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                                         ),
                                                       ],
                                                     ),
-                                                    items: staffs.keys
+                                                    items: (staffs.keys.toList()
+                                                          ..sort((a, b) =>
+                                                              (staffs[a] ?? '')
+                                                                  .toLowerCase()
+                                                                  .compareTo(
+                                                                      (staffs[b] ??
+                                                                              '')
+                                                                          .toLowerCase())))
                                                         .map((staffmember_id) {
                                                       return DropdownMenuItem<
                                                           String>(
@@ -5275,7 +5280,6 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                                     buttonStyleData:
                                                         ButtonStyleData(
                                                       height: 45,
-                                                      width: 160,
                                                       padding:
                                                           const EdgeInsets.only(
                                                               left: 14,
@@ -5306,6 +5310,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
+                                                      maxHeight: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius

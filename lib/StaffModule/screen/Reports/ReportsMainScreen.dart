@@ -454,12 +454,13 @@ class NarrowScreenLayout extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 10,
+              height: 20,
             ),
-            titleBar(
+            Padding(padding: EdgeInsets.only(left: 14, right: 14), child: titleBar(
               title: 'Reports',
               width: MediaQuery.of(context).size.width * .98,
-            ),
+            ),),
+            SizedBox(height: 10,),
             // Expanded(
             //   child: Padding(
             //     padding: const EdgeInsets.only(left: 10, right: 10),

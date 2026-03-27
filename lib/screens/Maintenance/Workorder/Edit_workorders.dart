@@ -2375,8 +2375,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             ],
                                           ),
-                                          items:
-                                              staffs.keys.map((staffmemberId) {
+                                          items: (staffs.keys.toList()
+                                                ..sort((a, b) => (staffs[a] ?? '')
+                                                    .toLowerCase()
+                                                    .compareTo((staffs[b] ?? '')
+                                                        .toLowerCase())))
+                                              .map((staffmemberId) {
                                             return DropdownMenuItem<String>(
                                               value: staffmemberId,
                                               child: Text(
@@ -2414,7 +2418,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 160,
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
@@ -2437,17 +2440,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
-                                            maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
+                                            maxHeight: 250,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
-                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -5808,8 +5806,17 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               ),
                                                             ],
                                                           ),
-                                                          items: staffs.keys.map(
-                                                              (staffmember_id) {
+                                                          items: (staffs.keys
+                                                                  .toList()
+                                                                ..sort((a, b) =>
+                                                                    (staffs[a] ??
+                                                                            '')
+                                                                        .toLowerCase()
+                                                                        .compareTo((staffs[b] ??
+                                                                                '')
+                                                                            .toLowerCase())))
+                                                              .map(
+                                                                  (staffmember_id) {
                                                             return DropdownMenuItem<
                                                                 String>(
                                                               value:
@@ -5854,7 +5861,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           buttonStyleData:
                                                               ButtonStyleData(
                                                             height: 45,
-                                                            width: 160,
                                                             padding:
                                                                 const EdgeInsets
                                                                     .only(
@@ -5886,6 +5892,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           ),
                                                           dropdownStyleData:
                                                               DropdownStyleData(
+                                                            maxHeight: 250,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:
