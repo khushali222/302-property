@@ -299,24 +299,41 @@ class _AddCardState extends State<AddCard> {
 
         CustomerData customerData = CustomerData.fromJson(customerJson);
 
-        Set<String> cardBillingIds = cardDetailsList
-            .map((card) =>
-                card['billing_id'].toString()) // Ensure conversion to string
+        final Set<String> cardBillingIds = cardDetailsList
+            .map((card) => card['billing_id']?.toString())
+            .whereType<String>()
+            .where((id) => id.isNotEmpty)
             .toSet();
 
-        // Filter customerData.billing to only include matching billing IDs
-        List<BillingData> filteredCards = customerData.billing
-            .where((billing) => cardBillingIds.contains(billing.billingId))
-            .toList();
+        final Map<String, String> cardTypeByBillingId = {};
+        for (final raw in cardDetailsList) {
+          if (raw is Map) {
+            final bid = raw['billing_id']?.toString();
+            final ct = raw['card_type']?.toString();
+            if (bid != null && bid.isNotEmpty && ct != null && ct.isNotEmpty) {
+              cardTypeByBillingId[bid] = ct;
+            }
+          }
+        }
+
+        final filteredCards = customerData.billing.where((billing) {
+          final id = billing.billingId?.toString();
+          return id != null && cardBillingIds.contains(id);
+        }).toList();
+
+        for (final billing in filteredCards) {
+          final id = billing.billingId?.toString();
+          if (id != null && cardTypeByBillingId.containsKey(id)) {
+            billing.binResult = cardTypeByBillingId[id];
+          } else {
+            final hasCardNumber = (billing.ccNumber?.trim().isNotEmpty ?? false);
+            billing.binResult = hasCardNumber
+                ? (billing.ccType ?? 'CREDIT')
+                : (billing.ccType ?? 'ACH');
+          }
+        }
 
         customerData.billing = filteredCards;
-
-        // Set binResult for each card
-        for (int i = 0;
-            i < filteredCards.length && i < cardDetailsList.length;
-            i++) {
-          filteredCards[i].binResult = cardDetailsList[i]["card_type"] ?? '';
-        }
 
         return customerData;
       } else {
@@ -1340,7 +1357,8 @@ class _AddCardState extends State<AddCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: _buildLogosBlock(
-                    '${billingData.binResult!} CARD', billingData.ccType ?? ''),
+                    '${(billingData.binResult ?? billingData.ccType ?? 'CARD').toUpperCase()} CARD',
+                    billingData.ccType ?? ''),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),

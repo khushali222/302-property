@@ -52,6 +52,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/addcard/AddCa
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
   String tenantId;
+
   /// When set, mobile opens this tab (0=Summary, 1=Leases, …). Tablet scrolls to lease section if 1.
   final int? initialSummaryTabIndex;
   ResponsiveTenantSummary({
@@ -482,8 +483,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   @override
   void initState() {
     super.initState();
-    _tenantSummaryTabIndex =
-        (widget.initialSummaryTabIndex ?? 0).clamp(0, 4);
+    _tenantSummaryTabIndex = (widget.initialSummaryTabIndex ?? 0).clamp(0, 4);
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -1231,7 +1231,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   Future<void> _onPaymentAllowAchChanged(bool value) async {
     final t = _tenantDetails ?? widget.tenants;
     if (t == null) return;
-    final card = t.allowCard ?? false;
+    final card = t.allowCard != false;
     final prevAch = t.allowAch;
     setState(() {
       if (_tenantDetails != null) _tenantDetails!.allowAch = value;
@@ -1257,7 +1257,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   Future<void> _onPaymentAllowCardChanged(bool value) async {
     final t = _tenantDetails ?? widget.tenants;
     if (t == null) return;
-    final ach = t.allowAch ?? false;
+    final ach = t.allowAch != false;
     final prevCard = t.allowCard;
     setState(() {
       if (_tenantDetails != null) _tenantDetails!.allowCard = value;
@@ -1965,8 +1965,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title:
-            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",style: TextStyle(color: blueColor, fontWeight: FontWeight.bold,fontSize: 18),),
+        title: Text(
+          isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",
+          style: TextStyle(
+              color: blueColor, fontWeight: FontWeight.bold, fontSize: 18),
+        ),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -2293,8 +2296,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               children: [
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                    await Navigator.of(context)
+                                        .push(MaterialPageRoute(
                                             builder: (context) => send_email(
                                                   lease: [
                                                     widget.tenants!.tenantId!
@@ -2332,8 +2335,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                    await Navigator.of(context)
+                                        .push(MaterialPageRoute(
                                             builder: (context) => EditTenants(
                                                   tenantId: "",
                                                   tenants: widget.tenants!,
@@ -2371,7 +2374,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                             ),
                           ],
                         ),
-                      const SizedBox(width: 5),
+                        const SizedBox(width: 5),
                       ],
                     ),
                   ),
@@ -2759,8 +2762,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 ),
                                 Builder(builder: (context) {
                                   final t = _tenantDetails ?? widget.tenants;
-                                  final allowAch = t?.allowAch == true;
-                                  final allowCard = t?.allowCard == true;
+                                  // Default both on when API omits allow_ach / allow_card (null).
+                                  final allowAch = t?.allowAch != false;
+                                  final allowCard = t?.allowCard != false;
                                   final canEdit = t != null;
                                   return Container(
                                     padding: const EdgeInsets.all(16),
@@ -2871,7 +2875,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                             Material(
                                               color: Colors.transparent,
                                               child: InkWell(
-                                                onTap: _openManagePaymentMethods,
+                                                onTap:
+                                                    _openManagePaymentMethods,
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                                 child: Container(
@@ -2902,7 +2907,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   );
                                 }),
                                 const SizedBox(height: 10),
-  Container(
+                                Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     border:
@@ -3309,7 +3314,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     ],
                                   ),
                                 ),
-                              
+
                                 const SizedBox(height: 10),
                                 Container(
                                   padding: const EdgeInsets.all(16),
@@ -3368,14 +3373,21 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                 });
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: blueColor,
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                               ),
                                               child: Center(
-                                                child: Icon(Icons.add,color: Colors.white,size: 22,),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
+                                                  size: 22,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -3485,8 +3497,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                 return SingleChildScrollView(
                                                   child: Column(
                                                     children: [
-                                                        const SizedBox(
-                                                            height: 10),
+                                                      const SizedBox(
+                                                          height: 10),
                                                       _buildHeaders(),
                                                       const SizedBox(
                                                           height: 10),
@@ -4164,7 +4176,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 SizedBox(height: 10),
                                 _buildEmergencyContactSection(),
                                 const SizedBox(height: 10),
-                              
+
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 20),
@@ -4177,14 +4189,13 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                     itemsPerPage: 10,
                                   ),
                                 ),
-                             
                               ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                  
+
                   if (_tenantSummaryTabIndex == 1) _buildLeaseTabContent(),
                   if (_tenantSummaryTabIndex == 2)
                     Tenant_communication(
@@ -4194,9 +4205,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                     FinancialTable(
                       leaseId: widget.tenantId,
                     ),
-                  if (_tenantSummaryTabIndex == 4)
-                    _buildTenantWorkOrdersTab(),
-
+                  if (_tenantSummaryTabIndex == 4) _buildTenantWorkOrdersTab(),
                 ],
               ),
             )
@@ -4511,7 +4520,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   Future<void> _tabletOnPaymentAch(Tenant t, bool value) async {
     final prev = t.allowAch;
-    final card = t.allowCard ?? false;
+    final card = t.allowCard != false;
     setState(() => t.allowAch = value);
     try {
       await repo.editTenantFromModel(t, allowAch: value, allowCard: card);
@@ -4522,7 +4531,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   Future<void> _tabletOnPaymentCard(Tenant t, bool value) async {
     final prev = t.allowCard;
-    final ach = t.allowAch ?? false;
+    final ach = t.allowAch != false;
     setState(() => t.allowCard = value);
     try {
       await repo.editTenantFromModel(t, allowAch: ach, allowCard: value);
@@ -6141,14 +6150,12 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: Builder(builder: (context) {
                             final tTab = tenantsummery.first;
-                            final ach = tTab.allowAch == true;
-                            final card = tTab.allowCard == true;
-                            final canEdit = true;
+                            final ach = tTab.allowAch != false;
+                            final card = tTab.allowCard != false;
                             return Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.grey.shade300),
+                                border: Border.all(color: Colors.grey.shade300),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
@@ -6180,10 +6187,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                     children: [
                                       Checkbox(
                                         value: ach,
-                                        onChanged: canEdit
-                                            ? (v) => _tabletOnPaymentAch(
-                                                tTab, v == true)
-                                            : null,
+                                        onChanged: (v) => _tabletOnPaymentAch(
+                                            tTab, v == true),
                                         activeColor: blueColor,
                                       ),
                                       Text(
@@ -6202,10 +6207,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                     children: [
                                       Checkbox(
                                         value: card,
-                                        onChanged: canEdit
-                                            ? (v) => _tabletOnPaymentCard(
-                                                tTab, v == true)
-                                            : null,
+                                        onChanged: (v) => _tabletOnPaymentCard(
+                                            tTab, v == true),
                                         activeColor: blueColor,
                                       ),
                                       Text(

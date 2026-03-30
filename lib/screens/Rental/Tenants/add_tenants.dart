@@ -589,9 +589,10 @@ class _AddTenantState extends State<AddTenant> {
                                             const SizedBox(height: 10),
                                             Container(
                                               height: 50,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0,
-                                                  vertical: 0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12.0,
+                                                      vertical: 0),
                                               decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   boxShadow: [
@@ -926,7 +927,7 @@ class _AddTenantState extends State<AddTenant> {
                                             child: TextField(
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                      decimal: true),
+                                                  decimal: true),
                                               decoration: InputDecoration(
                                                 hintStyle: const TextStyle(
                                                     fontSize: 13,
@@ -966,7 +967,8 @@ class _AddTenantState extends State<AddTenant> {
                                         )
                                       : Container(),
                                   const SizedBox(height: 10),
-                                  Text('Allowed Payment Methods',
+                                  Text(
+                                    'Allowed Payment Methods',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -985,7 +987,8 @@ class _AddTenantState extends State<AddTenant> {
                                           });
                                         },
                                       ),
-                                      Text('Card',
+                                      Text(
+                                        'Card',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -1005,7 +1008,8 @@ class _AddTenantState extends State<AddTenant> {
                                           });
                                         },
                                       ),
-                                      Text('ACH',
+                                      Text(
+                                        'ACH',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -1079,7 +1083,8 @@ class _AddTenantState extends State<AddTenant> {
                                       borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFFffffff),
+                                          backgroundColor:
+                                              const Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0))),
@@ -1419,7 +1424,8 @@ class _AddTenantState extends State<AddTenant> {
                                         // labelText: 'Select Date',
                                         hintText: 'Select Date',
                                         suffixIcon: IconButton(
-                                          icon: const Icon(Icons.calendar_today),
+                                          icon:
+                                              const Icon(Icons.calendar_today),
                                           onPressed: () {
                                             _selectDate(context);
                                           },
@@ -1677,7 +1683,7 @@ class _AddTenantState extends State<AddTenant> {
                                             child: TextField(
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                      decimal: true),
+                                                  decimal: true),
                                               decoration: InputDecoration(
                                                 hintStyle: const TextStyle(
                                                     fontSize: 13,
@@ -1718,7 +1724,8 @@ class _AddTenantState extends State<AddTenant> {
                                         )
                                       : Container(),
                                   const SizedBox(height: 10),
-                                  Text('Allowed Payment Methods',
+                                  Text(
+                                    'Allowed Payment Methods',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -1737,7 +1744,8 @@ class _AddTenantState extends State<AddTenant> {
                                           });
                                         },
                                       ),
-                                      Text('Card',
+                                      Text(
+                                        'Card',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -1757,7 +1765,8 @@ class _AddTenantState extends State<AddTenant> {
                                           });
                                         },
                                       ),
-                                      Text('ACH',
+                                      Text(
+                                        'ACH',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -1827,7 +1836,8 @@ class _AddTenantState extends State<AddTenant> {
                                       borderRadius: BorderRadius.circular(8.0)),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFFffffff),
+                                          backgroundColor:
+                                              const Color(0xFFffffff),
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8.0))),
@@ -2198,7 +2208,8 @@ class _AddTenantState extends State<AddTenant> {
                                                     fontSize: 14,
                                                     color: Colors.white,
                                                   ),
-                                                  margin: const EdgeInsets.symmetric(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 42),
                                                   message:
                                                       '''• At least one uppercase letter (A-Z).
@@ -2218,7 +2229,8 @@ class _AddTenantState extends State<AddTenant> {
                                             ],
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.refresh, size: 20),
+                                            icon: const Icon(Icons.refresh,
+                                                size: 20),
                                             padding: EdgeInsets.zero,
                                             constraints: const BoxConstraints(),
                                             onPressed: () {
@@ -2321,8 +2333,8 @@ class _AddTenantState extends State<AddTenant> {
                                                   color: Color(0xFFb0b6c3)),
                                               border: InputBorder.none,
                                               suffixIcon: IconButton(
-                                                icon:
-                                                    const Icon(Icons.calendar_today),
+                                                icon: const Icon(
+                                                    Icons.calendar_today),
                                                 onPressed: () =>
                                                     _selectDate(context),
                                               ),
@@ -2462,7 +2474,8 @@ class _AddTenantState extends State<AddTenant> {
                                               hintText: 'Enter contact name',
                                               controller: contactName,
                                               showElevation: false,
-                                              borderColor: const Color(0xFFCED4DA),
+                                              borderColor:
+                                                  const Color(0xFFCED4DA),
                                               optional: true,
                                             ),
                                           ],
@@ -2492,7 +2505,8 @@ class _AddTenantState extends State<AddTenant> {
                                                   'Enter relationship to tenant',
                                               controller: relationToTenant,
                                               showElevation: false,
-                                              borderColor: const Color(0xFFCED4DA),
+                                              borderColor:
+                                                  const Color(0xFFCED4DA),
                                               optional: true,
                                             ),
                                           ],
@@ -2527,7 +2541,8 @@ class _AddTenantState extends State<AddTenant> {
                                               controller: emergencyEmail,
                                               optional: true,
                                               showElevation: false,
-                                              borderColor: const Color(0xFFCED4DA),
+                                              borderColor:
+                                                  const Color(0xFFCED4DA),
                                               alterController: email,
                                               emrgencyController: alterEmail,
                                               email: true,
@@ -2566,7 +2581,8 @@ class _AddTenantState extends State<AddTenant> {
                                               // samephonenumber: workNumber.text.isNotEmpty ? workNumber.text == emergencyPhoneNumber.text : false,
                                               otherController: workNumber,
                                               businessController: phoneNumber,
-                                              borderColor: const Color(0xFFCED4DA),
+                                              borderColor:
+                                                  const Color(0xFFCED4DA),
                                               inputFormatters: [
                                                 FilteringTextInputFormatter
                                                     .digitsOnly,
@@ -2655,9 +2671,9 @@ class _AddTenantState extends State<AddTenant> {
                                             // ],
                                           ),
                                           child: TextField(
-                                            keyboardType:
-                                                const TextInputType.numberWithOptions(
-                                                    decimal: true),
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: true),
                                             decoration: InputDecoration(
                                               hintStyle: const TextStyle(
                                                   fontSize: 13,
@@ -2700,7 +2716,8 @@ class _AddTenantState extends State<AddTenant> {
                                 SizedBox(
                                   height: 5,
                                 ),
-                                Text(' Allowed Payment Methods',
+                                Text(
+                                  ' Allowed Payment Methods',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -2720,7 +2737,8 @@ class _AddTenantState extends State<AddTenant> {
                                         });
                                       },
                                     ),
-                                    Text('Card',
+                                    Text(
+                                      'Card',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
@@ -2742,14 +2760,15 @@ class _AddTenantState extends State<AddTenant> {
                                         });
                                       },
                                     ),
-                                    Text('ACH',
+                                    Text(
+                                      'ACH',
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
                                         color: Color(0xFF101828),
                                       ),
                                     ),
-                                  ],  
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 5,
@@ -2779,7 +2798,8 @@ class _AddTenantState extends State<AddTenant> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.white,
-                                    border: Border.all(color: const Color(0x80152B51))
+                                    border: Border.all(
+                                        color: const Color(0x80152B51))
                                     // boxShadow: [
                                     //   BoxShadow(
                                     //     color: Colors.grey,
@@ -3243,11 +3263,11 @@ class CustomTextFieldState extends State<CustomTextField> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 0),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      
+
                       borderRadius: BorderRadius.circular(8.0),
                       // Custom border implementation
                       border: widget.customBorder ??
@@ -3299,8 +3319,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                       controller: widget.controller,
                       decoration: InputDecoration(
                         suffixIcon: widget.suffixIcon,
-                        hintStyle:
-                            const TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: Color(0xFFb0b6c3)),
                         border: InputBorder.none,
                         hintText: widget.hintText,
                       ),

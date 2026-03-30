@@ -456,7 +456,8 @@ class _MakePaymentState extends State<MakePayment> {
       }).toList();
     }
     // Clear selected method if it's not in the new list (avoids RangeError when changing tenant/method)
-    if (_selectedPaymentMethod != null && !_paymentMethods.contains(_selectedPaymentMethod)) {
+    if (_selectedPaymentMethod != null &&
+        !_paymentMethods.contains(_selectedPaymentMethod)) {
       _selectedPaymentMethod = null;
     }
   }
@@ -905,7 +906,8 @@ class _MakePaymentState extends State<MakePayment> {
           cardDetails = customerData.billing;
           // Keep selected index only if still in range (avoids RangeError)
           if (selectedcardindex != null &&
-              (selectedcardindex! < 0 || selectedcardindex! >= cardDetails.length)) {
+              (selectedcardindex! < 0 ||
+                  selectedcardindex! >= cardDetails.length)) {
             selectedcardindex = null;
           }
         });
@@ -1677,7 +1679,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
                                   hint: const Text('Select Method'),
-                                  value: _paymentMethodsforfree.contains(_selectedPaymentMethod)
+                                  value: _paymentMethodsforfree
+                                          .contains(_selectedPaymentMethod)
                                       ? _selectedPaymentMethod
                                       : null,
                                   items: _paymentMethodsforfree.map((method) {
@@ -1767,7 +1770,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
                                           hint: const Text('Select Method'),
-                                          value: _paymentMethods.contains(_selectedPaymentMethod)
+                                          value: _paymentMethods.contains(
+                                                  _selectedPaymentMethod)
                                               ? _selectedPaymentMethod
                                               : null,
                                           items: _paymentMethods.map((method) {
@@ -2126,7 +2130,8 @@ class _MakePaymentState extends State<MakePayment> {
                                           children: [
                                             if (surCharge != null &&
                                                 selectedcardindex != null &&
-                                                selectedcardindex! < cardDetails.length)
+                                                selectedcardindex! <
+                                                    cardDetails.length)
                                               // ignore: unrelated_type_equality_checks
                                               Row(
                                                 children: [
@@ -2144,8 +2149,9 @@ class _MakePaymentState extends State<MakePayment> {
                                               Row(
                                                 children: [
                                                   Padding(
-                                                    padding: const EdgeInsets.only(
-                                                        top: 5),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 5),
                                                     child: Text(
                                                       state.errorText ?? '',
                                                       style: const TextStyle(
@@ -2427,7 +2433,8 @@ class _MakePaymentState extends State<MakePayment> {
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
-                                                hint: const Text('Select Account'),
+                                                hint: const Text(
+                                                    'Select Account'),
                                                 value: selectedAccount,
                                                 items:
                                                     _selecttype.map((method) {
@@ -3233,9 +3240,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                       ),
                                                     ),
                                                     hint: const Padding(
-                                                      padding:
-                                                          EdgeInsets.only(
-                                                              left: 10),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
                                                       child: Text(
                                                           'Select an account'),
                                                     ),

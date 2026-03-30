@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:three_zero_two_property/screens/Maintenance/Workorder/workorder_dropdown_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -767,10 +766,45 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 print(
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
-              buttonStyleData: WorkorderDropdownTheme.fullWidthButtonStyle(),
-              iconStyleData: WorkorderDropdownTheme.iconStyle,
-              dropdownStyleData: WorkorderDropdownTheme.panelStyle(),
-              menuItemStyleData: WorkorderDropdownTheme.menuItemStyle,
+              buttonStyleData: ButtonStyleData(
+                height: 45,
+                width: 160,
+                padding: const EdgeInsets.only(left: 14, right: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCED4DA),
+                    width: 1.5,
+                  ),
+                ),
+                elevation: 0,
+              ),
+              iconStyleData: const IconStyleData(
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                ),
+                iconSize: 24,
+                iconEnabledColor: Color(0xFFb0b6c3),
+                iconDisabledColor: Colors.grey,
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: Colors.white,
+                ),
+                offset: const Offset(0, -5),
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(6),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 40,
+                padding: EdgeInsets.only(left: 14, right: 14),
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -1891,17 +1925,53 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             });
                                             state.reset();
                                           },
-                                          buttonStyleData:
-                                              WorkorderDropdownTheme
-                                                  .formButtonStyle(),
-                                          iconStyleData:
-                                              WorkorderDropdownTheme.iconStyle,
-                                          dropdownStyleData:
-                                              WorkorderDropdownTheme
-                                                  .panelStyle(),
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: 160,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                            ),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            offset: const Offset(0, -5),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
                                           menuItemStyleData:
-                                              WorkorderDropdownTheme
-                                                  .menuItemStyle,
+                                              const MenuItemStyleData(
+                                            height: 40,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
                                         ),
                                       ),
                                       if (state.hasError)
@@ -2000,17 +2070,65 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       });
                                                     },
                                                     buttonStyleData:
-                                                        WorkorderDropdownTheme
-                                                            .formButtonStyle(),
+                                                        ButtonStyleData(
+                                                      height: 45,
+                                                      width: 160,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 14,
+                                                              right: 14),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        color: Colors.white,
+                                                        border: Border.all(
+                                                          color: const Color(
+                                                              0xFFCED4DA),
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                      elevation: 0,
+                                                    ),
                                                     iconStyleData:
-                                                        WorkorderDropdownTheme
-                                                            .iconStyle,
+                                                        const IconStyleData(
+                                                      icon: Icon(Icons
+                                                          .arrow_drop_down),
+                                                      iconSize: 24,
+                                                      iconEnabledColor:
+                                                          Color(0xFFb0b6c3),
+                                                      iconDisabledColor:
+                                                          Colors.grey,
+                                                    ),
                                                     dropdownStyleData:
-                                                        WorkorderDropdownTheme
-                                                            .panelStyle(),
+                                                        DropdownStyleData(
+                                                      maxHeight: 300,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color: Colors.white,
+                                                      ),
+                                                      offset:
+                                                          const Offset(0, -5),
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                        radius: const Radius
+                                                            .circular(6),
+                                                        thickness:
+                                                            MaterialStateProperty
+                                                                .all(6),
+                                                        thumbVisibility:
+                                                            MaterialStateProperty
+                                                                .all(true),
+                                                      ),
+                                                    ),
                                                     menuItemStyleData:
-                                                        WorkorderDropdownTheme
-                                                            .menuItemStyle,
+                                                        const MenuItemStyleData(
+                                                      height: 40,
+                                                      padding: EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -2124,7 +2242,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           //     );
                           //   },
                           // ),
-                          DropdownButtonHideUnderline(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
                             child: DropdownButton2<allcategories_model>(
                               isExpanded: true,
                               hint: Text(_isLoadingCategories
@@ -2157,14 +2277,46 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             newValue?.name == 'Other';
                                       });
                                     },
-                              buttonStyleData: WorkorderDropdownTheme
-                                  .fullWidthButtonStyle(),
-                              iconStyleData: WorkorderDropdownTheme.iconStyle,
-                              dropdownStyleData:
-                                  WorkorderDropdownTheme.panelStyle(),
-                              menuItemStyleData:
-                                  WorkorderDropdownTheme.menuItemStyle,
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                padding:
+                                    const EdgeInsets.only( right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: const Color(0xFFCED4DA),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(Icons.arrow_drop_down),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 300,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
                             ),
+                          ),
                           ),
                           _showTextField
                               ? Padding(
@@ -2269,17 +2421,53 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             });
                                             state.reset();
                                           },
-                                          buttonStyleData:
-                                              WorkorderDropdownTheme
-                                                  .formButtonStyle(),
-                                          iconStyleData:
-                                              WorkorderDropdownTheme.iconStyle,
-                                          dropdownStyleData:
-                                              WorkorderDropdownTheme
-                                                  .panelStyle(),
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: 160,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                            ),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            offset: const Offset(0, -5),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
                                           menuItemStyleData:
-                                              WorkorderDropdownTheme
-                                                  .menuItemStyle,
+                                              const MenuItemStyleData(
+                                            height: 40,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
                                         ),
                                       ),
                                       if (state.hasError)
@@ -2311,7 +2499,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          DropdownButtonHideUnderline(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
                               hint: const Text('Select'),
@@ -2331,14 +2521,48 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 });
                                 print('Selected category: $_selectedEntry');
                               },
-                              buttonStyleData: WorkorderDropdownTheme
-                                  .fullWidthButtonStyle(),
-                              iconStyleData: WorkorderDropdownTheme.iconStyle,
-                              dropdownStyleData:
-                                  WorkorderDropdownTheme.panelStyle(),
-                              menuItemStyleData:
-                                  WorkorderDropdownTheme.menuItemStyle,
+                              buttonStyleData: ButtonStyleData(
+                                height: 45,
+                                padding:
+                                    const EdgeInsets.only( right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: const Color(0xFFCED4DA),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                                iconSize: 24,
+                                iconEnabledColor: Color(0xFFb0b6c3),
+                                iconDisabledColor: Colors.grey,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 300,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(6),
+                                  thickness: MaterialStateProperty.all(6),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
                             ),
+                          ),
                           ),
                           const SizedBox(
                             height: 10,
@@ -2428,17 +2652,53 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             });
                                             state.reset();
                                           },
-                                          buttonStyleData:
-                                              WorkorderDropdownTheme
-                                                  .formButtonStyle(),
-                                          iconStyleData:
-                                              WorkorderDropdownTheme.iconStyle,
-                                          dropdownStyleData:
-                                              WorkorderDropdownTheme
-                                                  .panelStyle(),
+                                          buttonStyleData: ButtonStyleData(
+                                            height: 45,
+                                            width: 160,
+                                            padding: const EdgeInsets.only(
+                                                left: 14, right: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: const Color(0xFFCED4DA),
+                                                width: 1.5,
+                                              ),
+                                            ),
+                                            elevation: 0,
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                            ),
+                                            iconSize: 24,
+                                            iconEnabledColor: Color(0xFFb0b6c3),
+                                            iconDisabledColor: Colors.grey,
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: Colors.white,
+                                            ),
+                                            offset: const Offset(0, -5),
+                                            scrollbarTheme: ScrollbarThemeData(
+                                              radius: const Radius.circular(6),
+                                              thickness:
+                                                  MaterialStateProperty.all(6),
+                                              thumbVisibility:
+                                                  MaterialStateProperty.all(
+                                                      true),
+                                            ),
+                                          ),
                                           menuItemStyleData:
-                                              WorkorderDropdownTheme
-                                                  .menuItemStyle,
+                                              const MenuItemStyleData(
+                                            height: 40,
+                                            padding: EdgeInsets.only(
+                                                left: 14, right: 14),
+                                          ),
                                         ),
                                       ),
                                       if (state.hasError)
@@ -2743,17 +3003,65 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     });
                                                   },
                                                   buttonStyleData:
-                                                      WorkorderDropdownTheme
-                                                          .formButtonStyle(),
+                                                      ButtonStyleData(
+                                                    height: 45,
+                                                    width: 160,
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 14,
+                                                            right: 14),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFFCED4DA),
+                                                        width: 1.5,
+                                                      ),
+                                                    ),
+                                                    elevation: 0,
+                                                  ),
                                                   iconStyleData:
-                                                      WorkorderDropdownTheme
-                                                          .iconStyle,
+                                                      const IconStyleData(
+                                                    icon: Icon(
+                                                        Icons.arrow_drop_down),
+                                                    iconSize: 24,
+                                                    iconEnabledColor:
+                                                        Color(0xFFb0b6c3),
+                                                    iconDisabledColor:
+                                                        Colors.grey,
+                                                  ),
                                                   dropdownStyleData:
-                                                      WorkorderDropdownTheme
-                                                          .panelStyle(),
+                                                      DropdownStyleData(
+                                                    maxHeight: 300,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      color: Colors.white,
+                                                    ),
+                                                    offset: const Offset(0, -5),
+                                                    scrollbarTheme:
+                                                        ScrollbarThemeData(
+                                                      radius:
+                                                          const Radius.circular(
+                                                              6),
+                                                      thickness:
+                                                          MaterialStateProperty
+                                                              .all(6),
+                                                      thumbVisibility:
+                                                          MaterialStateProperty
+                                                              .all(true),
+                                                    ),
+                                                  ),
                                                   menuItemStyleData:
-                                                      WorkorderDropdownTheme
-                                                          .menuItemStyle,
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                    padding: EdgeInsets.only(
+                                                        left: 14, right: 14),
+                                                  ),
                                                   validator: (value) {
                                                     if (value == null ||
                                                         value.isEmpty) {
@@ -2933,7 +3241,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DropdownButtonHideUnderline(
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
                                       hint: const Text('New'),
@@ -2954,15 +3264,53 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         print(
                                             'Selected category: $_selectedStatus');
                                       },
-                                      buttonStyleData: WorkorderDropdownTheme
-                                          .fullWidthButtonStyle(),
-                                      iconStyleData:
-                                          WorkorderDropdownTheme.iconStyle,
-                                      dropdownStyleData:
-                                          WorkorderDropdownTheme.panelStyle(),
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 45,
+                                        padding: const EdgeInsets.only(
+                                            right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.white,
+                                          border: Border.all(
+                                            color: const Color(0xFFCED4DA),
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                        ),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 300,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        offset: const Offset(0, -5),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness:
+                                              MaterialStateProperty.all(6),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
+                                        ),
+                                      ),
                                       menuItemStyleData:
-                                          WorkorderDropdownTheme.menuItemStyle,
+                                          const MenuItemStyleData(
+                                        height: 40,
+                                        padding: EdgeInsets.only(
+                                            left: 14, right: 14),
+                                      ),
                                     ),
+                                  ),
                                   ),
                                   if (state.hasError)
                                     Padding(
@@ -3824,10 +4172,43 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                 print(
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
-              buttonStyleData: WorkorderDropdownTheme.fullWidthButtonStyle(),
-              iconStyleData: WorkorderDropdownTheme.iconStyle,
-              dropdownStyleData: WorkorderDropdownTheme.panelStyle(),
-              menuItemStyleData: WorkorderDropdownTheme.menuItemStyle,
+              buttonStyleData: ButtonStyleData(
+                height: 50,
+                width: 250,
+                padding: const EdgeInsets.only(left: 14, right: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCED4DA),
+                    width: 1.5,
+                  ),
+                ),
+                elevation: 0,
+              ),
+              iconStyleData: const IconStyleData(
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                ),
+                iconSize: 24,
+                iconEnabledColor: Color(0xFFb0b6c3),
+                iconDisabledColor: Colors.grey,
+              ),
+              dropdownStyleData: DropdownStyleData(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: Colors.white,
+                ),
+                scrollbarTheme: ScrollbarThemeData(
+                  radius: const Radius.circular(6),
+                  thickness: MaterialStateProperty.all(6),
+                  thumbVisibility: MaterialStateProperty.all(true),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 40,
+                padding: EdgeInsets.only(left: 14, right: 14),
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -4963,17 +5344,58 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   });
                                                 },
                                                 buttonStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .formButtonStyle(),
+                                                    ButtonStyleData(
+                                                  height: 45,
+                                                  width: 160,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
                                                 iconStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .iconStyle,
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                ),
                                                 dropdownStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .panelStyle(),
+                                                    DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
                                                 menuItemStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .menuItemStyle,
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {
@@ -5073,17 +5495,62 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                         });
                                                       },
                                                       buttonStyleData:
-                                                          WorkorderDropdownTheme
-                                                              .formButtonStyle(),
+                                                          ButtonStyleData(
+                                                        height: 45,
+                                                        width: 160,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 14,
+                                                                right: 14),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        elevation: 2,
+                                                      ),
                                                       iconStyleData:
-                                                          WorkorderDropdownTheme
-                                                              .iconStyle,
+                                                          const IconStyleData(
+                                                        icon: Icon(Icons
+                                                            .arrow_drop_down),
+                                                        iconSize: 24,
+                                                        iconEnabledColor:
+                                                            Color(0xFFb0b6c3),
+                                                        iconDisabledColor:
+                                                            Colors.grey,
+                                                      ),
                                                       dropdownStyleData:
-                                                          WorkorderDropdownTheme
-                                                              .panelStyle(),
+                                                          DropdownStyleData(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
+                                                          color: Colors.white,
+                                                        ),
+                                                        scrollbarTheme:
+                                                            ScrollbarThemeData(
+                                                          radius: const Radius
+                                                              .circular(6),
+                                                          thickness:
+                                                              MaterialStateProperty
+                                                                  .all(6),
+                                                          thumbVisibility:
+                                                              MaterialStateProperty
+                                                                  .all(true),
+                                                        ),
+                                                      ),
                                                       menuItemStyleData:
-                                                          WorkorderDropdownTheme
-                                                              .menuItemStyle,
+                                                          const MenuItemStyleData(
+                                                        height: 40,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 14,
+                                                                right: 14),
+                                                      ),
                                                       validator: (value) {
                                                         if (value == null ||
                                                             value.isEmpty) {
@@ -5148,17 +5615,54 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       'Selected category: $_selectedCategory');
                                                 },
                                                 buttonStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .fullWidthButtonStyle(),
+                                                    ButtonStyleData(
+                                                  height: 45,
+                                                  width: 250,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
                                                 iconStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .iconStyle,
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                ),
                                                 dropdownStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .panelStyle(),
+                                                    DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
                                                 menuItemStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .menuItemStyle,
+                                                    const MenuItemStyleData(
+                                                  height: 50,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -5205,17 +5709,58 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       'Selected category: $_selectedEntry');
                                                 },
                                                 buttonStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .fullWidthButtonStyle(),
+                                                    ButtonStyleData(
+                                                  height: 45,
+                                                  width: 200,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
                                                 iconStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .iconStyle,
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                ),
                                                 dropdownStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .panelStyle(),
+                                                    DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
                                                 menuItemStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .menuItemStyle,
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -5333,17 +5878,72 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             });
                                                           },
                                                           buttonStyleData:
-                                                              WorkorderDropdownTheme
-                                                                  .formButtonStyle(),
+                                                              ButtonStyleData(
+                                                            height: 45,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            elevation: 2,
+                                                          ),
                                                           iconStyleData:
-                                                              WorkorderDropdownTheme
-                                                                  .iconStyle,
+                                                              const IconStyleData(
+                                                            icon: Icon(
+                                                              Icons
+                                                                  .arrow_drop_down,
+                                                            ),
+                                                            iconSize: 24,
+                                                            iconEnabledColor:
+                                                                Color(
+                                                                    0xFFb0b6c3),
+                                                            iconDisabledColor:
+                                                                Colors.grey,
+                                                          ),
                                                           dropdownStyleData:
-                                                              WorkorderDropdownTheme
-                                                                  .panelStyle(),
+                                                              DropdownStyleData(
+                                                            maxHeight: 250,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            scrollbarTheme:
+                                                                ScrollbarThemeData(
+                                                              radius:
+                                                                  const Radius
+                                                                      .circular(
+                                                                      6),
+                                                              thickness:
+                                                                  MaterialStateProperty
+                                                                      .all(6),
+                                                              thumbVisibility:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                          true),
+                                                            ),
+                                                          ),
                                                           menuItemStyleData:
-                                                              WorkorderDropdownTheme
-                                                                  .menuItemStyle,
+                                                              const MenuItemStyleData(
+                                                            height: 40,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 14,
+                                                                    right: 14),
+                                                          ),
                                                           validator: (value) {
                                                             if (value == null ||
                                                                 value.isEmpty) {
@@ -5466,17 +6066,74 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               });
                                                             },
                                                             buttonStyleData:
-                                                                WorkorderDropdownTheme
-                                                                    .formButtonStyle(),
+                                                                ButtonStyleData(
+                                                              height: 45,
+                                                              width: 160,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left: 14,
+                                                                      right:
+                                                                          14),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              elevation: 2,
+                                                            ),
                                                             iconStyleData:
-                                                                WorkorderDropdownTheme
-                                                                    .iconStyle,
+                                                                const IconStyleData(
+                                                              icon: Icon(
+                                                                Icons
+                                                                    .arrow_drop_down,
+                                                              ),
+                                                              iconSize: 24,
+                                                              iconEnabledColor:
+                                                                  Color(
+                                                                      0xFFb0b6c3),
+                                                              iconDisabledColor:
+                                                                  Colors.grey,
+                                                            ),
                                                             dropdownStyleData:
-                                                                WorkorderDropdownTheme
-                                                                    .panelStyle(),
+                                                                DropdownStyleData(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              scrollbarTheme:
+                                                                  ScrollbarThemeData(
+                                                                radius:
+                                                                    const Radius
+                                                                        .circular(
+                                                                        6),
+                                                                thickness:
+                                                                    MaterialStateProperty
+                                                                        .all(6),
+                                                                thumbVisibility:
+                                                                    MaterialStateProperty
+                                                                        .all(
+                                                                            true),
+                                                              ),
+                                                            ),
                                                             menuItemStyleData:
-                                                                WorkorderDropdownTheme
-                                                                    .menuItemStyle,
+                                                                const MenuItemStyleData(
+                                                              height: 40,
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 14,
+                                                                      right:
+                                                                          14),
+                                                            ),
                                                             validator: (value) {
                                                               if (value ==
                                                                       null ||
@@ -5691,17 +6348,56 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       'Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                                 },
                                                 buttonStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .fullWidthButtonStyle(),
+                                                    ButtonStyleData(
+                                                  height: 45,
+                                                  // width: 300,
+                                                  //  padding: const EdgeInsets.only(left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  elevation: 2,
+                                                ),
                                                 iconStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .iconStyle,
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                ),
                                                 dropdownStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .panelStyle(),
+                                                    DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
                                                 menuItemStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .menuItemStyle,
+                                                    const MenuItemStyleData(
+                                                  height: 50,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -5971,17 +6667,71 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                     });
                                                                   },
                                                                   buttonStyleData:
-                                                                      WorkorderDropdownTheme
-                                                                          .formButtonStyle(),
+                                                                      ButtonStyleData(
+                                                                    height: 45,
+                                                                    width: 160,
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            14,
+                                                                        right:
+                                                                            14),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              6),
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    elevation:
+                                                                        2,
+                                                                  ),
                                                                   iconStyleData:
-                                                                      WorkorderDropdownTheme
-                                                                          .iconStyle,
+                                                                      const IconStyleData(
+                                                                    icon: Icon(Icons
+                                                                        .arrow_drop_down),
+                                                                    iconSize:
+                                                                        24,
+                                                                    iconEnabledColor:
+                                                                        Color(
+                                                                            0xFFb0b6c3),
+                                                                    iconDisabledColor:
+                                                                        Colors
+                                                                            .grey,
+                                                                  ),
                                                                   dropdownStyleData:
-                                                                      WorkorderDropdownTheme
-                                                                          .panelStyle(),
+                                                                      DropdownStyleData(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              6),
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    scrollbarTheme:
+                                                                        ScrollbarThemeData(
+                                                                      radius: const Radius
+                                                                          .circular(
+                                                                          6),
+                                                                      thickness:
+                                                                          MaterialStateProperty.all(
+                                                                              6),
+                                                                      thumbVisibility:
+                                                                          MaterialStateProperty.all(
+                                                                              true),
+                                                                    ),
+                                                                  ),
                                                                   menuItemStyleData:
-                                                                      WorkorderDropdownTheme
-                                                                          .menuItemStyle,
+                                                                      const MenuItemStyleData(
+                                                                    height: 40,
+                                                                    padding: EdgeInsets.only(
+                                                                        left:
+                                                                            14,
+                                                                        right:
+                                                                            14),
+                                                                  ),
                                                                   validator:
                                                                       (value) {
                                                                     if (value ==
@@ -6138,17 +6888,63 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       'Selected category: $_selectedStatus');
                                                 },
                                                 buttonStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .fullWidthButtonStyle(),
+                                                    ButtonStyleData(
+                                                  height: 45,
+                                                  width: 200,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 14, right: 14),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFFCED4DA),
+                                                      width: 1.5,
+                                                    ),
+                                                  ),
+                                                  elevation: 0,
+                                                ),
                                                 iconStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .iconStyle,
+                                                    const IconStyleData(
+                                                  icon: Icon(
+                                                    Icons.arrow_drop_down,
+                                                  ),
+                                                  iconSize: 24,
+                                                  iconEnabledColor:
+                                                      Color(0xFFb0b6c3),
+                                                  iconDisabledColor:
+                                                      Colors.grey,
+                                                ),
                                                 dropdownStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .panelStyle(),
+                                                    DropdownStyleData(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    color: Colors.white,
+                                                  ),
+                                                  scrollbarTheme:
+                                                      ScrollbarThemeData(
+                                                    radius:
+                                                        const Radius.circular(
+                                                            6),
+                                                    thickness:
+                                                        MaterialStateProperty
+                                                            .all(6),
+                                                    thumbVisibility:
+                                                        MaterialStateProperty
+                                                            .all(true),
+                                                  ),
+                                                ),
                                                 menuItemStyleData:
-                                                    WorkorderDropdownTheme
-                                                        .menuItemStyle,
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                  padding: EdgeInsets.only(
+                                                      left: 14, right: 14),
+                                                ),
                                               ),
                                             ),
                                           ],

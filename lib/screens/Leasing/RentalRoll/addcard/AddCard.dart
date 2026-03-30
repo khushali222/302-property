@@ -27,8 +27,10 @@ import '../../../../widgets/custom_drawer.dart';
 
 class AddCard extends StatefulWidget {
   final String leaseId;
+
   /// When set (e.g. opened from tenant summary), selects this tenant and merges `tenant_details` for name/email/phone.
   final String? initialTenantId;
+
   /// Staff module: use `staff_id` in the `id` header (admin_id in bodies stays from prefs).
   final bool useStaffIdHeader;
 
@@ -281,29 +283,24 @@ class _AddCardState extends State<AddCard> {
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
-      List<dynamic> cardDetailsList = jsonResponse['card_detail'];
-
-      // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
-
-      for (var cardDetail in cardDetailsList) {
-        // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
-
-        //  BillingData billingData = BillingData.fromJson(cardDetail);
-        // print('Parsed Billing ID: ${billingData.billingId}');
-
-        // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
-      }
+      final rawDetail = jsonResponse['card_detail'];
+      final List<dynamic> cardDetailsList =
+          rawDetail is List ? List<dynamic>.from(rawDetail) : <dynamic>[];
 
       CustomerData? customerData = await postBillingCustomerVault(
           customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
+        // Vault can include ACH / extra rows not present in card_detail; only list
+        // saved cards (masked cc_number) so indices never mismatch UI expectations.
+        final cardsOnly = customerData.billing.where((b) {
+          final cn = b.ccNumber?.trim() ?? '';
+          return cn.isNotEmpty;
+        }).toList();
         setState(() {
-          cardDetails = customerData.billing;
-          messageCardAvailable = '';
+          cardDetails = cardsOnly;
+          messageCardAvailable =
+              cardsOnly.isEmpty ? 'No card found for this tenant' : '';
         });
       }
     } else if (response.statusCode == 404) {
@@ -369,11 +366,26 @@ class _AddCardState extends State<AddCard> {
       var customerJson = jsonResponse['data']['customer'];
       CustomerData customerData = CustomerData.fromJson(customerJson);
 
-      customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
-      });
-      for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+      final Map<String, String> cardTypeByBillingId = {};
+      for (final raw in cardDetailsList) {
+        if (raw is Map) {
+          final bid = raw['billing_id']?.toString();
+          final ct = raw['card_type']?.toString();
+          if (bid != null && bid.isNotEmpty && ct != null && ct.isNotEmpty) {
+            cardTypeByBillingId[bid] = ct;
+          }
+        }
+      }
+      for (final billing in customerData.billing) {
+        final id = billing.billingId?.toString();
+        if (id != null && cardTypeByBillingId.containsKey(id)) {
+          billing.binResult = cardTypeByBillingId[id];
+        } else {
+          final hasCardNumber = (billing.ccNumber?.trim().isNotEmpty ?? false);
+          billing.binResult = hasCardNumber
+              ? (billing.ccType ?? 'CREDIT')
+              : (billing.ccType ?? 'ACH');
+        }
       }
 
       // List<String> binResults = await performBinChecks(customerData);
@@ -406,7 +418,8 @@ class _AddCardState extends State<AddCard> {
     );
 
     if (cardDetails.length == 1) {
-      AddCardService apiService = AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
+      AddCardService apiService =
+          AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
       int deleteResponse =
           await apiService.deleteOneCardDelete(customervaultid);
 
@@ -421,7 +434,8 @@ class _AddCardState extends State<AddCard> {
         // Handle the error case
       }
     } else {
-      AddCardService apiService = AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
+      AddCardService apiService =
+          AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
       int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
 
       if (deleteResponse == 200) {
@@ -1197,7 +1211,9 @@ class _AddCardState extends State<AddCard> {
 
                                                     AddCardService
                                                         addCardService =
-                                                        AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
+                                                        AddCardService(
+                                                            useStaffIdHeader: widget
+                                                                .useStaffIdHeader);
                                                     print(
                                                         "messageCardAvailable $messageCardAvailable");
                                                     if (messageCardAvailable ==
@@ -2079,7 +2095,10 @@ class _AddCardState extends State<AddCard> {
 
                                                             AddCardService
                                                                 addCardService =
-                                                                AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
+                                                                AddCardService(
+                                                                    useStaffIdHeader:
+                                                                        widget
+                                                                            .useStaffIdHeader);
                                                             print(
                                                                 "messageCardAvailable $messageCardAvailable");
                                                             if (messageCardAvailable ==
@@ -2348,7 +2367,8 @@ class _AddCardState extends State<AddCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: _buildLogosBlock(
-                    '${billingData.binResult!} CARD', billingData.ccType ?? ''),
+                    '${(billingData.binResult ?? billingData.ccType ?? 'CARD').toUpperCase()} CARD',
+                    billingData.ccType ?? ''),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
@@ -2819,7 +2839,7 @@ class CustomTextFieldState extends State<CustomTextField> {
       TextEditingController(); // Add this line
 
   late FocusNode _focusNode;
- 
+
   @override
   void initState() {
     super.initState();

@@ -1206,8 +1206,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                               children: [
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                    await Navigator.of(context)
+                                        .push(MaterialPageRoute(
                                             builder: (context) => send_email(
                                                   lease: [widget.tenantId],
                                                   leaseID: null,
@@ -1250,8 +1250,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                     widget.tenantId) ??
                                             [];
                                     if (tenantData.isNotEmpty && mounted) {
-                                      await Navigator.of(context).push(
-                                          MaterialPageRoute(
+                                      await Navigator.of(context)
+                                          .push(MaterialPageRoute(
                                               builder: (context) => EditTenants(
                                                     tenantId: widget.tenantId,
                                                     tenants: tenantData.first,
@@ -1286,12 +1286,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                     ),
                                   ),
                                 ),
-                              SizedBox(width: 8),
+                                SizedBox(width: 8),
                               ],
                             ),
                           ],
                         ),
-                    
                       ],
                     ),
                   ),
@@ -1676,155 +1675,163 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                 //     ],
                                 //   ),
                                 // ),
-                                
+
                                 _buildTenantInfoSection(),
-                               const SizedBox(height: 10,),
-
-                               Builder(builder: (context) {
-                                 final t = _tenantDetails ?? widget.tenants;
-                                 final allowAch = t?.allowAch == true;
-                                 final allowCard = t?.allowCard == true;
-                                 final canEdit = t != null;
-                                 return Container(
-                                   padding: const EdgeInsets.all(16),
-                                   decoration: BoxDecoration(
-                                     border:
-                                         Border.all(color: Colors.grey.shade300),
-                                     borderRadius: BorderRadius.circular(12),
-                                   ),
-                                   child: Column(
-                                     children: [
-                                       Row(
-                                         children: [
-                                           const SizedBox(width: 2),
-                                           Text(
-                                             "Payments Details",
-                                             style: TextStyle(
-                                               color: blueColor,
-                                               fontWeight: FontWeight.bold,
-                                               fontSize: 17,
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       const SizedBox(height: 10),
-                                       Row(
-                                         children: [
-                                           const SizedBox(width: 2),
-                                           Text(
-                                             "Allowed Payment Methods",
-                                             style: TextStyle(
-                                               color: Colors.grey.shade700,
-                                               fontWeight: FontWeight.bold,
-                                               fontSize: 14,
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       const SizedBox(height: 4),
-                                       Padding(
-                                         padding: const EdgeInsets.only(
-                                             left: 10, right: 10),
-                                         child: Column(
-                                           children: [
-                                             Row(
-                                               children: [
-                                                 SizedBox(
-                                                   width: 10,
-                                                   child: Checkbox(
-                                                     value: allowAch,
-                                                     onChanged: canEdit
-                                                         ? (v) =>
-                                                             _onPaymentAllowAchChanged(
-                                                                 v == true)
-                                                         : null,
-                                                     activeColor: blueColor,
-                                                   ),
-                                                 ),
-                                                 const SizedBox(width: 10),
-                                                 Text(
-                                                   "ACH",
-                                                   style: TextStyle(
-                                                     color: allowAch
-                                                         ? blueColor
-                                                         : Colors.grey.shade600,
-                                                     fontWeight: FontWeight.w600,
-                                                     fontSize: 14,
-                                                   ),
-                                                 ),
-                                               ],
-                                             ),
-                                             Row(
-                                               children: [
-                                                 SizedBox(
-                                                   width: 10,
-                                                   child: Checkbox(
-                                                     value: allowCard,
-                                                     onChanged: canEdit
-                                                         ? (v) =>
-                                                             _onPaymentAllowCardChanged(
-                                                                 v == true)
-                                                         : null,
-                                                     activeColor: blueColor,
-                                                   ),
-                                                 ),
-                                                 const SizedBox(width: 10),
-                                                 Text(
-                                                   "Card",
-                                                   style: TextStyle(
-                                                     color: allowCard
-                                                         ? blueColor
-                                                         : Colors.grey.shade600,
-                                                     fontWeight: FontWeight.w600,
-                                                     fontSize: 14,
-                                                   ),
-                                                 ),
-                                               ],
-                                             ),
-                                           ],
-                                         ),
-                                       ),
-                                       const SizedBox(height: 10),
-                                       Row(
-                                         children: [
-                                           Material(
-                                             color: Colors.transparent,
-                                             child: InkWell(
-                                               onTap: _openManagePaymentMethods,
-                                               borderRadius:
-                                                   BorderRadius.circular(12),
-                                               child: Container(
-                                                 padding:
-                                                     const EdgeInsets.all(10),
-                                                 decoration: BoxDecoration(
-                                                   color: blueColor,
-                                                   borderRadius:
-                                                       BorderRadius.circular(12),
-                                                 ),
-                                                 child: const Text(
-                                                   "Manage Payment Methods",
-                                                   style: TextStyle(
-                                                     color: Colors.white,
-                                                     fontWeight: FontWeight.bold,
-                                                     fontSize: 14,
-                                                   ),
-                                                 ),
-                                               ),
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                     ],
-                                   ),
-                                 );
-                               }),
-                          
-
-                                
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                   Container(
+
+                                Builder(builder: (context) {
+                                  final t = _tenantDetails ?? widget.tenants;
+                                  // Default both on when API omits allow_ach / allow_card (null).
+                                  final allowAch = t?.allowAch != false;
+                                  final allowCard = t?.allowCard != false;
+                                  final canEdit = t != null;
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              "Payments Details",
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              "Allowed Payment Methods",
+                                              style: TextStyle(
+                                                color: Colors.grey.shade700,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                    child: Checkbox(
+                                                      value: allowAch,
+                                                      onChanged: canEdit
+                                                          ? (v) =>
+                                                              _onPaymentAllowAchChanged(
+                                                                  v == true)
+                                                          : null,
+                                                      activeColor: blueColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    "ACH",
+                                                    style: TextStyle(
+                                                      color: allowAch
+                                                          ? blueColor
+                                                          : Colors
+                                                              .grey.shade600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                    child: Checkbox(
+                                                      value: allowCard,
+                                                      onChanged: canEdit
+                                                          ? (v) =>
+                                                              _onPaymentAllowCardChanged(
+                                                                  v == true)
+                                                          : null,
+                                                      activeColor: blueColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    "Card",
+                                                    style: TextStyle(
+                                                      color: allowCard
+                                                          ? blueColor
+                                                          : Colors
+                                                              .grey.shade600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                onTap:
+                                                    _openManagePaymentMethods,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: blueColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  child: const Text(
+                                                    "Manage Payment Methods",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     border:
@@ -2231,10 +2238,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                     ],
                                   ),
                                 ),
-                                
-                              
+
                                 SizedBox(height: 10),
-  //Rentals Insurance Policy
+                                //Rentals Insurance Policy
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -2279,19 +2285,24 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                               }
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8),
                                               decoration: BoxDecoration(
                                                 color: blueColor,
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                               ),
                                               child: Center(
-                                                child: 
-                                                Icon(Icons.add,color: Colors.white,size: 22,),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
+                                                  size: 22,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                       
                                         ],
                                       ),
                                       // if (MediaQuery.of(context).size.width < 500)
@@ -3057,11 +3068,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                     ],
                                   ),
                                 ),
-                                
+
                                 const SizedBox(height: 10),
                                 _buildEmergencyContactSection(),
-                                
-                             
+
                                 SizedBox(height: 10),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -3075,7 +3085,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                     itemsPerPage: 10,
                                   ),
                                 ),
-                             
                               ],
                             ),
                           ),
@@ -3091,8 +3100,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                     FinancialTable(
                       leaseId: widget.tenantId,
                     ),
-                  if (_tenantSummaryTabIndex == 4)
-                    _buildTenantWorkOrdersTab(),
+                  if (_tenantSummaryTabIndex == 4) _buildTenantWorkOrdersTab(),
                 ],
               ),
             )
@@ -3190,7 +3198,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   Future<void> _onPaymentAllowAchChanged(bool value) async {
     final t = _tenantDetails ?? widget.tenants;
     if (t == null) return;
-    final card = t.allowCard ?? false;
+    final card = t.allowCard != false;
     final prevAch = t.allowAch;
     setState(() {
       if (_tenantDetails != null) _tenantDetails!.allowAch = value;
@@ -3216,7 +3224,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   Future<void> _onPaymentAllowCardChanged(bool value) async {
     final t = _tenantDetails ?? widget.tenants;
     if (t == null) return;
-    final ach = t.allowAch ?? false;
+    final ach = t.allowAch != false;
     final prevCard = t.allowCard;
     setState(() {
       if (_tenantDetails != null) _tenantDetails!.allowCard = value;
@@ -3886,8 +3894,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title:
-            Text(isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",style: TextStyle(color: blueColor, fontWeight: FontWeight.bold,fontSize: 18),),
+        title: Text(
+          isEdit ? "Edit Emergency Contact" : "Add Emergency Contact",
+          style: TextStyle(
+              color: blueColor, fontWeight: FontWeight.bold, fontSize: 18),
+        ),
         content: SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -4083,7 +4094,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
       ),
     );
   }
-
 }
 
 class TenantSummaryTablet extends StatefulWidget {
@@ -4362,7 +4372,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   Future<void> _tabletOnPaymentAch(Tenant t, bool value) async {
     final prev = t.allowAch;
-    final card = t.allowCard ?? false;
+    final card = t.allowCard != false;
     setState(() => t.allowAch = value);
     try {
       await repo.editTenantFromModel(t, allowAch: value, allowCard: card);
@@ -4373,7 +4383,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   Future<void> _tabletOnPaymentCard(Tenant t, bool value) async {
     final prev = t.allowCard;
-    final ach = t.allowAch ?? false;
+    final ach = t.allowAch != false;
     setState(() => t.allowCard = value);
     try {
       await repo.editTenantFromModel(t, allowAch: ach, allowCard: value);
@@ -5821,9 +5831,8 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     child: Builder(builder: (context) {
                       final tTab = tenantsummery.first;
-                            final ach = tTab.allowAch == true;
-                            final card = tTab.allowCard == true;
-                            final canEdit = true;
+                            final ach = tTab.allowAch != false;
+                      final card = tTab.allowCard != false;
                             return Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -5835,16 +5844,16 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                           children: [
                             Row(
                               children: [
-                                      Text(
-                                        "Payments Details",
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 21,
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  "Payments Details",
+                                  style: TextStyle(
+                                    color: blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 21,
                                   ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 10),
                             Text(
                               "Allowed Payment Methods",
@@ -5859,18 +5868,15 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                               children: [
                                 Checkbox(
                                   value: ach,
-                                  onChanged: canEdit
-                                      ? (v) => _tabletOnPaymentAch(
-                                          tTab, v == true)
-                                      : null,
+                                  onChanged: (v) =>
+                                      _tabletOnPaymentAch(tTab, v == true),
                                   activeColor: blueColor,
                                 ),
                                 Text(
                                   "ACH",
                                   style: TextStyle(
-                                    color: ach
-                                        ? blueColor
-                                        : Colors.grey.shade600,
+                                    color:
+                                        ach ? blueColor : Colors.grey.shade600,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                   ),
@@ -5881,18 +5887,15 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                               children: [
                                 Checkbox(
                                   value: card,
-                                  onChanged: canEdit
-                                      ? (v) => _tabletOnPaymentCard(
-                                          tTab, v == true)
-                                      : null,
+                                  onChanged: (v) =>
+                                      _tabletOnPaymentCard(tTab, v == true),
                                   activeColor: blueColor,
                                 ),
                                 Text(
                                   "Card",
                                   style: TextStyle(
-                                    color: card
-                                        ? blueColor
-                                        : Colors.grey.shade600,
+                                    color:
+                                        card ? blueColor : Colors.grey.shade600,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
                                   ),
