@@ -27,7 +27,16 @@ import '../../../../widgets/custom_drawer.dart';
 
 class AddCard extends StatefulWidget {
   final String leaseId;
-  AddCard({required this.leaseId});
+  /// When set (e.g. opened from tenant summary), selects this tenant and merges `tenant_details` for name/email/phone.
+  final String? initialTenantId;
+  /// Staff module: use `staff_id` in the `id` header (admin_id in bodies stays from prefs).
+  final bool useStaffIdHeader;
+
+  AddCard({
+    required this.leaseId,
+    this.initialTenantId,
+    this.useStaffIdHeader = false,
+  });
 
   @override
   State<AddCard> createState() => _AddCardState();
@@ -102,9 +111,47 @@ class _AddCardState extends State<AddCard> {
   bool _tapToPayEnabled = false;
   String? _cardId;
 
+  String _crmHeaderId(SharedPreferences prefs) {
+    if (widget.useStaffIdHeader) {
+      return prefs.getString('staff_id') ?? prefs.getString('adminId') ?? '';
+    }
+    return prefs.getString('adminId') ?? '';
+  }
+
+  Future<void> _mergeTenantDetailsIntoForm(String tenantId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final idHeader = _crmHeaderId(prefs);
+    final response = await http.get(
+      Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $idHeader",
+      },
+    );
+    if (response.statusCode != 200 || !mounted) return;
+    final body = jsonDecode(response.body);
+    final list = body['data'];
+    if (list is! List || list.isEmpty) return;
+    final d = list.first;
+    if (d is! Map<String, dynamic>) return;
+    setState(() {
+      final fn = d['tenant_firstName']?.toString();
+      final ln = d['tenant_lastName']?.toString();
+      final em = d['tenant_email']?.toString();
+      final ph = d['tenant_phoneNumber']?.toString();
+      if (fn != null && fn.isNotEmpty) firstName.text = fn;
+      if (ln != null && ln.isNotEmpty) lastName.text = ln;
+      if (em != null && em.isNotEmpty) email.text = em;
+      if (ph != null && ph.isNotEmpty) {
+        phoneNumber.text = formatPhoneNumberedit(ph);
+      }
+    });
+  }
+
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
     print("token $token");
     print("Admin $id");
@@ -117,7 +164,6 @@ class _AddCardState extends State<AddCard> {
       final data = jsonDecode(response.body);
       print(data);
       final List<Map<String, String>> fetchedTenants = [];
-      print(firstName.text = data['tenant_firstName'] ?? "");
       for (var tenant in data['data']['tenants']) {
         fetchedTenants.add({
           'tenant_id': tenant['tenant_id'],
@@ -144,14 +190,26 @@ class _AddCardState extends State<AddCard> {
           'rental_zip': "${data['data']['rental_zip']}",
         });
       }
-      final rentalAddress = {
-        'rental_adress': data['data']['rental_adress'] ?? "",
-      };
       setState(() {
         tenants = fetchedTenants;
-        setTenantFormData(fetchedTenants.first);
         showmessage = false;
       });
+      Map<String, String>? preferred;
+      final wantId = widget.initialTenantId;
+      if (wantId != null && wantId.isNotEmpty) {
+        for (final t in fetchedTenants) {
+          if (t['tenant_id'] == wantId) {
+            preferred = t;
+            break;
+          }
+        }
+      }
+      if (preferred != null && wantId != null && wantId.isNotEmpty) {
+        setTenantFormData(preferred);
+        await _mergeTenantDetailsIntoForm(wantId);
+      } else if (fetchedTenants.isNotEmpty) {
+        setTenantFormData(fetchedTenants.first);
+      }
     } else {
       throw Exception('Failed to load tenants');
     }
@@ -174,7 +232,7 @@ class _AddCardState extends State<AddCard> {
   Future<String> fetchCompanyName(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _crmHeaderId(prefs);
     final String apiUrl = '${Api_url}/api/admin/admin_profile/$adminId';
 
     try {
@@ -207,7 +265,7 @@ class _AddCardState extends State<AddCard> {
 
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     setState(() {
@@ -289,6 +347,7 @@ class _AddCardState extends State<AddCard> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final idHeader = _crmHeaderId(prefs);
 
     Map<String, String> requestBody = {
       "customer_vault_id": customerVaultId,
@@ -299,7 +358,7 @@ class _AddCardState extends State<AddCard> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM $idHeader",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -347,7 +406,7 @@ class _AddCardState extends State<AddCard> {
     );
 
     if (cardDetails.length == 1) {
-      AddCardService apiService = AddCardService();
+      AddCardService apiService = AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
       int deleteResponse =
           await apiService.deleteOneCardDelete(customervaultid);
 
@@ -362,7 +421,7 @@ class _AddCardState extends State<AddCard> {
         // Handle the error case
       }
     } else {
-      AddCardService apiService = AddCardService();
+      AddCardService apiService = AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
       int deleteResponse = await apiService.deleteCard(cardmodelfordelete);
 
       if (deleteResponse == 200) {
@@ -1138,7 +1197,7 @@ class _AddCardState extends State<AddCard> {
 
                                                     AddCardService
                                                         addCardService =
-                                                        AddCardService();
+                                                        AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
                                                     print(
                                                         "messageCardAvailable $messageCardAvailable");
                                                     if (messageCardAvailable ==
@@ -2020,7 +2079,7 @@ class _AddCardState extends State<AddCard> {
 
                                                             AddCardService
                                                                 addCardService =
-                                                                AddCardService();
+                                                                AddCardService(useStaffIdHeader: widget.useStaffIdHeader);
                                                             print(
                                                                 "messageCardAvailable $messageCardAvailable");
                                                             if (messageCardAvailable ==

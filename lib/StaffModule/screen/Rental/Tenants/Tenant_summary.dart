@@ -47,6 +47,7 @@ import '../../../../widgets/custom_history_table.dart';
 import '../../../../enums/history_type.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart'
     as staff_workorder;
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/addcard/AddCard.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
@@ -476,6 +477,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   String? selectedValue;
   String searchvalue = "";
   late int _tenantSummaryTabIndex;
+  int _historyRefreshKey = 0;
 
   @override
   void initState() {
@@ -1195,11 +1197,13 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     return DateTime.tryParse(dateStr) ?? DateTime.now();
   }
 
-  /// Lease list for Lease tab: use widget.tenants first, else fetched _leaseData (Staff needs this so data loads).
+  /// Lease list for Lease tab: prefer fetched tenant details, then widget.tenants, then _leaseData.
   List<TenantLeaseData>? get _leaseListForTab =>
-      widget.tenants?.leaseData?.isNotEmpty == true
-          ? widget.tenants!.leaseData
-          : (_leaseData?.isNotEmpty == true ? _leaseData : null);
+      _tenantDetails?.leaseData?.isNotEmpty == true
+          ? _tenantDetails!.leaseData
+          : widget.tenants?.leaseData?.isNotEmpty == true
+              ? widget.tenants!.leaseData
+              : (_leaseData?.isNotEmpty == true ? _leaseData : null);
 
   /// First *active* lease's ID for lease summary. Null if no lease data or no active lease.
   String? get _firstActiveLeaseId {
@@ -1212,6 +1216,88 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
       }
     }
     return null;
+  }
+
+  String? get _leaseIdForAddCard {
+    final active = _firstActiveLeaseId;
+    if (active != null && active.isNotEmpty) return active;
+    final list = _leaseListForTab;
+    if (list == null || list.isEmpty) return null;
+    final id = list.first.leaseId;
+    if (id == null || id.isEmpty) return null;
+    return id;
+  }
+
+  Future<void> _onPaymentAllowAchChanged(bool value) async {
+    final t = _tenantDetails ?? widget.tenants;
+    if (t == null) return;
+    final card = t.allowCard ?? false;
+    final prevAch = t.allowAch;
+    setState(() {
+      if (_tenantDetails != null) _tenantDetails!.allowAch = value;
+      if (widget.tenants != null) widget.tenants!.allowAch = value;
+    });
+    try {
+      await repo.editTenantFromModel(
+        _tenantDetails ?? widget.tenants!,
+        allowAch: value,
+        allowCard: card,
+      );
+      if (mounted) setState(() => _historyRefreshKey++);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          if (_tenantDetails != null) _tenantDetails!.allowAch = prevAch;
+          if (widget.tenants != null) widget.tenants!.allowAch = prevAch;
+        });
+      }
+    }
+  }
+
+  Future<void> _onPaymentAllowCardChanged(bool value) async {
+    final t = _tenantDetails ?? widget.tenants;
+    if (t == null) return;
+    final ach = t.allowAch ?? false;
+    final prevCard = t.allowCard;
+    setState(() {
+      if (_tenantDetails != null) _tenantDetails!.allowCard = value;
+      if (widget.tenants != null) widget.tenants!.allowCard = value;
+    });
+    try {
+      await repo.editTenantFromModel(
+        _tenantDetails ?? widget.tenants!,
+        allowAch: ach,
+        allowCard: value,
+      );
+      if (mounted) setState(() => _historyRefreshKey++);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          if (_tenantDetails != null) _tenantDetails!.allowCard = prevCard;
+          if (widget.tenants != null) widget.tenants!.allowCard = prevCard;
+        });
+      }
+    }
+  }
+
+  void _openManagePaymentMethods() {
+    final leaseId = _leaseIdForAddCard;
+    if (leaseId == null || leaseId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No lease found to manage cards.')),
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddCard(
+          leaseId: leaseId,
+          initialTenantId: widget.tenantId,
+          useStaffIdHeader: true,
+        ),
+      ),
+    );
   }
 
   String? get _tenantRentalId {
@@ -2671,6 +2757,151 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 const SizedBox(
                                   height: 10,
                                 ),
+                                Builder(builder: (context) {
+                                  final t = _tenantDetails ?? widget.tenants;
+                                  final allowAch = t?.allowAch == true;
+                                  final allowCard = t?.allowCard == true;
+                                  final canEdit = t != null;
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              "Payments Details",
+                                              style: TextStyle(
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 2),
+                                            Text(
+                                              "Allowed Payment Methods",
+                                              style: TextStyle(
+                                                color: Colors.grey.shade700,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                    child: Checkbox(
+                                                      value: allowAch,
+                                                      onChanged: canEdit
+                                                          ? (v) =>
+                                                              _onPaymentAllowAchChanged(
+                                                                  v == true)
+                                                          : null,
+                                                      activeColor: blueColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    "ACH",
+                                                    style: TextStyle(
+                                                      color: allowAch
+                                                          ? blueColor
+                                                          : Colors
+                                                              .grey.shade600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 10,
+                                                    child: Checkbox(
+                                                      value: allowCard,
+                                                      onChanged: canEdit
+                                                          ? (v) =>
+                                                              _onPaymentAllowCardChanged(
+                                                                  v == true)
+                                                          : null,
+                                                      activeColor: blueColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    "Card",
+                                                    style: TextStyle(
+                                                      color: allowCard
+                                                          ? blueColor
+                                                          : Colors
+                                                              .grey.shade600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          children: [
+                                            Material(
+                                              color: Colors.transparent,
+                                              child: InkWell(
+                                                onTap: _openManagePaymentMethods,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  decoration: BoxDecoration(
+                                                    color: blueColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  child: const Text(
+                                                    "Manage Payment Methods",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                                const SizedBox(height: 10),
   Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -2723,7 +2954,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                       const SizedBox(
                                                           height: 12),
                                                       Text(
-                                                          'Loading Renter\'s Insurance...',
+                                                          'Loading lease details...',
                                                           style: TextStyle(
                                                               fontSize: 14,
                                                               color: Colors.grey
@@ -3938,6 +4169,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 20),
                                   child: CustomHistoryTable(
+                                    key: ValueKey(_historyRefreshKey),
                                     historyType: HistoryType.tenant,
                                     entityId: widget.tenantId,
                                     title: 'History',
@@ -4251,6 +4483,72 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
       _futureTenantSummary =
           repo.fetchTenantsummery(widget.tenantId) ?? Future.value([]);
     });
+  }
+
+  bool _tabletLeaseCoversNow(String? startDate, String? endDate) {
+    final start = parseDateRobust(startDate);
+    final end = parseDateRobust(endDate);
+    if (start == null || end == null) return false;
+    final now = DateTime.now();
+    return !now.isBefore(start) && !now.isAfter(end);
+  }
+
+  String? _tabletLeaseIdForAddCard(Tenant tenant) {
+    final list = tenant.leaseData;
+    if (list == null || list.isEmpty) return null;
+    for (final l in list) {
+      final id = l.leaseId;
+      if (id != null &&
+          id.isNotEmpty &&
+          _tabletLeaseCoversNow(l.startDate, l.endDate)) {
+        return id;
+      }
+    }
+    final firstId = list.first.leaseId;
+    if (firstId != null && firstId.isNotEmpty) return firstId;
+    return null;
+  }
+
+  Future<void> _tabletOnPaymentAch(Tenant t, bool value) async {
+    final prev = t.allowAch;
+    final card = t.allowCard ?? false;
+    setState(() => t.allowAch = value);
+    try {
+      await repo.editTenantFromModel(t, allowAch: value, allowCard: card);
+    } catch (_) {
+      if (mounted) setState(() => t.allowAch = prev);
+    }
+  }
+
+  Future<void> _tabletOnPaymentCard(Tenant t, bool value) async {
+    final prev = t.allowCard;
+    final ach = t.allowAch ?? false;
+    setState(() => t.allowCard = value);
+    try {
+      await repo.editTenantFromModel(t, allowAch: ach, allowCard: value);
+    } catch (_) {
+      if (mounted) setState(() => t.allowCard = prev);
+    }
+  }
+
+  void _tabletOpenAddCard(Tenant tenant) {
+    final leaseId = _tabletLeaseIdForAddCard(tenant);
+    if (leaseId == null || leaseId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No lease found to manage cards.')),
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddCard(
+          leaseId: leaseId,
+          initialTenantId: widget.tenantId,
+          useStaffIdHeader: true,
+        ),
+      ),
+    );
   }
 
   TableCell _tableCellLabel(String text) {
@@ -5839,6 +6137,120 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                         const SizedBox(
                           height: 16,
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          child: Builder(builder: (context) {
+                            final tTab = tenantsummery.first;
+                            final ach = tTab.allowAch == true;
+                            final card = tTab.allowCard == true;
+                            final canEdit = true;
+                            return Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Payments Details",
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 21,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "Allowed Payment Methods",
+                                    style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: ach,
+                                        onChanged: canEdit
+                                            ? (v) => _tabletOnPaymentAch(
+                                                tTab, v == true)
+                                            : null,
+                                        activeColor: blueColor,
+                                      ),
+                                      Text(
+                                        "ACH",
+                                        style: TextStyle(
+                                          color: ach
+                                              ? blueColor
+                                              : Colors.grey.shade600,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: card,
+                                        onChanged: canEdit
+                                            ? (v) => _tabletOnPaymentCard(
+                                                tTab, v == true)
+                                            : null,
+                                        activeColor: blueColor,
+                                      ),
+                                      Text(
+                                        "Card",
+                                        style: TextStyle(
+                                          color: card
+                                              ? blueColor
+                                              : Colors.grey.shade600,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () => _tabletOpenAddCard(
+                                          tenantsummery.first),
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: blueColor,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: const Text(
+                                          "Manage Payment Methods",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 16),
                         Padding(
                           key: _leaseDetailsSectionKey,
                           padding: const EdgeInsets.all(25.0),

@@ -308,6 +308,7 @@ class TenantsRepository {
     required String enableOverRideFee,
     required bool allowAch,
     required bool allowCard,
+    bool showSuccessToast = true,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -352,7 +353,9 @@ class TenantsRepository {
     print('edit tenant ${response.body}');
     print(responseData);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
+      if (showSuccessToast) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+      }
       return json.decode(response.body);
     } else if (responseData["statusCode"] == 201) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -361,6 +364,42 @@ class TenantsRepository {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to edit tenant type');
     }
+  }
+
+  /// PUT `/api/tenant/tenants/:id` using current [tenant] fields and updated payment flags.
+  Future<Map<String, dynamic>> editTenantFromModel(
+    Tenant tenant, {
+    required bool allowAch,
+    required bool allowCard,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final resolvedAdminId =
+        (tenant.adminId ?? '').isNotEmpty ? tenant.adminId! : (prefs.getString('adminId') ?? '');
+    final ec = tenant.emergencyContact;
+    return editTenant(
+      tenantId: tenant.tenantId ?? '',
+      adminId: resolvedAdminId,
+      tenantFirstName: tenant.tenantFirstName ?? '',
+      tenantLastName: tenant.tenantLastName ?? '',
+      tenantPhoneNumber: tenant.tenantPhoneNumber ?? '',
+      tenantAlternativeNumber: tenant.tenantAlternativeNumber ?? '',
+      tenantEmail: tenant.tenantEmail ?? '',
+      tenantAlternativeEmail: tenant.tenantAlternativeEmail ?? '',
+      tenantPassword: tenant.tenantPassword?.toString() ?? '',
+      tenantBirthDate: tenant.tenantBirthDate,
+      taxPayerId: tenant.taxPayerId ?? '',
+      comments: tenant.comments ?? '',
+      emergencyContactName: ec?.name ?? '',
+      emergencyContactRelation: ec?.relation ?? '',
+      emergencyContactEmail: ec?.email ?? '',
+      emergencyContactPhoneNumber: ec?.phoneNumber ?? '',
+      companyName: '',
+      overRideFee: tenant.overRideFee?.toString() ?? '',
+      enableOverRideFee: (tenant.enableoverrideFee == true).toString(),
+      allowAch: allowAch,
+      allowCard: allowCard,
+      showSuccessToast: false,
+    );
   }
 
   Future<Map<String, dynamic>> deleteTenant(
