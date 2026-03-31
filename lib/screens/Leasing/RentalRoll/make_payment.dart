@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -849,7 +850,12 @@ class _MakePaymentState extends State<MakePayment> {
 
       if (customerData != null) {
         setState(() {
-          cardDetails = customerData.billing;
+          // Web UI shows only CREDIT/DEBIT cards; filter out ACH + incomplete rows.
+          cardDetails = customerData.billing.where((b) {
+            final type = (b.binResult ?? '').toUpperCase();
+            final hasNumber = (b.ccNumber ?? '').toString().trim().isNotEmpty;
+            return (type == 'CREDIT' || type == 'DEBIT') && hasNumber;
+          }).toList();
           // Keep selected index only if still in range (avoids RangeError)
           if (selectedcardindex != null &&
               (selectedcardindex! < 0 ||
@@ -935,8 +941,23 @@ class _MakePaymentState extends State<MakePayment> {
       // binResults.forEach((result) {
       //   print('BIN Check Result: $result');
       // });
-      for (int i = 0; i < cardDetailsList.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+      // Map card types to billing records safely (avoids index mismatch and nulls).
+      final Map<String, String> cardTypeByBillingId = {};
+      for (final dynamic item in cardDetailsList) {
+        if (item is Map) {
+          final billingId = item['billing_id']?.toString();
+          final cardType = item['card_type']?.toString();
+          if (billingId != null && billingId.isNotEmpty && cardType != null) {
+            cardTypeByBillingId[billingId] = cardType;
+          }
+        }
+      }
+
+      for (final billing in customerData.billing) {
+        final id = billing.billingId;
+        if (id != null && cardTypeByBillingId.containsKey(id)) {
+          billing.binResult = cardTypeByBillingId[id];
+        }
       }
 
       return customerData;
@@ -986,7 +1007,17 @@ class _MakePaymentState extends State<MakePayment> {
       // Accessing the first element in the 'data' list
       var surchargeData = jsonResponse['data'][0] ?? "";
       if (_selectedPaymentMethod == "Card") {
-        if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
+        if (selectedcardindex == null ||
+            selectedcardindex! < 0 ||
+            selectedcardindex! >= cardDetails.length) {
+          setState(() {
+            surCharge = 0.0;
+          });
+          return;
+        }
+
+        if ((cardDetails[selectedcardindex!].binResult ?? '').toUpperCase() ==
+            "CREDIT") {
           setState(() {
             surCharge = surchargeData['surcharge_percent'] != null
                 ? surchargeData['surcharge_percent'].toDouble()
@@ -1115,7 +1146,7 @@ class _MakePaymentState extends State<MakePayment> {
                 borderRadius: BorderRadius.circular(5.0),
                 child: Container(
                   height: 50.0,
-                  padding: const EdgeInsets.only(top: 10, left: 10),
+                  padding: const EdgeInsets.only(top: 8, left: 8),
                   width: MediaQuery.of(context).size.width * .91,
                   margin: const EdgeInsets.only(bottom: 6.0),
                   //Same as `blurRadius` i guess
@@ -1130,12 +1161,13 @@ class _MakePaymentState extends State<MakePayment> {
                       ),
                     ],
                   ),
-                  child: const Text(
+                  child: const Padding(padding: EdgeInsets.only(top: 4, left: 8), child: Text(
                     "Make Payment",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
+                  ),
                   ),
                 ),
               ),
@@ -1143,17 +1175,18 @@ class _MakePaymentState extends State<MakePayment> {
             const SizedBox(
               height: 10,
             ),
+            //make payment form
             Form(
               key: _formKey,
               child: Padding(
                 padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width < 500 ? 16 : 35,
-                    right: MediaQuery.of(context).size.width < 500 ? 16 : 35),
+                    left: MediaQuery.of(context).size.width < 500 ? 18 : 35,
+                    right: MediaQuery.of(context).size.width < 500 ? 18 : 35),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                       border: Border.all(
-                        color: blueColor,
+                        color: Color(0xFFCED4DA),
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(
@@ -1171,11 +1204,11 @@ class _MakePaymentState extends State<MakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *',
+                              Text('Received From *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1197,7 +1230,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Tenant'),
+                                          hint: const Text('Select Tenant',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                           value: selectedTenantId,
                                           // items: tenants.map((tenant) {
                                           //   return DropdownMenuItem<String>(
@@ -1281,9 +1314,9 @@ class _MakePaymentState extends State<MakePayment> {
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 250,
+                                          //  width: 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1342,11 +1375,11 @@ class _MakePaymentState extends State<MakePayment> {
                                 height: 20,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Date *',
+                              Text('Date *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1432,11 +1465,11 @@ class _MakePaymentState extends State<MakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Received From *',
+                                          Text('Received From *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           tenants.isEmpty
                                               ? const Center(
@@ -1554,11 +1587,11 @@ class _MakePaymentState extends State<MakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Date *',
+                                          Text('Date *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           CustomTextField(
                                             onTap: () async {
@@ -1645,11 +1678,11 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text('Amount *',
+                            Text('Amount *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1658,21 +1691,33 @@ class _MakePaymentState extends State<MakePayment> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter amount';
                                 }
+                                final raw = value.trim().replaceAll(',', '');
+                                final parsed = double.tryParse(raw);
+                                if (parsed == null || parsed <= 0) {
+                                  return 'Please enter valid amount';
+                                }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
-                              hintText: 'Enter Amount',
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              formatter: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d{0,10}(\.\d{0,2})?$'),
+                                ),
+                              ],
+                              hintText: 'Enter amount',
                               controller: amountController,
                               onChanged: (value) => validateAmounts(),
                             ),
                             const SizedBox(
-                              height: 12,
+                              height: 15,
                             ),
-                            const Text('Payment Method *',
+                            Text('Payment Method *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1680,7 +1725,7 @@ class _MakePaymentState extends State<MakePayment> {
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: const Text('Select Method'),
+                                  hint: const Text('Select Method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                   value: _paymentMethodsforfree
                                           .contains(_selectedPaymentMethod)
                                       ? _selectedPaymentMethod
@@ -1736,12 +1781,12 @@ class _MakePaymentState extends State<MakePayment> {
                                         MediaQuery.of(context).size.width < 500
                                             ? 46
                                             : 55,
-                                    width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 200
-                                            : 250,
+                                    // width:
+                                    //     MediaQuery.of(context).size.width < 500
+                                    //         ? 200
+                                    //         : 250,
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 2, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -1836,12 +1881,12 @@ class _MakePaymentState extends State<MakePayment> {
                                                     500
                                                 ? 46
                                                 : 55,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 200
-                                                : 250,
+                                            // width: MediaQuery.of(context)
+                                            //             .size
+                                            //             .width <
+                                            //         500
+                                            //     ? 200
+                                            //     : 250,
                                             padding: const EdgeInsets.only(
                                                 left: 14, right: 14),
                                             decoration: BoxDecoration(
@@ -1895,16 +1940,16 @@ class _MakePaymentState extends State<MakePayment> {
                                   );
                                 },
                               ),
-                            const SizedBox(
-                              height: 12,
-                            ),
                             const SizedBox(height: 10),
-                            const Padding(
+                             Padding(
                               padding: EdgeInsets.all(4.0),
-                              child: Text("Reference"),
-                            ),
-                            const SizedBox(
-                              height: 5,
+                              child: Text(
+                                "Reference",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor),
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(4.0),
@@ -1999,10 +2044,9 @@ class _MakePaymentState extends State<MakePayment> {
                                                     int index = entry.key;
                                                     BillingData item =
                                                         entry.value;
-                                                    String month = item.ccExp!
-                                                        .substring(0, 2);
-                                                    String year = item.ccExp!
-                                                        .substring(2, 4);
+                                                    final exp =
+                                                        (item.ccExp ?? '')
+                                                            .toString();
                                                     //  print(month);
                                                     String currentMonth =
                                                         DateTime.now()
@@ -2022,25 +2066,27 @@ class _MakePaymentState extends State<MakePayment> {
                                                     /* print(
                                                           'Current: $currentMonthYear');*/
 
-                                                    String expMonthYear =
-                                                        item.ccExp!;
-                                                    String expMonth =
-                                                        expMonthYear.substring(
-                                                            0, 2);
-                                                    String expYear =
-                                                        expMonthYear.substring(
-                                                            2, 4);
-                                                    bool isExpired = int.parse(
-                                                                expYear) <
-                                                            int.parse(
-                                                                currentYear) ||
-                                                        (int.parse(expYear) ==
-                                                                int.parse(
-                                                                    currentYear) &&
-                                                            int.parse(
-                                                                    expMonth) <
-                                                                int.parse(
-                                                                    currentMonth));
+                                                    bool isExpired = true;
+                                                    if (exp.length >= 4) {
+                                                      final expMonthYear = exp;
+                                                      final expMonth =
+                                                          expMonthYear
+                                                              .substring(0, 2);
+                                                      final expYear =
+                                                          expMonthYear
+                                                              .substring(2, 4);
+                                                      isExpired = int.parse(
+                                                                  expYear) <
+                                                              int.parse(
+                                                                  currentYear) ||
+                                                          (int.parse(expYear) ==
+                                                                  int.parse(
+                                                                      currentYear) &&
+                                                              int.parse(
+                                                                      expMonth) <
+                                                                  int.parse(
+                                                                      currentMonth));
+                                                    }
 
                                                     /* print(
                                                           'Expiration date passed: $isExpired');
@@ -2119,7 +2165,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                         ),
                                                         DataCell(
                                                           Text(
-                                                            item.ccNumber!,
+                                                            item.ccNumber ?? '',
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 color:
@@ -2135,7 +2181,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                               const SizedBox(
                                                                   height: 4),
                                                               _buildLogosBlock(
-                                                                  item.ccType!),
+                                                                  item.ccType ??
+                                                                      ''),
                                                               const SizedBox(
                                                                   height: 4),
                                                               Text(
@@ -2286,9 +2333,15 @@ class _MakePaymentState extends State<MakePayment> {
                             ],
                             if (showCheckNumberField) ...[
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                                child: Text(
+                                  "Check Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2311,9 +2364,15 @@ class _MakePaymentState extends State<MakePayment> {
                             ],
                             if (showACHFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Bank Routing Number"),
+                                child: Text(
+                                  "Bank Routing Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2333,9 +2392,15 @@ class _MakePaymentState extends State<MakePayment> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Bank Account Number"),
+                                child: Text(
+                                  "Bank Account Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2375,7 +2440,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             DropdownButton2<String>(
                                               isExpanded: true,
                                               hint:
-                                                  const Text('Select Account'),
+                                                   Text('Select Account',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                               value: selectedAccount,
                                               items: _selecttype.map((method) {
                                                 return DropdownMenuItem<String>(
@@ -2395,7 +2460,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 height: 45,
                                                 // width: 200,
                                                 padding: const EdgeInsets.only(
-                                                    left: 14, right: 14),
+                                                    left: 4, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -2472,7 +2537,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
                                                 hint: const Text(
-                                                    'Select Account'),
+                                                    'Select Account',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                                 value: selectedAccount,
                                                 items:
                                                     _selecttype.map((method) {
@@ -2505,7 +2570,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                   width: 250,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                          left: 4, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2568,7 +2633,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             child: DropdownButton2<String>(
                                               isExpanded: true,
                                               hint: const Text(
-                                                  'Select Account Holder Type'),
+                                                  'Select Account Holder Type',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                               value: _selectedHoldertype,
                                               items:
                                                   _selectholder.map((method) {
@@ -2598,7 +2663,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 height: 55,
                                                 // width: 300,
                                                 padding: const EdgeInsets.only(
-                                                    left: 14, right: 14),
+                                                    left: 4, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -2650,14 +2715,12 @@ class _MakePaymentState extends State<MakePayment> {
                                   ],
                                 ),
                               const SizedBox(height: 10),
-                              const Padding(
+                               Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Name of the ACH account"),
+                                child: Text("Name of the ACH account",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: blueColor),),
                               ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
+                             
+                            Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: CustomTextField(
                                   validator: (value) {
@@ -2692,7 +2755,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             DropdownButton2<String>(
                                               isExpanded: true,
                                               hint: const Text(
-                                                  'Select Account Holder Type'),
+                                                  'Select Account Holder Type',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                               value: _selectedHoldertype,
                                               items:
                                                   _selectholder.map((method) {
@@ -2714,7 +2777,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 height: 45,
                                                 //  width: 200,
                                                 padding: const EdgeInsets.only(
-                                                    left: 14, right: 14),
+                                                    left: 4, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -2877,9 +2940,15 @@ class _MakePaymentState extends State<MakePayment> {
                             ],
                             if (showCashiersFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                                child: Text(
+                                  "Check Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2903,9 +2972,15 @@ class _MakePaymentState extends State<MakePayment> {
                             ],
                             if (showMoneyorderFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                                child: Text(
+                                  "Check Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2930,9 +3005,15 @@ class _MakePaymentState extends State<MakePayment> {
                             if (showMenualFields) ...[
                               //checkfield is not required
                               const SizedBox(height: 10),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                                child: Text(
+                                  "Check Number",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor),
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2954,28 +3035,28 @@ class _MakePaymentState extends State<MakePayment> {
                               ),
                               const SizedBox(height: 10),
                             ],
-                            const SizedBox(
-                              height: 8,
+                            Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: Text('Memo',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
                             ),
-                            const Text('Memo',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            CustomTextField(
-                              optional: true,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter memo';
-                                }
-                                return null;
-                              },
-                              keyboardType: TextInputType.text,
-                              hintText: 'Enter Memo',
-                              controller: Memo,
+                            Padding(
+                              padding: EdgeInsets.all(4.0),
+                              child: CustomTextField(
+                                optional: true,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter memo';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.text,
+                                hintText: 'Enter Memo',
+                                controller: Memo,
+                              ),
                             ),
                           ],
                         ),
@@ -2983,13 +3064,13 @@ class _MakePaymentState extends State<MakePayment> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(left: 10, right: 10),
                         child: Text('Apply Payment to Balances',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: blueColor)),
                       ),
                       const SizedBox(
                         height: 10,
@@ -2998,10 +3079,10 @@ class _MakePaymentState extends State<MakePayment> {
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Text(
                             'Current Balance : \$${balance.toStringAsFixed(2)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: blueColor)),
                       ),
                       const SizedBox(
                         height: 10,
@@ -3338,7 +3419,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           error_mess:
                                               "Amount must be less than or equal to balance",
                                           keyboardType: TextInputType.number,
-                                          hintText: 'Enter Amount',
+                                          hintText: 'Enter amount',
                                           controller: controllers[index],
                                           onChanged: (value) =>
                                               updateAmount(index, value),
@@ -3586,7 +3667,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       error_mess:
                                           "Amount must be less than or equal to balance",
                                       keyboardType: TextInputType.number,
-                                      hintText: 'Enter Amount',
+                                      hintText: 'Enter amount',
                                       controller: controllers[index],
                                       onChanged2: (value) =>
                                           updateAmount(index, value),
@@ -3840,23 +3921,16 @@ class _MakePaymentState extends State<MakePayment> {
                                     if (_selectedPaymentMethod == "Card" ||
                                         _selectedPaymentMethod == "ACH")
                                       buildAmountContainer(
-                                          'Amount',
-                                          amountController.text.isNotEmpty
-                                              ? double.parse(
-                                                  amountController.text)
-                                              : 0.0),
+                                          'Amount', _safeParseAmountText()),
                                     const SizedBox(
                                       height: 5,
                                     ),
                                     if (_selectedPaymentMethod == "Card")
                                       buildAmountContainer(
                                           'Surcharge included',
-                                          amountController.text.isNotEmpty
-                                              ? double.parse(
-                                                      amountController.text) *
-                                                  (surCharge ?? 0.0) /
-                                                  100
-                                              : 0.0),
+                                          _safeParseAmountText() *
+                                              (surCharge ?? 0.0) /
+                                              100),
                                     if (_selectedPaymentMethod == "ACH")
                                       buildAmountContainer('Surcharge included',
                                           surchargecount!),
@@ -3865,25 +3939,14 @@ class _MakePaymentState extends State<MakePayment> {
                                     ),
                                     buildAmountContainer(
                                         'Total Amount',
-                                        amountController.text.isNotEmpty &&
-                                                (_selectedPaymentMethod ==
-                                                    "Card")
-                                            ? (double.parse(
-                                                        amountController.text) *
+                                        (_selectedPaymentMethod == "Card")
+                                            ? (_safeParseAmountText() *
                                                     (surCharge ?? 0.0) /
                                                     100) +
-                                                double.parse(
-                                                    amountController.text)
-                                            : amountController
-                                                        .text.isNotEmpty &&
-                                                    (_selectedPaymentMethod ==
-                                                        "ACH")
+                                                _safeParseAmountText()
+                                            : (_selectedPaymentMethod == "ACH")
                                                 ? (finaltotal ?? 0.0)
-                                                : amountController
-                                                        .text.isNotEmpty
-                                                    ? double.parse(
-                                                        amountController.text)
-                                                    : 0.0),
+                                                : _safeParseAmountText()),
                                   ],
                                 ),
                               ),
@@ -3897,16 +3960,17 @@ class _MakePaymentState extends State<MakePayment> {
                 ),
               ),
             ),
+            //cancel and apply payment button
             Padding(
               padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width < 500 ? 16 : 35,
+                  left: MediaQuery.of(context).size.width < 500 ? 18 : 35,
                   right: 16,
                   bottom: 10,
-                  top: 10),
+                  top: 20),
               child: Row(
                 children: [
                   Container(
-                      height: 50,
+                      height: 45,
                       width: 150,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0)),
@@ -3957,8 +4021,20 @@ class _MakePaymentState extends State<MakePayment> {
                                 });
                               } else if (_selectedPaymentMethod == "Card") {
                                 print("adminId ${id}");
-                                print(
-                                    "adminId ${cardDetails[selectedcardindex!].company}");
+                                if (selectedcardindex == null ||
+                                    selectedcardindex! < 0 ||
+                                    selectedcardindex! >= cardDetails.length) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please select a card");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
+
+                                final selectedBilling =
+                                    cardDetails[selectedcardindex!];
+                                print("adminId ${selectedBilling.company}");
                                 if (processor_id == "zzz") {
                                   showFailedPaymentAlert(context);
                                   setState(() {
@@ -3983,18 +4059,15 @@ class _MakePaymentState extends State<MakePayment> {
                                     lastName: selectedTenant["last_name"]!,
                                     emailName: selectedTenant["email"]!,
                                     customerVaultId:
-                                        cardDetails[selectedcardindex!]
-                                            .customerVaultId!,
-                                    billingId: cardDetails[selectedcardindex!]
-                                        .billingId!,
+                                        selectedBilling.customerVaultId ?? "",
+                                    billingId: selectedBilling.billingId ?? "",
                                     surcharge:
-                                        "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                     amount:
-                                        "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
                                     date: _startDate.text.trim(),
-                                    address1: cardDetails[selectedcardindex!]
-                                        .address_1!,
+                                    address1: selectedBilling.address_1 ?? "",
                                     processorId: "",
                                     leaseid: widget.leaseId,
                                     company_name: companyName,
@@ -4065,7 +4138,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   emailName: selectedTenant["email"]!,
                                   surcharge: "$surchargecount",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -4144,9 +4217,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -4194,9 +4267,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -4284,18 +4357,36 @@ class _MakePaymentState extends State<MakePayment> {
                                     lastName: selectedTenant["last_name"]!,
                                     emailName: selectedTenant["email"]!,
                                     customerVaultId:
-                                        cardDetails[selectedcardindex!]
-                                            .customerVaultId!,
-                                    billingId: cardDetails[selectedcardindex!]
-                                        .billingId!,
+                                        (selectedcardindex != null &&
+                                                selectedcardindex! >= 0 &&
+                                                selectedcardindex! <
+                                                    cardDetails.length)
+                                            ? (cardDetails[selectedcardindex!]
+                                                    .customerVaultId ??
+                                                "")
+                                            : "",
+                                    billingId: (selectedcardindex != null &&
+                                            selectedcardindex! >= 0 &&
+                                            selectedcardindex! <
+                                                cardDetails.length)
+                                        ? (cardDetails[selectedcardindex!]
+                                                .billingId ??
+                                            "")
+                                        : "",
                                     surcharge:
-                                        "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                     amount:
-                                        "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
                                     date: _startDate.text.trim(),
-                                    address1: cardDetails[selectedcardindex!]
-                                        .address_1!,
+                                    address1: (selectedcardindex != null &&
+                                            selectedcardindex! >= 0 &&
+                                            selectedcardindex! <
+                                                cardDetails.length)
+                                        ? (cardDetails[selectedcardindex!]
+                                                .address_1 ??
+                                            "")
+                                        : "",
                                     processorId: "",
                                     leaseid: widget.leaseId,
                                     company_name: companyName,
@@ -4366,7 +4457,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   emailName: selectedTenant["email"]!,
                                   surcharge: "$surchargecount",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
@@ -4453,9 +4544,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   lastName: selectedTenant?["last_name"] ?? "",
                                   emailName: selectedTenant?["email"] ?? "",
                                   surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                   tenantId: selectedTenant != null
                                       ? selectedTenantId!
                                       : "",
@@ -4516,9 +4607,9 @@ class _MakePaymentState extends State<MakePayment> {
                                         // lastName: selectedTenant["last_name"]!,
                                         // emailName: selectedTenant["email"]!,
                                         surcharge:
-                                            "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                            "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                         amount:
-                                            "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                            "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
                                         tenantId: selectedTenant != null
                                             ? selectedTenantId!
                                             : "",
@@ -4570,15 +4661,15 @@ class _MakePaymentState extends State<MakePayment> {
                                     size: 50.0,
                                   ),
                                 )
-                              : const Text(
+                              :  Text(
                                   'Make Payment',
-                                  style: TextStyle(color: Color(0xFFf7f8f9)),
+                                  style: TextStyle(color: Color(0xFFf7f8f9),fontWeight: FontWeight.bold),
                                 ))),
                   const SizedBox(
                     width: 8,
                   ),
                   Container(
-                      height: 50,
+                      height: 45,
                       width: 120,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0)),
@@ -4599,9 +4690,9 @@ class _MakePaymentState extends State<MakePayment> {
                             // _selectedProperty = null;
                             // _selectedUnit = null;
                           },
-                          child: const Text(
+                          child:  Text(
                             'Cancel',
-                            style: TextStyle(color: Color(0xFF748097)),
+                            style: TextStyle(color:blueColor,fontWeight: FontWeight.bold),
                           ))),
                 ],
               ),
@@ -4686,31 +4777,35 @@ class _MakePaymentState extends State<MakePayment> {
     );
   }
 
+  double _safeParseAmountText() {
+    final raw = amountController.text.trim().replaceAll(',', '');
+    return double.tryParse(raw) ?? 0.0;
+  }
+
   surge_count() {
-    if (amountController.text.isNotEmpty) {
+    final amount = _safeParseAmountText();
+    if (amount > 0) {
       if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchper != null || surChargeAchper != 0.0) &&
           _selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100) +
-                  (surChargeAchflat ?? 0.0);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100) +
+              (surChargeAchflat ?? 0.0);
+          finaltotal = amount + (surchargecount ?? 0.0);
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          finaltotal = amount + (surchargecount ?? 0.0);
           // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchper != null || surChargeAchper != 0.0)) {
         setState(() {
-          surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100);
+          finaltotal = amount + (surchargecount ?? 0.0);
         });
       }
     }
@@ -4749,6 +4844,13 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Widget _buildLogosBlock(String ccType) {
+    if (ccType.trim().isEmpty) {
+      return const Icon(
+        Icons.credit_card,
+        color: Colors.white,
+        size: 30,
+      );
+    }
     String logoUrl =
         'https://logo.clearbit.com/${ccType.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com';
     return Image.network(

@@ -2422,7 +2422,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Entery allowed ',
+                          const Text('Entery Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -5278,7 +5278,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Entery allowed ',
+                                    const Text('Entery Allowed ',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
