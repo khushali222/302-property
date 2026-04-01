@@ -8,6 +8,21 @@ import 'dart:convert';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/revenue_details_screen.dart';
 
+int _barChartParseMonthKey(dynamic raw) {
+  if (raw == null) return -1;
+  final n = raw is num ? raw.toInt() : int.tryParse(raw.toString());
+  if (n == null) return -1;
+  if (n >= 1 && n <= 12) return n;
+  if (n >= 0 && n <= 11) return n + 1;
+  return -1;
+}
+
+double _barChartParseAmount(dynamic raw) {
+  if (raw == null) return 0.0;
+  if (raw is num) return raw.toDouble();
+  return double.tryParse(raw.toString()) ?? 0.0;
+}
+
 class Barchart extends StatefulWidget {
   @override
   State<Barchart> createState() => _BarchartState();
@@ -47,10 +62,13 @@ class _BarchartState extends State<Barchart> {
         bool hasCurrentYearData = false;
 
         // Only auto-switch to previous year on initial load
+        final List currentYearList = data['currentYear'] ?? [];
+        final List lastYearList = data['lastYear'] ?? [];
+
         if (year == 'Current Year' && selectedValue == 'Current Year') {
           double totalCurrentYear = 0;
-          for (var item in data['currentYear']) {
-            totalCurrentYear += item['totalAmount'].toDouble();
+          for (var item in currentYearList) {
+            totalCurrentYear += _barChartParseAmount(item['totalAmount']);
           }
           hasCurrentYearData = totalCurrentYear > 0;
 
@@ -65,12 +83,14 @@ class _BarchartState extends State<Barchart> {
 
         // Process data for the selected year
         if (year == 'Current Year') {
-          for (var item in data['currentYear']) {
-            revenueMap[item['month']] = item['totalAmount'].toDouble();
+          for (var item in currentYearList) {
+            final m = _barChartParseMonthKey(item['month']);
+            if (m >= 1) revenueMap[m] = _barChartParseAmount(item['totalAmount']);
           }
         } else if (year == 'Previous Year') {
-          for (var item in data['lastYear']) {
-            revenueMap[item['month']] = item['totalAmount'].toDouble();
+          for (var item in lastYearList) {
+            final m = _barChartParseMonthKey(item['month']);
+            if (m >= 1) revenueMap[m] = _barChartParseAmount(item['totalAmount']);
           }
         }
 

@@ -11,12 +11,66 @@ import 'package:http/http.dart' as http;
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
+  /// Parses v2 list response: unified [data.tenants] + [is_current_tenant], or legacy
+  /// [currentTenants] / [formerTenants] arrays.
+  Map<String, List<Tenant>> _categorizedTenantsFromV2Data(
+      Map<String, dynamic>? data) {
+    final categorizedTenants = <String, List<Tenant>>{
+      'currentTenants': [],
+      'formerTenants': [],
+      'currentApplicants': [],
+    };
+    if (data == null) return categorizedTenants;
+
+    final tenantsRaw = data['tenants'];
+    if (tenantsRaw is List && tenantsRaw.isNotEmpty) {
+      for (final item in tenantsRaw) {
+        if (item is! Map<String, dynamic>) continue;
+        final t = Tenant.fromJson(item);
+        if (item['is_current_tenant'] == true) {
+          categorizedTenants['currentTenants']!.add(t);
+        } else {
+          categorizedTenants['formerTenants']!.add(t);
+        }
+      }
+    } else {
+      if (data['currentTenants'] != null) {
+        final list = data['currentTenants'] as List;
+        categorizedTenants['currentTenants'] =
+            list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+      }
+      if (data['formerTenants'] != null) {
+        final list = data['formerTenants'] as List;
+        categorizedTenants['formerTenants'] =
+            list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+      }
+    }
+
+    if (data['currentApplicants'] != null) {
+      final list = data['currentApplicants'] as List;
+      categorizedTenants['currentApplicants'] =
+          list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+    }
+
+    return categorizedTenants;
+  }
+
   Future<Map<String, List<Tenant>>> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final uri = Uri.parse('${Api_url}/api/tenant/tenants/v2/$id').replace(
+      queryParameters: {
+        'page': '1',
+        'limit': '5000',
+        'search': '',
+        'tenantType': 'all',
+        'sortBy': 'createdAt',
+        'sortOrder': 'desc',
+      },
+    );
     final response = await http.get(
-      Uri.parse('${Api_url}/api/tenant/tenants/v2/$id'),
+      uri,
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
@@ -25,49 +79,18 @@ class TenantsRepository {
     print('get tenant ${response.body}');
     print('${Api_url}/api/tenant/tenants/$id');
     if (response.statusCode == 200) {
-      // Decode the JSON response
-      final jsonResponse = json.decode(response.body);
+      final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
 
-      // Access the 'data' object
       if (jsonResponse['data'] != null) {
-        Map<String, List<Tenant>> categorizedTenants = {
-          'currentTenants': [],
-          'formerTenants': [],
-          'currentApplicants': [],
-        };
-
-        // Add currentTenants if they exist
-        if (jsonResponse['data']['currentTenants'] != null) {
-          List currentTenantsJson = jsonResponse['data']['currentTenants'];
-          categorizedTenants['currentTenants'] =
-              currentTenantsJson.map((data) => Tenant.fromJson(data)).toList();
-        }
-
-        // Add formerTenants if they exist
-        if (jsonResponse['data']['formerTenants'] != null) {
-          List formerTenantsJson = jsonResponse['data']['formerTenants'];
-          categorizedTenants['formerTenants'] =
-              formerTenantsJson.map((data) => Tenant.fromJson(data)).toList();
-        }
-
-        // Add currentApplicants if they exist
-        if (jsonResponse['data']['currentApplicants'] != null) {
-          List currentApplicantsJson =
-              jsonResponse['data']['currentApplicants'];
-          categorizedTenants['currentApplicants'] = currentApplicantsJson
-              .map((data) => Tenant.fromJson(data))
-              .toList();
-        }
-
-        return categorizedTenants;
-      } else {
-        print('No data found in the response.');
-        return {
-          'currentTenants': [],
-          'formerTenants': [],
-          'currentApplicants': [],
-        };
+        return _categorizedTenantsFromV2Data(
+            jsonResponse['data'] as Map<String, dynamic>);
       }
+      print('No data found in the response.');
+      return {
+        'currentTenants': [],
+        'formerTenants': [],
+        'currentApplicants': [],
+      };
     } else {
       print('Failed to fetch tenants: ${response.body}');
       return {

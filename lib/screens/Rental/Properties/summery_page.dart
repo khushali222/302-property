@@ -14810,7 +14810,7 @@ class _Summery_pageState extends State<Summery_page>
                   if (MediaQuery.of(context).size.width > 500)
                     const SizedBox(width: 8),
                   Material(
-                    elevation: 3,
+                    
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -14823,7 +14823,7 @@ class _Summery_pageState extends State<Summery_page>
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           // border: Border.all(color: Colors.grey),
-                          border: Border.all(color: const Color(0xFF8A95A8))),
+                          border: Border.all(color: Color(0xFFDBE0E5))),
                       child: Stack(
                         children: [
                           Positioned.fill(
@@ -14867,7 +14867,7 @@ class _Summery_pageState extends State<Summery_page>
                   const Spacer(),
                   DropdownButtonHideUnderline(
                     child: Material(
-                      elevation: 3,
+                      
                       borderRadius: BorderRadius.circular(8),
                       child: DropdownButton2<String>(
                         isExpanded: true,
@@ -14921,7 +14921,7 @@ class _Summery_pageState extends State<Summery_page>
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               // color: Colors.black26,
-                              color: const Color(0xFF8A95A8),
+                              color: Color(0xFFDBE0E5),
                             ),
                             color: Colors.white,
                           ),
@@ -15031,7 +15031,7 @@ class _Summery_pageState extends State<Summery_page>
                       decoration: BoxDecoration(
                         border: Border.all(color: blueColor),
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
                         child: Row(
@@ -15237,9 +15237,7 @@ class _Summery_pageState extends State<Summery_page>
                                                 Expanded(
                                                   flex: 3,
                                                   child: Text(
-                                                    widget.properties
-                                                            .rentalAddress ??
-                                                        'N/A',
+                                                   workOrder.workSubject ?? 'N/A',
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,

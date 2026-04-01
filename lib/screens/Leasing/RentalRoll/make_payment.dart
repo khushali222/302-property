@@ -1837,7 +1837,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Method'),
+                                          hint: const Text('Select Method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                           value: _paymentMethods.contains(
                                                   _selectedPaymentMethod)
                                               ? _selectedPaymentMethod
@@ -1888,7 +1888,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             //     ? 200
                                             //     : 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),

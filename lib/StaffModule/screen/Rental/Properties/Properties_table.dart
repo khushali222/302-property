@@ -505,7 +505,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             padding: const EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortUp,
-                              size: 20,
+                              size: 15,
                               color: blueColor,
                             ),
                           )
@@ -513,7 +513,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             padding: const EdgeInsets.only(bottom: 7, left: 2),
                             child: FaIcon(
                               FontAwesomeIcons.sortDown,
-                              size: 20,
+                              size: 15,
                               color: blueColor,
                             ),
                           )
@@ -1743,6 +1743,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                         //                 .size
                                                         //                 .width *
                                                         //             .08),
+                                                        SizedBox(
+                                                            width:
+                                                                MediaQuery.of(context)
+                                                                        .size
+                                                                        .width *
+                                                                    .05),
                                                         rentals!.is_available!
                                                             ? Expanded(
                                                                 flex: 2,
@@ -1834,6 +1840,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                         //                 .size
                                                         //                 .width *
                                                         //             .02),
+                                                        SizedBox(
+                                                            width:
+                                                                MediaQuery.of(context)
+                                                                        .size
+                                                                        .width *
+                                                                    .02),
                                                       ],
                                                     ),
                                                   ),
