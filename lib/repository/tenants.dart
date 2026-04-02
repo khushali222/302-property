@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -69,6 +70,9 @@ class TenantsRepository {
         'sortOrder': 'desc',
       },
     );
+    debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
+    debugPrint('[Tenants v2][Admin] Flow: Tenants_table → TenantsRepository.fetchTenants()');
+    debugPrint('[Tenants v2][Admin] REQUEST GET $uri');
     final response = await http.get(
       uri,
       headers: {
@@ -76,23 +80,40 @@ class TenantsRepository {
         "id": "CRM $id",
       },
     );
-    print('get tenant ${response.body}');
-    print('${Api_url}/api/tenant/tenants/$id');
+    debugPrint('[Tenants v2][Admin] HTTP status: ${response.statusCode}');
+    debugPrint('[Tenants v2][Admin] RESPONSE BODY:\n${response.body}');
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+      if (jsonResponse['pagination'] != null) {
+        debugPrint('[Tenants v2][Admin] pagination: ${jsonResponse['pagination']}');
+      }
+      final dataMap = jsonResponse['data'];
+      if (dataMap is Map<String, dynamic> && dataMap['counts'] != null) {
+        debugPrint('[Tenants v2][Admin] data.counts: ${dataMap['counts']}');
+      }
+      if (dataMap is Map<String, dynamic> && dataMap['tenants'] is List) {
+        debugPrint(
+            '[Tenants v2][Admin] data.tenants length (raw JSON): ${(dataMap['tenants'] as List).length}');
+      }
 
       if (jsonResponse['data'] != null) {
-        return _categorizedTenantsFromV2Data(
+        final categorized = _categorizedTenantsFromV2Data(
             jsonResponse['data'] as Map<String, dynamic>);
+        debugPrint(
+            '[Tenants v2][Admin] after _categorizedTenantsFromV2Data → current: ${categorized['currentTenants']!.length}, former: ${categorized['formerTenants']!.length}, applicants: ${categorized['currentApplicants']!.length}');
+        debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
+        return categorized;
       }
-      print('No data found in the response.');
+      debugPrint('[Tenants v2][Admin] No data key in response.');
+      debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
       return {
         'currentTenants': [],
         'formerTenants': [],
         'currentApplicants': [],
       };
     } else {
-      print('Failed to fetch tenants: ${response.body}');
+      debugPrint('[Tenants v2][Admin] Failed: ${response.body}');
+      debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
       return {
         'currentTenants': [],
         'formerTenants': [],

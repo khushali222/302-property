@@ -283,6 +283,8 @@ class _Tenants_tableState extends State<Tenants_table> {
       });
     });
     checkInternet();
+    debugPrint(
+        '[Tenants_table][Staff] initState → futureTenants = TenantsRepository().fetchTenantsV2() (v2 API)');
     futureTenants = TenantsRepository().fetchTenantsV2();
     fetchtenantsadded();
     fetchCompany();
@@ -1115,6 +1117,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
                               .toList();
+                          final bool canChangePageSize = data.isNotEmpty;
                           return SingleChildScrollView(
                             child: Column(
                               children: [
@@ -1246,7 +1249,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                        '${tenants.rentalAddress!.isEmpty ? "N/A" : tenants.rentalAddress}',
+                                                        '${(tenants.rentalAddress ?? '').trim().isEmpty ? "Not Available" : tenants.rentalAddress}',
                                                         textAlign:
                                                             TextAlign.start,
                                                         style: TextStyle(
@@ -1542,7 +1545,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                if (data.length > itemsPerPage)
+                                if (data.isNotEmpty)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -1551,7 +1554,11 @@ class _Tenants_tableState extends State<Tenants_table> {
                                           // Text('Rows per page:'),
                                           const SizedBox(width: 10),
                                           Material(
-                                            elevation: 3,
+                                            elevation:
+                                                canChangePageSize ? 3 : 0,
+                                            color: canChangePageSize
+                                                ? null
+                                                : const Color(0xFFF0F0F0),
                                             child: Container(
                                               height: 40,
                                               padding:
@@ -1559,7 +1566,10 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                       horizontal: 12.0),
                                               decoration: BoxDecoration(
                                                 border: Border.all(
-                                                    color: Colors.grey),
+                                                    color: canChangePageSize
+                                                        ? Colors.grey
+                                                        : Colors.grey
+                                                            .shade400),
                                               ),
                                               child:
                                                   DropdownButtonHideUnderline(
@@ -1574,15 +1584,12 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                           value.toString()),
                                                     );
                                                   }).toList(),
-                                                  onChanged: data.length >
-                                                          itemsPerPageOptions
-                                                              .first // Condition to check if dropdown should be enabled
+                                                  onChanged: canChangePageSize
                                                       ? (newValue) {
                                                           setState(() {
                                                             itemsPerPage =
                                                                 newValue!;
-                                                            currentPage =
-                                                                0; // Reset to first page when items per page change
+                                                            currentPage = 0;
                                                           });
                                                         }
                                                       : null,
@@ -1598,57 +1605,48 @@ class _Tenants_tableState extends State<Tenants_table> {
                                             icon: FaIcon(
                                               FontAwesomeIcons
                                                   .circleChevronLeft,
-                                              color: currentPage == 0
-                                                  ? Colors.grey
-                                                  : blueColor,
+                                              color: totalPages > 1 &&
+                                                      currentPage > 0
+                                                  ? blueColor
+                                                  : Colors.grey,
                                             ),
-                                            onPressed: currentPage == 0
-                                                ? null
-                                                : () {
+                                            onPressed: totalPages > 1 &&
+                                                    currentPage > 0
+                                                ? () {
                                                     setState(() {
                                                       currentPage--;
                                                     });
-                                                  },
+                                                  }
+                                                : null,
                                           ),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_back),
-                                          //   onPressed: currentPage > 0
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage--;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
                                           Text(
-                                              'Page ${currentPage + 1} of $totalPages'),
-                                          // IconButton(
-                                          //   icon: Icon(Icons.arrow_forward),
-                                          //   onPressed: currentPage < totalPages - 1
-                                          //       ? () {
-                                          //     setState(() {
-                                          //       currentPage++;
-                                          //     });
-                                          //   }
-                                          //       : null,
-                                          // ),
+                                            'Page ${currentPage + 1} of $totalPages',
+                                            style: TextStyle(
+                                              color: totalPages > 1
+                                                  ? Colors.black87
+                                                  : Colors.grey.shade600,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                           IconButton(
                                             icon: FaIcon(
                                               FontAwesomeIcons
                                                   .circleChevronRight,
-                                              color:
-                                                  currentPage < totalPages - 1
-                                                      ? blueColor
-                                                      : Colors.grey,
+                                              color: totalPages > 1 &&
+                                                      currentPage <
+                                                          totalPages - 1
+                                                  ? blueColor
+                                                  : Colors.grey,
                                             ),
-                                            onPressed:
-                                                currentPage < totalPages - 1
-                                                    ? () {
-                                                        setState(() {
-                                                          currentPage++;
-                                                        });
-                                                      }
-                                                    : null,
+                                            onPressed: totalPages > 1 &&
+                                                    currentPage <
+                                                        totalPages - 1
+                                                ? () {
+                                                    setState(() {
+                                                      currentPage++;
+                                                    });
+                                                  }
+                                                : null,
                                           ),
                                         ],
                                       ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -54,7 +55,7 @@ class PropertiesTable extends StatefulWidget {
 }
 
 class _PropertiesTableState extends State<PropertiesTable> {
-  late Future<List<Rentals>> futureRentalOwners;
+  late Future<RentalsPageResult> futurePropertiesLoad;
   // late Future<List<propertytype>> futurePropertyTypes;
   int _rowsPerPage = 10;
   int _currentPage = 0;
@@ -162,6 +163,137 @@ class _PropertiesTableState extends State<PropertiesTable> {
     }
   }
 
+  bool _useServerPagination() {
+    if (selectedValue != null && selectedValue != 'All') return false;
+    if (selectedApplicantStatus != null &&
+        selectedApplicantStatus != 'All') return false;
+    if (selectedApplicantOcuupied != null &&
+        selectedApplicantOcuupied != 'All') return false;
+    if (selectedRentalOwner != null && selectedRentalOwner != 'All') {
+      return false;
+    }
+    return true;
+  }
+
+  MapEntry<String, String> _apiSortParams() {
+    if (sorting1) {
+      return MapEntry('rental_adress', ascending1 ? 'asc' : 'desc');
+    }
+    if (sorting2) {
+      return MapEntry('property_type', ascending2 ? 'asc' : 'desc');
+    }
+    if (sorting3) {
+      return MapEntry('is_available', ascending3 ? 'asc' : 'desc');
+    }
+    return const MapEntry('createdAt', 'asc');
+  }
+
+  List<Rentals> _applyLocalFilters(List<Rentals> data) {
+    var list = List<Rentals>.from(data);
+    if (selectedValue != null && selectedValue != "All") {
+      list = list
+          .where((properties) =>
+              properties.propertyTypeData?.propertyType == selectedValue)
+          .toList();
+    }
+    if (searchvalue.isNotEmpty) {
+      list = list
+          .where((properties) =>
+              properties.rentalAddress!.toLowerCase().contains(searchvalue.toLowerCase()) ||
+              properties.propertyTypeData!.propertyType!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.propertyTypeData!.propertySubType!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.rentalOwnerData!.rentalOwnerName!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.rentalOwnerData!.rentalOwnerPhoneNumber!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.rentalOwnerData!.rentalOwnerCompanyName!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.rentalOwnerData!.rentalOwnerPrimaryEmail!
+                  .toLowerCase()
+                  .contains(searchvalue.toLowerCase()) ||
+              properties.rentalOwnerData!.Address!.toLowerCase().contains(searchvalue.toLowerCase()) ||
+              (properties.tenantsData != null && properties.tenantsData!.any((tenant) => (tenant.tenantFirstName ?? '').toLowerCase().contains(searchvalue.toLowerCase()) || (tenant.tenantLastName ?? '').toLowerCase().contains(searchvalue.toLowerCase()))))
+          .toList();
+    }
+    if (selectedApplicantStatus == 'Accepting Applications') {
+      list = list.where((properties) => properties.is_available == true).toList();
+    } else if (selectedApplicantStatus == 'Not Accepting Applications') {
+      list = list.where((properties) => properties.is_available == false).toList();
+    }
+    if (selectedApplicantOcuupied == 'Occupied') {
+      list = list
+          .where((properties) =>
+              properties.tenantsData != null && properties.tenantsData!.length > 0)
+          .toList();
+    } else if (selectedApplicantOcuupied == 'Vacant') {
+      list = list
+          .where((properties) =>
+              properties.tenantsData == null || properties.tenantsData!.length == 0)
+          .toList();
+    }
+    if (selectedRentalOwner != null && selectedRentalOwner != "All") {
+      list = list
+          .where((properties) =>
+              properties.rentalOwnerData?.rentalOwnerId == selectedRentalOwner)
+          .toList();
+    }
+    return list;
+  }
+
+  Future<RentalsPageResult> _loadProperties() async {
+    final repo = PropertiesRepository();
+    if (_useServerPagination()) {
+      final sort = _apiSortParams();
+      var result = await repo.fetchPropertiesPage(
+        page: _currentPage + 1,
+        limit: _rowsPerPage,
+        search: searchvalue,
+        sortBy: sort.key,
+        sortOrder: sort.value,
+      );
+      final p = result.pagination;
+      if (p != null && p.totalPages > 0 && _currentPage >= p.totalPages) {
+        _currentPage = (p.totalPages - 1).clamp(0, p.totalPages - 1);
+        result = await repo.fetchPropertiesPage(
+          page: _currentPage + 1,
+          limit: _rowsPerPage,
+          search: searchvalue,
+          sortBy: sort.key,
+          sortOrder: sort.value,
+        );
+      }
+      return result;
+    }
+    List<Rentals> list = await repo.fetchProperties();
+    list = _applyLocalFilters(list);
+    sortData(list);
+    return RentalsPageResult(items: list, pagination: null);
+  }
+
+  void _reloadProperties() {
+    setState(() {
+      futurePropertiesLoad = _loadProperties();
+    });
+  }
+
+  void _scheduleSearchReload() {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (!mounted) return;
+      setState(() {
+        _currentPage = 0;
+        futurePropertiesLoad = _loadProperties();
+      });
+    });
+  }
+
   Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
@@ -202,13 +334,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       sorting1 = true;
                       sorting2 = false;
                       sorting3 = false;
-                      // Start with descending on first tap to show immediate change
                       ascending1 = false;
                       ascending2 = false;
                       ascending3 = false;
                     }
-
-                    // Sorting logic here
+                    _currentPage = 0;
+                    futurePropertiesLoad = _loadProperties();
                   });
                 },
                 child: Row(
@@ -322,7 +453,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     expandedRentalId = null;
                     print(
                         'After: sorting3=$sorting3, ascending3=$ascending3, expandedIndex=$expandedIndex, expandedRentalId=$expandedRentalId');
-                    // Sorting logic here
+                    _currentPage = 0;
+                    futurePropertiesLoad = _loadProperties();
                   });
                 },
                 child: Row(
@@ -389,6 +521,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   final List<String> items = ["All", "Commercial", "Residential"];
   String? selectedValue;
   String searchvalue = "";
+  Timer? _searchDebounce;
   ConnectivityResult? _connectivityResult;
   @override
   void initState() {
@@ -399,19 +532,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
       });
     });
     checkInternet();
-    futureRentalOwners = PropertiesRepository().fetchProperties().then((data) {
-      // Sort by createdAt in ascending order first (oldest first)
-      data.sort((a, b) {
-        if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(a.createdAt!)
-            .compareTo(DateTime.parse(b.createdAt!));
-      });
-      // Then sort by property name in ascending order
-      data.sort((a, b) => a.rentalAddress!.compareTo(b.rentalAddress!));
-      return data;
-    });
+    futurePropertiesLoad = _loadProperties();
     futureRentalOwnersList = RentalOwnerService().fetchRentalOwners(null);
-    fetchRentaladded();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) fetchRentaladded();
+    });
     // Set initial sorting to createdAt
     sorting1 = false;
     sorting2 = false;
@@ -437,9 +562,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   rentalId: properties.rentalId!,
                 )));
     if (check == true) {
-      setState(() {
-        futureRentalOwners = PropertiesRepository().fetchProperties();
-      });
+      _reloadProperties();
     }
     // final result = await Navigator.push(
     //     context,
@@ -509,11 +632,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               // print(id);
               var data = await PropertiesRepository()
                   .DeleteProperties(id: id, reason: reason.text);
-              if (data != null)
-                setState(() {
-                  futureRentalOwners = PropertiesRepository().fetchProperties();
-                  //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                });
+              if (data != null) _reloadProperties();
               fetchRentaladded();
               Navigator.pop(context);
             }
@@ -581,17 +700,28 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   void _sort<T>(Comparable<T> Function(Rentals) getField, int columnIndex,
       bool ascending) {
-    futureRentalOwners.then((Rentals) {
-      Rentals.sort((a, b) {
+    futurePropertiesLoad.then((result) {
+      if (result.pagination != null) return;
+      final sorted = List<Rentals>.from(result.items);
+      sorted.sort((a, b) {
         final aValue = getField(a);
         final bValue = getField(b);
+        if (aValue is String && bValue is String) {
+          final r = (aValue as String)
+              .toLowerCase()
+              .compareTo((bValue as String).toLowerCase());
+          return ascending ? r : -r;
+        }
         return ascending
             ? Comparable.compare(aValue, bValue)
             : Comparable.compare(bValue, aValue);
       });
+      if (!mounted) return;
       setState(() {
         _sortColumnIndex = columnIndex;
         _sortAscending = ascending;
+        futurePropertiesLoad =
+            Future.value(RentalsPageResult(items: sorted, pagination: null));
       });
     });
   }
@@ -609,31 +739,50 @@ class _PropertiesTableState extends State<PropertiesTable> {
   int rentalCount = 0;
   int propertyCountLimit = 0;
   Future<void> fetchRentaladded() async {
-    // print("calling");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    final response = await http.get(
-      Uri.parse('${Api_url}/api/rentals/limitation/$id'),
-      headers: {
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-      },
-    );
-    final jsonData = json.decode(response.body);
-    // print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      // print(rentalCount);
-      // print(propertyCountLimit);
-      setState(() {
-        rentalCount = jsonData['rentalCount'];
-        // print(rentalCount);
-        propertyCountLimit = jsonData['propertyCountLimit'];
-        // print(propertyCountLimit);
-      });
-    } else {
-      throw Exception('Failed to load data');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? id = prefs.getString("adminId");
+      final String? token = prefs.getString('token');
+      if (id == null || token == null) {
+        if (mounted) setState(() {});
+        return;
+      }
+      final response = await http.get(
+        Uri.parse('${Api_url}/api/rentals/limitation/$id'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      final jsonData = json.decode(response.body) as Map<String, dynamic>;
+      final code = jsonData["statusCode"];
+      final ok = code == 200 ||
+          code == 201 ||
+          code == '200' ||
+          code == '201';
+      if (!mounted) return;
+      if (ok) {
+        int toInt(dynamic v) {
+          if (v == null) return 0;
+          if (v is int) return v;
+          if (v is num) return v.toInt();
+          return int.tryParse(v.toString()) ?? 0;
+        }
+
+        setState(() {
+          rentalCount = toInt(jsonData['rentalCount']);
+          propertyCountLimit = toInt(jsonData['propertyCountLimit']);
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() {});
     }
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -692,9 +841,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                             Add_new_property()));
                                 if (result == true) {
                                   setState(() {
-                                    futureRentalOwners = PropertiesRepository()
-                                        .fetchProperties();
+                                    _currentPage = 0;
+                                    futurePropertiesLoad = _loadProperties();
                                   });
+                                  fetchRentaladded();
                                 }
                               },
                               child: Container(
@@ -781,9 +931,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchvalue = value;
-                                          if (_currentPage != 0)
+                                          if (!_useServerPagination() &&
+                                              _currentPage != 0) {
                                             _currentPage = 0;
+                                          }
                                         });
+                                        if (_useServerPagination()) {
+                                          _scheduleSearchReload();
+                                        }
                                       },
                                       cursorColor: blueColor,
                                       decoration: InputDecoration(
@@ -854,6 +1009,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedValue = value;
+                                    _currentPage = 0;
+                                    futurePropertiesLoad = _loadProperties();
                                   });
                                 },
                                 buttonStyleData: ButtonStyleData(
@@ -1004,9 +1161,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantStatus = value;
-                                    if (_currentPage != 0)
-                                      _currentPage =
-                                          0; // Reset to first page when filter changes
+                                    _currentPage = 0;
+                                    futurePropertiesLoad = _loadProperties();
                                   });
                                 },
                               ),
@@ -1099,9 +1255,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                 onChanged: (value) {
                                   setState(() {
                                     selectedApplicantOcuupied = value;
-                                    if (_currentPage != 0)
-                                      _currentPage =
-                                          0; // Reset to first page when filter changes
+                                    _currentPage = 0;
+                                    futurePropertiesLoad = _loadProperties();
                                   });
                                 },
                               ),
@@ -1261,9 +1416,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     onChanged: (value) {
                                       setState(() {
                                         selectedRentalOwner = value;
-                                        if (_currentPage != 0)
-                                          _currentPage =
-                                              0; // Reset to first page when filter changes
+                                        _currentPage = 0;
+                                        futurePropertiesLoad =
+                                            _loadProperties();
                                       });
                                     },
                                   ),
@@ -1275,13 +1430,35 @@ class _PropertiesTableState extends State<PropertiesTable> {
                         const SizedBox(width: 10),
                         Expanded(
                           flex: 1,
-                          child: Container(
-                              // Placeholder for count or other content
-                              // You can add your count widget here
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: screenHeight > 677 ? 13.6 : 13,
+                                    color: blueColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  children: [
+                                    const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332),)),
+                                    TextSpan(
+                                      text: '$rentalCount',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1A2332),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                            ),
+                          ),
                         ),
                         if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
+                          const SizedBox(width: 6),
                         if (MediaQuery.of(context).size.width > 500)
                           const SizedBox(width: 14),
                       ],
@@ -1339,14 +1516,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                       // padding: const EdgeInsets.all(11.0),
                       padding: EdgeInsets.all(
                           MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                      child: FutureBuilder<List<Rentals>>(
-                        future: futureRentalOwners,
+                      child: FutureBuilder<RentalsPageResult>(
+                        future: futurePropertiesLoad,
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return ColabShimmerLoadingWidget();
                           } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
+                              snapshot.data!.items.isEmpty) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
                               child: Center(
@@ -1374,118 +1551,46 @@ class _PropertiesTableState extends State<PropertiesTable> {
                               ),
                             );
                           } else {
-                            var data = snapshot.data!;
+                            final pageResult = snapshot.data!;
+                            final pag = pageResult.pagination;
+                            late final int totalPages;
+                            late final List<Rentals> currentPageData;
 
-                            // Apply filters
-                            if (selectedValue != null &&
-                                selectedValue != "All") {
-                              data = data
-                                  .where((properties) =>
-                                      properties
-                                          .propertyTypeData?.propertyType ==
-                                      selectedValue)
-                                  .toList();
+                            if (pag != null) {
+                              _tableData = pageResult.items;
+                              totalPages = pag.totalPages <= 0
+                                  ? 1
+                                  : pag.totalPages;
+                              currentPageData = pageResult.items;
+                            } else {
+                              final data =
+                                  List<Rentals>.from(pageResult.items);
+                              _tableData = data;
+                              final rawPages =
+                                  (_tableData.length / _rowsPerPage).ceil();
+                              totalPages = rawPages < 1 ? 1 : rawPages;
+                              if (_currentPage >= totalPages) {
+                                _currentPage = totalPages - 1;
+                              }
+                              if (_currentPage < 0) _currentPage = 0;
+                              final startIndex = _currentPage * _rowsPerPage;
+                              final endIndex =
+                                  startIndex + _rowsPerPage > _tableData.length
+                                      ? _tableData.length
+                                      : startIndex + _rowsPerPage;
+                              currentPageData =
+                                  _tableData.sublist(startIndex, endIndex);
                             }
 
-                            if (searchvalue.isNotEmpty) {
-                              data = data
-                                  .where((properties) =>
-                                      properties.rentalAddress!.toLowerCase().contains(searchvalue.toLowerCase()) ||
-                                      properties.propertyTypeData!.propertyType!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      properties.propertyTypeData!.propertySubType!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.rentalOwnerName!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.rentalOwnerPhoneNumber!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.rentalOwnerCompanyName!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.rentalOwnerPrimaryEmail!
-                                          .toLowerCase()
-                                          .contains(searchvalue.toLowerCase()) ||
-                                      properties.rentalOwnerData!.Address!.toLowerCase().contains(searchvalue.toLowerCase()) ||
-                                      (properties.tenantsData != null && properties.tenantsData!.any((tenant) => (tenant.tenantFirstName ?? '').toLowerCase().contains(searchvalue.toLowerCase()) || (tenant.tenantLastName ?? '').toLowerCase().contains(searchvalue.toLowerCase()))))
-                                  .toList();
-                            }
+                            final int totalForPager =
+                                pag?.totalItems ?? _tableData.length;
+                            // Always show pager when there is data so rows-per-page can be
+                            // changed (e.g. 25 → 10) even when everything fits one page.
+                            final bool showPagination = totalForPager > 0;
 
-                            if (selectedApplicantStatus ==
-                                'Accepting Applications') {
-                              data = data
-                                  .where((properties) =>
-                                      properties.is_available == true)
-                                  .toList();
-                            } else if (selectedApplicantStatus ==
-                                'Not Accepting Applications') {
-                              data = data
-                                  .where((properties) =>
-                                      properties.is_available == false)
-                                  .toList();
-                            }
-
-                            if (selectedApplicantOcuupied == 'Occupied') {
-                              data = data
-                                  .where((properties) =>
-                                      properties.tenantsData != null &&
-                                      properties.tenantsData!.length > 0)
-                                  .toList();
-                            } else if (selectedApplicantOcuupied == 'Vacant') {
-                              data = data
-                                  .where((properties) =>
-                                      properties.tenantsData == null ||
-                                      properties.tenantsData!.length == 0)
-                                  .toList();
-                            }
-
-                            if (selectedRentalOwner != null &&
-                                selectedRentalOwner != "All") {
-                              data = data
-                                  .where((properties) =>
-                                      properties
-                                          .rentalOwnerData?.rentalOwnerId ==
-                                      selectedRentalOwner)
-                                  .toList();
-                            }
-
-                            sortData(data);
-                          
-                            // Update the total data
-                            _tableData = List<Rentals>.from(data);
-
-                            // Calculate total pages
-                            final totalPages =
-                                (_tableData.length / _rowsPerPage).ceil();
-
-                            // Ensure current page is valid
-                            if (_currentPage >= totalPages && totalPages > 0) {
-                              _currentPage = totalPages - 1;
-                            }
-
-                            // Calculate start and end indices for current page
-                            final startIndex = _currentPage * _rowsPerPage;
-                            final endIndex =
-                                startIndex + _rowsPerPage > _tableData.length
-                                    ? _tableData.length
-                                    : startIndex + _rowsPerPage;
-
-                            // Get current page data
-                            final currentPageData =
-                                _tableData.sublist(startIndex, endIndex);
                             print("=== CURRENT PAGE DATA ===");
                             print(
                                 "Total data: ${_tableData.length}, Current page: $_currentPage, Rows per page: $_rowsPerPage");
-                            print(
-                                "Start index: $startIndex, End index: $endIndex");
                             print(
                                 "Current page data count: ${currentPageData.length}");
                             print(
@@ -1984,13 +2089,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   );
                                                                   if (check ==
                                                                       true) {
-                                                                    setState(
-                                                                        () {
-                                                                      futureRentalOwners =
-                                                                          PropertiesRepository()
-                                                                              .fetchProperties();
-                                                                    });
-                                                                    // Update State
+                                                                    _reloadProperties();
                                                                   }
                                                                 },
                                                                 child:
@@ -2102,7 +2201,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     ),
                                   ),
                                   const SizedBox(height: 20),
-                                  if (data.length > _rowsPerPage)
+                                  if (showPagination)
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
@@ -2134,16 +2233,17 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                             value.toString()),
                                                       );
                                                     }).toList(),
-                                                    onChanged: _tableData
-                                                                .length >
-                                                            itemsPerPageOptions
-                                                                .first
+                                                    onChanged: totalForPager > 0
                                                         ? (newValue) {
                                                             setState(() {
                                                               _rowsPerPage =
                                                                   newValue!;
                                                               _currentPage =
-                                                                  0; // Reset to first page when items per page change
+                                                                  0;
+                                                              if (_useServerPagination()) {
+                                                                futurePropertiesLoad =
+                                                                    _loadProperties();
+                                                              }
                                                             });
                                                           }
                                                         : null,
@@ -2176,6 +2276,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                   : () {
                                                       setState(() {
                                                         _currentPage--;
+                                                        if (pag != null) {
+                                                          futurePropertiesLoad =
+                                                              _loadProperties();
+                                                        }
                                                       });
                                                     },
                                             ),
@@ -2215,6 +2319,10 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       ? () {
                                                           setState(() {
                                                             _currentPage++;
+                                                            if (pag != null) {
+                                                              futurePropertiesLoad =
+                                                                  _loadProperties();
+                                                            }
                                                           });
                                                         }
                                                       : null,
@@ -2325,9 +2433,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         Fluttertoast.showToast(
             msg: "Property availability updated successfully.");
         // Optionally refresh data here
-        setState(() {
-          futureRentalOwners = PropertiesRepository().fetchProperties();
-        });
+        _reloadProperties();
       } else {
         Fluttertoast.showToast(msg: "Failed to publish rent amount");
       }
