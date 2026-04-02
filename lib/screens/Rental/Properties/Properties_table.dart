@@ -1023,7 +1023,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                       ? MediaQuery.of(context).size.width * .37
                                       : MediaQuery.of(context).size.width * .4,
                                   padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
+                                      left: 8, right: 14),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(

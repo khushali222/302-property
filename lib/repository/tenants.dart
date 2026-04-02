@@ -9,6 +9,38 @@ import '../Model/tenants.dart';
 import '../constant/constant.dart';
 import 'package:http/http.dart' as http;
 
+class TenantsPagination {
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+  final int itemsPerPage;
+
+  const TenantsPagination({
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalItems,
+    required this.itemsPerPage,
+  });
+}
+
+class TenantsV2ListResult {
+  final Map<String, List<Tenant>> categorized;
+  final Map<String, int> counts;
+  final TenantsPagination? pagination;
+
+  TenantsV2ListResult({
+    required this.categorized,
+    required this.counts,
+    this.pagination,
+  });
+}
+
+int _tenantJsonInt(dynamic v, [int fallback = 0]) {
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  return fallback;
+}
+
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
@@ -56,22 +88,52 @@ class TenantsRepository {
     return categorizedTenants;
   }
 
-  Future<Map<String, List<Tenant>>> fetchTenants() async {
+  Map<String, int> _countsFromV2Data(Map<String, dynamic>? dataMap) {
+    final counts = <String, int>{};
+    if (dataMap == null) return counts;
+    final raw = dataMap['counts'];
+    if (raw is! Map) return counts;
+    final m = Map<String, dynamic>.from(raw);
+    counts['currentCount'] = _tenantJsonInt(m['currentCount']);
+    counts['formerCount'] = _tenantJsonInt(m['formerCount']);
+    counts['applicantCount'] = _tenantJsonInt(m['applicantCount']);
+    return counts;
+  }
+
+  TenantsPagination? _paginationFromRoot(
+      Map<String, dynamic> jsonResponse, int limitFallback) {
+    final pRaw = jsonResponse['pagination'];
+    if (pRaw is! Map<String, dynamic>) return null;
+    return TenantsPagination(
+      currentPage: _tenantJsonInt(pRaw['currentPage'], 1),
+      totalPages: _tenantJsonInt(pRaw['totalPages'], 1).clamp(1, 1 << 30),
+      totalItems: _tenantJsonInt(pRaw['totalItems']),
+      itemsPerPage: _tenantJsonInt(pRaw['itemsPerPage'], limitFallback),
+    );
+  }
+
+  /// Paginated v2 list (same query shape as web: `page`, `limit`, `search`, `tenantType`, `sortBy`, `sortOrder`).
+  Future<TenantsV2ListResult> fetchTenantsV2Page({
+    required int page,
+    required int limit,
+    String search = '',
+    String tenantType = 'current',
+    String sortBy = 'createdAt',
+    String sortOrder = 'desc',
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final uri = Uri.parse('${Api_url}/api/tenant/tenants/v2/$id').replace(
       queryParameters: {
-        'page': '1',
-        'limit': '5000',
-        'search': '',
-        'tenantType': 'all',
-        'sortBy': 'createdAt',
-        'sortOrder': 'desc',
+        'page': '$page',
+        'limit': '$limit',
+        'search': search,
+        'tenantType': tenantType,
+        'sortBy': sortBy,
+        'sortOrder': sortOrder,
       },
     );
-    debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
-    debugPrint('[Tenants v2][Admin] Flow: Tenants_table → TenantsRepository.fetchTenants()');
     debugPrint('[Tenants v2][Admin] REQUEST GET $uri');
     final response = await http.get(
       uri,
@@ -81,45 +143,42 @@ class TenantsRepository {
       },
     );
     debugPrint('[Tenants v2][Admin] HTTP status: ${response.statusCode}');
-    debugPrint('[Tenants v2][Admin] RESPONSE BODY:\n${response.body}');
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-      if (jsonResponse['pagination'] != null) {
-        debugPrint('[Tenants v2][Admin] pagination: ${jsonResponse['pagination']}');
-      }
-      final dataMap = jsonResponse['data'];
-      if (dataMap is Map<String, dynamic> && dataMap['counts'] != null) {
-        debugPrint('[Tenants v2][Admin] data.counts: ${dataMap['counts']}');
-      }
-      if (dataMap is Map<String, dynamic> && dataMap['tenants'] is List) {
-        debugPrint(
-            '[Tenants v2][Admin] data.tenants length (raw JSON): ${(dataMap['tenants'] as List).length}');
-      }
-
-      if (jsonResponse['data'] != null) {
-        final categorized = _categorizedTenantsFromV2Data(
-            jsonResponse['data'] as Map<String, dynamic>);
-        debugPrint(
-            '[Tenants v2][Admin] after _categorizedTenantsFromV2Data → current: ${categorized['currentTenants']!.length}, former: ${categorized['formerTenants']!.length}, applicants: ${categorized['currentApplicants']!.length}');
-        debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
-        return categorized;
-      }
-      debugPrint('[Tenants v2][Admin] No data key in response.');
-      debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
-      return {
+    final empty = TenantsV2ListResult(
+      categorized: {
         'currentTenants': [],
         'formerTenants': [],
         'currentApplicants': [],
-      };
-    } else {
+      },
+      counts: {},
+      pagination: null,
+    );
+    if (response.statusCode != 200) {
       debugPrint('[Tenants v2][Admin] Failed: ${response.body}');
-      debugPrint('[Tenants v2][Admin] ──────────────────────────────────────');
-      return {
-        'currentTenants': [],
-        'formerTenants': [],
-        'currentApplicants': [],
-      };
+      return empty;
     }
+    final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+    final dataMap = jsonResponse['data'];
+    if (dataMap is! Map<String, dynamic>) return empty;
+    final categorized = _categorizedTenantsFromV2Data(dataMap);
+    final counts = _countsFromV2Data(dataMap);
+    final pagination = _paginationFromRoot(jsonResponse, limit);
+    return TenantsV2ListResult(
+      categorized: categorized,
+      counts: counts,
+      pagination: pagination,
+    );
+  }
+
+  Future<Map<String, List<Tenant>>> fetchTenants() async {
+    final r = await fetchTenantsV2Page(
+      page: 1,
+      limit: 5000,
+      search: '',
+      tenantType: 'all',
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    );
+    return r.categorized;
   }
 
   Future<List<Tenant>> fetchLeaseTenants(String tenantId) async {

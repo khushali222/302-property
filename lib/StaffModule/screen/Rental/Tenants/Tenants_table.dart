@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -36,7 +37,8 @@ class Tenants_table extends StatefulWidget {
 
 class _Tenants_tableState extends State<Tenants_table> {
   int totalrecords = 0;
-  late Future<Map<String, List<Tenant>>> futureTenants;
+  late Future<TenantsV2ListResult> futureTenants;
+  Timer? _searchDebounce;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -68,6 +70,23 @@ class _Tenants_tableState extends State<Tenants_table> {
     filteredData.addAll(categorizedData['currentApplicants'] ?? []);
 
     return filteredData;
+  }
+
+  Future<TenantsV2ListResult> _tenantsPageFuture() {
+    return TenantsRepository().fetchTenantsV2Page(
+      page: currentPage + 1,
+      limit: itemsPerPage,
+      search: searchvalue,
+      tenantType: includeFormerTenants ? 'all' : 'current',
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    );
+  }
+
+  void _scheduleTenantsLoad() {
+    setState(() {
+      futureTenants = _tenantsPageFuture();
+    });
   }
 
   void sortData(List<Tenant> data) {
@@ -284,10 +303,17 @@ class _Tenants_tableState extends State<Tenants_table> {
     });
     checkInternet();
     debugPrint(
-        '[Tenants_table][Staff] initState → futureTenants = TenantsRepository().fetchTenantsV2() (v2 API)');
-    futureTenants = TenantsRepository().fetchTenantsV2();
+        '[Tenants_table][Staff] initState → fetchTenantsV2Page (server pagination)');
+    futureTenants = _tenantsPageFuture();
     fetchtenantsadded();
     fetchCompany();
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   ConnectivityResult? _connectivityResult;
@@ -370,9 +396,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                   companyName: companyName,
                   tenantEmail: '',
                   reason: reason.text);
-              setState(() {
-                futureTenants = TenantsRepository().fetchTenantsV2();
-              });
+              _scheduleTenantsLoad();
+              fetchtenantsadded();
               Navigator.pop(context);
             }
           },
@@ -747,10 +772,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                     MaterialPageRoute(
                                         builder: (context) => AddTenant()));
                                 if (result == true) {
-                                  setState(() {
-                                    futureTenants =
-                                        TenantsRepository().fetchTenantsV2();
-                                  });
+                                  _scheduleTenantsLoad();
                                 }
                               },
                               child: Container(
@@ -829,7 +851,16 @@ class _Tenants_tableState extends State<Tenants_table> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchvalue = value;
-                                          if (currentPage != 0) currentPage = 0;
+                                        });
+                                        _searchDebounce?.cancel();
+                                        _searchDebounce = Timer(
+                                            const Duration(milliseconds: 400),
+                                            () {
+                                          if (!mounted) return;
+                                          setState(() {
+                                            currentPage = 0;
+                                            futureTenants = _tenantsPageFuture();
+                                          });
                                         });
                                       },
                                       cursorColor: blueColor,
@@ -919,16 +950,21 @@ class _Tenants_tableState extends State<Tenants_table> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Count display
-                              FutureBuilder<Map<String, List<Tenant>>>(
+                              FutureBuilder<TenantsV2ListResult>(
                                 future: futureTenants,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
-                                    int currentCount = snapshot
-                                            .data!['currentTenants']?.length ??
+                                    final c = snapshot.data!.counts;
+                                    int currentCount = c['currentCount'] ??
+                                        snapshot.data!.categorized[
+                                                'currentTenants']?.length ??
                                         0;
-                                    int formerCount = snapshot
-                                            .data!['formerTenants']?.length ??
+                                    int formerCount = c['formerCount'] ??
+                                        snapshot.data!.categorized[
+                                                'formerTenants']?.length ??
                                         0;
+                                    int applicantCount =
+                                        c['applicantCount'] ?? 0;
                                     int totalCount = currentCount + formerCount;
 
                                     return Row(
@@ -949,6 +985,15 @@ class _Tenants_tableState extends State<Tenants_table> {
                                             color: Colors.grey[700],
                                           ),
                                         ),
+                                        if (applicantCount > 0)
+                                          Text(
+                                            'Applicants: $applicantCount | ',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
                                         Text(
                                           'Total: $totalCount',
                                           style: TextStyle(
@@ -984,6 +1029,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                           includeFormerTenants = value!;
                                           currentPage =
                                               0; // Reset to first page
+                                          futureTenants = _tenantsPageFuture();
                                         });
                                       },
                                       activeColor: blueColor,
@@ -1015,7 +1061,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   Padding(
                     padding: EdgeInsets.all(
                         MediaQuery.of(context).size.width < 500 ? 14 : 28),
-                    child: FutureBuilder<Map<String, List<Tenant>>>(
+                    child: FutureBuilder<TenantsV2ListResult>(
                       future: futureTenants,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -1053,7 +1099,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                           );
                         } else {
                           // Get filtered data based on checkbox selections
-                          var data = getFilteredData(snapshot.data!);
+                          var data =
+                              getFilteredData(snapshot.data!.categorized);
 
                           if (data.isEmpty) {
                             return Container(
@@ -1084,39 +1131,16 @@ class _Tenants_tableState extends State<Tenants_table> {
                             );
                           }
 
-                          // Apply search filter to the already filtered data
-                          if (searchvalue.isNotEmpty && searchvalue != "All") {
-                            data = data.where((rentals) {
-                              // Combine first and last name for full name search
-                              String fullName =
-                                  '${rentals.tenantFirstName} ${rentals.tenantLastName}'
-                                      .toLowerCase();
-                              String searchTerm = searchvalue.toLowerCase();
-
-                              return fullName.contains(searchTerm) ||
-                                  (rentals.tenantPhoneNumber ?? '')
-                                      .toLowerCase()
-                                      .contains(searchTerm) ||
-                                  (rentals.tenantEmail ?? '')
-                                      .toLowerCase()
-                                      .contains(searchTerm) ||
-                                  (rentals.rentalAddress ?? '')
-                                      .toLowerCase()
-                                      .contains(searchTerm);
-                            }).toList();
-                          }
                           sortData(data);
                           if (data.isNotEmpty) {
                             print(
                                 'table password ${data.first.tenantPassword}');
                           }
-                          // data = data.reversed.toList();
-                          final totalPages =
-                              (data.length / itemsPerPage).ceil();
-                          final currentPageData = data
-                              .skip(currentPage * itemsPerPage)
-                              .take(itemsPerPage)
-                              .toList();
+                          final totalPages = (snapshot.data!.pagination
+                                      ?.totalPages ??
+                                  1)
+                              .clamp(1, 1 << 30);
+                          final currentPageData = data;
                           final bool canChangePageSize = data.isNotEmpty;
                           return SingleChildScrollView(
                             child: Column(
@@ -1453,11 +1477,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                           )));
                                                               if (check ==
                                                                   true) {
-                                                                setState(() {
-                                                                  futureTenants =
-                                                                      TenantsRepository()
-                                                                          .fetchTenantsV2();
-                                                                });
+                                                                _scheduleTenantsLoad();
                                                               }
                                                             },
                                                             child: Container(
@@ -1590,6 +1610,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                             itemsPerPage =
                                                                 newValue!;
                                                             currentPage = 0;
+                                                            futureTenants =
+                                                                _tenantsPageFuture();
                                                           });
                                                         }
                                                       : null,
@@ -1615,6 +1637,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 ? () {
                                                     setState(() {
                                                       currentPage--;
+                                                      futureTenants =
+                                                          _tenantsPageFuture();
                                                     });
                                                   }
                                                 : null,
@@ -1644,6 +1668,8 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                 ? () {
                                                     setState(() {
                                                       currentPage++;
+                                                      futureTenants =
+                                                          _tenantsPageFuture();
                                                     });
                                                   }
                                                 : null,
