@@ -325,10 +325,10 @@ class _Summery_pageState extends State<Summery_page>
     if (title.startsWith('Work order')) return 'assets/icons/maintence.png';
     if (title.startsWith('Lease')) return 'assets/icons/document.png';
     if (title.startsWith('Revenue')) return 'assets/icons/financial.png';
-    if (title.startsWith('Tax and Insurance'))
-      return 'assets/icons/mynaui_dollar-solid.png';
-    if (title.startsWith('Utilities')) return 'assets/icons/Utility.png';
-    if (title.startsWith('Additional Stats')) return 'assets/icons/note.png';
+    if (title.startsWith('Annual Expenses'))
+      return 'assets/icons/Taxes.png';
+    if (title.startsWith('Utilities')) return 'assets/icons/uti.png';
+    if (title.startsWith('Additional Stats')) return 'assets/icons/additional.png';
     return 'assets/icons/summery.png';
   }
 
@@ -1133,7 +1133,8 @@ class _Summery_pageState extends State<Summery_page>
     );
   }
 
-  Widget _noiRow(String label, num value, double bodySize) {
+  Widget _noiRow(String label, num value, double bodySize,
+      {String? leadingIconAsset}) {
     final isNegative = value < 0;
     final display = (isNegative ? '-' : '') +
         NumberFormat.currency(symbol: '\$', decimalDigits: 2)
@@ -1143,11 +1144,20 @@ class _Summery_pageState extends State<Summery_page>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: bodySize,
-                  color: Colors.grey[700],
-                  fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (leadingIconAsset != null) ...[
+                Image.asset(leadingIconAsset, width: 20, height: 20),
+                const SizedBox(width: 8),
+              ],
+              Text(label,
+                  style: TextStyle(
+                      fontSize: bodySize,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
           Text(display,
               style: TextStyle(
                   fontSize: bodySize,
@@ -3203,7 +3213,7 @@ class _Summery_pageState extends State<Summery_page>
                           {"title": "Lease", "index": isMultiUnit ? 4 : 3},
                           {"title": "Revenue", "index": isMultiUnit ? 5 : 4},
                           {
-                            "title": "Tax and Insurance",
+                            "title": "Annual Expenses",
                             "index": isMultiUnit ? 6 : 5
                           },
                           {"title": "Utilities", "index": isMultiUnit ? 7 : 6},

@@ -3114,7 +3114,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     // 'Charges',
     'Date Format',
     'Late Fee Charge',
-    'Manage Template',
+    'Manage Templates',
     'Mail',
     'Work Order',
     'Property Owners',
@@ -3132,7 +3132,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (ischargesetting) return 'Charges';
     if (isdateformate) return 'Date Format';
     if (islatefee) return 'Late Fee Charge';
-    if (ismanagetemplate) return 'Manage Template';
+    if (ismanagetemplate) return 'Manage Templates';
     if (ismail) return 'Mail';
     if (isworkorder) return 'Work Order';
     if (ispropertyowner) return 'Property Owners';
@@ -3153,7 +3153,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       islatefee = value == 'Late Fee Charge';
       isdateformate = value == 'Date Format';
       isworkorder = value == 'Work Order';
-      ismanagetemplate = value == 'Manage Template';
+      ismanagetemplate = value == 'Manage Templates';
       ischargesetting = value == 'Charges';
       iscategories = value == 'Categories';
       isvendor = value == 'Vendors' || value == 'Vendor';
@@ -3203,7 +3203,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.calendar_today;
       case 'Late Fee Charge':
         return Icons.schedule;
-      case 'Manage Template':
+      case 'Manage Templates':
         return Icons.description;
       case 'Mail':
         return Icons.email;

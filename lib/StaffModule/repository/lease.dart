@@ -16,6 +16,33 @@ import '../../model/get_lease.dart';
 import '../../model/lease.dart';
 import '../../repository/ExpiringLeaseTable.dart';
 
+class LeasesPagination {
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+  final int itemsPerPage;
+
+  const LeasesPagination({
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalItems,
+    required this.itemsPerPage,
+  });
+}
+
+class LeasesPageResult {
+  final List<Lease1> items;
+  final LeasesPagination? pagination;
+
+  LeasesPageResult({required this.items, this.pagination});
+}
+
+int _leaseJsonInt(dynamic v, [int fallback = 0]) {
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  return fallback;
+}
+
 class LeaseRepository {
   String baseUrl = '$Api_url/api/payment/charges_payments';
   // Future<void> postLease(Lease lease) async {
@@ -355,32 +382,80 @@ class LeaseRepository {
   //   }
   // }
 
-  Future<List<Lease1>> fetchLease(String? adminId) async {
+  Future<LeasesPageResult> fetchLeasePage({
+    required int page,
+    required int limit,
+    String search = '',
+    required String status,
+    String sortBy = 'end_date',
+    String sortOrder = 'descending',
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    adminId = prefs.getString("adminId");
-    String? adminid = prefs.getString("adminId");
+    final adminId = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
+    final uri = Uri.parse('$Api_url/api/leases/leases/$adminId').replace(
+      queryParameters: {
+        'page': '$page',
+        'limit': '$limit',
+        'search': search,
+        'status': status,
+        'sortBy': sortBy,
+        'sortOrder': sortOrder,
+      },
+    );
+    print(uri);
     final response = await http.get(
-      Uri.parse('$Api_url/api/leases/leases/$adminId'),
+      uri,
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
-    print('$Api_url/api/leases/leases/$adminId');
-    print(adminId);
-    print(response.body);
 
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body);
-      List leasesJson = jsonResponse['data'];
-      return leasesJson.map((data) => Lease1.fromJson(data)).toList();
-    } else {
-      print('Failed to fetch lease: ${response.body}');
-      return [];
-      //throw Exception('Failed to load lease');
+    final empty = LeasesPageResult(items: [], pagination: null);
+    if (response.statusCode != 200) {
+      print('Failed to fetch lease page: ${response.body}');
+      return empty;
     }
+    final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+    final raw = jsonResponse['data'];
+    if (raw is! List) return empty;
+    final items =
+        raw.map((e) => Lease1.fromJson(e as Map<String, dynamic>)).toList();
+
+    LeasesPagination? pagination;
+    final pRaw = jsonResponse['pagination'];
+    if (pRaw is Map<String, dynamic>) {
+      pagination = LeasesPagination(
+        currentPage: _leaseJsonInt(pRaw['currentPage'], 1),
+        totalPages: _leaseJsonInt(pRaw['totalPages'], 1).clamp(1, 1 << 30),
+        totalItems: _leaseJsonInt(pRaw['totalItems']),
+        itemsPerPage: _leaseJsonInt(pRaw['itemsPerPage'], limit),
+      );
+    }
+    return LeasesPageResult(items: items, pagination: pagination);
+  }
+
+  Future<List<Lease1>> fetchLease(String? adminId) async {
+    final all = <Lease1>[];
+    var page = 1;
+    const limit = 200;
+    while (true) {
+      final r = await fetchLeasePage(
+        page: page,
+        limit: limit,
+        search: '',
+        status: 'all',
+        sortBy: 'end_date',
+        sortOrder: 'descending',
+      );
+      all.addAll(r.items);
+      final p = r.pagination;
+      if (p == null || r.items.isEmpty || page >= p.totalPages) break;
+      page++;
+    }
+    return all;
   }
 
   Future<Map<String, dynamic>> deleteLease({
