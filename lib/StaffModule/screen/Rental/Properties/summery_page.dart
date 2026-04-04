@@ -46,6 +46,7 @@ import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
 import '../../../repository/unit_data.dart';
 import 'Additional Stats/Additional_Stats_table.dart';
+import 'package:three_zero_two_property/screens/Rental/Properties/Maintenance/maintenance_table.dart';
 import 'moveout/Moveout_properties.dart';
 import 'moveout/repository.dart';
 import 'applience/Applience_parts.dart' as applience_parts;
@@ -268,7 +269,7 @@ class _Summery_pageState extends State<Summery_page>
         Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
     // futuresummery = Properies_summery_Repo().fetchPropertiessummery(widget.properties.rentalId!);
     _tabController = TabController(length: 5, vsync: this);
-    _taxInsuranceTabController = TabController(length: 2, vsync: this);
+    _taxInsuranceTabController = TabController(length: 3, vsync: this);
     _additionalStatsTabController = TabController(length: 3, vsync: this);
     // street3.text = widget.unit!.rentalunitadress!;
     futureRentalDetails = Properies_summery_Repo()
@@ -3891,7 +3892,9 @@ class _Summery_pageState extends State<Summery_page>
                           Icon(
                             _taxInsuranceSelectedIndex == 0
                                 ? Icons.receipt
-                                : Icons.shield,
+                                : _taxInsuranceSelectedIndex == 1
+                                    ? Icons.shield
+                                    : Icons.build_circle_outlined,
                             color: blueColor,
                             size: 20,
                           ),
@@ -3900,7 +3903,9 @@ class _Summery_pageState extends State<Summery_page>
                             child: Text(
                               _taxInsuranceSelectedIndex == 0
                                   ? 'Tax'
-                                  : 'Insurance',
+                                  : _taxInsuranceSelectedIndex == 1
+                                      ? 'Insurance'
+                                      : 'Maintenance',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: blueColor,
@@ -4002,9 +4007,11 @@ class _Summery_pageState extends State<Summery_page>
                               color: _taxInsuranceSelectedIndex == 1
                                   ? const Color(0xFFF4F8FF)
                                   : Colors.white,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(8),
-                                bottomRight: Radius.circular(8),
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.shade200,
+                                  width: 0.5,
+                                ),
                               ),
                             ),
                             child: Row(
@@ -4044,6 +4051,64 @@ class _Summery_pageState extends State<Summery_page>
                             ),
                           ),
                         ),
+                        // Maintenance Menu Item
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _taxInsuranceSelectedIndex = 2;
+                              _isTaxInsuranceDropdownOpen = false;
+                              _taxInsuranceTabController?.animateTo(2);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: _taxInsuranceSelectedIndex == 2
+                                  ? const Color(0xFFF4F8FF)
+                                  : Colors.white,
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.build_circle_outlined,
+                                  color: _taxInsuranceSelectedIndex == 2
+                                      ? blueColor
+                                      : Colors.grey.shade700,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Maintenance',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: _taxInsuranceSelectedIndex == 2
+                                          ? blueColor
+                                          : Colors.grey.shade700,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <
+                                                  500
+                                              ? 14
+                                              : 15,
+                                    ),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: _taxInsuranceSelectedIndex == 2
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                 ],
@@ -4059,7 +4124,16 @@ class _Summery_pageState extends State<Summery_page>
                   showDrawer: false,
                   showAddButton: true,
                 )
-              : PropertyInsurance_page(unit),
+              : _taxInsuranceSelectedIndex == 1
+                  ? PropertyInsurance_page(unit)
+                  : MaintenanceTable(
+                      propertyId: widget.properties.rentalId ?? "",
+                      useStaffModule: true,
+                      showAppBar: false,
+                      showDrawer: false,
+                      showAddButton: true,
+                      showOuterSectionTitle: false,
+                    ),
         ],
       ),
     );
