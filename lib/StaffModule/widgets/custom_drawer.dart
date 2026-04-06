@@ -201,6 +201,7 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                     if (permissions.leaseView == true) "Leases",
                     if (permissions.applicantView == true) "Applicants",
                     "Upcoming Renewal",
+                    if (permissions.leaseView == true) "Pending Lease",
                     "Scheduled Payment",
                     "Scheduled Charges",
                   ],
@@ -236,6 +237,14 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                             width: 27,
                             color: blueColor,
                           ),
+                    if (permissions.leaseView == true)
+                      FaIcon(
+                        FontAwesomeIcons.fileLines,
+                        size: 20,
+                        color: widget.currentpage == "Pending Lease"
+                            ? Colors.white
+                            : blueColor,
+                      ),
                     FaIcon(
                       FontAwesomeIcons.clock,
                       size: 20,

@@ -216,6 +216,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Leases",
                   "Applicants",
                   "Upcoming Renewal",
+                  "Pending Lease",
                   "Scheduled Payment",
                   "Scheduled Charges",
                 ],
@@ -249,6 +250,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           width: 23,
                           color: blueColor,
                         ),
+                        //Pending Lease
+                  FaIcon(
+                    FontAwesomeIcons.fileLines,
+                    size: 18,
+                    color: widget.currentpage == "Pending Lease"
+                        ? Colors.white
+                        : blueColor,
+                  ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 18,

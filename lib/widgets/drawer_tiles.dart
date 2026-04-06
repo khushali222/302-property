@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../screens/Communications/Send E-mail/send_mail.dart';
+import '../screens/Leasing/Pending_lease/Pending_lease.dart';
 import '../screens/Rental/mortgage/mortgageTable.dart';
 import 'navigation_helper.dart';
 
@@ -147,6 +148,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Send E-mail": (context) => send_email(), //Send_Email_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
+    "Pending Lease": (context) => Pending_lease(),
     "Scheduled Payment": (context) => Scheduled_Payments_table(),
     "Scheduled Charges": (context) => ScheduledChargeTable(),
     // "Mortgage": (context) => MortgageTable() // Commented out - not deleted

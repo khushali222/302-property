@@ -991,7 +991,7 @@ class _Lease_tableState extends State<Lease_table> {
                               child: Container(
                                 height:
                                     (MediaQuery.of(context).size.width < 500)
-                                        ? 45
+                                        ? 40
                                         : 50,
                                 width: MediaQuery.of(context).size.width < 500
                                     ? MediaQuery.of(context).size.width * .52

@@ -98,9 +98,9 @@ void main() {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    runApp(
+    runApp(/*  */
       DevicePreview(
-        enabled: kDebugMode ?  false  :  false,
+        enabled: kDebugMode ?  true  :  true,
         tools: kDebugMode
             ? [
                 ...DevicePreview.defaultTools,

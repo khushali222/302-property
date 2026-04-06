@@ -7,6 +7,7 @@ import '../../widgets/navigation_helper.dart';
 
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/lease_table.dart';
+import 'package:three_zero_two_property/screens/Leasing/Pending_lease/Pending_lease.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
 // import 'package:three_zero_two_property/StaffModule/screen/Property_Type/Property_type_table.dart'; // Moved to Settings
@@ -129,6 +130,7 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
+    "Pending Lease": (context) => const Pending_lease(useStaffLayout: true),
     "Templates": (context) => TempletTable(),
     //"E-mail Logs": (context) => Email_log_tablee(),
     "E-mail Logs": (context) => Send_Email_table(),
