@@ -38,15 +38,20 @@ class MaintenanceTable extends StatefulWidget {
   State<MaintenanceTable> createState() => _MaintenanceTableState();
 }
 
-class _MaintenanceTableState extends State<MaintenanceTable> {
+class _MaintenanceTableState extends State<MaintenanceTable>
+    with AutomaticKeepAliveClientMixin {
   List<Map<String, dynamic>> _items = [];
   bool _isLoading = false;
   int? _expandedIndex;
+  int _loadGeneration = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    _load(showSpinner: true);
   }
 
   Future<Map<String, String>> _headers() async {
@@ -62,9 +67,15 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
     };
   }
 
-  Future<void> _load() async {
+  /// [showSpinner] false after add/edit/delete updates rows without the full
+  /// loading placeholder (lighter refresh for this section only).
+  Future<void> _load({bool showSpinner = true}) async {
     if (widget.propertyId.isEmpty) return;
-    setState(() => _isLoading = true);
+    final gen = ++_loadGeneration;
+    if (showSpinner && mounted) {
+      setState(() => _isLoading = true);
+    }
+
     try {
       final headers = await _headers();
       final response = await http
@@ -75,19 +86,17 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
           )
           .timeout(const Duration(seconds: 30));
 
+      if (!mounted || gen != _loadGeneration) return;
+
+      List<Map<String, dynamic>> next = [];
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true &&
             data['data'] != null &&
             data['data']['maintenance'] != null) {
-          setState(() {
-            _items = List<Map<String, dynamic>>.from(data['data']['maintenance']);
-          });
-        } else {
-          setState(() => _items = []);
+          next = List<Map<String, dynamic>>.from(data['data']['maintenance']);
         }
       } else {
-        setState(() => _items = []);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -97,8 +106,22 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
           );
         }
       }
+
+      if (!mounted || gen != _loadGeneration) return;
+      setState(() {
+        _items = next;
+        _isLoading = false;
+        if (_expandedIndex != null && _expandedIndex! >= next.length) {
+          _expandedIndex = null;
+        }
+      });
     } catch (e) {
-      setState(() => _items = []);
+      if (!mounted || gen != _loadGeneration) return;
+      setState(() {
+        _items = [];
+        _isLoading = false;
+        _expandedIndex = null;
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -107,8 +130,6 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
           ),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -132,7 +153,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
             ),
           );
         }
-        _load();
+        _load(showSpinner: false);
       } else {
         if (mounted) {
           String msg = 'Delete failed';
@@ -237,7 +258,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
         ),
       ),
     );
-    if (ok == true) _load();
+    if (ok == true) _load(showSpinner: false);
   }
 
   Future<void> _openEdit(Map<String, dynamic> row) async {
@@ -252,9 +273,10 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
         ),
       ),
     );
-    if (ok == true) _load();
+    if (ok == true) _load(showSpinner: false);
   }
 
+  /// Same layout pattern as [Insurance_premium_Table._buildHeaders].
   Widget _buildHeaders() {
     return Container(
       decoration: BoxDecoration(
@@ -264,28 +286,43 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
+        minVerticalPadding: 8,
         title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+          padding: const EdgeInsets.all(2.0),
           child: Row(
-            children: [
-              const SizedBox(width: 28),
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(width: 20),
               Expanded(
-                flex: 2,
-                child: Text(
-                  'Year',
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    'Year',
+                    style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                flex: 3,
-                child: Text(
-                  'Amount',
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
+                flex: 4,
+                child: Container(
+                  margin: const EdgeInsets.only(left: 24, right: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Amount',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -312,9 +349,10 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
           Divider(color: Colors.grey.shade300, thickness: 1),
           const SizedBox(height: 8),
         ],
-        Container(
+        Padding(padding: const EdgeInsets.only(left: 13,right: 13,top: 10,bottom: 10),
+        child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.only(left: 15,right: 15,top: 12,bottom: 12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -332,7 +370,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
             children: [
               if (widget.showAddButton)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
+                  padding: const EdgeInsets.only(bottom: 14,),
                   child: Row(
                     children: [
                       Text(
@@ -340,7 +378,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
                         style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 15,
                         ),
                       ),
                       const Spacer(),
@@ -354,7 +392,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text(
-                            'Add Maintenance',
+                            '+ Add',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -384,143 +422,189 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
                   ),
                 )
               else ...[
-                _buildHeaders(),
-                const SizedBox(height: 8),
-                ..._items.asMap().entries.map((e) {
-                  final index = e.key;
-                  final row = e.value;
-                  final expanded = _expandedIndex == index;
-                  final year = row['year']?.toString() ?? '-';
-                  final amt = _formatAmount(row['amount']);
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: _buildHeaders(),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Column(
+                    children: _items.asMap().entries.map((e) {
+                      final index = e.key;
+                      final row = e.value;
+                      final expanded = _expandedIndex == index;
+                      final year = row['year']?.toString() ?? '-';
+                      final amt = _formatAmount(row['amount']);
 
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    decoration: BoxDecoration(
-                      color: index % 2 != 0
-                          ? const Color(0xFFF4F8FF)
-                          : Colors.white,
-                      border: Border.all(color: const Color(0xFFDBE0E5)),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _expandedIndex = expanded ? null : index;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 8),
-                                    child: FaIcon(
-                                      expanded
-                                          ? FontAwesomeIcons.sortUp
-                                          : FontAwesomeIcons.sortDown,
-                                      size: 18,
-                                      color: const Color(0xFF1E3A8A),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _expandedIndex = expanded ? null : index;
-                                      });
-                                    },
-                                    child: Text(
-                                      year,
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _expandedIndex = expanded ? null : index;
-                                      });
-                                    },
-                                    child: Text(
-                                      amt,
-                                      style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                      void toggleExpand() {
+                        setState(() {
+                          _expandedIndex = expanded ? null : index;
+                        });
+                      }
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        decoration: BoxDecoration(
+                          color: index % 2 != 0
+                              ? const Color(0xFFF4F8FF)
+                              : Colors.white,
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        if (expanded)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  onTap: () => _openEdit(row),
-                                  child: Container(
-                                    height: 38,
-                                    width: 38,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.green.shade50,
-                                    ),
-                                    child: const Center(
-                                      child: FaIcon(
-                                        FontAwesomeIcons.pen,
-                                        size: 15,
-                                        color: Colors.green,
+                        child: Column(
+                          children: <Widget>[
+                            ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              minVerticalPadding: 8,
+                              title: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: toggleExpand,
+                                      child: Container(
+                                        margin: const EdgeInsets.only(
+                                            left: 5, right: 5),
+                                        padding: expanded
+                                            ? const EdgeInsets.only(top: 10)
+                                            : const EdgeInsets.only(
+                                                bottom: 10),
+                                        child: FaIcon(
+                                          expanded
+                                              ? FontAwesomeIcons.sortUp
+                                              : FontAwesomeIcons.sortDown,
+                                          size: 20,
+                                          color: const Color(0xFF1E3A8A),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                GestureDetector(
-                                  onTap: () => _confirmDelete(row),
-                                  child: Container(
-                                    height: 38,
-                                    width: 38,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.orange.shade50,
-                                    ),
-                                    child: const Center(
-                                      child: FaIcon(
-                                        FontAwesomeIcons.trashCan,
-                                        size: 15,
-                                        color: Colors.deepOrange,
+                                    Expanded(
+                                      flex: 3,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: InkWell(
+                                          onTap: toggleExpand,
+                                          child: Text(
+                                            year,
+                                            style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      flex: 4,
+                                      child: InkWell(
+                                        onTap: toggleExpand,
+                                        child: Container(
+                                          margin: const EdgeInsets.only(
+                                              left: 24, right: 5),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 6),
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            amt,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: blueColor,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
-                  );
-                }),
+                            if (expanded)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 2.0),
+                                margin: const EdgeInsets.only(bottom: 2),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        FaIcon(
+                                          expanded
+                                              ? FontAwesomeIcons.sortUp
+                                              : FontAwesomeIcons.sortDown,
+                                          size: 40,
+                                          color: Colors.transparent,
+                                        ),
+                                        const Spacer(),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                         GestureDetector(
+                                          onTap: () => _openEdit(row),
+                                          child: Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.green.shade50,
+                                            ),
+                                            child: const Center(
+                                              child: FaIcon(
+                                                FontAwesomeIcons.edit,
+                                                size: 15,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                       SizedBox(width: 10),
+                                        GestureDetector(
+                                          onTap: () => _confirmDelete(row),
+                                          child: Container(
+                                            height: 35,
+                                            width: 35,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.red.shade50,
+                                            ),
+                                            child: const Center(
+                                              child: FaIcon(
+                                                FontAwesomeIcons.trashCan,
+                                                size: 15,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        
+                                        const SizedBox(width: 10),
+                                      ]
+                                      ,
+                                    ),
+                                    const SizedBox(height: 15),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ],
             ],
           ),
+        ),
         ),
         const SizedBox(height: 16),
       ],
@@ -529,6 +613,7 @@ class _MaintenanceTableState extends State<MaintenanceTable> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final content = SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),

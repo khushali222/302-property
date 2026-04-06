@@ -197,19 +197,20 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
             final err = json.decode(response.body);
             msg = err['message']?.toString() ?? msg;
           } catch (_) {}
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(msg), backgroundColor: Colors.red),
+          Fluttertoast.showToast(
+            msg: msg,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
           );
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _hasValidated = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
+        Fluttertoast.showToast(
+          msg: 'Error: $e',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
       }
     } finally {
@@ -226,7 +227,30 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            SizedBox(height: 10),
+            Row(
+              children: [
+               
+                
+                Material(color: Colors.transparent,
+                child: InkWell(onTap: () => Navigator.pop(context),
+                borderRadius: BorderRadius.circular(5),
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color:Colors.grey.shade200 ,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey.shade300,width: 1),
+                  ),
+                  child: Icon(Icons.arrow_back_ios_new_rounded,size: 15,color: Colors.black,),
+                ),
+              ),
+            ),
+                
+                
+              SizedBox(width: 10),
+                Text(
               isEdit ? 'Edit Maintenance' : 'Add Maintenance',
               style: TextStyle(
                 color: blueColor,
@@ -234,7 +258,9 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
                 fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22,
               ),
             ),
-            const SizedBox(height: 6),
+            ],
+            ),
+            SizedBox(height: 20),
             Text(
               'Enter year and amount for this property.',
               style: TextStyle(
@@ -340,7 +366,7 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
-                  vertical: 6,
+                  vertical: 12,
                 ),
                 hintText: 'e.g., 1500 or 1500.50',
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
@@ -399,7 +425,7 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('Cancel'),
+                    child: const Text('Cancel',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600),),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -417,7 +443,7 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(isEdit ? 'Update' : 'Save'),
+                    child: Text(isEdit ? 'Update' : 'Save',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600),),
                   ),
                 ),
               ],
