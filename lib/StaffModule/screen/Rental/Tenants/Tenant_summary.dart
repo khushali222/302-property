@@ -1,4 +1,4 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
+﻿import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -256,7 +256,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                               fontSize: 13)),
                     ),
                     // Text("Property", style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 3),
+                    // const SizedBox(width: 3),
                   ],
                 ),
               ),
@@ -287,7 +287,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
+                      padding: const EdgeInsets.only(left: 0,),
                       child: Text("Policy Id",
                           style: TextStyle(
                               color: blueColor,
@@ -299,45 +299,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 2,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "Expiration \nDate",
-                      style: TextStyle(
-                          color: blueColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(width: 5),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(width: 40),
           ],
         ),
       ),
@@ -345,7 +307,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
   }
 
   Widget _buildHeaders_lease() {
-    var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
           color: const Color(0xFFF4F8FF),
@@ -356,118 +317,24 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            SizedBox(width: MediaQuery.of(context).size.width * .02),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0),
-                      child: Text("Status",
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(width: 3),
-                  ],
-                ),
-              ),
+              flex: 2,
+              child: Text("     Status",
+                  style: TextStyle(
+                      color: blueColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold)),
             ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
-                      child: Text("   Start Date",
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(width: 5),
-                  ],
-                ),
-              ),
+              flex: 2,
+              child: Text("    Property",
+                  style: TextStyle(
+                      color: blueColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold)),
             ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text(
-                      "  End Date",
-                      style: TextStyle(
-                          color: blueColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(width: 5),
-                  ],
-                ),
-              ),
-            ),
+            const SizedBox(width: 25),
           ],
         ),
       ),
@@ -672,7 +539,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     );
   }
 
-  void handleEdit(AdminTenantInsuranceModel property) async {}
+  void handleEdit(lease_renter_insurance property) async {}
 
   void _showRenterInsuranceDeleteAlert(
       BuildContext context, String rentersInsuranceId) {
@@ -774,15 +641,15 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     });
   }
 
-  void handleDelete(AdminTenantInsuranceModel property) {}
+  void handleDelete(lease_renter_insurance property) {}
 
-  void _sort<T>(Comparable<T> Function(AdminTenantInsuranceModel d) getField,
+  void _sort<T>(Comparable<T> Function(lease_renter_insurance d) getField,
       int columnIndex, bool ascending) {
     // Desktop renter insurance table uses lease_renter_insurance; sorting is via _sortRenterPolicies when needed.
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
-      Comparable<T> Function(AdminTenantInsuranceModel d)? getField) {
+      Comparable<T> Function(lease_renter_insurance d)? getField) {
     return TableCell(
       child: InkWell(
         onTap: getField != null
@@ -818,7 +685,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     );
   }
 
-  Widget _buildActionsCell(AdminTenantInsuranceModel data) {
+  Widget _buildActionsCell(lease_renter_insurance data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -1328,7 +1195,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'No rental is linked to this tenant\'s lease. Work orders cannot be loaded.',
+              'No Data Available',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
             ),
@@ -1443,7 +1310,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Center(
-                  child: Text("No emergency contacts",
+                  child: Text('No Data Available',
                       style: TextStyle(color: Colors.grey.shade600))),
             )
           else
@@ -2978,7 +2845,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                   height: 80,
                                                   child: const Center(
                                                       child: Text(
-                                                          'No data available')));
+                                                          'No Data Available')));
                                             } else {
                                               var data = snapshot.data!;
 
@@ -3009,7 +2876,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                     ),
                                                     Center(
                                                       child:
-                                                          Text("No data Found"),
+                                                          Text('No Data Available'),
                                                     ),
                                                   ],
                                                 );
@@ -3146,6 +3013,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                           ),
                                                                         ),
                                                                         Expanded(
+                                                                          flex: 2,
                                                                           child:
                                                                               InkWell(
                                                                             onTap:
@@ -3157,9 +3025,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                   expandedTenantLeaseIndex = index;
                                                                                 }
                                                                               });
-
-                                                                              // Navigator.of(context)
-                                                                              //     .push(MaterialPageRoute(builder: (context) => summery_page(lease_id: Propertytype.leaseId,)));
                                                                             },
                                                                             child:
                                                                                 Padding(
@@ -3175,39 +3040,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                             ),
                                                                           ),
                                                                         ),
+                                                                        const SizedBox(width: 10),
                                                                         Expanded(
-                                                                          child:
-                                                                              Text(
-                                                                            dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.startDate)),
-                                                                            style:
-                                                                                TextStyle(
+                                                                          flex: 2,
+                                                                          child: Text(
+                                                                            '${Propertytype.rentalAdress ?? ''}',
+                                                                            style: TextStyle(
                                                                               color: blueColor,
                                                                               fontWeight: FontWeight.bold,
                                                                               fontSize: 12,
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .02),
-                                                                        Expanded(
-                                                                          child:
-                                                                              Text(
-                                                                            // '${widget.data.createdAt}',
-
-                                                                            dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.endDate)),
-
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: blueColor,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              fontSize: 12,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * .02),
+                                                                        const SizedBox(width: 25),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -3244,19 +3089,32 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                       TextSpan(
                                                                                         children: [
                                                                                           TextSpan(
-                                                                                            text: 'Property : ',
-                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                                            text: 'Start Date : ',
+                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                                                                                           ),
                                                                                           TextSpan(
-                                                                                            text: '${Propertytype.rentalAdress ?? ''}',
-                                                                                            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
+                                                                                            text: dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.startDate)),
+                                                                                            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
                                                                                           ),
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                                    const SizedBox(
-                                                                                      height: 10,
+                                                                                    const SizedBox(height: 10),
+                                                                                    Text.rich(
+                                                                                      TextSpan(
+                                                                                        children: [
+                                                                                          TextSpan(
+                                                                                            text: 'End Date : ',
+                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                                                                                          ),
+                                                                                          TextSpan(
+                                                                                            text: dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.endDate)),
+                                                                                            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
                                                                                     ),
+                                                                                    const SizedBox(height: 10),
                                                                                     Text.rich(
                                                                                       TextSpan(
                                                                                         children: [
@@ -3443,45 +3301,34 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                         'Error: ${snapshot.error}'));
                                               } else if (!snapshot.hasData ||
                                                   snapshot.data!.isEmpty) {
-                                                return Container(
-                                                    height: 80,
-                                                    child: const Center(
-                                                        child: Text(
-                                                            'No data available')));
+                                                return Column(
+                                                  children: [
+                                                    const SizedBox(height: 10),
+                                                    _buildHeaders(),
+                                                    const SizedBox(height: 20),
+                                                    const Center(child: Text('No Data Available')),
+                                                  ],
+                                                );
                                               } else {
-                                                var data = snapshot.data!
-                                                    as List<
-                                                        lease_renter_insurance>;
-                                                if (selectedValue == null &&
-                                                    searchvalue!.isEmpty) {
-                                                  data = snapshot.data! as List<
-                                                      lease_renter_insurance>;
-                                                } else if (selectedValue ==
-                                                    "All") {
-                                                  data = snapshot.data! as List<
-                                                      lease_renter_insurance>;
-                                                } else if (searchvalue!
-                                                    .isNotEmpty) {
-                                                  data = (snapshot.data! as List<
-                                                          lease_renter_insurance>)
+                                                var data = (snapshot.data!
+                                                        as List<lease_renter_insurance>)
+                                                    .where((p) => p.policyStatus?.toUpperCase() == 'ACTIVE')
+                                                    .toList();
+                                                if (searchvalue!.isNotEmpty) {
+                                                  data = data
                                                       .where((p) =>
-                                                          (p.insuranceCompany ??
-                                                                  '')
+                                                          (p.insuranceCompany ?? '')
                                                               .toLowerCase()
-                                                              .contains(searchvalue!
-                                                                  .toLowerCase()))
+                                                              .contains(searchvalue!.toLowerCase()))
                                                       .toList();
                                                 }
                                                 if (data.isEmpty) {
-                                                  return const Column(
+                                                  return Column(
                                                     children: [
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Center(
-                                                        child: Text(
-                                                            "No data Found"),
-                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      _buildHeaders(),
+                                                      const SizedBox(height: 20),
+                                                      const Center(child: Text('No Data Available')),
                                                     ],
                                                   );
                                                 }
@@ -3605,8 +3452,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                             ),
                                                                           ),
                                                                           Expanded(
-                                                                            flex:
-                                                                                4,
+                                                                            flex: 2,
                                                                             child:
                                                                                 InkWell(
                                                                               onTap: () {
@@ -3626,13 +3472,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          SizedBox(
-                                                                              width: MediaQuery.of(context).size.width * .02),
+                                                                          const SizedBox(width: 20),
                                                                           Expanded(
-                                                                            flex:
-                                                                                2,
-                                                                            child:
-                                                                                Text(
+                                                                            flex: 2,
+                                                                            child: Text(
                                                                               '${policy.policyId ?? ''}',
                                                                               style: TextStyle(
                                                                                 color: blueColor,
@@ -3641,24 +3484,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          SizedBox(
-                                                                              width: MediaQuery.of(context).size.width * .08),
-                                                                          Expanded(
-                                                                            flex:
-                                                                                3,
-                                                                            child:
-                                                                                Text(
-                                                                              // '${widget.data.createdAt}',
-                                                                              dateProvider.formatCurrentDate('${policy.expirationDate ?? ''}'),
-                                                                              style: TextStyle(
-                                                                                color: blueColor,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                fontSize: 12,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              width: MediaQuery.of(context).size.width * .02),
+                                                                          const SizedBox(width: 25),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -3729,11 +3555,26 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                           children: [
                                                                                             TextSpan(
                                                                                               text: 'Effective Date : ',
-                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                                                                                             ),
                                                                                             TextSpan(
                                                                                               text: dateProvider.formatCurrentDate('${policy.effectiveDate ?? ''}'),
-                                                                                              style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
+                                                                                              style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                      const SizedBox(height: 10),
+                                                                                      Text.rich(
+                                                                                        TextSpan(
+                                                                                          children: [
+                                                                                            TextSpan(
+                                                                                              text: 'Expiration Date : ',
+                                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                                                                                            ),
+                                                                                            TextSpan(
+                                                                                              text: dateProvider.formatCurrentDate('${policy.expirationDate ?? ''}'),
+                                                                                              style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
                                                                                             ),
                                                                                           ],
                                                                                         ),
@@ -4020,7 +3861,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                 snapshot.data!.isEmpty) {
                                               return const Center(
                                                   child: Text(
-                                                      'No data available'));
+                                                      'No Data Available'));
                                             } else {
                                               _tableData = snapshot.data!
                                                   as List<
@@ -4848,7 +4689,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     });
   }
 
-  void handleEdit(AdminTenantInsuranceModel property) async {}
+  void handleEdit(lease_renter_insurance property) async {}
 
   void _showAlert(BuildContext context, String id) {
     Alert(
@@ -4880,15 +4721,12 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data = await AdminTenantInsuranceRepository()
-                .deleteInsurancesProperties(id);
-            // Add your delete logic here
-
-            if (data == true)
-              setState(() {
-                futureRenterPolicies = RentersInsuranceService()
-                    .fetchPoliciesByTenant(widget.tenantId);
-              });
+            await RentersInsuranceService()
+                .deleteInsurance(renters_insurance_id: id);
+            setState(() {
+              futureRenterPolicies = RentersInsuranceService()
+                  .fetchPoliciesByTenant(widget.tenantId);
+            });
             Navigator.pop(context);
           },
           color: Colors.red,
@@ -5012,7 +4850,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     });
   }
 
-  void handleDelete(AdminTenantInsuranceModel property) {}
+  void handleDelete(lease_renter_insurance property) {}
 
   Widget _buildHeader<T>(String text, int columnIndex,
       Comparable<T> Function(lease_renter_insurance d)? getField) {
@@ -5057,7 +4895,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     );
   }
 
-  Widget _buildActionsCell(AdminTenantInsuranceModel data) {
+  Widget _buildActionsCell(lease_renter_insurance data) {
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -5988,10 +5826,12 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                               snapshot.data!.isEmpty) {
                                             return const Center(
                                                 child:
-                                                    Text('No data available'));
+                                                    Text('No Data Available'));
                                           } else {
-                                            _tableData = snapshot.data!
-                                                as List<lease_renter_insurance>;
+                                            _tableData = (snapshot.data!
+                                                    as List<lease_renter_insurance>)
+                                                .where((p) => p.policyStatus?.toUpperCase() == 'ACTIVE')
+                                                .toList();
 
                                             totalrecords = _tableData.length;
                                             final dateProvider =
@@ -6309,7 +6149,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                               height: 80,
                                               child: const Center(
                                                 child:
-                                                    Text('No data available'),
+                                                    Text('No Data Available'),
                                               ),
                                             );
                                           } else {
@@ -6475,7 +6315,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
       //     } else if (snapshot.hasError) {
       //       return Text('Error: ${snapshot.error}');
       //     } else if (!snapshot.hasData || snapshot.data == null) {
-      //       return Text('No data available');
+      //       return Text('No Data Available');
       //     } else {
       //       RentalOwnerSummey rentalOwner = snapshot.data!;
       //       return ListView(
