@@ -167,8 +167,8 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
           dateProvider.formatCurrentDate(widget.data.expirationDate!);
     });
 
-    liablity.text = widget.data.liabilityCoverage.toString()!;
-    if (widget.data.policy!.isNotEmpty)
+    liablity.text = widget.data.liabilityCoverage?.toString() ?? '';
+    if (widget.data.policy != null && widget.data.policy!.isNotEmpty)
       _uploadedFileNames.add(widget.data.policy!);
     super.initState();
   }

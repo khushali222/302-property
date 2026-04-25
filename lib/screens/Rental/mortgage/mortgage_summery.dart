@@ -28,6 +28,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   Map<String, dynamic>? mortgageData;
   bool _isLoading = false;
   Set<int> _expandedPayoffIndices = {}; // Track which payoff rows are expanded
+  int? _lifecycleExpandedIndex;
+  bool _isAddingEvent = false;
 
   @override
   void initState() {
@@ -484,9 +486,10 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   //     _buildInfoRow('Status', status.toUpperCase()),
                   //   ],
                   // ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
+                  // Mortgage Lifecycle section
+                  _buildLifecycleSection(),
+                  const SizedBox(height: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: CustomHistoryTable(
@@ -507,6 +510,658 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       ),
     );
   }
+
+  // ─────────────────── Mortgage Lifecycle ───────────────────
+
+  String _getPropertyAddress(String? rentalId) {
+    if (rentalId == null || mortgageData == null) return 'Property';
+    final props = mortgageData!['properties'];
+    if (props is List) {
+      for (var p in props) {
+        if (p is Map && p['rental_id'] == rentalId) {
+          return p['address'] ?? 'Property';
+        }
+      }
+    }
+    return 'Property';
+  }
+
+  List<Map<String, dynamic>> _getLifecycleEvents() {
+    final events = <Map<String, dynamic>>[];
+    if (mortgageData == null) return events;
+
+    // Payoffs
+    for (var p in (mortgageData!['payoffs'] as List? ?? [])) {
+      final by = p['added_by'];
+      final byName = by is Map
+          ? '${by['first_name'] ?? ''} ${by['last_name'] ?? ''}'.trim()
+          : '';
+      events.add({
+        'eventKind': 'payoff',
+        'eventType': 'Payoff',
+        'date': p['date'] ?? p['created_at'] ?? '',
+        'details': '\$${p['amount']}${byName.isNotEmpty ? ' ($byName)' : ''}',
+      });
+    }
+
+    // Collateral events
+    for (var c in (mortgageData!['lifecycle_events']?['collateral'] as List? ?? [])) {
+      final isAdd = (c['type'] ?? '') == 'add';
+      final address = _getPropertyAddress(c['rental_id']?.toString());
+      events.add({
+        'eventKind': isAdd ? 'collateral_add' : 'collateral_release',
+        'eventType': isAdd ? 'Collateral add' : 'Collateral release',
+        'date': c['date'] ?? '',
+        'details': '${isAdd ? 'Collateral added' : 'Collateral released'} — $address',
+      });
+    }
+
+    events.sort((a, b) {
+      try {
+        return DateTime.parse(b['date']).compareTo(DateTime.parse(a['date']));
+      } catch (_) {
+        return 0;
+      }
+    });
+    return events;
+  }
+
+  Widget _buildLifecycleSection() {
+    final events = _getLifecycleEvents();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Title row ──────────────────────────────────────────
+          Row(
+            children: [
+              const SizedBox(width: 2),
+              Text(
+                'Mortgage Lifecycle',
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: _isAddingEvent ? null : _showAddEventDialog,
+                icon: _isAddingEvent
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.add, size: 15, color: Colors.white),
+                label: const Text('Add Event',
+                    style: TextStyle(color: Colors.white, fontSize: 13)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: blueColor,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // ── Column headers ─────────────────────────────────────
+          Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F8FF),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFDBE0E5)),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  const SizedBox(width: 36),
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Date',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 14),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Event Type',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ── Rows / empty state ─────────────────────────────────
+          if (events.isEmpty)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Text('No lifecycle events',
+                    style: TextStyle(color: Colors.grey, fontSize: 14)),
+              ),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: events.length,
+              itemBuilder: (_, i) => _buildLifecycleRow(events[i], i),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLifecycleRow(Map<String, dynamic> event, int index) {
+    final isExpanded = _lifecycleExpandedIndex == index;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
+    // Use DateProvider to format date for display (respects user's date format preference)
+    String dateStr;
+    try {
+      final raw = event['date'] as String? ?? '';
+      final dt = DateTime.parse(raw);
+      dateStr = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(dt));
+    } catch (_) {
+      dateStr = _formatDate(event['date']);
+    }
+
+    final eventType = event['eventType'] as String;
+    final details = event['details'] as String;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Expand icon
+                  GestureDetector(
+                    onTap: () => setState(
+                        () => _lifecycleExpandedIndex =
+                            isExpanded ? null : index),
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      padding: !isExpanded
+                          ? const EdgeInsets.only(bottom: 10)
+                          : const EdgeInsets.only(top: 10),
+                      child: FaIcon(
+                        isExpanded
+                            ? FontAwesomeIcons.sortUp
+                            : FontAwesomeIcons.sortDown,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                    ),
+                  ),
+                  // Date
+                  Expanded(
+                    flex: 3,
+                    child: GestureDetector(
+                      onTap: () => setState(() =>
+                          _lifecycleExpandedIndex =
+                              isExpanded ? null : index),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 12),
+                        child: Text(dateStr,
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Event Type
+                  Expanded(
+                    flex: 3,
+                    child: GestureDetector(
+                      onTap: () => setState(() =>
+                          _lifecycleExpandedIndex =
+                              isExpanded ? null : index),
+                      child: Text(eventType,
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isExpanded) ...[
+            Divider(height: 1, color: const Color(0xFFDBE0E5)),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEEF4FF),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Details :',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                          fontSize: 13)),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border:
+                          Border.all(color: const Color(0xFFDBE0E5)),
+                    ),
+                    child: Text(details,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _showAddEventDialog() {
+    // Get DateProvider once — used only for display formatting
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    String selectedType = 'payoff';
+    final amountCtrl = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+    String? amountError; // persists across StatefulBuilder rebuilds
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialog) => Dialog(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── Header ──────────────────────────────────────────
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 16, 12, 16),
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.event_note_rounded,
+                        color: Colors.white, size: 20),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Text(
+                        'Add Lifecycle Event',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(ctx),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Icon(Icons.close,
+                            color: Colors.white, size: 18),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Body ────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Event Type',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: Colors.grey.shade700),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          RadioListTile<String>(
+                            value: 'payoff',
+                            groupValue: selectedType,
+                            activeColor: blueColor,
+                            title: const Text('Payoff Event',
+                                style: TextStyle(fontSize: 14)),
+                            dense: true,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
+                            onChanged: (v) =>
+                                setDialog(() => selectedType = v!),
+                          ),
+                          Divider(
+                              height: 1, color: Colors.grey.shade200),
+                          RadioListTile<String>(
+                            value: 'balance_update',
+                            groupValue: selectedType,
+                            activeColor: blueColor,
+                            title: const Text('Balance Update',
+                                style: TextStyle(fontSize: 14)),
+                            dense: true,
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
+                            onChanged: (v) =>
+                                setDialog(() => selectedType = v!),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (selectedType == 'payoff') ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Amount',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Colors.grey.shade700),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: amountCtrl,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        onChanged: (_) {
+                          if (amountError != null) {
+                            setDialog(() => amountError = null);
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Enter payoff amount',
+                          prefixText: '\$ ',
+                          errorText: amountError,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide:
+                                BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: amountError != null
+                                  ? Colors.red
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: amountError != null
+                                  ? Colors.red
+                                  : blueColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                                color: Colors.red, width: 1.5),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                                color: Colors.red, width: 1.5),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Date',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Colors.grey.shade700),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: ctx,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                            initialEntryMode:
+                                DatePickerEntryMode.calendarOnly,
+                            builder: (BuildContext c, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  primaryColor: blueColor,
+                                  colorScheme: ColorScheme.light(
+                                    primary: blueColor,
+                                  ),
+                                  buttonTheme: const ButtonThemeData(
+                                    textTheme: ButtonTextTheme.primary,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null)
+                            setDialog(() => selectedDate = picked);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
+                          decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            children: [
+                              Icon(Icons.calendar_today_outlined,
+                                  size: 16, color: blueColor),
+                              const SizedBox(width: 10),
+                              Text(
+                                // Display using user's date format preference
+                                dateProvider.formatCurrentDate(
+                                    DateFormat('yyyy-MM-dd').format(selectedDate)),
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              const Spacer(),
+                              Icon(Icons.arrow_drop_down,
+                                  color: Colors.grey.shade500),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // ── Footer buttons ───────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey.shade300),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 13),
+                        ),
+                        child: const Text('Cancel',
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: blueColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 13),
+                          elevation: 0,
+                        ),
+                        onPressed: () async {
+                          if (selectedType == 'payoff') {
+                            final text = amountCtrl.text.trim();
+                            final amount = double.tryParse(text);
+                            if (text.isEmpty) {
+                              setDialog(() => amountError =
+                                  'Amount is required');
+                              return;
+                            }
+                            if (amount == null || amount <= 0) {
+                              setDialog(() => amountError =
+                                  'Please enter a valid amount greater than 0');
+                              return;
+                            }
+                            amountError = null;
+                            Navigator.pop(ctx);
+                            await _addPayoffEvent(amount, selectedDate);
+                          } else {
+                            Navigator.pop(ctx);
+                          }
+                        },
+                        child: const Text('Add Event',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addPayoffEvent(double amount, DateTime date) async {
+    setState(() => _isAddingEvent = true);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('adminId');
+      final mortgageId =
+          mortgageData!['_id'] ?? widget.mortgageData!['_id'];
+
+      // Preserve existing payoffs + append new one
+      final existing =
+          (mortgageData!['payoffs'] as List? ?? []).map((p) => {
+                if (p['_id'] != null) '_id': p['_id'],
+                'amount': p['amount'],
+                'date': p['date'],
+              }).toList();
+      existing.add({
+        'amount': amount,
+        'date': '${DateFormat('yyyy-MM-dd').format(date)}T00:00:00.000Z',
+      });
+
+      final response = await http.put(
+        Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+        body: json.encode({'payoffs': existing}),
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        await _loadMortgageData();
+      }
+    } catch (e) {
+      print('Error adding payoff event: $e');
+    } finally {
+      if (mounted) setState(() => _isAddingEvent = false);
+    }
+  }
+
+  // ───────────────────────────────────────────────────────────
 
   Widget _buildSummaryCard({
     required String title,

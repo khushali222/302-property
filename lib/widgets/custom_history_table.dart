@@ -2277,8 +2277,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                 left: isEntryItem && !isEntryDetailsHeader
                                     ? 16.0
                                     : 0.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
                                 Text(
                                   '$key: ',
@@ -2288,14 +2288,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black87,
-                                    ),
+                                Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
                                   ),
                                 ),
                               ],
@@ -2379,8 +2377,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                           left: isEntryItem && !isEntryDetailsHeader
                               ? 16.0
                               : 0.0), // Extra indent for Entry items
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.start,
                         children: [
                           Text(
                             '$key: ',
@@ -2394,16 +2392,14 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                               color: Colors.black87,
                             ),
                           ),
-                          Expanded(
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: isEntryDetailsHeader
-                                    ? FontWeight.bold
-                                    : FontWeight.w500,
-                                color: Colors.black87,
-                              ),
+                          Text(
+                            value,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isEntryDetailsHeader
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: Colors.black87,
                             ),
                           ),
                         ],
@@ -2473,8 +2469,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                   padding: EdgeInsets.only(
                       left: isIndented ? 16.0 : 0.0,
                       bottom: index < parsedDetails.length - 1 ? 6 : 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
                     children: [
                       Text(
                         '$key: ',
@@ -2484,14 +2480,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                           color: Colors.black87,
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          value,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
                         ),
                       ),
                     ],
@@ -2617,8 +2611,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                 padding: EdgeInsets.only(
                     left: isIndented ? 16.0 : 0.0,
                     bottom: index < parsedDetails.length - 1 ? 6 : 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       '$key: ',
@@ -2628,51 +2624,43 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                         color: Colors.black87,
                       ),
                     ),
-                    Expanded(
-                      child: Wrap(
-                        spacing: 6,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFEE2E2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              oldValue,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF991B1B),
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            '→',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFD1FAE5),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              newValue,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF065F46),
-                              ),
-                            ),
-                          ),
-                        ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEE2E2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        oldValue,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF991B1B),
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      '→',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD1FAE5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        newValue,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF065F46),
+                        ),
                       ),
                     ),
                   ],
@@ -2685,8 +2673,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             padding: EdgeInsets.only(
                 left: isIndented ? 16.0 : 0.0,
                 bottom: index < parsedDetails.length - 1 ? 6 : 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
               children: [
                 Text(
                   '$key: ',
@@ -2696,14 +2684,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                     color: Colors.black87,
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
                   ),
                 ),
               ],

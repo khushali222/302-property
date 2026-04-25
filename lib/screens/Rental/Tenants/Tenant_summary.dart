@@ -273,7 +273,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                 ),
               ),
             ),
-            const SizedBox(width: 40),
+            const SizedBox(width: 47),
           ],
         ),
       ),
@@ -1963,7 +1963,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        const SizedBox(width: 10),
+                                                                        const SizedBox(width: 15),
                                                                         Expanded(
                                                                           flex: 2,
                                                                           child: Text(
@@ -1975,7 +1975,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        const SizedBox(width: 25),
+                                                                        const SizedBox(width: 35),
                                                                       ],
                                                                     ),
                                                                   ),
@@ -2571,7 +2571,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                     expirationDate: Propertytype.expirationDate,
                                                                                                     liabilityCoverage: Propertytype.liabilityCoverage?.toString(),
                                                                                                     tenantInsuranceId: Propertytype.sId,
-                                                                                                    status: Propertytype.active == true ? 'active' : 'expired',
+                                                                                                    policy: Propertytype.insurancePolicyDocument,
+                                                                                                    status: Propertytype.policyStatus?.toLowerCase() ?? 'expired',
                                                                                                   ),
                                                                                                 )));
                                                                                     if (check == true) {

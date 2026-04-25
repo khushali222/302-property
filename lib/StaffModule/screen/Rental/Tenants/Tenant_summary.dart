@@ -299,7 +299,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                 ),
               ),
             ),
-            const SizedBox(width: 40),
+            const SizedBox(width: 47),
           ],
         ),
       ),
@@ -3040,7 +3040,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        const SizedBox(width: 10),
+                                                                        const SizedBox(width: 15),
                                                                         Expanded(
                                                                           flex: 2,
                                                                           child: Text(
