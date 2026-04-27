@@ -32,6 +32,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   Set<int> _expandedPayoffIndices = {}; // Track which payoff rows are expanded
   int? _lifecycleExpandedIndex;
   bool _isAddingEvent = false;
+  int _lifecyclePage = 1;
+  static const int _lifecycleItemsPerPage = 10;
 
   @override
   void initState() {
@@ -489,8 +491,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   // ),
                   const SizedBox(height: 20),
                   // Mortgage Lifecycle section
-                  _buildLifecycleSection(),
-                  const SizedBox(height: 20),
+                  // _buildLifecycleSection(),
+                  // const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: CustomHistoryTable(
@@ -498,7 +500,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                         entityId: mortgageData!['id'] ??
                             mortgageData!['_id'] ??
                             widget.mortgageData!['_id'],
-                        title: 'Mortgage History',
+                        title: 'Audit History',
                         blueColor: blueColor,
                         itemsPerPage: 10),
                   ),
@@ -531,6 +533,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final events = <Map<String, dynamic>>[];
     if (mortgageData == null) return events;
 
+    // ── Payoffs ────────────────────────────────────────────────
     for (var p in (mortgageData!['payoffs'] as List? ?? [])) {
       final by = p['added_by'];
       final byName = by is Map
@@ -544,6 +547,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       });
     }
 
+    // ── Collateral events ──────────────────────────────────────
     for (var c in (mortgageData!['lifecycle_events']?['collateral'] as List? ?? [])) {
       final isAdd = (c['type'] ?? '') == 'add';
       final address = _getPropertyAddress(c['rental_id']?.toString());
@@ -552,6 +556,26 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         'eventType': isAdd ? 'Collateral add' : 'Collateral release',
         'date': c['date'] ?? '',
         'details': '${isAdd ? 'Collateral added' : 'Collateral released'} — $address',
+      });
+    }
+
+    // ── Renewals (balance updates shown as Renewal / Refinance) ─
+    for (var r in (mortgageData!['lifecycle_events']?['renewals'] as List? ?? [])) {
+      events.add({
+        'eventKind': 'renewal',
+        'eventType': 'Renewal / Refinance',
+        'date': r['date'] ?? '',
+        'details': r['notes'] ?? '',
+      });
+    }
+
+    // ── Old terms ──────────────────────────────────────────────
+    for (var o in (mortgageData!['lifecycle_events']?['old_terms'] as List? ?? [])) {
+      events.add({
+        'eventKind': 'old_terms',
+        'eventType': 'Old terms',
+        'date': o['date'] ?? '',
+        'details': o['notes'] ?? '',
       });
     }
 
@@ -566,7 +590,15 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   }
 
   Widget _buildLifecycleSection() {
-    final events = _getLifecycleEvents();
+    final allEvents = _getLifecycleEvents();
+    final totalEvents = allEvents.length;
+    final totalPages =
+        totalEvents == 0 ? 1 : (totalEvents / _lifecycleItemsPerPage).ceil();
+    final startIndex = (_lifecyclePage - 1) * _lifecycleItemsPerPage;
+    final endIndex = (startIndex + _lifecycleItemsPerPage).clamp(0, totalEvents);
+    final pageEvents =
+        totalEvents == 0 ? <Map<String, dynamic>>[] : allEvents.sublist(startIndex, endIndex);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(
@@ -586,17 +618,10 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               ),
               const Spacer(),
               ElevatedButton.icon(
-                onPressed: _isAddingEvent ? null : _showAddEventDialog,
-                icon: _isAddingEvent
-                    ? const SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.add, size: 15, color: Colors.white),
+                onPressed: _isAddingEvent ? () {} : _showAddEventDialog,
+                icon: const Icon(Icons.add, size: 15, color: Colors.white),
                 label: const Text('Add Event',
-                    style: TextStyle(color: Colors.white, fontSize: 13)),
+                    style: TextStyle(color: Colors.white, fontSize: 13,fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: blueColor,
                   padding:
@@ -608,7 +633,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
 
           // ── Column headers ─────────────────────────────────────
           Container(
@@ -617,42 +642,40 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFDBE0E5)),
             ),
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Row(
-                children: [
-                  const SizedBox(width: 36),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Date',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: blueColor,
-                          fontSize: 14),
-                    ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            child: Row(
+              children: [
+                const SizedBox(width: 28),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Date',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                        fontSize: 14),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Event Type',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: blueColor,
-                          fontSize: 14),
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Event Type',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                        fontSize: 14),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
 
           // ── Rows / empty state ─────────────────────────────────
-          if (events.isEmpty)
+          if (allEvents.isEmpty)
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: const Color(0xFFDBE0E5)),
@@ -666,12 +689,81 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           else
             ListView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: events.length,
-              itemBuilder: (_, i) => _buildLifecycleRow(events[i], i),
+              itemCount: pageEvents.length,
+              itemBuilder: (_, i) =>
+                  _buildLifecycleRow(pageEvents[i], startIndex + i),
             ),
+
+          // ── Pagination controls ────────────────────────────────
+          if (totalEvents > _lifecycleItemsPerPage) ...[
+            const SizedBox(height: 6),
+            _buildLifecyclePagination(
+                totalEvents, totalPages, startIndex, endIndex),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildLifecyclePagination(
+      int totalEvents, int totalPages, int startIndex, int endIndex) {
+    final canPrev = _lifecyclePage > 1;
+    final canNext = _lifecyclePage < totalPages;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // ── Left chevron circle ──────────────────────────────────
+        GestureDetector(
+          onTap: canPrev
+              ? () => setState(() {
+                    _lifecyclePage--;
+                    _lifecycleExpandedIndex = null;
+                  })
+              : null,
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: canPrev ? blueColor : Colors.grey.shade300,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.chevron_left,
+                color: Colors.white, size: 20),
+          ),
+        ),
+        const SizedBox(width: 14),
+        // ── "Page X of Y" label ──────────────────────────────────
+        Text(
+          'Page $_lifecyclePage of $totalPages',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade700,
+          ),
+        ),
+        const SizedBox(width: 14),
+        // ── Right chevron circle ─────────────────────────────────
+        GestureDetector(
+          onTap: canNext
+              ? () => setState(() {
+                    _lifecyclePage++;
+                    _lifecycleExpandedIndex = null;
+                  })
+              : null,
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: canNext ? blueColor : Colors.grey.shade300,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.chevron_right,
+                color: Colors.white, size: 20),
+          ),
+        ),
+      ],
     );
   }
 
@@ -813,8 +905,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     String selectedType = 'payoff';
     final amountCtrl = TextEditingController();
+    final balanceCtrl = TextEditingController();
     DateTime selectedDate = DateTime.now();
-    String? amountError; // persists across StatefulBuilder rebuilds
+    String? amountError;   // persists across StatefulBuilder rebuilds
+    String? balanceError;  // persists across StatefulBuilder rebuilds
+    bool isSubmitting = false; // controls loading on dialog submit button
 
     showDialog(
       context: context,
@@ -902,8 +997,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             dense: true,
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 8),
-                            onChanged: (v) =>
-                                setDialog(() => selectedType = v!),
+                            onChanged: (v) => setDialog(() {
+                              selectedType = v!;
+                              amountError = null;
+                              balanceError = null;
+                            }),
                           ),
                           Divider(
                               height: 1, color: Colors.grey.shade200),
@@ -916,12 +1014,75 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             dense: true,
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 8),
-                            onChanged: (v) =>
-                                setDialog(() => selectedType = v!),
+                            onChanged: (v) => setDialog(() {
+                              selectedType = v!;
+                              amountError = null;
+                              balanceError = null;
+                            }),
                           ),
                         ],
                       ),
                     ),
+                    if (selectedType == 'balance_update') ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Remaining Balance (\$)',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: Colors.grey.shade700),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: balanceCtrl,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        onChanged: (_) {
+                          if (balanceError != null) {
+                            setDialog(() => balanceError = null);
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Enter remaining balance',
+                          prefixText: '\$ ',
+                          errorText: balanceError,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide:
+                                BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: balanceError != null
+                                  ? Colors.red
+                                  : Colors.grey.shade300,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              color: balanceError != null
+                                  ? Colors.red
+                                  : blueColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                                color: Colors.red, width: 1.5),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                                color: Colors.red, width: 1.5),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 12),
+                        ),
+                      ),
+                    ],
                     if (selectedType == 'payoff') ...[
                       const SizedBox(height: 16),
                       Text(
@@ -997,12 +1158,22 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             initialDate: selectedDate,
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
-                            builder: (c, child) => Theme(
-                              data: Theme.of(c).copyWith(
+                            initialEntryMode:
+                                DatePickerEntryMode.calendarOnly,
+                            builder: (BuildContext c, Widget? child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  primaryColor: blueColor,
                                   colorScheme: ColorScheme.light(
-                                      primary: blueColor)),
-                              child: child!,
-                            ),
+                                    primary: blueColor,
+                                  ),
+                                  buttonTheme: const ButtonThemeData(
+                                    textTheme: ButtonTextTheme.primary,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (picked != null)
                             setDialog(() => selectedDate = picked);
@@ -1046,7 +1217,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Navigator.pop(ctx),
+                        onPressed: isSubmitting ? null : () => Navigator.pop(ctx),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey.shade300),
                           shape: RoundedRectangleBorder(
@@ -1070,32 +1241,67 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                               const EdgeInsets.symmetric(vertical: 13),
                           elevation: 0,
                         ),
-                        onPressed: () async {
-                          if (selectedType == 'payoff') {
-                            final text = amountCtrl.text.trim();
-                            final amount = double.tryParse(text);
-                            if (text.isEmpty) {
-                              setDialog(() => amountError =
-                                  'Amount is required');
-                              return;
-                            }
-                            if (amount == null || amount <= 0) {
-                              setDialog(() => amountError =
-                                  'Please enter a valid amount greater than 0');
-                              return;
-                            }
-                            amountError = null;
-                            Navigator.pop(ctx);
-                            await _addPayoffEvent(amount, selectedDate);
-                          } else {
-                            Navigator.pop(ctx);
-                          }
-                        },
-                        child: const Text('Add Event',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold)),
+                        onPressed: isSubmitting
+                            ? () {}
+                            : () async {
+                                if (selectedType == 'payoff') {
+                                  final text = amountCtrl.text.trim();
+                                  final amount = double.tryParse(text);
+                                  if (text.isEmpty) {
+                                    setDialog(() => amountError =
+                                        'Amount is required');
+                                    return;
+                                  }
+                                  if (amount == null || amount <= 0) {
+                                    setDialog(() => amountError =
+                                        'Please enter a valid amount greater than 0');
+                                    return;
+                                  }
+                                  setDialog(() {
+                                    amountError = null;
+                                    isSubmitting = true;
+                                  });
+                                  await _addPayoffEvent(amount, selectedDate);
+                                } else if (selectedType == 'balance_update') {
+                                  final text = balanceCtrl.text.trim();
+                                  final balance = double.tryParse(text);
+                                  if (text.isEmpty) {
+                                    setDialog(() => balanceError =
+                                        'Remaining balance is required');
+                                    return;
+                                  }
+                                  if (balance == null || balance < 0) {
+                                    setDialog(() => balanceError =
+                                        'Please enter a valid amount');
+                                    return;
+                                  }
+                                  setDialog(() {
+                                    balanceError = null;
+                                    isSubmitting = true;
+                                  });
+                                  await _addBalanceUpdateEvent(balance);
+                                }
+                                if (ctx.mounted) Navigator.pop(ctx);
+                              },
+                        child: isSubmitting
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SpinKitFadingCircle(
+                                      color: Colors.white, size: 18),
+                                  const SizedBox(width: 8),
+                                  const Text('Saving...',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              )
+                            : const Text('Add Event',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],
@@ -1140,9 +1346,112 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
       if (response.statusCode == 200) {
         await _loadMortgageData();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Payoff event added successfully'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Failed to add payoff event'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
       }
     } catch (e) {
       print('Error adding payoff event: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Something went wrong. Please try again.'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isAddingEvent = false);
+    }
+  }
+
+  Future<void> _addBalanceUpdateEvent(double newBalance) async {
+    setState(() => _isAddingEvent = true);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? id = prefs.getString('staff_id'); // staff uses staff_id
+      final mortgageId =
+          mortgageData!['_id'] ?? widget.mortgageData!['_id'];
+
+      final response = await http.put(
+        Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+        body: json.encode({'remaining_balance': newBalance}),
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        await _loadMortgageData();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Balance updated successfully'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Failed to update balance'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error updating remaining balance: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Something went wrong. Please try again.'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isAddingEvent = false);
     }

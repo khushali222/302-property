@@ -1998,10 +1998,21 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     return details.isEmpty ? [description] : details;
   }
 
+  /// Reformat any embedded date strings in [text] according to the provider's date format.
+  String _formatDatesInText(String text, DateProvider dateProvider) {
+    return text.replaceAllMapped(
+      RegExp(r'\b(\d{1,2}/\d{1,2}/\d{4}|\d{4}-\d{2}-\d{2})\b'),
+      (match) => dateProvider.formatCurrentDate(match.group(0)!),
+    );
+  }
+
   /// Build description widget with parsed details
   Widget _buildDescriptionWidget(String description,
       {HistoryItem? historyItem}) {
-    final parsedDetails = _parseDescription(description);
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final parsedDetails = _parseDescription(description)
+        .map((detail) => _formatDatesInText(detail, dateProvider))
+        .toList();
 
     // For "Payment created" entries, also check metadata for Entry data
     if (historyItem != null &&
