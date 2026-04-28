@@ -149,17 +149,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
             '  [$i] ${data[i].rentalAddress} - is_available: ${data[i].is_available}');
       }
     } else {
-      // Default sorting by createdAt in ascending order (oldest first)
+      // Default sorting by createdAt in descending order (newest first) to match web
       data.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
-        return DateTime.parse(a.createdAt!)
-            .compareTo(DateTime.parse(b.createdAt!));
+        return DateTime.parse(b.createdAt!)
+            .compareTo(DateTime.parse(a.createdAt!));
       });
-
-      // Then sort by property name in ascending order (case-insensitive)
-      data.sort((a, b) => a.rentalAddress!
-          .toLowerCase()
-          .compareTo(b.rentalAddress!.toLowerCase()));
     }
   }
 
@@ -185,7 +180,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     if (sorting3) {
       return MapEntry('is_available', ascending3 ? 'asc' : 'desc');
     }
-    return const MapEntry('createdAt', 'asc');
+    return const MapEntry('createdAt', 'desc');
   }
 
   List<Rentals> _applyLocalFilters(List<Rentals> data) {
@@ -2027,24 +2022,33 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               ),
                                                               GestureDetector(
                                                                 onTap: () {
-                                                                  setState(() {
-                                                                    _showAlert(
-                                                                        context,
-                                                                        rentals
-                                                                            .rentalId!);
-                                                                  });
+                                                                  // Check if property is multi-unit based on property type data
+                                                                  bool
+                                                                      isMultiUnit =
+                                                                      rentals.propertyTypeData
+                                                                              ?.isMultiunit ??
+                                                                          false;
+
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => Summery_page(
+                                                                                properties: rentals,
+                                                                              )));
                                                                 },
                                                                 child:
                                                                     Container(
                                                                   height: 35,
                                                                   width: 35,
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                      color: Colors
-                                                                          .red
-                                                                          .shade50),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade200,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
                                                                   child:
                                                                       const Row(
                                                                     mainAxisAlignment:
@@ -2056,12 +2060,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
-                                                                            .trashCan,
+                                                                            .eye,
                                                                         size:
                                                                             15,
                                                                         color: Colors
-                                                                            .red,
+                                                                            .black,
                                                                       ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              2),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -2129,33 +2136,24 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                               ),
                                                               GestureDetector(
                                                                 onTap: () {
-                                                                  // Check if property is multi-unit based on property type data
-                                                                  bool
-                                                                      isMultiUnit =
-                                                                      rentals.propertyTypeData
-                                                                              ?.isMultiunit ??
-                                                                          false;
-
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => Summery_page(
-                                                                                properties: rentals,
-                                                                              )));
+                                                                  setState(() {
+                                                                    _showAlert(
+                                                                        context,
+                                                                        rentals
+                                                                            .rentalId!);
+                                                                  });
                                                                 },
                                                                 child:
                                                                     Container(
                                                                   height: 35,
                                                                   width: 35,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .shade200,
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      color: Colors
+                                                                          .red
+                                                                          .shade50),
                                                                   child:
                                                                       const Row(
                                                                     mainAxisAlignment:
@@ -2167,15 +2165,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                     children: [
                                                                       FaIcon(
                                                                         FontAwesomeIcons
-                                                                            .eye,
+                                                                            .trashCan,
                                                                         size:
                                                                             15,
                                                                         color: Colors
-                                                                            .black,
+                                                                            .red,
                                                                       ),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              2),
                                                                     ],
                                                                   ),
                                                                 ),

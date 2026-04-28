@@ -489,9 +489,9 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   //   ],
                   // ),
                   const SizedBox(height: 20),
-                  // // Mortgage Lifecycle section
-                  // _buildLifecycleSection(),
-                  // const SizedBox(height: 4),
+                  // Mortgage Lifecycle section
+                  _buildLifecycleSection(),
+                  const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: CustomHistoryTable(
@@ -547,19 +547,22 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     }
 
     // ── Collateral events ──────────────────────────────────────
-    for (var c in (mortgageData!['lifecycle_events']?['collateral'] as List? ?? [])) {
+    for (var c
+        in (mortgageData!['lifecycle_events']?['collateral'] as List? ?? [])) {
       final isAdd = (c['type'] ?? '') == 'add';
       final address = _getPropertyAddress(c['rental_id']?.toString());
       events.add({
         'eventKind': isAdd ? 'collateral_add' : 'collateral_release',
         'eventType': isAdd ? 'Collateral add' : 'Collateral release',
         'date': c['date'] ?? '',
-        'details': '${isAdd ? 'Collateral added' : 'Collateral released'} — $address',
+        'details':
+            '${isAdd ? 'Collateral added' : 'Collateral released'} — $address',
       });
     }
 
     // ── Renewals (balance updates shown as Renewal / Refinance) ─
-    for (var r in (mortgageData!['lifecycle_events']?['renewals'] as List? ?? [])) {
+    for (var r
+        in (mortgageData!['lifecycle_events']?['renewals'] as List? ?? [])) {
       events.add({
         'eventKind': 'renewal',
         'eventType': 'Renewal / Refinance',
@@ -569,7 +572,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     }
 
     // ── Old terms ──────────────────────────────────────────────
-    for (var o in (mortgageData!['lifecycle_events']?['old_terms'] as List? ?? [])) {
+    for (var o
+        in (mortgageData!['lifecycle_events']?['old_terms'] as List? ?? [])) {
       events.add({
         'eventKind': 'old_terms',
         'eventType': 'Old terms',
@@ -594,9 +598,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final totalPages =
         totalEvents == 0 ? 1 : (totalEvents / _lifecycleItemsPerPage).ceil();
     final startIndex = (_lifecyclePage - 1) * _lifecycleItemsPerPage;
-    final endIndex = (startIndex + _lifecycleItemsPerPage).clamp(0, totalEvents);
-    final pageEvents =
-        totalEvents == 0 ? <Map<String, dynamic>>[] : allEvents.sublist(startIndex, endIndex);
+    final endIndex =
+        (startIndex + _lifecycleItemsPerPage).clamp(0, totalEvents);
+    final pageEvents = totalEvents == 0
+        ? <Map<String, dynamic>>[]
+        : allEvents.sublist(startIndex, endIndex);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
@@ -620,7 +626,10 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 onPressed: _isAddingEvent ? () {} : _showAddEventDialog,
                 icon: const Icon(Icons.add, size: 15, color: Colors.white),
                 label: const Text('Add Event',
-                    style: TextStyle(color: Colors.white, fontSize: 13,fontWeight: FontWeight.bold)),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: blueColor,
                   padding:
@@ -728,8 +737,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               color: canPrev ? blueColor : Colors.grey.shade300,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.chevron_left,
-                color: Colors.white, size: 20),
+            child:
+                const Icon(Icons.chevron_left, color: Colors.white, size: 20),
           ),
         ),
         const SizedBox(width: 14),
@@ -758,8 +767,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               color: canNext ? blueColor : Colors.grey.shade300,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.chevron_right,
-                color: Colors.white, size: 20),
+            child:
+                const Icon(Icons.chevron_right, color: Colors.white, size: 20),
           ),
         ),
       ],
@@ -775,7 +784,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     try {
       final raw = event['date'] as String? ?? '';
       final dt = DateTime.parse(raw);
-      dateStr = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(dt));
+      dateStr =
+          dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(dt));
     } catch (_) {
       dateStr = _formatDate(event['date']);
     }
@@ -801,9 +811,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 children: [
                   // Expand icon
                   GestureDetector(
-                    onTap: () => setState(
-                        () => _lifecycleExpandedIndex =
-                            isExpanded ? null : index),
+                    onTap: () => setState(() =>
+                        _lifecycleExpandedIndex = isExpanded ? null : index),
                     child: Container(
                       margin: const EdgeInsets.only(left: 5),
                       padding: !isExpanded
@@ -823,8 +832,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                     flex: 3,
                     child: GestureDetector(
                       onTap: () => setState(() =>
-                          _lifecycleExpandedIndex =
-                              isExpanded ? null : index),
+                          _lifecycleExpandedIndex = isExpanded ? null : index),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 12),
@@ -842,8 +850,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                     flex: 3,
                     child: GestureDetector(
                       onTap: () => setState(() =>
-                          _lifecycleExpandedIndex =
-                              isExpanded ? null : index),
+                          _lifecycleExpandedIndex = isExpanded ? null : index),
                       child: Text(eventType,
                           style: TextStyle(
                               color: blueColor,
@@ -882,8 +889,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
-                      border:
-                          Border.all(color: const Color(0xFFDBE0E5)),
+                      border: Border.all(color: const Color(0xFFDBE0E5)),
                     ),
                     child: Text(details,
                         style: const TextStyle(
@@ -907,8 +913,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final amountCtrl = TextEditingController();
     final balanceCtrl = TextEditingController();
     DateTime selectedDate = DateTime.now();
-    String? amountError;   // persists across StatefulBuilder rebuilds
-    String? balanceError;  // persists across StatefulBuilder rebuilds
+    String? amountError; // persists across StatefulBuilder rebuilds
+    String? balanceError; // persists across StatefulBuilder rebuilds
     bool isSubmitting = false; // controls loading on dialog submit button
 
     showDialog(
@@ -1003,8 +1009,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                               balanceError = null;
                             }),
                           ),
-                          Divider(
-                              height: 1, color: Colors.grey.shade200),
+                          Divider(height: 1, color: Colors.grey.shade200),
                           RadioListTile<String>(
                             value: 'balance_update',
                             groupValue: selectedType,
@@ -1048,8 +1053,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           errorText: balanceError,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                BorderSide(color: Colors.grey.shade300),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -1062,21 +1066,20 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: balanceError != null
-                                  ? Colors.red
-                                  : blueColor,
+                              color:
+                                  balanceError != null ? Colors.red : blueColor,
                               width: 1.5,
                             ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Colors.red, width: 1.5),
+                            borderSide:
+                                const BorderSide(color: Colors.red, width: 1.5),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Colors.red, width: 1.5),
+                            borderSide:
+                                const BorderSide(color: Colors.red, width: 1.5),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 12),
@@ -1108,8 +1111,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           errorText: amountError,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide:
-                                BorderSide(color: Colors.grey.shade300),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -1122,21 +1124,20 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: amountError != null
-                                  ? Colors.red
-                                  : blueColor,
+                              color:
+                                  amountError != null ? Colors.red : blueColor,
                               width: 1.5,
                             ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Colors.red, width: 1.5),
+                            borderSide:
+                                const BorderSide(color: Colors.red, width: 1.5),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                                color: Colors.red, width: 1.5),
+                            borderSide:
+                                const BorderSide(color: Colors.red, width: 1.5),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 12),
@@ -1158,8 +1159,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             initialDate: selectedDate,
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
-                            initialEntryMode:
-                                DatePickerEntryMode.calendarOnly,
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
                             builder: (BuildContext c, Widget? child) {
                               return Theme(
                                 data: ThemeData.light().copyWith(
@@ -1182,8 +1182,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 12),
                           decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.grey.shade300),
+                              border: Border.all(color: Colors.grey.shade300),
                               borderRadius: BorderRadius.circular(10)),
                           child: Row(
                             children: [
@@ -1193,10 +1192,10 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                               Text(
                                 // Display using user's date format preference
                                 dateProvider.formatCurrentDate(
-                                    DateFormat('yyyy-MM-dd').format(selectedDate)),
+                                    DateFormat('yyyy-MM-dd')
+                                        .format(selectedDate)),
                                 style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500),
+                                    fontSize: 14, fontWeight: FontWeight.w500),
                               ),
                               const Spacer(),
                               Icon(Icons.arrow_drop_down,
@@ -1217,17 +1216,16 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: isSubmitting ? null : () => Navigator.pop(ctx),
+                        onPressed:
+                            isSubmitting ? null : () => Navigator.pop(ctx),
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(color: Colors.grey.shade300),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 13),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
                         ),
                         child: const Text('Cancel',
-                            style: TextStyle(
-                                color: Colors.grey, fontSize: 14)),
+                            style: TextStyle(color: Colors.grey, fontSize: 14)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -1237,8 +1235,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                           backgroundColor: blueColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 13),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
                           elevation: 0,
                         ),
                         onPressed: isSubmitting
@@ -1248,8 +1245,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                                   final text = amountCtrl.text.trim();
                                   final amount = double.tryParse(text);
                                   if (text.isEmpty) {
-                                    setDialog(() => amountError =
-                                        'Amount is required');
+                                    setDialog(() =>
+                                        amountError = 'Amount is required');
                                     return;
                                   }
                                   if (amount == null || amount <= 0) {
@@ -1320,30 +1317,32 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final mortgageId =
-          mortgageData!['_id'] ?? widget.mortgageData!['_id'];
+      final mortgageId = mortgageData!['_id'] ?? widget.mortgageData!['_id'];
 
       // Preserve existing payoffs + append new one
-      final existing =
-          (mortgageData!['payoffs'] as List? ?? []).map((p) => {
+      final existing = (mortgageData!['payoffs'] as List? ?? [])
+          .map((p) => {
                 if (p['_id'] != null) '_id': p['_id'],
                 'amount': p['amount'],
                 'date': p['date'],
-              }).toList();
+              })
+          .toList();
       existing.add({
         'amount': amount,
         'date': '${DateFormat('yyyy-MM-dd').format(date)}T00:00:00.000Z',
       });
 
-      final response = await http.put(
-        Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': 'CRM $token',
-          'id': 'CRM $id',
-        },
-        body: json.encode({'payoffs': existing}),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .put(
+            Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'CRM $token',
+              'id': 'CRM $id',
+            },
+            body: json.encode({'payoffs': existing}),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         await _loadMortgageData();
@@ -1398,18 +1397,19 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final mortgageId =
-          mortgageData!['_id'] ?? widget.mortgageData!['_id'];
+      final mortgageId = mortgageData!['_id'] ?? widget.mortgageData!['_id'];
 
-      final response = await http.put(
-        Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'authorization': 'CRM $token',
-          'id': 'CRM $id',
-        },
-        body: json.encode({'remaining_balance': newBalance}),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .put(
+            Uri.parse('${Api_url}/api/mortgage/$mortgageId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'authorization': 'CRM $token',
+              'id': 'CRM $id',
+            },
+            body: json.encode({'remaining_balance': newBalance}),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         await _loadMortgageData();

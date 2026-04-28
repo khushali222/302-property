@@ -491,8 +491,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   // ),
                   const SizedBox(height: 20),
                   // Mortgage Lifecycle section
-                  // _buildLifecycleSection(),
-                  // const SizedBox(height: 4),
+                  _buildLifecycleSection(),
+                  const SizedBox(height: 4),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: CustomHistoryTable(
