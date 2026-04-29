@@ -4,22 +4,35 @@ import 'dart:developer';
 
 class LeaseLedger {
   List<Data>? data;
-  double? totalBalance; // Adjusted to double
+  double? totalBalance;
   String? message;
+  List<Data>? tenantPayments;
+  Map<String, dynamic>? tenantData;
 
-  LeaseLedger({this.data, this.totalBalance, this.message});
+  LeaseLedger({
+    this.data,
+    this.totalBalance,
+    this.message,
+    this.tenantPayments,
+    this.tenantData,
+  });
 
   LeaseLedger.fromJson(Map<String, dynamic> json) {
-  //  log(json.toString());
     if (json['data'] != null) {
       data = [];
       json['data'].forEach((v) {
         data!.add(Data.fromJson(v));
       });
     }
-    totalBalance =
-        (json['totalBalance'] as num?)?.toDouble(); // Parse as double
+    totalBalance = (json['totalBalance'] as num?)?.toDouble();
     message = json['message'];
+    if (json['tenantPayments'] != null) {
+      tenantPayments = [];
+      json['tenantPayments'].forEach((v) {
+        tenantPayments!.add(Data.fromJson(v));
+      });
+    }
+    tenantData = json['tenantData'] as Map<String, dynamic>?;
   }
 
   Map<String, dynamic> toJson() {

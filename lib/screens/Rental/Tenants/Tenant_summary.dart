@@ -321,6 +321,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   ConnectivityResult? _connectivityResult;
   int _tenantSummaryTabIndex = 0;
   int _historyRefreshKey = 0;
+  TenantLeaseData? _selectedLease;
 
   @override
   void initState() {
@@ -2964,7 +2965,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                     ),
                   if (_tenantSummaryTabIndex == 3)
                     FinancialTable(
-                      leaseId: widget.tenantId,
+                      tenantId: widget.tenantId,
+                      tenantName:
+                          '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'
+                              .trim(),
+                      leases: _leaseListForSummary,
+                      initialLeaseId: _selectedLease?.leaseId ?? _firstActiveLeaseId,
                     ),
                   if (_tenantSummaryTabIndex == 4) _buildTenantWorkOrdersTab(),
                 ],
@@ -3010,14 +3016,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
         endDate == null ||
         startDate.isEmpty ||
         endDate.isEmpty) return false;
-    try {
-      final start = _parseLeaseDate(startDate);
-      final end = _parseLeaseDate(endDate);
-      final now = DateTime.now();
-      return !now.isBefore(start) && !now.isAfter(end);
-    } catch (_) {
-      return false;
-    }
+    final start = parseDateRobust(startDate);
+    final end = parseDateRobust(endDate);
+    if (start == null || end == null) return false;
+    final now = DateTime.now();
+    return !now.isBefore(start) && !now.isAfter(end);
   }
 
   DateTime _parseLeaseDate(String dateStr) {
@@ -3924,12 +3927,27 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     );
   }
 
+  /// Label shown in the lease dropdown for a given lease entry.
+  String _leaseDropdownLabel(TenantLeaseData l) {
+    final addr = l.rentalAdress ?? '';
+    final unit = (l.rentalUnit ?? '').isNotEmpty ? ' - ${l.rentalUnit}' : '';
+    final startYear = _extractYear(l.startDate);
+    final yearPart = startYear != null ? ' ($startYear)' : '';
+    final statusPart = _isLeaseActive(l.startDate, l.endDate) ? ' (Active)' : '';
+    return '$addr$unit$yearPart$statusPart';
+  }
+
+  String? _extractYear(String? date) {
+    if (date == null || date.isEmpty) return null;
+    return parseDateRobust(date)?.year.toString();
+  }
+
   Widget _buildLeaseTabContent() {
-    final list = widget.tenants?.leaseData;
+    final list = _leaseListForSummary;
     if (list == null || list.isEmpty) {
-      return SizedBox(
-        height: MediaQuery.sizeOf(context).height - 300,
-        child: const Center(
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 60),
+        child: Center(
           child: Text(
             'No lease data available for this tenant.',
             style: TextStyle(fontSize: 13),
@@ -3937,11 +3955,21 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
         ),
       );
     }
-    final activeLeaseId = _firstActiveLeaseId;
-    if (activeLeaseId == null || activeLeaseId.isEmpty) {
-      return SizedBox(
-        height: MediaQuery.sizeOf(context).height - 300,
-        child: const Center(
+
+    // Determine which lease is currently selected (default to first active).
+    final currentLease = _selectedLease != null &&
+            list.any((l) => l.leaseId == _selectedLease!.leaseId)
+        ? _selectedLease!
+        : list.firstWhere(
+            (l) => _isLeaseActive(l.startDate, l.endDate) && (l.leaseId ?? '').isNotEmpty,
+            orElse: () => list.first,
+          );
+
+    final currentLeaseId = currentLease.leaseId ?? '';
+    if (currentLeaseId.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 60),
+        child: Center(
           child: Text(
             'No active lease. All leases are expired or not yet started.',
             style: TextStyle(fontSize: 13),
@@ -3949,15 +3977,154 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
         ),
       );
     }
-    final activeLease = list.firstWhere((l) => l.leaseId == activeLeaseId);
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height - 300,
-      child: SummeryPageLease(
-        leaseId: activeLeaseId,
-        enddate: activeLease.endDate,
-        isredirectpayment: false,
-        embeddedInTenantSummary: true,
-      ),
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Lease selector — only shown when tenant has multiple leases.
+        if (list.length > 1)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                child: Text(
+                  'Lease',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: blueColor,
+                  ),
+                ),
+              ),
+              Container(
+                height: 60,
+                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: DropdownButton2<TenantLeaseData>(
+                  isExpanded: true,
+                  underline: const SizedBox(),
+                  value: currentLease,
+                  selectedItemBuilder: (context) {
+                    return list.map((l) {
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _leaseDropdownLabel(l),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: blueColor,
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  },
+                  items: list.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final l = entry.value;
+                    return DropdownMenuItem<TenantLeaseData>(
+                      value: l,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          border: idx < list.length - 1
+                              ? Border(
+                                  bottom: BorderSide(
+                                    color: blueColor.withOpacity(0.2),
+                                    width: 0.5,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _leaseDropdownLabel(l),
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: blueColor,
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right, size: 25, color: blueColor),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (TenantLeaseData? selected) {
+                    if (selected != null) {
+                      setState(() => _selectedLease = selected);
+                    }
+                  },
+                  buttonStyleData: ButtonStyleData(
+                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade400, width: 1),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                  iconStyleData: const IconStyleData(
+                    icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                    iconSize: 24,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    maxHeight: MediaQuery.of(context).size.height * 0.54,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey.shade500, width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 10,
+                          offset: const Offset(10, 10),
+                        ),
+                      ],
+                    ),
+                    scrollbarTheme: ScrollbarThemeData(
+                      radius: const Radius.circular(40),
+                      thickness: MaterialStateProperty.all(6),
+                      thumbVisibility: MaterialStateProperty.all(false),
+                    ),
+                  ),
+                  menuItemStyleData: const MenuItemStyleData(
+                    height: 50,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        // Lease content flows naturally — outer ListView handles all scrolling.
+        SummeryPageLease(
+          key: ValueKey(currentLeaseId),
+          leaseId: currentLeaseId,
+          enddate: currentLease.endDate,
+          isredirectpayment: false,
+          embeddedInTenantSummary: true,
+        ),
+      ],
     );
   }
 }

@@ -433,11 +433,34 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
+    // When embedded inside a parent scroll (e.g. Tenant Summary ListView),
+    // skip Scaffold + SingleChildScrollView so the outer scroll handles everything.
+    if (widget.embeddedInTenantSummary) {
+      return _connectivityResult != ConnectivityResult.none
+          ? FutureBuilder<LeaseSummary>(
+              future: futureLeaseSummary,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 60),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data == null) {
+                  return const Center(child: Text('No data found.'));
+                }
+                return _buildLeaseContent(snapshot.data!, context, screenWidth);
+              },
+            )
+          : _buildNoInternetWidget();
+    }
+
     return Scaffold(
-      // appBar: widget302.,
-      appBar: widget.embeddedInTenantSummary ? null : widget_302.App_Bar(context: context),
+      appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: widget.embeddedInTenantSummary ? null : CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),
@@ -459,8 +482,31 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     } else if (!snapshot.hasData || snapshot.data == null) {
                       return const Center(child: Text('No data found.'));
                     } else {
-                      var lease = snapshot.data!;
-                      return Column(
+                      return _buildLeaseContent(snapshot.data!, context, screenWidth);
+                    }
+                  }),
+            )
+          : _buildNoInternetWidget(),
+    );
+  }
+
+  Widget _buildNoInternetWidget() {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset('assets/no_internet.json', width: 200, height: 200, fit: BoxFit.fill),
+          const Text('No Internet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text('Check your internet connection', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLeaseContent(LeaseSummary lease, BuildContext context, double screenWidth) {
+    return Column(
                         children: <Widget>[
                           if (!widget.embeddedInTenantSummary) ...[
                             const SizedBox(
@@ -483,7 +529,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
-                                      '${snapshot.data?.data?.rentalAddress}',
+                                      '${lease.data?.rentalAddress}',
                                       maxLines: 5, // Set maximum number of lines
                                       overflow: TextOverflow
                                           .ellipsis, // Handle overflow with ellipsis
@@ -554,11 +600,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             child: Row(
                               children: [
                                 Text(
-                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
+                                  '${determineStatus(lease.data?.startDate, lease.data?.endDate)} ${lease.data?.renewLeases != null && lease.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
                                     color: _getStatusColor(determineStatus(
-                                        snapshot.data?.data?.startDate,
-                                        snapshot.data?.data?.endDate)),
+                                        lease.data?.startDate,
+                                        lease.data?.endDate)),
                                     fontWeight: FontWeight.bold,
                                     fontSize:
                                         MediaQuery.of(context).size.width < 500
@@ -590,26 +636,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           MaterialPageRoute(
                                               builder: (context) => Edit_lease(
                                                     //lease: lease,
-                                                    leaseId: snapshot
-                                                        .data!.data!.leaseId!,
+                                                    leaseId: lease
+                                                        .data!.leaseId!,
                                                   )));
                                     } else if (value == 'send_mail') {
-                                      // Provider.of<SelectedTenantsProvider>(context,
-                                      //     listen: false)
-                                      //     .clearTenant();
-                                      // Provider.of<SelectedCosignersProvider>(context,
-                                      //     listen: false)
-                                      //     .clearCosigner();
-                                      // Provider.of<SelectedApplicantProvider>(context,
-                                      //     listen: false)
-                                      //     .clearApplicant();
                                       final result = await Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (context) => send_email(
-                                                    lease: snapshot
-                                                        .data!.data!.tenantId!,
-                                                    leaseID: snapshot
-                                                        .data!.data!.leaseId!,
+                                                    lease: lease
+                                                        .data!.tenantId!,
+                                                    leaseID: lease
+                                                        .data!.leaseId!,
                                                   )));
                                     }
                                   },
@@ -893,7 +930,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               ),
                             ),
                           ),
-                          _buildTabContent(snapshot.data!, context),
+                          _buildTabContent(lease, context),
                           /*  Expanded(
                           child: TabBarView(
                             controller: _tabController,
@@ -917,33 +954,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         ),*/
                         ],
                       );
-                    }
-                  }),
-            )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-    );
   }
 
   Widget _buildTabContent(LeaseSummary snapshot, BuildContext context) {

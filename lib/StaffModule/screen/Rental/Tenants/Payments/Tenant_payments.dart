@@ -1209,14 +1209,26 @@ class _FinancialTableState extends State<FinancialTable> {
   late TextEditingController _toDateController;
 
   void _fetchData() {
-    if (_fromDateController.text.isNotEmpty &&
-        _toDateController.text.isNotEmpty) {
-      _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger(
+    final fromD = _fromDateController.text;
+    final toD = _toDateController.text;
+    if (fromD.isNotEmpty && toD.isNotEmpty) {
+      final fromApi = reverseFormatDate(fromD);
+      final toApi = reverseFormatDate(toD);
+      if (fromApi.isNotEmpty && toApi.isNotEmpty) {
+        _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger(
           leaseId: widget.leaseId,
-          fromDate: _fromDateController.text,
-          toDate: _toDateController.text);
+          fromDate: fromApi,
+          toDate: toApi,
+        );
+      } else {
+        _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger(
+          leaseId: widget.leaseId,
+        );
+      }
     } else {
-      _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger();
+      _leaseLedgerFuture = TenantLeaseRepository().fetchLeaseLedger(
+        leaseId: widget.leaseId,
+      );
     }
     setState(() {});
   }
@@ -1263,6 +1275,10 @@ class _FinancialTableState extends State<FinancialTable> {
         controller.text = dateProvider.formatCurrentDate(apiFormatDate);
         fdate = apiFormatDate; // Keep API format for filtering
       });
+      if (_fromDateController.text.isNotEmpty &&
+          _toDateController.text.isNotEmpty) {
+        _fetchData();
+      }
     }
   }
 
@@ -1302,6 +1318,10 @@ class _FinancialTableState extends State<FinancialTable> {
         controller.text = dateProvider.formatCurrentDate(apiFormatDate);
         edate = apiFormatDate; // Keep API format for filtering
       });
+      if (_fromDateController.text.isNotEmpty &&
+          _toDateController.text.isNotEmpty) {
+        _fetchData();
+      }
     }
   }
 
@@ -1311,10 +1331,11 @@ class _FinancialTableState extends State<FinancialTable> {
   // Helper function to convert display format back to API format (yyyy-MM-dd)
   String _convertToApiFormat(String displayDate) {
     if (displayDate.isEmpty) return "";
+    final viaReverse = reverseFormatDate(displayDate);
+    if (viaReverse.isNotEmpty) return viaReverse;
     try {
       DateTime? parsedDate;
 
-      // Try to parse the date using common formats
       List<String> dateFormats = [
         'MM/dd/yyyy',
         'MM-dd-yyyy',
@@ -1336,46 +1357,97 @@ class _FinancialTableState extends State<FinancialTable> {
         return DateFormat('yyyy-MM-dd').format(parsedDate);
       }
 
-      return displayDate; // Return as is if parsing fails
+      return displayDate;
     } catch (e) {
-      return displayDate; // Return as is if parsing fails
+      return displayDate;
     }
   }
 
-  void _filterData() {
-    // Parse the dates from the controllers
+  /// Payment date for filtering; prefer [Data.createdAt] to match the Date column.
+  DateTime? _leasePaymentDateOnly(Data lease) {
     try {
-      // Convert display format back to API format for filtering
-      String fromDateStr = _convertToApiFormat(_fromDateController.text);
-      String toDateStr = _convertToApiFormat(_toDateController.text);
+      final raw = lease.createdAt;
+      if (raw != null && raw.isNotEmpty) {
+        final s = raw.contains(' ') ? raw.split(' ')[0] : raw;
+        return DateTime.parse(s);
+      }
+      if (lease.entry != null &&
+          lease.entry!.isNotEmpty &&
+          (lease.entry!.first.date ?? '').isNotEmpty) {
+        return DateFormat('yyyy-MM-dd').parse(lease.entry!.first.date!);
+      }
+    } catch (_) {}
+    return null;
+  }
 
-      DateTime fromDate = DateFormat('yyyy-MM-dd').parse(fromDateStr);
-      DateTime toDate = DateFormat('yyyy-MM-dd')
-          .parse(toDateStr)
-          .add(Duration(days: 1)); // Include the end date
+  bool _paymentInDateRange(
+    DateTime? paymentDay,
+    DateTime fromDay,
+    DateTime toDay,
+  ) {
+    if (paymentDay == null) return false;
+    final p = DateTime(paymentDay.year, paymentDay.month, paymentDay.day);
+    final f = DateTime(fromDay.year, fromDay.month, fromDay.day);
+    final t = DateTime(toDay.year, toDay.month, toDay.day);
+    return !p.isBefore(f) && !p.isAfter(t);
+  }
 
-      // Filter the data based on the selected date range
-      filteredData = allData.where((data) {
-        if (data.entry == null || data.entry!.isEmpty) {
-          return false; // Skip entries with no date information
+  List<Data> _filterLeasePaymentRows(List<Data> rows) {
+    var list = rows.toList();
+    final sv = searchvalue;
+    if (sv.isNotEmpty && sv != 'All') {
+      final q = sv.toLowerCase();
+      list = list.where((lease) {
+        if ((lease.type ?? '').toLowerCase().contains(q)) return true;
+        if ((lease.balance?.toString() ?? '').toLowerCase().contains(q)) {
+          return true;
         }
-        DateTime leaseDate = DateFormat('yyyy-MM-dd').parse(
-            data.entry!.first.date!); // Adjust according to your data structure
-        return leaseDate.isAfter(fromDate) && leaseDate.isBefore(toDate);
+        if ((lease.totalAmount?.toString() ?? '').toLowerCase().contains(q)) {
+          return true;
+        }
+        if ((lease.transactionid ?? '').toLowerCase().contains(q)) {
+          return true;
+        }
+        if ((lease.paymenttype ?? '').toLowerCase().contains(q)) return true;
+        if ((lease.response ?? '').toLowerCase().contains(q)) return true;
+        if ((lease.createdAt ?? '').toLowerCase().contains(q)) return true;
+        final td = lease.tenantData;
+        if (td is Map) {
+          final fn =
+              '${td['tenant_firstName'] ?? ''} ${td['tenant_lastName'] ?? ''}'
+                  .toLowerCase();
+          if (fn.contains(q)) return true;
+        }
+        return false;
       }).toList();
-    } catch (e) {
-      print("Date parsing error: $e");
-      // Optionally, show an error message to the user
     }
 
-    // Refresh the UI
-    setState(() {});
+    if (_fromDateController.text.isNotEmpty &&
+        _toDateController.text.isNotEmpty) {
+      try {
+        final fromDateStr = _convertToApiFormat(_fromDateController.text);
+        final toDateStr = _convertToApiFormat(_toDateController.text);
+        if (fromDateStr.isEmpty || toDateStr.isEmpty) return list;
+        final fromDate = DateFormat('yyyy-MM-dd').parse(fromDateStr);
+        final toDate = DateFormat('yyyy-MM-dd').parse(toDateStr);
+        list = list.where((lease) {
+          final pd = _leasePaymentDateOnly(lease);
+          return _paymentInDateRange(pd, fromDate, toDate);
+        }).toList();
+      } catch (e) {
+        print("Date filter error: $e");
+      }
+    }
+
+    return list;
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    final dateProvider = Provider.of<DateProvider>(context);
+    final dateProvider = Provider.of<DateProvider>(context, listen: true);
+    final dateFormatHint =
+        dateProvider.fixDateFormat(dateProvider.dateFormat).toUpperCase();
 
     return Container(
       child: SingleChildScrollView(
@@ -1423,73 +1495,8 @@ class _FinancialTableState extends State<FinancialTable> {
                       );
                     } else {
                       final leaseLedger = snapshot.data!;
-                      var data = leaseLedger.data!.toList();
-                      //final data = data.reversed.toList();
-                      if (searchvalue != null &&
-                          searchvalue!.isNotEmpty &&
-                          searchvalue != "All") {
-                        data = data
-                            .where((lease) =>
-                                lease.type!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                lease.balance
-                                    .toString()!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                lease.totalAmount
-                                    .toString()!
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
-                            .toList();
-                      }
-
-                      if (_fromDateController.text.isNotEmpty &&
-                          _toDateController.text.isNotEmpty) {
-                        try {
-                          // Convert display format back to API format for filtering
-                          String fromDateStr =
-                              _convertToApiFormat(_fromDateController.text);
-                          String toDateStr =
-                              _convertToApiFormat(_toDateController.text);
-
-                          DateTime fromDate =
-                              DateFormat('yyyy-MM-dd').parse(fromDateStr);
-                          DateTime toDate =
-                              DateFormat('yyyy-MM-dd').parse(toDateStr);
-                          print("From Date: $fromDate");
-                          print("To Date: $toDate");
-
-                          if (fromDate.isAtSameMomentAs(toDate)) {
-                            // If both dates are the same, only include leases with the same date
-                            data = data.where((lease) {
-                              if (lease.entry == null || lease.entry!.isEmpty) {
-                                return false; // Skip entries with no date information
-                              }
-                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
-                                  .parse(lease.entry!.first.date!);
-                              print("Lease Date: $leaseDate");
-                              return leaseDate.isAtSameMomentAs(fromDate);
-                            }).toList();
-                          } else {
-                            // If dates are different, use the original condition
-                            data = data.where((lease) {
-                              if (lease.entry == null || lease.entry!.isEmpty) {
-                                return false; // Skip entries with no date information
-                              }
-                              DateTime leaseDate = DateFormat('yyyy-MM-dd')
-                                  .parse(lease.entry!.first.date!);
-                              print("Lease Date: $leaseDate");
-                              return (leaseDate.isAfter(fromDate) &&
-                                      leaseDate.isBefore(toDate)) ||
-                                  leaseDate.isAtSameMomentAs(fromDate) ||
-                                  leaseDate.isAtSameMomentAs(toDate);
-                            }).toList();
-                          }
-                        } catch (e) {
-                          print("Date parsing error: $e");
-                        }
-                      }
+                      var data = _filterLeasePaymentRows(
+                          leaseLedger.data!.toList());
 
                       sortData(data);
                       final totalPages = (data.length / itemsPerPage).ceil();
@@ -1590,7 +1597,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           _fromDateController),
                                                       decoration:
                                                           InputDecoration(
-                                                        hintText: 'yyyy-mm-dd',
+                                                        hintText: dateFormatHint,
                                                         suffixIcon: Icon(Icons
                                                             .calendar_today),
                                                         border:
@@ -1623,7 +1630,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                         context,
                                                         _toDateController),
                                                     decoration: InputDecoration(
-                                                      hintText: 'dd-mm-yyyy',
+                                                      hintText: dateFormatHint,
                                                       suffixIcon: Icon(
                                                           Icons.calendar_today),
                                                       border:
@@ -1714,7 +1721,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     InputBorder
                                                                         .none,
                                                                 hintText:
-                                                                    'From date',
+                                                                    dateFormatHint,
                                                                 suffixIcon:
                                                                     IconButton(
                                                                   padding: EdgeInsets
@@ -1811,7 +1818,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     InputBorder
                                                                         .none,
                                                                 hintText:
-                                                                    'To date',
+                                                                    dateFormatHint,
                                                                 suffixIcon:
                                                                     IconButton(
                                                                   padding: EdgeInsets
@@ -2629,7 +2636,9 @@ class _FinancialTableState extends State<FinancialTable> {
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    final filtered =
+                        _filterLeasePaymentRows(snapshot.data!.data!);
+                    _tableData = List<Data?>.from(filtered);
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Column(
@@ -2774,7 +2783,9 @@ class _FinancialTableState extends State<FinancialTable> {
                       snapshot.data!.data!.isEmpty) {
                     return const Center(child: Text('No data available'));
                   } else {
-                    _tableData = snapshot.data!.data!;
+                    final filtered =
+                        _filterLeasePaymentRows(snapshot.data!.data!);
+                    _tableData = List<Data?>.from(filtered);
                     totalrecords = _tableData.length;
                     return SingleChildScrollView(
                       child: Padding(

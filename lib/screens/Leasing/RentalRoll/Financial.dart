@@ -1616,6 +1616,61 @@ class _FinancialTableState extends State<FinancialTable> {
             const SizedBox(
               height: 0,
             ),
+            FutureBuilder<LeaseLedger?>(
+              future: _leaseLedgerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data?.totalBalance != null) {
+                  final totalBalance = snapshot.data!.totalBalance!;
+                  final isCredit = totalBalance < 0;
+                  final absAmount = totalBalance.abs();
+                  final formatted = NumberFormat.currency(
+                    locale: 'en_US',
+                    symbol: '\$',
+                    decimalDigits: 2,
+                  ).format(absAmount);
+                  final displayText = isCredit
+                      ? '($formatted) Credit'
+                      : totalBalance > 0
+                          ? '$formatted Balance Due'
+                          : '\$0.00';
+                  final badgeColor = isCredit
+                      ? const Color(0xFFD1FAE5)
+                      : const Color(0xFFDEEAFF);
+                  final textColor = isCredit
+                      ? const Color(0xFF065F46)
+                      : blueColor;
+                  final borderColor = isCredit
+                      ? const Color(0xFF6EE7B7)
+                      : const Color(0xFF8AAEE0);
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 11.0, top: 6.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: badgeColor,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: borderColor),
+                          ),
+                          child: Text(
+                            'Balance: $displayText',
+                            style: TextStyle(
+                              color: textColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
             Container(
               width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.symmetric(
