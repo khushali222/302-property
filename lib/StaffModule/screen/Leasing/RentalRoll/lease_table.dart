@@ -1078,6 +1078,18 @@ class _Lease_tableState extends State<Lease_table> {
                                 ),
                               ),
                             ),
+                            // const SizedBox(width: 10),
+                            // Align(
+                            //   alignment: Alignment.centerRight,
+                            //   child: RichText(
+                            //     text: TextSpan(
+                            //       children: [
+                            //         TextSpan(text: 'Added : ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                            //         TextSpan(text: '$leaseCount', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(width: 8),
                             if (MediaQuery.of(context).size.width > 500)

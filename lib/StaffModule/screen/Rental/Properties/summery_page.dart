@@ -60,6 +60,7 @@ import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../Maintenance/Workorder/Edit_workorders.dart';
 import '../../../repository/workorder.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../widgets/summary_lease_info_expandable.dart';
 import '../../../../widgets/custom_history_table.dart';
 import '../../../../enums/history_type.dart';
 
@@ -121,6 +122,7 @@ class _Summery_pageState extends State<Summery_page>
   late Future<List<Properties_lease_model>> futureLeaseDetails;
   late Future<List<Map<String, dynamic>>> futurePropertyTaxes;
   late Future<(Rentals, Map<String, dynamic>?)> futureSummaryWithFinancial;
+  Future<List<Properties_lease_model>> _summaryLeasesFuture = Future.value([]);
   bool isLoaders = false;
   int _taxInsuranceSelectedIndex = 0;
   bool _isTaxInsuranceDropdownOpen = false;
@@ -278,10 +280,13 @@ class _Summery_pageState extends State<Summery_page>
     // futureLeaseDetails = Properies_summery_Repo().fetchrLeaseDetails(widget.unit?.unitId ?? "");
     futureUnitsummery.then((units) {
       if (units.isNotEmpty) {
-        // Get the first unit's ID and fetch lease details
-        String unitId = units.first.unitId!;
-        futureLeaseDetails =
-            Properies_summery_Repo().fetchrLeaseDetails(unitId);
+        final String unitId = units.first.unitId!;
+        setState(() {
+          futureLeaseDetails =
+              Properies_summery_Repo().fetchrLeaseDetails(unitId);
+          _summaryLeasesFuture =
+              Properies_summery_Repo().fetchrLeaseDetails(unitId);
+        });
         print("unit id with new $unitId");
       }
     });
@@ -4731,374 +4736,184 @@ class _Summery_pageState extends State<Summery_page>
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      border:
-                          Border.all(color: const Color(0xFFDEE2E6), width: 1),
-                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFFDEE2E6), width: 1),
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.06),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Full-width property image ──────────────────────
+                        SizedBox(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width < 500 ? 200 : 280,
+                          child: (rentalDetails.rentalImage != null &&
+                                  rentalDetails.rentalImage!.isNotEmpty)
+                              ? CachedNetworkImage(
+                                  imageUrl: '$image_url$currentImage',
+                                  width: double.infinity,
+                                  height: MediaQuery.of(context).size.width < 500 ? 200 : 280,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: Container(color: Colors.grey[300]),
+                                  ),
+                                  errorWidget: (context, url, error) => Image.asset(
+                                    'assets/images/noimage.png',
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.width < 500 ? 200 : 280,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Image.asset(
+                                  'assets/images/noimage.png',
+                                  width: double.infinity,
+                                  height: MediaQuery.of(context).size.width < 500 ? 200 : 280,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+
+                        // ── Property type label + photo action (one row) ──────
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(width: 36),
+                              Expanded(
+                                child: Text(
+                                  [
+                                    rentalDetails.propertyTypeData?.propertyType,
+                                    rentalDetails.propertyTypeData?.propertySubType,
+                                  ]
+                                      .where((e) => e != null && e.isNotEmpty)
+                                      .join(' · '),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Color(0xFF8A95A8),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 36,
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: currentImage == ''
+                                      ? Tooltip(
+                                          message: 'Upload photo',
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(20),
+                                            onTap: () => _pickImage().then((_) => setState(() {})),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: blueColor.withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: blueColor.withOpacity(0.4), width: 1),
+                                              ),
+                                              child: Icon(Icons.camera_alt_outlined, size: 16, color: blueColor),
+                                            ),
+                                          ),
+                                        )
+                                      : Tooltip(
+                                          message: 'Delete photo',
+                                          child: InkWell(
+                                            borderRadius: BorderRadius.circular(20),
+                                            onTap: _removeImage,
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.withOpacity(0.1),
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: Colors.red.withOpacity(0.4), width: 1),
+                                              ),
+                                              child: Icon(Icons.delete_outline_rounded, size: 16, color: Colors.red.shade600),
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // ── Property Details + Lease Info ──────────────────
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Property Details',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: MediaQuery.of(context).size.width < 500 ? 18 : 22,
+                                  color: blueColor,
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              Text('Address',
+                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 4),
+                              Text(
+                                [
+                                  rentalDetails.rentalAddress,
+                                  [
+                                    rentalDetails.rentalCity,
+                                    rentalDetails.rentalState,
+                                    rentalDetails.rentalCountry,
+                                    rentalDetails.rentalPostcode,
+                                  ].where((e) => e != null && e.isNotEmpty).join(', '),
+                                ].where((e) => e != null && e.isNotEmpty).join(', '),
+                                style: TextStyle(color: Colors.grey[700], fontSize: 13, height: 1.5),
+                              ),
+                              const SizedBox(height: 12),
+                              Text('Subdivision',
+                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 4),
+                              Text(
+                                (rentalDetails.subdivision?.isNotEmpty == true)
+                                    ? rentalDetails.subdivision!
+                                    : 'N/A',
+                                style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                              ),
+                              const SizedBox(height: 16),
+                              Text('Lease Info:',
+                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 15)),
+                              const SizedBox(height: 8),
+                              FutureBuilder<List<Properties_lease_model>>(
+                                future: _summaryLeasesFuture,
+                                builder: (context, leaseSnapshot) {
+                                  if (leaseSnapshot.connectionState == ConnectionState.waiting) {
+                                    return const Center(child: SpinKitFadingCircle(color: Colors.black, size: 30));
+                                  }
+                                  final leases = leaseSnapshot.data ?? [];
+                                  if (leases.isEmpty) {
+                                    return Text('N/A', style: TextStyle(color: Colors.grey[700], fontSize: 13));
+                                  }
+                                  return SummaryLeaseInfoExpandable(
+                                    leases: leases,
+                                    blueColor: blueColor,
+                                    now: DateTime.now(),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // const SizedBox(
-                          //   height: 4,
-                          // ),
-                          Row(
-                            children: [
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              // Container(
-                              //   // height: 150,
-                              //   width: 150,
-                              //   decoration: BoxDecoration(color: Colors.blue),
-                              //   child: Image.network(
-                              //     "$image_url${widget.properties.rentalImage}"??'https://st.depositphotos.com/1763233/3344/i/450/depositphotos_33445577-stock-photo-wooden-house.jpg',
-                              //     fit: BoxFit.fill,
-                              //     height: 100,
-                              //   ),
-                              // ),
-
-                              Container(
-                                width: MediaQuery.of(context).size.width < 500
-                                    ? 150
-                                    : 250,
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 120
-                                    : 200,
-                                child: SizedBox(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          (rentalDetails.rentalImage != null &&
-                                                  rentalDetails
-                                                      .rentalImage!.isNotEmpty
-                                              ? "$image_url$currentImage"
-                                              : 'assets/images/no_image.jpg'),
-                                      fit: BoxFit.cover,
-                                      height:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 140
-                                              : 220,
-                                      width: MediaQuery.of(context).size.width <
-                                              500
-                                          ? 160
-                                          : 220,
-                                      placeholder: (context, url) =>
-                                          Shimmer.fromColors(
-                                        baseColor: Colors.grey[300]!,
-                                        highlightColor: Colors.grey[100]!,
-                                        child: Container(
-                                          color: Colors.grey[300],
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 140
-                                              : 220,
-                                          width: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 160
-                                              : 220,
-                                        ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
-                                        "assets/images/no_image.jpg",
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // Container(
-                              //   width: MediaQuery.of(context).size.width < 500
-                              //       ? 150
-                              //       : 250,
-                              //   height: MediaQuery.of(context).size.width < 500
-                              //       ? 120
-                              //       : 200,
-                              //   //decoration: const BoxDecoration(color: Colors.blue),
-                              //   child: SizedBox(
-                              //     child: ClipRRect(
-                              //       borderRadius: BorderRadius.circular(8.0),
-                              //       child: CachedNetworkImage(
-                              //         imageUrl: widget.properties.rentalImage !=
-                              //                     null &&
-                              //                 widget
-                              //                     .properties.rentalImage!.isNotEmpty
-                              //             ? "$image_url${widget.properties.rentalImage}"
-                              //             : 'assets/images/no_image.jpg',
-                              //         fit: BoxFit.cover,
-                              //         height: MediaQuery.of(context).size.width < 500
-                              //             ? 140
-                              //             : 220,
-                              //         width: MediaQuery.of(context).size.width < 500
-                              //             ? 160
-                              //             : 220,
-                              //         placeholder: (context, url) =>
-                              //             Shimmer.fromColors(
-                              //           baseColor: Colors.grey[300]!,
-                              //           highlightColor: Colors.grey[100]!,
-                              //           child: Container(
-                              //             color: Colors.grey[300],
-                              //             height:
-                              //                 MediaQuery.of(context).size.width < 500
-                              //                     ? 140
-                              //                     : 220,
-                              //             width:
-                              //                 MediaQuery.of(context).size.width < 500
-                              //                     ? 160
-                              //                     : 220,
-                              //           ),
-                              //         ),
-                              //         errorWidget: (context, url, error) =>
-                              //             Image.asset(
-                              //           "assets/images/no_image.jpg",
-                              //           fit: BoxFit.fill,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-
-                              if (MediaQuery.of(context).size.width < 500)
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                const SizedBox(
-                                  width: 25,
-                                ),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Text(
-                                        'Property Details',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 22,
-                                          color: blueColor,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Text('Address',
-                                          style: TextStyle(
-                                            color: const Color(0xFF8A95A8),
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 13
-                                                : 18,
-                                          )),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Text(
-                                        '${rentalDetails.propertyTypeData?.propertyType}',
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Text(
-                                        '${rentalDetails.rentalAddress}',
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                          color: blueColor,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Text(
-                                        [
-                                          rentalDetails.rentalCity,
-                                          rentalDetails.rentalState,
-                                          rentalDetails.rentalCountry,
-                                          rentalDetails.rentalPostcode,
-                                        ]
-                                            .where((element) =>
-                                                element != null &&
-                                                element.isNotEmpty)
-                                            .map((element) => element!)
-                                            .join(' , '),
-                                        style: TextStyle(
-                                          color: blueColor,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 13
-                                              : 18,
-                                        ),
-                                        maxLines: 6,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-
-                                    // Row(
-                                    //   children: [
-                                    //     SizedBox(
-                                    //       width: 10,
-                                    //     ),
-                                    //     Text(
-                                    //       '${widget.properties.rentalCountry},',
-                                    //       style: TextStyle(
-                                    //         color: blueColor,
-                                    //         fontSize:
-                                    //             MediaQuery.of(context).size.width < 500
-                                    //                 ? 13
-                                    //                 : 18,
-                                    //       ),
-                                    //     ),
-                                    //     SizedBox(width: 3),
-                                    //     Text(
-                                    //       '${widget.properties.rentalPostcode}',
-                                    //       style: TextStyle(
-                                    //         color: blueColor,
-                                    //         fontSize:
-                                    //             MediaQuery.of(context).size.width < 500
-                                    //                 ? 13
-                                    //                 : 18,
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              if (currentImage == '')
-                                Container(
-                                  height: 30,
-                                  width: 90,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      _pickImage().then((_) {
-                                        setState(
-                                            () {}); // Rebuild the widget after selecting the image
-                                      });
-                                    },
-                                    child: const Text(
-                                      'Upload',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              if (_imageUrls.isNotEmpty ||
-                                  rentalDetails.rentalImage != '')
-                                Container(
-                                  height: 30,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      _removeImage();
-                                    },
-                                    child: const Text(
-                                      'Delete',
-                                      style:
-                                          TextStyle(color: Color(0xFFf7f8f9)),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   _buildFinancialSummarySection(
                     context,
                     financialData,
@@ -22583,6 +22398,333 @@ class _AppliancesPartState extends State<AppliancesPart> {
     );
   }
 }
+
+// ─── Expandable lease table used in the Summary tab ─────────────────────────
+class SummaryLeaseInfoExpandable extends StatefulWidget {
+  final List<Properties_lease_model> leases;
+  final Color blueColor;
+  final DateTime now;
+
+  const SummaryLeaseInfoExpandable({
+    super.key,
+    required this.leases,
+    required this.blueColor,
+    required this.now,
+  });
+
+  @override
+  State<SummaryLeaseInfoExpandable> createState() =>
+      _SummaryLeaseInfoExpandableState();
+}
+
+class _SummaryLeaseInfoExpandableState
+    extends State<SummaryLeaseInfoExpandable> {
+  static const int _pageSize = 10;
+  int _currentPage = 0;
+  int? _expandedGlobalIdx;
+
+  int _calcDays(String? endDate) {
+    if (endDate == null || endDate.isEmpty) return 0;
+    final d = DateTime.tryParse(endDate);
+    if (d == null) return 0;
+    // clamp to 0 — never show negative for expired leases
+    return d.difference(widget.now).inDays.clamp(0, 999999);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final blueColor = widget.blueColor;
+    final allLeases = widget.leases;
+    final total = allLeases.length;
+    final totalPages = (total / _pageSize).ceil().clamp(1, 999);
+    final start = _currentPage * _pageSize;
+    final end = (start + _pageSize).clamp(0, total);
+    final pageLeases = allLeases.sublist(start, end);
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+
+    final hStyle = TextStyle(
+        color: blueColor, fontSize: 13, fontWeight: FontWeight.bold);
+    const vStyle = TextStyle(
+        color: Colors.black87, fontSize: 13, fontWeight: FontWeight.w600);
+    final dLabelStyle = TextStyle(
+        color: blueColor, fontSize: 13, fontWeight: FontWeight.bold);
+    const dValueStyle = TextStyle(
+        color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Header row ─────────────────────────────────────────────────
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF4F8FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          child: Row(
+            children: [
+              const SizedBox(width: 26), // arrow placeholder
+              Expanded(flex: 5, child: Text('Tenant Name', style: hStyle)),
+              Expanded(
+                flex: 4,
+                child: Text('Lease End', style: hStyle,
+                    textAlign: TextAlign.right),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 6),
+
+        // ── Data rows ──────────────────────────────────────────────────
+        ...pageLeases.asMap().entries.map((entry) {
+          final localIdx = entry.key;
+          final globalIdx = start + localIdx;
+          final l = entry.value;
+          final isExpanded = _expandedGlobalIdx == globalIdx;
+
+          final name = (l.tenantNames?.isNotEmpty == true)
+              ? l.tenantNames!
+              : '';
+
+          // use API-provided remainingDays (already correct), fallback to calc; never negative
+          final rawDays = l.remainingDays ?? _calcDays(l.endDate);
+          final days = rawDays.clamp(0, 999999);
+
+          final amt = l.amount != null
+              ? '\$${l.amount!.toStringAsFixed(2)}'
+              : 'N/A';
+          final formattedEnd = dateProvider.formatCurrentDate(l.endDate ?? '');
+
+          // row background: odd rows get light tint
+          final rowBg = localIdx % 2 != 0
+              ? const Color(0xFFF4F8FF)
+              : Colors.white;
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 6),
+            decoration: BoxDecoration(
+              color: rowBg,
+              border: Border.all(color: const Color(0xFFDBE0E5)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                // ── Collapsed row ────────────────────────────────────
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () => setState(() {
+                    _expandedGlobalIdx = isExpanded ? null : globalIdx;
+                  }),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 13),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // expand arrow
+                        SizedBox(
+                          width: 22,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: isExpanded ? 0 : 5,
+                              top: isExpanded ? 5 : 0,
+                            ),
+                            child: FaIcon(
+                              isExpanded
+                                  ? FontAwesomeIcons.sortUp
+                                  : FontAwesomeIcons.sortDown,
+                              size: 17,
+                              color: blueColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        // Tenant Name
+                        Expanded(
+                          flex: 5,
+                          child: Text(
+                            name.isEmpty ? 'N/A' : name,
+                            style: vStyle,
+                          ),
+                        ),
+                        // Lease End — right-aligned
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            formattedEnd.isEmpty ? 'N/A' : formattedEnd,
+                            style: vStyle,
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ── Expanded detail panel ────────────────────────────
+                if (isExpanded) ...[
+                  Divider(
+                      height: 1,
+                      color: const Color(0xFFDBE0E5)),
+                  Container(
+                    color: rowBg,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Rent Cycle (left) + Rent Amount (right-aligned)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Rent Cycle', style: dLabelStyle),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    (l.rentCycle != null &&
+                                            l.rentCycle!.isNotEmpty)
+                                        ? l.rentCycle!
+                                        : 'N/A',
+                                    style: dValueStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text('Rent Amount',
+                                      style: dLabelStyle,
+                                      textAlign: TextAlign.right),
+                                  const SizedBox(height: 3),
+                                  Text(amt,
+                                      style: dValueStyle,
+                                      textAlign: TextAlign.right),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // Remaining Days
+                        Text('Remaining Days', style: dLabelStyle),
+                        const SizedBox(height: 3),
+                        Text('$days Days', style: dValueStyle),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }).toList(),
+
+        // ── Pagination bar (only when > 10 leases) ─────────────────────
+        if (total > _pageSize) ...[
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Showing ${start + 1}–$end of $total',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+              Row(
+                children: [
+                  _pgBtn(
+                    icon: Icons.chevron_left,
+                    enabled: _currentPage > 0,
+                    blueColor: blueColor,
+                    onTap: () => setState(() {
+                      _currentPage--;
+                      _expandedGlobalIdx = null;
+                    }),
+                  ),
+                  const SizedBox(width: 4),
+                  ...List.generate(totalPages, (i) {
+                    final active = i == _currentPage;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: GestureDetector(
+                        onTap: () => setState(() {
+                          _currentPage = i;
+                          _expandedGlobalIdx = null;
+                        }),
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: active ? blueColor : const Color(0xFFF4F8FF),
+                            border: Border.all(
+                                color: active
+                                    ? blueColor
+                                    : const Color(0xFFDBE0E5)),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${i + 1}',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: active ? Colors.white : blueColor),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                  const SizedBox(width: 4),
+                  _pgBtn(
+                    icon: Icons.chevron_right,
+                    enabled: _currentPage < totalPages - 1,
+                    blueColor: blueColor,
+                    onTap: () => setState(() {
+                      _currentPage++;
+                      _expandedGlobalIdx = null;
+                    }),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _pgBtn({
+    required IconData icon,
+    required bool enabled,
+    required Color blueColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: enabled ? const Color(0xFFF4F8FF) : const Color(0xFFF0F0F0),
+          border: Border.all(
+              color: enabled
+                  ? const Color(0xFFDBE0E5)
+                  : const Color(0xFFE8E8E8)),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Icon(icon,
+            size: 18, color: enabled ? blueColor : Colors.grey[400]),
+      ),
+    );
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 class CustomTextFormField extends StatefulWidget {
   final String labelText;

@@ -642,7 +642,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           // Search and Filter Section
           Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
@@ -655,7 +655,7 @@ class _MortgageTableState extends State<MortgageTable> {
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    height: (MediaQuery.of(context).size.width < 768) ? 50 : 60,
+                    height: (MediaQuery.of(context).size.width < 768) ? 45 : 60,
                     width: MediaQuery.of(context).size.width * 0.49,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -680,12 +680,25 @@ class _MortgageTableState extends State<MortgageTable> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                // const SizedBox(width: 10),
+                // Expanded(
+                //   child: Align(
+                //     alignment: Alignment.centerRight,
+                //     child: RichText(
+                //       text: TextSpan(
+                //         children: [
+                //           TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                //           TextSpan(text: '${_mortgages.length}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(width: 5),
               ],
             ),
           ),
-          // const SizedBox(height: 25),
-
+          SizedBox(height: 5),
           // Content Section
           _isLoading
               ? const SizedBox(

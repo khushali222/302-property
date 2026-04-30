@@ -96,7 +96,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
   final _nextPaymentDateController = TextEditingController();
   final _borrowerFirstNameController = TextEditingController();
   final _borrowerLastNameController = TextEditingController();
-  final _borrowerSSNController = TextEditingController();
+  final _borrowerCompanyNameController = TextEditingController();
   final _borrowerAddressController = TextEditingController();
   final _borrowerPhoneController = TextEditingController();
   final _borrowerEmailController = TextEditingController();
@@ -198,7 +198,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     _nextPaymentDateController.dispose();
     _borrowerFirstNameController.dispose();
     _borrowerLastNameController.dispose();
-    _borrowerSSNController.dispose();
+    _borrowerCompanyNameController.dispose();
     _borrowerAddressController.dispose();
     _borrowerPhoneController.dispose();
     _borrowerEmailController.dispose();
@@ -370,6 +370,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     return null;
   }
 
+  /// Empty is valid; if filled, must be a non-negative integer.
+  String? _validateOptionalNonNegativeInt(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) return null;
+    final n = int.tryParse(value.trim());
+    if (n == null || n < 0) {
+      return 'Enter a valid $fieldName';
+    }
+    return null;
+  }
+
   String? _validateEmail(String? value) {
     if (value != null && value.isNotEmpty) {
       final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -414,9 +424,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
   String? _validateInterestRate(String? value) {
     final trimmed = value?.trim() ?? '';
-    if (trimmed.isEmpty) {
-      return 'Interest rate must be between 0 to 100';
-    }
+    if (trimmed.isEmpty) return null;
     final rate = double.tryParse(trimmed.replaceAll('%', ''));
     if (rate == null || rate < 0 || rate > 100) {
       return 'Interest rate must be between 0 to 100';
@@ -856,7 +864,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             mortgageData['borrower_first_name'] ?? '';
         _borrowerLastNameController.text =
             mortgageData['borrower_last_name'] ?? '';
-        _borrowerSSNController.text = mortgageData['borrower_ssn'] ?? '';
+        _borrowerCompanyNameController.text =
+            mortgageData['borrower_company_name'] ?? '';
         _borrowerAddressController.text =
             mortgageData['borrower_address'] ?? '';
         _borrowerPhoneController.text = mortgageData['borrower_phone'] ?? '';
@@ -960,7 +969,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             _nextPaymentDate != null ? _nextPaymentDate!.toIso8601String() : '',
         'borrower_first_name': _borrowerFirstNameController.text.trim(),
         'borrower_last_name': _borrowerLastNameController.text.trim(),
-        'borrower_ssn': _borrowerSSNController.text.trim(),
+        'borrower_company_name': _borrowerCompanyNameController.text.trim(),
         'borrower_address': _borrowerAddressController.text.trim(),
         'borrower_phone': _borrowerPhoneController.text.trim(),
         'borrower_email': _borrowerEmailController.text.trim(),
@@ -1036,8 +1045,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
           _originalMortgageData!['borrower_first_name'] ?? '';
       originalData['borrower_last_name'] =
           _originalMortgageData!['borrower_last_name'] ?? '';
-      originalData['borrower_ssn'] =
-          _originalMortgageData!['borrower_ssn'] ?? '';
+      originalData['borrower_company_name'] =
+          _originalMortgageData!['borrower_company_name'] ?? '';
       originalData['borrower_address'] =
           _originalMortgageData!['borrower_address'] ?? '';
       originalData['borrower_phone'] =
@@ -1146,59 +1155,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       }
     }
 
-    // Validate Fixed Interest Expiration Date for Fixed Rate Mortgage
-    if (_selectedMortgageType == 'Fixed Rate Mortgage' ||
-        (_selectedMortgageType.isEmpty &&
-            _typeController.text == 'Fixed Rate Mortgage')) {
-      if (_fixedInterestExpirationDate == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fixed Interest Expiration Date is required'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-      if (_startDate != null && _endDate != null) {
-        // Must be strictly between Origination and Maturity dates (exclusive)
-        // expDate > startDate AND expDate < endDate
-        final startDateOnly =
-            DateTime(_startDate!.year, _startDate!.month, _startDate!.day);
-        final endDateOnly =
-            DateTime(_endDate!.year, _endDate!.month, _endDate!.day);
-        final expirationDateOnly = DateTime(
-            _fixedInterestExpirationDate!.year,
-            _fixedInterestExpirationDate!.month,
-            _fixedInterestExpirationDate!.day);
-
-        // Check: expDate > startDate (must be after origination date)
-        if (expirationDateOnly.isBefore(startDateOnly) ||
-            expirationDateOnly.isAtSameMomentAs(startDateOnly)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Fixed interest expiration date must be after origination date'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          return;
-        }
-
-        // Check: expDate < endDate (must be before maturity date)
-        if (expirationDateOnly.isAfter(endDateOnly) ||
-            expirationDateOnly.isAtSameMomentAs(endDateOnly)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Fixed interest expiration date must be before maturity date'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          return;
-        }
-      }
-    }
-
     // Check if in edit mode and if there are any changes - do this before business logic validations
     if (widget.mortgageId != null && !_hasChanges()) {
       // No changes made, don't call API and skip business logic validations
@@ -1295,6 +1251,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         // Build base mortgage data
         final mortgageData = <String, dynamic>{
           'properties': propertyIds,
+          'payment_entry_mode': 'principal_interest',
           'bank_name': _bankNameController.text.trim(),
           'bank_address': _bankAddressController.text.trim(),
           'bank_contact_no': _bankContactController.text.trim(),
@@ -1331,7 +1288,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               : '',
           'borrower_first_name': _borrowerFirstNameController.text.trim(),
           'borrower_last_name': _borrowerLastNameController.text.trim(),
-          'borrower_ssn': _borrowerSSNController.text.trim(),
+          'borrower_company_name': _borrowerCompanyNameController.text.trim(),
           'borrower_address': _borrowerAddressController.text.trim(),
           'borrower_phone': _borrowerPhoneController.text.trim(),
           'borrower_email': _borrowerEmailController.text.trim(),
@@ -1546,12 +1503,14 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     //   ),
                     // const SizedBox(height: 24),
 
-                    // Bank Information Section
-                    _buildSectionHeader('Bank Information'),
+                    // Bank (lender) section
+                    _buildSectionHeader('Bank',
+                        subtitle:
+                            'Enter the Lender and contact details.'),
                     _buildTextField(
                       controller: _bankNameController,
-                      label: 'Name *',
-                      hint: 'Enter bank name',
+                      label: 'Bank Name *',
+                      hint: 'Enter Bank Name',
                       validator: (value) =>
                           _validateRequired(value, 'Bank name'),
                     ),
@@ -1559,76 +1518,68 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     _buildTextField(
                       controller: _bankAddressController,
                       label: 'Address',
-                      hint: 'Enter bank address',
+                      hint: 'Enter Bank Address',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _bankContactController,
-                      label: 'Contact Number *',
-                      hint: 'Enter bank contact number',
+                      label: 'Phone',
+                      hint: '(xxx) xxx-xxxx',
                       keyboardType: TextInputType.phone,
                       inputFormatters: [PhoneNumberFormatter()],
-                      validator: (value) {
-                        String? requiredError =
-                            _validateRequired(value, 'Bank contact number');
-                        if (requiredError != null) return requiredError;
-                        return _validatePhone(value);
-                      },
+                      validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _bankEmailController,
                       label: 'Email',
-                      hint: 'Enter bank email',
+                      hint: 'Enter Bank Email',
                       keyboardType: TextInputType.emailAddress,
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 24),
 
                     // Relationship Manager Information Section
-                    _buildSectionHeader('Relationship Manager Information'),
+                    _buildSectionHeader('Relationship Manager',
+                        subtitle: 'Optional point of contact for this loan.'),
                     _buildTextField(
                       controller: _managerFirstNameController,
                       label: 'First Name',
-                      hint: 'Enter first name',
+                      hint: 'Enter First Name',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _managerLastNameController,
                       label: 'Last Name',
-                      hint: 'Enter last name',
+                      hint: 'Enter Last Name',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _managerPhoneController,
-                      label: 'Phone *',
-                      hint: 'Enter relationship manager phone',
+                      label: 'Phone',
+                      hint: '(xxx) xxx-xxxx',
                       keyboardType: TextInputType.phone,
                       inputFormatters: [PhoneNumberFormatter()],
-                      validator: (value) {
-                        String? requiredError =
-                            _validateRequired(value, 'Manager phone');
-                        if (requiredError != null) return requiredError;
-                        return _validatePhone(value);
-                      },
+                      validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _managerEmailController,
                       label: 'Email',
-                      hint: 'Enter email',
+                      hint: 'Enter Email',
                       keyboardType: TextInputType.emailAddress,
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 24),
 
                     // Mortgage Details Section
-                    _buildSectionHeader('Mortgage Details'),
+                    _buildSectionHeader('Mortgage Details',
+                        subtitle: 'Loan type, identifiers, and key terms.'),
 
                         _buildTextField(
                       controller: _mortgageNumberController,
-                      label: 'Loan Number  *',
-                      hint: 'Enter loan number',
+                      label: 'Loan Number *',
+                      hint: 'Enter Loan Number',
                       keyboardType: TextInputType.text,
                       validator: (value) {
                         String? requiredError =
@@ -1718,8 +1669,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                      _buildDropdownField(
                         controller: _typeController,
-                        label: 'Term Type  *',
-                        hint: 'Select term type',
+                        label: 'Term Type *',
+                        hint: 'Select Term Type',
                         validator: (value) =>
                             _validateRequired(value, 'Term type'),
                         items: _typeOptions,
@@ -1743,13 +1694,21 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                    
                      _buildTextField(
                         controller: _amortizationPeriodController,
-                        label: 'Amortization Period (months) *',
-                        hint: 'Enter amortization period'),
+                        label: 'Amortization Period (Months)',
+                        hint: 'Enter Amortization Period (Months)',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        validator: (value) =>
+                            _validateOptionalNonNegativeInt(
+                                value, 'amortization period'),
+                      ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _interestRateController,
-                      label: 'Interest Rate (%)',
-                      hint: 'Enter interest rate',
+                      label: 'Interest Rate',
+                      hint: 'Enter Interest Rate %',
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: _validateInterestRate,
@@ -1757,8 +1716,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _loanAmountController,
-                      label: 'Loan Amount (\$)',
-                      hint: '\$Enter loan amount',
+                      label: 'Loan Amount',
+                      hint: 'Enter Loan Amount',
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: _validateAmount,
@@ -1776,23 +1735,23 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _principalController,
-                      label: 'Principal (\$)',
-                      hint: 'Enter principal',
+                      label: 'Monthly Principal',
+                      hint: 'Enter monthly principal',
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _interestController,
-                      label: 'Interest (\$)',
-                      hint: 'Enter interest',
+                      label: 'Monthly Interest',
+                      hint: 'Enter monthly interest',
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _monthlyPaymentDisplayController,
-                      label: 'Monthly Payment (\$)',
+                      label: 'Monthly Payment',
                       hint: '0.00',
                       readOnly: true,
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -1804,14 +1763,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             _typeController.text == 'Fixed Rate Mortgage')) ...[
                       _buildTextField(
                         controller: _fixedInterestPeriodController,
-                        label: 'Fixed Interest Period (months) *',
+                        label: 'Fixed Interest Period (Months)',
                         hint: 'Enter fixed interest period in months',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         validator: (value) =>
-                            _validateRequired(value, 'Fixed Interest Period'),
+                            _validateOptionalNonNegativeInt(
+                                value, 'fixed interest period'),
                       ),
                       const SizedBox(height: 16),
                       Builder(
@@ -1821,11 +1781,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                           final dateHint = _getDateHintText(dateProvider);
                           return _buildDateField(
                             controller: _fixedInterestExpirationDateController,
-                            label: 'Fixed Interest Expiration Date *',
+                            label: 'Fixed Interest Expiration Date',
                             hint: dateHint,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Fixed Interest Expiration Date is required';
+                                return null;
                               }
                               if (_startDate != null &&
                                   _endDate != null &&
@@ -1903,14 +1863,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       const SizedBox(height: 16),
                       _buildTextField(
                         controller: _spreadOnFloatingRateController,
-                        label: 'Spread on Floating Rate (%) *',
+                        label: 'Spread on Floating Rate (%)',
                         hint: 'Enter spread on floating rate',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        validator: (value) =>
-                            _validateRequired(value, 'Spread on Floating Rate'),
+                        validator: _validateInterestRate,
                       ),
                       const SizedBox(height: 16),
                     ] else if (_selectedMortgageType ==
@@ -1920,14 +1879,13 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                 'Floating Rate Mortgage')) ...[
                       _buildTextField(
                         controller: _spreadController,
-                        label: 'Spread (%) *',
+                        label: 'Spread (%)',
                         hint: 'Enter spread',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
-                        validator: (value) =>
-                            _validateRequired(value, 'Spread'),
+                        validator: _validateInterestRate,
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -1984,60 +1942,60 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         );
                       },
                     ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Not providing principal and interest amounts will prevent DSCR from being calculated.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.orange[800],
+                      ),
+                    ),
                     const SizedBox(height: 24),
 
                     // Borrower Information Section
-                    _buildSectionHeader('Borrower Information'),
+                    _buildSectionHeader('Borrower',
+                        subtitle:
+                            'Primary borrower contact and address.'),
                     _buildTextField(
                       controller: _borrowerFirstNameController,
-                      label: 'First Name *',
-                      hint: 'Enter first name',
-                      validator: (value) =>
-                          _validateRequired(value, 'Borrower first name'),
+                      label: 'First Name',
+                      hint: 'First Name',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _borrowerLastNameController,
-                      label: 'Last Name *',
-                      hint: 'Enter last name',
-                      validator: (value) =>
-                          _validateRequired(value, 'Borrower last name'),
+                      label: 'Last Name',
+                      hint: 'Last Name',
                     ),
-                    // const SizedBox(height: 16),
-                    // _buildTextField(
-                    //   controller: _borrowerSSNController,
-                    //   label: 'SSN',
-                    //   hint: 'Enter SSN',
-                    //   validator: _validateSSN,
-                    // ),
                     const SizedBox(height: 16),
                     _buildTextField(
-                      controller: _borrowerAddressController,
-                      label: 'Address',
-                      hint: 'Enter address',
-                      maxLines: 3,
+                      controller: _borrowerCompanyNameController,
+                      label: 'Company Name',
+                      hint: 'Company Name',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _borrowerPhoneController,
-                      label: 'Phone *',
-                      hint: 'Enter phone number',
+                      label: 'Phone',
+                      hint: '(xxx) xxx-xxxx',
                       keyboardType: TextInputType.phone,
                       inputFormatters: [PhoneNumberFormatter()],
-                      validator: (value) {
-                        String? requiredError =
-                            _validateRequired(value, 'Borrower phone');
-                        if (requiredError != null) return requiredError;
-                        return _validatePhone(value);
-                      },
+                      validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _borrowerEmailController,
                       label: 'Email',
-                      hint: 'Enter email',
+                      hint: 'Email',
                       keyboardType: TextInputType.emailAddress,
                       validator: _validateEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: _borrowerAddressController,
+                      label: 'Address',
+                      hint: 'Enter Address',
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 24),
                     // _buildSectionHeader('Payoff History'),
@@ -2112,16 +2070,31 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, {String? subtitle}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: blueColor,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -28,6 +28,7 @@ class Rentals {
   String? purchaseDate;
   double? purchasePrice;
   String? placedInService;
+  String? subdivision;
 
   List<String>? rentalImages;
   bool? isDelete;
@@ -68,6 +69,7 @@ class Rentals {
       this.purchaseDate,
       this.purchasePrice,
       this.placedInService,
+      this.subdivision,
       this.units,
       this.insuredValues,
       this.propertyValues});
@@ -105,6 +107,7 @@ class Rentals {
           ? (json['purchase_price'] as int).toDouble()
           : (json['purchase_price'] as num?)?.toDouble(),
       placedInService: json['placed_in_service'] ?? "",
+      subdivision: json['subdivision'] ?? "",
       rentalOwnerData:
           RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
       propertyTypeData:
