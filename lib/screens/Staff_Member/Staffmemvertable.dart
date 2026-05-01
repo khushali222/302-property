@@ -799,7 +799,7 @@ class _StaffTableState extends State<StaffTable> {
                   const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    padding: const EdgeInsets.only(left: 14, right: 14),
                     child: Row(
                       children: [
                         if (MediaQuery.of(context).size.width < 500)
@@ -808,14 +808,14 @@ class _StaffTableState extends State<StaffTable> {
                           const SizedBox(width: 19),
                         Expanded(
                           child: Material(
-                            elevation: 3,
+                           // elevation: 3,
                             borderRadius: BorderRadius.circular(8),
                             child: Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               // height: 40,
                               height: MediaQuery.of(context).size.width < 500
-                                  ? 49
+                                  ? 45
                                   : 50,
                               // width: MediaQuery.of(context).size.width < 500
                               //     ? MediaQuery.of(context).size.width * .45
@@ -881,7 +881,7 @@ class _StaffTableState extends State<StaffTable> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
                     child: FutureBuilder<List<Staffmembers>>(
                       future: futureStaffMembers,
                       builder: (context, snapshot) {
@@ -985,7 +985,7 @@ class _StaffTableState extends State<StaffTable> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                const SizedBox(height: 10),
+                                // const SizedBox(height: 5),
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(

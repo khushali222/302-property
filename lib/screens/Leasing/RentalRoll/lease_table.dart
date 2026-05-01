@@ -991,7 +991,7 @@ class _Lease_tableState extends State<Lease_table> {
                               child: Container(
                                 height:
                                     (MediaQuery.of(context).size.width < 500)
-                                        ? 40
+                                        ? 45
                                         : 50,
                                 width: MediaQuery.of(context).size.width < 500
                                     ? MediaQuery.of(context).size.width * .52
@@ -1023,7 +1023,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     hintText: "Search here...",
                                     hintStyle:
                                         TextStyle(color: Color(0xFF8A95A8),fontSize: 14),
-                                    contentPadding: EdgeInsets.only(left: 15,bottom: 10,top: 4),
+                                    contentPadding: EdgeInsets.only(left: 15,bottom: 9),
                                   ),
                                 ),
                               ),
@@ -1228,7 +1228,7 @@ class _Lease_tableState extends State<Lease_table> {
                   Padding(
                     // padding: const EdgeInsets.all(10.0),
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
                     child: FutureBuilder<LeasesPageResult>(
                       future: futureLease,
                       builder: (context, snapshot) {
@@ -1331,7 +1331,7 @@ class _Lease_tableState extends State<Lease_table> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                const SizedBox(height: 10),
+                                // const SizedBox(height: 10),
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(

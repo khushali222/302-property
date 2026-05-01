@@ -1207,7 +1207,7 @@ class _Lease_tableState extends State<Lease_table> {
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
                     child: FutureBuilder<LeasesPageResult>(
                       future: futureLease,
                       builder: (context, snapshot) {
@@ -1310,7 +1310,7 @@ class _Lease_tableState extends State<Lease_table> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                const SizedBox(height: 10),
+                                // const SizedBox(height: 10),
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(

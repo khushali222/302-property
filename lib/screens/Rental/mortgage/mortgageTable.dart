@@ -698,6 +698,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
+          SizedBox(height: 5),
           // Content Section
           _isLoading
               ? const SizedBox(
@@ -744,7 +745,7 @@ class _MortgageTableState extends State<MortgageTable> {
                     )
                   : Padding(
                       padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 10 : 28),
+                          MediaQuery.of(context).size.width < 500 ? 14 : 28),
                       child: Column(
                         children: [
                           _buildHeaders(),
