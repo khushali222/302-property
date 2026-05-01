@@ -39,8 +39,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   @override
   void initState() {
     super.initState();
-    print(
-        '🔵 CustomHistoryTable initState - Type: ${widget.historyType}, EntityId: ${widget.entityId}');
+    // print(
+        // '🔵 CustomHistoryTable initState - Type: ${widget.historyType}, EntityId: ${widget.entityId}');
     _loadHistory();
   }
 
@@ -52,37 +52,37 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       limit: widget.itemsPerPage,
     );
     _historyFuture.then((response) {
-      print(
-          '🔵 History API Response - Status: ${response.pagination.total} items, Page: ${response.pagination.page}');
-      print('🔵 History Data Count: ${response.data.length}');
+      // print(
+          // '🔵 History API Response - Status: ${response.pagination.total} items, Page: ${response.pagination.page}');
+      // print('🔵 History Data Count: ${response.data.length}');
 
       // For lease history, always use frontend pagination (API returns all data)
       if (widget.historyType == HistoryType.lease) {
-        print('🔵 Lease history detected - using frontend pagination');
+        // print('🔵 Lease history detected - using frontend pagination');
         setState(() {
           _allHistoryItems = response.data;
           _isFrontendPagination = true;
-          print('🔵 Stored ${_allHistoryItems!.length} lease history items');
+          // print('🔵 Stored ${_allHistoryItems!.length} lease history items');
         });
       } else {
         // For other types, check if data length > limit (frontend pagination)
         // or if pagination info suggests backend pagination
         if (response.data.length > widget.itemsPerPage &&
             response.pagination.totalPages == 1) {
-          print(
-              '🔵 Frontend pagination detected - data length (${response.data.length}) > limit (${widget.itemsPerPage})');
+          // print(
+              // '🔵 Frontend pagination detected - data length (${response.data.length}) > limit (${widget.itemsPerPage})');
           setState(() {
             _allHistoryItems = response.data;
             _isFrontendPagination = true;
           });
         } else {
-          print('🔵 Backend pagination detected');
+          // print('🔵 Backend pagination detected');
           _isFrontendPagination = false;
           _allHistoryItems = null;
         }
       }
     }).catchError((error) {
-      print('🔴 History API Error: $error');
+      // print('🔴 History API Error: $error');
     });
   }
 
@@ -102,7 +102,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (widget.historyType == HistoryType.lease ||
           (_isFrontendPagination && _allHistoryItems != null)) {
         // Pagination will be handled in the build method by slicing data
-        print('🔵 Page changed to $page - Using frontend pagination');
+        // print('🔵 Page changed to $page - Using frontend pagination');
         return;
       }
 
@@ -344,7 +344,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       return formattedResult;
     } catch (e) {
-      print('Error formatting date: $e');
+      // print('Error formatting date: $e');
       // Fallback: try DateProvider one more time
       try {
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -1551,7 +1551,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       headerText = actionMatch.group(1)?.trim() ?? '';
       if (headerText.isNotEmpty) {
         details.add(headerText); // Add header without colon
-        print('🔵 [LEASE DESC] Added header: "$headerText"');
+        // print('🔵 [LEASE DESC] Added header: "$headerText"');
       }
     }
 
@@ -1572,8 +1572,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(remainingDescription);
 
-    print(
-        '🔵 [LEASE DESC] Found ${matches.length} key-value matches in remaining: "$remainingDescription"');
+    // print(
+        // '🔵 [LEASE DESC] Found ${matches.length} key-value matches in remaining: "$remainingDescription"');
 
     for (var match in matches) {
       final key = match.group(1)?.trim() ?? '';
@@ -1587,22 +1587,22 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       // Skip if key matches the header (shouldn't happen after removing header, but just in case)
       if (key.toLowerCase() == headerText.toLowerCase() &&
           headerText.isNotEmpty) {
-        print('🔵 [LEASE DESC] Skipping header key: "$key"');
+        // print('🔵 [LEASE DESC] Skipping header key: "$key"');
         continue;
       }
 
       if (key.isNotEmpty && value.isNotEmpty) {
         details.add('$key: $value');
-        print('🔵 [LEASE DESC] Added detail: "$key: $value"');
+        // print('🔵 [LEASE DESC] Added detail: "$key: $value"');
       }
     }
 
-    print(
-        '🔵 [LEASE DESC] Final details count: ${details.length}, details: $details');
+    // print(
+        // '🔵 [LEASE DESC] Final details count: ${details.length}, details: $details');
 
     if (details.length <= 1) {
       // Only header or empty - try general parsing
-      print('🔵 [LEASE DESC] Falling back to general parsing');
+      // print('🔵 [LEASE DESC] Falling back to general parsing');
       return _parseGeneralDescription(description);
     }
 
@@ -1616,7 +1616,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
     // Extract header "Tenant moved out"
     details.add('Tenant moved out');
-    print('🔵 [TENANT MOVED OUT] Added header: "Tenant moved out"');
+    // print('🔵 [TENANT MOVED OUT] Added header: "Tenant moved out"');
 
     // Remove "Tenant moved out:" from the start
     String remainingDescription = description;
@@ -1625,8 +1625,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     remainingDescription =
         remainingDescription.replaceFirst(headerPattern, '').trim();
 
-    print(
-        '🔵 [TENANT MOVED OUT] Remaining after header: "$remainingDescription"');
+    // print(
+        // '🔵 [TENANT MOVED OUT] Remaining after header: "$remainingDescription"');
 
     // Extract tenant name (comes first, before first key-value pair)
     // Pattern: "Name, Key: Value" or "Name, Key: Value, Key: Value"
@@ -1641,7 +1641,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           tenantName.length > 1) {
         // Add tenant name as bullet point
         details.add('• $tenantName');
-        print('🔵 [TENANT MOVED OUT] Added tenant name: "$tenantName"');
+        // print('🔵 [TENANT MOVED OUT] Added tenant name: "$tenantName"');
 
         // Remove tenant name from remaining description
         remainingDescription =
@@ -1655,7 +1655,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(remainingDescription);
 
-    print('🔵 [TENANT MOVED OUT] Found ${matches.length} key-value matches');
+    // print('🔵 [TENANT MOVED OUT] Found ${matches.length} key-value matches');
 
     for (var match in matches) {
       final key = match.group(1)?.trim() ?? '';
@@ -1668,16 +1668,16 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       if (key.isNotEmpty && value.isNotEmpty) {
         details.add('$key: $value');
-        print('🔵 [TENANT MOVED OUT] Added detail: "$key: $value"');
+        // print('🔵 [TENANT MOVED OUT] Added detail: "$key: $value"');
       }
     }
 
-    print(
-        '🔵 [TENANT MOVED OUT] Final details count: ${details.length}, details: $details');
+    // print(
+        // '🔵 [TENANT MOVED OUT] Final details count: ${details.length}, details: $details');
 
     if (details.length <= 1) {
       // Only header or empty - try general parsing
-      print('🔵 [TENANT MOVED OUT] Falling back to general parsing');
+      // print('🔵 [TENANT MOVED OUT] Falling back to general parsing');
       return _parseGeneralDescription(description);
     }
 
@@ -1750,8 +1750,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(description);
 
-    print('🔵 [PAYMENT CREATED] Parsing description: "$description"');
-    print('🔵 [PAYMENT CREATED] Found ${matches.length} key-value matches');
+    // print('🔵 [PAYMENT CREATED] Parsing description: "$description"');
+    // print('🔵 [PAYMENT CREATED] Found ${matches.length} key-value matches');
 
     // Separate payment fields from entry fields
     List<String> paymentFieldDetails = [];
@@ -1766,7 +1766,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       value = value.replaceAll(RegExp(r'[,;.\s]+$'), '');
       value = value.trim();
 
-      print('🔵 [PAYMENT CREATED] Key: "$key", Value: "$value"');
+      // print('🔵 [PAYMENT CREATED] Key: "$key", Value: "$value"');
 
       // Skip "Payment created" itself as we already added it as header
       if (key.toLowerCase().contains('payment created')) {
@@ -2729,17 +2729,17 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    print(
-        '🔵 CustomHistoryTable build - Type: ${widget.historyType}, EntityId: ${widget.entityId}, Title: ${widget.title}');
+    // print(
+        // '🔵 CustomHistoryTable build - Type: ${widget.historyType}, EntityId: ${widget.entityId}, Title: ${widget.title}');
 
     return FutureBuilder<HistoryResponse>(
       future: _historyFuture,
       builder: (context, snapshot) {
-        print(
-            '🔵 History FutureBuilder - ConnectionState: ${snapshot.connectionState}, HasData: ${snapshot.hasData}, HasError: ${snapshot.hasError}');
+        // print(
+            // '🔵 History FutureBuilder - ConnectionState: ${snapshot.connectionState}, HasData: ${snapshot.hasData}, HasError: ${snapshot.hasError}');
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print('⏳ History loading...');
+          // print('⏳ History loading...');
           // Show title and header structure while loading
           return RepaintBoundary(
             child: Column(
@@ -2842,7 +2842,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else if (snapshot.hasError) {
-          print('🔴 History Error: ${snapshot.error}');
+          // print('🔴 History Error: ${snapshot.error}');
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -2864,8 +2864,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
-          print(
-              '⚠️ History - No data or empty data. Data count: ${snapshot.hasData ? snapshot.data!.data.length : 0}');
+          // print(
+              // '⚠️ History - No data or empty data. Data count: ${snapshot.hasData ? snapshot.data!.data.length : 0}');
           // Show title and header even when no data
           return RepaintBoundary(
             child: Column(
@@ -2969,8 +2969,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else {
-          print(
-              '✅ History loaded successfully - ${snapshot.data!.data.length} items');
+          // print(
+              // '✅ History loaded successfully - ${snapshot.data!.data.length} items');
 
           // Handle frontend pagination if we have all items stored
           List<HistoryItem> displayData = snapshot.data!.data;
@@ -3000,8 +3000,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               limit: widget.itemsPerPage,
               totalPages: totalPages > 0 ? totalPages : 1,
             );
-            print(
-                '🔵 Lease History Pagination - Total: ${allItems.length}, Showing items ${startIndex + 1}-${endIndex > allItems.length ? allItems.length : endIndex}, Page: $_currentPage of $totalPages');
+            // print(
+                // '🔵 Lease History Pagination - Total: ${allItems.length}, Showing items ${startIndex + 1}-${endIndex > allItems.length ? allItems.length : endIndex}, Page: $_currentPage of $totalPages');
           } else if (_isFrontendPagination &&
               _allHistoryItems != null &&
               _allHistoryItems!.isNotEmpty) {
@@ -3022,8 +3022,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               limit: widget.itemsPerPage,
               totalPages: totalPages > 0 ? totalPages : 1,
             );
-            print(
-                '🔵 Frontend Pagination - Showing items ${startIndex + 1}-${endIndex > _allHistoryItems!.length ? _allHistoryItems!.length : endIndex} of ${_allHistoryItems!.length}');
+            // print(
+                // '🔵 Frontend Pagination - Showing items ${startIndex + 1}-${endIndex > _allHistoryItems!.length ? _allHistoryItems!.length : endIndex} of ${_allHistoryItems!.length}');
           }
 
           final historyData =

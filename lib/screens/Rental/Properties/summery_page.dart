@@ -1991,7 +1991,7 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget _buildPaginationControls() {
     int numorpages = 1;
-    numorpages = (totalrecordsmulti / _rowsPerPage).ceil();
+    numorpages = (totalrecords / _rowsPerPage).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -2326,7 +2326,7 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget _buildPaginationControlsmulti() {
     int numorpages = 1;
-    numorpages = (totalrecords / _rowsPerPagemulti).ceil();
+    numorpages = (totalrecordsmulti / _rowsPerPagemulti).ceil();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -15844,11 +15844,11 @@ class _Summery_pageState extends State<Summery_page>
                           .toList();
                     }
                     if (isChecked) {
-                      _tableData = snapshot.data!
+                      _tableData = _tableData
                           .where((workorder) => workorder.status == 'Completed')
                           .toList();
                     } else {
-                      _tableData = snapshot.data!
+                      _tableData = _tableData
                           .where((workorder) => workorder.status != 'Completed')
                           .toList();
                     }

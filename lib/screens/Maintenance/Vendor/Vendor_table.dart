@@ -930,24 +930,6 @@ class _Vendor_tableState extends State<Vendor_table> {
               //     ),
               //   ],
               // ),
-              const SizedBox(width: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Added : ',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332)),
-                      ),
-                      TextSpan(
-                        text: '$vendorCount',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1A2332)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               if (widget.isEmbedded &&
                   MediaQuery.of(context).size.width < 500)
                 const SizedBox(width: 8),
@@ -955,6 +937,20 @@ class _Vendor_tableState extends State<Vendor_table> {
                   MediaQuery.of(context).size.width > 500)
                 const SizedBox(width: 25),
             ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 18, right: 18, top: 8),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                  TextSpan(text: '$vendorCount', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                ],
+              ),
+            ),
           ),
         ),
         SizedBox(height: 10),

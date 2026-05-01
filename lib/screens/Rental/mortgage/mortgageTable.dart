@@ -680,25 +680,24 @@ class _MortgageTableState extends State<MortgageTable> {
                     ),
                   ),
                 ),
-                // const SizedBox(width: 10),
-                // Expanded(
-                //   child: Align(
-                //     alignment: Alignment.centerRight,
-                //     child: RichText(
-                //       text: TextSpan(
-                //         children: [
-                //           TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
-                //           TextSpan(text: '${_mortgages.length}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(width: 5),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                          TextSpan(text: '${_mortgages.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
               ],
             ),
           ),
-          SizedBox(height: 5),
           // Content Section
           _isLoading
               ? const SizedBox(
