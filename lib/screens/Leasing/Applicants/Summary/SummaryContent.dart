@@ -5,14 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
-import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/applicant_summery2.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/custom_history_table.dart';
+import 'package:three_zero_two_property/widgets/CustomTextField.dart';
 import 'package:three_zero_two_property/enums/history_type.dart';
 
 class SummaryContent extends StatefulWidget {
@@ -25,7 +24,8 @@ class SummaryContent extends StatefulWidget {
 }
 
 class _SummaryContentState extends State<SummaryContent> {
-  bool _showAll = false;
+  bool _showAllNotes = false;
+  bool _showAllStatus = false;
   List<String> newItems = [];
   List<String> applicantCheckedChecklist = [
     "CreditCheck",
@@ -44,7 +44,8 @@ class _SummaryContentState extends State<SummaryContent> {
   TextEditingController checkvalue = TextEditingController();
   List<String> applicantChecklist = [];
   bool addcheckbox = false;
-  bool openNote = false;
+  /// Collapsed: header + "Attach Notes / File". Expanded: full form + saved list.
+  bool _notesExpanded = false;
   TextEditingController noteController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -54,7 +55,7 @@ class _SummaryContentState extends State<SummaryContent> {
   Future<void> _pickPdfFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg', 'csv'],
       allowMultiple: true,
     );
 
@@ -200,168 +201,250 @@ class _SummaryContentState extends State<SummaryContent> {
 
   bool isNotePost = false;
 
+  static const Color _kPageBg = Color(0xFFF4F6F9);
+  static const Color _kBorder = Color(0xFFDBE0E5);
+  static const Color _kIconMuted = Color(0xFF98A2B3);
+
+  String _displayOptionalPhone(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return 'N/A';
+    return formatPhoneNumber(raw);
+  }
+
+  Widget _sectionCard({required String title, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _kBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
+          const SizedBox(height: 14),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _checklistItemBox(Widget rowChild) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: _kBorder),
+      ),
+      child: rowChild,
+    );
+  }
+
+  Widget _contactRow({required IconData icon, required String text}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: _kIconMuted, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: blueColor,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statusBadge(String? raw) {
+    final s = (raw ?? '').toLowerCase();
+    final isRejected = s.contains('reject');
+    final bg = isRejected ? const Color(0xFFFFE8E8) : const Color(0xFFE8F5E9);
+    final fg = isRejected ? const Color(0xFFC62828) : const Color(0xFF2E7D32);
+    final label = raw?.trim().isNotEmpty == true ? raw! : 'Update';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: fg,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildUpdateRows(List<ApplicantStatus> statuses, int maxItems) {
+    final List<Widget> rows = [];
+    for (int i = 0; i < maxItems && i < statuses.length; i++) {
+      final status = statuses[i];
+      final when = status.updateAt ?? '';
+      final by = status.statusUpdatedBy ?? 'Admin';
+      final body =
+          'The New Rental Application Status — Updated By $by At $when';
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _statusBadge(status.status),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  body,
+                  style: TextStyle(
+                    color: blueColor,
+                    fontSize: 13,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return rows;
+  }
+
   @override
   Widget build(BuildContext context) {
-    int itemCount = _showAll ? widget.summery.applicantStatus!.length : 5;
+    final statusList = widget.summery.applicantStatus;
+    final int statusItemCount = statusList == null || statusList.isEmpty
+        ? 0
+        : (_showAllStatus
+            ? statusList.length
+            : (statusList.length < 5 ? statusList.length : 5));
     applicantChecklist =
-    List<String>.from(widget.summery.applicantCheckedChecklist!);
-    List<DataRow> buildRows(List<ApplicantStatus> statuses) {
-      print(widget.summery.applicantId);
-      List<DataRow> rows = [];
-      for (int i = 0; i < itemCount && i < statuses.length; i++) {
-        final status = statuses[i];
-        final statusMessage =
-        status.updateAt != null ?   '${status.status} by ${status.statusUpdatedBy} at ${status.updateAt}':'${status.status} by ${status.statusUpdatedBy} ';
-        rows.add(DataRow(cells: [
-          DataCell(Text(
-            status.status!,
-            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Text(
-              "The New Rental Application Status",
-              style: TextStyle(color: grey, fontWeight: FontWeight.bold),
-            ),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Text(
-              statusMessage,
-              style: TextStyle(color: grey, fontWeight: FontWeight.bold),
-            ),
-          )),
-        ]));
-      }
-      return rows;
-    }
+        List<String>.from(widget.summery.applicantCheckedChecklist!);
 
-    return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: applicantCheckedChecklist.map((item) {
-                return Row(
-                  children: [
-                    SizedBox(
-                      width: 20.0, // Standard width for checkbox
-                      height: 40.0,
-                      child: Checkbox(
-                        value: widget.summery.applicantCheckedChecklist!
-                            .contains(item),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            if (value != false) {
-                              widget.summery.applicantCheckedChecklist!
-                                  .add(item);
-                              applicantChecklist.add(item);
-                            } else {
-                              widget.summery.applicantCheckedChecklist!
-                                  .remove(item);
-                              applicantChecklist.remove(item);
-                            }
-                          });
-                          //  updatecheckBox();
-                        },
-                        activeColor: blueColor,
-                        // Disable checkbox if amount is not entered
+    return ColoredBox(
+      color: _kPageBg,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _sectionCard(
+                title: 'Application Checklist',
+                children: [
+                  ...applicantCheckedChecklist.map((item) {
+                    return _checklistItemBox(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 22,
+                            height: 40,
+                            child: Checkbox(
+                              value: widget.summery.applicantCheckedChecklist!
+                                  .contains(item),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value != false) {
+                                    widget.summery.applicantCheckedChecklist!
+                                        .add(item);
+                                    applicantChecklist.add(item);
+                                  } else {
+                                    widget.summery.applicantCheckedChecklist!
+                                        .remove(item);
+                                    applicantChecklist.remove(item);
+                                  }
+                                });
+                              },
+                              activeColor: blueColor,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              displayNames[item].toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                      displayNames[item].toString(),
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: blueColor,
-                          fontSize: 15),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            Column(
-              children: widget.summery.applicantChecklist!.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 20.0, // Standard width for checkbox
-                        height: 40.0,
-                        child: Checkbox(
-                          value: widget.summery.applicantCheckedChecklist!
-                              .contains(item),
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (value != false) {
-                                widget.summery.applicantCheckedChecklist!
-                                    .add(item);
-                                applicantChecklist.add(item);
-                              } else {
-                                widget.summery.applicantCheckedChecklist!
-                                    .remove(item);
-                                applicantChecklist.remove(item);
-                              }
-                            });
-                            //updatecheckBox();
-                          },
-                          activeColor:
-                          blueColor, // Disable checkbox if amount is not entered
-                        ),
+                    );
+                  }),
+                  ...widget.summery.applicantChecklist!.map((item) {
+                    return _checklistItemBox(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 22,
+                            height: 40,
+                            child: Checkbox(
+                              value: widget.summery.applicantCheckedChecklist!
+                                  .contains(item),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value != false) {
+                                    widget.summery.applicantCheckedChecklist!
+                                        .add(item);
+                                    applicantChecklist.add(item);
+                                  } else {
+                                    widget.summery.applicantCheckedChecklist!
+                                        .remove(item);
+                                    applicantChecklist.remove(item);
+                                  }
+                                });
+                              },
+                              activeColor: blueColor,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                widget.summery.applicantChecklist!.remove(item);
+                              });
+                              updatecheckBoxnew(widget.summery.applicantChecklist!);
+                            },
+                            child: const Icon(Icons.close, color: Colors.grey),
+                          ),
+                        ],
                       ),
-                      // Checkbox(
-                      //   activeColor:  blueColor,
-                      //   value: widget.summery.applicantCheckedChecklist!
-                      //       .contains(item),
-                      //   onChanged: (bool? value) {
-                      //     setState(() {
-                      //       if (value != false) {
-                      //         widget.summery.applicantCheckedChecklist!
-                      //             .add(item);
-                      //         applicantChecklist.add(item);
-                      //       } else {
-                      //         widget.summery.applicantCheckedChecklist!
-                      //             .remove(item);
-                      //         applicantChecklist.remove(item);
-                      //       }
-                      //     });
-                      //     updatecheckBox();
-                      //   },
-                      // ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(item , style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: blueColor,
-                          fontSize: 15),),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            setState(() {
-                              widget.summery.applicantChecklist!.remove(item);
-
-                            });
-                            updatecheckBoxnew(
-                                widget.summery.applicantChecklist!);
-                          },
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.grey,
-                          )),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
+                    );
+                  }),
             if (addcheckbox)
               Column(
                 children: [
@@ -424,544 +507,478 @@ class _SummaryContentState extends State<SummaryContent> {
                   ),
                 ],
               ),
-            const SizedBox(
-              height: 20,
-            ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  addcheckbox = !addcheckbox;
-                  print(  widget.summery.applicantChecklist);
-                  print(  applicantChecklist);
-                });
-                //  Navigator.pop(context);
-              },
-              child: Material(
-                elevation: 3,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(3),
-                ),
-                child: Container(
-                  height: 42,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    //color: blueColor,
-                    border: Border.all(color: grey),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(3),
-                    ),
-                  ),
-                  child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
+                  const SizedBox(height: 8),
+                  Row(
                     children: [
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(Icons.add),
-                      SizedBox(
-                        width: 3,
-                      ),
-                      Center(
-                          child: Text(
-                            "Add Checklist",
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              addcheckbox = !addcheckbox;
+                            });
+                          },
+                          icon: Icon(Icons.add, color: blueColor, size: 18),
+                          label: Text(
+                            'Add Checklist',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: blueColor,
-                                fontSize: 14),
-                          )),
+                              color: blueColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            side: BorderSide(color: blueColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => updatecheckBox(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Save Changes',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            GestureDetector(
-              onTap: (){
-                List<String> stringList = widget.summery.applicantCheckedChecklist
-                !.map((item) => item.toString()) // Convert each item to String
-                    .toList();
-                updatecheckBox();
-                // updatecheckBoxnew(stringList );
-              },
-              child: Container(
-                height: 45,
-                width: 150,
-                decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: BorderRadius.circular(6)
-                ),
-                child: Center(child: Text("Save Changes",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),)),
-              ),
-            ),
-
-            const SizedBox(
-              height: 20,
-            ),
-            Text('Notes And Files',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: grey,
-                )),
-            const SizedBox(
-              height: 10,
-            ),
-            if (openNote == false)
-              Material(
-                elevation: 3,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(3),
-                ),
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      openNote = !openNote;
-                    });
-                  },
-                  child: Container(
-                    height: 42,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(3),
-                      border: Border.all(color: grey),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(9.0),
-                      child: Text(
-                        'Attach Note / File',
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14),
-                      ),
+              _sectionCard(
+                title: 'Applicant Information',
+                children: [
+                  Text(
+                    '${widget.summery.applicantFirstName} ${widget.summery.applicantLastName}',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Applicant',
+                    style: TextStyle(
+                      color: grey,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _contactRow(
+                    icon: Icons.home_outlined,
+                    text: _displayOptionalPhone(
+                        widget.summery.applicantHomeNumber),
+                  ),
+                  _contactRow(
+                    icon: Icons.business_center_outlined,
+                    text: _displayOptionalPhone(
+                        widget.summery.applicantBusinessNumber),
+                  ),
+                  _contactRow(
+                    icon: Icons.phone_outlined,
+                    text: widget.summery.applicantPhoneNumber == null ||
+                            widget.summery.applicantPhoneNumber!.trim().isEmpty
+                        ? 'N/A'
+                        : formatPhoneNumber(
+                            widget.summery.applicantPhoneNumber!),
+                  ),
+                  _contactRow(
+                    icon: Icons.email_outlined,
+                    text: widget.summery.applicantEmail ?? 'N/A',
+                  ),
+                ],
               ),
-            if (openNote)
               Container(
-                margin: const EdgeInsets.only(top: 5),
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 14),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: blueColor),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: _kBorder),
                 ),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notes',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: blueColor),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      CustomTextField(
-                        hintText: 'Enter Notes',
-                        controller: noteController,
-                      ),
-                      const SizedBox(height: 10),
-                      Text('Upload File',
-                          style: TextStyle(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Notes & Files',
+                            style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: blueColor)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        // height: 45,
-                        width: 90,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          onPressed: _pickPdfFiles,
-                          child: const Text('Upload'),
-                        ),
-                      ),
-                      if (_uploadedFileName != Null)
-                        Text(_uploadedFileName ?? ''),
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                            ),
-                            onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                NoteFile noteFiles = NoteFile(
-                                    note: noteController.text.trim(),
-                                    files: _uploadedFileName ?? '');
-                                setState(() {
-                                  isNotePost = true;
-                                });
-                                ApplicantSummeryRepository
-                                applicantSummeryRepository =
-                                ApplicantSummeryRepository();
-
-                                int response = await applicantSummeryRepository
-                                    .noteAndFilePost(
-                                    noteFiles, widget.summery.applicantId!);
-                                if (response == 200) {
-                                  Fluttertoast.showToast(
-                                      msg: 'Note Added Successfully');
-                                  noteController.clear();
-                                  setState(() {
-                                    openNote = false;
-                                    isNotePost = false;
-                                  });
-                                }
-                              } else {
-                                setState(() {
-                                  openNote = false;
-                                  isNotePost = true;
-                                });
-                              }
-                              // Implement save logic
-                            },
-                            child: isNotePost
-                                ? const Center(
-                              child: SpinKitFadingCircle(
-                                color: Colors.white,
-                                size: 20.0,
-                              ),
-                            )
-                                : const Text(
-                              'Save',
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                openNote = !openNote;
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: blueColor),
-                              ),
-                              child: const Text('Cancel'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            const SizedBox(
-              height: 20,
-            ),
-            notesAndFiles.isEmpty
-                ? Container()
-                : Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: grey),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.0),
-                      child: Text(
-                        "Notes And Files",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: blueColor),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: buildRowsNote(
-                          notesAndFiles,
-                          _showAll ? notesAndFiles.length : 10,
-                        ),
-                      ),
-                    ),
-                    if (notesAndFiles.length > 10)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _showAll = !_showAll;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(_showAll
-                                      ? 'Show Less'
-                                      : 'View More'),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(
-              height: 10,
-            ),
-            if(widget.summery.applicantStatus!.length >0)
-            Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: grey),
-                ),
-                //width: ,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14.0),
-                      child: Text(
-                        "Updates",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: blueColor),
-                      ),
-                    ),
-                    DataTable(
-                      headingRowHeight: 10,
-                      columnSpacing: 20,
-                      dataRowHeight:
-                      80, // Adjust spacing between columns as needed
-                      columns: [
-                        const DataColumn(label: Text('')),
-                        const DataColumn(label: Text('')),
-                        const DataColumn(label: Text('')),
-                      ],
-                      rows: buildRows(widget.summery.applicantStatus!),
-                    ),
-                    SizedBox(height: 20),
-                    if (widget.summery.applicantStatus!.length > 5)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _showAll = !_showAll;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                      _showAll ? 'Show Less' : 'View More'),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            if(widget.summery.applicantStatus!.length >0)
-            const SizedBox(
-              height: 16,
-            ),
-            Material(
-              elevation: 6,
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: grey),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 16, bottom: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                          '${widget.summery.applicantFirstName} ${widget.summery.applicantLastName}',
-                          style: TextStyle(
-                              fontSize: 17,
-                              color: blueColor,
-                              fontWeight: FontWeight.bold)),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text('Applicant',
-                          style: TextStyle(
-                              color: grey,
                               fontWeight: FontWeight.bold,
-                              fontSize: 15)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.home,
-                            color: blueColor,
-                            size: 30,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "${widget.summery.applicantHomeNumber != null ? 'N/A' : widget.summery.applicantHomeNumber ?? "N/A"}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
                               color: blueColor,
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.business_center_outlined,
-                            color: blueColor,
-                            size: 30,
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "${widget.summery.applicantBusinessNumber != null ? 'N/A' : widget.summery.applicantBusinessNumber ?? "N/A"}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: blueColor,
+                        ),
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _notesExpanded = !_notesExpanded;
+                            });
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            side: BorderSide(color: blueColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 5,
+                            backgroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
                           ),
-                          FaIcon(
-                            FontAwesomeIcons.mobile,
-                            color: blueColor,
-                            size: 25,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            formatPhoneNumber(
-                                '${widget.summery.applicantPhoneNumber ?? "N/A"}'),
-                            // "${widget.summery.applicantPhoneNumber!.isEmpty ? 'N/A' : widget.summery.applicantPhoneNumber}",
+                          child: Text(
+                            _notesExpanded
+                                ? 'Hide'
+                                : 'Attach Notes / File',
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
                               color: blueColor,
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.mail,
-                            color: blueColor,
-                            size: 30,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "${widget.summery.applicantEmail ?? 'N/A'}",
-                            style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: blueColor,
+                              fontSize: 13,
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeInOut,
+                      alignment: Alignment.topCenter,
+                      child: _notesExpanded
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: 14),
+                                Form(
+                                  key: formKey,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextFormField(
+                                        controller: noteController,
+                                        minLines: 5,
+                                        maxLines: 8,
+                                        style: TextStyle(
+                                          color: blueColor,
+                                          fontSize: 15,
+                                        ),
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText: 'Enter notes',
+                                          hintStyle: TextStyle(
+                                            color: grey,
+                                            fontSize: 14,
+                                          ),
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          contentPadding:
+                                              const EdgeInsets.all(14),
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide(
+                                                color: _kBorder),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide(
+                                                color: _kBorder),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: BorderSide(
+                                                color: blueColor, width: 1.2),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 14),
+                                      InkWell(
+                                        onTap: _pickPdfFiles,
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 16,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: _kBorder),
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Icon(
+                                              //   Icons.cloud_upload_outlined,
+                                              //   size: 36,
+                                              //   color: _kIconMuted,
+                                              // ),
+                                              Image.asset(
+                                      'assets/icons/Upload.png',
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    Text(
+                                                      'Attach your Files here',
+                                                      style: TextStyle(
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Maximum File Size is 20MB',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: grey,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'Supported: .png, .jpeg, .pdf, .csv',
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (_uploadedFileName != null)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            _uploadedFileName!,
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: blueColor,
+                                              elevation: 0,
+                                              shadowColor: Colors.transparent,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              if (formKey.currentState!
+                                                  .validate()) {
+                                                NoteFile noteFiles = NoteFile(
+                                                    note: noteController.text
+                                                        .trim(),
+                                                    files: _uploadedFileName ??
+                                                        '');
+                                                setState(() {
+                                                  isNotePost = true;
+                                                });
+                                                ApplicantSummeryRepository
+                                                    applicantSummeryRepository =
+                                                    ApplicantSummeryRepository();
+
+                                                int response =
+                                                    await applicantSummeryRepository
+                                                        .noteAndFilePost(
+                                                            noteFiles,
+                                                            widget.summery
+                                                                .applicantId!);
+                                                if (response == 200) {
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          'Note Added Successfully');
+                                                  noteController.clear();
+                                                  setState(() {
+                                                    isNotePost = false;
+                                                  });
+                                                }
+                                              } else {
+                                                setState(() {
+                                                  isNotePost = true;
+                                                });
+                                              }
+                                            },
+                                            child: isNotePost
+                                                ? const Center(
+                                                    child:
+                                                        SpinKitFadingCircle(
+                                                      color: Colors.white,
+                                                      size: 20.0,
+                                                    ),
+                                                  )
+                                                : const Text(
+                                                    'Save',
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                          ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: OutlinedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                noteController.clear();
+                                              });
+                                            },
+                                            style: OutlinedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
+                                              side: BorderSide(
+                                                  color: blueColor),
+                                              backgroundColor: Colors.white,
+                                              elevation: 0,
+                                            ),
+                                            child: Text(
+                                              'Clear',
+                                              style: TextStyle(
+                                                  color: blueColor,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                            ),
+                                          ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (notesAndFiles.isNotEmpty) ...[
+                                  const Divider(height: 28),
+                                  Text(
+                                    'Saved notes & files',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: buildRowsNote(
+                                      notesAndFiles,
+                                      _showAllNotes
+                                          ? notesAndFiles.length
+                                          : 10,
+                                    ),
+                                  ),
+                                  if (notesAndFiles.length > 10)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _showAllNotes = !_showAllNotes;
+                                            });
+                                          },
+                                          child: Text(
+                                            _showAllNotes
+                                                ? 'Show Less'
+                                                : 'View More',
+                                            style:
+                                                TextStyle(color: blueColor),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
                 ),
               ),
-            ),
+
             const SizedBox(
               height: 10,
             ),
+            if (widget.summery.applicantStatus != null &&
+                widget.summery.applicantStatus!.isNotEmpty) ...[
+              _sectionCard(
+                title: 'Updates',
+                children: [
+                  ..._buildUpdateRows(
+                    widget.summery.applicantStatus!,
+                    statusItemCount,
+                  ),
+                  if (widget.summery.applicantStatus!.length > 5)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _showAllStatus = !_showAllStatus;
+                          });
+                        },
+                        child: Text(
+                          _showAllStatus ? 'Show Less' : 'View More',
+                          style: TextStyle(color: blueColor),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+            ],
             //Applicant History Table
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
               child: CustomHistoryTable(
                 historyType: HistoryType.applicant,
                 entityId: widget.applicant_id,
@@ -973,6 +990,7 @@ class _SummaryContentState extends State<SummaryContent> {
           ],
         ),
       ),
+    ),
     );
   }
 

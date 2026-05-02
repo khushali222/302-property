@@ -35,7 +35,8 @@ class Applicants_table extends StatefulWidget {
   _Applicants_tableState createState() => _Applicants_tableState();
 }
 
-class _Applicants_tableState extends State<Applicants_table> {
+class _Applicants_tableState extends State<Applicants_table>
+    with TickerProviderStateMixin {
   int totalrecords = 0;
   late Future<List<propertytype>> futurePropertyTypes;
   late Future<List<Datum>> futureApplicantdata;
@@ -86,12 +87,6 @@ class _Applicants_tableState extends State<Applicants_table> {
           border: Border.all(color: Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -133,7 +128,6 @@ class _Applicants_tableState extends State<Applicants_table> {
                         : Text("Name",
                             style: TextStyle(
                                 color: blueColor, fontWeight: FontWeight.bold)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
                     SizedBox(width: 3),
                     ascending1
                         ? Padding(
@@ -278,9 +272,23 @@ class _Applicants_tableState extends State<Applicants_table> {
     'Last 60 Days',
     'All Time'
   ];
-  String? selectedDateFilter = "All Time";
+  String? selectedDateFilter = "Last 15 Days";
 
   ConnectivityResult? _connectivityResult;
+
+  // ── Tab controller ──
+  late TabController _tabController;
+
+  // ── Pending & Deleted invites state ──
+  List<Map<String, dynamic>> _pendingInvites = [];
+  List<Map<String, dynamic>> _deletedInvites = [];
+  bool _loadingPending = true;
+  bool _loadingDeleted = true;
+  int? _expandedPendingIndex;
+  int? _expandedDeletedIndex;
+  String _pendingSearch = '';
+  String _deletedSearch = '';
+
   @override
   void initState() {
     super.initState();
@@ -294,6 +302,16 @@ class _Applicants_tableState extends State<Applicants_table> {
     futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
     futureApplicantdata = ApplicantRepository().fetchApplicants();
     fetchapplicantadded();
+    // NEW
+    _tabController = TabController(length: 2, vsync: this);
+    fetchPendingInvites();
+    fetchDeletedInvites();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void checkInternet() async {
@@ -718,6 +736,517 @@ class _Applicants_tableState extends State<Applicants_table> {
     ).show();
   }
 
+  // ── NEW: fetch pending invites ──
+  Future<void> fetchPendingInvites() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/applicant/pending-invites/$id'),
+          headers: {"authorization": "CRM $token", "id": "CRM $id"});
+      final jsonData = json.decode(response.body);
+      if ((jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) &&
+          jsonData["data"] != null) {
+        if (mounted)
+          setState(() {
+            _pendingInvites =
+                List<Map<String, dynamic>>.from(jsonData["data"]);
+            _loadingPending = false;
+          });
+      } else {
+        if (mounted) setState(() => _loadingPending = false);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loadingPending = false);
+    }
+  }
+
+  // ── NEW: fetch deleted invites ──
+  Future<void> fetchDeletedInvites() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await http.get(
+          Uri.parse('${Api_url}/api/applicant/deleted-invites/$id'),
+          headers: {"authorization": "CRM $token", "id": "CRM $id"});
+      final jsonData = json.decode(response.body);
+      if ((jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) &&
+          jsonData["data"] != null) {
+        if (mounted)
+          setState(() {
+            _deletedInvites =
+                List<Map<String, dynamic>>.from(jsonData["data"]);
+            _loadingDeleted = false;
+          });
+      } else {
+        if (mounted) setState(() => _loadingDeleted = false);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loadingDeleted = false);
+    }
+  }
+
+  /// Resend one pending invite — matches web payload (forceResend, is_web, etc.).
+  Future<void> _resendInviteEmail(String email) async {
+    final trimmed = email.trim();
+    if (trimmed.isEmpty) return;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? adminId = prefs.getString('adminId');
+      final String? token = prefs.getString('token');
+      if (adminId == null || token == null) return;
+      final response = await http.post(
+        Uri.parse('$Api_url/api/applicant/invite'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+        },
+        body: jsonEncode({
+          'emails': [trimmed],
+          'admin_id': adminId,
+          'forceResend': true,
+          'is_web': true,
+          'user_active_recently': true,
+        }),
+      );
+      final dynamic jsonData = json.decode(response.body);
+      if (!mounted) return;
+      final bool ok = response.statusCode == 200 ||
+          (jsonData is Map &&
+              (jsonData['statusCode'] == 200 ||
+                  jsonData['statusCode'] == 201));
+      if (ok) {
+        final msg = jsonData is Map && jsonData['message'] != null
+            ? jsonData['message'].toString()
+            : 'Invitation sent successfully.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg), backgroundColor: Colors.green),
+        );
+        await fetchPendingInvites();
+      } else {
+        final err = jsonData is Map && jsonData['message'] != null
+            ? jsonData['message'].toString()
+            : 'Failed to resend invitation.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(err), backgroundColor: Colors.red),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to resend invitation.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  String _formatInviteDate(String? raw) {
+    if (raw == null || raw.isEmpty) return 'N/A';
+    try {
+      final dt = DateTime.parse(raw);
+      return DateFormat('MM/dd/yyyy').format(dt);
+    } catch (_) {
+      return raw.split(' ').first;
+    }
+  }
+
+  /// Search fields on Pending tab — hint/text vertically centered with icon.
+  Widget _buildInviteSearchField(ValueChanged<String> onChanged) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F8FF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+      ),
+      child: TextField(
+        onChanged: onChanged,
+        cursorColor: blueColor,
+        textAlignVertical: TextAlignVertical.center,
+        style: const TextStyle(fontSize: 13, height: 1.25),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          isDense: true,
+          hintText: 'Search by email...',
+          hintStyle:
+              const TextStyle(color: Color(0xFF8A95A8), fontSize: 13),
+          prefixIcon:
+              Icon(Icons.search, color: blueColor, size: 20),
+          prefixIconConstraints:
+              const BoxConstraints(minWidth: 44, minHeight: 44),
+          contentPadding:
+              const EdgeInsets.only(right: 14, top: 12, bottom: 12),
+        ),
+      ),
+    );
+  }
+
+  // ── Pending table header — columns match row layout exactly ──
+  Widget _buildPendingHeader() {
+    final cellHeader =
+        TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 12);
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F8FF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(width: 30),
+            Expanded(flex: 3, child: Text('Email', style: cellHeader)),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: Text(
+                'Invited Date',
+                style: cellHeader,
+                textAlign: TextAlign.start,
+              ),
+            ),
+            const SizedBox(width: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Deleted table header — columns match row layout exactly ──
+  Widget _buildDeletedHeader() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F8FF),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(width: 30),
+            Expanded(
+              flex: 3,
+              child: Text('Email',
+                  style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 2,
+              child: Text('Deleted By',
+                  style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12)),
+            ),
+            const SizedBox(width: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── pending expand list ──
+  Widget _buildPendingList() {
+    final filtered = _pendingSearch.isEmpty
+        ? _pendingInvites
+        : _pendingInvites
+            .where((p) => (p['email'] ?? '')
+                .toString()
+                .toLowerCase()
+                .contains(_pendingSearch.toLowerCase()))
+            .toList();
+
+    if (_loadingPending)
+      return const Center(
+          child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator()));
+
+    if (filtered.isEmpty)
+      return Container(
+          height: 100,
+          child: Center(
+              child: Text("No pending invites",
+                  style: TextStyle(
+                      color: blueColor, fontWeight: FontWeight.bold))));
+
+    return Column(
+      children: filtered.asMap().entries.map((entry) {
+        int index = entry.key;
+        Map<String, dynamic> invite = entry.value;
+        bool isRowExpanded = _expandedPendingIndex == index;
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+            border: Border.all(color: const Color(0xFFDBE0E5)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── collapsed row ──
+              InkWell(
+                onTap: () => setState(() =>
+                    _expandedPendingIndex = isRowExpanded ? null : index),
+                borderRadius: BorderRadius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 4, vertical: 13),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 5, right: 5),
+                        padding: !isRowExpanded
+                            ? const EdgeInsets.only(bottom: 10)
+                            : const EdgeInsets.only(top: 10),
+                        child: FaIcon(
+                          isRowExpanded
+                              ? FontAwesomeIcons.sortUp
+                              : FontAwesomeIcons.sortDown,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          invite['email'] ?? 'N/A',
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
+                          softWrap: true,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          _formatInviteDate(invite['invited_date']),
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12),
+                          softWrap: true,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                  ),
+                ),
+              ),
+              // ── expanded: Resend + Delete action buttons ──
+              if (isRowExpanded)
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 36, right: 8, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _resendInviteEmail(
+                            '${invite['email'] ?? ''}'),
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: FaIcon(FontAwesomeIcons.envelope,
+                                size: 15, color: blueColor),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: FaIcon(FontAwesomeIcons.trashCan,
+                                size: 15, color: Colors.red),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // ── deleted expand list ──
+  Widget _buildDeletedList() {
+    final filtered = _deletedSearch.isEmpty
+        ? _deletedInvites
+        : _deletedInvites
+            .where((d) =>
+                (d['email'] ?? '')
+                    .toString()
+                    .toLowerCase()
+                    .contains(_deletedSearch.toLowerCase()) ||
+                (d['deleted_by'] ?? '')
+                    .toString()
+                    .toLowerCase()
+                    .contains(_deletedSearch.toLowerCase()))
+            .toList();
+
+    if (_loadingDeleted)
+      return const Center(
+          child: Padding(
+              padding: EdgeInsets.all(20), child: CircularProgressIndicator()));
+
+    if (filtered.isEmpty)
+      return Container(
+          height: 100,
+          child: Center(
+              child: Text("No deleted invitations",
+                  style: TextStyle(
+                      color: blueColor, fontWeight: FontWeight.bold))));
+
+    return Column(
+      children: filtered.asMap().entries.map((entry) {
+        int index = entry.key;
+        Map<String, dynamic> invite = entry.value;
+        bool isRowExpanded = _expandedDeletedIndex == index;
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            color: index % 2 != 0 ? const Color(0xFFF4F8FF) : Colors.white,
+            border: Border.all(color: const Color(0xFFDBE0E5)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ── collapsed row ──
+              InkWell(
+                onTap: () => setState(() =>
+                    _expandedDeletedIndex = isRowExpanded ? null : index),
+                borderRadius: BorderRadius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 4, vertical: 13),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(left: 5, right: 5),
+                        padding: !isRowExpanded
+                            ? const EdgeInsets.only(bottom: 10)
+                            : const EdgeInsets.only(top: 10),
+                        child: FaIcon(
+                          isRowExpanded
+                              ? FontAwesomeIcons.sortUp
+                              : FontAwesomeIcons.sortDown,
+                          size: 20,
+                          color: blueColor,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          invite['email'] ?? 'N/A',
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
+                          softWrap: true,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          invite['deleted_by'] ?? 'N/A',
+                          style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12),
+                          softWrap: true,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                  ),
+                ),
+              ),
+              if (isRowExpanded)
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 36, right: 8, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: 'Deleted Date : ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: blueColor),
+                        ),
+                        TextSpan(
+                          text: _formatInviteDate(invite['deleted_at']),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: grey),
+                        ),
+                      ])),
+                      const SizedBox(height: 4),
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: 'Reason : ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: blueColor),
+                        ),
+                        TextSpan(
+                          text: invite['reason'] ?? 'N/A',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: grey),
+                        ),
+                      ])),
+                      const SizedBox(height: 6),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
@@ -730,9 +1259,8 @@ class _Applicants_tableState extends State<Applicants_table> {
         dropdown: true,
       ),
       body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
+          ? Column(
+              children: [
                   const SizedBox(
                     height: 20,
                   ),
@@ -845,61 +1373,123 @@ class _Applicants_tableState extends State<Applicants_table> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
-                  // Search bar - full width
+                  // ── TabBar: equal-width segments + pill indicator ──
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
-                    child: Row(
-                      children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 19),
-                        Expanded(
-                          child: Material(
-                            elevation: 3,
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 45
-                                  : 50,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: const Color(0xFF8A95A8)),
-                              ),
-                              child: TextField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    searchvalue = value;
-                                    if (currentPage != 0) currentPage = 0;
-                                  });
-                                },
-                                cursorColor: Colors.blue,
-                                decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Search here...",
-                                  hintStyle:
-                                      TextStyle(color: Color(0xFF8A95A8)),
-                                  contentPadding: EdgeInsets.all(11),
-                                ),
-                              ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF4F8FF),
+                        borderRadius: BorderRadius.circular(12),
+                        border:
+                            Border.all(color: const Color(0xFFDBE0E5)),
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        isScrollable: false,
+                        dividerColor: Colors.transparent,
+                        splashBorderRadius: BorderRadius.circular(10),
+                        labelColor: blueColor,
+                        unselectedLabelColor: const Color(0xFF8A95A8),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        indicatorPadding:
+                            const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 2),
+                        indicator: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: const Color(0xFFDBE0E5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: blueColor.withOpacity(0.07),
+                              blurRadius: 5,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        labelPadding: EdgeInsets.zero,
+                        labelStyle: const TextStyle(
+                            fontWeight: FontWeight.w700, fontSize: 13),
+                        unselectedLabelStyle: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 13),
+                        tabs: [
+                          const Tab(height: 44, text: 'Applicants'),
+                          Tab(
+                            height: 44,
+                            child: AnimatedBuilder(
+                              animation: _tabController,
+                              builder: (context, _) {
+                                final selected = _tabController.index == 1;
+                                final c = selected
+                                    ? blueColor
+                                    : const Color(0xFF8A95A8);
+                                final w = selected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500;
+                                return Center(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Pending Applicants',
+                                          style: TextStyle(
+                                            color: c,
+                                            fontWeight: w,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets
+                                              .symmetric(
+                                              horizontal: 7,
+                                              vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: _pendingInvites.isEmpty
+                                                ? const Color(0xFF8A95A8)
+                                                : blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            '${_pendingInvites.length}',
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 11,
+                                                fontWeight:
+                                                    FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
-                        ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 25),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
-                  // Date filter dropdown - full width, side by side with status filter
+                  // ── TabBarView ──
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        // ════════════════════════════════
+                        // TAB 1 — Applicants (existing)
+                        // ════════════════════════════════
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+
+                  // Date filter + Status filter dropdowns — shown FIRST
                   const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
@@ -912,7 +1502,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: Material(
-                              elevation: 3,
+                              elevation: 0,
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                               child: DropdownButton2<String>(
                                 isExpanded: true,
@@ -965,7 +1556,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: Color(0xFF8A95A8),
+                                      color: const Color(0xFFDBE0E5),
                                     ),
                                     color: Colors.white,
                                   ),
@@ -997,7 +1588,8 @@ class _Applicants_tableState extends State<Applicants_table> {
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: Material(
-                              elevation: 3,
+                              elevation: 0,
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.circular(8),
                               child: DropdownButton2<String>(
                                 isExpanded: true,
@@ -1050,7 +1642,7 @@ class _Applicants_tableState extends State<Applicants_table> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: Color(0xFF8A95A8),
+                                      color: const Color(0xFFDBE0E5),
                                     ),
                                     color: Colors.white,
                                   ),
@@ -1085,9 +1677,61 @@ class _Applicants_tableState extends State<Applicants_table> {
                       ],
                     ),
                   ),
-                  // if (MediaQuery.of(context).size.width > 500)
-                  //   const SizedBox(height: 25),
-                  // if (MediaQuery.of(context).size.width < 500)
+
+                  // Search bar — shown BELOW the filter dropdowns
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    child: Row(
+                      children: [
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 19),
+                        Expanded(
+                          child: Material(
+                            elevation: 0,
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    color: const Color(0xFFDBE0E5)),
+                              ),
+                              child: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchvalue = value;
+                                    if (currentPage != 0) currentPage = 0;
+                                  });
+                                },
+                                cursorColor: Colors.blue,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: "Search here...",
+                                  hintStyle:
+                                      TextStyle(color: Color(0xFF8A95A8)),
+                                  contentPadding: EdgeInsets.all(11),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (MediaQuery.of(context).size.width < 500)
+                          const SizedBox(width: 2),
+                        if (MediaQuery.of(context).size.width > 500)
+                          const SizedBox(width: 25),
+                      ],
+                    ),
+                  ),
+
                   Padding(
                     padding: EdgeInsets.all(
                         MediaQuery.of(context).size.width < 500 ? 11 : 28),
@@ -1999,9 +2643,60 @@ class _Applicants_tableState extends State<Applicants_table> {
                   //       }
                   //     },
                   //   ),
-                ],
-              ),
-            )
+                    ], // closes Tab1 Column children
+                  ),   // closes Tab1 Column
+                ),     // closes Tab1 SingleChildScrollView
+
+                // ════════════════════════════════
+                // TAB 2 — Pending Applicants (NEW)
+                // ════════════════════════════════
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 11, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 6),
+                        // ── Pending section title ──
+                        Text('Pending',
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
+                        const SizedBox(height: 8),
+                        _buildInviteSearchField(
+                            (v) => setState(() => _pendingSearch = v)),
+                        const SizedBox(height: 10),
+                        _buildPendingHeader(),
+                        const SizedBox(height: 4),
+                        _buildPendingList(),
+
+                        const SizedBox(height: 24),
+
+                        // ── Deleted Invitations section title ──
+                        Text('Deleted Invitations',
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14)),
+                        const SizedBox(height: 8),
+                        _buildInviteSearchField(
+                            (v) => setState(() => _deletedSearch = v)),
+                        const SizedBox(height: 10),
+                        _buildDeletedHeader(),
+                        const SizedBox(height: 4),
+                        _buildDeletedList(),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ],   // closes TabBarView children
+            ),     // closes TabBarView
+          ),       // closes Expanded
+        ],         // closes outer Column children
+      )            // closes outer Column (connected body)
           : SizedBox(
               width: double.infinity,
               child: Column(
