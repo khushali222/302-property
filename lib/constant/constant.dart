@@ -14,11 +14,11 @@ String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/"
 //String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.3:4000";
+//String Api_url = "http://192.168.1.55:4000";
 
 //String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
-//String Api_url = "https://development.cloudrentalmanager.com";
+//String Api_url = "https://staging.cloudrentalmanager.com";
+String Api_url = "https://development.cloudrentalmanager.com";
 
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";

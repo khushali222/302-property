@@ -68,41 +68,45 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails}),
       );
 
-      print(response.statusCode);
-      print(" payment responce ${response.body}");
+      print("[CARD PAYMENT] /api/nmipayment/sale status: ${response.statusCode}");
+      print("[CARD PAYMENT] /api/nmipayment/sale response: ${response.body}");
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
+          print("[CARD PAYMENT] SUCCESS — transactionId: ${jsonData["data"]["transactionid"]}, responseText: ${jsonData["data"]["responsetext"]}");
 
-          // Wait for both services to complete using Future.wait
-          await Future.wait([
-            storePayment(
-                companyName: company_name,
-                adminId: adminId,
-                tenantId: tenantId,
-                leaseId: leaseid,
-                paymentAmountType: paymentAmountType,
-                paymentType: "Card",
-                customerVaultId: customerVaultId,
-                billingId: billingId,
-                totalAmount: amount,
-                isLeaseAdded: false,
-                uploadedFile: "",
-                date: date,
-                scheduledPayment: scheduledPayment,
-                transactionId: jsonData["data"]["transactionid"],
-                responseText: "SUCCESS",
-                surcharge: surcharge,
-                notificationTime: notificationTime),
-          ]);
+          // NOTE: /api/nmipayment/sale now saves payment to DB internally (backend change by Neil).
+          // storePayment() call removed to prevent duplicate transaction entries.
+          // OLD FLOW (commented out — restore if backend reverts):
+          // await Future.wait([
+          //   storePayment(
+          //       companyName: company_name,
+          //       adminId: adminId,
+          //       tenantId: tenantId,
+          //       leaseId: leaseid,
+          //       paymentAmountType: paymentAmountType,
+          //       paymentType: "Card",
+          //       customerVaultId: customerVaultId,
+          //       billingId: billingId,
+          //       totalAmount: amount,
+          //       isLeaseAdded: false,
+          //       uploadedFile: "",
+          //       date: date,
+          //       scheduledPayment: scheduledPayment,
+          //       transactionId: jsonData["data"]["transactionid"],
+          //       responseText: "SUCCESS",
+          //       surcharge: surcharge,
+          //       notificationTime: notificationTime),
+          // ]);
+
           return "Payment Success";
         } else {
+          print("[CARD PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
+        print("[CARD PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         throw Exception('Failed to make payment');
       }
     } else {
@@ -125,7 +129,8 @@ class PaymentService {
             date: date,
             responseText: "PENDING",
             surcharge: surcharge,
-            notificationTime: notificationTime);
+            notificationTime: notificationTime,
+            entries: entries);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -152,6 +157,7 @@ class PaymentService {
     required String paymentAmountType,
     required String date,
     required bool scheduledPayment,
+    List<Map<String, dynamic>>? entries,
   }) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -202,7 +208,10 @@ class PaymentService {
         'transaction_id': transactionId,
         'response': responseText,
         'date': date,
-        'scheduleRecurring': scheduledPayment
+        'scheduleRecurring': scheduledPayment,
+        'is_web': true,
+        'type': 'Payment',
+        if (entries != null) 'entry': entries,
       }),
     );
 
@@ -284,38 +293,49 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
+      print("[ACH PAYMENT] /api/nmipayment/ACH_sale status: ${response.statusCode}");
+      print("[ACH PAYMENT] /api/nmipayment/ACH_sale response: ${response.body}");
+
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
           final data = jsonData["data"];
           final transactionId = data["transactionid"]?.toString() ?? "";
           final responseText = data["responsetext"]?.toString() ?? "SUCCESS";
-          final authcode = data["authcode"]?.toString() ?? "";
-          final responseCode = data["response_code"]?.toString() ?? "100";
-          await storePaymentAch(
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            entries: entries,
-            totalAmount: amount,
-            surcharge: surcharge,
-            transactionId: transactionId,
-            responseText: responseText,
-            authcode: authcode,
-            responseCode: responseCode,
-            paymentAmountType: paymentAmountType ?? "full",
-            date: date,
-          );
+          print("[ACH PAYMENT] SUCCESS — transactionId: $transactionId, responseText: $responseText");
+
+          // NOTE: /api/nmipayment/ACH_sale now saves payment to DB internally (backend change by Neil).
+          // storePaymentAch() call removed to prevent duplicate transaction entries.
+          // OLD FLOW (commented out — restore if backend reverts):
+          // final authcode = data["authcode"]?.toString() ?? "";
+          // final responseCode = data["response_code"]?.toString() ?? "100";
+          // await storePaymentAch(
+          //   adminId: adminId,
+          //   tenantId: tenantId,
+          //   leaseId: leaseid,
+          //   entries: entries,
+          //   totalAmount: amount,
+          //   surcharge: surcharge,
+          //   transactionId: transactionId,
+          //   responseText: responseText,
+          //   authcode: authcode,
+          //   responseCode: responseCode,
+          //   paymentAmountType: paymentAmountType ?? "full",
+          //   date: date,
+          // );
+
           return "Payment Success";
         } else {
+          print("[ACH PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
+        print("[ACH PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         throw Exception('Failed to make payment');
       }
     } else {
       try {
+        // Scheduled future ACH payment — still uses /api/payment/tenant-payment directly (no NMI call)
         await storePaymentAch(
           adminId: adminId,
           tenantId: tenantId,
@@ -459,34 +479,45 @@ class PaymentService {
         },
         body: jsonEncode({"paymentDetails": paymentDetails}),
       );
+      print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale status: ${response.statusCode}");
+      print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale response: ${response.body}");
+
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
           final data = jsonData["data"];
-          await storePaymentAch(
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            entries: entries,
-            totalAmount: amount,
-            surcharge: surcharge,
-            transactionId: data["transactionid"]?.toString() ?? "",
-            responseText: data["responsetext"]?.toString() ?? "SUCCESS",
-            authcode: data["authcode"]?.toString() ?? "",
-            responseCode: data["response_code"]?.toString() ?? "100",
-            paymentAmountType: "full",
-            date: date,
-          );
+          print("[NORMAL/CHECK PAYMENT] SUCCESS — transactionId: ${data["transactionid"]}, responseText: ${data["responsetext"]}");
+
+          // NOTE: /api/nmipayment/ACH_sale now saves payment to DB internally (backend change by Neil).
+          // storePaymentAch() call removed to prevent duplicate transaction entries.
+          // OLD FLOW (commented out — restore if backend reverts):
+          // await storePaymentAch(
+          //   adminId: adminId,
+          //   tenantId: tenantId,
+          //   leaseId: leaseid,
+          //   entries: entries,
+          //   totalAmount: amount,
+          //   surcharge: surcharge,
+          //   transactionId: data["transactionid"]?.toString() ?? "",
+          //   responseText: data["responsetext"]?.toString() ?? "SUCCESS",
+          //   authcode: data["authcode"]?.toString() ?? "",
+          //   responseCode: data["response_code"]?.toString() ?? "100",
+          //   paymentAmountType: "full",
+          //   date: date,
+          // );
+
           return "Payment Success";
         } else {
+          print("[NORMAL/CHECK PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
+        print("[NORMAL/CHECK PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         throw Exception('Failed to make payment');
       }
     } else {
       try {
+        // Scheduled future check/normal payment — still uses /api/payment/payment directly
         storePaymentfornormal(
             companyName: company_name,
             adminId: adminId,

@@ -117,9 +117,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           //  countList[1] = jsonData['rentalCount'];
           countList[2] = jsonData["data"]['rent'];
           countList[3] =
-              convertDateFormat(jsonData["data"]['due_date'].toString());
+              convertDateFormat(jsonData["data"]['rentDueDate'].toString());
           countList[4] =
               convertDateFormat(jsonData["data"]['end_date'].toString());
+          countList[5] =
+              convertDateFormat(jsonData["data"]['start_date'].toString());
           countList[1] = double.parse(jsonData["data"]['balance'].toString())
               .toStringAsFixed(2);
           countList[1] = double.parse(countList[1]) < 0
@@ -143,6 +145,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         countList[2] = 0;
         countList[3] = "--/--/----";
         countList[4] = "--/--/----";
+        countList[5] = "--/--/----";
       });
       print('Error fetching data: $e');
     } finally {}
@@ -365,7 +368,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   }
 
   late DashboardData dashboardData;
-  List<dynamic> countList = [0, 0, 0, "", ""];
+  List<dynamic> countList = [0, 0, 0, "", "", ""];
   List<int> amountList = List.filled(2, 0);
   String convertDateFormat(String dateStr) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -388,7 +391,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     });
     checkInternet();
     dashboardData =
-        DashboardData(countList: [0, 0, 0, "", ""], amountList: [0, 0]);
+        DashboardData(countList: [0, 0, 0, "", "", ""], amountList: [0, 0]);
     fetchDatacount();
     fetchData();
     _loadName();
@@ -493,7 +496,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           iconColor: const Color(0xFF4CAF50),
           title: "Lease",
           leftLabel: "Start Date",
-          leftValue: countList[3].toString(),
+          leftValue: countList[5].toString(),
           rightLabel: "End Date",
           rightValue: countList[4].toString(),
           onTap: () {},

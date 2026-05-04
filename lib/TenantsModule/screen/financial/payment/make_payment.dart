@@ -1352,7 +1352,9 @@ class _MakePaymentState extends State<MakePayment> {
           _cardOnlyList[selectedcardindex!].binResult == "CREDIT") {
         setState(() {
           print("Override_fee === $override_fee");
-          if (override_fee == null) {
+          if (override_fee == null ||
+              override_fee == "null" ||
+              override_fee!.isEmpty) {
             surCharge = surchargeData['surcharge_percent'];
             if (totalamount > 0.0) {
               surchargeamount = totalamount * surCharge! / 100;
@@ -1360,9 +1362,9 @@ class _MakePaymentState extends State<MakePayment> {
             }
             print(totalamount);
           } else {
-            surCharge = surchargeData['override_fee'];
+            surCharge = num.tryParse(override_fee) ?? surchargeData['surcharge_percent'];
             if (totalamount > 0.0) {
-              surchargeamount = totalamount * (surCharge ?? 00) / 100;
+              surchargeamount = totalamount * (surCharge ?? 0) / 100;
               totalpayamount = totalamount + surchargeamount;
             }
           }
