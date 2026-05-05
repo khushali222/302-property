@@ -662,11 +662,12 @@ class _MakePaymentState extends State<MakePayment> {
                               entryData.value.contains(entry.account),
                           orElse: () {
                             // If the chargeType is not found, add it dynamically
-                            categorizedData[entry.chargeType!] = [
-                              ...(categorizedData[entry.chargeType!] ?? []),
-                              entry.account!
+                            final fallbackType = entry.chargeType ?? 'One Time Charge';
+                            categorizedData[fallbackType] = [
+                              ...(categorizedData[fallbackType] ?? []),
+                              entry.account ?? '',
                             ];
-                            return MapEntry(entry.chargeType!, []);
+                            return MapEntry(fallbackType, []);
                           },
                         ).key;
               print(chargeType);

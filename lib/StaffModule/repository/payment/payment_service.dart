@@ -78,6 +78,10 @@ class PaymentService {
         'tenantName':tenantname,
         'notificationTime':notificationTime,
         'entry':updatedEntries,
+        // OLD was: lease_id missing from staff card payload — backend couldn't identify which lease
+        'lease_id': leaseid,
+        // NEW: added to match web payload — backend uses these to identify source
+        'user_active_recently': true,
       };
     //  log(paymentDetails.toString());
       final response = await http.post(
@@ -87,7 +91,9 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        // NEW: added is_web: true at body level to match web payload
+        // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
+        body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
       if (response.statusCode == 200) {
@@ -96,7 +102,42 @@ class PaymentService {
         if (jsonData["statusCode"] == 100) {
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          await Future.wait([
+
+          // NEW: backend now saves the payment record to DB internally after /api/nmipayment/sale
+          // storePayment() removed to prevent duplicate transaction entries (same change as tenant module)
+          // OLD storePayment call kept below as reference — restore if backend reverts:
+          // await Future.wait([
+          //   storePayment(
+          //       companyName: company_name,
+          //       adminId: adminId,
+          //       tenantId: tenantId,
+          //       leaseId: leaseid,
+          //       paymentType: "Card",
+          //       customerVaultId: customerVaultId,
+          //       billingId: billingId,
+          //       entries: updatedEntries,
+          //       totalAmount: amount,
+          //       isLeaseAdded: false,
+          //       uploadedFile: [],
+          //       transactionId: jsonData["data"]["transactionid"],
+          //       responseText: "SUCCESS",
+          //       surcharge: surcharge,
+          //       notificationTime: notificationTime,
+          //   )
+          // ]);
+
+          return "Payment Success";
+        } else {
+          throw Exception('Failed payment ${jsonData["message"]}');
+        }
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to make payment');
+      }
+    } else {
+      try {
+        // OLD was: storePayment(...) without await — fire and forget, errors silently swallowed
+        await Future.wait([
           storePayment(
               companyName: company_name,
               adminId: adminId,
@@ -110,42 +151,11 @@ class PaymentService {
               totalAmount: amount,
               isLeaseAdded: false,
               uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-              responseText: "SUCCESS",
-              //responseText: jsonData["data"]["responsetext"],
+              transactionId: "",
+              responseText: "PENDING",
               surcharge: surcharge,
-
-          notificationTime: notificationTime,
-          )
-          ]);
-          return "Payment Success";
-        } else {
-          throw Exception('Failed payment ${jsonData["message"]}');
-        }
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to make payment');
-      }
-    } else {
-      try {
-        storePayment(
-            companyName: company_name,
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            paymentType: "Card",
-            customerVaultId: customerVaultId,
-            billingId: billingId,
-            entries: updatedEntries,
-            //entries: entries,
-            totalAmount: amount,
-            isLeaseAdded: false,
-            uploadedFile: [],
-            transactionId: "",
-            responseText: "PENDING",
-            surcharge: surcharge,
-            notificationTime: notificationTime
-        );
+              notificationTime: notificationTime)
+        ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);
@@ -292,6 +302,10 @@ class PaymentService {
         'processor_id': processorId,
         'tenantName':tenantname,
         "notificationTime": notificationTime,
+        // OLD was: lease_id missing from staff ACH payload — backend couldn't identify which lease
+        'lease_id': leaseid,
+        // NEW: added to match web payload — backend uses these to identify source
+        'user_active_recently': true,
       };
       print(paymentDetails);
       final response = await http.post(
@@ -301,7 +315,9 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        // NEW: added is_web: true at body level to match web payload
+        // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
+        body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
       if (response.statusCode == 200) {
@@ -310,24 +326,28 @@ class PaymentService {
         if (jsonData["statusCode"] == 100) {
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          await Future.wait([
-          storePaymentAch(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "ACH",
-             // entries: entries,
-              entries: updatedEntries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: jsonData["data"]["transactionid"],
-              responseText: "SUCCESS",
-              surcharge: surcharge,
-              notificationTime: notificationTime,
-          )
-          ]);
+
+          // NEW: backend now saves the payment record to DB internally after /api/nmipayment/ACH_sale
+          // storePaymentAch() removed to prevent duplicate entries (same change as tenant module)
+          // OLD storePaymentAch call kept below as reference — restore if backend reverts:
+          // await Future.wait([
+          //   storePaymentAch(
+          //       companyName: company_name,
+          //       adminId: adminId,
+          //       tenantId: tenantId,
+          //       leaseId: leaseid,
+          //       paymentType: "ACH",
+          //       entries: updatedEntries,
+          //       totalAmount: amount,
+          //       isLeaseAdded: false,
+          //       uploadedFile: [],
+          //       transactionId: jsonData["data"]["transactionid"],
+          //       responseText: "SUCCESS",
+          //       surcharge: surcharge,
+          //       notificationTime: notificationTime,
+          //   )
+          // ]);
+
           return "Payment Success";
         } else {
           throw Exception('Failed payment ${jsonData["message"]}');
@@ -338,22 +358,25 @@ class PaymentService {
       }
     } else {
       try {
-        storePaymentAch(
-            companyName: company_name,
-            adminId: adminId,
-            tenantId: tenantId,
-            leaseId: leaseid,
-            paymentType: "Card",
-            entries: updatedEntries,
-            //entries: entries,
-            totalAmount: amount,
-            isLeaseAdded: false,
-            uploadedFile: [],
-            transactionId: "",
-            responseText: "PENDING",
-            surcharge: surcharge,
-            notificationTime: notificationTime
-        );
+        // OLD was: storePaymentAch(...) without await — fire and forget, errors silently swallowed
+        // OLD was: paymentType: "Card" — wrong type for ACH scheduled payment
+        await Future.wait([
+          storePaymentAch(
+              companyName: company_name,
+              adminId: adminId,
+              tenantId: tenantId,
+              leaseId: leaseid,
+              paymentType: "ACH",
+              entries: updatedEntries,
+              //entries: entries,
+              totalAmount: amount,
+              isLeaseAdded: false,
+              uploadedFile: [],
+              transactionId: "",
+              responseText: "PENDING",
+              surcharge: surcharge,
+              notificationTime: notificationTime)
+        ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
         throw Exception(e);

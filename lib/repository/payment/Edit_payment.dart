@@ -7,8 +7,6 @@ import 'package:three_zero_two_property/model/lease.dart';
 import '../../constant/constant.dart';
 
 class PaymentService {
-
-
   Future<String> makePaymentforcard({
     required String adminId,
     // required String firstName,
@@ -16,7 +14,7 @@ class PaymentService {
     // required String emailName,
     required String customerVaultId,
     required String billingId,
-   // required String surcharge,
+    // required String surcharge,
     required String amount,
     required String tenantId,
     required String date,
@@ -29,7 +27,6 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -69,7 +66,7 @@ class PaymentService {
       };
     }).toList();
     print("callog");
-   // print("surcharge ${surcharge}");
+    // print("surcharge ${surcharge}");
     // if (future_Date == false) {
     //   final String baseUrl = '$Api_url/api/nmipayment/sale';
     //   print(baseUrl);
@@ -143,31 +140,30 @@ class PaymentService {
     //   }
     // }
     // else {
-      try {
-        await Future.wait([
-          storePayment(
-              companyName: company_name,
-              adminId: adminId,
-              tenantId: tenantId,
-              leaseId: leaseid,
-              paymentType: "Card",
-              customerVaultId: customerVaultId,
-              billingId: billingId,
-              entries: updatedEntries,
-              // entries: entries,
-              totalAmount: amount,
-              isLeaseAdded: false,
-              uploadedFile: [],
-              transactionId: "",
-              responseText: "PENDING",
-              surcharge: "surcharge",
-              notificationTime: notificationTime
-          )
-        ]);
-        return "Payment Updated Successfully";
-      } catch (e) {
-        throw Exception(e);
-      }
+    try {
+      await Future.wait([
+        storePayment(
+            companyName: company_name,
+            adminId: adminId,
+            tenantId: tenantId,
+            leaseId: leaseid,
+            paymentType: "Card",
+            customerVaultId: customerVaultId,
+            billingId: billingId,
+            entries: updatedEntries,
+            // entries: entries,
+            totalAmount: amount,
+            isLeaseAdded: false,
+            uploadedFile: [],
+            transactionId: "",
+            responseText: "PENDING",
+            surcharge: "surcharge",
+            notificationTime: notificationTime)
+      ]);
+      return "Payment Updated Successfully";
+    } catch (e) {
+      throw Exception(e);
+    }
     // }
     // return "";
   }
@@ -188,7 +184,6 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     print("caaaalied");
     final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
@@ -199,15 +194,13 @@ class PaymentService {
     print(" Daaaaataaaa   ${{
       'company_name': companyName,
       'admin_id': id,
-     //   'tenant_id': tenantId,
+      //   'tenant_id': tenantId,
       'lease_id': leaseId,
       'payment_type': paymentType,
       'customer_vault_id': customerVaultId,
       'billing_id': billingId,
       'entry': entries,
-      'total_amount':
-      (double.parse(totalAmount)),
-
+      'total_amount': (double.parse(totalAmount)),
     }}");
     print(baseUrl);
     final response = await http.put(
@@ -226,9 +219,7 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount':
-        (double.parse(totalAmount) ),
-
+        'total_amount': (double.parse(totalAmount)),
       }),
     );
     print(response.body);
@@ -266,7 +257,6 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -313,7 +303,7 @@ class PaymentService {
             adminId: adminId,
             tenantId: tenantId,
             leaseId: leaseid,
-            paymentType: "Card",
+            paymentType: "ACH",
             entries: updatedEntries,
             // entries: entries,
             totalAmount: amount,
@@ -322,14 +312,12 @@ class PaymentService {
             transactionId: "",
             responseText: "PENDING",
             surcharge: surcharge,
-            notificationTime: notificationTime
-        )
+            notificationTime: notificationTime)
       ]);
       return "Payment Updated Successfully";
     } catch (e) {
       throw Exception(e);
     }
-
   }
 
   Future<Map<String, dynamic>> storePaymentAch({
@@ -346,7 +334,6 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -365,17 +352,17 @@ class PaymentService {
         'admin_id': id,
         'payment_id': tenantId,
         'lease_id': leaseId,
-       // 'payment_type': paymentType,
+        // 'payment_type': paymentType,
 
         'entry': entries,
         // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) ),
+        'total_amount': (double.parse(totalAmount)),
         //'surcharge': surcharge,
-       // 'is_leaseAdded': isLeaseAdded,
+        // 'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
-       // 'transaction_id': transactionId,
-       // 'response': responseText,
-       // 'notificationTime':notificationTime,
+        // 'transaction_id': transactionId,
+        // 'response': responseText,
+        // 'notificationTime':notificationTime,
       }),
     );
 
@@ -416,7 +403,6 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -476,7 +462,7 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'lease_id':leaseid,
+        'lease_id': leaseid,
         'entry': updatedEntries,
         //'entry': entries,
         // 'notificationTime':notificationTime,
@@ -492,7 +478,6 @@ class PaymentService {
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
       if (response.statusCode == 200) {
@@ -525,8 +510,7 @@ class PaymentService {
       } else {
         throw Exception('Failed to make payment');
       }
-    }
-    else {
+    } else {
       try {
         await Future.wait([
           storePaymentfornormal(
@@ -544,9 +528,7 @@ class PaymentService {
               responseText: "PENDING",
               surcharge: surcharge,
               notificationTime: notificationTime,
-              paymentId: paymentId
-
-          )
+              paymentId: paymentId)
         ]);
         return "Payment Updated Successfully";
       } catch (e) {
@@ -571,7 +553,6 @@ class PaymentService {
     required String surcharge,
     String? notificationTime,
     String? paymentId,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -590,7 +571,7 @@ class PaymentService {
         'admin_id': id,
         'tenant_id': tenantId,
         'lease_id': leaseId,
-        'payment_id':paymentId,
+        'payment_id': paymentId,
         'payment_type': paymentType,
         'entry': entries,
         'total_amount': totalAmount,
@@ -598,7 +579,7 @@ class PaymentService {
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
         'response': "SUCCESS",
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -610,8 +591,6 @@ class PaymentService {
           'Failed to payment ${jsonDecode(response.body)["message"]}');
     }
   }
-
-
 
 // Future<String> makePaymentforCashier({
 //   required String adminId,
@@ -715,6 +694,4 @@ class PaymentService {
 //     throw Exception('Error: $e');
 //   }
 // }
-
-
 }
