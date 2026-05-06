@@ -157,7 +157,7 @@ class PaymentService {
             uploadedFile: [],
             transactionId: "",
             responseText: "PENDING",
-            surcharge: "surcharge",
+            surcharge: "0",
             notificationTime: notificationTime)
       ]);
       return "Payment Updated Successfully";

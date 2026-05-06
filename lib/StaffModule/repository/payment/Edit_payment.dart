@@ -29,7 +29,7 @@ class PaymentService {
     String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {
@@ -185,6 +185,7 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffId = prefs.getString('staff_id');
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
@@ -192,7 +193,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId",
         "Content-Type": "application/json",
       },
       body: jsonEncode(<String, dynamic>{
@@ -250,7 +251,7 @@ class PaymentService {
     String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {
@@ -401,6 +402,7 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffId = prefs.getString('staff_id');
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
@@ -408,7 +410,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId",
         "Content-Type": "application/json",
       },
       body: jsonEncode(<String, dynamic>{
@@ -469,7 +471,7 @@ class PaymentService {
     String? notificationTime,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {

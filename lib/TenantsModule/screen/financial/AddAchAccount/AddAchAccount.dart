@@ -19,7 +19,18 @@ class AddAchAccount extends StatefulWidget {
   /// Optional: when set, existing ACH accounts from get-billing-customer-vault are shown in card style.
   final String? customerVaultId;
 
-  const AddAchAccount({Key? key, required this.tenantId, this.customerVaultId})
+  /// When true (e.g. staff Make Payment flow), HTTP `id` header uses `staff_id` instead of `tenant_id`.
+  final bool authAsStaff;
+
+  /// When true (admin Make Payment), HTTP `id` header uses `adminId` instead of `tenant_id`.
+  final bool authAsAdmin;
+
+  const AddAchAccount(
+      {Key? key,
+      required this.tenantId,
+      this.customerVaultId,
+      this.authAsStaff = false,
+      this.authAsAdmin = false})
       : super(key: key);
 
   @override
@@ -73,17 +84,23 @@ class _AddAchAccountState extends State<AddAchAccount> {
     super.dispose();
   }
 
+  String? _headerIdForRequest(SharedPreferences prefs) {
+    if (widget.authAsStaff) return prefs.getString('staff_id');
+    if (widget.authAsAdmin) return prefs.getString('adminId');
+    return prefs.getString('tenant_id');
+  }
+
   Future<void> _loadProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('tenant_id');
+    String? headerId = _headerIdForRequest(prefs);
     String? token = prefs.getString('token');
-    if (id == null) return;
+    if (headerId == null || token == null) return;
     try {
       final response = await http.get(
-        Uri.parse('$Api_url/api/tenant/tenant_profile/$id'),
+        Uri.parse('$Api_url/api/tenant/tenant_profile/${widget.tenantId}'),
         headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM $headerId',
         },
       );
       if (response.statusCode == 200) {
@@ -105,14 +122,15 @@ class _AddAchAccountState extends State<AddAchAccount> {
     setState(() => _loadingExisting = true);
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString('tenant_id');
+      String? headerId = _headerIdForRequest(prefs);
       String? adminId = prefs.getString('adminId');
       String? token = prefs.getString('token');
+      if (headerId == null) return;
       final response = await http.post(
         Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
         headers: {
           'Content-Type': 'application/json',
-          'id': 'CRM $id',
+          'id': 'CRM $headerId',
           'authorization': 'CRM $token',
         },
         body: json.encode({
@@ -156,23 +174,28 @@ class _AddAchAccountState extends State<AddAchAccount> {
   }
 
   Future<bool> _submit() async {
+    if (_accountType == null ||
+        _accountHolderType == null ||
+        _accountHolderName.text.trim().isEmpty ||
+        _routingNumber.text.trim().isEmpty ||
+        _accountNumber.text.trim().isEmpty) {
+      setState(() => _validationError = 'Please fill all the required fields*');
+      return false;
+    }
+    if (!(_formKey.currentState?.validate() ?? false)) return false;
     setState(() {
       _validationError = null;
-      if (_accountType == null ||
-          _accountHolderType == null ||
-          _accountHolderName.text.trim().isEmpty ||
-          _routingNumber.text.trim().isEmpty ||
-          _accountNumber.text.trim().isEmpty) {
-        _validationError = 'Please fill all the required fields*';
-        return;
-      }
       _isSubmitting = true;
     });
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
-    String? id = prefs.getString('tenant_id');
+    String? headerId = _headerIdForRequest(prefs);
     String? token = prefs.getString('token');
+    if (headerId == null) {
+      if (mounted) setState(() => _isSubmitting = false);
+      return false;
+    }
 
     final String url = '$Api_url/api/nmipayment/tenant/add-tenant-ach-mobile';
     final String accountHolderName = _accountHolderName.text.trim();
@@ -197,7 +220,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'id': 'CRM $id',
+          'id': 'CRM $headerId',
           'authorization': 'CRM $token',
         },
         body: json.encode(body),
@@ -281,15 +304,26 @@ class _AddAchAccountState extends State<AddAchAccount> {
               DropdownButtonHideUnderline(
                 child: DropdownButton2<String>(
                   isExpanded: true,
-                  hint: const Text('Account Type'),
+                  hint: const Padding(
+                    padding: EdgeInsets.only(left: 0),
+                    child: Text('Account Type',
+                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                  ),
                   value: _accountType,
+                  selectedItemBuilder: (context) => _accountTypes
+                      .map((e) => Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(e,
+                                style: const TextStyle(fontSize: 14)),
+                          ))
+                      .toList(),
                   items: _accountTypes
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
                   onChanged: (v) => setState(() => _accountType = v),
                   buttonStyleData: ButtonStyleData(
                     height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    padding: const EdgeInsets.only(left: 0, right: 0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: blueColor.withOpacity(0.6)),
@@ -310,15 +344,26 @@ class _AddAchAccountState extends State<AddAchAccount> {
               DropdownButtonHideUnderline(
                 child: DropdownButton2<String>(
                   isExpanded: true,
-                  hint: const Text('Account Holder Type'),
+                  hint: const Padding(
+                    padding: EdgeInsets.only(left: 0),
+                    child: Text('Account Holder Type',
+                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                  ),
                   value: _accountHolderType,
+                  selectedItemBuilder: (context) => _holderTypes
+                      .map((e) => Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(e,
+                                style: const TextStyle(fontSize: 14)),
+                          ))
+                      .toList(),
                   items: _holderTypes
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
                   onChanged: (v) => setState(() => _accountHolderType = v),
                   buttonStyleData: ButtonStyleData(
                     height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    padding: const EdgeInsets.only(left: 0, right: 0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: blueColor.withOpacity(0.6)),
@@ -499,7 +544,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                                                     fontWeight:
                                                         FontWeight.w500)),
                                             const SizedBox(height: 4),
-                                            Text(type,
+                                            Text(holderType,
                                                 style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w600,
@@ -585,6 +630,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
   InputDecoration _inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
+      hintStyle: const TextStyle(fontSize: 14, color: Colors.black54),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     );

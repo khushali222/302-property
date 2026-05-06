@@ -242,8 +242,6 @@ class PaymentService {
     required String firstName,
     required String lastName,
     required String emailName,
-    //  required String customerVaultId,
-    //required String billingId,
     required String surcharge,
     required String amount,
     required String tenantId,
@@ -262,6 +260,8 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
+    String? billingId,
+    String? customerVaultId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -307,11 +307,6 @@ class PaymentService {
         'first_name': firstName,
         'last_name': lastName,
         'email_name': emailName,
-        'checkname': checkname,
-        'account_type': account_type,
-        'checkaccount': checkaccount,
-        'checkaba': checkaba,
-        'account_holder_type': account_holder_type,
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
@@ -322,10 +317,22 @@ class PaymentService {
         'notificationTime': notificationTime,
         'lease_id': leaseid,
         'entry': updatedEntries,
-        // 'entry': entries,
-        // NEW: added to match web payload — backend uses these to identify source
         'user_active_recently': true,
       };
+      if (billingId != null &&
+          billingId.isNotEmpty &&
+          customerVaultId != null &&
+          customerVaultId.isNotEmpty) {
+        paymentDetails['billing_id'] = billingId;
+        paymentDetails['customer_vault_id'] = customerVaultId;
+        paymentDetails['paymentType'] = 'check';
+      } else {
+        paymentDetails['checkname'] = checkname;
+        paymentDetails['account_type'] = account_type;
+        paymentDetails['checkaccount'] = checkaccount;
+        paymentDetails['checkaba'] = checkaba;
+        paymentDetails['account_holder_type'] = account_holder_type;
+      }
       print(paymentDetails);
       final response = await http.post(
         Uri.parse(baseUrl),
@@ -547,6 +554,7 @@ class PaymentService {
         'entry': updatedEntries,
         //'entry': entries,
         // 'notificationTime':notificationTime,
+        'user_active_recently': true,
       };
       print(paymentDetails);
 
@@ -559,6 +567,7 @@ class PaymentService {
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
+          "is_web": true,
         }),
       );
       if (response.statusCode == 200) {
@@ -567,7 +576,7 @@ class PaymentService {
         if (jsonData["statusCode"] == 100) {
           print(jsonData["data"]["responsetext"]);
           print(jsonData["data"]["transactionid"]);
-          storePaymentAch(
+          await storePaymentAch(
             companyName: company_name,
             adminId: adminId,
             tenantId: tenantId,
@@ -653,6 +662,7 @@ class PaymentService {
         'payment_type': paymentType,
         'entry': entries,
         'total_amount': totalAmount,
+        'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'check_number': checknumber,

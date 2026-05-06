@@ -264,15 +264,16 @@ class _Applicants_tableState extends State<Applicants_table>
   String? selectedValue = "All";
   String searchvalue = "";
 
-  // Date filter options
+  // Date filter options ('All' shows all dates; 'All Time' kept for backwards compatibility)
   final List<String> dateFilterItems = [
+    'All',
     'Last 15 Days',
     'Last 30 Days',
     'Last 45 Days',
     'Last 60 Days',
     'All Time'
   ];
-  String? selectedDateFilter = "Last 15 Days";
+  String? selectedDateFilter = "All";
 
   ConnectivityResult? _connectivityResult;
 
@@ -1375,7 +1376,7 @@ class _Applicants_tableState extends State<Applicants_table>
                   ),
                   const SizedBox(height: 8),
 
-                  // ── TabBar: equal-width segments + pill indicator ──
+                  /* ── TabBar: Applicants / Pending — kept for future use; uncomment block and remove/disable day filter Padding below when restoring ──
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Container(
@@ -1476,10 +1477,14 @@ class _Applicants_tableState extends State<Applicants_table>
                       ),
                     ),
                   ),
+                  */
+
+                  const SizedBox(height: 8),
 
                   // ── TabBarView ──
                   Expanded(
                     child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _tabController,
                       children: [
                         // ════════════════════════════════
@@ -1809,9 +1814,10 @@ class _Applicants_tableState extends State<Applicants_table>
                                 .toList();
                           }
 
-                          // Apply date filter (15, 30, 45, 60 days or All time)
+                          // Apply date filter (15, 30, 45, 60 days; skip for All / All Time)
                           if (selectedDateFilter != null &&
-                              selectedDateFilter != "All Time") {
+                              selectedDateFilter != "All Time" &&
+                              selectedDateFilter != "All") {
                             int? daysAgo;
                             if (selectedDateFilter == "Last 15 Days") {
                               daysAgo = 15;

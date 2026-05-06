@@ -2022,7 +2022,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
+                                  hintText: 'Enter account number',
                                   controller: accountnum,
                                 ),
                               ),

@@ -35,6 +35,7 @@ import 'addcard/AddCard.dart';
 import 'addcard/CardModel.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../model/LeaseLedgerModel.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
 
 class MakePayment extends StatefulWidget {
   final String leaseId;
@@ -232,6 +233,103 @@ class _MakePaymentState extends State<MakePayment> {
   String? selectedTenantId;
   List<TextEditingController> controllers = [];
   List<BillingData> cardDetails = [];
+  List<Map<String, dynamic>> achAccounts = [];
+  int? selectedAchIndex;
+  bool isLoadingAch = false;
+
+  static String? _extractVaultString(dynamic v) {
+    if (v == null) return null;
+    if (v is String) return v.isEmpty ? null : v;
+    if (v is num) return v.toString();
+    if (v is Map && v.isEmpty) return null;
+    if (v is Map) return null;
+    return v.toString();
+  }
+
+  Future<void> fetchAchFromBillingVault() async {
+    if (customervaultid == null) {
+      if (mounted) {
+        setState(() {
+          achAccounts = [];
+          selectedAchIndex = null;
+          isLoadingAch = false;
+        });
+      }
+      return;
+    }
+    setState(() => isLoadingAch = true);
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? hdrId = prefs.getString('adminId');
+      String? adminId = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+        headers: {
+          'Content-Type': 'application/json',
+          'id': 'CRM $hdrId',
+          'authorization': 'CRM $token',
+        },
+        body: json.encode({
+          'customer_vault_id': customervaultid.toString(),
+          'admin_id': adminId ?? '',
+        }),
+      );
+      if (response.statusCode == 200 && mounted) {
+        final jsonResponse = json.decode(response.body);
+        List<Map<String, dynamic>> list = [];
+        final data =
+            jsonResponse is Map<String, dynamic> ? jsonResponse['data'] : null;
+        final customer = data is Map ? data['customer'] : null;
+        final billing = customer is Map ? customer['billing'] : null;
+        if (billing is List) {
+          for (final item in billing) {
+            if (item is! Map) continue;
+            final checkAccount = _extractVaultString(item['check_account']);
+            final checkName = _extractVaultString(item['check_name']);
+            if ((checkAccount != null && checkAccount.isNotEmpty) ||
+                (checkName != null && checkName.isNotEmpty)) {
+              final attrs = item['@attributes'];
+              final billingId =
+                  attrs is Map ? _extractVaultString(attrs['id']) : null;
+              list.add({
+                'account_name': checkName ?? '',
+                'account_holder_name': checkName ?? '',
+                'account_number': checkAccount ?? '',
+                'routing_number':
+                    _extractVaultString(item['check_aba']) ?? '',
+                'account_type': _extractVaultString(item['account_type']) ?? '',
+                'account_holder_type':
+                    _extractVaultString(item['account_holder_type']) ?? '',
+                'billing_id': billingId ?? '',
+              });
+            }
+          }
+        }
+        setState(() {
+          achAccounts = list;
+          if (selectedAchIndex != null && selectedAchIndex! >= list.length) {
+            selectedAchIndex = list.isEmpty ? null : 0;
+          }
+          isLoadingAch = false;
+        });
+      } else if (mounted) {
+        setState(() {
+          achAccounts = [];
+          selectedAchIndex = null;
+          isLoadingAch = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          achAccounts = [];
+          selectedAchIndex = null;
+          isLoadingAch = false;
+        });
+      }
+    }
+  }
 
   Future<void> fetchTenants() async {
     try {
@@ -306,7 +404,10 @@ class _MakePaymentState extends State<MakePayment> {
           //   fetchChargesForSelectedTenant(selectedTenantId!);
           //   fetchcreditcard(selectedTenantId!);
           // }
-          processor_id = data["processor_id"] ?? "";
+          final inner = data['data'];
+          processor_id = inner is Map
+              ? (inner['processor_id']?.toString() ?? '')
+              : '';
         });
         print(' fetch teant ${fetchedTenants.length}');
       } else {
@@ -646,6 +747,7 @@ class _MakePaymentState extends State<MakePayment> {
           '$tenantId');
 
       setState(() {
+        charges_balances = [0.0];
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
               // String chargeType = categorizedData.entries.firstWhere(
               //       (entryData) => entryData.value.contains(entry.account),
@@ -820,6 +922,8 @@ class _MakePaymentState extends State<MakePayment> {
       isLoading = true;
       cardDetails = []; // Clear previous card details
       selectedcardindex = null; // Avoid RangeError when list is rebuilt
+      selectedAchIndex = null;
+      achAccounts = [];
     });
 
     final response = await http.get(
@@ -830,6 +934,15 @@ class _MakePaymentState extends State<MakePayment> {
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
+      if (customervaultid != null) {
+        await fetchAchFromBillingVault();
+      } else {
+        setState(() {
+          achAccounts = [];
+          selectedAchIndex = null;
+          isLoadingAch = false;
+        });
+      }
       List<dynamic> cardDetailsList = jsonResponse['card_detail'];
 
       // Debug print to check the response structure
@@ -1714,7 +1827,7 @@ class _MakePaymentState extends State<MakePayment> {
                             const SizedBox(
                               height: 15,
                             ),
-                            Text('Payment Method *',
+                            Text('Payment method *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -1726,7 +1839,7 @@ class _MakePaymentState extends State<MakePayment> {
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: const Text('Select Method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
+                                  hint: const Text('Select method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                   value: _paymentMethodsforfree
                                           .contains(_selectedPaymentMethod)
                                       ? _selectedPaymentMethod
@@ -1838,7 +1951,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
+                                          hint: const Text('Select method',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
                                           value: _paymentMethods.contains(
                                                   _selectedPaymentMethod)
                                               ? _selectedPaymentMethod
@@ -2365,578 +2478,292 @@ class _MakePaymentState extends State<MakePayment> {
                             ],
                             if (showACHFields) ...[
                               const SizedBox(height: 10),
-                              Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text(
-                                  "Bank Routing Number",
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter routing number';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
-                                  controller: bankrountingnum,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text(
-                                  "Bank Account Number",
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter account number';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
-                                  controller: accountnum,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: DropdownButtonHideUnderline(
-                                    child: FormField<String>(
-                                      validator: (value) {
-                                        if (selectedAccount == null ||
-                                            selectedAccount!.isEmpty) {
-                                          return 'Please select an account';
-                                        }
-                                        return null;
-                                      },
-                                      builder: (FormFieldState<String> state) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint:
-                                                   Text('Select Account',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
-                                              value: selectedAccount,
-                                              items: _selecttype.map((method) {
-                                                return DropdownMenuItem<String>(
-                                                  value: method,
-                                                  child: Text(method),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  selectedAccount = newValue;
-                                                });
-                                                state.reset();
-                                                print(
-                                                    'Selected account: $selectedAccount ${selectedAccount == "Card"}');
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 45,
-                                                // width: 200,
-                                                padding: const EdgeInsets.only(
-                                                    left: 4, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                elevation: 2,
-                                              ),
-                                              iconStyleData:
-                                                  const IconStyleData(
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                                iconSize: 24,
-                                                iconEnabledColor:
-                                                    Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData:
-                                                  DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme:
-                                                    ScrollbarThemeData(
-                                                  radius:
-                                                      const Radius.circular(6),
-                                                  thickness:
-                                                      MaterialStateProperty.all(
-                                                          6),
-                                                  thumbVisibility:
-                                                      MaterialStateProperty.all(
-                                                          true),
-                                                ),
-                                              ),
-                                              menuItemStyleData:
-                                                  const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(
-                                                    left: 14, right: 14),
-                                              ),
-                                            ),
-                                            if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 14, top: 5),
-                                                child: Text(
-                                                  state.errorText ?? '',
-                                                  style: const TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 12),
-                                                ),
-                                              ),
-                                          ],
-                                        );
-                                      },
-                                    ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ACH Account Details",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
                                   ),
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // First Column
-                                    Expanded(
-                                      child: Column(
+                                  const SizedBox(height: 10),
+                                  if (isLoadingAch)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: SpinKitFadingCircle(
+                                            color: blueColor, size: 45.0),
+                                      ),
+                                    )
+                                  else if (achAccounts.isEmpty)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: Text(
+                                        'No ACH accounts',
+                                        style: TextStyle(
+                                            fontSize: 15, color: grey),
+                                      ),
+                                    )
+                                  else
+                                    Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.stretch,
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                hint: const Text(
-                                                    'Select Account',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
-                                                value: selectedAccount,
-                                                items:
-                                                    _selecttype.map((method) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: method,
-                                                    child: Text(method),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? newValue) {
-                                                  // setState(() {
-                                                  //   _selectedPaymentMethod = newValue;
-                                                  //   //_selectedPaymentMethod = addRow();
-                                                  //   if(_selectedPaymentMethod == 'Card')
-                                                  //   addRow();
-                                                  //   if(_selectedPaymentMethod == 'Check')
-                                                  //    Text("hello");
-                                                  //
-                                                  // });
-                                                  setState(() {
-                                                    selectedAccount = newValue;
-                                                  });
-                                                  // print();
-                                                  print(
-                                                      'Selected payment method: $selectedAccount ${selectedAccount == "Card"}');
-                                                },
-                                                buttonStyleData:
-                                                    ButtonStyleData(
-                                                  height: 55,
-                                                  width: 250,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 4, right: 14),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  elevation: 2,
-                                                ),
-                                                iconStyleData:
-                                                    const IconStyleData(
-                                                  icon: Icon(
-                                                    Icons.arrow_drop_down,
-                                                  ),
-                                                  iconSize: 24,
-                                                  iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
-                                                  iconDisabledColor:
-                                                      Colors.grey,
-                                                ),
-                                                dropdownStyleData:
-                                                    DropdownStyleData(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: Colors.white,
-                                                  ),
-                                                  scrollbarTheme:
-                                                      ScrollbarThemeData(
-                                                    radius:
-                                                        const Radius.circular(
-                                                            6),
-                                                    thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
-                                                    thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                          ...achAccounts
+                                              .asMap()
+                                              .entries
+                                              .map((e) {
+                                            final int idx = e.key;
+                                            final acc = e.value;
+                                            String accountName = acc[
+                                                        'account_name']
+                                                    ?.toString() ??
+                                                acc['account_holder_name']
+                                                    ?.toString() ??
+                                                '—';
+                                            String accountNumber = acc[
+                                                        'account_number']
+                                                    ?.toString() ??
+                                                '';
+                                            if (accountNumber.length > 4) {
+                                              accountNumber = '****' +
+                                                  accountNumber.substring(
+                                                      accountNumber.length - 4);
+                                            } else if (accountNumber
+                                                .isNotEmpty) {
+                                              accountNumber = accountNumber
+                                                  .replaceAll(RegExp(r'\d'), '*');
+                                            }
+                                            final route = acc['routing_number']
+                                                    ?.toString() ??
+                                                '';
+                                            return GestureDetector(
+                                              onTap: () => setState(() =>
+                                                  selectedAchIndex =
+                                                      selectedAchIndex == idx
+                                                          ? null
+                                                          : idx),
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 8),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 12),
+                                                decoration: BoxDecoration(
+                                                  color: selectedAchIndex ==
+                                                          idx
+                                                      ? blueColor
+                                                          .withOpacity(0.05)
+                                                      : Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                    color: selectedAchIndex ==
+                                                            idx
+                                                        ? blueColor
+                                                        : Colors.grey.shade300,
+                                                    width:
+                                                        selectedAchIndex == idx
+                                                            ? 1.5
+                                                            : 1,
                                                   ),
                                                 ),
-                                                menuItemStyleData:
-                                                    const MenuItemStyleData(
-                                                  height: 40,
-                                                  padding: EdgeInsets.only(
-                                                      left: 14, right: 14),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Checkbox(
+                                                      value:
+                                                          selectedAchIndex ==
+                                                              idx,
+                                                      onChanged: (v) =>
+                                                          setState(() =>
+                                                              selectedAchIndex =
+                                                                  v == true
+                                                                      ? idx
+                                                                      : null),
+                                                      activeColor: blueColor,
+                                                      materialTapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  'Account Holder Name',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          grey,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 3),
+                                                                Text(
+                                                                  accountName,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87),
+                                                                ),
+                                                                if (route
+                                                                    .isNotEmpty) ...[
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          4),
+                                                                  Text(
+                                                                    'Routing $route',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                        color:
+                                                                            grey,
+                                                                        fontWeight:
+                                                                            FontWeight.w400),
+                                                                  ),
+                                                                ],
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 8),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  'Account Number',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                      color:
+                                                                          grey,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 3),
+                                                                Text(
+                                                                  accountNumber,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: Colors
+                                                                          .black87),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ),
-                                          ),
+                                            );
+                                          }),
                                         ],
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    // Second Column
-                                    Expanded(
-                                      child: Column(
-                                        //crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          DropdownButtonHideUnderline(
-                                            child: DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint: const Text(
-                                                  'Select Account Holder Type',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
-                                              value: _selectedHoldertype,
-                                              items:
-                                                  _selectholder.map((method) {
-                                                return DropdownMenuItem<String>(
-                                                  value: method,
-                                                  child: Text(method),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                // setState(() {
-                                                //   _selectedPaymentMethod = newValue;
-                                                //   //_selectedPaymentMethod = addRow();
-                                                //   if(_selectedPaymentMethod == 'Card')
-                                                //   addRow();
-                                                //   if(_selectedPaymentMethod == 'Check')
-                                                //    Text("hello");
-                                                //
-                                                // });
-                                                setState(() {
-                                                  _selectedHoldertype =
-                                                      newValue;
-                                                });
-                                                print(
-                                                    'Selected payment method: $_selectedHoldertype');
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 55,
-                                                // width: 300,
-                                                padding: const EdgeInsets.only(
-                                                    left: 4, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
+                                  const SizedBox(height: 15),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          if (selectedTenantId == null) {
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Please select Received From');
+                                            return;
+                                          }
+                                          final added =
+                                              await Navigator.push<bool>(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => AddAchAccount(
+                                                tenantId: selectedTenantId!,
+                                                customerVaultId:
+                                                    customervaultid?.toString(),
+                                                authAsAdmin: true,
+                                              ),
+                                            ),
+                                          );
+                                          if (added == true &&
+                                              mounted &&
+                                              selectedTenantId != null) {
+                                            await fetchcreditcard(
+                                                selectedTenantId!);
+                                          }
+                                        },
+                                        child: Container(
+                                          height: 45,
+                                          width: 200,
+                                          margin: const EdgeInsets.only(
+                                              bottom: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                                color: blueColor, width: 1.5),
+                                            color: blueColor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Add a New ACH Account",
+                                              style: TextStyle(
+                                                  fontSize: 14,
                                                   color: Colors.white,
-                                                ),
-                                                elevation: 2,
-                                              ),
-                                              iconStyleData:
-                                                  const IconStyleData(
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                                iconSize: 24,
-                                                iconEnabledColor:
-                                                    Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData:
-                                                  DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme:
-                                                    ScrollbarThemeData(
-                                                  radius:
-                                                      const Radius.circular(6),
-                                                  thickness:
-                                                      MaterialStateProperty.all(
-                                                          6),
-                                                  thumbVisibility:
-                                                      MaterialStateProperty.all(
-                                                          true),
-                                                ),
-                                              ),
-                                              menuItemStyleData:
-                                                  const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(
-                                                    left: 14, right: 14),
-                                              ),
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                  ],
-                                ),
-                              const SizedBox(height: 10),
-                               Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Name of the ACH account",style: TextStyle(fontSize: 13,fontWeight: FontWeight.bold,color: blueColor),),
-                              ),
-                             
-                            Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: CustomTextField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter account name';
-                                    }
-                                    return null;
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  hintText: 'Enter account name',
-                                  controller: achname,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: DropdownButtonHideUnderline(
-                                    child: FormField<String>(
-                                      validator: (value) {
-                                        if (_selectedHoldertype == null ||
-                                            _selectedHoldertype!.isEmpty) {
-                                          return 'Please select an account holder type';
-                                        }
-                                        return null;
-                                      },
-                                      builder: (FormFieldState<String> state) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            DropdownButton2<String>(
-                                              isExpanded: true,
-                                              hint: const Text(
-                                                  'Select Account Holder Type',style: TextStyle(fontSize: 13,color: Color(0xFFb0b6c3)),),
-                                              value: _selectedHoldertype,
-                                              items:
-                                                  _selectholder.map((method) {
-                                                return DropdownMenuItem<String>(
-                                                  value: method,
-                                                  child: Text(method),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _selectedHoldertype =
-                                                      newValue;
-                                                });
-                                                state.reset();
-                                                print(
-                                                    'Selected account: $_selectedHoldertype ${_selectedHoldertype == "Card"}');
-                                              },
-                                              buttonStyleData: ButtonStyleData(
-                                                height: 45,
-                                                //  width: 200,
-                                                padding: const EdgeInsets.only(
-                                                    left: 4, right: 14),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                elevation: 2,
-                                              ),
-                                              iconStyleData:
-                                                  const IconStyleData(
-                                                icon: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                                iconSize: 24,
-                                                iconEnabledColor:
-                                                    Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
-                                              ),
-                                              dropdownStyleData:
-                                                  DropdownStyleData(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  color: Colors.white,
-                                                ),
-                                                scrollbarTheme:
-                                                    ScrollbarThemeData(
-                                                  radius:
-                                                      const Radius.circular(6),
-                                                  thickness:
-                                                      MaterialStateProperty.all(
-                                                          6),
-                                                  thumbVisibility:
-                                                      MaterialStateProperty.all(
-                                                          true),
-                                                ),
-                                              ),
-                                              menuItemStyleData:
-                                                  const MenuItemStyleData(
-                                                height: 40,
-                                                padding: EdgeInsets.only(
-                                                    left: 14, right: 14),
-                                              ),
-                                            ),
-                                            if (state.hasError)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 14, top: 5),
-                                                child: Text(
-                                                  state.errorText ?? '',
-                                                  style: const TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 12),
-                                                ),
-                                              ),
-                                          ],
-                                        );
-                                      },
-                                    ),
+                                    ],
                                   ),
-                                ),
-                              // Padding(
-                              //   padding: const EdgeInsets.all(4.0),
-                              //   child: FormField<String>(
-                              //     validator: (value) {
-                              //       if (value == null || value.isEmpty) {
-                              //         return 'Please select an account holder type';
-                              //       }
-                              //       return null;
-                              //     },
-                              //     builder: (FormFieldState<String> state) {
-                              //       return Column(
-                              //         crossAxisAlignment:
-                              //             CrossAxisAlignment.start,
-                              //         children: [
-                              //           DropdownButtonHideUnderline(
-                              //             child: DropdownButton2<String>(
-                              //               isExpanded: true,
-                              //               hint: const Text(
-                              //                   'Select Account Holder Type'),
-                              //               value: _selectedHoldertype,
-                              //               items: _selectholder
-                              //                   .map((holderType) {
-                              //                 return DropdownMenuItem<String>(
-                              //                   value: holderType,
-                              //                   child: Text(holderType),
-                              //                 );
-                              //               }).toList(),
-                              //               onChanged: (String? newValue) {
-                              //                 setState(() {
-                              //                   _selectedHoldertype = newValue;
-                              //                   state.didChange(newValue); // Notify FormField of change
-                              //                 });
-                              //                 state.reset();
-                              //               },
-                              //               buttonStyleData: ButtonStyleData(
-                              //                 height: 45,
-                              //                 padding: const EdgeInsets.only(
-                              //                     left: 0, right: 14),
-                              //                 decoration: BoxDecoration(
-                              //                   borderRadius:
-                              //                       BorderRadius.circular(6),
-                              //                   color: Colors.white,
-                              //                 ),
-                              //                 elevation: 3,
-                              //               ),
-                              //               iconStyleData:
-                              //                   const IconStyleData(
-                              //                 icon:
-                              //                     Icon(Icons.arrow_drop_down),
-                              //                 iconSize: 24,
-                              //                 iconEnabledColor:
-                              //                     Color(0xFFb0b6c3),
-                              //                 iconDisabledColor: Colors.grey,
-                              //               ),
-                              //               dropdownStyleData:
-                              //                   DropdownStyleData(
-                              //                 decoration: BoxDecoration(
-                              //                   borderRadius:
-                              //                       BorderRadius.circular(6),
-                              //                   color: Colors.white,
-                              //                 ),
-                              //                 scrollbarTheme:
-                              //                     ScrollbarThemeData(
-                              //                   radius:
-                              //                       const Radius.circular(6),
-                              //                   thickness:
-                              //                       MaterialStateProperty.all(
-                              //                           6),
-                              //                   thumbVisibility:
-                              //                       MaterialStateProperty.all(
-                              //                           true),
-                              //                 ),
-                              //               ),
-                              //               menuItemStyleData:
-                              //                   const MenuItemStyleData(
-                              //                 height: 40,
-                              //                 padding: EdgeInsets.only(
-                              //                     left: 14, right: 14),
-                              //               ),
-                              //             ),
-                              //           ),
-                              //           if (state.hasError)
-                              //             Padding(
-                              //               padding:
-                              //                   const EdgeInsets.only(top: 5),
-                              //               child: Text(
-                              //                 state.errorText ?? '',
-                              //                 style: const TextStyle(
-                              //                   color: Colors.red,
-                              //                   fontSize: 12,
-                              //                 ),
-                              //               ),
-                              //             ),
-                              //         ],
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
+                                  if (achAccounts.isNotEmpty &&
+                                      selectedAchIndex == null &&
+                                      !isLoadingAch)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8),
+                                      child: Text(
+                                        'Select a saved account above.',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.orange.shade800),
+                                      ),
+                                    ),
+                                ],
+                              ),
                               const SizedBox(height: 10),
                             ],
                             if (showCashiersFields) ...[
@@ -3055,7 +2882,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   return null;
                                 },
                                 keyboardType: TextInputType.text,
-                                hintText: 'Enter Memo',
+                                hintText: 'Enter memo',
                                 controller: Memo,
                               ),
                             ),
@@ -4120,6 +3947,23 @@ class _MakePaymentState extends State<MakePayment> {
                                   });
                                 }
                               } else if (_selectedPaymentMethod == "ACH") {
+                                if (achAccounts.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Please add an ACH account first (Add a New ACH Account).");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
+                                if (selectedAchIndex == null) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please select an ACH account");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -4131,29 +3975,57 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                final double achPrincipal = _achPrincipalForSale();
+                                final Map<String, dynamic> vaultAch =
+                                    achAccounts[selectedAchIndex!];
                                 await PaymentService()
                                     .makePaymentforach(
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge: "$surchargecount",
-                                  amount:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
+                                  surcharge: "${surchargecount ?? 0}",
+                                  amount: "${achPrincipal}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
-                                  processorId: "",
+                                  processorId: processor_id,
                                   leaseid: widget.leaseId,
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: futuredate!,
-                                  account_type: selectedAccount!,
-                                  account_holder_type: _selectedHoldertype!,
-                                  checkaccount: accountnum.text.trim(),
-                                  checkaba: bankrountingnum.text.trim(),
+                                  account_type: (vaultAch['account_type']
+                                                  ?.toString() ??
+                                              '')
+                                          .trim()
+                                          .isNotEmpty
+                                      ? vaultAch['account_type'].toString()
+                                      : "Checking",
+                                  account_holder_type: (vaultAch[
+                                                      'account_holder_type']
+                                                  ?.toString() ??
+                                              '')
+                                          .trim()
+                                          .isNotEmpty
+                                      ? vaultAch['account_holder_type']
+                                          .toString()
+                                      : "Personal",
+                                  checkaccount:
+                                      vaultAch['account_number']?.toString() ??
+                                          '',
+                                  checkaba:
+                                      vaultAch['routing_number']?.toString() ??
+                                          '',
                                   tenantname: tenantname,
-                                  checkname: achname.text.trim(),
+                                  checkname: vaultAch['account_name']
+                                          ?.toString() ??
+                                      vaultAch['account_holder_name']
+                                          ?.toString() ??
+                                      '',
+                                  billingId:
+                                      vaultAch['billing_id']?.toString(),
+                                  customerVaultId:
+                                      customervaultid?.toString(),
                                   uploadedFile: _uploadedFileNames,
                                   notificationTime: notificationTime,
                                 )
@@ -4439,6 +4311,23 @@ class _MakePaymentState extends State<MakePayment> {
                                   });
                                 }
                               } else if (_selectedPaymentMethod == "ACH") {
+                                if (achAccounts.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg:
+                                          "Please add an ACH account first (Add a New ACH Account).");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
+                                if (selectedAchIndex == null) {
+                                  Fluttertoast.showToast(
+                                      msg: "Please select an ACH account");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -4450,29 +4339,57 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                final double achPrincipal = _achPrincipalForSale();
+                                final Map<String, dynamic> vaultAch =
+                                    achAccounts[selectedAchIndex!];
                                 await PaymentService()
                                     .makePaymentforach(
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge: "$surchargecount",
-                                  amount:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
+                                  surcharge: "${surchargecount ?? 0}",
+                                  amount: "${achPrincipal}",
                                   tenantId: selectedTenantId!,
                                   date: _startDate.text.trim(),
                                   address1: "",
-                                  processorId: "",
+                                  processorId: processor_id,
                                   leaseid: widget.leaseId,
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: futuredate!,
-                                  account_type: selectedAccount!,
-                                  account_holder_type: _selectedHoldertype!,
-                                  checkaccount: accountnum.text.trim(),
-                                  checkaba: bankrountingnum.text.trim(),
+                                  account_type: (vaultAch['account_type']
+                                                  ?.toString() ??
+                                              '')
+                                          .trim()
+                                          .isNotEmpty
+                                      ? vaultAch['account_type'].toString()
+                                      : "Checking",
+                                  account_holder_type: (vaultAch[
+                                                      'account_holder_type']
+                                                  ?.toString() ??
+                                              '')
+                                          .trim()
+                                          .isNotEmpty
+                                      ? vaultAch['account_holder_type']
+                                          .toString()
+                                      : "Personal",
+                                  checkaccount:
+                                      vaultAch['account_number']?.toString() ??
+                                          '',
+                                  checkaba:
+                                      vaultAch['routing_number']?.toString() ??
+                                          '',
                                   tenantname: tenantname,
-                                  checkname: achname.text.trim(),
+                                  checkname: vaultAch['account_name']
+                                          ?.toString() ??
+                                      vaultAch['account_holder_name']
+                                          ?.toString() ??
+                                      '',
+                                  billingId:
+                                      vaultAch['billing_id']?.toString(),
+                                  customerVaultId:
+                                      customervaultid?.toString(),
                                   uploadedFile: _uploadedFileNames,
                                   notificationTime: notificationTime,
                                 )
@@ -4765,7 +4682,7 @@ class _MakePaymentState extends State<MakePayment> {
               ),
             ),
             Text(
-              '\$$amount',
+              '\$${amount.toStringAsFixed(2)}',
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -4781,6 +4698,21 @@ class _MakePaymentState extends State<MakePayment> {
   double _safeParseAmountText() {
     final raw = amountController.text.trim().replaceAll(',', '');
     return double.tryParse(raw) ?? 0.0;
+  }
+
+  /// Principal subtotal for ACH_sale (matches web `paymentDetails.amount` and entry amounts).
+  double _achPrincipalForSale() {
+    double sum = 0.0;
+    for (final r in rows) {
+      final v = r['amount'];
+      if (v is num) {
+        sum += v.toDouble();
+      } else {
+        sum += double.tryParse(v?.toString() ?? '') ?? 0.0;
+      }
+    }
+    if (sum > 0) return sum;
+    return _safeParseAmountText();
   }
 
   surge_count() {
