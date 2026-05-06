@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
 import '../../../../constant/constant.dart';
@@ -90,6 +91,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -193,6 +195,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -321,6 +324,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -419,6 +423,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -536,6 +541,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
@@ -624,6 +630,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,

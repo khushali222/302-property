@@ -10,6 +10,10 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/appbar.dart' as admin_appbar;
+import 'package:three_zero_two_property/widgets/custom_drawer.dart' as admin_drawer;
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart' as staff_appbar;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 
 /// Full-screen form to add a new ACH account for the tenant.
 /// POST to add-tenant-ach; backend expects check_name (Account Holder Name).
@@ -262,12 +266,20 @@ class _AddAchAccountState extends State<AddAchAccount> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
-      appBar: widget_302.App_Bar(
-        context: context,
-        onDrawerIconPressed: () => key.currentState?.openDrawer(),
-      ),
+      appBar: widget.authAsAdmin
+          ? admin_appbar.widget_302.App_Bar(context: context)
+          : widget.authAsStaff
+              ? staff_appbar.widget_302_Staff.App_Bar(context: context)
+              : widget_302.App_Bar(
+                  context: context,
+                  onDrawerIconPressed: () => key.currentState?.openDrawer(),
+                ),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Financial'),
+      drawer: widget.authAsAdmin
+          ? admin_drawer.CustomDrawer(currentpage: 'Leases', dropdown: true)
+          : widget.authAsStaff
+              ? CustomDrawerStaff(currentpage: 'Leases', dropdown: true)
+              : CustomDrawer(currentpage: 'Financial'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Form(

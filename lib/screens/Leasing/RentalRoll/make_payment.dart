@@ -3896,7 +3896,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     tenantId: selectedTenantId!,
                                     date: _startDate.text.trim(),
                                     address1: selectedBilling.address_1 ?? "",
-                                    processorId: "",
+                                    processorId: processor_id,
                                     leaseid: widget.leaseId,
                                     company_name: companyName,
                                     entries: rows,
@@ -4260,7 +4260,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                 .address_1 ??
                                             "")
                                         : "",
-                                    processorId: "",
+                                    processorId: processor_id,
                                     leaseid: widget.leaseId,
                                     company_name: companyName,
                                     entries: rows,
