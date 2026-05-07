@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -153,8 +154,19 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                         .firstWhere(
                           (entryData) =>
                               entryData.value.contains(entry.account),
-                          orElse: () => const MapEntry(
-                              "Unknown", []), // Default if not found
+                          orElse: () {
+                            String fallbackType =
+                                entry.chargeType ?? "One Time Charge";
+                            if (entry.account != null) {
+                              categorizedData[fallbackType] ??= [];
+                              if (!categorizedData[fallbackType]!
+                                  .contains(entry.account)) {
+                                categorizedData[fallbackType]!
+                                    .add(entry.account!);
+                              }
+                            }
+                            return MapEntry(fallbackType, []);
+                          },
                         )
                         .key;
             print(entry.chargeType);
@@ -276,8 +288,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
-
-          fetchedData[chargeType]!.add(account);
+          if (!fetchedData[chargeType]!.contains(account)) {
+            fetchedData[chargeType]!.add(account);
+          }
         }
 
         setState(() {
@@ -305,14 +318,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(amountController.text) ?? 0.0;
+    double roundedEntered =
+        double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
 
-    /* setState(() {
-      totalAmount = enteredAmount;
-    });*/
-    if (enteredAmount != totalAmount) {
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${(roundedEntered - roundedTotal).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {
@@ -947,6 +960,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             const SizedBox(
               height: 10,
             ),
+
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: ClipRRect(
@@ -2484,6 +2498,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 categorizedDataCopy['Other']!
                                                     .add(selectedAccount);
                                               }
+                                              for (final k in categorizedDataCopy
+                                                  .keys
+                                                  .toList()) {
+                                                categorizedDataCopy[k] =
+                                                    categorizedDataCopy[k]!
+                                                        .toSet()
+                                                        .toList();
+                                              }
                                               print(row);
                                               if (row['charge_type'] ==
                                                   "Rent") {}
@@ -2528,53 +2550,29 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       ...categorizedDataCopy
                                                           .entries
                                                           .expand((entry) {
-                                                        return [
-                                                          // DropdownMenuItem<
-                                                          //     String>(
-                                                          //   enabled: false,
-                                                          //   child: Text(
-                                                          //     entry.key,
-                                                          //     style:
-                                                          //     const TextStyle(
-                                                          //       fontWeight:
-                                                          //       FontWeight
-                                                          //           .bold,
-                                                          //       color: Color
-                                                          //           .fromRGBO(
-                                                          //           21,
-                                                          //           43,
-                                                          //           81,
-                                                          //           1),
-                                                          //     ),
-                                                          //   ),
-                                                          // ),
-                                                          ...entry.value
-                                                              .map((item) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value:
-                                                                  "${item}_${entry.key}",
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
+                                                        return entry.value
+                                                            .map((item) =>
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value:
+                                                                      "${item}_${entry.key}",
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
                                                                         .only(
                                                                         left:
                                                                             16.0),
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
+                                                                    child: Text(
+                                                                      item,
+                                                                      style: const TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontWeight: FontWeight
                                                                             .w400,
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ];
+                                                                ));
                                                       }).toList(),
                                                     ],
                                                     onChanged: (value) {
@@ -2878,24 +2876,22 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   ),
                                                 ),
                                               ),
-                                              ...entry.value.map((item) {
-                                                return DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 16.0),
-                                                    child: Text(
-                                                      item,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                              ...entry.value.map((item) =>
+                                                  DropdownMenuItem<String>(
+                                                    value: item,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .only(left: 16.0),
+                                                      child: Text(
+                                                        item,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                );
-                                              }).toList(),
+                                                  )),
                                             ];
                                           }).toList(),
                                         ],
