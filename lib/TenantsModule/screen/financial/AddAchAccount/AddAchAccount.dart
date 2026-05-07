@@ -23,6 +23,9 @@ class AddAchAccount extends StatefulWidget {
   /// Optional: when set, existing ACH accounts from get-billing-customer-vault are shown in card style.
   final String? customerVaultId;
 
+  /// Optional: when set, used as fallback to fetch vault_id from payment history if getCreditCards returns 404.
+  final String? leaseId;
+
   /// When true (e.g. staff Make Payment flow), HTTP `id` header uses `staff_id` instead of `tenant_id`.
   final bool authAsStaff;
 
@@ -33,6 +36,7 @@ class AddAchAccount extends StatefulWidget {
       {Key? key,
       required this.tenantId,
       this.customerVaultId,
+      this.leaseId,
       this.authAsStaff = false,
       this.authAsAdmin = false})
       : super(key: key);
@@ -56,7 +60,8 @@ class _AddAchAccountState extends State<AddAchAccount> {
   Map<String, dynamic>? _profileData;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   List<Map<String, dynamic>> _existingAchAccounts = [];
-  bool _loadingExisting = false;
+  bool _loadingExisting = true;
+  String? _resolvedVaultId;
 
   static const List<String> _accountTypes = ['Checking', 'Savings'];
   static const List<String> _holderTypes = ['Personal', 'Business'];
@@ -73,9 +78,91 @@ class _AddAchAccountState extends State<AddAchAccount> {
   void initState() {
     super.initState();
     _loadProfile();
-    if (widget.customerVaultId != null && widget.customerVaultId!.isNotEmpty) {
+    _resolvedVaultId = widget.customerVaultId;
+    if (_resolvedVaultId != null && _resolvedVaultId!.isNotEmpty) {
       _loadExistingAchAccounts();
+    } else {
+      _fetchVaultIdThenLoadAccounts();
     }
+  }
+
+  Future<void> _fetchVaultIdThenLoadAccounts() async {
+    print('[ACH] _fetchVaultIdThenLoadAccounts START tenantId=${widget.tenantId} authAsAdmin=${widget.authAsAdmin} authAsStaff=${widget.authAsStaff}');
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? headerId = _headerIdForRequest(prefs);
+      String? token = prefs.getString('token');
+      print('[ACH] headerId=$headerId token=${token != null ? 'set' : 'NULL'}');
+      if (headerId == null || token == null) {
+        print('[ACH] EARLY RETURN — headerId or token is null');
+        if (mounted) setState(() => _loadingExisting = false);
+        return;
+      }
+      final url = '$Api_url/api/creditcard/getCreditCards/${widget.tenantId}';
+      print('[ACH] GET $url');
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'id': 'CRM $headerId',
+          'authorization': 'CRM $token',
+        },
+      );
+      print('[ACH] getCreditCards status=${response.statusCode} body=${response.body}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = json.decode(response.body);
+        final vaultId = jsonResponse['customer_vault_id']?.toString();
+        print('[ACH] vaultId=$vaultId');
+        if (vaultId != null && vaultId.isNotEmpty && mounted) {
+          setState(() => _resolvedVaultId = vaultId);
+          await _loadExistingAchAccounts();
+          return;
+        } else {
+          print('[ACH] vaultId null/empty — trying payment history fallback');
+        }
+      } else if (response.statusCode == 404 && widget.leaseId != null) {
+        // No credit cards — try to find vault_id from ACH payment history
+        print('[ACH] getCreditCards 404 — trying payment history fallback for leaseId=${widget.leaseId}');
+        final vaultId = await _fetchVaultIdFromPaymentHistory(headerId!, token!);
+        if (vaultId != null && mounted) {
+          setState(() => _resolvedVaultId = vaultId);
+          await _loadExistingAchAccounts();
+          return;
+        }
+      }
+    } catch (e) {
+      print('[ACH] ERROR in _fetchVaultIdThenLoadAccounts: $e');
+    }
+    if (mounted) setState(() => _loadingExisting = false);
+  }
+
+  Future<String?> _fetchVaultIdFromPaymentHistory(String headerId, String token) async {
+    try {
+      final historyUrl = '$Api_url/api/payment/charges_payments/${widget.leaseId}';
+      print('[ACH] GET $historyUrl (vault_id fallback)');
+      final res = await http.get(
+        Uri.parse(historyUrl),
+        headers: {'id': 'CRM $headerId', 'authorization': 'CRM $token'},
+      );
+      print('[ACH] payment history status=${res.statusCode}');
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final j = json.decode(res.body);
+        final data = j is Map ? j['data'] : null;
+        if (data is List) {
+          for (final item in data) {
+            if (item is! Map) continue;
+            final vaultId = item['customer_vault_id']?.toString();
+            if (vaultId != null && vaultId.isNotEmpty && vaultId != 'null') {
+              print('[ACH] Found vault_id=$vaultId from payment history');
+              return vaultId;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('[ACH] ERROR in _fetchVaultIdFromPaymentHistory: $e');
+    }
+    print('[ACH] No vault_id found in payment history');
+    return null;
   }
 
   @override
@@ -122,58 +209,88 @@ class _AddAchAccountState extends State<AddAchAccount> {
   }
 
   Future<void> _loadExistingAchAccounts() async {
-    if (widget.customerVaultId == null) return;
-    setState(() => _loadingExisting = true);
+    final vaultId = _resolvedVaultId ?? widget.customerVaultId;
+    print('[ACH] _loadExistingAchAccounts START vaultId=$vaultId');
+    if (vaultId == null || vaultId.isEmpty) {
+      print('[ACH] _loadExistingAchAccounts EARLY RETURN — vaultId null/empty');
+      if (mounted) setState(() => _loadingExisting = false);
+      return;
+    }
+    if (mounted) setState(() => _loadingExisting = true);
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      // id header: staff_id for staff, adminId for admin — matches make_payment.dart
       String? headerId = _headerIdForRequest(prefs);
       String? adminId = prefs.getString('adminId');
       String? token = prefs.getString('token');
-      if (headerId == null) return;
+      print('[ACH] _loadExistingAchAccounts headerId=$headerId adminId=$adminId token=${token != null ? 'set' : 'NULL'}');
+      if (headerId == null || adminId == null || token == null) {
+        print('[ACH] _loadExistingAchAccounts EARLY RETURN — headerId/adminId/token null');
+        if (mounted) setState(() => _loadingExisting = false);
+        return;
+      }
+      final postUrl = '$Api_url/api/nmipayment/get-billing-customer-vault';
+      print('[ACH] POST $postUrl body={"customer_vault_id":"$vaultId","admin_id":"$adminId"}');
       final response = await http.post(
-        Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
+        Uri.parse(postUrl),
         headers: {
           'Content-Type': 'application/json',
           'id': 'CRM $headerId',
           'authorization': 'CRM $token',
         },
         body: json.encode({
-          'customer_vault_id': widget.customerVaultId,
-          'admin_id': adminId ?? '',
+          'customer_vault_id': vaultId,
+          'admin_id': adminId,
         }),
       );
-      if (response.statusCode == 200 && mounted) {
+      print('[ACH] get-billing-customer-vault status=${response.statusCode} body=${response.body}');
+      if ((response.statusCode == 200 || response.statusCode == 201) && mounted) {
         final jsonResponse = json.decode(response.body);
         List<Map<String, dynamic>> list = [];
         var data = jsonResponse is Map ? jsonResponse['data'] : null;
         var customer = data is Map ? data['customer'] : null;
-        var billing = customer is Map ? customer['billing'] : null;
-        if (billing is List) {
-          for (var item in billing) {
-            if (item is! Map) continue;
-            String? checkAccount = _extractString(item['check_account']);
-            String? checkName = _extractString(item['check_name']);
-            if ((checkAccount != null && checkAccount.isNotEmpty) ||
-                (checkName != null && checkName.isNotEmpty)) {
-              list.add({
-                'account_name': checkName ?? '',
-                'account_number': checkAccount ?? '',
-                'account_type': _extractString(item['account_type']) ?? '',
-                'account_holder_type':
-                    _extractString(item['account_holder_type']) ?? '',
-              });
-            }
+        var rawBilling = customer is Map ? customer['billing'] : null;
+        print('[ACH] rawBilling type=${rawBilling?.runtimeType} value=$rawBilling');
+
+        // billing can be a List (multiple entries) or a Map (single entry from XML conversion)
+        List billingList = [];
+        if (rawBilling is List) {
+          billingList = rawBilling;
+        } else if (rawBilling is Map) {
+          billingList = [rawBilling];
+        }
+        print('[ACH] billingList.length=${billingList.length}');
+
+        for (var item in billingList) {
+          if (item is! Map) continue;
+          String? checkAccount = _extractString(item['check_account']);
+          String? checkName = _extractString(item['check_name']);
+          print('[ACH] billing item: check_name=$checkName check_account=$checkAccount');
+          if ((checkAccount != null && checkAccount.isNotEmpty) ||
+              (checkName != null && checkName.isNotEmpty)) {
+            list.add({
+              'account_name': checkName ?? '',
+              'account_number': checkAccount ?? '',
+              'account_type': _extractString(item['account_type']) ?? '',
+              'account_holder_type':
+                  _extractString(item['account_holder_type']) ?? '',
+            });
           }
         }
-        setState(() {
-          _existingAchAccounts = list;
-          _loadingExisting = false;
-        });
+        print('[ACH] ACH accounts extracted: ${list.length}');
+        if (mounted) {
+          setState(() {
+            _existingAchAccounts = list;
+            _loadingExisting = false;
+          });
+        }
       } else {
-        setState(() => _loadingExisting = false);
+        print('[ACH] get-billing-customer-vault failed or not mounted');
+        if (mounted) setState(() => _loadingExisting = false);
       }
-    } catch (_) {
-      setState(() => _loadingExisting = false);
+    } catch (e) {
+      print('[ACH] ERROR in _loadExistingAchAccounts: $e');
+      if (mounted) setState(() => _loadingExisting = false);
     }
   }
 
@@ -236,6 +353,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
         setState(() => _isSubmitting = false);
         if (response.statusCode == 200 || response.statusCode == 201) {
           Fluttertoast.showToast(msg: 'ACH account added successfully');
+          await _fetchVaultIdThenLoadAccounts();
           Navigator.pop(context, true);
           return true;
         } else {
@@ -446,8 +564,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                 ),
               ],
               const SizedBox(height: 12),
-              if (widget.customerVaultId != null &&
-                  widget.customerVaultId!.isNotEmpty) ...[
+              ...[
                 Text(
                   'ACH Accounts',
                   style: TextStyle(

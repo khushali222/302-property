@@ -945,7 +945,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   leaseId: widget.leaseId,
                                   status:
                                       '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate).toString()}',
-                                  tenantId: ' ${snapshot.data!.data?.tenantId}',
+                                  tenantId: snapshot.data!.data?.tenantId?.isNotEmpty == true ? snapshot.data!.data!.tenantId!.first : '',
                                 ),
                               ),
                               Tenant(context),
@@ -970,7 +970,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             status: determineStatus(
                     snapshot.data?.startDate, snapshot.data?.endDate)
                 .toString(),
-            tenantId: ' ${snapshot.data?.tenantId}',
+            tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
           ),
         );
       case 2:
@@ -994,7 +994,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             status: determineStatus(
                     snapshot.data?.startDate, snapshot.data?.endDate)
                 .toString(),
-            tenantId: ' ${snapshot.data?.tenantId}',
+            tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
           ),
         );
       case 3:

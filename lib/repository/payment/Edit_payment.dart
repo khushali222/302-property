@@ -28,6 +28,7 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
+    String? actualTenantId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -155,11 +156,13 @@ class PaymentService {
             // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
-            uploadedFile: [],
+            uploadedFile: uploadedFile,
             transactionId: "",
             responseText: "PENDING",
             surcharge: "0",
-            notificationTime: notificationTime)
+            notificationTime: notificationTime,
+            actualTenantId: actualTenantId,
+            tenantName: tenantname)
       ]);
       return "Payment Updated Successfully";
     } catch (e) {
@@ -185,6 +188,8 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
+    String? actualTenantId,
+    String? tenantName,
   }) async {
     print("caaaalied");
     final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
@@ -192,17 +197,6 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
-    print(" Daaaaataaaa   ${{
-      'company_name': companyName,
-      'admin_id': id,
-      //   'tenant_id': tenantId,
-      'lease_id': leaseId,
-      'payment_type': paymentType,
-      'customer_vault_id': customerVaultId,
-      'billing_id': billingId,
-      'entry': entries,
-      'total_amount': (double.parse(totalAmount)),
-    }}");
     print(baseUrl);
     final response = await http.put(
       Uri.parse(baseUrl),
@@ -215,13 +209,17 @@ class PaymentService {
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
         'admin_id': id,
-        //'tenant_id': tenantId,
+        'tenant_id': actualTenantId,
+        'payment_id': tenantId,
         'lease_id': leaseId,
-        //'payment_type': paymentType,
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
+        'tenantName': tenantName,
         'entry': entries,
         'total_amount': (double.parse(totalAmount)),
+        'uploaded_file': uploadedFile ?? [],
+        'is_web': false,
+        'user_active_recently': true,
       }),
     );
     print(response.body);
@@ -259,6 +257,7 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
+    String? actualTenantId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
@@ -310,11 +309,13 @@ class PaymentService {
             // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
-            uploadedFile: [],
+            uploadedFile: uploadedFile,
             transactionId: "",
             responseText: "PENDING",
             surcharge: surcharge,
-            notificationTime: notificationTime)
+            notificationTime: notificationTime,
+            actualTenantId: actualTenantId,
+            tenantName: tenantname)
       ]);
       return "Payment Updated Successfully";
     } catch (e) {
@@ -336,6 +337,8 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
+    String? actualTenantId,
+    String? tenantName,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -354,18 +357,14 @@ class PaymentService {
         'company_name': companyName,
         'admin_id': id,
         'payment_id': tenantId,
+        'tenant_id': actualTenantId,
         'lease_id': leaseId,
-        // 'payment_type': paymentType,
-
+        'tenantName': tenantName,
         'entry': entries,
-        // 'total_amount': totalAmount,
         'total_amount': (double.parse(totalAmount)),
-        //'surcharge': surcharge,
-        // 'is_leaseAdded': isLeaseAdded,
-        'uploaded_file': uploadedFile,
-        // 'transaction_id': transactionId,
-        // 'response': responseText,
-        // 'notificationTime':notificationTime,
+        'uploaded_file': uploadedFile ?? [],
+        'is_web': false,
+        'user_active_recently': true,
       }),
     );
 

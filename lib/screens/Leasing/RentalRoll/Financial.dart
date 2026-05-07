@@ -40,6 +40,7 @@ import '../../../model/LeaseLedgerModel.dart';
 import 'addcard/AddCard.dart';
 import 'enterCharge.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
 
 class FinancialTable extends StatefulWidget {
   final String leaseId;
@@ -618,6 +619,34 @@ class _FinancialTableState extends State<FinancialTable> {
   String searchvalue = "";
   late Future<LeaseLedger?> _leaseLedgerFuture;
   List<bool> _expanded = [];
+  bool _leaseAchAccepted = false;
+
+  Future<void> _fetchAchAccepted() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        Uri.parse(
+            '$Api_url/api/tenant/payment_settings/${widget.tenantId}/${widget.leaseId}'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        if (mounted) {
+          setState(() {
+            _leaseAchAccepted = jsonData['data']['achAccepted'] == true;
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching ACH settings: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -628,6 +657,7 @@ class _FinancialTableState extends State<FinancialTable> {
     _fromDateController = TextEditingController(text: '');
     _toDateController = TextEditingController(text: '');
     filteredData = allData;
+    _fetchAchAccepted();
   }
 
   @override
@@ -1811,9 +1841,12 @@ class _FinancialTableState extends State<FinancialTable> {
                   ),
 
                   const SizedBox(height: 10),
-// First row - Export and Add Cards
+// Buttons row + dropdown row
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                  // Buttons row
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       // Export button
                       // Expanded(
@@ -1907,7 +1940,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                     size: 18,
                                     color: blueColor,
                                   ),
-                                  // const SizedBox(width: 10),
                                   Text(
                                     'Add Cards',
                                     style: TextStyle(
@@ -1928,68 +1960,72 @@ class _FinancialTableState extends State<FinancialTable> {
                       else
                         Spacer(),
 
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: Material(
-                            elevation: 0,
-                            borderRadius: BorderRadius.circular(8),
-                            child: DropdownButton2<String>(
-                              value: selectedTransactionType,
-                              isExpanded: true,
-                              hint: Text(
-                                'Select',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: blueColor,
+                      // Add ACH button
+                      if (!isFreePlan &&
+                          (widget.status == 'Active' ||
+                              widget.status == 'Future') &&
+                          _leaseAchAccepted)
+                        Expanded(
+                          child: Container(
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border:
+                                  Border.all(color: const Color(0xFF8A95A8)),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
                                 ),
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
                               ),
-                              items: transactionTypeOptions.map((String item) {
-                                return DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(
-                                    item,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddAchAccount(
+                                      tenantId: widget.tenantId,
+                                      leaseId: widget.leaseId,
+                                      authAsAdmin: true,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.account_balance,
+                                    size: 18,
+                                    color: blueColor,
+                                  ),
+                                  Text(
+                                    'Add ACH',
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width <=
+                                                  360
+                                              ? 11
+                                              : 14,
                                       color: blueColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedTransactionType = value;
-                                });
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                height: MediaQuery.of(context).size.width < 500
-                                    ? 45
-                                    : 50,
-                                width: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: const Color(0xFF8A95A8)),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: const Color(0xFF8A95A8)),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ),
                     ],
+                  ),
+                  ],
                   ),
                 ],
               ),
@@ -2270,177 +2306,172 @@ class _FinancialTableState extends State<FinancialTable> {
                             const SizedBox(
                               height: 6,
                             ),
-                            Expanded(
-                              flex: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 2.0, vertical: 4),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Material(
-                                        elevation: 0,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 2.0, vertical: 4),
+                              child: Column(
+                                children: [
+                                  // Full-width search bar
+                                  Material(
+                                    elevation: 0,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
                                         borderRadius: BorderRadius.circular(8),
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 48
-                                              : 50,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: const Color(0xFF8A95A8)),
-                                          ),
-                                          child: TextField(
+                                        border: Border.all(
+                                            color: const Color(0xFF8A95A8)),
+                                      ),
+                                      child: TextField(
+                                        onChanged: (value) {
+                                          setState(() {
+                                            searchvalue = value;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          prefixIcon: Icon(Icons.search,
+                                              color: blueColor, size: 20),
+                                          hintText: "Search here...",
+                                          hintStyle:
+                                              TextStyle(color: Colors.grey[400]),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  // Transaction filter + Export side by side (equal width)
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton2<String>(
+                                            value: selectedTransactionType,
+                                            isExpanded: true,
+                                            hint: Text(
+                                              'All Types',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: blueColor),
+                                            ),
+                                            items: transactionTypeOptions
+                                                .map((String item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item,
+                                                child: Text(item,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: blueColor,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                              );
+                                            }).toList(),
                                             onChanged: (value) {
                                               setState(() {
-                                                searchvalue = value;
+                                                selectedTransactionType = value;
                                               });
                                             },
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: "Search here...",
-                                              hintStyle:
-                                                  TextStyle(color: blueColor),
+                                            buttonStyleData: ButtonStyleData(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              height: 48,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFF8A95A8)),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            dropdownStyleData: DropdownStyleData(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFF8A95A8)),
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    // Container(
-                                    //   height: 45,
-                                    //   width: 110,
-                                    //   decoration: BoxDecoration(
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(8.0)),
-                                    //   child: ElevatedButton(
-                                    //     style: ElevatedButton.styleFrom(
-                                    //       backgroundColor: blueColor,
-                                    //     ),
-                                    //     onPressed: () {},
-                                    //     child: PopupMenuButton<String>(
-                                    //       onSelected: (value) async {
-                                    //         // Add your export logic here based on the selected value
-                                    //         if (value == 'PDF') {
-                                    //           print('pdf');
-                                    //           generateWorkOrderPdf(data);
-                                    //           // Export as PDF
-                                    //         } else if (value == 'XLSX') {
-                                    //           print('XLSX');
-                                    //           generateWorkOrderExcel(data);
-                                    //           // Export as XLSX
-                                    //         } else if (value == 'CSV') {
-                                    //           print('CSV');
-                                    //           generateWorkOrderCsv(data);
-                                    //           // Export as CSV
-                                    //         }
-                                    //       },
-                                    //       itemBuilder:
-                                    //           (BuildContext context) =>
-                                    //               <PopupMenuEntry<String>>[
-                                    //         const PopupMenuItem<String>(
-                                    //           value: 'PDF',
-                                    //           child: Text('PDF'),
-                                    //         ),
-                                    //         const PopupMenuItem<String>(
-                                    //           value: 'XLSX',
-                                    //           child: Text('XLSX'),
-                                    //         ),
-                                    //         const PopupMenuItem<String>(
-                                    //           value: 'CSV',
-                                    //           child: Text('CSV'),
-                                    //         ),
-                                    //       ],
-                                    //       child: Row(
-                                    //         mainAxisSize: MainAxisSize.min,
-                                    //         children: [
-                                    //           Text(
-                                    //
-                                    //             'Export',
-                                    //
-                                    //             style: TextStyle(
-                                    //                 fontWeight: FontWeight.bold,
-                                    //                 fontSize: 15,
-                                    //               ),
-                                    //
-                                    //           ),
-                                    //           SizedBox(
-                                    //
-                                    //             width: 2,
-                                    //
-                                    //           ),
-                                    //           Icon(
-                                    //
-                                    //             Icons.arrow_drop_down,
-                                    //
-                                    //             size: 25,
-                                    //
-                                    //           ),
-                                    //         ],
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    Container(
-                                      height: 45,
-                                      width: 75,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.white,
-                                      ),
-                                      child: PopupMenuButton<String>(
-                                        offset: const Offset(5, 50),
-                                        // onSelected: handleDownload,
-                                        icon: const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            FaIcon(FontAwesomeIcons
-                                                .download), // Your download icon
-                                            SizedBox(
-                                                width:
-                                                    5), // Adds spacing between the icons
-                                            Icon(Icons
-                                                .arrow_drop_down), // The dropdown arrow icon
-                                          ],
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Container(
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color:
+                                                    const Color(0xFF8A95A8)),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: Colors.white,
+                                          ),
+                                          child: PopupMenuButton<String>(
+                                            offset: const Offset(0, 52),
+                                            tooltip: "Export",
+                                            child: Center(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  FaIcon(
+                                                      FontAwesomeIcons.download,
+                                                      size: 14,
+                                                      color: blueColor),
+                                                  const SizedBox(width: 6),
+                                                  Text('Export',
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  Icon(Icons.arrow_drop_down,
+                                                      color: blueColor),
+                                                ],
+                                              ),
+                                            ),
+                                            itemBuilder:
+                                                (BuildContext context) {
+                                              return downloadOptions
+                                                  .map((String option) {
+                                                return PopupMenuItem<String>(
+                                                  value: option,
+                                                  onTap: () async {
+                                                    if (option == "PDF")
+                                                      generateWorkOrderPdf(
+                                                          data);
+                                                    if (option == "Excel")
+                                                      generateWorkOrderExcel(
+                                                          data);
+                                                    if (option == "CSV")
+                                                      generateWorkOrderCsv(
+                                                          data);
+                                                  },
+                                                  child: Text(
+                                                    "Download as $option",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: blueColor),
+                                                  ),
+                                                );
+                                              }).toList();
+                                            },
+                                          ),
                                         ),
-                                        tooltip: "Download",
-                                        itemBuilder: (BuildContext context) {
-                                          return downloadOptions
-                                              .map((String option) {
-                                            return PopupMenuItem<String>(
-                                              value: option,
-                                              onTap: () async {
-                                                if (option == "PDF")
-                                                  generateWorkOrderPdf(data);
-                                                // generaterentersInsurancePdf(snapshot.data!);
-                                                if (option == "Excel")
-                                                  generateWorkOrderExcel(data);
-                                                //generateRentersInsuranceExcel(snapshot.data!);
-                                                if (option == "CSV")
-                                                  generateWorkOrderCsv(data);
-                                                // generateRentersInsuranceCSV(snapshot.data!);
-                                              },
-                                              child:
-                                                  Text("Download as $option",style: TextStyle(fontSize: 14,color: blueColor),),
-                                            );
-                                          }).toList();
-                                        },
                                       ),
-                                    )
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             // SizedBox(height: 10),

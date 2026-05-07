@@ -3309,12 +3309,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               } else if (_selectedPaymentMethod == "Card") {
                                 //print("adminId ${id}");
                                 // print("adminId ${cardDetails[selectedcardindex!].company}");
-                                if (processor_id == "zzz") {
-                                  showFailedPaymentAlert(context);
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                } else {
+                                {
                                   List<Map<String, String>> filteredTenants =
                                       tenants.where((tenant) {
                                     return tenant['tenant_id'] ==
@@ -3343,7 +3338,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           entries: rows,
                                           tenantname: tenantname,
                                           future_Date: false,
-                                          uploadedFile: _uploadedFileNames)
+                                          uploadedFile: _uploadedFileNames,
+                                          actualTenantId: selectedTenantId)
                                       .then((value) {
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
@@ -3416,7 +3412,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         // checkaba: bankrountingnum.text.trim(),
                                         tenantname: tenantname,
                                         // checkname: achname.text.trim(),
-                                        uploadedFile: _uploadedFileNames)
+                                        uploadedFile: _uploadedFileNames,
+                                        actualTenantId: selectedTenantId)
                                     .then((value) {
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
@@ -3639,9 +3636,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   surge_count() {
     if (amountController.text.isNotEmpty) {
       if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0) &&
-          _selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0) &&
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100) +
@@ -3649,14 +3645,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           finaltotal = double.parse(amountController.text) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount = double.parse(surChargeAchflat.toString());
           finaltotal = double.parse(amountController.text) + surchargecount!;
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100);

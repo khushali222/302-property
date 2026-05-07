@@ -278,8 +278,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           'Rent Income'
         ];
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+          String chargeType = item['charge_type'] ?? 'One Time Charge';
+          String account = item['account'] ?? '';
+          if (account.isEmpty) continue;
 
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
@@ -3496,6 +3497,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 setState(() {
                                   _isLoading = false;
                                 });
+                              } else if (_selectedPaymentMethod == "Card" ||
+                                  _selectedPaymentMethod == "ACH") {
+                                Fluttertoast.showToast(
+                                    msg:
+                                        "Card and ACH payments cannot be edited. Please contact admin.");
+                                setState(() {
+                                  _isLoading = false;
+                                });
                               }
                               /*  else if (_selectedPaymentMethod == "Card") {
                                 print("adminId ${id}");
@@ -4113,9 +4122,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   surge_count() {
     if (amountController.text.isNotEmpty) {
       if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0) &&
-          _selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0) &&
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100) +
@@ -4123,14 +4131,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           finaltotal = double.parse(amountController.text) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount = double.parse(surChargeAchflat.toString());
           finaltotal = double.parse(amountController.text) + surchargecount!;
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100);
