@@ -785,6 +785,7 @@ class _FinancialTableState extends State<FinancialTable> {
 
   List<Data?> _tableData = [];
   int _rowsPerPage = 10;
+  List<Data> _cachedLedgerData = [];
 
   String fdate = "";
   String edate = "";
@@ -1629,6 +1630,269 @@ class _FinancialTableState extends State<FinancialTable> {
   String? selectedTransactionType = 'All';
   List<String> transactionTypeOptions = ['All', 'Payment', 'Charge'];
 
+  bool _quickActionsExpanded = false;
+
+  static const double _financeQuickActionHeight = 42;
+  static const Color _financeBorderGray = Color(0xFFD1D5DB);
+
+  InputDecoration _financeSheetFieldDecoration({String? hint}) {
+    return InputDecoration(
+      hintText: hint,
+      suffixIcon: Icon(Icons.calendar_today, color: blueColor.withOpacity(0.75), size: 20),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: _financeBorderGray),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: blueColor, width: 1.2),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: const BorderSide(color: _financeBorderGray),
+      ),
+    );
+  }
+
+  void _showFiltersBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (BuildContext context) {
+        String? tempTransactionType = selectedTransactionType;
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setSheetState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Filters',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: blueColor),
+                  ),
+                  const SizedBox(height: 18),
+                  Text('From Date', style: TextStyle(fontWeight: FontWeight.w600, color: blueColor)),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: _fromDateController,
+                    readOnly: true,
+                    onTap: () async {
+                      await _selectfromDate(context, _fromDateController);
+                      setSheetState(() {});
+                    },
+                    decoration: _financeSheetFieldDecoration(hint: 'dd-mm-yyyy'),
+                  ),
+                  const SizedBox(height: 12),
+                  Text('To Date', style: TextStyle(fontWeight: FontWeight.w600, color: blueColor)),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: _toDateController,
+                    readOnly: true,
+                    onTap: () async {
+                      await _selectendDate(context, _toDateController);
+                      setSheetState(() {});
+                    },
+                    decoration: _financeSheetFieldDecoration(hint: 'dd-mm-yyyy'),
+                  ),
+                  const SizedBox(height: 12),
+                  Text('Transaction Type', style: TextStyle(fontWeight: FontWeight.w600, color: blueColor)),
+                  const SizedBox(height: 6),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      value: tempTransactionType,
+                      isExpanded: true,
+                      hint: Text('All Types', style: TextStyle(fontSize: 14, color: blueColor)),
+                      items: transactionTypeOptions.map((String item) {
+                        return DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(item, style: TextStyle(fontSize: 14, color: blueColor, fontWeight: FontWeight.bold)),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setSheetState(() {
+                          tempTransactionType = value;
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: _financeBorderGray),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: _financeBorderGray),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 46,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedTransactionType = tempTransactionType;
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Show Results', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SizedBox(
+                          height: 46,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              side: BorderSide(color: blueColor),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _fromDateController.clear();
+                                _toDateController.clear();
+                                _fromDateApiFormat = '';
+                                _toDateApiFormat = '';
+                                selectedTransactionType = 'All';
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Text('Clear', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _quickEnterChargeCell(BuildContext context) {
+    return Container(
+      height: _financeQuickActionHeight,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: blueColor, width: 1),
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          minimumSize: Size.fromHeight(_financeQuickActionHeight),
+        ),
+        onPressed: () async {
+          final value = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => enterCharge(leaseId: widget.leaseId)),
+          );
+          if (value == true) {
+            setState(() {
+              _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+            });
+          }
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.attach_money, size: 18, color: blueColor),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                'Enter Charge',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _quickMakePaymentButton(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: blueColor,
+        backgroundColor: Colors.white,
+        side: BorderSide(color: blueColor, width: 1),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+      ),
+      onPressed: () async {
+        final value = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MakePayment(
+              leaseId: widget.leaseId,
+              tenantId: widget.tenantId,
+            ),
+          ),
+        );
+        if (value == true) {
+          setState(() {
+            _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+          });
+        }
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.payment, size: 16, color: blueColor),
+          const SizedBox(width: 5),
+          Flexible(
+            child: Text(
+              'Make Payment',
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1639,6 +1903,11 @@ class _FinancialTableState extends State<FinancialTable> {
             ?.planDetail
             ?.planName ==
         'Free Plan';
+    final financeShowAddCards =
+        !isFreePlan && (widget.status == 'Active' || widget.status == 'Future');
+    // Temporarily hide ACH quick action (keep code for future use).
+    // final financeShowAch = _leaseAchAccepted && financeShowAddCards;
+    final financeShowAch = false;
     return Container(
       child: SingleChildScrollView(
         child: Column(
@@ -1646,387 +1915,319 @@ class _FinancialTableState extends State<FinancialTable> {
             const SizedBox(
               height: 0,
             ),
-            FutureBuilder<LeaseLedger?>(
-              future: _leaseLedgerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data?.totalBalance != null) {
-                  final totalBalance = snapshot.data!.totalBalance!;
-                  final isCredit = totalBalance < 0;
-                  final absAmount = totalBalance.abs();
-                  final formatted = NumberFormat.currency(
-                    locale: 'en_US',
-                    symbol: '\$',
-                    decimalDigits: 2,
-                  ).format(absAmount);
-                  final displayText = isCredit
-                      ? '($formatted) Credit'
-                      : totalBalance > 0
-                          ? '$formatted Balance Due'
-                          : '\$0.00';
-                  final badgeColor = isCredit
-                      ? const Color(0xFFD1FAE5)
-                      : const Color(0xFFDEEAFF);
-                  final textColor = isCredit
-                      ? const Color(0xFF065F46)
-                      : blueColor;
-                  final borderColor = isCredit
-                      ? const Color(0xFF6EE7B7)
-                      : const Color(0xFF8AAEE0);
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 11.0, top: 6.0),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: badgeColor,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: borderColor),
-                          ),
-                          child: Text(
-                            'Balance: $displayText',
-                            style: TextStyle(
-                              color: textColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 11),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _financeBorderGray),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                    child: FutureBuilder<LeaseLedger?>(
+                      future: _leaseLedgerFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data?.totalBalance != null) {
+                          final totalBalance = snapshot.data!.totalBalance!;
+                          final isCredit = totalBalance < 0;
+                          final absAmount = totalBalance.abs();
+                          final formatted = NumberFormat.currency(
+                            locale: 'en_US',
+                            symbol: '\$',
+                            decimalDigits: 2,
+                          ).format(absAmount);
+                          final displayText = isCredit
+                              ? '($formatted) Credit'
+                              : totalBalance > 0
+                                  ? '$formatted Balance Due'
+                                  : '\$0.00';
+                          final badgeColor = isCredit
+                              ? const Color(0xFFD1FAE5)
+                              : const Color(0xFFEBF5FF);
+                          final textColor = isCredit ? const Color(0xFF065F46) : blueColor;
+                          final borderColor = isCredit
+                              ? const Color(0xFF6EE7B7)
+                              : const Color(0xFF8AAEE0);
+                          return Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: badgeColor,
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(color: borderColor),
+                              ),
+                              child: Text(
+                                'Balance: $displayText',
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 48,
+                            padding: const EdgeInsets.only(left: 12, right: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: _financeBorderGray),
+                            ),
+                            child: TextField(
+                              onChanged: (value) => setState(() {
+                                searchvalue = value;
+                                if (currentPage != 0) currentPage = 0;
+                              }),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                isDense: true,
+                                hintText: 'Search here...',
+                                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+                                suffixIcon:
+                                    Icon(Icons.search, color: blueColor.withOpacity(0.7), size: 22),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Material(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              child: InkWell(
+                                onTap: () => _showFiltersBottomSheet(context),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  height: 48,
+                                  width: 48,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: _financeBorderGray),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(Icons.filter_alt, color: blueColor, size: 22),
+                                ),
+                              ),
+                            ),
+                            if (_fromDateApiFormat.isNotEmpty ||
+                                _toDateApiFormat.isNotEmpty ||
+                                (selectedTransactionType != null && selectedTransactionType != 'All'))
+                              Positioned(
+                                right: 4,
+                                top: 4,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration:
+                                      const BoxDecoration(color: Color(0xFF22C55E), shape: BoxShape.circle),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1, thickness: 1, color: Color(0xFFE5E7EB)),
+                  InkWell(
+                    onTap: () => setState(() => _quickActionsExpanded = !_quickActionsExpanded),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Quick Action Buttons',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: blueColor,
+                            ),
+                          ),
+                          Icon(
+                            _quickActionsExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                            color: blueColor,
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.symmetric(
-                  horizontal:
-                      MediaQuery.of(context).size.width <= 360 ? 11.0 : 11.0),
-              child: Column(
-                children: [
-                  // Second row - Make Payment and Enter Charge
-                  Row(
-                    children: [
-                      // Make Payment button
-                      Expanded(
-                        child: Container(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                          margin: const EdgeInsets.only(right: 8),
-                          decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            onPressed: () async {
-                              final value = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MakePayment(
-                                    leaseId: widget.leaseId,
-                                    tenantId: widget.tenantId,
-                                  ),
-                                ),
-                              );
-                              if (value == true) {
-                                setState(() {
-                                  _leaseLedgerFuture = LeaseRepository()
-                                      .fetchLeaseLedger(
-                                          leaseId: widget.leaseId);
-                                });
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Icon(
-                                  Icons.add,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                                // const SizedBox(width: 10),
-                                Text(
-                                  'Make Payment',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width <= 360
-                                            ? 11
-                                            : 14,
+                  ),
+                  if (_quickActionsExpanded)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 14),
+                      child: Column(
+                        children: [
+                          // Row 1: Export | Add Cards (Add Cards omitted when plan/status disallows)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: _financeQuickActionHeight,
+                                  decoration: BoxDecoration(
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: blueColor, width: 1),
+                                  ),
+                                  child: PopupMenuButton<String>(
+                                    offset: const Offset(0, 50),
+                                    tooltip: 'Export',
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          FaIcon(FontAwesomeIcons.download, size: 14, color: blueColor),
+                                          const SizedBox(width: 6),
+                                          Text('Export', style: TextStyle(fontSize: 14, color: blueColor, fontWeight: FontWeight.bold)),
+                                          Icon(Icons.arrow_drop_down, color: blueColor),
+                                        ],
+                                      ),
+                                    ),
+                                    itemBuilder: (BuildContext context) {
+                                      return downloadOptions.map((String option) {
+                                        return PopupMenuItem<String>(
+                                          value: option,
+                                          onTap: () async {
+                                            if (option == 'PDF') generateWorkOrderPdf(_cachedLedgerData);
+                                            if (option == 'Excel') generateWorkOrderExcel(_cachedLedgerData);
+                                            if (option == 'CSV') generateWorkOrderCsv(_cachedLedgerData);
+                                          },
+                                          child: Text('Download as $option', style: TextStyle(fontSize: 14, color: blueColor)),
+                                        );
+                                      }).toList();
+                                    },
+                                  ),
+                                ),
+                              ),
+                              if (financeShowAddCards) ...[
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Container(
+                                    height: _financeQuickActionHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: blueColor, width: 1),
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        elevation: 0,
+                                        backgroundColor: Colors.transparent,
+                                        minimumSize: Size.fromHeight(_financeQuickActionHeight),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => AddCard(leaseId: widget.leaseId)),
+                                        );
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.credit_card, size: 18, color: blueColor),
+                                          const SizedBox(width: 6),
+                                          Text('Add Cards', style: TextStyle(fontSize: 14, color: blueColor, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
-                            ),
+                            ],
                           ),
-                        ),
-                      ),
-
-                      // Enter Charge button
-                      // if (widget.status == 'Active')
-                      Expanded(
-                        child: Container(
-                          height:
-                              MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: const Color(0xFF8A95A8)),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            onPressed: () async {
-                              final value = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => enterCharge(
-                                    leaseId: widget.leaseId,
-                                  ),
-                                ),
-                              );
-                              if (value == true) {
-                                setState(() {
-                                  _leaseLedgerFuture = LeaseRepository()
-                                      .fetchLeaseLedger(
-                                          leaseId: widget.leaseId);
-                                });
-                              }
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          const SizedBox(height: 8),
+                          if (financeShowAch) ...[
+                            Row(
                               children: [
-                                SizedBox(
-                                  width: 1,
+                                Expanded(
+                                  child: Container(
+                                    height: _financeQuickActionHeight,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: blueColor, width: 1),
+                                    ),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                        elevation: 0,
+                                        backgroundColor: Colors.transparent,
+                                        minimumSize: Size.fromHeight(_financeQuickActionHeight),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => AddAchAccount(
+                                              tenantId: widget.tenantId,
+                                              leaseId: widget.leaseId,
+                                              authAsAdmin: true,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.account_balance, size: 18, color: blueColor),
+                                          const SizedBox(width: 6),
+                                          Text('Add ACH', style: TextStyle(fontSize: 14, color: blueColor, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                Icon(
-                                  Icons.attach_money,
-                                  size: 18,
-                                  color: blueColor,
+                                const SizedBox(width: 8),
+                                Expanded(child: _quickEnterChargeCell(context)),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: _financeQuickActionHeight,
+                                    child: _quickMakePaymentButton(context),
+                                  ),
                                 ),
-                                // const SizedBox(width: 10),
-                                Text(
-                                  ' Enter Charge',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width <= 360
-                                            ? 11
-                                            : 14,
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
+                                const SizedBox(width: 8),
+                                Expanded(child: SizedBox(height: _financeQuickActionHeight)),
+                              ],
+                            ),
+                          ] else ...[
+                            Row(
+                              children: [
+                                Expanded(child: _quickEnterChargeCell(context)),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: _financeQuickActionHeight,
+                                    child: _quickMakePaymentButton(context),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
+                          ],
+                        ],
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-// Buttons row + dropdown row
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                  // Buttons row
-                  Row(
-                    children: [
-                      // Export button
-                      // Expanded(
-                      //   child: Container(
-                      //     height:
-                      //     MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                      //     margin: const EdgeInsets.only(right: 8),
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.white,
-                      //       borderRadius: BorderRadius.circular(8.0),
-                      //       border: Border.all(color: const Color(0xFF8A95A8)),
-                      //     ),
-                      //     child: ElevatedButton(
-                      //       style: ElevatedButton.styleFrom(
-                      //         shape: RoundedRectangleBorder(
-                      //           borderRadius: BorderRadius.circular(8.0),
-                      //         ),
-                      //         elevation: 0,
-                      //         backgroundColor: Colors.transparent,
-                      //       ),
-                      //       onPressed: () {
-                      //         // Export functionality
-                      //       },
-                      //       child: Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //         children: [
-                      //           Text(
-                      //             'All Types',
-                      //             style: TextStyle(
-                      //               fontSize:
-                      //               MediaQuery.of(context).size.width <= 360
-                      //                   ? 11
-                      //                   : 14,
-                      //               color:blueColor,
-                      //               fontWeight: FontWeight.bold,
-                      //             ),
-                      //           ),
-                      //           const SizedBox(width: 15),
-                      //           Icon(
-                      //             Icons.expand_less,
-                      //             size: 18,
-                      //             color: blueColor,
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-
-                      // Add Cards button
-
-                      if (!isFreePlan &&
-                          (widget.status == 'Active' ||
-                              widget.status == 'Future'))
-                        Expanded(
-                          child: Container(
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                elevation: 0,
-                                backgroundColor: Colors.transparent,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddCard(
-                                      leaseId: widget.leaseId,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Icon(
-                                    Icons.credit_card,
-                                    size: 18,
-                                    color: blueColor,
-                                  ),
-                                  Text(
-                                    'Add Cards',
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <=
-                                                  360
-                                              ? 11
-                                              : 14,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        Spacer(),
-
-                      // Add ACH button
-                      if (!isFreePlan &&
-                          (widget.status == 'Active' ||
-                              widget.status == 'Future') &&
-                          _leaseAchAccepted)
-                        Expanded(
-                          child: Container(
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border:
-                                  Border.all(color: const Color(0xFF8A95A8)),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                elevation: 0,
-                                backgroundColor: Colors.transparent,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddAchAccount(
-                                      tenantId: widget.tenantId,
-                                      leaseId: widget.leaseId,
-                                      authAsAdmin: true,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Icon(
-                                    Icons.account_balance,
-                                    size: 18,
-                                    color: blueColor,
-                                  ),
-                                  Text(
-                                    'Add ACH',
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <=
-                                                  360
-                                              ? 11
-                                              : 14,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  ],
-                  ),
+                    ),
                 ],
               ),
             ),
@@ -2284,6 +2485,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       }
 
                       sortData(data);
+                      _cachedLedgerData = data;
                       print("========== FINAL DATA SUMMARY ==========");
                       print("Total records after all filters: ${data.length}");
                       print("Items per page: $itemsPerPage");
@@ -2303,481 +2505,6 @@ class _FinancialTableState extends State<FinancialTable> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 2.0, vertical: 4),
-                              child: Column(
-                                children: [
-                                  // Full-width search bar
-                                  Material(
-                                    elevation: 0,
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(
-                                            color: const Color(0xFF8A95A8)),
-                                      ),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          setState(() {
-                                            searchvalue = value;
-                                          });
-                                        },
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          prefixIcon: Icon(Icons.search,
-                                              color: blueColor, size: 20),
-                                          hintText: "Search here...",
-                                          hintStyle:
-                                              TextStyle(color: Colors.grey[400]),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  // Transaction filter + Export side by side (equal width)
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            value: selectedTransactionType,
-                                            isExpanded: true,
-                                            hint: Text(
-                                              'All Types',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: blueColor),
-                                            ),
-                                            items: transactionTypeOptions
-                                                .map((String item) {
-                                              return DropdownMenuItem<String>(
-                                                value: item,
-                                                child: Text(item,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                selectedTransactionType = value;
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                              height: 48,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFF8A95A8)),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                            dropdownStyleData: DropdownStyleData(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFF8A95A8)),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Container(
-                                          height: 48,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color:
-                                                    const Color(0xFF8A95A8)),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            color: Colors.white,
-                                          ),
-                                          child: PopupMenuButton<String>(
-                                            offset: const Offset(0, 52),
-                                            tooltip: "Export",
-                                            child: Center(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  FaIcon(
-                                                      FontAwesomeIcons.download,
-                                                      size: 14,
-                                                      color: blueColor),
-                                                  const SizedBox(width: 6),
-                                                  Text('Export',
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  Icon(Icons.arrow_drop_down,
-                                                      color: blueColor),
-                                                ],
-                                              ),
-                                            ),
-                                            itemBuilder:
-                                                (BuildContext context) {
-                                              return downloadOptions
-                                                  .map((String option) {
-                                                return PopupMenuItem<String>(
-                                                  value: option,
-                                                  onTap: () async {
-                                                    if (option == "PDF")
-                                                      generateWorkOrderPdf(
-                                                          data);
-                                                    if (option == "Excel")
-                                                      generateWorkOrderExcel(
-                                                          data);
-                                                    if (option == "CSV")
-                                                      generateWorkOrderCsv(
-                                                          data);
-                                                  },
-                                                  child: Text(
-                                                    "Download as $option",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: blueColor),
-                                                  ),
-                                                );
-                                              }).toList();
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // SizedBox(height: 10),
-                            Container(
-                              // width: double.infinity,
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(
-                              //     color: blueColor,
-                              //   ),
-                              //   borderRadius: BorderRadius.circular(10.0),
-                              // ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 2),
-                                child: Form(
-                                  key: _formKey,
-                                  child: screenWidth > 500
-                                      ? Row(
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('From',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Colors.grey[600],
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                  const SizedBox(height: 5),
-                                                  Container(
-                                                    child: TextFormField(
-                                                      controller:
-                                                          _fromDateController,
-                                                      readOnly: true,
-                                                      onTap: () => _selectfromDate(
-                                                          context,
-                                                          _fromDateController),
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        hintText: 'yyyy-mm-dd',
-                                                        suffixIcon: Icon(Icons
-                                                            .calendar_today),
-                                                        border:
-                                                            OutlineInputBorder(),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 40),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text('To',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Colors.grey[600],
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w600)),
-                                                  const SizedBox(height: 5),
-                                                  TextFormField(
-                                                    controller:
-                                                        _toDateController,
-                                                    readOnly: true,
-                                                    onTap: () => _selectendDate(
-                                                        context,
-                                                        _toDateController),
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      hintText: 'dd-mm-yyyy',
-                                                      suffixIcon: Icon(
-                                                          Icons.calendar_today),
-                                                      border:
-                                                          OutlineInputBorder(),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      : Column(
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Text('From',
-                                                        //     style: TextStyle(
-                                                        //         color: blueColor,
-                                                        //         fontSize: 15,
-                                                        //         fontWeight: FontWeight.w600)),
-                                                        // SizedBox(height: 4),
-
-                                                        Material(
-                                                          elevation: 0,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                          child: Container(
-                                                            height: 50,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10.0,
-                                                                    vertical:
-                                                                        0),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0),
-                                                              border: Border.all(
-                                                                  color: const Color(
-                                                                      0xFF8A95A8)),
-                                                            ),
-                                                            child:
-                                                                TextFormField(
-                                                              controller:
-                                                                  _fromDateController,
-                                                              // initialValue: fdate,
-                                                              readOnly: true,
-                                                              onTap: () =>
-                                                                  _selectfromDate(
-                                                                      context,
-                                                                      _fromDateController),
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                // contentPadding: EdgeInsets.all(8.0),
-                                                                // contentPadding: EdgeInsets.symmetric(),
-                                                                suffixIconConstraints:
-                                                                    const BoxConstraints(
-                                                                        maxWidth:
-                                                                            20,
-                                                                        maxHeight:
-                                                                            20,
-                                                                        minHeight:
-                                                                            20,
-                                                                        minWidth:
-                                                                            20),
-                                                                hintStyle: TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color:
-                                                                        blueColor),
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                hintText:
-                                                                    'From date',
-                                                                suffixIcon:
-                                                                    IconButton(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          1),
-                                                                  iconSize: 20,
-                                                                  icon: Icon(
-                                                                    Icons
-                                                                        .calendar_today,
-                                                                    color:
-                                                                        blueColor,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () {},
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 16,
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Text('To',
-                                                        //     style: TextStyle(
-                                                        //         color: blueColor,
-                                                        //         fontSize: 15,
-                                                        //         fontWeight: FontWeight.w600)),
-                                                        // SizedBox(height: 4),
-
-                                                        Material(
-                                                          elevation: 0,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                          child: Container(
-                                                            height: 50,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10.0,
-                                                                    vertical:
-                                                                        0),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8.0),
-                                                              border: Border.all(
-                                                                  color: const Color(
-                                                                      0xFF8A95A8)),
-                                                            ),
-                                                            child:
-                                                                TextFormField(
-                                                              controller:
-                                                                  _toDateController,
-                                                              readOnly: true,
-                                                              onTap: () {
-                                                                _selectendDate(
-                                                                    context,
-                                                                    _toDateController);
-                                                              },
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                // contentPadding: EdgeInsets.all(8.0),
-                                                                // contentPadding: EdgeInsets.symmetric(),
-                                                                suffixIconConstraints:
-                                                                    const BoxConstraints(
-                                                                        maxWidth:
-                                                                            20,
-                                                                        maxHeight:
-                                                                            20,
-                                                                        minHeight:
-                                                                            20,
-                                                                        minWidth:
-                                                                            20),
-                                                                hintStyle: TextStyle(
-                                                                    fontSize:
-                                                                        15,
-                                                                    color:
-                                                                        blueColor),
-                                                                border:
-                                                                    InputBorder
-                                                                        .none,
-                                                                hintText:
-                                                                    'To date',
-                                                                suffixIcon:
-                                                                    IconButton(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          1),
-                                                                  iconSize: 20,
-                                                                  icon: Icon(
-                                                                    Icons
-                                                                        .calendar_today,
-                                                                    color:
-                                                                        blueColor,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () {},
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        ),
-                                ),
-                              ),
-                            ),
-                            // SizedBox(height: 5),
                             if (data.isNotEmpty)
                               if (currentPageData.length > 0) _buildHeaders(),
                             const SizedBox(height: 10),

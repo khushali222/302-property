@@ -136,12 +136,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
       _startDate.text = formatDate(c_data.entry!.first.date!);
       amountController.text = c_data.totalAmount.toString();
-      customerVaultID = c_data.customer_vault_id!;
+      customerVaultID = c_data.customer_vault_id ?? "";
       _selectedPaymentMethod = c_data.paymenttype;
       if (_selectedPaymentMethod != "Cash")
         checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
-      billingID = c_data.billing_id! ?? "";
+      billingID = c_data.billing_id ?? "";
       print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
             String? chargeType = (entry.account == "Late Fee Income" ||
@@ -276,15 +276,17 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
         Map<String, List<String>> fetchedData = {};
         // Adding static items to the "LIABILITY ACCOUNT" category
-        fetchedData["Rent"] = ["Rent Income"];
-        fetchedData["Late Fee Income"] = ["Late Fee Income"];
-        fetchedData["Pre-payments"] = ["Pre-payments"];
-        fetchedData["Security Deposit"] = ["Security Deposit"];
-
+        fetchedData["Liability Account"] = [
+          "Late Fee Income",
+          "Pre-payments",
+          "Security Deposit",
+          'Rent Income'
+        ];
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'] ?? "One Time Charge";
-          String account = item['account'];
-          print(chargeType);
+          String chargeType = item['charge_type'] ?? 'One Time Charge';
+          String account = item['account'] ?? '';
+          if (account.isEmpty) continue;
+
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
@@ -983,11 +985,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                     ],
                   ),
                   child: const Text(
-                    "Make Payments",
+                    "Make Payment",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                 ),
               ),
@@ -1005,7 +1007,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       border: Border.all(
-                        color: blueColor,
+                        color: const Color(0xFFCED4DA),
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(
@@ -1023,11 +1025,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *',
+                              Text('Received From *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1049,7 +1051,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Tenant'),
+                                          hint: const Text('Select Tenant',
+                                              style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                           value: selectedTenantId,
                                           items: tenants.map((tenant) {
                                             return DropdownMenuItem<String>(
@@ -1076,9 +1079,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           // },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1092,7 +1094,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             ),
                                             iconSize: 24,
                                             iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
+                                            iconDisabledColor: Color(0xFFb0b6c3),
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
@@ -1137,11 +1139,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 height: 20,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Date',
+                              Text('Date *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1206,7 +1208,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 },
                                 label: "Select the date",
                                 keyboardType: TextInputType.text,
-                                hintText: 'dd-mm-yyyy',
+                                hintText: 'YYYY-MM-DD',
                                 controller: _startDate,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
@@ -1227,11 +1229,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Received From *',
+                                          Text('Received From *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           tenants.isEmpty
                                               ? const Center(
@@ -1245,7 +1247,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       DropdownButton2<String>(
                                                     isExpanded: true,
                                                     hint: const Text(
-                                                        'Select Tenant'),
+                                                        'Select Tenant',
+                                                        style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                                     value: selectedTenantId,
                                                     items:
                                                         tenants.map((tenant) {
@@ -1287,10 +1290,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                                   500
                                                               ? 45
                                                               : 55,
-                                                      width: 250,
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 14,
+                                                              left: 2,
                                                               right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
@@ -1309,7 +1311,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       iconEnabledColor:
                                                           Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                          Colors.grey,
+                                                          Color(0xFFb0b6c3),
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
@@ -1349,11 +1351,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Date',
+                                          Text('Date *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           CustomTextField(
                                             onTap: () async {
@@ -1427,7 +1429,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             },
                                             label: "Select the date",
                                             keyboardType: TextInputType.text,
-                                            hintText: 'dd-mm-yyyy',
+                                            hintText: 'YYYY-MM-DD',
                                             controller: _startDate,
                                           ),
                                           const SizedBox(height: 5),
@@ -1440,11 +1442,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text('Amount',
+                            Text('Amount *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1453,10 +1455,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter amount';
                                 }
+                                final parsed = double.tryParse(value.trim());
+                                if (parsed == null || parsed <= 0) {
+                                  return 'Please enter a valid amount';
+                                }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
-                              hintText: 'Enter Amount',
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              hintText: 'Enter amount',
                               controller: amountController,
                               onChanged: (value) => validateAmounts(),
                               readOnnly: true,
@@ -1464,11 +1470,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             const SizedBox(
                               height: 12,
                             ),
-                            const Text('Payment Method',
+                            Text('Payment Method *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1476,7 +1482,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: const Text('Select Method'),
+                                  hint: const Text('Select method',
+                                      style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                   value: _selectedPaymentMethod,
                                   items: _paymentMethodsforfree.map((method) {
                                     return DropdownMenuItem<String>(
@@ -1508,12 +1515,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         MediaQuery.of(context).size.width < 500
                                             ? 46
                                             : 55,
-                                    width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 200
-                                            : 250,
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 2, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -1526,7 +1529,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     ),
                                     iconSize: 24,
                                     iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
+                                    iconDisabledColor: Color(0xFFb0b6c3),
                                   ),
                                   dropdownStyleData: DropdownStyleData(
                                     decoration: BoxDecoration(
@@ -1568,7 +1571,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Method'),
+                                          hint: const Text('Select method',
+                                      style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                           value: _selectedPaymentMethod,
                                           items: _paymentMethods.map((method) {
                                             return DropdownMenuItem<String>(
@@ -1598,14 +1602,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     500
                                                 ? 46
                                                 : 55,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 200
-                                                : 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1617,7 +1615,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             icon: Icon(Icons.arrow_drop_down),
                                             iconSize: 24,
                                             iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
+                                            iconDisabledColor: Color(0xFFb0b6c3),
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
@@ -1661,9 +1659,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               height: 12,
                             ),
                             const SizedBox(height: 10),
-                            const Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: Text("Reference"),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text("Reference",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
                             ),
                             const SizedBox(
                               height: 5,
@@ -1887,9 +1889,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             // ],
                             if (showCheckNumberField) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Check Number',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2293,9 +2299,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             // ],
                             if (showCashiersFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Check Number',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2319,9 +2329,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             ],
                             if (showMoneyorderFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Check Number',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2346,9 +2360,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             if (showMenualFields) ...[
                               //checkfield is not required
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text('Check Number',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2390,7 +2408,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 return null;
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Memo',
+                              hintText: 'Enter memo',
                               controller: Memo,
                             ),
                           ],
@@ -2646,7 +2664,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       iconEnabledColor:
                                                           Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                          Colors.grey,
+                                                          Color(0xFFb0b6c3),
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
@@ -2927,7 +2945,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           icon: Icon(Icons.arrow_drop_down),
                                           iconSize: 24,
                                           iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
+                                          iconDisabledColor: Color(0xFFb0b6c3),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           width: 250,
@@ -3290,8 +3308,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         'date': reverseFormatDate(_startDate
                                             .text
                                             .trim()), // Set the date to the desired date
-                                        'balance': charges_balances[
-                                            index], // Add balance from charges_balances list
+                                        'balance': double.parse(charges_balances[index].toStringAsFixed(2)), // Add balance from charges_balances list
                                       },
                                     );
                                   })
@@ -3306,126 +3323,31 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                              } else if (_selectedPaymentMethod == "Card") {
-                                //print("adminId ${id}");
-                                // print("adminId ${cardDetails[selectedcardindex!].company}");
-                                {
-                                  List<Map<String, String>> filteredTenants =
-                                      tenants.where((tenant) {
-                                    return tenant['tenant_id'] ==
-                                        selectedTenantId;
-                                  }).toList();
-                                  Map<String, String> selectedTenant =
-                                      filteredTenants.first;
-                                  await PaymentService()
-                                      .makePaymentforcard(
-                                          adminId: id ?? "",
-                                          // firstName: selectedTenant["first_name"]!,
-                                          // lastName: selectedTenant["last_name"]!,
-                                          // emailName: selectedTenant["email"]!,
-                                          customerVaultId: customerVaultID,
-                                          billingId: billingID,
-                                          //   surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                          amount:
-                                              "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
-                                          tenantId: widget.data!.paymentId!,
-                                          date: _startDate.text.trim(),
-                                          address1:
-                                              "cardDetails[selectedcardindex!].address_1!",
-                                          processorId: "",
-                                          leaseid: widget.leaseId,
-                                          company_name: companyName,
-                                          entries: rows,
-                                          tenantname: tenantname,
-                                          future_Date: false,
-                                          uploadedFile: _uploadedFileNames,
-                                          actualTenantId: selectedTenantId)
-                                      .then((value) {
-                                    Fluttertoast.showToast(msg: "$value");
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Navigator.pop(context, true);
-                                  }).catchError((e) {
-                                    print(e
-                                        .toString()
-                                        .split("Exception")[1]
-                                        .toString()
-                                        .trimLeft());
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Alert(
-                                      context: context,
-                                      type: AlertType.warning,
-                                      title: "Payment Failed!",
-                                      desc:
-                                          "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                      style: const AlertStyle(
-                                        backgroundColor: Colors.white,
-                                        //  overlayColor: Colors.black.withOpacity(.8)
-                                      ),
-                                      buttons: [
-                                        DialogButton(
-                                          child: const Text(
-                                            "Ok",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          color: blueColor,
-                                        ),
-                                      ],
-                                    ).show();
-                                  });
-                                }
-                              } else if (_selectedPaymentMethod == "ACH") {
-                                List<Map<String, String>> filteredTenants =
-                                    tenants.where((tenant) {
-                                  return tenant['tenant_id'] ==
-                                      selectedTenantId;
-                                }).toList();
-                                Map<String, String> selectedTenant =
-                                    filteredTenants.first;
+                              } else if (_selectedPaymentMethod == "Card" ||
+                                  _selectedPaymentMethod == "ACH") {
                                 await PaymentService()
-                                    .makePaymentforach(
-                                        adminId: id ?? "",
-                                        // firstName: selectedTenant["first_name"]!,
-                                        // lastName: selectedTenant["last_name"]!,
-                                        // emailName: selectedTenant["email"]!,
-                                        surcharge: "$surchargecount",
-                                        amount:
-                                            "${(double.parse(amountController.text.trim()))}",
-                                        tenantId: widget.data!.paymentId!,
-                                        date: _startDate.text.trim(),
-                                        address1: "",
-                                        processorId: "",
-                                        leaseid: widget.leaseId,
-                                        company_name: companyName,
-                                        entries: rows,
-                                        future_Date: false,
-                                        // account_type: selectedAccount!,
-                                        // account_holder_type: _selectedHoldertype!,
-                                        // checkaccount: accountnum.text.trim(),
-                                        // checkaba: bankrountingnum.text.trim(),
-                                        tenantname: tenantname,
-                                        // checkname: achname.text.trim(),
-                                        uploadedFile: _uploadedFileNames,
-                                        actualTenantId: selectedTenantId)
+                                    .storePaymentForEdit(
+                                      companyName: companyName,
+                                      adminId: id ?? "",
+                                      tenantId: selectedTenantId!,
+                                      tenantName: tenantname,
+                                      leaseId: widget.leaseId,
+                                      paymentId: widget.data!.paymentId ?? "",
+                                      customerVaultId: customerVaultID,
+                                      billingId: billingID,
+                                      entries: rows,
+                                      totalAmount: double.parse(amountController.text.trim()),
+                                      uploadedFile: _uploadedFileNames,
+                                    )
                                     .then((value) {
-                                  Fluttertoast.showToast(msg: "$value");
+                                  Fluttertoast.showToast(
+                                      msg: "Payment Updated Successfully");
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
-                                  print(e
-                                      .toString()
-                                      .split("Exception")[1]
-                                      .toString()
-                                      .trimLeft());
+                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -3433,11 +3355,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     context: context,
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
-                                    desc:
-                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                    desc: "${e.toString().split('Exception:').last.trimLeft()}",
                                     style: const AlertStyle(
                                       backgroundColor: Colors.white,
-                                      //  overlayColor: Colors.black.withOpacity(.8)
                                     ),
                                     buttons: [
                                       DialogButton(
@@ -3447,7 +3367,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               color: Colors.white,
                                               fontSize: 18),
                                         ),
-                                        onPressed: () => Navigator.pop(context),
+                                        onPressed: () =>
+                                            Navigator.pop(context),
                                         color: blueColor,
                                       ),
                                     ],

@@ -596,6 +596,57 @@ class PaymentService {
     }
   }
 
+  Future<Map<String, dynamic>> storePaymentForEdit({
+    required String companyName,
+    required String adminId,
+    required String tenantId,
+    required String tenantName,
+    required String leaseId,
+    required String paymentId,
+    required String customerVaultId,
+    required String billingId,
+    required List<Map<String, dynamic>> entries,
+    required double totalAmount,
+    required List<String>? uploadedFile,
+  }) async {
+    final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+
+    final response = await http.put(
+      Uri.parse(baseUrl),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+        "X-Idempotency-Key": Uuid().v4(),
+      },
+      body: jsonEncode(<String, dynamic>{
+        'payment_id': paymentId,
+        'admin_id': adminId,
+        'tenant_id': tenantId,
+        'tenantName': tenantName,
+        'lease_id': leaseId,
+        'customer_vault_id': customerVaultId,
+        'billing_id': billingId,
+        'entry': entries,
+        'total_amount': totalAmount,
+        'uploaded_file': uploadedFile ?? [],
+        'is_web': false,
+        'user_active_recently': true,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          'Failed to update payment ${jsonDecode(response.body)["message"]}');
+    }
+  }
+
 // Future<String> makePaymentforCashier({
 //   required String adminId,
 //   required String firstName,
