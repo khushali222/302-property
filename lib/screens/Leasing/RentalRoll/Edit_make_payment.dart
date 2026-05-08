@@ -2545,25 +2545,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    //value: liabilityAccounts.contains(row['account']) ? "${row['account']}_Liability Account" : "${row['account']}_${row['charge_type']}",
-                                                    // value: liabilityAccounts
-                                                    //         .contains(
-                                                    //             row['account'])
-                                                    //     ? "${row['account']}_Liability Account"
-                                                    //     : liabilityAccounts
-                                                    //             .contains(row[
-                                                    //                 'account'])
-                                                    //         ? ""
-                                                    //         : "${row['account']}_${row['charge_type']}",
-                                                    value: (row['account'] == null ||
-                                                            row['account']
-                                                                .isEmpty ||
-                                                            row['charge_type'] ==
-                                                                null ||
-                                                            row['charge_type']
-                                                                .isEmpty)
-                                                        ? null // Default value that is part of the items
-                                                        : "${row['account']}_${row['charge_type']}",
+                                                    value: liabilityAccounts
+                                                            .contains(
+                                                                row['account'])
+                                                        ? "${row['account']}_Liability Account"
+                                                        : (row['account'] ==
+                                                                    null ||
+                                                                row['account']
+                                                                    .isEmpty ||
+                                                                row['charge_type'] ==
+                                                                    null ||
+                                                                row['charge_type']
+                                                                    .isEmpty)
+                                                            ? null
+                                                            : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
