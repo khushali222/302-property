@@ -10,8 +10,10 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Expiring_Insurance.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Home_System_Report.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/InsurancePremiumReport.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/LoanSummaryReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/PortfolioOverviewReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/PropertyRevenueReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/RentersInsurance.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/ReopenWorkorder.dart';
@@ -809,6 +811,16 @@ class ReportScreen extends StatelessWidget {
                       'Compare property revenue between current and previous periods',
                   "navigate": PropertyRevenueReport()
                 },
+                // {
+                //   'title': 'Portfolio Overview',
+                //   'subtitle': 'KPI overview of your property portfolio',
+                //   "navigate": PortfolioOverviewReport(),
+                // },
+                // {
+                //   'title': 'Loan Summary Report',
+                //   'subtitle': 'Summary of all loans with balance and properties',
+                //   "navigate": Loansummaryreport()
+                // },
               ],
               "Track payments, transactions, and owner accounts.",
               context),
