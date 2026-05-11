@@ -80,7 +80,6 @@ class _Applicants_tableState extends State<Applicants_table>
   bool ascending2 = false;
   bool ascending3 = false;
   Widget _buildHeaders() {
-    var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
           color: Color(0xFFF4F8FF),
@@ -91,14 +90,22 @@ class _Applicants_tableState extends State<Applicants_table>
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Container(
-              child: const Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
+            const SizedBox(width: 30),
+            Expanded(
+              flex: 3,
+              child: Text(
+                "#",
+                style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
               ),
             ),
+            Container(
+              width: 1,
+              height: 18,
+              color: Color(0xFFDBE0E5),
+            ),
+            const SizedBox(width: 8),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -116,125 +123,15 @@ class _Applicants_tableState extends State<Applicants_table>
                       ascending2 = false;
                       ascending3 = false;
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
-                    width < 400
-                        ? Text("Name",
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Name",
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 3),
-                    ascending1
-                        ? Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("   Phone Number",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    SizedBox(width: 15),
-                    Text("Status",
+                    Text("Name",
                         style: TextStyle(
                             color: blueColor, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    ascending3
+                    const SizedBox(width: 3),
+                    ascending1
                         ? Padding(
                             padding: EdgeInsets.only(top: 7, left: 2),
                             child: FaIcon(
@@ -274,7 +171,7 @@ class _Applicants_tableState extends State<Applicants_table>
     'Last 60 Days',
     'All Time'
   ];
-  String? selectedDateFilter = "All";
+  String? selectedDateFilter = "Last 15 Days";
   @override
   void initState() {
     super.initState();
@@ -1225,27 +1122,24 @@ class _Applicants_tableState extends State<Applicants_table>
                   // Header Section with Title and Add Button
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
+                        horizontal: 12.0, vertical: 8.0),
                     child: Row(
                       children: [
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(
-                            width: 13,
-                          ),
                         Expanded(
                           flex: permissions!.applicantAdd! ? 2 : 1,
                           child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                            padding: const EdgeInsets.only(right: 6.0),
                             child: titleBar(
                               width: double.infinity,
                               title: 'Applicants',
                             ),
                           ),
                         ),
-                        Flexible(
+                        Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 4.0, right: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: GestureDetector(
                               onTap: () async {
                                 final result = await Navigator.of(context).push(
@@ -1260,6 +1154,7 @@ class _Applicants_tableState extends State<Applicants_table>
                                 }
                               },
                               child: Container(
+                                width: double.infinity,
                                 height:
                                     (MediaQuery.of(context).size.width < 768)
                                         ? 50
@@ -1282,15 +1177,17 @@ class _Applicants_tableState extends State<Applicants_table>
                             ),
                           ),
                         ),
-                       Flexible(
+                        Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: GestureDetector(
                               onTap: () async {
                                 _showInviteApplicantsDialog();
                               },
                               child: Container(
+                                width: double.infinity,
                                 height:
                                     (MediaQuery.of(context).size.width < 768)
                                         ? 50
@@ -1321,14 +1218,10 @@ class _Applicants_tableState extends State<Applicants_table>
                             ),
                           ),
                         ),
-                        
-             
-                     if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 13),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  // const SizedBox(height: 8),
 
                   /* ── TabBar: Applicants / Pending — kept for future use; uncomment block and remove/disable day filter Padding below when restoring ──
                   Padding(
@@ -1449,13 +1342,9 @@ class _Applicants_tableState extends State<Applicants_table>
                   // Date filter + Status filter dropdowns — shown FIRST
                   const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 19),
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: Material(
@@ -1627,10 +1516,6 @@ class _Applicants_tableState extends State<Applicants_table>
                             ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 25),
                       ],
                     ),
                   ),
@@ -1638,13 +1523,9 @@ class _Applicants_tableState extends State<Applicants_table>
                   // Search bar — shown BELOW the filter dropdowns
                   const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.only(left: 11, right: 11),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Row(
                       children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 19),
                         Expanded(
                           child: Material(
                             elevation: 0,
@@ -1669,7 +1550,7 @@ class _Applicants_tableState extends State<Applicants_table>
                                     if (currentPage != 0) currentPage = 0;
                                   });
                                 },
-                                cursorColor: Colors.blue,
+                                cursorColor: blueColor,
                                 decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: "Search here...",
@@ -1681,17 +1562,14 @@ class _Applicants_tableState extends State<Applicants_table>
                             ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          const SizedBox(width: 2),
-                        if (MediaQuery.of(context).size.width > 500)
-                          const SizedBox(width: 25),
                       ],
                     ),
                   ),
 
                   Padding(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    padding: MediaQuery.of(context).size.width < 500
+                        ? const EdgeInsets.fromLTRB(12, 11, 12, 11)
+                        : const EdgeInsets.all(28),
                     child: FutureBuilder<List<Datum>>(
                       future: futureApplicantdata,
                       builder: (context, snapshot) {
@@ -1871,7 +1749,7 @@ class _Applicants_tableState extends State<Applicants_table>
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                const SizedBox(height: 10),
+                                // const SizedBox(height: 10),
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(
@@ -1934,8 +1812,7 @@ class _Applicants_tableState extends State<Applicants_table>
                                                       },
                                                       child: Container(
                                                         margin: const EdgeInsets
-                                                            .only(
-                                                            left: 5, right: 5),
+                                                            .only(left: 5),
                                                         padding: !isExpanded
                                                             ? const EdgeInsets
                                                                 .only(
@@ -1953,6 +1830,26 @@ class _Applicants_tableState extends State<Applicants_table>
                                                         ),
                                                       ),
                                                     ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 4),
+                                                        child: Text(
+                                                        applicant.applicationNumber ?? 'N/A',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight: FontWeight.bold,
+                                                          fontSize: 11,
+                                                        ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: 1,
+                                                      height: 18,
+                                                      color: Color(0xFFDBE0E5),
+                                                    ),
+                                                    const SizedBox(width: 8),
                                                     Expanded(
                                                       flex: 3,
                                                       child: InkWell(
@@ -1986,55 +1883,6 @@ class _Applicants_tableState extends State<Applicants_table>
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .02),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Text(
-                                                        formatPhoneNumber(
-                                                            '${applicant.applicantPhoneNumber ?? "---------"}'),
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .05),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 15.0),
-                                                        child: Text(
-                                                          '   ${applicant.applicantStatus.isNotEmpty ? applicant.applicantStatus.first.status.toString() : 'Undecided'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .02),
                                                   ],
                                                 ),
                                               ),
@@ -2070,6 +1918,59 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: <Widget>[
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Phone : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.applicantPhoneNumber != null &&
+                                                                                applicant.applicantPhoneNumber.toString().isNotEmpty
+                                                                            ? formatPhoneNumber(applicant.applicantPhoneNumber.toString())
+                                                                            : 'N/A',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 8,
+                                                                ),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            'Status : ',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: blueColor),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text: applicant.applicantStatus.isNotEmpty
+                                                                            ? applicant.applicantStatus.first.status.toString()
+                                                                            : 'Undecided',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: grey),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 8,
+                                                                ),
                                                                 Text.rich(
                                                                   TextSpan(
                                                                     children: [
