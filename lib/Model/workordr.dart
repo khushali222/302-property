@@ -637,6 +637,7 @@ class RentalUnit {
   bool? isDelete;
   int? iV;
   String? processorId;
+  String? rentalUnit;
 
   RentalUnit(
       {this.sId,
@@ -656,7 +657,8 @@ class RentalUnit {
         this.updatedAt,
         this.isDelete,
         this.iV,
-        this.processorId});
+        this.processorId,
+        this.rentalUnit});
 
   RentalUnit.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -677,6 +679,7 @@ class RentalUnit {
     isDelete = json['is_delete'];
     iV = json['__v'] != null ? int.tryParse(json['__v'].toString()) : null;
     processorId = json['processor_id'];
+    rentalUnit = json['rental_unit'];
   }
 
   Map<String, dynamic> toJson() {
@@ -699,6 +702,7 @@ class RentalUnit {
     data['is_delete'] = this.isDelete;
     data['__v'] = this.iV;
     data['processor_id'] = this.processorId;
+    data['rental_unit'] = this.rentalUnit;
     return data;
   }
 }

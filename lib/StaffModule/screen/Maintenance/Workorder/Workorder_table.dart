@@ -1307,17 +1307,33 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         SizedBox(width: 5),
                                         Expanded(
                                           flex: 3,
-                                          child: Text(
-                                            workOrder.rentalAddress
-                                                    ?.rentalAdress ??
-                                                'N/A',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                              color: blueColor,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                [
+                                                  workOrder.rentalAddress?.rentalAdress,
+                                                  workOrder.rentalUnit?.rentalUnit,
+                                                ].where((v) => v != null && v.isNotEmpty).join(' - '),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                  color: blueColor,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                              if ((workOrder.workOrderData?.workSubject ?? '').isNotEmpty)
+                                                Text(
+                                                  workOrder.workOrderData!.workSubject!,
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.lightBlue,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                            ],
                                           ),
                                         ),
                                         SizedBox(width: 2),

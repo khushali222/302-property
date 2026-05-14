@@ -811,11 +811,11 @@ class ReportScreen extends StatelessWidget {
                       'Compare property revenue between current and previous periods',
                   "navigate": PropertyRevenueReport()
                 },
-                // {
-                //   'title': 'Portfolio Overview',
-                //   'subtitle': 'KPI overview of your property portfolio',
-                //   "navigate": PortfolioOverviewReport(),
-                // },
+                {
+                  'title': 'Portfolio Overview',
+                  'subtitle': 'KPI overview of your property portfolio',
+                  "navigate": PortfolioOverviewReport(),
+                },
                 // {
                 //   'title': 'Loan Summary Report',
                 //   'subtitle': 'Summary of all loans with balance and properties',

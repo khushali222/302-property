@@ -1938,9 +1938,7 @@ class _FinancialTableState extends State<FinancialTable> {
         'Free Plan';
     final financeShowAddCards =
         !isFreePlan && (widget.status == 'Active' || widget.status == 'Future');
-    // Temporarily hide ACH quick action (keep code for future use).
-    // final financeShowAch = _leaseAchAccepted && financeShowAddCards;
-    final financeShowAch = false;
+    final financeShowAch = _leaseAchAccepted && financeShowAddCards;
     return Container(
       child: SingleChildScrollView(
         child: Column(
