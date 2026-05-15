@@ -31,10 +31,9 @@ class _edit_vendorState extends State<edit_vendor> {
   String? initialPhoneNumber;
   String? initialEmail;
   String? initialPassword;
-  // FUTURE: re-enable with Trade Type UI — map from API `vendor.trade`
-  // String? initialTradeType;
-  // String? selectedTradeType;
-  // final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
+  String? initialTradeType;
+  String? selectedTradeType;
+  final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   Future<void> _fetchVendor() async {
     setState(() {
       isloading = true;
@@ -46,15 +45,15 @@ class _edit_vendorState extends State<edit_vendor> {
       initialPhoneNumber = vendor.vendorPhoneNumber;
       initialEmail = vendor.vendorEmail;
       initialPassword = vendor.vendorPassword;
-      // initialTradeType = vendor.trade;
+      initialTradeType = vendor.trade;
       firstName.text = vendor.vendorName!;
       phoneNumber.text = formatPhoneNumberedit(vendor.vendorPhoneNumber!);
       email.text = vendor.vendorEmail!;
       passWord.text = vendor.vendorPassword!;
       conpassWord.text = vendor.vendorPassword!;
-      // if (vendor.trade != null) {
-      //   selectedTradeType = vendor.trade!.toLowerCase();
-      // }
+      if (vendor.trade != null) {
+        selectedTradeType = vendor.trade!.toLowerCase();
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to fetch vendor data')));
@@ -255,41 +254,41 @@ class _edit_vendorState extends State<edit_vendor> {
                               const SizedBox(
                                 height: 10,
                               ),
-//                               Text('Trade Type *',
-//                                   style: TextStyle(
-//                                       fontSize: 13,
-//                                       fontWeight: FontWeight.bold,
-//                                       color: blueColor)),
-//                               const SizedBox(height: 10),
-//                               Container(
-//                                 height: 50,
-//                                 decoration: BoxDecoration(
-//                                   color: Colors.white,
-//                                   borderRadius: BorderRadius.circular(8.0),
-//                                   border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
-//                                 ),
-//                                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-//                                 child: DropdownButtonHideUnderline(
-//                                   child: DropdownButton<String>(
-//                                     value: selectedTradeType,
-//                                     hint: const Text('Select trade type',
-//                                         style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
-//                                     isExpanded: true,
-//                                     menuMaxHeight: 250,
-//                                     items: _tradeTypes.map((type) {
-//                                       return DropdownMenuItem<String>(
-//                                         value: type.toLowerCase(),
-//                                         child: Text(type, style: const TextStyle(fontSize: 14)),
-//                                       );
-//                                     }).toList(),
-//                                     onChanged: (value) {
-//                                       setState(() {
-//                                         selectedTradeType = value;
-//                                       });
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
+                              Text('Trade Type *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
+                              const SizedBox(height: 10),
+                              Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: selectedTradeType,
+                                    hint: const Text('Select trade type',
+                                        style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
+                                    isExpanded: true,
+                                    menuMaxHeight: 250,
+                                    items: _tradeTypes.map((type) {
+                                      return DropdownMenuItem<String>(
+                                        value: type.toLowerCase(),
+                                        child: Text(type, style: const TextStyle(fontSize: 14)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedTradeType = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -403,8 +402,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                           bool hasChanges = firstName.text != initialVendorName ||
                                               phoneNumber.text != initialPhoneNumber ||
                                               email.text != initialEmail ||
-                                              passWord.text != initialPassword;
-                                              // || selectedTradeType != initialTradeType;
+                                              passWord.text != initialPassword ||
+                                              selectedTradeType != initialTradeType;
 
                                           if (!hasChanges) { Navigator.of(context).pop(false); return; }
                                           if (!isFormValid) return;
@@ -419,7 +418,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                             vendorPhoneNumber: phoneNumber.text,
                                             vendorEmail: email.text,
                                             vendorPassword: passWord.text,
-                                            // trade: selectedTradeType,
+                                            trade: selectedTradeType,
                                           );
                                           final success = await vendorRepository.update_vendor(vendor, widget.vender_id!);
                                           setState(() { isLoading = false; });
@@ -651,41 +650,41 @@ class _edit_vendorState extends State<edit_vendor> {
                             const SizedBox(
                               height: 10,
                             ),
-                            // Text('Trade Type *',
-                                // style: TextStyle(
-                                    // fontSize: 13,
-                                    // fontWeight: FontWeight.bold,
-                                    // color: blueColor)),
-                            // const SizedBox(height: 10),
-                            // Container(
-                              // height: 50,
-                              // decoration: BoxDecoration(
-                                // color: Colors.white,
-                                // borderRadius: BorderRadius.circular(8.0),
-                                // border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
-                              // ),
-                              // padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                              // child: DropdownButtonHideUnderline(
-                                // child: DropdownButton<String>(
-                                  // value: selectedTradeType,
-                                  // hint: const Text('Select trade type',
-                                      // style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
-                                  // isExpanded: true,
-                                    // menuMaxHeight: 250,
-                                  // items: _tradeTypes.map((type) {
-                                    // return DropdownMenuItem<String>(
-                                      // value: type.toLowerCase(),
-                                      // child: Text(type, style: const TextStyle(fontSize: 14)),
-                                    // );
-                                  // }).toList(),
-                                  // onChanged: (value) {
-                                    // setState(() {
-                                      // selectedTradeType = value;
-                                    // });
-                                  // },
-                                // ),
-                              // ),
-                            // ),
+                            Text('Trade Type *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor)),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: selectedTradeType,
+                                  hint: const Text('Select trade type',
+                                      style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
+                                  isExpanded: true,
+                                  menuMaxHeight: 250,
+                                  items: _tradeTypes.map((type) {
+                                    return DropdownMenuItem<String>(
+                                      value: type.toLowerCase(),
+                                      child: Text(type, style: const TextStyle(fontSize: 14)),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedTradeType = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -883,8 +882,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                         bool hasChanges = firstName.text != initialVendorName ||
                                             phoneNumber.text != initialPhoneNumber ||
                                             email.text != initialEmail ||
-                                            passWord.text != initialPassword;
-                                            // || selectedTradeType != initialTradeType;
+                                            passWord.text != initialPassword ||
+                                            selectedTradeType != initialTradeType;
 
                                         if (!hasChanges) {
                                           Navigator.of(context).pop(false);
@@ -903,7 +902,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                           vendorPhoneNumber: phoneNumber.text.trim(),
                                           vendorEmail: email.text.trim(),
                                           vendorPassword: passWord.text.trim(),
-                                          // trade: selectedTradeType,
+                                          trade: selectedTradeType,
                                         );
 
                                         final success = await vendorRepository

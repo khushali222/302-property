@@ -38,7 +38,7 @@ class Vendor {
       'vendor_phoneNumber': vendorPhoneNumber,
       'vendor_email': vendorEmail,
       'vendor_password': vendorPassword,
-      if (trade != null && trade!.isNotEmpty) 'trade': trade,
+      'trade': trade,
     };
   }
 }

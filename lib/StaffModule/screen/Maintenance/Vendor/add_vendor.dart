@@ -954,9 +954,8 @@ class _Add_vendorState extends State<Add_vendor> {
   final TextEditingController conpassWord = TextEditingController();
   bool isLoading = false;
   bool formValid = false;
-  // FUTURE: trade type for API — re-enable with Trade Type dropdown UI
-  // String? selectedTradeType;
-  // final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
+  String? selectedTradeType;
+  final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   final VendorRepository vendorRepository =
       VendorRepository(baseUrl: 'https://yourapiurl.com');
   @override
@@ -1126,41 +1125,41 @@ class _Add_vendorState extends State<Add_vendor> {
                               const SizedBox(
                                 height: 10,
                               ),
-//                               Text('Trade Type *',
-//                                   style: TextStyle(
-//                                       fontSize: 13,
-//                                       fontWeight: FontWeight.bold,
-//                                       color: blueColor)),
-//                               const SizedBox(height: 10),
-//                               Container(
-//                                 height: 50,
-//                                 decoration: BoxDecoration(
-//                                   color: Colors.white,
-//                                   borderRadius: BorderRadius.circular(8.0),
-//                                   border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
-//                                 ),
-//                                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-//                                 child: DropdownButtonHideUnderline(
-//                                   child: DropdownButton<String>(
-//                                     value: selectedTradeType,
-//                                     hint: const Text('Select trade type',
-//                                         style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
-//                                     isExpanded: true,
-//                                     menuMaxHeight: 250,
-//                                     items: _tradeTypes.map((type) {
-//                                       return DropdownMenuItem<String>(
-//                                         value: type.toLowerCase(),
-//                                         child: Text(type, style: const TextStyle(fontSize: 14)),
-//                                       );
-//                                     }).toList(),
-//                                     onChanged: (value) {
-//                                       setState(() {
-//                                         selectedTradeType = value;
-//                                       });
-//                                     },
-//                                   ),
-//                                 ),
-//                               ),
+                              Text('Trade Type *',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
+                              const SizedBox(height: 10),
+                              Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: selectedTradeType,
+                                    hint: const Text('Select trade type',
+                                        style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
+                                    isExpanded: true,
+                                    menuMaxHeight: 250,
+                                    items: _tradeTypes.map((type) {
+                                      return DropdownMenuItem<String>(
+                                        value: type.toLowerCase(),
+                                        child: Text(type, style: const TextStyle(fontSize: 14)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedTradeType = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -1420,42 +1419,42 @@ class _Add_vendorState extends State<Add_vendor> {
                               },
                               email: true,
                             ),
-                            // const SizedBox(height: 10),
-                            // Text('Trade Type *',
-                                // style: TextStyle(
-                                    // fontSize: 13,
-                                    // fontWeight: FontWeight.bold,
-                                    // color: blueColor)),
-                            // const SizedBox(height: 10),
-                            // Container(
-                              // height: 50,
-                              // decoration: BoxDecoration(
-                                // color: Colors.white,
-                                // borderRadius: BorderRadius.circular(8.0),
-                                // border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
-                              // ),
-                              // padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                              // child: DropdownButtonHideUnderline(
-                                // child: DropdownButton<String>(
-                                  // value: selectedTradeType,
-                                  // hint: const Text('Select trade type',
-                                      // style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
-                                  // isExpanded: true,
-                                    // menuMaxHeight: 250,
-                                  // items: _tradeTypes.map((type) {
-                                    // return DropdownMenuItem<String>(
-                                      // value: type.toLowerCase(),
-                                      // child: Text(type, style: const TextStyle(fontSize: 14)),
-                                    // );
-                                  // }).toList(),
-                                  // onChanged: (value) {
-                                    // setState(() {
-                                      // selectedTradeType = value;
-                                    // });
-                                  // },
-                                // ),
-                              // ),
-                            // ),
+                            const SizedBox(height: 10),
+                            Text('Trade Type *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor)),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(color: const Color(0xFFE0E0E0), width: 1.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: selectedTradeType,
+                                  hint: const Text('Select trade type',
+                                      style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
+                                  isExpanded: true,
+                                  menuMaxHeight: 250,
+                                  items: _tradeTypes.map((type) {
+                                    return DropdownMenuItem<String>(
+                                      value: type.toLowerCase(),
+                                      child: Text(type, style: const TextStyle(fontSize: 14)),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedTradeType = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 10),
                             Text('Password *',
                                 style: TextStyle(
@@ -1584,7 +1583,7 @@ class _Add_vendorState extends State<Add_vendor> {
       vendorPhoneNumber: phoneNumber.text.trim(),
       vendorEmail: email.text.trim(),
       vendorPassword: passWord.text.trim(),
-      // trade: selectedTradeType,
+      trade: selectedTradeType,
     );
 
     final success = await vendorRepository.addVendor(vendor);

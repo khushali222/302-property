@@ -52,6 +52,7 @@ dependencies:
   flutter_launcher_icons:
   email_validator: ^3.0.0
   http:
+  package_info_plus: ^8.0.0
   fluttertoast: ^8.2.5
   syncfusion_flutter_charts:
   shared_preferences: ^2.5.3
