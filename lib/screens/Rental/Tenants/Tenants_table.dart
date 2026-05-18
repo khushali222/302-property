@@ -64,9 +64,6 @@ class _Tenants_tableState extends State<Tenants_table> {
       filteredData.addAll(categorizedData['formerTenants'] ?? []);
     }
 
-    // Always include applicants
-    filteredData.addAll(categorizedData['currentApplicants'] ?? []);
-
     return filteredData;
   }
 

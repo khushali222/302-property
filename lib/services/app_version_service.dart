@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class AppVersionService {
-  static const String _baseUrl = 'https://development.cloudrentalmanager.com';
   static const String _endpoint = '/api/app-version';
 
   static Future<VersionCheckResult> checkVersion() async {
@@ -20,7 +20,7 @@ class AppVersionService {
       print('📱 Platform: $platform');
 
       // Step 3: Call GET /api/app-version?platform=android
-      final uri = Uri.parse('$_baseUrl$_endpoint?platform=$platform');
+      final uri = Uri.parse('$Api_url$_endpoint?platform=$platform');
       print('📱 Calling: $uri');
 
       final response = await http.get(uri).timeout(const Duration(seconds: 10));

@@ -337,18 +337,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
     await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay
 
-    // ── VERSION CHECK (commented out — uncomment when going to production) ──
-    // final versionResult = await AppVersionService.checkVersion();
-    // if (!mounted) return;
-    //
-    // if (versionResult.status == VersionStatus.forceUpdate) {
-    //   _showForceUpdateDialog(versionResult.latestVersion ?? '');
-    //   return; // Stop navigation — user must update
-    // } else if (versionResult.status == VersionStatus.softUpdate) {
-    //   _showSoftUpdateDialog(versionResult.latestVersion ?? '');
-    //   // Continue navigation after showing dialog
-    // }
-    // ─────────────────────────────────────────────────────────────────────
+    // ── VERSION CHECK ──────────────────────────────────────────
+    final versionResult = await AppVersionService.checkVersion();
+    if (!mounted) return;
+
+    if (versionResult.status == VersionStatus.forceUpdate) {
+      _showForceUpdateDialog(versionResult.latestVersion ?? '');
+      return; // Stop navigation — user must update
+    } else if (versionResult.status == VersionStatus.softUpdate) {
+      _showSoftUpdateDialog(versionResult.latestVersion ?? '');
+      // Continue navigation after showing dialog
+    }
+    // ──────────────────────────────────────────────────────────
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;

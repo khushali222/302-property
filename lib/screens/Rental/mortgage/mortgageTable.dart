@@ -951,25 +951,13 @@ class _MortgageTableState extends State<MortgageTable> {
                                                                             'loan_amount'])),
                                                                 'Interest Rate:',
                                                                 _getDisplayValue(
-                                                                    '${mortgage['interest_rate'] ?? 0}%'),
+                                                                    '${(mortgage['interest_rate'] ?? 0).toStringAsFixed(2)}%'),
                                                               ),
                                                               _buildTableRow(
                                                                 'Loan Number',
                                                                 _getDisplayValue(
                                                                     mortgage[
                                                                         'mortgage_no']),
-                                                                'Start Date',
-                                                                _getDisplayValue(
-                                                                    _formatDate(
-                                                                        mortgage['start_date']
-                                                                            ?.toString())),
-                                                              ),
-                                                              _buildTableRow(
-                                                                'End Date',
-                                                                _getDisplayValue(
-                                                                    _formatDate(
-                                                                        mortgage['end_date']
-                                                                            ?.toString())),
                                                                 'Balance',
                                                                 _getDisplayValue(
                                                                     _formatCurrency(

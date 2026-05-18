@@ -5,6 +5,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/bid_request.dart';
@@ -170,21 +172,21 @@ class _BidRoomTableState extends State<BidRoomTable> {
     return address;
   }
 
-  String _formatDate(String? dateStr) {
+  String _formatDate(BuildContext context, String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
-      DateTime date = DateTime.parse(dateStr);
-      return DateFormat('yyyy-MM-dd').format(date);
+      return Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(dateStr);
     } catch (e) {
       return dateStr;
     }
   }
 
-  String _formatDateTime(String? dateStr) {
+  String _formatDateTime(BuildContext context, String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
-      DateTime date = DateTime.parse(dateStr);
-      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
+      return Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDateTime(dateStr);
     } catch (e) {
       return dateStr;
     }
@@ -890,11 +892,11 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             request.workCategory ??
                                                                                 'N/A',
                                                                             'Created Date:',
-                                                                            _formatDate(request.createdAt),
+                                                                            _formatDate(context, request.createdAt),
                                                                           ),
                                                                           _buildTableRow(
                                                                             'Due Date:',
-                                                                            _formatDate(request.dueDate),
+                                                                            _formatDate(context, request.dueDate),
                                                                             'Status:',
                                                                             request.status ??
                                                                                 'N/A',
@@ -1390,11 +1392,11 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                             request.workCategory ??
                                                                                 'N/A',
                                                                             'Created Date:',
-                                                                            _formatDate(request.createdAt),
+                                                                            _formatDate(context, request.createdAt),
                                                                           ),
                                                                           _buildTableRow(
                                                                             'Due Date:',
-                                                                            _formatDate(request.dueDate),
+                                                                            _formatDate(context, request.dueDate),
                                                                             'Status:',
                                                                             request.status ??
                                                                                 'N/A',
@@ -1835,7 +1837,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _formatDateTime(submission.submittedAt),
+                            _formatDateTime(context, submission.submittedAt),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
