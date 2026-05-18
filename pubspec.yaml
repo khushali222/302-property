@@ -20,6 +20,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.125+128
 
+#always uncomment the version when go in live popup one
 
 environment:
   sdk: ">=3.2.3 <4.0.0"
