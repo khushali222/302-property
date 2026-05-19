@@ -665,7 +665,7 @@ class _AddTenantState extends State<AddTenant> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  const Text('Comments',
+                                  const Text('Notes',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -703,7 +703,7 @@ class _AddTenantState extends State<AddTenant> {
                                           hintStyle: TextStyle(
                                               fontSize: 13,
                                               color: Color(0xFFb0b6c3)),
-                                          hintText: 'Enter the comment',
+                                          hintText: 'Enter notes',
                                         )),
                                   ),
                                   const SizedBox(
@@ -1455,7 +1455,7 @@ class _AddTenantState extends State<AddTenant> {
                                   const SizedBox(
                                     height: 10,
                                   ),
-                                  const Text('Comments',
+                                  const Text('Notes',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
@@ -1493,7 +1493,7 @@ class _AddTenantState extends State<AddTenant> {
                                           hintStyle: TextStyle(
                                               fontSize: 13,
                                               color: Color(0xFFb0b6c3)),
-                                          hintText: 'Enter the comment',
+                                          hintText: 'Enter notes',
                                         )),
                                   ),
                                   const SizedBox(
@@ -2383,7 +2383,7 @@ class _AddTenantState extends State<AddTenant> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text('Comments',
+                                        const Text('Notes',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -2423,7 +2423,7 @@ class _AddTenantState extends State<AddTenant> {
                                                 hintStyle: TextStyle(
                                                     fontSize: 13,
                                                     color: Color(0xFFb0b6c3)),
-                                                hintText: 'Enter the comment',
+                                                hintText: 'Enter notes',
                                               )),
                                         ),
                                       ],

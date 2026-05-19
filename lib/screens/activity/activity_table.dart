@@ -68,178 +68,35 @@ class _ActivityTableState extends State<ActivityTable> {
   bool ascending2 = false;
   bool ascending3 = false;
   Widget _buildHeaders() {
-    var width = MediaQuery.of(context).size.width;
     return Container(
-      // decoration: BoxDecoration(
-      //   color: blueColor,
-      //   borderRadius: BorderRadius.only(
-      //     topLeft: Radius.circular(13),
-      //     topRight: Radius.circular(13),
-      //   ),
-      // ),
       decoration: BoxDecoration(
           color: const Color(0xFFF4F8FF),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: const Color(0xFFDBE0E5))),
-      child: ListTile(
-        contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: Icon(
-                Icons.expand_less,
-                color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            const Icon(Icons.expand_less, color: Colors.transparent, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 3,
+              child: Text(
+                "Activity By",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
               ),
             ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting1 == true) {
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = !sorting1;
-                      sorting2 = false;
-                      sorting3 = false;
-                      ascending1 = sorting1 ? !ascending1 : true;
-                      ascending2 = false;
-                      ascending3 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    width < 400
-                        ? Text("  Activity By ",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15))
-                        : Text("  Activity By",
-                            style: TextStyle(
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15)),
-                    // Text("Property", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 3),
-                    /* ascending1
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("   ACTION",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    SizedBox(width: 5),
-                    /*  ascending2
-                        ? Padding(
-                      padding: const EdgeInsets.only(top: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortUp,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    )
-                        : Padding(
-                      padding: const EdgeInsets.only(bottom: 7, left: 2),
-                      child: FaIcon(
-                        FontAwesomeIcons.sortDown,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),*/
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("   Date & Time",
-                        style: TextStyle(
-                            color: blueColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15)),
-                    SizedBox(width: 5),
-                  ],
-                ),
+              flex: 2,
+              child: Text(
+                "Date & Time",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
               ),
             ),
           ],
@@ -796,255 +653,171 @@ class _ActivityTableState extends State<ActivityTable> {
                                           // ),
                                           child: Column(
                                             children: <Widget>[
-                                              ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (expandedIndex == index) {
+                                                      expandedIndex = null;
+                                                    } else {
+                                                      expandedIndex = index;
+                                                    }
+                                                  });
+                                                },
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                                   child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () {
-                                                          // setState(() {
-                                                          //    isExpanded = !isExpanded;
-                                                          // //  expandedIndex = !expandedIndex;
-                                                          //
-                                                          // });
-                                                          // setState(() {
-                                                          //   if (isExpanded) {
-                                                          //     expandedIndex = null;
-                                                          //     isExpanded = !isExpanded;
-                                                          //   } else {
-                                                          //     expandedIndex = index;
-                                                          //   }
-                                                          // });
-                                                          setState(() {
-                                                            if (expandedIndex ==
-                                                                index) {
-                                                              expandedIndex =
-                                                                  null;
-                                                            } else {
-                                                              expandedIndex =
-                                                                  index;
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 5,
-                                                                  right: 5),
-                                                          padding: !isExpanded
-                                                              ? EdgeInsets.only(
-                                                                  bottom: 10)
-                                                              : EdgeInsets.only(
-                                                                  top: 10),
-                                                          child: FaIcon(
-                                                            isExpanded
-                                                                ? FontAwesomeIcons
-                                                                    .sortUp
-                                                                : FontAwesomeIcons
-                                                                    .sortDown,
-                                                            size: 20,
-                                                            color: blueColor,
-                                                          ),
-                                                        ),
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Icon(
+                                                        isExpanded
+                                                            ? Icons.keyboard_arrow_up
+                                                            : Icons.keyboard_arrow_down,
+                                                        color: Colors.grey[600],
+                                                        size: 20,
                                                       ),
+                                                      const SizedBox(width: 8),
                                                       Expanded(
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              if (expandedIndex ==
-                                                                  index) {
-                                                                expandedIndex =
-                                                                    null;
-                                                              } else {
-                                                                expandedIndex =
-                                                                    index;
-                                                              }
-                                                            });
-                                                          },
-                                                          child: Text(
-                                                            ' ${Propertytype.activityByUsername} (${Propertytype.activityBy})',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13,
+                                                        flex: 3,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text(
+                                                              '${Propertytype.activityByUsername}',
+                                                              style: TextStyle(
+                                                                color: blueColor,
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 14,
+                                                              ),
                                                             ),
-                                                          ),
+                                                            const SizedBox(height: 2),
+                                                            Text(
+                                                              '(${Propertytype.activityBy})',
+                                                              style: TextStyle(
+                                                                color: Colors.grey[600],
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .08),
                                                       Expanded(
+                                                        flex: 2,
                                                         child: Text(
-                                                          '${Propertytype.action}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .03),
-                                                      Expanded(
-                                                        child: Text(
-                                                          // '${widget.data.createdAt}',
-                                                          // formatDate(
-                                                          //     '${Propertytype.createdAt}'),
-                                                          Propertytype.createdAt
-                                                                      ?.isNotEmpty ==
-                                                                  true
-                                                              ? DateFormat(
-                                                                      "yyyy-MM-dd HH:mm")
-                                                                  .format(DateTime.parse(
-                                                                          Propertytype
-                                                                              .createdAt!)
-                                                                      .toLocal())
+                                                          Propertytype.createdAt?.isNotEmpty == true
+                                                              ? dateProvider.formatCurrentDateTime('${Propertytype.createdAt}')
                                                               : 'N/A',
-
                                                           style: TextStyle(
                                                             color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.w600,
                                                             fontSize: 13,
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .02),
                                                     ],
                                                   ),
                                                 ),
                                               ),
                                               if (isExpanded)
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 2.0),
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 2),
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            FaIcon(
-                                                              isExpanded
-                                                                  ? FontAwesomeIcons
-                                                                      .sortUp
-                                                                  : FontAwesomeIcons
-                                                                      .sortDown,
-                                                              size: 50,
-                                                              color: Colors
-                                                                  .transparent,
+                                                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(color: Color(0xFFDBE0E5), width: 1),
+                                                    ),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            'ACTION',
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              color: blueColor,
+                                                              fontSize: 13,
                                                             ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <Widget>[
-                                                                  Text.rich(
-                                                                    TextSpan(
-                                                                      children: [
-                                                                        TextSpan(
-                                                                          text:
-                                                                              'Details : ',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: blueColor), // Bold and black
-                                                                        ),
-                                                                        TextSpan(
-                                                                          // text: formatDate(
-                                                                          //     '${Propertytype.updatedAt}'),
-                                                                          text:
-                                                                              '${Propertytype.activity!.description}',
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w700,
-                                                                              color: grey), // Light and grey
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                                          ),
+                                                          const SizedBox(width: 8),
+                                                          Container(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(color: const Color(0xFFDBE0E5)),
+                                                              borderRadius: BorderRadius.circular(20),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Container(
+                                                                  width: 8,
+                                                                  height: 8,
+                                                                  decoration: BoxDecoration(
+                                                                    color: blueColor,
+                                                                    shape: BoxShape.circle,
                                                                   ),
-                                                                ],
-                                                              ),
+                                                                ),
+                                                                const SizedBox(width: 6),
+                                                                Text(
+                                                                  '${Propertytype.action}',
+                                                                  style: TextStyle(
+                                                                    color: blueColor,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    fontSize: 13,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      Text.rich(
+                                                        TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: 'Details :  ',
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: blueColor,
+                                                                  fontSize: 13),
+                                                            ),
+                                                            TextSpan(
+                                                              text: '${Propertytype.activity?.description ?? ''}',
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.w500,
+                                                                  color: Colors.grey[700],
+                                                                  fontSize: 13),
                                                             ),
                                                           ],
                                                         ),
-                                                        if (Propertytype
-                                                                .reason !=
-                                                            null)
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
+                                                      ),
+                                                      if (Propertytype.reason != null) ...[
+                                                        const SizedBox(height: 8),
+                                                        Text.rich(
+                                                          TextSpan(
                                                             children: [
-                                                              FaIcon(
-                                                                isExpanded
-                                                                    ? FontAwesomeIcons
-                                                                        .sortUp
-                                                                    : FontAwesomeIcons
-                                                                        .sortDown,
-                                                                size: 50,
-                                                                color: Colors
-                                                                    .transparent,
+                                                              TextSpan(
+                                                                text: 'Reason :  ',
+                                                                style: TextStyle(
+                                                                    fontWeight: FontWeight.bold,
+                                                                    color: blueColor,
+                                                                    fontSize: 13),
                                                               ),
-                                                              Expanded(
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <Widget>[
-                                                                    Text.rich(
-                                                                      TextSpan(
-                                                                        children: [
-                                                                          TextSpan(
-                                                                            text:
-                                                                                'Reason : ',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
-                                                                          ),
-                                                                          TextSpan(
-                                                                            // text: formatDate(
-                                                                            //     '${Propertytype.updatedAt}'),
-                                                                            text:
-                                                                                '${Propertytype.reason}',
-                                                                            style:
-                                                                                TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                              TextSpan(
+                                                                text: '${Propertytype.reason}',
+                                                                style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    color: Colors.grey[700],
+                                                                    fontSize: 13),
                                                               ),
                                                             ],
                                                           ),
-                                                        /*  Row(
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ),
+                                                /*  Row(
                                                     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                       Expanded(
@@ -1152,11 +925,6 @@ class _ActivityTableState extends State<ActivityTable> {
                                                       ),
                                                     ],
                                                   ),*/
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              //SizedBox(height: 13,),
                                             ],
                                           ),
                                         );

@@ -273,7 +273,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 4),
                                       child: Text(
-                                        "Designation *",
+                                        "Title *",
                                         style: TextStyle(
                                           color: Color(0xFF101828),
                                           fontWeight: FontWeight.bold,
@@ -307,7 +307,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                           controller: designation,
                                           cursorColor: blueColor,
                                           decoration: InputDecoration(
-                                            hintText: "Enter designation",
+                                            hintText: "Enter title",
                                             hintStyle: TextStyle(
                                               fontSize: MediaQuery.of(context)
                                                   .size
@@ -798,7 +798,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                   setState(() {
                                     designationerror = true;
                                     designationmessage =
-                                    "Please enter Designation";
+                                    "Please enter Title";
                                   });
                                 } else {
                                   setState(() {

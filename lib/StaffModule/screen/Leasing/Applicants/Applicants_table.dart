@@ -682,27 +682,150 @@ class _Applicants_tableState extends State<Applicants_table>
         final msg = jsonData is Map && jsonData['message'] != null
             ? jsonData['message'].toString()
             : 'Invitation sent successfully.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: Colors.green),
+        Fluttertoast.showToast(
+          msg: msg,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_LONG,
         );
         await fetchPendingInvites();
       } else {
         final err = jsonData is Map && jsonData['message'] != null
             ? jsonData['message'].toString()
             : 'Failed to resend invitation.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(err), backgroundColor: Colors.red),
+        Fluttertoast.showToast(
+          msg: err,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_LONG,
         );
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to resend invitation.'),
-            backgroundColor: Colors.red,
-          ),
+        Fluttertoast.showToast(
+          msg: 'Failed to resend invitation.',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_LONG,
         );
       }
+    }
+  }
+
+  void _showDeletePendingInviteAlert(Map<String, dynamic> invite) {
+    final inviteId = (invite['applicant_id'] ?? invite['_id'] ?? invite['id'] ?? '').toString();
+    if (inviteId.isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Unable to identify invite.',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+      return;
+    }
+    TextEditingController reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Are you sure?",
+      desc: "Once deleted, you will not be able to recover this applicant!",
+      content: Column(
+        children: [
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for deletion',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      style: const AlertStyle(backgroundColor: Colors.white),
+      buttons: [
+        DialogButton(
+          child: const Text("Delete",
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () async {
+            if (reason.text.trim().isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+            } else {
+              Navigator.pop(context);
+              await _deletePendingInvite(inviteId, reason.text.trim(), invite['email']?.toString() ?? '');
+            }
+          },
+          color: blueColor,
+        ),
+        DialogButton(
+          child: Text("Cancel",
+              style: TextStyle(
+                  color: blueColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(color: blueColor, width: 1.5),
+        ),
+      ],
+    ).show();
+  }
+
+  Future<void> _deletePendingInvite(String inviteId, String reason, String email) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? adminId = prefs.getString('adminId');
+      String? staffId = prefs.getString('staff_id');
+      String? token = prefs.getString('token');
+      final response = await http.delete(
+        Uri.parse('$Api_url/api/applicant/pending-invite/$adminId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $staffId',
+        },
+        body: jsonEncode({'reason': reason, 'email': email, 'applicant_id': inviteId}),
+      );
+      final jsonData = json.decode(response.body);
+      print('deletePendingInvite → status: ${response.statusCode}');
+      print('deletePendingInvite → body: ${response.body}');
+      final bool ok = response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          (jsonData is Map &&
+              (jsonData['statusCode'] == 200 || jsonData['statusCode'] == 201));
+      if (ok) {
+        final msg = jsonData is Map && jsonData['message'] != null
+            ? jsonData['message'].toString()
+            : 'Invite deleted successfully.';
+        Fluttertoast.showToast(
+          msg: msg,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_LONG,
+        );
+        await fetchPendingInvites();
+        await fetchDeletedInvites();
+      } else {
+        final err = jsonData is Map && jsonData['message'] != null
+            ? jsonData['message'].toString()
+            : 'Failed to delete invite.';
+        Fluttertoast.showToast(
+          msg: err,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Failed to delete invite.',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 
@@ -929,7 +1052,7 @@ class _Applicants_tableState extends State<Applicants_table>
                       ),
                       const SizedBox(width: 5),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => _showDeletePendingInviteAlert(invite),
                         child: Container(
                           height: 35,
                           width: 35,
@@ -1221,9 +1344,8 @@ class _Applicants_tableState extends State<Applicants_table>
                       ],
                     ),
                   ),
-                  // const SizedBox(height: 8),
+                  const SizedBox(height: 8),
 
-                  /* ── TabBar: Applicants / Pending — kept for future use; uncomment block and remove/disable day filter Padding below when restoring ──
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Container(
@@ -1324,7 +1446,6 @@ class _Applicants_tableState extends State<Applicants_table>
                       ),
                     ),
                   ),
-                  */
 
                   const SizedBox(height: 8),
 
@@ -2588,24 +2709,38 @@ class _Applicants_tableState extends State<Applicants_table>
                     'admin_id': adminId,
                   }),
                 );
-                print(response.body);
-                if (response.statusCode == 200) {
+                final jsonData = json.decode(response.body);
+                print('sendInvites → status: ${response.statusCode}');
+                print('sendInvites → body: ${response.body}');
+                final bool ok = response.statusCode == 200 ||
+                    response.statusCode == 201 ||
+                    (jsonData is Map &&
+                        (jsonData['statusCode'] == 200 ||
+                            jsonData['statusCode'] == 201));
+                if (ok) {
+                  final msg = jsonData is Map && jsonData['message'] != null
+                      ? jsonData['message'].toString()
+                      : 'Invitations sent successfully!';
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Invitations sent successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
+                  Fluttertoast.showToast(
+                    msg: msg,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    toastLength: Toast.LENGTH_LONG,
                   );
+                  fetchPendingInvites();
                 } else {
-                  throw Exception('Failed to send invites');
+                  final err = jsonData is Map && jsonData['message'] != null
+                      ? jsonData['message'].toString()
+                      : 'Failed to send invites.';
+                  throw Exception(err);
                 }
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to send invites. Please try again.'),
-                    backgroundColor: Colors.red,
-                  ),
+                Fluttertoast.showToast(
+                  msg: e.toString().replaceFirst('Exception: ', ''),
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  toastLength: Toast.LENGTH_LONG,
                 );
               }
             }

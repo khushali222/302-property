@@ -816,11 +816,11 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'KPI overview of your property portfolio',
                   "navigate": PortfolioOverviewReport(),
                 },
-                // {
-                //   'title': 'Loan Summary Report',
-                //   'subtitle': 'Summary of all loans with balance and properties',
-                //   "navigate": Loansummaryreport()
-                // },
+                {
+                  'title': 'Loan Summary Report',
+                  'subtitle': 'Summary of all loans with balance and properties',
+                  "navigate": Loansummaryreport()
+                },
               ],
               "Track payments, transactions, and owner accounts.",
               context),

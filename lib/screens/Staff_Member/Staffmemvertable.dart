@@ -125,6 +125,7 @@ class _StaffTableState extends State<StaffTable> {
               ),
             ),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -175,8 +176,8 @@ class _StaffTableState extends State<StaffTable> {
                 ),
               ),
             ),
-            const Spacer(),
             Expanded(
+              flex: 2,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -198,8 +199,8 @@ class _StaffTableState extends State<StaffTable> {
                   });
                 },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Title",
                         style: TextStyle(
@@ -395,7 +396,7 @@ class _StaffTableState extends State<StaffTable> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text("Designation",
+                  Text("Title",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, color: blueColor)),
                   const SizedBox(height: 6),
@@ -1026,41 +1027,25 @@ class _StaffTableState extends State<StaffTable> {
                                                     const EdgeInsets.all(16.0),
                                                 child: Row(
                                                   children: <Widget>[
+                                                    Icon(
+                                                      isExpanded
+                                                          ? Icons.keyboard_arrow_up
+                                                          : Icons.keyboard_arrow_down,
+                                                      color: Colors.grey[600],
+                                                      size: 20,
+                                                    ),
+                                                    const SizedBox(width: 8),
                                                     Expanded(
                                                       flex: 3,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            isExpanded
-                                                                ? Icons
-                                                                    .keyboard_arrow_up
-                                                                : Icons
-                                                                    .keyboard_arrow_down,
-                                                            color: Colors
-                                                                .grey[600],
-                                                            size: 20,
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 8),
-                                                          Flexible(
-                                                            child: Text(
-                                                              '${staffmembers.staffmemberName}',
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 16,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                      child: Text(
+                                                        '${staffmembers.staffmemberName}',
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 14,
+                                                        ),
+                                                        overflow: TextOverflow.ellipsis,
+                                                        maxLines: 1,
                                                       ),
                                                     ),
                                                     Expanded(
@@ -1069,15 +1054,10 @@ class _StaffTableState extends State<StaffTable> {
                                                         '${staffmembers.staffmemberDesignation}',
                                                         style: const TextStyle(
                                                           color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontSize: 14,
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
+                                                        textAlign: TextAlign.start,
                                                       ),
                                                     ),
                                                   ],
@@ -1147,104 +1127,6 @@ class _StaffTableState extends State<StaffTable> {
                                                           ),
                                                           overflow: TextOverflow
                                                               .ellipsis,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                'Created On :',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                staffmembers.createdAt
-                                                                            ?.isNotEmpty ==
-                                                                        true
-                                                                    ? dateProvider
-                                                                        .formatCurrentDate(
-                                                                            '${staffmembers.createdAt}')
-                                                                    : 'N/A',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  color:
-                                                                      grey, // Light and grey
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 16),
-                                                        Expanded(
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              Text(
-                                                                'Updated On :',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      blueColor, // Bold and blue
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                staffmembers.updatedAt
-                                                                            ?.isNotEmpty ==
-                                                                        true
-                                                                    ? dateProvider
-                                                                        .formatCurrentDate(
-                                                                            '${staffmembers.updatedAt}')
-                                                                    : 'N/A',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  color:
-                                                                      grey, // Light and grey
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            ],
-                                                          ),
                                                         ),
                                                       ],
                                                     ),
