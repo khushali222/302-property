@@ -2,15 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
 import '../../../constant/constant.dart';
 
-
-
 class PaymentService {
-
-
   Future<String> makePaymentforcard({
     required String adminId,
     required String firstName,
@@ -31,10 +28,9 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {
@@ -88,10 +84,10 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
-        'entry':updatedEntries,
+        'tenantName': tenantname,
+        'notificationTime': notificationTime,
+        'lease_id': leaseid,
+        'entry': updatedEntries,
         // 'entry':entries,
       };
       log(paymentDetails.toString());
@@ -101,10 +97,10 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
       print('card for real ${response.body}');
@@ -162,8 +158,7 @@ class PaymentService {
               transactionId: "",
               responseText: "PENDING",
               surcharge: surcharge,
-              notificationTime: notificationTime
-          )
+              notificationTime: notificationTime)
         ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
@@ -189,10 +184,10 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffId = prefs.getString('staff_id');
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
@@ -200,8 +195,9 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -212,14 +208,13 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount':
-        (double.parse(totalAmount) - double.parse(surcharge)),
+        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -257,10 +252,9 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? tenantname,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {
@@ -316,9 +310,9 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'tenantName':tenantname,
-        'notificationTime':notificationTime,
-        'lease_id':leaseid,
+        'tenantName': tenantname,
+        'notificationTime': notificationTime,
+        'lease_id': leaseid,
         'entry': updatedEntries,
         // 'entry': entries,
       };
@@ -329,10 +323,10 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
 
@@ -358,9 +352,7 @@ class PaymentService {
                 //    responseText: jsonData["data"]["responsetext"],
                 responseText: "SUCCESS",
                 surcharge: surcharge,
-                notificationTime: notificationTime
-            )
-
+                notificationTime: notificationTime)
           ]);
           return "Payment Success";
         } else {
@@ -378,7 +370,7 @@ class PaymentService {
               adminId: adminId,
               tenantId: tenantId,
               leaseId: leaseid,
-              paymentType: "Card",
+              paymentType: "ACH",
               entries: updatedEntries,
               // entries: entries,
               totalAmount: amount,
@@ -387,8 +379,7 @@ class PaymentService {
               transactionId: "",
               responseText: "PENDING",
               surcharge: surcharge,
-              notificationTime: notificationTime
-          )
+              notificationTime: notificationTime)
         ]);
         return "Payment Scheduled Successfully";
       } catch (e) {
@@ -412,10 +403,10 @@ class PaymentService {
     required String responseText,
     required String surcharge,
     String? notificationTime,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? staffId = prefs.getString('staff_id');
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
@@ -423,8 +414,9 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -435,13 +427,13 @@ class PaymentService {
 
         'entry': entries,
         // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
+        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -482,10 +474,9 @@ class PaymentService {
     required List<String>? uploadedFile,
     required List<Map<String, dynamic>> entries,
     String? notificationTime,
-
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     // List<Map<String, dynamic>> updatedEntries = entries.map((entry) {
     //   return {
@@ -542,7 +533,7 @@ class PaymentService {
         'date': date,
         'address1': address1,
         'processor_id': processorId,
-        'lease_id':leaseid,
+        'lease_id': leaseid,
         'entry': updatedEntries,
         //'entry': entries,
         // 'notificationTime':notificationTime,
@@ -555,10 +546,10 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
-
         }),
       );
       if (response.statusCode == 200) {
@@ -591,8 +582,7 @@ class PaymentService {
       } else {
         throw Exception('Failed to make payment');
       }
-    }
-    else {
+    } else {
       try {
         await Future.wait([
           storePaymentfornormal(
@@ -610,9 +600,7 @@ class PaymentService {
               responseText: "PENDING",
               surcharge: surcharge,
               notificationTime: notificationTime,
-              paymentId: paymentId
-
-          )
+              paymentId: paymentId)
         ]);
         return "Payment Successfully";
       } catch (e) {
@@ -637,7 +625,6 @@ class PaymentService {
     required String surcharge,
     String? notificationTime,
     String? paymentId,
-
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -650,13 +637,14 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
+          "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
         'admin_id': id,
         'tenant_id': tenantId,
         'lease_id': leaseId,
-        'payment_id':paymentId,
+        'payment_id': paymentId,
         'payment_type': paymentType,
         'entry': entries,
         'total_amount': totalAmount,
@@ -664,7 +652,7 @@ class PaymentService {
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
         'response': "SUCCESS",
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
       }),
     );
 
@@ -677,7 +665,56 @@ class PaymentService {
     }
   }
 
+  Future<Map<String, dynamic>> storePaymentForEdit({
+    required String companyName,
+    required String adminId,
+    required String tenantId,
+    required String tenantName,
+    required String leaseId,
+    required String paymentId,
+    required String customerVaultId,
+    required String billingId,
+    required List<Map<String, dynamic>> entries,
+    required double totalAmount,
+    required List<String>? uploadedFile,
+  }) async {
+    final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('adminId');
+    String? token = prefs.getString('token');
 
+    final response = await http.put(
+      Uri.parse(baseUrl),
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        "Content-Type": "application/json",
+        "X-Idempotency-Key": Uuid().v4(),
+      },
+      body: jsonEncode(<String, dynamic>{
+        'payment_id': paymentId,
+        'admin_id': adminId,
+        'tenant_id': tenantId,
+        'tenantName': tenantName,
+        'lease_id': leaseId,
+        'customer_vault_id': customerVaultId,
+        'billing_id': billingId,
+        'entry': entries,
+        'total_amount': totalAmount,
+        'uploaded_file': uploadedFile ?? [],
+        'is_web': false,
+        'user_active_recently': true,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(
+          'Failed to update payment ${jsonDecode(response.body)["message"]}');
+    }
+  }
 
 // Future<String> makePaymentforCashier({
 //   required String adminId,
@@ -781,6 +818,4 @@ class PaymentService {
 //     throw Exception('Error: $e');
 //   }
 // }
-
-
 }

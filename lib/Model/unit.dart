@@ -7,6 +7,11 @@ class unit_lease {
   String? leaseId;
   String? leaseType;
   int? amount;
+  String? rentCycle;
+  int? remainingDays;
+  double? totalBalance;
+  String? tenantNames;
+  String? rentalId;
 
   unit_lease(
       {this.tenantId,
@@ -16,7 +21,12 @@ class unit_lease {
       this.endDate,
       this.leaseId,
       this.leaseType,
-      this.amount});
+      this.amount,
+      this.rentCycle,
+      this.remainingDays,
+      this.totalBalance,
+      this.tenantNames,
+      this.rentalId});
 
   unit_lease.fromJson(Map<String, dynamic> json) {
     tenantId = json['tenant_id'];
@@ -26,7 +36,19 @@ class unit_lease {
     endDate = json['end_date'];
     leaseId = json['lease_id'];
     leaseType = json['lease_type'];
-    amount = json['amount'];
+    amount = json['amount'] is int
+        ? json['amount']
+        : (json['amount'] as num?)?.toInt();
+    rentCycle = json['rent_cycle'] ?? json['rentCycle'];
+    remainingDays = json['remainingDays'] is int
+        ? json['remainingDays']
+        : (json['remainingDays'] as num?)?.toInt();
+    totalBalance = json['totalBalance'] is double
+        ? json['totalBalance']
+        : (json['totalBalance'] as num?)?.toDouble();
+    tenantNames = json['tenantNames'] ??
+        '${json['tenant_firstName'] ?? ''} ${json['tenant_lastName'] ?? ''}'.trim();
+    rentalId = json['rental_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +61,11 @@ class unit_lease {
     data['lease_id'] = this.leaseId;
     data['lease_type'] = this.leaseType;
     data['amount'] = this.amount;
+    data['rent_cycle'] = this.rentCycle;
+    data['remainingDays'] = this.remainingDays;
+    data['totalBalance'] = this.totalBalance;
+    data['tenantNames'] = this.tenantNames;
+    data['rental_id'] = this.rentalId;
     return data;
   }
 }

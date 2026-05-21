@@ -14,7 +14,7 @@ class titleBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(5.0),
       child: Container(
         height: (MediaQuery.of(context).size.width < 768) ? 50 : 60,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         width: width,
         margin: EdgeInsets.zero,
         decoration: BoxDecoration(
@@ -31,7 +31,7 @@ class titleBar extends StatelessWidget {
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 20.0),
             child: Text(
               "${title}",
               style: TextStyle(

@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -36,13 +34,15 @@ import '../../../repository/tenants.dart';
 import 'addcard/AddCard.dart';
 import 'addcard/CardModel.dart';
 import '../../../widgets/custom_drawer.dart';
+
 class EditMakePayment extends StatefulWidget {
   final String leaseId;
   final String tenantId;
   bool? isEdit;
   Data? data;
 
-   EditMakePayment({required this.leaseId, required this.tenantId,this.isEdit,this.data});
+  EditMakePayment(
+      {required this.leaseId, required this.tenantId, this.isEdit, this.data});
 
   @override
   State<EditMakePayment> createState() => _EditMakePaymentState();
@@ -129,38 +129,57 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     Data c_data = widget.data!;
     setState(() {
       selectedTenantId = widget.tenantId;
-      tenantname = "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
+      tenantname =
+          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
       _startDate.text = formatDate(c_data.entry!.first.date!);
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
-      if (_selectedPaymentMethod != "Cash") checknumber.text = c_data!.check_number ?? "";
+      customerVaultId = c_data.customer_vault_id ?? "";
+      billingId = c_data.billing_id ?? "";
+      if (_selectedPaymentMethod != "Cash")
+        checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
 
       print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
-        String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
-            ? entry.account
-            : entry.account == "Rent Income"
-            ? "Rent"
-            : categorizedData.entries
-            .firstWhere(
-              (entryData) => entryData.value.contains(entry.account),
-          orElse: () => const MapEntry("Unknown", []), // Default if not found
-        )
-            .key;
-        print(chargeType);
-        return {
-          'entry_id': entry.entryId,
-          'account': entry.account,
-          'amount': entry.amount,
-          'charge_amount': entry.amount,
-          'memo': entry.memo,
-          'date': entry.date,
-          'charge_type': chargeType,
-          'sub_charge_type': entry.chargeType,
-          'newfield': false,
-        };
-      }).toList() ??
+            String? chargeType = (entry.account == "Late Fee Income" ||
+                    entry.account == "Pre-payments" ||
+                    entry.account == "Security Deposit")
+                ? entry.account
+                : entry.account == "Rent Income"
+                    ? "Rent"
+                    : categorizedData.entries
+                        .firstWhere(
+                          (entryData) =>
+                              entryData.value.contains(entry.account),
+                          orElse: () {
+                            String fallbackType =
+                                entry.chargeType ?? "One Time Charge";
+                            if (entry.account != null) {
+                              categorizedData[fallbackType] ??= [];
+                              if (!categorizedData[fallbackType]!
+                                  .contains(entry.account)) {
+                                categorizedData[fallbackType]!
+                                    .add(entry.account!);
+                              }
+                            }
+                            return MapEntry(fallbackType, []);
+                          },
+                        )
+                        .key;
+            print(chargeType);
+            return {
+              'entry_id': entry.entryId,
+              'account': entry.account,
+              'amount': entry.amount,
+              'charge_amount': entry.amount,
+              'memo': entry.memo,
+              'date': entry.date,
+              'charge_type': chargeType,
+              'sub_charge_type': entry.chargeType,
+              'newfield': false,
+            };
+          }).toList() ??
           [];
       for (var i = 0; i < c_data.entry!.length; i++) {
         if (i == 0) {
@@ -261,20 +280,22 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           'Rent Income'
         ];
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+          String chargeType = item['charge_type'] ?? 'One Time Charge';
+          String account = item['account'] ?? '';
+          if (account.isEmpty) continue;
 
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
           }
-          fetchedData[chargeType]!.add(account);
+          if (!fetchedData[chargeType]!.contains(account)) {
+            fetchedData[chargeType]!.add(account);
+          }
         }
         setState(() {
           categorizedData = fetchedData;
           isLoading = false;
         });
-        if(widget.isEdit != null)
-          editpayment();
+        if (widget.isEdit != null) editpayment();
       } else {
         setState(() {
           hasError = true;
@@ -295,14 +316,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(amountController.text) ?? 0.0;
+    double roundedEntered =
+        double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
 
-    /* setState(() {
-      totalAmount = enteredAmount;
-    });*/
-    if (enteredAmount != totalAmount) {
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${(roundedEntered - roundedTotal).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {
@@ -405,6 +426,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   bool showMoneyorderFields = false;
   bool showMenualFields = false;
   int? customervaultid;
+  String customerVaultId = "";
+  String billingId = "";
 
   void AddFields() {
     print("selected method $_selectedPaymentMethod");
@@ -511,9 +534,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       hasError = false;
     });
     try {
-      List<Entrycharge>? charges = await ChargeRepositorys().fetchChargesTable(widget.leaseId);
+      List<Entrycharge>? charges =
+          await ChargeRepositorys().fetchChargesTable(widget.leaseId);
       print('charge details ${charges!.length}');
-      List<Entrycharge> filteredCharges = charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
+      List<Entrycharge> filteredCharges =
+          charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
       print("charges length:- ${charges!.length}");
       print('leaseid ${widget.leaseId}');
 
@@ -522,33 +547,38 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
-          // String chargeType = categorizedData.entries.firstWhere(
-          //       (entryData) => entryData.value.contains(entry.account),
-          //   orElse: () => MapEntry("Unknown", []), // Default if not found
-          // ).key;
-          String? chargeType = (entry.account == "Late Fee Income" || entry.account == "Pre-payments" || entry.account == "Security Deposit")
-              ? entry.account
-              : entry.account == "Rent Income"
-              ? "Rent"
-              : categorizedData.entries
-              .firstWhere(
-                (entryData) => entryData.value.contains(entry.account),
-            orElse: () => const MapEntry("Unknown", []), // Default if not found
-          )
-              .key;
-          print(chargeType);
-          return {
-            'entry_id': entry.entryId,
-            'account': entry.account,
-            'amount': 0.0,
-            'charge_amount': entry.chargeAmount,
-            'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
-            'date': entry.date,
-            'charge_type': chargeType, // Set matched charge type libity
-            'sub_charge_type': entry.chargeType, // Set original charge type onetime
-            'newfield': false,
-          };
-        }).toList() ??
+              // String chargeType = categorizedData.entries.firstWhere(
+              //       (entryData) => entryData.value.contains(entry.account),
+              //   orElse: () => MapEntry("Unknown", []), // Default if not found
+              // ).key;
+              String? chargeType = (entry.account == "Late Fee Income" ||
+                      entry.account == "Pre-payments" ||
+                      entry.account == "Security Deposit")
+                  ? entry.account
+                  : entry.account == "Rent Income"
+                      ? "Rent"
+                      : categorizedData.entries
+                          .firstWhere(
+                            (entryData) =>
+                                entryData.value.contains(entry.account),
+                            orElse: () => const MapEntry(
+                                "Unknown", []), // Default if not found
+                          )
+                          .key;
+              print(chargeType);
+              return {
+                'entry_id': entry.entryId,
+                'account': entry.account,
+                'amount': 0.0,
+                'charge_amount': entry.chargeAmount,
+                'memo': entry.memo?.isNotEmpty == true ? entry.memo : "Payment",
+                'date': entry.date,
+                'charge_type': chargeType, // Set matched charge type libity
+                'sub_charge_type':
+                    entry.chargeType, // Set original charge type onetime
+                'newfield': false,
+              };
+            }).toList() ??
             [];
 
         for (var i = 0; i < filteredCharges!.length; i++) {
@@ -573,7 +603,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           return TextEditingController(text: "".toString());
         }).toList();
         print(rows);
-        totalAmount = rows.fold(0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        totalAmount = rows.fold(
+            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -583,6 +614,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       });
     }
   }
+
   void addRow() {
     setState(() {
       rows.add({
@@ -591,7 +623,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': reverseFormatDate(_startDate.text),
         'newfield': true
       });
 
@@ -642,7 +674,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
           for (var i = 0; i < rows.length; i++) {
             print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0) totalAmount = totalAmount + rows[i]["amount"];
+            if (rows[i]["amount"] != 0.0)
+              totalAmount = totalAmount + rows[i]["amount"];
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
@@ -657,7 +690,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
           for (var i = 0; i < rows.length; i++) {
             print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0) totalAmount = totalAmount + rows[i]["amount"];
+            if (rows[i]["amount"] != 0.0)
+              totalAmount = totalAmount + rows[i]["amount"];
           }
         }
 
@@ -705,8 +739,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         print('Billing ID: ${cardDetail['billing_id']}');
       }
 
-      CustomerData? customerData =
-          await postBillingCustomerVault(customervaultid.toString(),cardDetailsList);
+      CustomerData? customerData = await postBillingCustomerVault(
+          customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
         setState(() {
@@ -746,7 +780,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -933,7 +968,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                   //Same as `blurRadius` i guess
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5.0),
-                    color:blueColor,
+                    color: blueColor,
                     boxShadow: const [
                       BoxShadow(
                         color: Colors.grey,
@@ -943,11 +978,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                     ],
                   ),
                   child: const Text(
-                    "Make Payments",
+                    "Make Payment",
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                 ),
               ),
@@ -965,7 +1000,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                       border: Border.all(
-                        color: blueColor,
+                        color: const Color(0xFFCED4DA),
                       ),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Column(
@@ -983,11 +1018,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               height: 8,
                             ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Received From *',
+                              Text('Received From *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1009,7 +1044,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Tenant'),
+                                          hint: const Text('Select Tenant',
+                                              style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                           value: selectedTenantId,
                                           items: tenants.map((tenant) {
                                             return DropdownMenuItem<String>(
@@ -1036,9 +1072,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           // },
                                           buttonStyleData: ButtonStyleData(
                                             height: 45,
-                                            width: 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1052,7 +1087,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             ),
                                             iconSize: 24,
                                             iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
+                                            iconDisabledColor: Color(0xFFb0b6c3),
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
@@ -1097,11 +1132,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 height: 20,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
-                              const Text('Date',
+                              Text('Date *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                             if (MediaQuery.of(context).size.width < 500)
                               const SizedBox(
                                 height: 8,
@@ -1166,7 +1201,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 },
                                 label: "Select the date",
                                 keyboardType: TextInputType.text,
-                                hintText: 'dd-mm-yyyy',
+                                hintText: 'YYYY-MM-DD',
                                 controller: _startDate,
                               ),
                             if (MediaQuery.of(context).size.width < 500)
@@ -1187,11 +1222,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Received From *',
+                                          Text('Received From *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           tenants.isEmpty
                                               ? const Center(
@@ -1205,7 +1240,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       DropdownButton2<String>(
                                                     isExpanded: true,
                                                     hint: const Text(
-                                                        'Select Tenant'),
+                                                        'Select Tenant',
+                                                        style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                                     value: selectedTenantId,
                                                     items:
                                                         tenants.map((tenant) {
@@ -1247,10 +1283,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                                   500
                                                               ? 45
                                                               : 55,
-                                                      width: 250,
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              left: 14,
+                                                              left: 2,
                                                               right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
@@ -1269,7 +1304,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       iconEnabledColor:
                                                           Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                          Colors.grey,
+                                                          Color(0xFFb0b6c3),
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
@@ -1309,11 +1344,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text('Date',
+                                          Text('Date *',
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           const SizedBox(height: 5),
                                           CustomTextField(
                                             onTap: () async {
@@ -1353,10 +1388,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                           foregroundColor:
                                                               Colors.white,
                                                           backgroundColor:
-                                                               blueColor
-
-
-, // button text color
+                                                              blueColor, // button text color
                                                         ),
                                                       ),
                                                     ),
@@ -1390,7 +1422,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             },
                                             label: "Select the date",
                                             keyboardType: TextInputType.text,
-                                            hintText: 'dd-mm-yyyy',
+                                            hintText: 'YYYY-MM-DD',
                                             controller: _startDate,
                                           ),
                                           const SizedBox(height: 5),
@@ -1403,11 +1435,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             const SizedBox(
                               height: 8,
                             ),
-                            const Text('Amount',
+                            Text('Amount *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1416,23 +1448,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter amount';
                                 }
+                                final parsed = double.tryParse(value.trim());
+                                if (parsed == null || parsed <= 0) {
+                                  return 'Please enter a valid amount';
+                                }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
-                              hintText: 'Enter Amount',
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              hintText: 'Enter amount',
                               controller: amountController,
                               onChanged: (value) => validateAmounts(),
                               readOnnly: true,
                             ),
-
                             const SizedBox(
                               height: 12,
                             ),
-                            const Text('Payment Method',
+                            Text('Payment Method *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: blueColor)),
                             const SizedBox(
                               height: 8,
                             ),
@@ -1440,7 +1475,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               DropdownButtonHideUnderline(
                                 child: DropdownButton2<String>(
                                   isExpanded: true,
-                                  hint: const Text('Select Method'),
+                                  hint: const Text('Select Method',
+                                    style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                   value: _selectedPaymentMethod,
                                   items: _paymentMethodsforfree.map((method) {
                                     return DropdownMenuItem<String>(
@@ -1472,12 +1508,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         MediaQuery.of(context).size.width < 500
                                             ? 46
                                             : 55,
-                                    width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 200
-                                            : 250,
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                        left: 2, right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
@@ -1490,7 +1522,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     ),
                                     iconSize: 24,
                                     iconEnabledColor: Color(0xFFb0b6c3),
-                                    iconDisabledColor: Colors.grey,
+                                    iconDisabledColor: Color(0xFFb0b6c3),
                                   ),
                                   dropdownStyleData: DropdownStyleData(
                                     decoration: BoxDecoration(
@@ -1515,7 +1547,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               FormField<String>(
                                 validator: (value) {
                                   if (_selectedPaymentMethod == null ||
-                                      _selectedPaymentMethod!.isEmpty ) {
+                                      _selectedPaymentMethod!.isEmpty) {
                                     return 'Please select a payment method';
                                   }
                                   return null;
@@ -1523,8 +1555,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 builder: (FormFieldState<String> state) {
                                   if (!_paymentMethods
                                       .contains(_selectedPaymentMethod)) {
-                                    _selectedPaymentMethod =
-                                    null;
+                                    _selectedPaymentMethod = null;
                                   }
                                   return Column(
                                     crossAxisAlignment:
@@ -1533,7 +1564,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       DropdownButtonHideUnderline(
                                         child: DropdownButton2<String>(
                                           isExpanded: true,
-                                          hint: const Text('Select Method'),
+                                          hint: const Text('Select Method',
+                                              style: TextStyle(fontSize: 13, color: Color(0xFFb0b6c3))),
                                           value: _selectedPaymentMethod,
                                           items: _paymentMethods.map((method) {
                                             return DropdownMenuItem<String>(
@@ -1563,14 +1595,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     500
                                                 ? 46
                                                 : 55,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 200
-                                                : 250,
                                             padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
+                                                left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1582,7 +1608,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             icon: Icon(Icons.arrow_drop_down),
                                             iconSize: 24,
                                             iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
+                                            iconDisabledColor: Color(0xFFb0b6c3),
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             decoration: BoxDecoration(
@@ -1626,9 +1652,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               height: 12,
                             ),
                             const SizedBox(height: 10),
-                            const Padding(
-                              padding: EdgeInsets.all(4.0),
-                              child: Text("Reference"),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text("Reference",
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
                             ),
                             const SizedBox(
                               height: 5,
@@ -1695,35 +1722,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 dataRowHeight: 75,
                                                 horizontalMargin: 0.0,
                                                 columnSpacing: 40.0,
-                                                columns:  [
+                                                columns: [
                                                   DataColumn(
                                                     label: Text(
                                                       'Select',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Number',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                   DataColumn(
                                                     label: Text(
                                                       'Card Type',
                                                       style: TextStyle(
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     ),
                                                   ),
                                                 ],
@@ -1807,12 +1825,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     ),
                                                     DataCell(Text(
                                                       item.ccNumber!,
-                                                      style:  TextStyle(
+                                                      style: TextStyle(
                                                           fontSize: 13,
-                                                          color:blueColor
-
-
-),
+                                                          color: blueColor),
                                                     )),
                                                     DataCell(Column(
                                                       mainAxisAlignment:
@@ -1854,11 +1869,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               // ignore: unrelated_type_equality_checks
                                               Text(
                                                 '${cardDetails[selectedcardindex!].binResult} card transactions will charge $surCharge%',
-                                                style:  TextStyle(
-                                                    color: blueColor
-
-
-,
+                                                style: TextStyle(
+                                                    color: blueColor,
                                                     fontSize: 14,
                                                     fontWeight:
                                                         FontWeight.w500),
@@ -1912,10 +1924,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           5.0),
-                                                  color: blueColor
-
-
-,
+                                                  color: blueColor,
                                                   boxShadow: [
                                                     const BoxShadow(
                                                       color: Colors.grey,
@@ -1964,9 +1973,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             ],
                             if (showCheckNumberField) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text("Check Number",
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2028,7 +2038,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     return null;
                                   },
                                   keyboardType: TextInputType.text,
-                                  hintText: 'Enter routing number',
+                                  hintText: 'Enter account number',
                                   controller: accountnum,
                                 ),
                               ),
@@ -2071,9 +2081,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
-                                                width: 200,
                                                 padding: const EdgeInsets.only(
-                                                    left: 14, right: 14),
+                                                    left: 2, right: 14),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(6),
@@ -2089,7 +2098,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 iconSize: 24,
                                                 iconEnabledColor:
                                                     Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
+                                                iconDisabledColor: Color(0xFFb0b6c3),
                                               ),
                                               dropdownStyleData:
                                                   DropdownStyleData(
@@ -2149,7 +2158,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
-                                                hint: const Text('Select Account'),
+                                                hint: const Text(
+                                                    'Select Account'),
                                                 value: selectedAccount,
                                                 items:
                                                     _selecttype.map((method) {
@@ -2179,10 +2189,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 buttonStyleData:
                                                     ButtonStyleData(
                                                   height: 55,
-                                                  width: 250,
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 14, right: 14),
+                                                          left: 2, right: 14),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2200,7 +2209,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   iconEnabledColor:
                                                       Color(0xFFb0b6c3),
                                                   iconDisabledColor:
-                                                      Colors.grey,
+                                                      Color(0xFFb0b6c3),
                                                 ),
                                                 dropdownStyleData:
                                                     DropdownStyleData(
@@ -2291,7 +2300,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 iconSize: 24,
                                                 iconEnabledColor:
                                                     Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
+                                                iconDisabledColor: Color(0xFFb0b6c3),
                                               ),
                                               dropdownStyleData:
                                                   DropdownStyleData(
@@ -2404,7 +2413,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 iconSize: 24,
                                                 iconEnabledColor:
                                                     Color(0xFFb0b6c3),
-                                                iconDisabledColor: Colors.grey,
+                                                iconDisabledColor: Color(0xFFb0b6c3),
                                               ),
                                               dropdownStyleData:
                                                   DropdownStyleData(
@@ -2454,9 +2463,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             ],
                             if (showCashiersFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text("Check Number",
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2480,9 +2490,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             ],
                             if (showMoneyorderFields) ...[
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text("Check Number",
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2507,9 +2518,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             if (showMenualFields) ...[
                               //checkfield is not required
                               const SizedBox(height: 10),
-                              const Padding(
-                                padding: EdgeInsets.all(4.0),
-                                child: Text("Check Number"),
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text("Check Number",
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -2551,7 +2563,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 return null;
                               },
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Memo',
+                              hintText: 'Enter memo',
                               controller: Memo,
                             ),
                           ],
@@ -2589,11 +2601,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   padding: const EdgeInsets.all(15.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text('Charge ${index + 1}',
                                               style: const TextStyle(
@@ -2637,27 +2649,35 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                             builder:
                                                 (FormFieldState<String> state) {
                                               String? selectedAccount =
-                                              row['account'];
+                                                  row['account'];
 
                                               // List of all dropdown items, including missing ones
                                               Map<String, List<String>>
-                                              categorizedDataCopy =
-                                              Map.from(categorizedData);
+                                                  categorizedDataCopy =
+                                                  Map.from(categorizedData);
 
                                               // Ensure the selected value is present in the list
                                               if (selectedAccount != null &&
                                                   !categorizedData.values
                                                       .expand((list) => list)
                                                       .contains(
-                                                      selectedAccount)) {
+                                                          selectedAccount)) {
                                                 if (categorizedDataCopy[
-                                                'Other'] ==
+                                                        'Other'] ==
                                                     null) {
                                                   categorizedDataCopy['Other'] =
-                                                  [];
+                                                      [];
                                                 }
                                                 categorizedDataCopy['Other']!
                                                     .add(selectedAccount);
+                                              }
+                                              for (final k in categorizedDataCopy
+                                                  .keys
+                                                  .toList()) {
+                                                categorizedDataCopy[k] =
+                                                    categorizedDataCopy[k]!
+                                                        .toSet()
+                                                        .toList();
                                               }
                                               print(row);
                                               if (row['charge_type'] ==
@@ -2676,7 +2696,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               print(categorizedDataCopy.values);
                                               return Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   DropdownButton2<String>(
                                                     isExpanded: true,
@@ -2691,77 +2711,52 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                     //         ? ""
                                                     //         : "${row['account']}_${row['charge_type']}",
                                                     value: liabilityAccounts
-                                                        .contains(
-                                                        row['account'])
+                                                            .contains(
+                                                                row['account'])
                                                         ? "${row['account']}_Liability Account"
                                                         : (row['account'] ==
-                                                        null ||
-                                                        row['account']
-                                                            .isEmpty ||
-                                                        row['charge_type'] ==
-                                                            null ||
-                                                        row['charge_type']
-                                                            .isEmpty)
-                                                        ? null // Default value that is part of the items
-                                                        : "${row['account']}_${row['charge_type']}",
+                                                                    null ||
+                                                                row['account']
+                                                                    .isEmpty ||
+                                                                row['charge_type'] ==
+                                                                    null ||
+                                                                row['charge_type']
+                                                                    .isEmpty)
+                                                            ? null // Default value that is part of the items
+                                                            : "${row['account']}_${row['charge_type']}",
                                                     items: [
                                                       ...categorizedDataCopy
                                                           .entries
                                                           .expand((entry) {
-                                                        return [
-                                                          // DropdownMenuItem<
-                                                          //     String>(
-                                                          //   enabled: false,
-                                                          //   child: Text(
-                                                          //     entry.key,
-                                                          //     style:
-                                                          //     const TextStyle(
-                                                          //       fontWeight:
-                                                          //       FontWeight
-                                                          //           .bold,
-                                                          //       color: Color
-                                                          //           .fromRGBO(
-                                                          //           21,
-                                                          //           43,
-                                                          //           81,
-                                                          //           1),
-                                                          //     ),
-                                                          //   ),
-                                                          // ),
-                                                          ...entry.value
-                                                              .map((item) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value:
-                                                              "${item}_${entry.key}",
-                                                              child: Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .only(
-                                                                    left:
-                                                                    16.0),
-                                                                child: Text(
-                                                                  item,
-                                                                  style:
-                                                                  const TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                        return entry.value
+                                                            .map((item) =>
+                                                                DropdownMenuItem<
+                                                                    String>(
+                                                                  value:
+                                                                      "${item}_${entry.key}",
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            16.0),
+                                                                    child: Text(
+                                                                      item,
+                                                                      style: const TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontWeight: FontWeight
+                                                                              .w400),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ];
+                                                                ));
                                                       }).toList(),
                                                     ],
                                                     onChanged: (value) {
                                                       dynamic? chargeType;
                                                       for (var entry
-                                                      in categorizedData
-                                                          .entries) {
+                                                          in categorizedData
+                                                              .entries) {
                                                         if (entry.value
                                                             .contains(value)) {
                                                           chargeType =
@@ -2771,17 +2766,17 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       }
                                                       setState(() {
                                                         final parts =
-                                                        value!.split('_');
+                                                            value!.split('_');
                                                         final chargeType =
-                                                        parts[0];
+                                                            parts[0];
                                                         final selectedValue =
-                                                        parts
-                                                            .sublist(1)
-                                                            .join('_');
+                                                            parts
+                                                                .sublist(1)
+                                                                .join('_');
                                                         rows[index]['account'] =
                                                             chargeType;
                                                         rows[index][
-                                                        'charge_type'] =
+                                                                'charge_type'] =
                                                             selectedValue;
                                                         state.didChange(
                                                             value); // Update the FormField state
@@ -2789,54 +2784,55 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       state.reset();
                                                     },
                                                     buttonStyleData:
-                                                    ButtonStyleData(
+                                                        ButtonStyleData(
                                                       height: 45,
                                                       // width: 220,
                                                       padding:
-                                                      const EdgeInsets.only(
-                                                          left: 0,
-                                                          right: 14),
+                                                          const EdgeInsets.only(
+                                                              left: 0,
+                                                              right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       elevation: 2,
                                                     ),
                                                     iconStyleData:
-                                                    const IconStyleData(
+                                                        const IconStyleData(
                                                       icon: Icon(Icons
                                                           .arrow_drop_down),
                                                       iconSize: 24,
                                                       iconEnabledColor:
-                                                      Color(0xFFb0b6c3),
+                                                          Color(0xFFb0b6c3),
                                                       iconDisabledColor:
-                                                      Colors.grey,
+                                                          Color(0xFFb0b6c3),
                                                     ),
                                                     dropdownStyleData:
-                                                    DropdownStyleData(
+                                                        DropdownStyleData(
                                                       width: 250,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius
-                                                            .circular(6),
+                                                            BorderRadius
+                                                                .circular(6),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
-                                                      ScrollbarThemeData(
+                                                          ScrollbarThemeData(
                                                         radius: const Radius
                                                             .circular(6),
                                                         thickness:
-                                                        MaterialStateProperty
-                                                            .all(6),
+                                                            MaterialStateProperty
+                                                                .all(6),
                                                         thumbVisibility:
-                                                        MaterialStateProperty
-                                                            .all(true),
+                                                            MaterialStateProperty
+                                                                .all(true),
                                                       ),
                                                     ),
                                                     hint: const Padding(
-                                                      padding: EdgeInsets.only(left: 10),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
                                                       child: Text(
                                                           'Select an account'),
                                                     ),
@@ -2845,9 +2841,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       .hasError) // Display the validation error
                                                     Padding(
                                                       padding:
-                                                      const EdgeInsets.only(
-                                                          left: 16.0,
-                                                          top: 5.0),
+                                                          const EdgeInsets.only(
+                                                              left: 16.0,
+                                                              top: 5.0),
                                                       child: Text(
                                                         state.errorText ?? '',
                                                         style: const TextStyle(
@@ -2892,10 +2888,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               ? true
                                               : null,
                                           max_amount: rows[index]
-                                          ["charge_amount"]
+                                                  ["charge_amount"]
                                               .toString(),
                                           error_mess:
-                                          "Amount must be less than or equal to balance",
+                                              "Amount must be less than or equal to balance",
                                           keyboardType: TextInputType.number,
                                           hintText: 'Enter Amount',
                                           controller: controllers[index],
@@ -2923,13 +2919,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         child: Material(
                                           elevation: 3,
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                           child: Container(
                                             height: 50,
                                             decoration: BoxDecoration(
                                               color: const Color(0xFFb0b6c3),
                                               borderRadius:
-                                              BorderRadius.circular(10),
+                                                  BorderRadius.circular(10),
                                             ),
                                             child: Row(
                                               children: [
@@ -2939,14 +2935,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 const Text("Balance :",
                                                     style: TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                                 const SizedBox(width: 12.0),
                                                 Text(
                                                     charges_balances[index]
                                                         .toStringAsFixed(2),
                                                     style: const TextStyle(
                                                         fontWeight:
-                                                        FontWeight.bold)),
+                                                            FontWeight.bold)),
                                               ],
                                             ),
                                           ),
@@ -2972,7 +2968,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               2: FlexColumnWidth(2),
                             },
                             children: [
-                               TableRow(children: [
+                              TableRow(children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text('Account',
@@ -3047,33 +3043,28 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 enabled: false,
                                                 child: Text(
                                                   entry.key,
-                                                  style:  TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: blueColor
-
-
-,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                               ),
-                                              ...entry.value.map((item) {
-                                                return DropdownMenuItem<String>(
-                                                  value: item,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 16.0),
-                                                    child: Text(
-                                                      item,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                              ...entry.value.map((item) =>
+                                                  DropdownMenuItem<String>(
+                                                    value: item,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .only(left: 16.0),
+                                                      child: Text(
+                                                        item,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                );
-                                              }).toList(),
+                                                  )),
                                             ];
                                           }).toList(),
                                         ],
@@ -3109,7 +3100,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           icon: Icon(Icons.arrow_drop_down),
                                           iconSize: 24,
                                           iconEnabledColor: Color(0xFFb0b6c3),
-                                          iconDisabledColor: Colors.grey,
+                                          iconDisabledColor: Color(0xFFb0b6c3),
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           width: 250,
@@ -3347,10 +3338,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:  blueColor
-
-
-,
+                                    backgroundColor: blueColor,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
@@ -3481,30 +3469,85 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0))),
                           onPressed: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
-                            if ((_formKey.currentState?.validate() ?? false) && validationMessage == null) {
+                            if ((_formKey.currentState?.validate() ?? false) &&
+                                validationMessage == null) {
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
-                                return MapEntry(
-                                  index,
-                                  {
-                                    ...entry,
-                                    'date': reverseFormatDate(_startDate.text.trim()), // Set the date to the desired date
-                                    'balance': charges_balances[index], // Add balance from charges_balances list
-                                  },
-                                );
-                              })
+                                    return MapEntry(
+                                      index,
+                                      {
+                                        ...entry,
+                                        'date': reverseFormatDate(_startDate
+                                            .text
+                                            .trim()), // Set the date to the desired date
+                                        'balance': double.parse(charges_balances[index].toStringAsFixed(2)), // Add balance from charges_balances list
+                                      },
+                                    );
+                                  })
                                   .values
                                   .toList();
                               setState(() {
                                 _isLoading = true;
                               });
                               if (_selectedPaymentMethod == null) {
-                                Fluttertoast.showToast(msg: "Please select the payment method");
+                                Fluttertoast.showToast(
+                                    msg: "Please select the payment method");
                                 setState(() {
                                   _isLoading = false;
+                                });
+                              } else if (_selectedPaymentMethod == "Card" ||
+                                  _selectedPaymentMethod == "ACH") {
+                                await PaymentService()
+                                    .storePaymentForEdit(
+                                      companyName: companyName,
+                                      adminId: id ?? "",
+                                      tenantId: selectedTenantId!,
+                                      tenantName: tenantname,
+                                      leaseId: widget.leaseId,
+                                      paymentId: widget.data!.paymentId ?? "",
+                                      customerVaultId: customerVaultId,
+                                      billingId: billingId,
+                                      entries: rows!,
+                                      totalAmount: double.parse(amountController.text.trim()),
+                                      uploadedFile: _uploadedFileNames,
+                                    )
+                                    .then((value) {
+                                  Fluttertoast.showToast(
+                                      msg: "Payment Updated Successfully");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  print(e.toString());
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.warning,
+                                    title: "Payment Failed!",
+                                    desc: "${e.toString().split('Exception:').last.trimLeft()}",
+                                    style: AlertStyle(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text(
+                                          "Ok",
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 18),
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        color: blueColor,
+                                      ),
+                                    ],
+                                  ).show();
                                 });
                               }
                               /*  else if (_selectedPaymentMethod == "Card") {
@@ -3531,7 +3574,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                           amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                           tenantId: selectedTenantId!,
-                                          date: _startDate.text.trim(),
+                                          date: reverseFormatDate(_startDate.text.trim()),
                                           address1: cardDetails[selectedcardindex!].address_1!,
                                           processorId: "",
                                           leaseid: widget.leaseId,
@@ -3588,7 +3631,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         surcharge: "$surchargecount",
                                         amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                         tenantId: selectedTenantId!,
-                                        date: _startDate.text.trim(),
+                                        date: reverseFormatDate(_startDate.text.trim()),
                                         address1: "",
                                         processorId: "",
                                         leaseid: widget.leaseId,
@@ -3635,21 +3678,29 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   ).show();
                                 });
                               }*/
-                              else if (_selectedPaymentMethod == "Check" || _selectedPaymentMethod == "Money Order" || _selectedPaymentMethod == "Cashier 's Check") {
-                                List<Map<String, String>> filteredTenants = tenants.where((tenant) {
-                                  return tenant['tenant_id'] == selectedTenantId;
+                              else if (_selectedPaymentMethod == "Check" ||
+                                  _selectedPaymentMethod == "Money Order" ||
+                                  _selectedPaymentMethod ==
+                                      "Cashier 's Check") {
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant = filteredTenants.first;
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                  amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                  surcharge:
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  amount:
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
@@ -3672,14 +3723,18 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Fluttertoast.showToast(msg: "Payment failed $e");
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
                                 });
-                              }
-                              else if (_selectedPaymentMethod == "Cash" || _selectedPaymentMethod == "Manual") {
-                                List<Map<String, String>> filteredTenants = tenants.where((tenant) {
-                                  return tenant['tenant_id'] == selectedTenantId;
+                              } else if (_selectedPaymentMethod == "Cash" ||
+                                  _selectedPaymentMethod == "Manual") {
+                                List<Map<String, String>> filteredTenants =
+                                    tenants.where((tenant) {
+                                  return tenant['tenant_id'] ==
+                                      selectedTenantId;
                                 }).toList();
-                                Map<String, String> selectedTenant = filteredTenants.first;
+                                Map<String, String> selectedTenant =
+                                    filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
@@ -3687,10 +3742,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                  amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                  surcharge:
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  amount:
+                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
@@ -3714,7 +3771,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Fluttertoast.showToast(msg: "Payment failed $e");
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
                                 });
                               }
 
@@ -4108,9 +4166,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   surge_count() {
     if (amountController.text.isNotEmpty) {
       if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0) &&
-          _selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0) &&
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100) +
@@ -4118,14 +4175,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           finaltotal = double.parse(amountController.text) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
+          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount = double.parse(surChargeAchflat.toString());
           finaltotal = double.parse(amountController.text) + surchargecount!;
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0)) {
+          (surChargeAchper != null && surChargeAchper != 0.0)) {
         setState(() {
           surchargecount =
               (double.parse(amountController.text) * surChargeAchper / 100);

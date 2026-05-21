@@ -33,7 +33,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   List<int> customervaultid = [];
   List<BillingData> cardDetails = [];
   Map<int, List<Map<String?, dynamic?>>> tenantDropdowns =
-  {}; // Stores dropdown values per tenant
+      {}; // Stores dropdown values per tenant
   double totalAmount = 0.0; // Store total amount
   List<Setting4> accounts = [];
   @override
@@ -48,7 +48,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     // TODO: implement initState
     fetchAccounts();
     getAllTenantCardData();
-
 
     super.initState();
   }
@@ -71,17 +70,21 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       print(cardDetails.length);
       print(customervaultid);
       print(tenantIds);
-     // getcards();
+      // getcards();
       setState(() {
         for (int i = 0; i < tenantIds.length; i++) {
           tenantDropdowns[i] = [
-            {"selectedCard": null, "selectedDay": null,"selectedAccount":null,"amount": TextEditingController() }
+            {
+              "selectedCard": null,
+              "selectedDay": null,
+              "selectedAccount": null,
+              "amount": TextEditingController()
+            }
           ];
         }
 
         isLoading = false;
       });
-
     }
   }
 
@@ -94,6 +97,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       _connectivityResult = connectiondata;
     });
   }
+
   void fetchAccounts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -113,66 +117,74 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         accounts.add(Setting4(
             account: 'Rent Income',
             chargeType: 'Recurring Charge',
-            createdAt: "123"
-        ));
-        accounts.addAll(jsonResponse.map((data) => Setting4.fromJson(data)).toList());
-        accounts = accounts.where((account)=>account.chargeType == "Recurring Charge").toList();
-
+            createdAt: "123"));
+        accounts.addAll(
+            jsonResponse.map((data) => Setting4.fromJson(data)).toList());
+        accounts = accounts
+            .where((account) => account.chargeType == "Recurring Charge")
+            .toList();
       });
-
     } else {
       print('Failed to fetch settings: ${response.body}');
       //return [];
     }
   }
-  void getcards(){
+
+  void getcards() {
     for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
-      fetchExistingCards(widget.leaseData.tenantData![i].tenantId!,widget.leaseData.leaseId!,i);
+      fetchExistingCards(widget.leaseData.tenantData![i].tenantId!,
+          widget.leaseData.leaseId!, i);
     }
   }
-  void fetchExistingCards(String tenantid,String leaseid,int index) async {
 
-
+  void fetchExistingCards(String tenantid, String leaseid, int index) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    final response = await http.post(
-        Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
-        headers: {
-          'authorization': 'CRM $token',
-          'id': 'CRM $id',
-        },
-        body: {
-          "lease_id":leaseid,
-          "tenant_id":tenantid
-        }
-    );
+    final response = await http
+        .post(Uri.parse('${Api_url}/api/recurring-cards/get-cards'), headers: {
+      'authorization': 'CRM $token',
+      'id': 'CRM $id',
+    }, body: {
+      "lease_id": leaseid,
+      "tenant_id": tenantid
+    });
     print(response.body);
-    Map<String,dynamic> Response = json.decode(response.body);
+    Map<String, dynamic> Response = json.decode(response.body);
     if (Response["statusCode"] == 200) {
-      Map<String,dynamic> jsonResponse = json.decode(response.body)['data'];
+      Map<String, dynamic> jsonResponse = json.decode(response.body)['data'];
       setState(() {
         List<dynamic> recurrings = jsonResponse["recurrings"];
-        tenantDropdowns[index]=[];
-        for(int i = 0 ;i<recurrings!.length;i++){
-          List<Setting4> account = accounts.where((acc)=>acc.account == jsonResponse["recurrings"][i]['account']).toList();
+        tenantDropdowns[index] = [];
+        for (int i = 0; i < recurrings!.length; i++) {
+          List<Setting4> account = accounts
+              .where((acc) =>
+                  acc.account == jsonResponse["recurrings"][i]['account'])
+              .toList();
 
           Setting4? fetchaccount = account.length > 0 ? account[0] : null;
-          tenantDropdowns[index]!.add({"selectedCard": "${jsonResponse["recurrings"][i]['billing_id']}_${jsonResponse["recurrings"][i]['card_type']}", "selectedDay": "${jsonResponse["recurrings"][i]['date']}","selectedAccount":"${fetchaccount!.account}_${fetchaccount!.createdAt}","amount": TextEditingController(text: jsonResponse["recurrings"][i]['amount'].toString()) });
+          tenantDropdowns[index]!.add({
+            "selectedCard":
+                "${jsonResponse["recurrings"][i]['billing_id']}_${jsonResponse["recurrings"][i]['card_type']}",
+            "selectedDay": "${jsonResponse["recurrings"][i]['date']}",
+            "selectedAccount":
+                "${fetchaccount!.account}_${fetchaccount!.createdAt}",
+            "amount": TextEditingController(
+                text: jsonResponse["recurrings"][i]['amount'].toString())
+          });
           // tenantDropdowns[index] = [
           //
           // ];
         }
-
       });
       calculateTotal();
-
     } else {
       print('Failed to fetch settings: ${response.body}');
       //return [];
     }
   }
+
   Map<int, String?> selectedCard = {};
   Map<int, int?> selectedDay = {};
   bool isLoading = false;
@@ -182,334 +194,443 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
-     drawer: CustomDrawer(
+      drawer: CustomDrawer(
         currentpage: "Leases",
         dropdown: true,
       ),
-      body:isLoading? CircularProgressIndicator() :
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: widget.leaseData.tenantData!.asMap()
-                    .entries
-                    .map((entry) {
-                  int index = entry.key;
+      body: isLoading
+          ? CircularProgressIndicator()
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      children: widget.leaseData.tenantData!
+                          .asMap()
+                          .entries
+                          .map((entry) {
+                        int index = entry.key;
 
-                  var tenant = widget.leaseData.tenantData![index];
-                  int? vaultId = customervaultid.length > index ? customervaultid[index] : null;
-                  List<BillingData> tenantCards = cardDetails
-                      .where((card) => card.customerVaultId == vaultId.toString())
-                      .toList();
+                        var tenant = widget.leaseData.tenantData![index];
+                        int? vaultId = customervaultid.length > index
+                            ? customervaultid[index]
+                            : null;
+                        List<BillingData> tenantCards = cardDetails
+                            .where((card) =>
+                                card.customerVaultId == vaultId.toString())
+                            .toList();
 
-                  return Padding(
-                    padding: EdgeInsets.all(0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tenant.tenantFirstName ?? 'Unknown Tenant',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10),
-                        Column(
-                          children: List.generate(
-                            tenantDropdowns[index]!.length,
-                                (rowIndex) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    // Card Dropdown
-                                    Container(
-                                      width: 200,
-                                      padding: EdgeInsets.symmetric(horizontal: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey.shade400),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          hint: Text('Select a Card'),
-                                          isExpanded: true,
-                                          value: tenantDropdowns[index]![rowIndex]["selectedCard"],
-                                          items: tenantCards.isNotEmpty
-                                              ? tenantCards.map((card) {
-                                            String uniqueKey = "${card.billingId}_${card.binResult}"; // Unique key
-                                            return DropdownMenuItem<String>(
-                                              value: uniqueKey,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    height: 30,
-                                                    width: 30,
-                                                    child: Image.network(
-                                                        "https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text("${card.ccNumber}", style: TextStyle(fontSize: 12)),
-                                                      Text("${card.billingId}", style: TextStyle(fontSize: 12)),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            );
-                                          }).toList()
-                                              : [
-                                            DropdownMenuItem<String>(
-                                              value: '',
-                                              child: Text('No cards available'),
+                        return Padding(
+                          padding: EdgeInsets.all(0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                tenant.tenantFirstName ?? 'Unknown Tenant',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 10),
+                              Column(
+                                children: List.generate(
+                                  tenantDropdowns[index]!.length,
+                                  (rowIndex) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          // Card Dropdown
+                                          Container(
+                                            width: 200,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade400),
                                             ),
-                                          ],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              print(value);
-                                              tenantDropdowns[index]![rowIndex]["selectedCard"] = value;
-                                            });
-                                          },
-                                          selectedItemBuilder: (BuildContext context) {
-                                            return tenantCards.map((card) {
-                                              String uniqueKey = "${card.ccNumber}_${card.billingId}";
-                                              return Align(
-                                                alignment: Alignment.center,  // ✅ Center the selected card number
-                                                child: Text(
-                                                  card.ccNumber!, // Show only CC number after selection
-                                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<String>(
+                                                hint: Text('Select a Card'),
+                                                isExpanded: true,
+                                                value: tenantDropdowns[index]![
+                                                    rowIndex]["selectedCard"],
+                                                items: tenantCards.isNotEmpty
+                                                    ? tenantCards.map((card) {
+                                                        String uniqueKey =
+                                                            "${card.billingId}_${card.binResult}"; // Unique key
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: uniqueKey,
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                height: 30,
+                                                                width: 30,
+                                                                child: Image
+                                                                    .network(
+                                                                        "https://logo.clearbit.com/${card.ccType!.replaceAll(RegExp(r'[-\s]'), "").toLowerCase()}.com"),
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 5),
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                      "${card.ccNumber}",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12)),
+                                                                  Text(
+                                                                      "${card.billingId}",
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12)),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }).toList()
+                                                    : [
+                                                        DropdownMenuItem<
+                                                            String>(
+                                                          value: '',
+                                                          child: Text(
+                                                              'No cards available'),
+                                                        ),
+                                                      ],
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    print(value);
+                                                    tenantDropdowns[index]![
+                                                                rowIndex]
+                                                            ["selectedCard"] =
+                                                        value;
+                                                  });
+                                                },
+                                                selectedItemBuilder:
+                                                    (BuildContext context) {
+                                                  return tenantCards
+                                                      .map((card) {
+                                                    String uniqueKey =
+                                                        "${card.ccNumber}_${card.billingId}";
+                                                    return Align(
+                                                      alignment: Alignment
+                                                          .center, // ✅ Center the selected card number
+                                                      child: Text(
+                                                        card.ccNumber!, // Show only CC number after selection
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    );
+                                                  }).toList();
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+
+                                          // Day Dropdown
+                                          Container(
+                                            width: 200,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade400),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<String>(
+                                                hint: Text('Day'),
+                                                isExpanded: true,
+                                                menuMaxHeight: 200,
+                                                value: tenantDropdowns[index]![
+                                                    rowIndex]["selectedDay"],
+                                                items: List.generate(
+                                                        28, (i) => i + 1)
+                                                    .map((day) =>
+                                                        DropdownMenuItem<
+                                                            String>(
+                                                          value: day.toString(),
+                                                          child: Text('$day'),
+                                                        ))
+                                                    .toList(),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    tenantDropdowns[index]![
+                                                            rowIndex]
+                                                        ["selectedDay"] = value;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(width: 12),
+                                          Container(
+                                            width: 200,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.grey.shade400),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<String>(
+                                                hint: Text('select Account'),
+                                                isExpanded: true,
+                                                menuMaxHeight: 200,
+                                                value: tenantDropdowns[index]![
+                                                        rowIndex]
+                                                    ["selectedAccount"],
+                                                items: accounts.isNotEmpty
+                                                    ? accounts.map((card) {
+                                                        String uniqueKey =
+                                                            "${card.account}_${card.createdAt}"; // Unique key
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: uniqueKey,
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                child: Text(
+                                                                    "${card.account}",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16)),
+                                                              ),
+                                                              SizedBox(
+                                                                  width: 5),
+                                                              // Column(
+                                                              //   crossAxisAlignment: CrossAxisAlignment.start,
+                                                              //   children: [
+                                                              //     Text("${card.billingId}", style: TextStyle(fontSize: 12)),
+                                                              //   ],
+                                                              // )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }).toList()
+                                                    : [
+                                                        DropdownMenuItem<
+                                                            String>(
+                                                          value: '',
+                                                          child: Text(
+                                                              'No cards available'),
+                                                        ),
+                                                      ],
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    tenantDropdowns[index]![
+                                                                rowIndex][
+                                                            "selectedAccount"] =
+                                                        value;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          SizedBox(
+                                            width:
+                                                120, // Adjust width as needed
+                                            child: TextField(
+                                              controller: tenantDropdowns[index]
+                                                  ?[rowIndex]["amount"],
+                                              keyboardType: TextInputType
+                                                  .number, // Ensures numeric input
+                                              // textAlign: TextAlign.center, // Centers the text inside the field
+                                              onChanged: (value) {
+                                                calculateTotal();
+                                              },
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight
+                                                      .w500), // Custom font styling
+                                              decoration: InputDecoration(
+                                                labelText: "Amount",
+                                                labelStyle: TextStyle(
+                                                    color: Colors.grey.shade600,
+                                                    fontSize:
+                                                        12), // Subtle label styling
+                                                hintText: "Enter amount",
+                                                hintStyle: TextStyle(
+                                                    color: Colors.grey.shade400,
+                                                    fontSize:
+                                                        12), // Lighter hint text
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10,
+                                                        horizontal:
+                                                            10), // Padding for better spacing
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8), // Rounded corners
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey
+                                                          .shade400), // Border color
                                                 ),
-                                              );
-                                            }).toList();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 12),
-
-                                    // Day Dropdown
-                                    Container(
-                                      width: 200,
-                                      padding: EdgeInsets.symmetric(horizontal: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey.shade400),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          hint: Text('Day'),
-                                          isExpanded: true,
-                                          menuMaxHeight: 200,
-                                          value: tenantDropdowns[index]![rowIndex]["selectedDay"],
-                                          items: List.generate(28, (i) => i + 1)
-                                              .map((day) => DropdownMenuItem<String>(
-                                            value: day.toString(),
-                                            child: Text('$day'),
-                                          ))
-                                              .toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              tenantDropdowns[index]![rowIndex]["selectedDay"] = value;
-                                            });
-                                          },
-
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Container(
-                                      width: 200,
-                                      padding: EdgeInsets.symmetric(horizontal: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey.shade400),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          hint: Text('select Account'),
-                                          isExpanded: true,
-                                          menuMaxHeight: 200,
-                                          value: tenantDropdowns[index]![rowIndex]["selectedAccount"],
-                                          items:   accounts.isNotEmpty
-                                              ? accounts.map((card) {
-                                            String uniqueKey = "${card.account}_${card.createdAt}"; // Unique key
-                                            return DropdownMenuItem<String>(
-                                              value: uniqueKey,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-
-                                                    child:
-                                                    Text("${card.account}", style: TextStyle(fontSize: 16)),
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  // Column(
-                                                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                                                  //   children: [
-                                                  //     Text("${card.billingId}", style: TextStyle(fontSize: 12)),
-                                                  //   ],
-                                                  // )
-                                                ],
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.blue,
+                                                      width:
+                                                          2), // Highlight on focus
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey
+                                                          .shade300), // Default border
+                                                ),
+                                                // prefixIcon: Icon(Icons.attach_money, size: 18, color: Colors.green), // Money icon
                                               ),
-                                            );
-                                          }).toList()
-                                              : [
-                                            DropdownMenuItem<String>(
-                                              value: '',
-                                              child: Text('No cards available'),
                                             ),
-                                          ],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              tenantDropdowns[index]![rowIndex]["selectedAccount"] = value;
-                                            });
-                                          },
-
-                                        ),
+                                          ),
+                                          // Remove Row Icon
+                                          if (tenantDropdowns[index]!.length >
+                                              0)
+                                            IconButton(
+                                              icon: Icon(Icons.close,
+                                                  color: Colors.red),
+                                              onPressed: () {
+                                                calculateTotal();
+                                                setState(() {
+                                                  tenantDropdowns[index]!
+                                                      .removeAt(rowIndex);
+                                                });
+                                              },
+                                            ),
+                                        ],
                                       ),
                                     ),
-                                    SizedBox(width: 10,),
-                                    SizedBox(
-                                      width: 120, // Adjust width as needed
-                                      child: TextField(
-                                        controller: tenantDropdowns[index]?[rowIndex]["amount"],
-                                        keyboardType: TextInputType.number, // Ensures numeric input
-                                        // textAlign: TextAlign.center, // Centers the text inside the field
-                                        onChanged: (value){
-                                          calculateTotal();
-                                        },
-                                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500), // Custom font styling
-                                        decoration: InputDecoration(
-                                          labelText: "Amount",
-                                          labelStyle: TextStyle(color: Colors.grey.shade600, fontSize: 12), // Subtle label styling
-                                          hintText: "Enter amount",
-                                          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 12), // Lighter hint text
-                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Padding for better spacing
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8), // Rounded corners
-                                            borderSide: BorderSide(color: Colors.grey.shade400), // Border color
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                            borderSide: BorderSide(color: Colors.blue, width: 2), // Highlight on focus
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8),
-                                            borderSide: BorderSide(color: Colors.grey.shade300), // Default border
-                                          ),
-                                          // prefixIcon: Icon(Icons.attach_money, size: 18, color: Colors.green), // Money icon
-                                        ),
-                                      ),
-                                    ),
-                                    // Remove Row Icon
-                                    if (tenantDropdowns[index]!.length > 0)
-                                      IconButton(
-                                        icon: Icon(Icons.close, color: Colors.red),
-                                        onPressed: () {
-                                          calculateTotal();
-                                          setState(() {
-                                            tenantDropdowns[index]!.removeAt(rowIndex);
-                                          });
-                                        },
-                                      ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
+
+                              // Add Row Button
+                              TextButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    tenantDropdowns[index]!.add({
+                                      "selectedCard": null,
+                                      "selectedDay": null,
+                                      "selectedAccount": null,
+                                      "amount": TextEditingController()
+                                    });
+                                  });
+                                },
+                                icon: Icon(Icons.add, color: Colors.blue),
+                                label: Text("Add Row",
+                                    style: TextStyle(color: Colors.blue)),
+                              ),
+                            ],
                           ),
-                        ),
-
-                        // Add Row Button
-                        TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              tenantDropdowns[index]!.add({"selectedCard": null, "selectedDay": null,"selectedAccount":null,"amount": TextEditingController() });
-                            });
-                          },
-                          icon: Icon(Icons.add, color: Colors.blue),
-                          label: Text("Add Row", style: TextStyle(color: Colors.blue)),
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
-                  );
+                    Text("Total Amount : ${totalAmount}"),
+                    ElevatedButton(
+                      onPressed: () {
+                        List<Map<String, dynamic>> selectedTenantsData = [];
 
-                }).toList(),
+                        for (int i = 0;
+                            i < widget.leaseData.tenantData!.length;
+                            i++) {
+                          var tenant = widget.leaseData.tenantData![i];
+                          int? vaultId = customervaultid.length > i
+                              ? customervaultid[i]
+                              : null;
+
+                          // Creating recurrings list
+                          List<Map<String, dynamic>> recurringsList = [];
+
+                          for (var row in tenantDropdowns[i]!) {
+                            print(row['selectedCard']);
+                            if (row['selectedCard'] != null) {
+                              var cardData = row['selectedCard']!
+                                  .split('_'); // Splitting "ccNumber_billingId"
+                              String billingId =
+                                  cardData.length > 1 ? cardData[0] : "";
+                              String cardtype =
+                                  cardData.length > 1 ? cardData[1] : "";
+                              var rec_accounts =
+                                  row['selectedAccount']!.split('_');
+                              String selectedacc = rec_accounts.length > 1
+                                  ? rec_accounts[0]
+                                  : '';
+                              String amount = row['amount'].text;
+                              recurringsList.add({
+                                "billing_id": billingId,
+                                "amount":
+                                    amount, // Amount can be added dynamically if needed
+                                "card_type":
+                                    cardtype, // Get card type if required
+                                "account": selectedacc, // CC Number
+                                "date": row['selectedDay']?.toString() ??
+                                    "", // Selected day
+                              });
+                            }
+                          }
+
+                          // Add only if recurrings list is not empty
+                          if (recurringsList.isNotEmpty) {
+                            selectedTenantsData.add({
+                              "tenant_id": tenant.tenantId,
+                              "lease_id": widget.leaseData.leaseId!,
+                              "customer_vault_id": vaultId?.toString() ?? "",
+                              "date": "", // Add the date if applicable
+                              "recurrings": recurringsList,
+                            });
+                          }
+                        }
+
+                        // Print the final JSON object
+                        print(selectedTenantsData);
+                        postLease(selectedTenantsData);
+                      },
+                      child: Text("Save Cards"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        disablecards(widget.leaseData!.leaseId!);
+                      },
+                      child: Text("Disable Cards"),
+                    ),
+                  ],
+                ),
               ),
-              Text("Total Amount : ${totalAmount}"),
-              ElevatedButton(
-                onPressed: () {
-                  List<Map<String, dynamic>> selectedTenantsData = [];
-
-                  for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
-                    var tenant = widget.leaseData.tenantData![i];
-                    int? vaultId = customervaultid.length > i ? customervaultid[i] : null;
-
-                    // Creating recurrings list
-                    List<Map<String, dynamic>> recurringsList = [];
-
-                    for (var row in tenantDropdowns[i]!) {
-                      print(row['selectedCard'] );
-                      if (row['selectedCard'] != null) {
-                        var cardData = row['selectedCard']!.split('_'); // Splitting "ccNumber_billingId"
-                        String billingId = cardData.length > 1 ? cardData[0] : "";
-                        String cardtype = cardData.length > 1 ? cardData[1] : "";
-                        var rec_accounts = row['selectedAccount']!.split('_');
-                        String selectedacc = rec_accounts.length > 1 ? rec_accounts[0] : '';
-                        String amount = row['amount'].text;
-                        recurringsList.add({
-                          "billing_id": billingId,
-                          "amount": amount,  // Amount can be added dynamically if needed
-                          "card_type": cardtype,  // Get card type if required
-                          "account":selectedacc,  // CC Number
-                          "date": row['selectedDay']?.toString() ?? "",  // Selected day
-                        });
-                      }
-                    }
-
-                    // Add only if recurrings list is not empty
-                    if (recurringsList.isNotEmpty) {
-                      selectedTenantsData.add({
-                        "tenant_id": tenant.tenantId,
-                        "lease_id": widget.leaseData.leaseId!,
-                        "customer_vault_id": vaultId?.toString() ?? "",
-                        "date": "",  // Add the date if applicable
-                        "recurrings": recurringsList,
-                      });
-                    }
-                  }
-
-                  // Print the final JSON object
-                  print(selectedTenantsData);
-                  postLease(selectedTenantsData);
-
-                },
-                child: Text("Save Cards"),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  disablecards(widget.leaseData!.leaseId!);
-
-                },
-                child: Text("Disable Cards"),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
+
   void calculateTotal() {
     double total = 0.0;
-    for(int i =0;i<widget.leaseData.tenantData!.length ;i++)
-    {
+    for (int i = 0; i < widget.leaseData.tenantData!.length; i++) {
       for (var element in tenantDropdowns[i]!) {
         double value = double.tryParse(element["amount"].text) ?? 0.0;
         total += value;
@@ -520,6 +641,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       totalAmount = total;
     });
   }
+
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -546,8 +668,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
           print('Billing ID: ${cardDetail['billing_id']}');
         }
 
-        CustomerData? customerData =
-        await postBillingCustomerVault(custvaultid.toString(),cardDetailsList);
+        CustomerData? customerData = await postBillingCustomerVault(
+            custvaultid.toString(), cardDetailsList);
 
         if (customerData != null) {
           setState(() {
@@ -597,7 +719,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     }
   }
 
-  Future<CustomerData?> postBillingCustomerVault(String customerVaultId,List<dynamic> cardDetailsList) async {
+  Future<CustomerData?> postBillingCustomerVault(
+      String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -644,7 +767,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
           customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
         }
 
-
         return customerData;
       }
     } else {
@@ -652,7 +774,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       return null;
     }
   }
-  postLease( List<Map<String, dynamic>> lease) async {
+
+  postLease(List<Map<String, dynamic>> lease) async {
     final url = Uri.parse('${Api_url}/api/recurring-cards/add-cards');
     print(url);
     //log(jsonEncode(lease.toJson()));
@@ -688,9 +811,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
               msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
-      } else {
-
-      }
+      } else {}
     } catch (error) {
       print('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
@@ -698,8 +819,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     }
   }
 
-  disablecards( String leaseid) async {
-    final url = Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
+  disablecards(String leaseid) async {
+    final url =
+        Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
     print(url);
     //log(jsonEncode(lease.toJson()));
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -734,15 +856,14 @@ class _RecurringPaymentState extends State<RecurringPayment> {
               msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
-      } else {
-
-      }
+      } else {}
     } catch (error) {
       print('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
   }
+
   Future<List<String>> performBinChecks(CustomerData customerData) async {
     List<String> binResults = [];
     for (BillingData billing in customerData.billing) {

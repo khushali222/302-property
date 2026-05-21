@@ -279,12 +279,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
           border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
-        // leading: Container(
-        //   child: Icon(
-        //     Icons.expand_less,
-        //     color: Colors.transparent,
-        //   ),
-        // ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -312,8 +306,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                       ascending2 = false;
                       ascending3 = false;
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Padding(
@@ -321,33 +313,17 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                   child: Row(
                     children: [
                       width < 400
-                          ?  Text("  Insurance\n  Company",
-                          style: TextStyle(color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))
-                          :  Text("  Insurance\n  Company",
-                          style: TextStyle(color: blueColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
-                      // Text("Property", style: TextStyle(color: Colors.white)),
+                          ? Text("  Insurance\n  Company",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15))
+                          : Text("  Insurance\n  Company",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15)),
                       const SizedBox(width: 3),
-                      // ascending1
-                      //     ? const Padding(
-                      //         padding: EdgeInsets.only(top: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortUp,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       )
-                      //     : const Padding(
-                      //         padding: EdgeInsets.only(bottom: 7, left: 2),
-                      //         child: FaIcon(
-                      //           FontAwesomeIcons.sortDown,
-                      //           size: 20,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
                     ],
                   ),
                 ),
@@ -372,33 +348,16 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                       ascending1 = false;
                       ascending3 = false;
                     }
-                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
                     Text("     Expiration\n        Date",
-                        style: TextStyle(color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
-                    SizedBox(width: 5),
-                    // ascending2
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(top: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortUp,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Padding(
-                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortDown,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -422,34 +381,16 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                       ascending2 = false;
                       ascending1 = false;
                     }
-
-                    // Sorting logic here
                   });
                 },
                 child: Row(
                   children: [
                     Text("      Effective\n         Date",
-                        style: TextStyle(color: blueColor,
+                        style: TextStyle(
+                            color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
-                    SizedBox(width: 5),
-                    // ascending3
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.only(top: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortUp,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       )
-                    //     : Padding(
-                    //         padding: const EdgeInsets.only(bottom: 7, left: 2),
-                    //         child: FaIcon(
-                    //           FontAwesomeIcons.sortDown,
-                    //           size: 20,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
+                    const SizedBox(width: 5),
                   ],
                 ),
               ),
@@ -491,10 +432,11 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
           },
           color: blueColor,
         ),
-         DialogButton(
+        DialogButton(
           child: Text(
             "Cancel",
-            style: TextStyle(color: blueColor, fontSize: 18,fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           onPressed: () => Navigator.pop(context),
           color: Colors.white,
@@ -659,7 +601,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -680,7 +621,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[
@@ -937,19 +878,70 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                         ),
                                                         Row(
                                                           mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .end,
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            ViewRentersDetails(
+                                                                              tenantid: widget.tenantId,
+                                                                              leaseId: widget.leaseId,
+                                                                              renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                            )));
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            2),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
                                                             GestureDetector(
                                                               onTap: () async {
                                                                 var check = await Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
                                                                         builder: (context) => EditRentersInsurance(
-                                                                          tenantid: widget.tenantId,
-                                                                          leaseId: widget.leaseId,
-                                                                          renters_insurance_id: item.rentersInsuranceId ?? "",
-                                                                        )));
+                                                                              tenantid: widget.tenantId,
+                                                                              leaseId: widget.leaseId,
+                                                                              renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                            )));
                                                                 if (check ==
                                                                     true) {
                                                                   setState(() {
@@ -964,20 +956,20 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .green
-                                                                        .shade50), // color:Colors.grey[100],
+                                                                        .shade50),
                                                                 child:
-                                                                const Row(
+                                                                    const Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1005,20 +997,20 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
                                                                     borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                        8),
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
                                                                     color: Colors
                                                                         .red
                                                                         .shade50),
                                                                 child:
-                                                                const Row(
+                                                                    const Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
+                                                                      MainAxisAlignment
+                                                                          .center,
                                                                   crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
                                                                     FaIcon(
                                                                       FontAwesomeIcons
@@ -1027,57 +1019,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                       color: Colors
                                                                           .red,
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            ViewRentersDetails(
-                                                                              tenantid: widget.tenantId,
-                                                                              leaseId: widget.leaseId,
-                                                                              renters_insurance_id: item.rentersInsuranceId ?? "",
-                                                                            )));
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade200,
-                                                                  borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                      8),
-                                                                ),
-                                                                child:
-                                                                const Row(
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .eye,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
-                                                                    SizedBox(
-                                                                        width:
-                                                                        2),
                                                                   ],
                                                                 ),
                                                               ),
@@ -1237,7 +1178,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(
-
                                   child: Column(
                                     children: currentPageData
                                         .asMap()
@@ -1258,7 +1198,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                           border: Border.all(
                                               color: const Color(0xFFDBE0E5)),
                                           borderRadius:
-                                          BorderRadius.circular(10),
+                                              BorderRadius.circular(10),
                                         ),
                                         child: Column(
                                           children: <Widget>[

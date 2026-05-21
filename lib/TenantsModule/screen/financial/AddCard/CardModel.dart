@@ -161,12 +161,6 @@ class BillingData {
       this.billingId});
 
   factory BillingData.fromJson(Map<String, dynamic> json) {
-    print(json);
-    if (json["@attributes"] != []) {
-      print(json["@attributes"]["id"]);
-    }
-    // print("]from json ${json["billing_id"]}");
-
     String? lastName;
     if (json["last_name"] is String) {
       lastName = json["last_name"] as String?;
@@ -246,15 +240,15 @@ class BillingData {
     }
 
     String? billingId;
-    print(json["billing_id"].runtimeType);
-    if (json["billing_id"] is int) {
-      billingId = json["billing_id"].toString();
-      print("assign json ${billingId}");
-    } else if (json["billing_id"] is Map) {
-      // Handle the case when last_name is a Map, set it to null or extract specific value
-      billingId =
-          null; // Or json["last_name"]["some_field"] if you need a specific value
-      print('billing_id is ${json["billing_id"]}');
+    final attrs = json['@attributes'];
+    if (attrs is Map && attrs['id'] != null) {
+      billingId = attrs['id'].toString();
+    } else if (json['billing_id'] is int) {
+      billingId = json['billing_id'].toString();
+    } else if (json['billing_id'] is String) {
+      billingId = json['billing_id'] as String;
+    } else if (json['billing_id'] != null && json['billing_id'] is! Map) {
+      billingId = json['billing_id'].toString();
     }
 
     // Safely parse email
@@ -282,7 +276,7 @@ class BillingData {
         ccBin: ccBin,
         cvv: cvv,
         customerVaultId: customerVaultId,
-        billingId: json["@attributes"]["id"].toString(),
+        billingId: billingId,
         email: email,
         address_1: address_1,
         company: companyName);

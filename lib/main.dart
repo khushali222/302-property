@@ -98,14 +98,14 @@ void main() {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    runApp(
+    runApp(/*  */
       DevicePreview(
         enabled: kDebugMode ? false : false,
         tools: kDebugMode
             ? [
                 ...DevicePreview.defaultTools,
               ]
-            : const [
+            : const [ 
                 ...DevicePreview.defaultTools,
               ],
         builder: (context) => MultiProvider(

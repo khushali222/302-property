@@ -21,6 +21,8 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../widgets/drawer_tiles.dart';
 import 'Edit_RentalOwners.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../../widgets/custom_history_table.dart';
+import '../../../../enums/history_type.dart';
 
 class ResponsiveRentalSummary extends StatefulWidget {
   RentalOwnerData? rentalowners;
@@ -80,6 +82,7 @@ class _RentalownersSummeryForMobileState
   }
 
   ConnectivityResult? _connectivityResult;
+  int _historyRefreshKey = 0;
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
@@ -1022,7 +1025,18 @@ class _RentalownersSummeryForMobileState
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                    child: CustomHistoryTable(
+                      key: ValueKey(_historyRefreshKey),
+                      historyType: HistoryType.rentalOwner,
+                      entityId: widget.rentalOwnersid,
+                      title: 'History',
+                      blueColor: blueColor,
+                      itemsPerPage: 10,
+                    ),
+                  ),
                 ],
               ),
             )
@@ -1077,6 +1091,7 @@ class _RentalownersSummeryForTabletState
   }
 
   ConnectivityResult? _connectivityResult;
+  int _historyRefreshKey = 0;
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
@@ -1961,6 +1976,18 @@ class _RentalownersSummeryForTabletState
                             ),
                           ],
                         ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                        child: CustomHistoryTable(
+                          key: ValueKey(_historyRefreshKey),
+                          historyType: HistoryType.rentalOwner,
+                          entityId: widget.rentalOwnersid,
+                          title: 'History',
+                          blueColor: blueColor,
+                          itemsPerPage: 10,
+                        ),
+                      ),
                       ],
                     );
                   }

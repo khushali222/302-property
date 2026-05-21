@@ -340,9 +340,9 @@ class DailyTrasactionReport {
     if (chargetype != null) {
       url = '$url&selectedChargeType=$chargetype';
     }
-    print("API URL: $url");
-    print("selectedStartDate: '$selectedStartDate'");
-    print("selectedEndDate: '$selectedEndDate'");
+    // print("API URL: $url");
+    // print("selectedStartDate: '$selectedStartDate'");
+    // print("selectedEndDate: '$selectedEndDate'");
 
     try {
       final response = await http.get(
@@ -353,20 +353,20 @@ class DailyTrasactionReport {
           "id": "CRM $id",
         },
       );
-      print("report daily transaction ${response.body}");
+      // print("report daily transaction ${response.body}");
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
+        // print(parsedJson);
         return DailyTransactionReportData.fromJson(parsedJson);
       } else {
         // Handle error response
-        print('Failed to load report. Status code: ${response.statusCode}');
+        // print('Failed to load report. Status code: ${response.statusCode}');
         throw Exception('Failed to load renters insurance');
       }
     } catch (error) {
       // Handle error during fetch
-      print('Error fetching daily transaction reportsd: $error');
+      // print('Error fetching daily transaction reportsd: $error');
       throw Exception('Failed to load renters insurance');
     }
   }
@@ -388,7 +388,7 @@ class DailyTrasactionReportStaff {
     if (chargetype != null) {
       url = '$url&selectedChargeType=$chargetype';
     }
-    print(url);
+    // print(url);
 
     try {
       final response = await http.get(
@@ -399,20 +399,20 @@ class DailyTrasactionReportStaff {
           "id": "CRM $id",
         },
       );
-      print("report daily transaction ${response.body}");
+      // print("report daily transaction ${response.body}");
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
+        // print(parsedJson);
         return DailyTransactionReportData.fromJson(parsedJson);
       } else {
         // Handle error response
-        print('Failed to load report. Status code: ${response.statusCode}');
+        // print('Failed to load report. Status code: ${response.statusCode}');
         throw Exception('Failed to load renters insurance');
       }
     } catch (error) {
       // Handle error during fetch
-      print('Error fetching daily transaction reportsd: $error');
+      // print('Error fetching daily transaction reportsd: $error');
       throw Exception('Failed to load renters insurance');
     }
   }

@@ -767,8 +767,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: 50,
-                //width: 250,
+                height: 45,
+                width: 160,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
@@ -789,10 +789,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 iconDisabledColor: Colors.grey,
               ),
               dropdownStyleData: DropdownStyleData(
+                maxHeight: 300,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
                   color: Colors.white,
                 ),
+                offset: const Offset(0, -5),
                 scrollbarTheme: ScrollbarThemeData(
                   radius: const Radius.circular(6),
                   thickness: MaterialStateProperty.all(6),
@@ -1949,10 +1951,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -2074,9 +2072,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     buttonStyleData:
                                                         ButtonStyleData(
                                                       height: 45,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 14),
+                                                      width: 160,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 14,
+                                                              right: 14),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
@@ -2102,13 +2102,15 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
-                                                      maxHeight: 200,
+                                                      maxHeight: 300,
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(6),
                                                         color: Colors.white,
                                                       ),
+                                                      offset:
+                                                          const Offset(0, -5),
                                                       scrollbarTheme:
                                                           ScrollbarThemeData(
                                                         radius: const Radius
@@ -2124,9 +2126,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     menuItemStyleData:
                                                         const MenuItemStyleData(
                                                       height: 40,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 14),
+                                                      padding: EdgeInsets.only(
+                                                          left: 14, right: 14),
                                                     ),
                                                   ),
                                                 ),
@@ -2241,7 +2242,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           //     );
                           //   },
                           // ),
-                          DropdownButtonHideUnderline(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
                             child: DropdownButton2<allcategories_model>(
                               isExpanded: true,
                               hint: Text(_isLoadingCategories
@@ -2277,7 +2280,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                    const EdgeInsets.only( right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                   color: Colors.white,
@@ -2295,11 +2298,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 iconDisabledColor: Colors.grey,
                               ),
                               dropdownStyleData: DropdownStyleData(
-                                maxHeight: 250,
+                                maxHeight: 300,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
                                 ),
+                                offset: const Offset(0, -5),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
@@ -2308,10 +2312,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
-                                height: 50,
+                                height: 40,
                                 padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
+                          ),
                           ),
                           _showTextField
                               ? Padding(
@@ -2375,8 +2380,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               ),
                                             ],
                                           ),
-                                          items:
-                                              staffs.keys.map((staffmemberId) {
+                                          items: (staffs.keys.toList()
+                                                ..sort((a, b) => (staffs[a] ?? '')
+                                                    .toLowerCase()
+                                                    .compareTo((staffs[b] ?? '')
+                                                        .toLowerCase())))
+                                              .map((staffmemberId) {
                                             return DropdownMenuItem<String>(
                                               value: staffmemberId,
                                               child: Text(
@@ -2438,10 +2447,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -2486,7 +2491,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Entery allowed ',
+                          const Text('Entery Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -2494,7 +2499,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          DropdownButtonHideUnderline(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
                               hint: const Text('Select'),
@@ -2516,9 +2523,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
-                                //width: 200,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                    const EdgeInsets.only( right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                   color: Colors.white,
@@ -2538,10 +2544,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 iconDisabledColor: Colors.grey,
                               ),
                               dropdownStyleData: DropdownStyleData(
+                                maxHeight: 300,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
                                 ),
+                                offset: const Offset(0, -5),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
@@ -2554,6 +2562,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
+                          ),
                           ),
                           const SizedBox(
                             height: 10,
@@ -2669,10 +2678,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -3008,10 +3013,15 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                              8.0),
                                                       color: Colors.white,
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFFCED4DA),
+                                                        width: 1.5,
+                                                      ),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                       const IconStyleData(
@@ -3025,12 +3035,14 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   ),
                                                   dropdownStyleData:
                                                       DropdownStyleData(
+                                                    maxHeight: 300,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               6),
                                                       color: Colors.white,
                                                     ),
+                                                    offset: const Offset(0, -5),
                                                     scrollbarTheme:
                                                         ScrollbarThemeData(
                                                       radius:
@@ -3229,7 +3241,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DropdownButtonHideUnderline(
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
                                       hint: const Text('New'),
@@ -3253,7 +3267,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                       buttonStyleData: ButtonStyleData(
                                         height: 45,
                                         padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
+                                            right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -3274,11 +3288,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                         iconDisabledColor: Colors.grey,
                                       ),
                                       dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 300,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
+                                        offset: const Offset(0, -5),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
                                           thickness:
@@ -3294,6 +3310,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             left: 14, right: 14),
                                       ),
                                     ),
+                                  ),
                                   ),
                                   if (state.hasError)
                                     Padding(
@@ -5661,7 +5678,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text('Entery allowed ',
+                                            const Text('Entery Allowed ',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
@@ -5808,8 +5825,17 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                               ),
                                                             ],
                                                           ),
-                                                          items: staffs.keys.map(
-                                                              (staffmember_id) {
+                                                          items: (staffs.keys
+                                                                  .toList()
+                                                                ..sort((a, b) =>
+                                                                    (staffs[a] ??
+                                                                            '')
+                                                                        .toLowerCase()
+                                                                        .compareTo((staffs[b] ??
+                                                                                '')
+                                                                            .toLowerCase())))
+                                                              .map(
+                                                                  (staffmember_id) {
                                                             return DropdownMenuItem<
                                                                 String>(
                                                               value:
@@ -5854,7 +5880,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           buttonStyleData:
                                                               ButtonStyleData(
                                                             height: 45,
-                                                            width: 160,
                                                             padding:
                                                                 const EdgeInsets
                                                                     .only(
@@ -5886,6 +5911,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           ),
                                                           dropdownStyleData:
                                                               DropdownStyleData(
+                                                            maxHeight: 250,
                                                             decoration:
                                                                 BoxDecoration(
                                                               borderRadius:

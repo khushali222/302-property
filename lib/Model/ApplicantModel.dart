@@ -30,6 +30,7 @@ class Datum {
   Datum(
       {this.id,
       this.applicantId,
+      this.applicationNumber,
       this.adminId,
       this.applicantFirstName,
       this.applicantLastName,
@@ -56,6 +57,7 @@ class Datum {
 
   final String? id;
   final String? applicantId;
+  final String? applicationNumber;
   final String? adminId;
   final String? applicantFirstName;
   final String? applicantLastName;
@@ -86,6 +88,7 @@ class Datum {
     return Datum(
       id: json["_id"],
       applicantId: json["applicant_id"],
+      applicationNumber: json["application_number"],
       adminId: json["admin_id"],
       applicantFirstName: json["applicant_firstName"],
       applicantLastName: json["applicant_lastName"],
@@ -129,6 +132,7 @@ class Datum {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "applicant_id": applicantId,
+        "application_number": applicationNumber,
         "admin_id": adminId,
         "applicant_firstName": applicantFirstName,
         "applicant_lastName": applicantLastName,

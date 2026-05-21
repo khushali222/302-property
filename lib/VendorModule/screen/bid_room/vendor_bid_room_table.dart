@@ -670,7 +670,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                                       blueColor),
                                                             ),
                                                           ),
-                                                       SizedBox(width: MediaQuery.of(context).size.width * 0.01,),
+                                                        SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                                                     Expanded(
                                                       flex: 4,
                                                       child: Text(
@@ -721,7 +721,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 15)),
+                                                                fontSize: 16)),
                                                       ),
                                                       SizedBox(height: 10),
                                                      _buildDetailRow(

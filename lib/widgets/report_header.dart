@@ -43,6 +43,7 @@ class ReportHeader extends StatelessWidget {
               ),
             ),
           ),
+          
           const SizedBox(width: 16),
           Expanded(
             child: Text(

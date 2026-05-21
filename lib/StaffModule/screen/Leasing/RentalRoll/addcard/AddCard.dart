@@ -194,29 +194,22 @@ class _AddCardState extends State<AddCard> {
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       customervaultid = jsonResponse['customer_vault_id'];
-      List<dynamic> cardDetailsList = jsonResponse['card_detail'];
-
-      // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
-
-      for (var cardDetail in cardDetailsList) {
-        // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
-
-        //  BillingData billingData = BillingData.fromJson(cardDetail);
-        // print('Parsed Billing ID: ${billingData.billingId}');
-
-        // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
-      }
+      final rawDetail = jsonResponse['card_detail'];
+      final List<dynamic> cardDetailsList =
+          rawDetail is List ? List<dynamic>.from(rawDetail) : <dynamic>[];
 
       CustomerData? customerData = await postBillingCustomerVault(
           customervaultid.toString(), cardDetailsList);
 
       if (customerData != null) {
+        final cardsOnly = customerData.billing.where((b) {
+          final cn = b.ccNumber?.trim() ?? '';
+          return cn.isNotEmpty;
+        }).toList();
         setState(() {
-          cardDetails = customerData.billing;
-          messageCardAvailable = '';
+          cardDetails = cardsOnly;
+          messageCardAvailable =
+              cardsOnly.isEmpty ? 'No card found for this tenant' : '';
         });
       }
     } else if (response.statusCode == 404) {
@@ -282,12 +275,26 @@ class _AddCardState extends State<AddCard> {
       var customerJson = jsonResponse['data']['customer'];
       CustomerData customerData = CustomerData.fromJson(customerJson);
 
-      customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
-      });
-
-      for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+      final Map<String, String> cardTypeByBillingId = {};
+      for (final raw in cardDetailsList) {
+        if (raw is Map) {
+          final bid = raw['billing_id']?.toString();
+          final ct = raw['card_type']?.toString();
+          if (bid != null && bid.isNotEmpty && ct != null && ct.isNotEmpty) {
+            cardTypeByBillingId[bid] = ct;
+          }
+        }
+      }
+      for (final billing in customerData.billing) {
+        final id = billing.billingId?.toString();
+        if (id != null && cardTypeByBillingId.containsKey(id)) {
+          billing.binResult = cardTypeByBillingId[id];
+        } else {
+          final hasCardNumber = (billing.ccNumber?.trim().isNotEmpty ?? false);
+          billing.binResult = hasCardNumber
+              ? (billing.ccType ?? 'CREDIT')
+              : (billing.ccType ?? 'ACH');
+        }
       }
 
       // List<String> binResults = await performBinChecks(customerData);
@@ -2122,7 +2129,8 @@ class _AddCardState extends State<AddCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: _buildLogosBlock(
-                    '${billingData.binResult!} CARD', billingData.ccType ?? ''),
+                    '${(billingData.binResult ?? billingData.ccType ?? 'CARD').toUpperCase()} CARD',
+                    billingData.ccType ?? ''),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),

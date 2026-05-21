@@ -11,33 +11,118 @@ import 'package:http/http.dart' as http;
 
 import '../../model/add_property.dart';
 
+class RentalsPaginationInfo {
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+  final int itemsPerPage;
+
+  RentalsPaginationInfo({
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalItems,
+    required this.itemsPerPage,
+  });
+}
+
+class RentalsPageResult {
+  final List<Rentals> items;
+  final RentalsPaginationInfo? pagination;
+
+  RentalsPageResult({required this.items, this.pagination});
+}
+
 class PropertiesRepository {
   final String apiUrl = '${Api_url}/api/propertytype/property_type';
 
-  Future<List<Rentals>> fetchProperties() async {
+  Future<RentalsPageResult> fetchPropertiesPage({
+    required int page,
+    required int limit,
+    String search = '',
+    String sortBy = 'createdAt',
+    String sortOrder = 'asc',
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
+    final uri = Uri.parse('${Api_url}/api/rentals/rentals/$adminid').replace(
+      queryParameters: {
+        'page': '$page',
+        'limit': '$limit',
+        'search': search,
+        'sortBy': sortBy,
+        'sortOrder': sortOrder,
+      },
+    );
+
     final response = await http.get(
-      Uri.parse('${Api_url}/api/rentals/rentals/$adminid'),
+      uri,
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
     print(response.body);
-    //log(re)
-    print('${Api_url}/api/rentals/rentals/$id');
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body)['data'];
-      return jsonResponse.map((data) => Rentals.fromJson(data)).toList();
-    } else {
+    print('$uri');
+    if (response.statusCode != 200) {
       print('Failed to fetch properties: ${response.body}');
-      return [];
-      // throw Exception('Failed to load data');
+      return RentalsPageResult(items: [], pagination: null);
     }
+
+    final body = json.decode(response.body) as Map<String, dynamic>;
+    final dataRaw = body['data'];
+    final List<Rentals> items = dataRaw is List
+        ? dataRaw
+            .map((e) => Rentals.fromJson(e as Map<String, dynamic>))
+            .toList()
+        : [];
+
+    RentalsPaginationInfo? pagination;
+    final p = body['pagination'];
+    if (p is Map<String, dynamic>) {
+      pagination = RentalsPaginationInfo(
+        currentPage: (p['currentPage'] is int)
+            ? p['currentPage'] as int
+            : int.tryParse('${p['currentPage']}') ?? page,
+        totalPages: (p['totalPages'] is int)
+            ? p['totalPages'] as int
+            : int.tryParse('${p['totalPages']}') ?? 1,
+        totalItems: (p['totalItems'] is int)
+            ? p['totalItems'] as int
+            : int.tryParse('${p['totalItems']}') ?? items.length,
+        itemsPerPage: (p['itemsPerPage'] is int)
+            ? p['itemsPerPage'] as int
+            : int.tryParse('${p['itemsPerPage']}') ?? limit,
+      );
+    }
+
+    return RentalsPageResult(items: items, pagination: pagination);
+  }
+
+  Future<List<Rentals>> fetchProperties() async {
+    final List<Rentals> all = [];
+    int page = 1;
+    const int limit = 100;
+    while (true) {
+      final chunk = await fetchPropertiesPage(
+        page: page,
+        limit: limit,
+        search: '',
+        sortBy: 'createdAt',
+        sortOrder: 'asc',
+      );
+      all.addAll(chunk.items);
+      final p = chunk.pagination;
+      if (p == null ||
+          page >= p.totalPages ||
+          chunk.items.isEmpty) {
+        break;
+      }
+      page++;
+    }
+    return all;
   }
 
   Future<Map<String, dynamic>> editTenant({

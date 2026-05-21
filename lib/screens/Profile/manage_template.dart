@@ -208,7 +208,7 @@ class _manage_templatesState extends State<manage_templates> {
               Spacer(),
             ],
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           Column(
             children: dummyTemplateList.map((element) {
               final templates = element.templates ?? [];

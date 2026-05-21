@@ -52,16 +52,16 @@ class MaintenanceHistoryService {
         }
       }
 
-      print('Sending request to: ${request.url}');
-      print('Form fields: ${request.fields}');
-      print('Files count: ${request.files.length}');
+      // print('Sending request to: ${request.url}');
+      // print('Form fields: ${request.fields}');
+      // print('Files count: ${request.files.length}');
 
       var response = await request.send();
       var responseData = await response.stream.bytesToString();
       var jsonResponse = json.decode(responseData);
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: $responseData');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: $responseData');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
@@ -69,7 +69,7 @@ class MaintenanceHistoryService {
         throw Exception(jsonResponse['message'] ?? 'Failed to add maintenance history');
       }
     } catch (e) {
-      print('Error adding maintenance history: $e');
+      // print('Error adding maintenance history: $e');
       rethrow;
     }
   }

@@ -26,6 +26,9 @@ import 'package:three_zero_two_property/repository/RentPastDue.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as staff_appbar;
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/summery_page.dart';
 import '../../../model/properties.dart';
@@ -40,12 +43,22 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../repository/rentalownerreport.dart';
 import '../../../widgets/custom_drawer.dart';
-import '../Leasing/RentalRoll/SummeryPageLease.dart';
+import '../Leasing/RentalRoll/SummeryPageLease.dart' as admin_lease;
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/SummeryPageLease.dart'
+    as staff_lease;
 
 class RentPastDueReports extends StatefulWidget {
   bool? isRentdue;
   String? title;
-  RentPastDueReports({super.key, this.isRentdue, this.title});
+  /// Staff dashboard: same logo app bar + staff drawer with Dashboard highlighted (not Reports).
+  final bool fromStaffModule;
+
+  RentPastDueReports({
+    super.key,
+    this.isRentdue,
+    this.title,
+    this.fromStaffModule = false,
+  });
 
   @override
   State<RentPastDueReports> createState() => _RentPastDueReportsState();
@@ -367,12 +380,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
+             
               child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
+                size: 15,
               ),
             ),
             Expanded(
+              flex: 3,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -391,47 +407,45 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                   // Fetch new data with updated sort parameters
                   refreshData();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Row(
-                    children: [
-                      width < 400
-                          ? Text("Property",
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15))
-                          : Text("Property",
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15)),
-                      const SizedBox(width: 3),
-                      // Show sort indicator if sorting by property
-                      if (sortKey == 'property')
-                        sortOrder == 'asc'
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortUp,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.only(bottom: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortDown,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
+                child: Row(
+                  children: [
+                    width < 400
+                        ? Text("Property",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                        : Text("Property",
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
+                    const SizedBox(width: 3),
+                    // Show sort indicator if sorting by property
+                    if (sortKey == 'property')
+                      sortOrder == 'asc'
+                          ? Padding(
+                              padding: EdgeInsets.only(top: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 20,
+                                color: blueColor,
                               ),
-                    ],
-                  ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 20,
+                                color: blueColor,
+                              ),
+                            ),
+                  ],
                 ),
               ),
             ),
             Expanded(
+              flex: 2,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -455,8 +469,8 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 28),
-                    Text("  Tenant",
+                    // SizedBox(width: 28),
+                    Text("Tenant",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -467,6 +481,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
             ),
             Expanded(
+              flex: 2,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -491,9 +506,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 },
                 child: Row(
                   children: [
-                    SizedBox(width: 30),
+                    SizedBox(width: 12),
                     Text("Amount",
-                        style: TextStyle(
+                    
+                      style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
@@ -514,13 +530,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
+    String? headerId = staffId ?? adminId;
     String? token = prefs.getString('token');
 
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $headerId",
       });
 
       if (response.statusCode == 200) {
@@ -543,6 +561,42 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
 
   bool istenantDataLoading = false;
   bool customdate = false;
+
+  bool _profileFieldNonEmpty(String? s) =>
+      s != null && s.trim().isNotEmpty;
+
+  /// Rent Due / past-due PDF header (top-right): only non-empty fields — no N/A lines.
+  List<pw.Widget> _buildPdfCompanyHeaderWidgets(profile? p) {
+    if (p == null) return [];
+    final style = pw.TextStyle(
+      fontSize: 10,
+      fontWeight: pw.FontWeight.bold,
+    );
+    final children = <pw.Widget>[];
+    if (_profileFieldNonEmpty(p.companyName)) {
+      children.add(pw.Text(p.companyName!.trim(), style: style));
+    }
+    if (_profileFieldNonEmpty(p.companyAddress)) {
+      children.add(pw.Text(p.companyAddress!.trim(), style: style));
+    }
+    final cityStateCountry = <String>[];
+    if (_profileFieldNonEmpty(p.companyCity)) {
+      cityStateCountry.add(p.companyCity!.trim());
+    }
+    if (_profileFieldNonEmpty(p.companyState)) {
+      cityStateCountry.add(p.companyState!.trim());
+    }
+    if (_profileFieldNonEmpty(p.companyCountry)) {
+      cityStateCountry.add(p.companyCountry!.trim());
+    }
+    if (cityStateCountry.isNotEmpty) {
+      children.add(pw.Text(cityStateCountry.join(', '), style: style));
+    }
+    if (_profileFieldNonEmpty(p.companyPostalCode)) {
+      children.add(pw.Text(p.companyPostalCode!.trim(), style: style));
+    }
+    return children;
+  }
 
   Future<void> generateDelinquentTenantsPdf(
       List<Transaction>? delinquentTenantsData) async {
@@ -612,45 +666,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  //  pw.SizedBox(height: 30)
-                ],
+                children: _buildPdfCompanyHeaderWidgets(profileData),
               ),
             ],
           ),
@@ -1027,12 +1043,15 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   Future<void> fetchRentalOwners() async {
     //print"calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
+    String? headerId = staffId ?? adminId;
     String? token = prefs.getString('token');
     final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
+        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$adminId'),
+            headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM $headerId",
     });
     final jsonData = json.decode(response.body);
     //printjsonData);
@@ -1060,11 +1079,18 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
-      drawer: CustomDrawer(
-        currentpage: "Report",
-        dropdown: false,
-      ),
+      appBar: widget.fromStaffModule
+          ? staff_appbar.widget_302_Staff.App_Bar(context: context)
+          : widget_302.App_Bar(context: context),
+      drawer: widget.fromStaffModule
+          ? CustomDrawerStaff(
+              currentpage: "Dashboard",
+              dropdown: false,
+            )
+          : CustomDrawer(
+              currentpage: "Report",
+              dropdown: false,
+            ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
               child: Column(
@@ -1296,12 +1322,13 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 0.0,
+          horizontal: 3,
         ),
         child: Column(
           children: [
+            SizedBox(height: 2),
             filters(data: chargedata),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               children: [
                 SizedBox(
@@ -1316,7 +1343,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 ),
                 Spacer(),
                 Text(
-                  '\$${total.toStringAsFixed(2)}',
+                  formatCurrency(total),
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -1327,7 +1354,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             _buildHeaders(),
             if (currentPageData.length == 0)
               Padding(
@@ -1410,7 +1437,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                     ),
                                   ),
                                   Expanded(
-                                    flex: 4,
+                                    flex: 3,
                                     child: GestureDetector(
                                       onTap: () {
                                         setState(() {
@@ -1426,14 +1453,20 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                           if (item.rentalData != null) {
                                             if (item.leaseId != null &&
                                                 item.leaseId!.isNotEmpty) {
+                                              final leaseId = item.leaseId!;
+                                              final next = widget.fromStaffModule
+                                                  ? staff_lease.SummeryPageLease(
+                                                      leaseId: leaseId,
+                                                    )
+                                                  : admin_lease.SummeryPageLease(
+                                                      leaseId: leaseId,
+                                                    );
                                               Navigator.of(context)
                                                   .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              SummeryPageLease(
-                                                                leaseId: item
-                                                                    .leaseId!,
-                                                              )));
+                                                MaterialPageRoute(
+                                                  builder: (context) => next,
+                                                ),
+                                              );
                                             } else {
                                               Fluttertoast.showToast(
                                                 msg:
@@ -1456,16 +1489,10 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       ),
                                     ),
                                   ),
-                                  // SizedBox(
-                                  //   width: 30,
-                                  // ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .05),
+                                  SizedBox(width: MediaQuery.of(context).size.width * .06),
                                   Expanded(
-                                    flex: 3,
-                                    child: Text(
-                                      '${item.tenantData != null ? item.tenantData!.tenantFirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantLastName : "N/A" ?? '-'}',
+                                    flex: 2,
+                                    child: Text('${item.tenantData != null ? item.tenantData!.tenantFirstName : "N/A" ?? '-'} ${item.tenantData != null ? item.tenantData!.tenantLastName : "N/A" ?? '-'}',
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -1473,13 +1500,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                                       ),
                                     ),
                                   ),
-                                  // SizedBox(
-                                  //   width: 5,
-                                  // ),
+                                SizedBox(width: MediaQuery.of(context).size.width * .06),
                                   Expanded(
                                     flex: 2,
                                     child: Text(
-                                      '\$${item.total!.toStringAsFixed(2).toString() ?? '-'}',
+                                      formatCurrency(item.total),
                                       style: TextStyle(
                                         color: blueColor,
                                         fontWeight: FontWeight.bold,
@@ -1618,12 +1643,16 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             height: 42,
                             // width: 170,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.grey)),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: chargeType,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                value: chargeType,style: TextStyle(
+                           
+                                 color: Colors.black,
+                                  fontSize:14,
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 10),
                                 hint: Text(
                                   "Charge type",
                                   style: TextStyle(
@@ -1685,14 +1714,18 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                             height: 42,
                             // width: 170,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.grey)),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 key: ValueKey(
                                     'month_dropdown_$monthType'), // Unique key
                                 value: monthType,
-                                padding: EdgeInsets.symmetric(horizontal: 5),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 10),
                                 hint: Text(
                                   "Select Month",
                                   style: TextStyle(
@@ -1757,7 +1790,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
             children: [
               Expanded(
                 child: Material(
-                  elevation: 3,
+                  // elevation: 3,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
@@ -1767,7 +1800,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                         ? MediaQuery.of(context).size.width * .52
                         : MediaQuery.of(context).size.width * .49,
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        // color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                         // border: Border.all(color: Colors.grey),
                         border: Border.all(color: Color(0xFF8A95A8))),
@@ -1796,13 +1829,11 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                               border: InputBorder.none,
                               hintText: "Search here...",
                               hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 14
-                                          : 18),
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
                               contentPadding: (EdgeInsets.only(
-                                  left: 5, bottom: 12, top: 5)),
+                                  left: 5, bottom: 10, top: 5)),
                             ),
                           ),
                         ),

@@ -119,6 +119,7 @@ class _Edit_leaseState extends State<Edit_lease>
 
       _selectedProperty = fetchedDetails.rental.rentalId;
       renderId = fetchedDetails.rental.rentalId!;
+      _leaseRentalAddress = fetchedDetails.rental.rentalAddress;
 
       _selectedLeaseType = fetchedDetails.lease.leaseType;
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -231,6 +232,8 @@ class _Edit_leaseState extends State<Edit_lease>
   List<Map<String, String>> properties = [];
   List<Map<String, String>> units = [];
   String? _selectedProperty;
+  /// From lease details when this rental is not returned by `/rentals` for the dropdown.
+  String? _leaseRentalAddress;
   String? _selectedUnit;
   String? _selectedLeaseType;
 
@@ -292,6 +295,27 @@ class _Edit_leaseState extends State<Edit_lease>
         SnackBar(content: Text('Failed to fetch properties: $e')),
       );
     }
+  }
+
+  List<Map<String, String>> _propertyDropdownItems() {
+    final list = List<Map<String, String>>.from(properties);
+    final sel = _selectedProperty?.trim();
+    if (sel == null || sel.isEmpty) return list;
+    final exists = list.any(
+        (p) => (p['rental_id'] ?? '').toString().trim() == sel);
+    if (exists) return list;
+    final addr = (_leaseRentalAddress != null &&
+            _leaseRentalAddress!.trim().isNotEmpty)
+        ? _leaseRentalAddress!.trim()
+        : 'Unavailable property';
+    list.add({
+      'rental_id': sel,
+      'rental_adress': addr,
+    });
+    list.sort((a, b) => (a['rental_adress'] ?? '')
+        .toLowerCase()
+        .compareTo((b['rental_adress'] ?? '').toLowerCase()));
+    return list;
   }
 
   bool _showUnitDropdown = false;
@@ -1083,6 +1107,23 @@ class _Edit_leaseState extends State<Edit_lease>
                                       return null;
                                     },
                                     builder: (FormFieldState<String> state) {
+                                      final propertyItems =
+                                          _propertyDropdownItems();
+                                      String? propertyValue;
+                                      final selNorm =
+                                          _selectedProperty?.trim();
+                                      if (selNorm != null &&
+                                          selNorm.isNotEmpty) {
+                                        for (final p in propertyItems) {
+                                          if ((p['rental_id'] ?? '')
+                                                  .toString()
+                                                  .trim() ==
+                                              selNorm) {
+                                            propertyValue = p['rental_id'];
+                                            break;
+                                          }
+                                        }
+                                      }
                                       return Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1112,37 +1153,34 @@ class _Edit_leaseState extends State<Edit_lease>
                                                   ),
                                                 ],
                                               ),
-                                              items: properties.map((property) {
-                                                return DropdownMenuItem<String>(
-                                                  value: property['rental_id'],
-                                                  child: Text(
-                                                    property['rental_adress']!,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: Colors.black87,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              value: _selectedProperty,
+                                              items: () {
+                                                final seen = <String>{};
+                                                return propertyItems
+                                                    .where((p) => seen.add(p['rental_id'] ?? ''))
+                                                    .map((property) => DropdownMenuItem<String>(
+                                                          value: property['rental_id'],
+                                                          child: Text(
+                                                            property['rental_adress']!,
+                                                            style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w400,
+                                                              color: Colors.black87,
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ))
+                                                    .toList();
+                                              }(),
+                                              value: propertyValue,
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
-                                                  _selectedUnit =
-                                                      null; // Reset _selectedUnit when property changes
+                                                  _selectedUnit = null;
                                                   _showUnitDropdown = false;
-                                                  state.didChange(
-                                                      value); // Notify the FormField that the value has changed
+                                                  state.didChange(value);
                                                   renderId = value.toString();
-
-                                                  _loadUnits(
-                                                      value!); // Fetch units for the selected property
+                                                  _loadUnits(value!);
                                                 });
-                                                state.reset();
                                               },
                                               buttonStyleData: ButtonStyleData(
                                                 height: 45,
@@ -1429,51 +1467,53 @@ class _Edit_leaseState extends State<Edit_lease>
                                               ),
                                             ],
                                           ),
-                                          items: [
-                                            ...leaseTypeitems
-                                                .map(
-                                                  (String item) =>
-                                                      DropdownMenuItem<String>(
-                                                    value: item,
-                                                    child: Text(
-                                                      item,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                          items: () {
+                                            final seen = <String>{};
+                                            final items = <DropdownMenuItem<String>>[];
+                                            for (final item in leaseTypeitems) {
+                                              if (seen.add(item)) {
+                                                items.add(DropdownMenuItem<String>(
+                                                  value: item,
+                                                  child: Text(
+                                                    item,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
                                                     ),
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
-                                                )
-                                                .toList(),
-                                            if (_selectedLeaseType != null &&
-                                                !leaseTypeitems.contains(
-                                                    _selectedLeaseType))
-                                              DropdownMenuItem<String>(
-                                                value: _selectedLeaseType,
+                                                ));
+                                              }
+                                            }
+                                            final custom = _selectedLeaseType;
+                                            if (custom != null &&
+                                                custom.isNotEmpty &&
+                                                seen.add(custom)) {
+                                              items.add(DropdownMenuItem<String>(
+                                                value: custom,
                                                 child: Text(
-                                                  _selectedLeaseType!,
+                                                  custom,
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black,
                                                   ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                  overflow: TextOverflow.ellipsis,
                                                 ),
-                                              ),
-                                          ],
-                                          value: _selectedLeaseType,
+                                              ));
+                                            }
+                                            return items;
+                                          }(),
+                                          value: (_selectedLeaseType == null ||
+                                                  _selectedLeaseType!.isEmpty)
+                                              ? null
+                                              : _selectedLeaseType,
                                           onChanged: (value) {
-                                            // Update the FormField state
                                             setState(() {
                                               _selectedLeaseType = value;
                                               state.didChange(value);
                                             });
-                                            state.reset();
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 50,

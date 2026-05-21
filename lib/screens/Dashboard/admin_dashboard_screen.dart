@@ -188,11 +188,11 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const TabBarExample(initialTab: 'Vendor')));
+                                    const TabBarExample(initialTab: 'Vendors')));
                       },
                     ),
                     _dashboardCard(
-                      "assets/icons/Frame (1).svg",
+                      "assets/icons/Frame1.svg",
                       _formatCount(widget.countList[4]),
                       'Work Orders ->',
                       () {

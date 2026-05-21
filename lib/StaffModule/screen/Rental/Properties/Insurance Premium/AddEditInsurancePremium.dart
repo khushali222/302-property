@@ -1,3 +1,4 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -28,8 +29,9 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
 
+  String? _selectedYear;
+
   // Form controllers
-  final _yearController = TextEditingController();
   final _carrierController = TextEditingController();
   final _premiumAmountController = TextEditingController();
 
@@ -38,19 +40,34 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
   String? _generalError;
   List<Map<String, dynamic>> _existingPremiums = [];
 
+  List<String> get _yearChoices {
+    final int maxY = DateTime.now().year;
+    final Set<String> set = {};
+    for (int y = maxY; y >= 2020; y--) {
+      set.add(y.toString());
+    }
+    if (_selectedYear != null && _selectedYear!.isNotEmpty) {
+      set.add(_selectedYear!);
+    }
+    final list = set.toList();
+    list.sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+    return list;
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.premiumId != null && widget.premiumData != null) {
       _populateFormWithData(widget.premiumData!);
       _hasValidated = false;
+    } else {
+      _selectedYear = DateTime.now().year.toString();
     }
     _loadExistingPremiums();
   }
 
   @override
   void dispose() {
-    _yearController.dispose();
     _carrierController.dispose();
     _premiumAmountController.dispose();
     _scrollController.dispose();
@@ -76,7 +93,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? id = prefs.getString('adminId');
+      String? id = prefs.getString('staff_id');
 
       final response = await http.get(
         Uri.parse(
@@ -106,7 +123,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
 
   void _populateFormWithData(Map<String, dynamic> premiumData) {
     setState(() {
-      _yearController.text = premiumData['year']?.toString() ?? '';
+      _selectedYear = premiumData['year']?.toString();
       _carrierController.text = premiumData['carrier']?.toString() ?? '';
       // Remove $ and format for editing
       String premium = premiumData['insurance_premium']?.toString() ?? '';
@@ -145,7 +162,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? id = prefs.getString('adminId');
+      String? id = prefs.getString('staff_id');
 
       String amountStr = _premiumAmountController.text
           .replaceAll('\$', '')
@@ -168,7 +185,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                 'id': 'CRM $id',
               },
               body: json.encode({
-                'year': _yearController.text.trim(),
+                'year': _selectedYear?.trim() ?? '',
                 'carrier': _carrierController.text.trim(),
                 'insurance_premium': premiumAmount,
               }),
@@ -210,7 +227,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                 'id': 'CRM $id',
               },
               body: json.encode({
-                'year': _yearController.text.trim(),
+                'year': _selectedYear?.trim() ?? '',
                 'carrier': _carrierController.text.trim(),
                 'insurance_premium': premiumAmount,
               }),
@@ -372,22 +389,19 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                     ),
                     const SizedBox(height: 8),
                     FormField<String>(
-                      initialValue: _yearController.text,
+                      initialValue: _selectedYear ?? '',
                       validator: (value) {
                         if (_hasValidated &&
                             (value == null || value.trim().isEmpty)) {
                           return 'Year is required';
                         }
-                        // Check for duplicate year
                         if (_hasValidated &&
                             value != null &&
                             value.trim().isNotEmpty) {
                           String yearValue = value.trim();
-                          // In edit mode, exclude current premium's year from duplicate check
                           bool isDuplicate = _existingPremiums.any((premium) {
                             String existingYear =
                                 premium['year']?.toString().trim() ?? '';
-                            // If editing, skip the current premium
                             if (widget.premiumId != null &&
                                 premium['_id'] == widget.premiumId) {
                               return false;
@@ -402,58 +416,87 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
                         return null;
                       },
                       builder: (FormFieldState<String> state) {
+                        final yearError = state.hasError;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextFormField(
-                              controller: _yearController,
-                              onChanged: (value) {
-                                state.didChange(value);
+                            DropdownButton2<String>(
+                              isExpanded: true,
+                              underline: const SizedBox.shrink(),
+                              value: _selectedYear != null &&
+                                      _yearChoices.contains(_selectedYear)
+                                  ? _selectedYear
+                                  : null,
+                              hint: Text(
+                                'Select Year',
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              items: _yearChoices
+                                  .map(
+                                    (y) => DropdownMenuItem<String>(
+                                      value: y,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        y,
+                                        style: const TextStyle(fontSize: 15),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (v) {
+                                setState(() => _selectedYear = v);
+                                state.didChange(v ?? '');
                                 if (_hasValidated) {
                                   state.validate();
                                 }
-                                if (_hasValidated && value.trim().isNotEmpty) {
-                                  setState(() {
-                                    _generalError = null;
-                                  });
+                                if (_hasValidated &&
+                                    (v ?? '').trim().isNotEmpty) {
+                                  setState(() => _generalError = null);
                                 }
                               },
-                              decoration: InputDecoration(
-                                hintText: 'e.g., 2023, 2024, 2025',
-                                border: OutlineInputBorder(
+                              buttonStyleData: ButtonStyleData(
+                                height: 48,
+                                padding:
+                                    const EdgeInsets.only(left: 12, right: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50],
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                    color: yearError
+                                        ? Colors.red
+                                        : Colors.grey.shade300,
+                                  ),
                                 ),
-                                enabledBorder: OutlineInputBorder(
+                              ),
+                              iconStyleData: IconStyleData(
+                                icon: Icon(Icons.keyboard_arrow_down,
+                                    color: blueColor),
+                                openMenuIcon: Icon(Icons.keyboard_arrow_up,
+                                    color: blueColor),
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 280,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                      color: const Color(0xFFDBE0E5)),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey[50],
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
-                                errorStyle: const TextStyle(
-                                  fontSize: 0,
-                                  height: 0,
-                                ),
-                                isDense: true,
+                                offset: const Offset(0, 4),
+                                elevation: 2,
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 10),
                               ),
                             ),
                             if (state.hasError)
                               Padding(
-                                padding: const EdgeInsets.only(top: 4.0, left: 16, right: 16),
+                                padding: const EdgeInsets.only(
+                                    top: 4.0, left: 4, right: 16),
                                 child: Text(
                                   state.errorText ?? '',
                                   style: const TextStyle(

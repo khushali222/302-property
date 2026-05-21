@@ -8759,6 +8759,10 @@ class CustomDropdown extends StatefulWidget {
   final ValueChanged<String?> onChanged;
   final FormFieldValidator<String>? validator;
 
+  /// When true, uses border instead of elevation/shadow and [dropdownHeight] for height (default 45).
+  final bool useBorderStyle;
+  final double? dropdownHeight;
+
   CustomDropdown({
     Key? key,
     required this.labelText,
@@ -8766,6 +8770,8 @@ class CustomDropdown extends StatefulWidget {
     required this.selectedValue,
     required this.onChanged,
     required this.validator,
+    this.useBorderStyle = false,
+    this.dropdownHeight,
   }) : super(key: key);
 
   @override
@@ -8783,7 +8789,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Material(
-              elevation: 2,
+              elevation: widget.useBorderStyle ? 0 : 2,
               borderRadius: BorderRadius.circular(8.0),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton2<String>(
@@ -8826,18 +8832,28 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     state.reset();
                   },
                   buttonStyleData: ButtonStyleData(
-                    height: MediaQuery.of(context).size.width < 500 ? 45 : 55,
+                    height: widget.useBorderStyle
+                        ? (widget.dropdownHeight ?? 45)
+                        : (MediaQuery.of(context).size.width < 500 ? 45 : 55),
                     padding: const EdgeInsets.only(left: 0, right: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(6),
                       color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: const Offset(4, 4),
-                          blurRadius: 3,
-                        ),
-                      ],
+                      border: widget.useBorderStyle
+                          ? Border.all(
+                              color: const Color(0xFFCED4DA),
+                              width: 1.0,
+                            )
+                          : null,
+                      boxShadow: widget.useBorderStyle
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: const Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ],
                     ),
                   ),
                   iconStyleData: const IconStyleData(

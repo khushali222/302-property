@@ -870,7 +870,7 @@ class _MakePaymentState extends State<MakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': _normalizeToIsoDate(_startDate.text),
         'newfield': true
       });
 
@@ -1352,7 +1352,9 @@ class _MakePaymentState extends State<MakePayment> {
           _cardOnlyList[selectedcardindex!].binResult == "CREDIT") {
         setState(() {
           print("Override_fee === $override_fee");
-          if (override_fee == null) {
+          if (override_fee == null ||
+              override_fee == "null" ||
+              override_fee!.isEmpty) {
             surCharge = surchargeData['surcharge_percent'];
             if (totalamount > 0.0) {
               surchargeamount = totalamount * surCharge! / 100;
@@ -1360,9 +1362,9 @@ class _MakePaymentState extends State<MakePayment> {
             }
             print(totalamount);
           } else {
-            surCharge = surchargeData['override_fee'];
+            surCharge = num.tryParse(override_fee) ?? surchargeData['surcharge_percent'];
             if (totalamount > 0.0) {
-              surchargeamount = totalamount * (surCharge ?? 00) / 100;
+              surchargeamount = totalamount * (surCharge ?? 0) / 100;
               totalpayamount = totalamount + surchargeamount;
             }
           }
@@ -2914,7 +2916,7 @@ class _MakePaymentState extends State<MakePayment> {
                               "memo": selected_account == "rent"
                                   ? "Rent Income"
                                   : "Payment",
-                              "date": _startDate.text.trim(),
+                              "date": _normalizeToIsoDate(_startDate.text),
                               "charge_type":
                                   selected_account == "rent" ? "Rent" : "Payment",
                             }
@@ -3015,7 +3017,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   "memo": selected_account == "rent"
                                       ? "Rent Income"
                                       : "Payment",
-                                  "date": _startDate.text.trim(),
+                                  "date": _normalizeToIsoDate(_startDate.text),
                                   "charge_type":
                                       selected_account == "rent" ? "Rent" : "Payment",
                                 }
@@ -3055,7 +3057,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   surcharge: "${surchargeamount}",
                                   amount: "${totalamount}",
                                   tenantId: widget.tenantId,
-                                  date: _startDate.text.trim(),
+                                  date: _normalizeToIsoDate(_startDate.text),
                                   address1: checkname,
                                   processorId: processorId,
                                   leaseid: selectedTenantId!,
@@ -3114,7 +3116,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 surcharge: "${surchargeamount}",
                                 amount: "${totalamount}",
                                 tenantId: widget.tenantId,
-                                date: _startDate.text.trim(),
+                                date: _normalizeToIsoDate(_startDate.text),
                                 address1:
                                     _cardOnlyList[selectedcardindex!].address_1!,
                                 processorId: "",
@@ -3453,5 +3455,24 @@ class _MakePaymentState extends State<MakePayment> {
         );
       },
     );
+  }
+
+  String _normalizeToIsoDate(String inputDate) {
+    inputDate = inputDate.trim();
+    final List<String> formats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'MM/dd/yyyy',
+      'M/d/yyyy',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+    ];
+    for (final fmt in formats) {
+      try {
+        final parsed = DateFormat(fmt).parseStrict(inputDate);
+        return DateFormat('yyyy-MM-dd').format(parsed);
+      } catch (_) {}
+    }
+    return inputDate;
   }
 }

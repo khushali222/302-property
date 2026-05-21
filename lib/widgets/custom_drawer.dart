@@ -216,6 +216,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Leases",
                   "Applicants",
                   "Upcoming Renewal",
+                  "Pending Lease",
                   "Scheduled Payment",
                   "Scheduled Charges",
                 ],
@@ -249,6 +250,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           width: 23,
                           color: blueColor,
                         ),
+                        //Pending Lease
+                  FaIcon(
+                    FontAwesomeIcons.fileLines,
+                    size: 18,
+                    color: widget.currentpage == "Pending Lease"
+                        ? Colors.white
+                        : blueColor,
+                  ),
                   FaIcon(
                     FontAwesomeIcons.clock,
                     size: 18,
@@ -329,45 +338,22 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Bid Room",
                 widget.currentpage == "Bid Room",
               ),
-              buildDropdownListTile(
+              buildListTile(
                 context,
                 FaIcon(
-                  FontAwesomeIcons.comments,
+                  FontAwesomeIcons.solidCircleUser,
                   size: 20,
-                  color: blueColor,
+                  color: widget.currentpage == "Vendors"
+                      ? Colors.white
+                      : blueColor,
                 ),
-                "Communications",
-                [
-                  "Send E-mail",
-                  "E-mail Logs",
-                  "Templates",
-                ],
-                [
-                  FaIcon(
-                    FontAwesomeIcons.envelopeCircleCheck,
-                    size: 18,
-                    color: widget.currentpage == "Send E-mail"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for Properties
-                  FaIcon(
-                    FontAwesomeIcons.envelopeOpenText,
-                    size: 18,
-                    color: widget.currentpage == "E-mail Logs"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-
-                  FaIcon(
-                    FontAwesomeIcons.wallet,
-                    size: 18,
-                    color: widget.currentpage == "Templates"
-                        ? Colors.white
-                        : blueColor,
-                  ), // Icon for RentalOwner
-                  //  FaIcon(FontAwesomeIcons.users, size: 20, color: blueColor), // Icon for Tenants
-                ],
-                selectedSubtopic: !widget.dropdown ? null : widget.currentpage,
+                "Vendors",
+                widget.currentpage == "Vendors",
+              ),
+              buildCommunicationsSection(
+                context,
+                currentpage: widget.currentpage,
+                dropdown: widget.dropdown,
               ),
               buildListTile(
                 context,

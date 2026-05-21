@@ -678,32 +678,34 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
-                height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
-                // width: 180,
-                // width: MediaQuery.of(context).size.width < 500
-                //     ? MediaQuery.of(context).size.width * .38
-                //     : MediaQuery.of(context).size.width * .4,
+                height: 45,
+                width: 160,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    // color: Colors.black26,
-                    color: const Color(0xFF8A95A8),
-                  ),
+                  borderRadius: BorderRadius.circular(8.0),
                   color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCED4DA),
+                    width: 1.5,
+                  ),
                 ),
                 elevation: 0,
               ),
+              iconStyleData: const IconStyleData(
+                icon: Icon(Icons.arrow_drop_down),
+                iconSize: 24,
+                iconEnabledColor: Color(0xFFb0b6c3),
+                iconDisabledColor: Colors.grey,
+              ),
               dropdownStyleData: DropdownStyleData(
-                maxHeight: 250,
-                width: 200,
+                maxHeight: 300,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  //color: Colors.redAccent,
+                  borderRadius: BorderRadius.circular(6),
+                  color: Colors.white,
                 ),
-                offset: const Offset(-20, 0),
+                offset: const Offset(0, -5),
                 scrollbarTheme: ScrollbarThemeData(
-                  radius: const Radius.circular(40),
+                  radius: const Radius.circular(6),
                   thickness: MaterialStateProperty.all(6),
                   thumbVisibility: MaterialStateProperty.all(true),
                 ),
@@ -1521,7 +1523,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
-                                 
                                   ],
                                 ),
                               ),
@@ -1753,7 +1754,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  'Select Property',
+                                                  'Select here',
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w400,
@@ -1824,10 +1825,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                           ),
                                           dropdownStyleData: DropdownStyleData(
                                             maxHeight: 300,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
@@ -1907,7 +1904,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        'Select Unit',
+                                                        'Select here',
                                                         style: TextStyle(
                                                           fontSize: 14,
                                                           fontWeight:
@@ -2006,12 +2003,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                 ),
                                                 dropdownStyleData:
                                                     DropdownStyleData(
+                                                  maxHeight: 300,
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             6),
                                                     color: Colors.white,
                                                   ),
+                                                  offset: const Offset(0, -5),
                                                   scrollbarTheme:
                                                       ScrollbarThemeData(
                                                     radius:
@@ -2031,6 +2030,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                   padding: EdgeInsets.only(
                                                       left: 14, right: 14),
                                                 ),
+
                                                 // validator: (value) {
                                                 //   if (value == null || value.isEmpty) {
                                                 //     return 'Please select an option';
@@ -2159,8 +2159,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           //     );
                           //   },
                           // ),
-                          DropdownButtonHideUnderline(
-                            child: Builder(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
+                              child: Builder(
                               builder: (context) {
                                 print(
                                     '=== Building Category Dropdown (Mobile) ===');
@@ -2184,10 +2186,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       'category_dropdown_${_dropdownCategories.length}'),
                                   isExpanded: true,
                                   hint: Text(_isLoadingCategories
-                                      ? 'Loading categories...'
+                                      ? 'Select here'
                                       : _dropdownCategories.isEmpty
-                                          ? 'No categories available'
-                                          : 'Select Category'),
+                                          ? 'Select here'
+                                          : 'Select here',style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3),fontWeight: FontWeight.w400),),
                                   value: _selectedDropdownCategory != null &&
                                           _dropdownCategories.any((cat) =>
                                               cat.categoryId ==
@@ -2221,7 +2223,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
                                     padding: const EdgeInsets.only(
-                                        left: 14, right: 14),
+                                         right: 14),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8.0),
                                       color: Colors.white,
@@ -2239,11 +2241,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     iconDisabledColor: Colors.grey,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
-                                    maxHeight: 250,
+                                    maxHeight: 300,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
                                       color: Colors.white,
                                     ),
+                                    offset: const Offset(0, -5),
                                     scrollbarTheme: ScrollbarThemeData(
                                       radius: const Radius.circular(6),
                                       thickness: MaterialStateProperty.all(6),
@@ -2252,13 +2255,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                     ),
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
-                                    height: 50,
+                                    height: 40,
                                     padding:
                                         EdgeInsets.only(left: 14, right: 14),
                                   ),
                                 );
                               },
                             ),
+                          ),
                           ),
                           _showTextField
                               ? Padding(
@@ -2317,8 +2321,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                               ),
                                             ],
                                           ),
-                                          items:
-                                              staffs.keys.map((staffmember_id) {
+                                          items: (staffs.keys.toList()
+                                                ..sort((a, b) => (staffs[a] ??
+                                                        '')
+                                                    .toLowerCase()
+                                                    .compareTo((staffs[b] ?? '')
+                                                        .toLowerCase())))
+                                              .map((staffmember_id) {
                                             return DropdownMenuItem<String>(
                                               value: staffmember_id,
                                               child: Text(
@@ -2368,11 +2377,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
+                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -2411,7 +2422,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Entery allowed ',
+                          const Text('Entery Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -2419,10 +2430,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const SizedBox(
                             height: 10,
                           ),
-                          DropdownButtonHideUnderline(
+                          SizedBox(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: const Text('Select'),
+                              hint: const Text('Select here',style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3),fontWeight: FontWeight.w400),),
                               value: _selectedEntry,
                               items: _entry.map((method) {
                                 return DropdownMenuItem<String>(
@@ -2441,9 +2454,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
-                                // width: 200,
                                 padding:
-                                    const EdgeInsets.only(left: 14, right: 14),
+                                    const EdgeInsets.only(right: 14),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                   color: Colors.white,
@@ -2463,10 +2475,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 iconDisabledColor: Colors.grey,
                               ),
                               dropdownStyleData: DropdownStyleData(
+                                maxHeight: 300,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(6),
                                   color: Colors.white,
                                 ),
+                                offset: const Offset(0, -5),
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(6),
                                   thickness: MaterialStateProperty.all(6),
@@ -2479,6 +2493,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 padding: EdgeInsets.only(left: 14, right: 14),
                               ),
                             ),
+                          ),
                           ),
                           const SizedBox(
                             height: 10,
@@ -2581,11 +2596,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                               color: Colors.white,
                                             ),
+                                            offset: const Offset(0, -5),
                                             scrollbarTheme: ScrollbarThemeData(
                                               radius: const Radius.circular(6),
                                               thickness:
@@ -2878,10 +2895,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
+                                                              8.0),
                                                       color: Colors.white,
+                                                      border: Border.all(
+                                                        color: const Color(
+                                                            0xFFCED4DA),
+                                                        width: 1.5,
+                                                      ),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                       const IconStyleData(
@@ -2895,12 +2917,14 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                                   ),
                                                   dropdownStyleData:
                                                       DropdownStyleData(
+                                                    maxHeight: 300,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               6),
                                                       color: Colors.white,
                                                     ),
+                                                    offset: const Offset(0, -5),
                                                     scrollbarTheme:
                                                         ScrollbarThemeData(
                                                       radius:
@@ -3099,10 +3123,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DropdownButtonHideUnderline(
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      hint: const Text('New'),
+                                      hint: const Text('New',style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3),fontWeight: FontWeight.w400),),
                                       value: _selectedStatus,
                                       items: _status.map((method) {
                                         return DropdownMenuItem<String>(
@@ -3123,7 +3149,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       buttonStyleData: ButtonStyleData(
                                         height: 45,
                                         padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
+                                             right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8.0),
@@ -3144,11 +3170,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                         iconDisabledColor: Colors.grey,
                                       ),
                                       dropdownStyleData: DropdownStyleData(
+                                        maxHeight: 300,
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(6),
                                           color: Colors.white,
                                         ),
+                                        offset: const Offset(0, -5),
                                         scrollbarTheme: ScrollbarThemeData(
                                           radius: const Radius.circular(6),
                                           thickness:
@@ -3164,6 +3192,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                             left: 14, right: 14),
                                       ),
                                     ),
+                                  ),
                                   ),
                                   if (state.hasError)
                                     Padding(
@@ -5249,7 +5278,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Entery allowed ',
+                                    const Text('Entery Allowed ',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -5373,7 +5402,15 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                       ),
                                                     ],
                                                   ),
-                                                  items: staffs.keys
+                                                  items: (staffs.keys.toList()
+                                                        ..sort((a, b) => (staffs[
+                                                                    a] ??
+                                                                '')
+                                                            .toLowerCase()
+                                                            .compareTo((staffs[
+                                                                        b] ??
+                                                                    '')
+                                                                .toLowerCase())))
                                                       .map((staffmember_id) {
                                                     return DropdownMenuItem<
                                                         String>(
@@ -5410,7 +5447,6 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                   buttonStyleData:
                                                       ButtonStyleData(
                                                     height: 45,
-                                                    width: 160,
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 14,
@@ -5436,6 +5472,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                                   ),
                                                   dropdownStyleData:
                                                       DropdownStyleData(
+                                                    maxHeight: 250,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(

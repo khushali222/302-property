@@ -128,8 +128,7 @@ class HistoryResponse {
         limit: itemsPerPage,
         totalPages: totalPages > 0 ? totalPages : 1,
       );
-      print(
-          '🔵 Lease History Pagination - Total: $totalItems, Pages: $totalPages, Current Page: $currentPage');
+      // print('🔵 Lease History Pagination - Total: $totalItems, Pages: $totalPages, Current Page: $currentPage');
     } else if (isFrontendPagination &&
         json['data'] != null &&
         json['data'] is List) {

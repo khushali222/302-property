@@ -7,7 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
@@ -54,6 +56,10 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   String? _selectedTradeType;
   String? _selectedStatus = 'Open';
   List<String> _selectedVendorIds = [];
+  final ValueNotifier<List<String>> _selectedVendorIdsNotifier =
+      ValueNotifier<List<String>>([]);
+
+  DateTime? _selectedDueDate;
 
   // Loading states
   bool _isLoading = false;
@@ -79,12 +85,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     if (_isEditMode) {
       final b = widget.existingBidRequest!;
       _descriptionController.text = b.description ?? '';
-      _dueDateController.text = b.dueDate ?? '';
       _selectedStatus = b.status ?? 'Open';
       _selectedTradeType = b.workCategory;
       _selectedVendorIds = List<String>.from(b.selectedVendorIds ?? []);
+      _selectedVendorIdsNotifier.value = List.from(_selectedVendorIds);
       _uploadedImageNames = List<String>.from(b.bidRequestImages ?? []);
       _initialExistingImageCount = _uploadedImageNames.length;
+      if (b.dueDate != null && b.dueDate!.isNotEmpty) {
+        try {
+          _selectedDueDate = DateFormat('yyyy-MM-dd').parse(b.dueDate!);
+        } catch (_) {}
+      }
     }
     _loadProperties();
     _loadVendors();
@@ -95,6 +106,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   void dispose() {
     _descriptionController.dispose();
     _dueDateController.dispose();
+    _selectedVendorIdsNotifier.dispose();
     super.dispose();
   }
 
@@ -198,7 +210,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       workCategory: _selectedTradeType,
       description: _descriptionController.text,
       bidRequestImages: _uploadedImageNames,
-      dueDate: _dueDateController.text,
+      dueDate: _selectedDueDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDueDate!) : '',
       status: _selectedStatus ?? 'Open',
       selectedVendorIds: _selectedVendorIds,
     );
@@ -332,23 +344,24 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   }
 
   Future<void> _selectDueDate() async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _selectedDueDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: blueColor, // body text color
+              primary: blueColor,
+              onPrimary: Colors.white,
+              onSurface: blueColor,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
+                backgroundColor: blueColor,
               ),
             ),
           ),
@@ -359,7 +372,8 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
 
     if (picked != null) {
       setState(() {
-        _dueDateController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _selectedDueDate = picked;
+        _dueDateController.text = DateFormat(dateProvider.dateFormat).format(picked);
       });
     }
   }
@@ -520,7 +534,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           "description": _descriptionController.text,
           "bid_request_images": _uploadedImageNames,
           "due_date":
-              _dueDateController.text.isEmpty ? "" : _dueDateController.text,
+              _selectedDueDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDueDate!) : "",
           "status": _selectedStatus,
           "selected_vendor_ids": _selectedVendorIds,
         }
@@ -700,9 +714,11 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                 ),
                 const SizedBox(height: 16),
 
-                // Select Vendors (Optional)
-                _buildVendorSelectionField(),
-                const SizedBox(height: 16),
+                // Select Vendors (Optional) — only visible after trade type is chosen
+                if (_selectedTradeType != null) ...[
+                  _buildVendorSelectionField(),
+                  const SizedBox(height: 16),
+                ],
 
                 // Description
                 _buildTextField(
@@ -840,34 +856,29 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           ],
         ),
         const SizedBox(height: 8),
-        Container(
-          //   color: Colors.red,
-          child: isLoading
-              ? Container(
-                  height: 50,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey.shade50,
-                    border: Border.all(
-                      color: const Color(0xFFDBE0E5),
-                      width: 1,
-                    ),
+        isLoading
+            ? Container(
+                height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFDBE0E5),
+                    width: 1,
                   ),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                ),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Loading...',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
                   ),
-                )
-              : DropdownButtonFormField2<String>(
-                  value: value,
-                  items: items,
-                  onChanged: onChanged,
+                ),
+              )
+            : DropdownButtonHideUnderline(
+                child: DropdownButton2<String>(
                   isExpanded: true,
                   hint: Text(
                     hint,
@@ -876,25 +887,16 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                       color: Colors.grey[600],
                     ),
                   ),
-                  style: TextStyle(
+                  value: value,
+                  items: items,
+                  onChanged: onChanged,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.black87,
                   ),
-                  decoration: InputDecoration(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                    border: InputBorder.none,
-                  ),
-                  validator: isRequired
-                      ? (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select $label';
-                          }
-                          return null;
-                        }
-                      : null,
                   buttonStyleData: ButtonStyleData(
                     height: 50,
+                    width: double.infinity,
                     padding: const EdgeInsets.only(left: 16, right: 8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -903,14 +905,6 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                         color: const Color(0xFFDBE0E5),
                         width: 1,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.05),
-                          spreadRadius: 1,
-                          blurRadius: 2,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
                     ),
                     elevation: 0,
                   ),
@@ -942,7 +936,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                     padding: EdgeInsets.symmetric(horizontal: 16),
                   ),
                 ),
-        ),
+              ),
       ],
     );
   }
@@ -1025,6 +1019,10 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   }
 
   Widget _buildDateField() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    if (_selectedDueDate != null && _dueDateController.text.isEmpty) {
+      _dueDateController.text = DateFormat(dateProvider.dateFormat).format(_selectedDueDate!);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1048,7 +1046,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
               color: Colors.black87,
             ),
             decoration: InputDecoration(
-              hintText: 'Select Due Date (YYYY-MM-DD)',
+              hintText: dateProvider.dateFormat,
               hintStyle: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[600],
@@ -1085,6 +1083,12 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   }
 
   Widget _buildVendorSelectionField() {
+    String displayText = _selectedVendorIds.isEmpty
+        ? 'Select Vendors (Optional)'
+        : _selectedVendorIds.length == 1
+            ? vendors[_selectedVendorIds.first] ?? '1 vendor selected'
+            : '${_selectedVendorIds.length} vendors selected';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1109,144 +1113,127 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           ],
         ),
         const SizedBox(height: 8),
-        Builder(
-          builder: (context) {
-            String displayText = _selectedVendorIds.isEmpty
+        ValueListenableBuilder<List<String>>(
+          valueListenable: _selectedVendorIdsNotifier,
+          builder: (context, currentSelected, _) {
+            final String hintText = currentSelected.isEmpty
                 ? 'Select Vendors (Optional)'
-                : _selectedVendorIds.length == 1
-                    ? vendors[_selectedVendorIds.first] ?? '1 vendor selected'
-                    : '${_selectedVendorIds.length} vendors selected';
+                : currentSelected.length == 1
+                    ? vendors[currentSelected.first] ?? '1 vendor selected'
+                    : '${currentSelected.length} vendors selected';
 
-            return Container(
-              child: DropdownButtonFormField2<String>(
-                value: null, // Always null for multi-select
+            return DropdownButtonHideUnderline(
+              child: DropdownButton2<String>(
                 isExpanded: true,
                 hint: Text(
-                  displayText,
+                  hintText,
                   style: TextStyle(
                     fontSize: 14,
-                    color: _selectedVendorIds.isEmpty
+                    color: currentSelected.isEmpty
                         ? Colors.grey[600]
-                        : Colors.black87,
+                        : Colors.black,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  border: InputBorder.none,
-                ),
+                value: null,
                 items: vendors.entries.map((entry) {
-                  String vendorId = entry.key;
-                  String vendorName = entry.value;
-                  bool isSelected = _selectedVendorIds.contains(vendorId);
-
+                  final vendorId = entry.key;
+                  final vendorName = entry.value;
                   return DropdownMenuItem<String>(
                     value: vendorId,
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: isSelected,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (value == true) {
-                                if (!_selectedVendorIds.contains(vendorId)) {
-                                  _selectedVendorIds.add(vendorId);
-                                }
-                              } else {
-                                _selectedVendorIds.remove(vendorId);
-                              }
-                            });
+                    enabled: false,
+                    child: ValueListenableBuilder<List<String>>(
+                      valueListenable: _selectedVendorIdsNotifier,
+                      builder: (context, currentList, _) {
+                        final isSelected = currentList.contains(vendorId);
+                        return InkWell(
+                          onTap: () {
+                            if (isSelected) {
+                              _selectedVendorIds.remove(vendorId);
+                            } else {
+                              _selectedVendorIds.add(vendorId);
+                            }
+                            _selectedVendorIdsNotifier.value =
+                                List.from(_selectedVendorIds);
+                            setState(() {});
                           },
-                          activeColor: blueColor,
-                        ),
-                        Expanded(
-                          child: Text(
-                            vendorName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black87,
-                            ),
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: isSelected,
+                                onChanged: (bool? value) {
+                                  if (value == true) {
+                                    if (!_selectedVendorIds.contains(vendorId)) {
+                                      _selectedVendorIds.add(vendorId);
+                                    }
+                                  } else {
+                                    _selectedVendorIds.remove(vendorId);
+                                  }
+                                  _selectedVendorIdsNotifier.value =
+                                      List.from(_selectedVendorIds);
+                                  setState(() {});
+                                },
+                                activeColor: blueColor,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  vendorName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   );
                 }).toList(),
-                onChanged: (String? value) {
-                  // Handle selection is done in checkbox onChanged
-                },
+                onChanged: (value) {},
                 buttonStyleData: ButtonStyleData(
                   height: 50,
+                  width: double.infinity,
                   padding: const EdgeInsets.only(left: 16, right: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
                     color: Colors.white,
-                    border: Border.all(
-                      color: const Color(0xFFDBE0E5),
-                      width: 1,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.05),
-                        spreadRadius: 1,
-                        blurRadius: 2,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
                   ),
                   elevation: 0,
                 ),
-                iconStyleData: IconStyleData(
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.grey[600],
-                  ),
-                  iconSize: 24,
-                ),
                 dropdownStyleData: DropdownStyleData(
+                  maxHeight: 250,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.grey[300]!,
-                      width: 1,
-                    ),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  maxHeight: 300,
+                  offset: const Offset(0, 0),
                   scrollbarTheme: ScrollbarThemeData(
-                    radius: const Radius.circular(6),
+                    radius: const Radius.circular(20),
                     thickness: MaterialStateProperty.all(6),
                     thumbVisibility: MaterialStateProperty.all(true),
                   ),
                 ),
                 menuItemStyleData: const MenuItemStyleData(
-                  height: 48,
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  height: 40,
+                  padding: EdgeInsets.only(left: 14, right: 14),
                 ),
               ),
             );
           },
         ),
         if (_selectedVendorIds.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _selectedVendorIds.map((vendorId) {
-              return Chip(
-                label: Text(vendors[vendorId] ?? ''),
-                onDeleted: () {
-                  setState(() {
-                    _selectedVendorIds.remove(vendorId);
-                  });
-                },
-                deleteIcon: const Icon(Icons.close, size: 18),
-              );
-            }).toList(),
+          const SizedBox(height: 6),
+          Text(
+            '${_selectedVendorIds.length} vendor(s) selected. They will receive email notifications when you create this bid room.',
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ],

@@ -28,6 +28,7 @@ class Rentals {
   String? purchaseDate;
   double? purchasePrice;
   String? placedInService;
+  String? subdivision;
 
   List<String>? rentalImages;
   bool? isDelete;
@@ -37,6 +38,7 @@ class Rentals {
   List<TenantPropertiesData>? tenantsData;
   List<Map<String, dynamic>>? units;
   List<InsuredValue>? insuredValues; // Insured values list
+  List<PropertyValueItem>? propertyValues;
 
   Rentals(
       {this.id,
@@ -67,8 +69,10 @@ class Rentals {
       this.purchaseDate,
       this.purchasePrice,
       this.placedInService,
+      this.subdivision,
       this.units,
-      this.insuredValues});
+      this.insuredValues,
+      this.propertyValues});
 
   // Define the fromJson method within the Rental class
   factory Rentals.fromJson(Map<String, dynamic> json) {
@@ -103,6 +107,7 @@ class Rentals {
           ? (json['purchase_price'] as int).toDouble()
           : (json['purchase_price'] as num?)?.toDouble(),
       placedInService: json['placed_in_service'] ?? "",
+      subdivision: json['subdivision'] ?? "",
       rentalOwnerData:
           RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
       propertyTypeData:
@@ -117,7 +122,43 @@ class Rentals {
       insuredValues: (json['insured_values'] as List<dynamic>?)
           ?.map((e) => InsuredValue.fromJson(e))
           .toList(),
+      propertyValues: (json['propertyValues'] as List<dynamic>?)
+          ?.map((e) => PropertyValueItem.fromJson(e))
+          .toList(),
     );
+  }
+}
+
+class PropertyValueItem {
+  String? id;
+  num? estimatedValue;
+  String? valueSource;
+  String? valueAsOfDate;
+
+  PropertyValueItem({
+    this.id,
+    this.estimatedValue,
+    this.valueSource,
+    this.valueAsOfDate,
+  });
+
+  factory PropertyValueItem.fromJson(Map<String, dynamic> json) {
+    return PropertyValueItem(
+      id: json['_id']?.toString(),
+      estimatedValue: json['estimatedValue'] is int
+          ? (json['estimatedValue'] as int).toDouble()
+          : (json['estimatedValue'] as num?)?.toDouble(),
+      valueSource: json['valueSource']?.toString(),
+      valueAsOfDate: json['valueAsOfDate']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'estimatedValue': estimatedValue,
+      'valueSource': valueSource,
+      'valueAsOfDate': valueAsOfDate,
+    };
   }
 }
 

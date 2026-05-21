@@ -18,7 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Dashboard/cronjob_payment_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
-import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Dashboard/Unpaid_Properties.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/lease_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/Properties/Properties_table.dart';
 // Wizard not used for now: same Add Work Order screen as web/tablet (phone skill = easy access, not different UI).
@@ -31,12 +31,14 @@ import '../../Model/properties.dart';
 import '../../constant/geolocation_data_filter.dart';
 import '../../model/properties_workorders.dart';
 import '../../screens/Dashboard/dashboard_sample.dart';
+import 'Dashboard/dashboard_leaseExpiring_staff.dart';
 import '../../screens/Rental/Properties/summery_page.dart';
 import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
 import '../../constant/constant.dart';
+import '../../repository/RentPastDue.dart';
 import '../../provider/dateProvider.dart';
 import '../widgets/drawer_tiles.dart';
 import '../widgets/custom_drawer.dart';
@@ -61,7 +63,7 @@ class DashboardData {
     "assets/images/tenant-icon.svg",
     "assets/images/applicant-icon.svg",
     "assets/images/vendor-icon.svg",
-    "assets/images/workorder-icon.svg"
+    "assets/icons/Frame1.svg"
   ];
 
   List<String> titles = [
@@ -69,7 +71,7 @@ class DashboardData {
     "Tenants",
     "Applicants",
     "Vendors",
-    "Work Orders"
+    "Unpaid Properties"
   ];
 
   List<Color> colorc = [
@@ -109,7 +111,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     Tenants_table(),
     Applicants_table(),
     const Vendor_table(),
-    Workorder_table(),
+    const Unpaid_Properties(),
   ];
   List<Data> nearestWorkOrders = [];
   List<Data> nearestPropertyWorkOrders = [];
@@ -144,6 +146,9 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
+      print('DEBUG [Dashboard Staff]: Staff ID: $id');
+      print('DEBUG [Dashboard Staff]: Admin ID: $admin_id');
+
       final response = await http.get(
           Uri.parse('${Api_url}/api/staffmember/count/${id!}/${admin_id}'),
           headers: {
@@ -155,14 +160,37 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
-          countList[0] = jsonData['property_staffMember'];
-          countList[1] = jsonData['tenant_staffMember'];
-          countList[2] = jsonData['applicant_staffMember'];
-          countList[3] = jsonData['vendor_staffMember'];
-          countList[4] = jsonData['workorder_staffMember'];
-          totalWorkOrders = jsonData['workorder_staffMember'] ?? 0;
+          countList[0] = jsonData['property_staffMember'] ?? 0;
+          countList[1] = jsonData['tenant_staffMember'] ?? 0;
+          countList[2] = jsonData['applicant_staffMember'] ?? 0;
+          countList[3] = jsonData['vendor_staffMember'] ?? 0;
           loading = false;
         });
+        // Rent balance data from admin balance API
+        try {
+          final balanceRes = await http.get(
+            Uri.parse('${Api_url}/api/payment/admin_balance/$admin_id'),
+            headers: {
+              "id": "CRM $id",
+              "authorization": "CRM $token",
+              "Content-Type": "application/json",
+            },
+          );
+          if (balanceRes.statusCode == 200) {
+            final balanceJson = json.decode(balanceRes.body);
+            if (balanceJson["statusCode"] == 200 && balanceJson["data"] != null) {
+              final data = balanceJson["data"];
+              setState(() {
+                countList[4] = data["totalUnpaidRentLeases"] as int? ?? 0;
+                currentMonthRentDue = (data["currentMonthRentDue"] as num?)?.toDouble() ?? 0.0;
+                lastMonthRentDue = (data["lastMonthRentDue"] as num?)?.toDouble() ?? 0.0;
+                currentMonthRentPaid = (data["currentMonthRentPaid"] as num?)?.toDouble() ?? 0.0;
+                lastMonthRentPaid = (data["lastMonthRentPaid"] as num?)?.toDouble() ?? 0.0;
+                totalRentPastDue = (data["totalRentPastDue"] as num?)?.toDouble() ?? 0.0;
+              });
+            }
+          }
+        } catch (_) {}
       } else {
         throw Exception('Failed to load data');
       }
@@ -604,12 +632,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
               Expanded(
                 child: _quickActionCard(
                   context: context,
-                  icon: Icons.assignment_outlined,
-                  label: 'Work Orders',
+                  icon: Icons.layers_outlined,
+                  label: 'Unpaid Properties',
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => Workorder_table(),
+                        builder: (context) => const Unpaid_Properties(),
                       ),
                     );
                   },
@@ -1327,6 +1355,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 ),
 
                 // Dynamically build Column items from properties list
+                // const SizedBox(height: 15),
+                Dashboard_leaseExpiringStaff(),
               ],
             ),
           ),
@@ -1341,11 +1371,16 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
                 tenantCount: countList[1],
                 applicantCount: countList[2],
                 vendorCount: countList[3],
-                workOrderCount: countList[4],
+                unpaidPropertiesCount: countList[4],
                 newWorkOrder: newworkorder,
                 overdueWorkOrder: overdueworkorder,
                 totalWorkOrders: totalWorkOrders,
-                // Add payment data as needed
+                currentMonthRentDue: currentMonthRentDue,
+                lastMonthRentDue: lastMonthRentDue,
+                currentMonthRentPaid: currentMonthRentPaid,
+                lastMonthRentPaid: lastMonthRentPaid,
+                totalRentPastDue: totalRentPastDue,
+                fromStaffModule: true,
               )
               /*  LayoutBuilder(
                 builder:

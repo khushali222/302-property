@@ -39,8 +39,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   @override
   void initState() {
     super.initState();
-    print(
-        '🔵 CustomHistoryTable initState - Type: ${widget.historyType}, EntityId: ${widget.entityId}');
+    // print(
+        // '🔵 CustomHistoryTable initState - Type: ${widget.historyType}, EntityId: ${widget.entityId}');
     _loadHistory();
   }
 
@@ -52,37 +52,37 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       limit: widget.itemsPerPage,
     );
     _historyFuture.then((response) {
-      print(
-          '🔵 History API Response - Status: ${response.pagination.total} items, Page: ${response.pagination.page}');
-      print('🔵 History Data Count: ${response.data.length}');
+      // print(
+          // '🔵 History API Response - Status: ${response.pagination.total} items, Page: ${response.pagination.page}');
+      // print('🔵 History Data Count: ${response.data.length}');
 
       // For lease history, always use frontend pagination (API returns all data)
       if (widget.historyType == HistoryType.lease) {
-        print('🔵 Lease history detected - using frontend pagination');
+        // print('🔵 Lease history detected - using frontend pagination');
         setState(() {
           _allHistoryItems = response.data;
           _isFrontendPagination = true;
-          print('🔵 Stored ${_allHistoryItems!.length} lease history items');
+          // print('🔵 Stored ${_allHistoryItems!.length} lease history items');
         });
       } else {
         // For other types, check if data length > limit (frontend pagination)
         // or if pagination info suggests backend pagination
         if (response.data.length > widget.itemsPerPage &&
             response.pagination.totalPages == 1) {
-          print(
-              '🔵 Frontend pagination detected - data length (${response.data.length}) > limit (${widget.itemsPerPage})');
+          // print(
+              // '🔵 Frontend pagination detected - data length (${response.data.length}) > limit (${widget.itemsPerPage})');
           setState(() {
             _allHistoryItems = response.data;
             _isFrontendPagination = true;
           });
         } else {
-          print('🔵 Backend pagination detected');
+          // print('🔵 Backend pagination detected');
           _isFrontendPagination = false;
           _allHistoryItems = null;
         }
       }
     }).catchError((error) {
-      print('🔴 History API Error: $error');
+      // print('🔴 History API Error: $error');
     });
   }
 
@@ -102,7 +102,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (widget.historyType == HistoryType.lease ||
           (_isFrontendPagination && _allHistoryItems != null)) {
         // Pagination will be handled in the build method by slicing data
-        print('🔵 Page changed to $page - Using frontend pagination');
+        // print('🔵 Page changed to $page - Using frontend pagination');
         return;
       }
 
@@ -115,8 +115,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     if (dateTimeString.isEmpty) return '';
 
     try {
-      print('🔵 [LEASE HISTORY] Formatting date: "$dateTimeString"');
-      print('🔵 [LEASE HISTORY] History Type: ${widget.historyType}');
+      // print('🔵 [LEASE HISTORY] Formatting date: "$dateTimeString"');
+      // print('🔵 [LEASE HISTORY] History Type: ${widget.historyType}');
 
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
       DateTime? parsedDate;
@@ -125,7 +125,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       // Step 1: Handle verbose JavaScript date format FIRST
       // Format: "Mon Dec 08 2025 08:00:03 GMT+0000 (Coordinated Universal Time)"
       if (dateTimeString.contains('GMT') && dateTimeString.contains('(')) {
-        print('🔵 [LEASE HISTORY] Detected verbose GMT format');
+        //print('🔵 [LEASE HISTORY] Detected verbose GMT format');
         try {
           // Extract the date part before the parentheses: "Mon Dec 08 2025 08:00:03 GMT+0000"
           String datePart = dateTimeString.split('(')[0].trim();
@@ -133,10 +133,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           try {
             final verboseFormat = DateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z");
             parsedDate = verboseFormat.parse(datePart);
-            print('🔵 [LEASE HISTORY] Parsed verbose format: $parsedDate');
+         //   print('🔵 [LEASE HISTORY] Parsed verbose format: $parsedDate');
           } catch (e) {
-            print(
-                '🔵 [LEASE HISTORY] Verbose format parse failed, trying alternative: $e');
+            // print(
+            //     '🔵 [LEASE HISTORY] Verbose format parse failed, trying alternative: $e');
             // Alternative: Extract components manually
             final altPattern = RegExp(
                 r'(\w{3})\s+(\w{3})\s+(\d{1,2})\s+(\d{4})\s+(\d{2}:\d{2}:\d{2})');
@@ -148,18 +148,18 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               final time = match.group(5)!;
               final altFormat = DateFormat("MMM dd yyyy HH:mm:ss");
               parsedDate = altFormat.parse("$month $day $year $time");
-              print(
-                  '🔵 [LEASE HISTORY] Parsed with alternative method: $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed with alternative method: $parsedDate');
             }
           }
         } catch (e) {
-          print('🔴 [LEASE HISTORY] Failed to parse verbose date format: $e');
+          // print('🔴 [LEASE HISTORY] Failed to parse verbose date format: $e');
         }
       }
 
       // Step 2: If not verbose format, parse using common formats
       if (parsedDate == null) {
-        print('🔵 [LEASE HISTORY] Trying common format parsing');
+        // print('🔵 [LEASE HISTORY] Trying common format parsing');
 
         // Check if it's ISO format with Z (UTC) - e.g., "2026-01-07T04:51:59.000Z"
         // For lease history, if date has Z, convert UTC to local time (like web does)
@@ -167,16 +167,16 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             dateTimeString.toUpperCase().endsWith('Z');
 
         if (isISOWithZ && widget.historyType == HistoryType.lease) {
-          print(
-              '🔵 [LEASE HISTORY] Detected ISO format with Z (UTC): "$dateTimeString"');
+          // print(
+          //     '🔵 [LEASE HISTORY] Detected ISO format with Z (UTC): "$dateTimeString"');
           try {
             // Parse as UTC and convert to local time (matching web behavior)
             parsedDate = DateTime.parse(dateTimeString).toLocal();
             isAlreadyLocalTime = true; // Already converted to local time
-            print(
-                '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
+            // print(
+            //     '🔵 [LEASE HISTORY] Parsed ISO with Z and converted to local: $parsedDate');
           } catch (e) {
-            print('🔵 [LEASE HISTORY] Failed to parse ISO with Z: $e');
+            // print('🔵 [LEASE HISTORY] Failed to parse ISO with Z: $e');
           }
         }
 
@@ -190,23 +190,23 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               parsedDate =
                   DateFormat('yyyy-MM-dd HH:mm:ss').parse(dateTimeString);
               isAlreadyLocalTime = true; // Already in local time format
-              print(
-                  '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed as yyyy-MM-dd HH:mm:ss (local time): $parsedDate');
             } else if (RegExp(r'^\d{4}-\d{2}-\d{2}$')
                 .hasMatch(dateTimeString)) {
               // Date only format "yyyy-MM-dd" - parse and set to midnight
               parsedDate = DateFormat('yyyy-MM-dd').parse(dateTimeString);
-              print(
-                  '🔵 [LEASE HISTORY] Parsed as date-only (yyyy-MM-dd): $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed as date-only (yyyy-MM-dd): $parsedDate');
             } else if (!isISOWithZ) {
               // Try DateTime.parse for ISO formats (but not if we already handled Z format)
               parsedDate = DateTime.parse(dateTimeString);
-              print(
-                  '🔵 [LEASE HISTORY] Parsed with DateTime.parse: $parsedDate');
+              // print(
+              //     '🔵 [LEASE HISTORY] Parsed with DateTime.parse: $parsedDate');
             }
           } catch (e) {
-            print(
-                '🔵 [LEASE HISTORY] Common format parse failed, trying format list: $e');
+            // print(
+            //     '🔵 [LEASE HISTORY] Common format parse failed, trying format list: $e');
             // Try other common formats
             List<String> dateTimeFormats = [
               'yyyy-MM-dd HH:mm:ss', // "2026-01-01 08:00:04"
@@ -223,8 +223,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             for (String format in dateTimeFormats) {
               try {
                 parsedDate = DateFormat(format).parse(dateTimeString);
-                print(
-                    '🔵 [LEASE HISTORY] Parsed with format "$format": $parsedDate');
+                // print(
+                //     '🔵 [LEASE HISTORY] Parsed with format "$format": $parsedDate');
                 break;
               } catch (e2) {
                 continue;
@@ -236,10 +236,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       // Step 3: If still not parsed, use DateProvider as fallback
       if (parsedDate == null) {
-        print('🔵 [LEASE HISTORY] Using DateProvider fallback');
+        // print('🔵 [LEASE HISTORY] Using DateProvider fallback');
         // Try DateProvider first
         String formatted = dateProvider.formatCurrentDateTime(dateTimeString);
-        print('🔵 [LEASE HISTORY] DateProvider formatted: "$formatted"');
+        // print('🔵 [LEASE HISTORY] DateProvider formatted: "$formatted"');
 
         // ALWAYS ensure seconds are included - check and fix if missing
         // Check for patterns like "8:00 AM" or "08:00 AM" (without seconds)
@@ -255,37 +255,37 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             formatted
                 .contains(RegExp(r':\d{2}\s+(AM|PM)', caseSensitive: false));
 
-        print('🔵 [LEASE HISTORY] Has seconds? $hasSeconds');
+        // print('🔵 [LEASE HISTORY] Has seconds? $hasSeconds');
 
         if (!hasSeconds) {
-          print('🔵 [LEASE HISTORY] Adding seconds...');
+          // print('🔵 [LEASE HISTORY] Adding seconds...');
           // Seconds are missing - add them
           if (timePattern12h.hasMatch(formatted)) {
             // 12-hour format without seconds - add :00 before AM/PM
             formatted = formatted.replaceAllMapped(timePattern12h, (match) {
               final result = '${match.group(1)}:00 ${match.group(2)}';
-              print(
-                  '🔵 [LEASE HISTORY] Replaced 12h: "${match.group(0)}" -> "$result"');
+              // print(
+              //     '🔵 [LEASE HISTORY] Replaced 12h: "${match.group(0)}" -> "$result"');
               return result;
             });
           } else if (timePattern24h.hasMatch(formatted)) {
             // 24-hour format without seconds - add :00
             formatted = formatted.replaceAllMapped(timePattern24h, (match) {
               final result = '${match.group(1)}:00';
-              print(
-                  '🔵 [LEASE HISTORY] Replaced 24h: "${match.group(0)}" -> "$result"');
+              // print(
+              //     '🔵 [LEASE HISTORY] Replaced 24h: "${match.group(0)}" -> "$result"');
               return result;
             });
           }
         }
 
-        print(
-            '🔵 [LEASE HISTORY] Final formatted result (Step 3): "$formatted"');
+        // print(
+        //     '🔵 [LEASE HISTORY] Final formatted result (Step 3): "$formatted"');
         return formatted;
       }
 
       // Step 4: Format parsed date
-      print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
+      // print('🔵 [LEASE HISTORY] Formatting parsed date: $parsedDate');
 
       // Apply timezone offset only if date is not already in local time
       // For lease history with "yyyy-MM-dd HH:mm:ss" or ISO Z (converted to local),
@@ -294,12 +294,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       if (widget.historyType == HistoryType.lease && isAlreadyLocalTime) {
         // For lease history that's already in local time, use as-is
         dateToFormat = parsedDate;
-        print(
-            '🔵 [LEASE HISTORY] Using date as-is (already local time): $dateToFormat');
+        // print(
+        //     '🔵 [LEASE HISTORY] Using date as-is (already local time): $dateToFormat');
       } else {
         // For other history types or dates that need conversion, apply timezone offset
         dateToFormat = parsedDate.add(Duration(hours: 5, minutes: 30));
-        print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
+        // print('🔵 [LEASE HISTORY] After timezone offset: $dateToFormat');
       }
 
       // Use user's date format preferences for all history types including lease
@@ -310,10 +310,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           dateProvider.timeFormat == '24' ? 'HH:mm:ss' : 'h:mm:ss a';
       String dateTimeFormat = '$dateFormat $timeFormatPattern';
 
-      print('🔵 [LEASE HISTORY] Date format: "$dateFormat"');
-      print(
-          '🔵 [LEASE HISTORY] Time format: "${dateProvider.timeFormat}" -> "$timeFormatPattern"');
-      print('🔵 [LEASE HISTORY] Combined format: "$dateTimeFormat"');
+      // print('🔵 [LEASE HISTORY] Date format: "$dateFormat"');
+      // print(
+      //     '🔵 [LEASE HISTORY] Time format: "${dateProvider.timeFormat}" -> "$timeFormatPattern"');
+      // print('🔵 [LEASE HISTORY] Combined format: "$dateTimeFormat"');
 
       // Format the date with seconds ALWAYS included
       String formattedResult = DateFormat(dateTimeFormat).format(dateToFormat);
@@ -344,7 +344,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       return formattedResult;
     } catch (e) {
-      print('Error formatting date: $e');
+      // print('Error formatting date: $e');
       // Fallback: try DateProvider one more time
       try {
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -1551,7 +1551,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       headerText = actionMatch.group(1)?.trim() ?? '';
       if (headerText.isNotEmpty) {
         details.add(headerText); // Add header without colon
-        print('🔵 [LEASE DESC] Added header: "$headerText"');
+        // print('🔵 [LEASE DESC] Added header: "$headerText"');
       }
     }
 
@@ -1572,8 +1572,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(remainingDescription);
 
-    print(
-        '🔵 [LEASE DESC] Found ${matches.length} key-value matches in remaining: "$remainingDescription"');
+    // print(
+        // '🔵 [LEASE DESC] Found ${matches.length} key-value matches in remaining: "$remainingDescription"');
 
     for (var match in matches) {
       final key = match.group(1)?.trim() ?? '';
@@ -1587,22 +1587,22 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       // Skip if key matches the header (shouldn't happen after removing header, but just in case)
       if (key.toLowerCase() == headerText.toLowerCase() &&
           headerText.isNotEmpty) {
-        print('🔵 [LEASE DESC] Skipping header key: "$key"');
+        // print('🔵 [LEASE DESC] Skipping header key: "$key"');
         continue;
       }
 
       if (key.isNotEmpty && value.isNotEmpty) {
         details.add('$key: $value');
-        print('🔵 [LEASE DESC] Added detail: "$key: $value"');
+        // print('🔵 [LEASE DESC] Added detail: "$key: $value"');
       }
     }
 
-    print(
-        '🔵 [LEASE DESC] Final details count: ${details.length}, details: $details');
+    // print(
+        // '🔵 [LEASE DESC] Final details count: ${details.length}, details: $details');
 
     if (details.length <= 1) {
       // Only header or empty - try general parsing
-      print('🔵 [LEASE DESC] Falling back to general parsing');
+      // print('🔵 [LEASE DESC] Falling back to general parsing');
       return _parseGeneralDescription(description);
     }
 
@@ -1616,7 +1616,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
     // Extract header "Tenant moved out"
     details.add('Tenant moved out');
-    print('🔵 [TENANT MOVED OUT] Added header: "Tenant moved out"');
+    // print('🔵 [TENANT MOVED OUT] Added header: "Tenant moved out"');
 
     // Remove "Tenant moved out:" from the start
     String remainingDescription = description;
@@ -1625,8 +1625,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     remainingDescription =
         remainingDescription.replaceFirst(headerPattern, '').trim();
 
-    print(
-        '🔵 [TENANT MOVED OUT] Remaining after header: "$remainingDescription"');
+    // print(
+        // '🔵 [TENANT MOVED OUT] Remaining after header: "$remainingDescription"');
 
     // Extract tenant name (comes first, before first key-value pair)
     // Pattern: "Name, Key: Value" or "Name, Key: Value, Key: Value"
@@ -1641,7 +1641,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
           tenantName.length > 1) {
         // Add tenant name as bullet point
         details.add('• $tenantName');
-        print('🔵 [TENANT MOVED OUT] Added tenant name: "$tenantName"');
+        // print('🔵 [TENANT MOVED OUT] Added tenant name: "$tenantName"');
 
         // Remove tenant name from remaining description
         remainingDescription =
@@ -1655,7 +1655,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(remainingDescription);
 
-    print('🔵 [TENANT MOVED OUT] Found ${matches.length} key-value matches');
+    // print('🔵 [TENANT MOVED OUT] Found ${matches.length} key-value matches');
 
     for (var match in matches) {
       final key = match.group(1)?.trim() ?? '';
@@ -1668,16 +1668,16 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
 
       if (key.isNotEmpty && value.isNotEmpty) {
         details.add('$key: $value');
-        print('🔵 [TENANT MOVED OUT] Added detail: "$key: $value"');
+        // print('🔵 [TENANT MOVED OUT] Added detail: "$key: $value"');
       }
     }
 
-    print(
-        '🔵 [TENANT MOVED OUT] Final details count: ${details.length}, details: $details');
+    // print(
+        // '🔵 [TENANT MOVED OUT] Final details count: ${details.length}, details: $details');
 
     if (details.length <= 1) {
       // Only header or empty - try general parsing
-      print('🔵 [TENANT MOVED OUT] Falling back to general parsing');
+      // print('🔵 [TENANT MOVED OUT] Falling back to general parsing');
       return _parseGeneralDescription(description);
     }
 
@@ -1750,8 +1750,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
         dotAll: true);
     final matches = keyValuePattern.allMatches(description);
 
-    print('🔵 [PAYMENT CREATED] Parsing description: "$description"');
-    print('🔵 [PAYMENT CREATED] Found ${matches.length} key-value matches');
+    // print('🔵 [PAYMENT CREATED] Parsing description: "$description"');
+    // print('🔵 [PAYMENT CREATED] Found ${matches.length} key-value matches');
 
     // Separate payment fields from entry fields
     List<String> paymentFieldDetails = [];
@@ -1766,7 +1766,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       value = value.replaceAll(RegExp(r'[,;.\s]+$'), '');
       value = value.trim();
 
-      print('🔵 [PAYMENT CREATED] Key: "$key", Value: "$value"');
+      // print('🔵 [PAYMENT CREATED] Key: "$key", Value: "$value"');
 
       // Skip "Payment created" itself as we already added it as header
       if (key.toLowerCase().contains('payment created')) {
@@ -1998,10 +1998,21 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
     return details.isEmpty ? [description] : details;
   }
 
+  /// Reformat any embedded date strings in [text] according to the provider's date format.
+  String _formatDatesInText(String text, DateProvider dateProvider) {
+    return text.replaceAllMapped(
+      RegExp(r'\b(\d{1,2}/\d{1,2}/\d{4}|\d{4}-\d{2}-\d{2})\b'),
+      (match) => dateProvider.formatCurrentDate(match.group(0)!),
+    );
+  }
+
   /// Build description widget with parsed details
   Widget _buildDescriptionWidget(String description,
       {HistoryItem? historyItem}) {
-    final parsedDetails = _parseDescription(description);
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final parsedDetails = _parseDescription(description)
+        .map((detail) => _formatDatesInText(detail, dateProvider))
+        .toList();
 
     // For "Payment created" entries, also check metadata for Entry data
     if (historyItem != null &&
@@ -2277,8 +2288,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                 left: isEntryItem && !isEntryDetailsHeader
                                     ? 16.0
                                     : 0.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
                                 Text(
                                   '$key: ',
@@ -2288,14 +2299,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                                     color: Colors.black87,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black87,
-                                    ),
+                                Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
                                   ),
                                 ),
                               ],
@@ -2379,8 +2388,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                           left: isEntryItem && !isEntryDetailsHeader
                               ? 16.0
                               : 0.0), // Extra indent for Entry items
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.start,
                         children: [
                           Text(
                             '$key: ',
@@ -2394,16 +2403,14 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                               color: Colors.black87,
                             ),
                           ),
-                          Expanded(
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: isEntryDetailsHeader
-                                    ? FontWeight.bold
-                                    : FontWeight.w500,
-                                color: Colors.black87,
-                              ),
+                          Text(
+                            value,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isEntryDetailsHeader
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: Colors.black87,
                             ),
                           ),
                         ],
@@ -2473,8 +2480,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                   padding: EdgeInsets.only(
                       left: isIndented ? 16.0 : 0.0,
                       bottom: index < parsedDetails.length - 1 ? 6 : 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
                     children: [
                       Text(
                         '$key: ',
@@ -2484,14 +2491,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                           color: Colors.black87,
                         ),
                       ),
-                      Expanded(
-                        child: Text(
-                          value,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
                         ),
                       ),
                     ],
@@ -2617,8 +2622,10 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                 padding: EdgeInsets.only(
                     left: isIndented ? 16.0 : 0.0,
                     bottom: index < parsedDetails.length - 1 ? 6 : 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(
                       '$key: ',
@@ -2628,51 +2635,43 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                         color: Colors.black87,
                       ),
                     ),
-                    Expanded(
-                      child: Wrap(
-                        spacing: 6,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFEE2E2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              oldValue,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF991B1B),
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            '→',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFD1FAE5),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              newValue,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF065F46),
-                              ),
-                            ),
-                          ),
-                        ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFEE2E2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        oldValue,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF991B1B),
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      '→',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD1FAE5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        newValue,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF065F46),
+                        ),
                       ),
                     ),
                   ],
@@ -2685,8 +2684,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             padding: EdgeInsets.only(
                 left: isIndented ? 16.0 : 0.0,
                 bottom: index < parsedDetails.length - 1 ? 6 : 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
               children: [
                 Text(
                   '$key: ',
@@ -2696,14 +2695,12 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                     color: Colors.black87,
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
                   ),
                 ),
               ],
@@ -2732,17 +2729,17 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    print(
-        '🔵 CustomHistoryTable build - Type: ${widget.historyType}, EntityId: ${widget.entityId}, Title: ${widget.title}');
+    // print(
+        // '🔵 CustomHistoryTable build - Type: ${widget.historyType}, EntityId: ${widget.entityId}, Title: ${widget.title}');
 
     return FutureBuilder<HistoryResponse>(
       future: _historyFuture,
       builder: (context, snapshot) {
-        print(
-            '🔵 History FutureBuilder - ConnectionState: ${snapshot.connectionState}, HasData: ${snapshot.hasData}, HasError: ${snapshot.hasError}');
+        // print(
+            // '🔵 History FutureBuilder - ConnectionState: ${snapshot.connectionState}, HasData: ${snapshot.hasData}, HasError: ${snapshot.hasError}');
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print('⏳ History loading...');
+          // print('⏳ History loading...');
           // Show title and header structure while loading
           return RepaintBoundary(
             child: Column(
@@ -2845,7 +2842,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else if (snapshot.hasError) {
-          print('🔴 History Error: ${snapshot.error}');
+          // print('🔴 History Error: ${snapshot.error}');
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -2867,8 +2864,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else if (!snapshot.hasData || snapshot.data!.data.isEmpty) {
-          print(
-              '⚠️ History - No data or empty data. Data count: ${snapshot.hasData ? snapshot.data!.data.length : 0}');
+          // print(
+              // '⚠️ History - No data or empty data. Data count: ${snapshot.hasData ? snapshot.data!.data.length : 0}');
           // Show title and header even when no data
           return RepaintBoundary(
             child: Column(
@@ -2972,8 +2969,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
             ),
           );
         } else {
-          print(
-              '✅ History loaded successfully - ${snapshot.data!.data.length} items');
+          // print(
+              // '✅ History loaded successfully - ${snapshot.data!.data.length} items');
 
           // Handle frontend pagination if we have all items stored
           List<HistoryItem> displayData = snapshot.data!.data;
@@ -3003,8 +3000,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               limit: widget.itemsPerPage,
               totalPages: totalPages > 0 ? totalPages : 1,
             );
-            print(
-                '🔵 Lease History Pagination - Total: ${allItems.length}, Showing items ${startIndex + 1}-${endIndex > allItems.length ? allItems.length : endIndex}, Page: $_currentPage of $totalPages');
+            // print(
+                // '🔵 Lease History Pagination - Total: ${allItems.length}, Showing items ${startIndex + 1}-${endIndex > allItems.length ? allItems.length : endIndex}, Page: $_currentPage of $totalPages');
           } else if (_isFrontendPagination &&
               _allHistoryItems != null &&
               _allHistoryItems!.isNotEmpty) {
@@ -3025,8 +3022,8 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
               limit: widget.itemsPerPage,
               totalPages: totalPages > 0 ? totalPages : 1,
             );
-            print(
-                '🔵 Frontend Pagination - Showing items ${startIndex + 1}-${endIndex > _allHistoryItems!.length ? _allHistoryItems!.length : endIndex} of ${_allHistoryItems!.length}');
+            // print(
+                // '🔵 Frontend Pagination - Showing items ${startIndex + 1}-${endIndex > _allHistoryItems!.length ? _allHistoryItems!.length : endIndex} of ${_allHistoryItems!.length}');
           }
 
           final historyData =

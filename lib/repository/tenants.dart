@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,74 +9,176 @@ import '../Model/tenants.dart';
 import '../constant/constant.dart';
 import 'package:http/http.dart' as http;
 
+class TenantsPagination {
+  final int currentPage;
+  final int totalPages;
+  final int totalItems;
+  final int itemsPerPage;
+
+  const TenantsPagination({
+    required this.currentPage,
+    required this.totalPages,
+    required this.totalItems,
+    required this.itemsPerPage,
+  });
+}
+
+class TenantsV2ListResult {
+  final Map<String, List<Tenant>> categorized;
+  final Map<String, int> counts;
+  final TenantsPagination? pagination;
+
+  TenantsV2ListResult({
+    required this.categorized,
+    required this.counts,
+    this.pagination,
+  });
+}
+
+int _tenantJsonInt(dynamic v, [int fallback = 0]) {
+  if (v is int) return v;
+  if (v is num) return v.toInt();
+  return fallback;
+}
+
 class TenantsRepository {
   final String apiUrl = '${Api_url}/api//tenant/tenants';
 
-  Future<Map<String, List<Tenant>>> fetchTenants() async {
+  /// Parses v2 list response: unified [data.tenants] + [is_current_tenant], or legacy
+  /// [currentTenants] / [formerTenants] arrays.
+  Map<String, List<Tenant>> _categorizedTenantsFromV2Data(
+      Map<String, dynamic>? data) {
+    final categorizedTenants = <String, List<Tenant>>{
+      'currentTenants': [],
+      'formerTenants': [],
+      'currentApplicants': [],
+    };
+    if (data == null) return categorizedTenants;
+
+    final tenantsRaw = data['tenants'];
+    if (tenantsRaw is List && tenantsRaw.isNotEmpty) {
+      for (final item in tenantsRaw) {
+        if (item is! Map<String, dynamic>) continue;
+        final t = Tenant.fromJson(item);
+        if (item['is_current_tenant'] == true) {
+          categorizedTenants['currentTenants']!.add(t);
+        } else {
+          categorizedTenants['formerTenants']!.add(t);
+        }
+      }
+    } else {
+      if (data['currentTenants'] != null) {
+        final list = data['currentTenants'] as List;
+        categorizedTenants['currentTenants'] =
+            list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+      }
+      if (data['formerTenants'] != null) {
+        final list = data['formerTenants'] as List;
+        categorizedTenants['formerTenants'] =
+            list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+      }
+    }
+
+    if (data['currentApplicants'] != null) {
+      final list = data['currentApplicants'] as List;
+      categorizedTenants['currentApplicants'] =
+          list.map((e) => Tenant.fromJson(e as Map<String, dynamic>)).toList();
+    }
+
+    return categorizedTenants;
+  }
+
+  Map<String, int> _countsFromV2Data(Map<String, dynamic>? dataMap) {
+    final counts = <String, int>{};
+    if (dataMap == null) return counts;
+    final raw = dataMap['counts'];
+    if (raw is! Map) return counts;
+    final m = Map<String, dynamic>.from(raw);
+    counts['currentCount'] = _tenantJsonInt(m['currentCount']);
+    counts['formerCount'] = _tenantJsonInt(m['formerCount']);
+    counts['applicantCount'] = _tenantJsonInt(m['applicantCount']);
+    return counts;
+  }
+
+  TenantsPagination? _paginationFromRoot(
+      Map<String, dynamic> jsonResponse, int limitFallback) {
+    final pRaw = jsonResponse['pagination'];
+    if (pRaw is! Map<String, dynamic>) return null;
+    return TenantsPagination(
+      currentPage: _tenantJsonInt(pRaw['currentPage'], 1),
+      totalPages: _tenantJsonInt(pRaw['totalPages'], 1).clamp(1, 1 << 30),
+      totalItems: _tenantJsonInt(pRaw['totalItems']),
+      itemsPerPage: _tenantJsonInt(pRaw['itemsPerPage'], limitFallback),
+    );
+  }
+
+  /// Paginated v2 list (same query shape as web: `page`, `limit`, `search`, `tenantType`, `sortBy`, `sortOrder`).
+  Future<TenantsV2ListResult> fetchTenantsV2Page({
+    required int page,
+    required int limit,
+    String search = '',
+    String tenantType = 'current',
+    String sortBy = 'createdAt',
+    String sortOrder = 'desc',
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final uri = Uri.parse('${Api_url}/api/tenant/tenants/v2/$id').replace(
+      queryParameters: {
+        'page': '$page',
+        'limit': '$limit',
+        'search': search,
+        'tenantType': tenantType,
+        'sortBy': sortBy,
+        'sortOrder': sortOrder,
+      },
+    );
+    debugPrint('[Tenants v2][Admin] REQUEST GET $uri');
     final response = await http.get(
-      Uri.parse('${Api_url}/api/tenant/tenants/v2/$id'),
+      uri,
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },
     );
-    print('get tenant ${response.body}');
-    print('${Api_url}/api/tenant/tenants/$id');
-    if (response.statusCode == 200) {
-      // Decode the JSON response
-      final jsonResponse = json.decode(response.body);
-
-      // Access the 'data' object
-      if (jsonResponse['data'] != null) {
-        Map<String, List<Tenant>> categorizedTenants = {
-          'currentTenants': [],
-          'formerTenants': [],
-          'currentApplicants': [],
-        };
-
-        // Add currentTenants if they exist
-        if (jsonResponse['data']['currentTenants'] != null) {
-          List currentTenantsJson = jsonResponse['data']['currentTenants'];
-          categorizedTenants['currentTenants'] =
-              currentTenantsJson.map((data) => Tenant.fromJson(data)).toList();
-        }
-
-        // Add formerTenants if they exist
-        if (jsonResponse['data']['formerTenants'] != null) {
-          List formerTenantsJson = jsonResponse['data']['formerTenants'];
-          categorizedTenants['formerTenants'] =
-              formerTenantsJson.map((data) => Tenant.fromJson(data)).toList();
-        }
-
-        // Add currentApplicants if they exist
-        if (jsonResponse['data']['currentApplicants'] != null) {
-          List currentApplicantsJson =
-              jsonResponse['data']['currentApplicants'];
-          categorizedTenants['currentApplicants'] = currentApplicantsJson
-              .map((data) => Tenant.fromJson(data))
-              .toList();
-        }
-
-        return categorizedTenants;
-      } else {
-        print('No data found in the response.');
-        return {
-          'currentTenants': [],
-          'formerTenants': [],
-          'currentApplicants': [],
-        };
-      }
-    } else {
-      print('Failed to fetch tenants: ${response.body}');
-      return {
+    debugPrint('[Tenants v2][Admin] HTTP status: ${response.statusCode}');
+    final empty = TenantsV2ListResult(
+      categorized: {
         'currentTenants': [],
         'formerTenants': [],
         'currentApplicants': [],
-      };
+      },
+      counts: {},
+      pagination: null,
+    );
+    if (response.statusCode != 200) {
+      debugPrint('[Tenants v2][Admin] Failed: ${response.body}');
+      return empty;
     }
+    final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
+    final dataMap = jsonResponse['data'];
+    if (dataMap is! Map<String, dynamic>) return empty;
+    final categorized = _categorizedTenantsFromV2Data(dataMap);
+    final counts = _countsFromV2Data(dataMap);
+    final pagination = _paginationFromRoot(jsonResponse, limit);
+    return TenantsV2ListResult(
+      categorized: categorized,
+      counts: counts,
+      pagination: pagination,
+    );
+  }
+
+  Future<Map<String, List<Tenant>>> fetchTenants() async {
+    final r = await fetchTenantsV2Page(
+      page: 1,
+      limit: 5000,
+      search: '',
+      tenantType: 'all',
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    );
+    return r.categorized;
   }
 
   Future<List<Tenant>> fetchLeaseTenants(String tenantId) async {
@@ -308,6 +411,7 @@ class TenantsRepository {
     required String enableOverRideFee,
     required bool allowAch,
     required bool allowCard,
+    bool showSuccessToast = true,
   }) async {
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -352,7 +456,9 @@ class TenantsRepository {
     print('edit tenant ${response.body}');
     print(responseData);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
+      if (showSuccessToast) {
+        Fluttertoast.showToast(msg: responseData["message"]);
+      }
       return json.decode(response.body);
     } else if (responseData["statusCode"] == 201) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -361,6 +467,42 @@ class TenantsRepository {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to edit tenant type');
     }
+  }
+
+  /// PUT `/api/tenant/tenants/:id` using current [tenant] fields and updated payment flags.
+  Future<Map<String, dynamic>> editTenantFromModel(
+    Tenant tenant, {
+    required bool allowAch,
+    required bool allowCard,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final resolvedAdminId =
+        (tenant.adminId ?? '').isNotEmpty ? tenant.adminId! : (prefs.getString('adminId') ?? '');
+    final ec = tenant.emergencyContact;
+    return editTenant(
+      tenantId: tenant.tenantId ?? '',
+      adminId: resolvedAdminId,
+      tenantFirstName: tenant.tenantFirstName ?? '',
+      tenantLastName: tenant.tenantLastName ?? '',
+      tenantPhoneNumber: tenant.tenantPhoneNumber ?? '',
+      tenantAlternativeNumber: tenant.tenantAlternativeNumber ?? '',
+      tenantEmail: tenant.tenantEmail ?? '',
+      tenantAlternativeEmail: tenant.tenantAlternativeEmail ?? '',
+      tenantPassword: tenant.tenantPassword?.toString() ?? '',
+      tenantBirthDate: tenant.tenantBirthDate,
+      taxPayerId: tenant.taxPayerId ?? '',
+      comments: tenant.comments ?? '',
+      emergencyContactName: ec?.name ?? '',
+      emergencyContactRelation: ec?.relation ?? '',
+      emergencyContactEmail: ec?.email ?? '',
+      emergencyContactPhoneNumber: ec?.phoneNumber ?? '',
+      companyName: '',
+      overRideFee: tenant.overRideFee?.toString() ?? '',
+      enableOverRideFee: (tenant.enableoverrideFee == true).toString(),
+      allowAch: allowAch,
+      allowCard: allowCard,
+      showSuccessToast: false,
+    );
   }
 
   Future<Map<String, dynamic>> deleteTenant(

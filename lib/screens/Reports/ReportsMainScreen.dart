@@ -19,6 +19,8 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/Home_System_Report.dart';
 import 'ReportScreens/InsurancePremiumReport.dart';
+import 'ReportScreens/LoanSummaryReport.dart';
+import 'ReportScreens/PortfolioOverviewReport.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
 import 'ReportScreens/Rent_collection.dart';
@@ -452,12 +454,13 @@ class NarrowScreenLayout extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 10,
+              height: 20,
             ),
-            titleBar(
+            Padding(padding: EdgeInsets.only(left: 14, right: 14), child: titleBar(
               title: 'Reports',
               width: MediaQuery.of(context).size.width * .98,
-            ),
+            ),),
+            SizedBox(height: 10,),
             ReportScreen(),
           ],
         ),
@@ -778,6 +781,16 @@ class ReportScreen extends StatelessWidget {
                       'Compare property revenue between current and previous periods',
                   "navigate": PropertyRevenueReport()
                 },
+                {
+                  'title': 'Portfolio Overview',
+                  'subtitle': 'KPI overview of your property portfolio',
+                  "navigate": PortfolioOverviewReport()
+                },
+                // {
+                //   'title': 'Loan Summary Report',
+                //   'subtitle': 'Summary of all loans with balance and properties',
+                //   "navigate": Loansummaryreport()
+                // },
               ],
               "Track payments, transactions, and owner accounts.",
               context),

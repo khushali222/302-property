@@ -50,6 +50,62 @@ import '../../StaffModule/screen/Property_Type/Property_type_table.dart'
     as StaffPropertyType;
 import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart'
     as StaffVendor;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
+
+/// Full state names for company profile address dropdowns (matches web UI).
+const List<String> kUsStateNames = [
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
+];
 
 class TabBarExample extends StatefulWidget {
   final String? initialTab; // Optional parameter to specify which tab to open
@@ -104,6 +160,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool issurge = false;
   bool ismail = false;
   bool isaccounts = true;
+  bool iscompanyprofile = false;
   bool islatefee = false;
   bool isLoading = false;
   bool isloading = false;
@@ -121,6 +178,40 @@ class _TabBarExampleState extends State<TabBarExample> {
   String? twilioAccountSidError;
   String? twilioAuthTokenError;
   String? twilioPhoneNumberError;
+
+  // Company profile (Manage Company Profile)
+  final TextEditingController _cpCompanyName = TextEditingController();
+  final TextEditingController _cpMailingStreet = TextEditingController();
+  final TextEditingController _cpMailingCity = TextEditingController();
+  final TextEditingController _cpMailingCountry = TextEditingController();
+  final TextEditingController _cpMailingZip = TextEditingController();
+  final TextEditingController _cpOfficeStreet = TextEditingController();
+  final TextEditingController _cpOfficeCity = TextEditingController();
+  final TextEditingController _cpOfficeCountry = TextEditingController();
+  final TextEditingController _cpOfficeZip = TextEditingController();
+  final TextEditingController _cpOfficePhone = TextEditingController();
+  final TextEditingController _cpManagerName = TextEditingController();
+  String? _cpMailingState;
+  String? _cpOfficeState;
+  bool _cpLoading = false;
+  bool _cpSaving = false;
+  bool _cpLoadedOnce = false;
+  final Map<String, String> _cpErrors = {};
+  String _cpOrigCompanyName = '';
+  String _cpOrigMailingStreet = '';
+  String _cpOrigMailingCity = '';
+  String _cpOrigMailingState = '';
+  String _cpOrigMailingCountry = '';
+  String _cpOrigMailingZip = '';
+  String _cpOrigOfficeStreet = '';
+  String _cpOrigOfficeCity = '';
+  String _cpOrigOfficeState = '';
+  String _cpOrigOfficeCountry = '';
+  String _cpOrigOfficeZip = '';
+  String _cpOrigOfficePhone = '';
+  String _cpOrigManagerName = '';
+  String? _cpApiError;
+
   // Vendor table state variables
   String vendorSearchValue = "";
   int vendorCurrentPage = 0;
@@ -184,7 +275,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       dateProvider.loadDateFormat();
 
       // Set initial tab if specified
-      if (widget.initialTab == 'Vendor') {
+      if (widget.initialTab == 'Vendors' || widget.initialTab == 'Vendor') {
         setState(() {
           issurge = false;
           ismail = false;
@@ -229,6 +320,25 @@ class _TabBarExampleState extends State<TabBarExample> {
           ispropertyowner = false;
           ispropertytype = true;
         });
+      } else if (widget.initialTab == 'Company Profile') {
+        setState(() {
+          issurge = false;
+          ismail = false;
+          isaccounts = false;
+          islatefee = false;
+          isdateformate = false;
+          isworkorder = false;
+          ismanagetemplate = false;
+          ischargesetting = false;
+          iscategories = false;
+          isvendor = false;
+          ispropertyowner = false;
+          ispropertytype = false;
+          iscompanyprofile = true;
+        });
+        if (!_cpLoadedOnce) {
+          _fetchCompanyProfile();
+        }
       }
     });
     // _customDateController.text = customdate!;
@@ -290,6 +400,17 @@ class _TabBarExampleState extends State<TabBarExample> {
   void dispose() {
     accountname.dispose();
     note.dispose();
+    _cpCompanyName.dispose();
+    _cpMailingStreet.dispose();
+    _cpMailingCity.dispose();
+    _cpMailingCountry.dispose();
+    _cpMailingZip.dispose();
+    _cpOfficeStreet.dispose();
+    _cpOfficeCity.dispose();
+    _cpOfficeCountry.dispose();
+    _cpOfficeZip.dispose();
+    _cpOfficePhone.dispose();
+    _cpManagerName.dispose();
     super.dispose();
   }
 
@@ -872,6 +993,876 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+  // --- Company profile (settings) ---
+
+  void _cpTakeSnapshot() {
+    _cpOrigCompanyName = _cpCompanyName.text.trim();
+    _cpOrigMailingStreet = _cpMailingStreet.text.trim();
+    _cpOrigMailingCity = _cpMailingCity.text.trim();
+    _cpOrigMailingState = (_cpMailingState ?? '').trim();
+    _cpOrigMailingCountry = _cpMailingCountry.text.trim();
+    _cpOrigMailingZip = _cpMailingZip.text.trim();
+    _cpOrigOfficeStreet = _cpOfficeStreet.text.trim();
+    _cpOrigOfficeCity = _cpOfficeCity.text.trim();
+    _cpOrigOfficeState = (_cpOfficeState ?? '').trim();
+    _cpOrigOfficeCountry = _cpOfficeCountry.text.trim();
+    _cpOrigOfficeZip = _cpOfficeZip.text.trim();
+    _cpOrigOfficePhone = _cpOfficePhone.text.trim();
+    _cpOrigManagerName = _cpManagerName.text.trim();
+  }
+
+  bool _hasCompanyProfileChanges() {
+    return _cpCompanyName.text.trim() != _cpOrigCompanyName ||
+        _cpMailingStreet.text.trim() != _cpOrigMailingStreet ||
+        _cpMailingCity.text.trim() != _cpOrigMailingCity ||
+        (_cpMailingState ?? '').trim() != _cpOrigMailingState ||
+        _cpMailingCountry.text.trim() != _cpOrigMailingCountry ||
+        _cpMailingZip.text.trim() != _cpOrigMailingZip ||
+        _cpOfficeStreet.text.trim() != _cpOrigOfficeStreet ||
+        _cpOfficeCity.text.trim() != _cpOrigOfficeCity ||
+        (_cpOfficeState ?? '').trim() != _cpOrigOfficeState ||
+        _cpOfficeCountry.text.trim() != _cpOrigOfficeCountry ||
+        _cpOfficeZip.text.trim() != _cpOrigOfficeZip ||
+        _cpOfficePhone.text.trim() != _cpOrigOfficePhone ||
+        _cpManagerName.text.trim() != _cpOrigManagerName;
+  }
+
+  String _cpComposeBlockAddress({
+    required String street,
+    required String city,
+    required String state,
+    required String country,
+    required String zip,
+  }) {
+    final parts = <String>[
+      street.trim(),
+      city.trim(),
+      state.trim(),
+      country.trim(),
+      zip.trim(),
+    ].where((s) => s.isNotEmpty).toList();
+    return parts.join(', ');
+  }
+
+  static final RegExp _cpUsZipRegex = RegExp(r'^\d{5}(-\d{4})?$');
+
+  bool _cpZipValid(String raw) {
+    return _cpUsZipRegex.hasMatch(raw.trim());
+  }
+
+  bool _cpPhoneValid(String raw) {
+    final digits = raw.replaceAll(RegExp(r'\D'), '');
+    return digits.length == 10;
+  }
+
+  bool _validateCompanyProfileForm() {
+    setState(() {
+      _cpErrors.clear();
+    });
+    var ok = true;
+    void err(String key, String msg) {
+      _cpErrors[key] = msg;
+      ok = false;
+    }
+
+    if (_cpCompanyName.text.trim().isEmpty) {
+      err('company_name', 'This field is required');
+    }
+    if (_cpMailingStreet.text.trim().isEmpty) {
+      err('mailing_street', 'This field is required');
+    }
+    if (_cpMailingCity.text.trim().isEmpty) {
+      err('mailing_city', 'This field is required');
+    }
+    if (_cpMailingState == null || _cpMailingState!.trim().isEmpty) {
+      err('mailing_state', 'This field is required');
+    }
+    if (_cpMailingCountry.text.trim().isEmpty) {
+      err('mailing_country', 'This field is required');
+    }
+    final mz = _cpMailingZip.text.trim();
+    if (mz.isEmpty) {
+      err('mailing_zip', 'This field is required');
+    } else if (!_cpZipValid(mz)) {
+      err('mailing_zip', 'Enter valid US zip');
+    }
+
+    final oz = _cpOfficeZip.text.trim();
+    if (oz.isNotEmpty && !_cpZipValid(oz)) {
+      err('office_zip', 'Enter valid US zip');
+    }
+
+    if (_cpOfficePhone.text.trim().isEmpty) {
+      err('office_phone', 'This field is required');
+    } else if (!_cpPhoneValid(_cpOfficePhone.text)) {
+      err('office_phone', 'Phone number must be 10 digits');
+    }
+
+    if (_cpManagerName.text.trim().isEmpty) {
+      err('manager_name', 'This field is required');
+    }
+
+    setState(() {});
+    return ok;
+  }
+
+  /// Staff: `id` + `staff_id` use staff id; `admin_id` is the tenant admin.
+  /// Admin: `id` + `admin_id` use admin id (no `staff_id`).
+  Map<String, String> _companyProfileAuthHeaders({
+    required String token,
+    required String? adminId,
+    required String? staffId,
+  }) {
+    final h = <String, String>{
+      'authorization': 'CRM $token',
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+    final staff = staffId != null && staffId.isNotEmpty;
+    if (staff) {
+      h['id'] = 'CRM $staffId';
+      h['staff_id'] = staffId!;
+      if (adminId != null && adminId.isNotEmpty) {
+        h['admin_id'] = adminId!;
+      }
+    } else {
+      final a = adminId ?? '';
+      h['id'] = 'CRM $a';
+      if (adminId != null && adminId.isNotEmpty) {
+        h['admin_id'] = adminId!;
+      }
+    }
+    return h;
+  }
+
+  Future<void> _fetchCompanyProfile() async {
+    if (_cpLoading) return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final adminId = prefs.getString('adminId');
+    final token = prefs.getString('token');
+    final staffId = prefs.getString('staff_id');
+    if (adminId == null || token == null) return;
+
+    setState(() => _cpLoading = true);
+    try {
+      final hdr = _companyProfileAuthHeaders(
+        token: token,
+        adminId: adminId,
+        staffId: staffId,
+      );
+      var uri = Uri.parse('$Api_url/api/settings/company-profile/$adminId');
+      var res = await http.get(uri, headers: hdr);
+      if (res.statusCode != 200) {
+        uri = Uri.parse('$Api_url/api/settings/company-profile');
+        res = await http.get(uri, headers: hdr);
+      }
+      final decoded = jsonDecode(res.body);
+      if (decoded['statusCode'] == 200 && decoded['data'] != null) {
+        final d = decoded['data'] as Map<String, dynamic>;
+        setState(() {
+          _cpCompanyName.text = (d['company_name'] ?? '').toString();
+          _cpMailingStreet.text = (d['mailing_street'] ?? '').toString();
+          _cpMailingCity.text = (d['mailing_city'] ?? '').toString();
+          final ms = (d['mailing_state'] ?? '').toString().trim();
+          _cpMailingState = ms.isEmpty ? null : ms;
+          _cpMailingCountry.text = (d['mailing_country'] ?? '').toString();
+          _cpMailingZip.text = (d['mailing_zip'] ?? '').toString();
+          _cpOfficeStreet.text = (d['office_street'] ?? '').toString();
+          _cpOfficeCity.text = (d['office_city'] ?? '').toString();
+          final os = (d['office_state'] ?? '').toString().trim();
+          _cpOfficeState = os.isEmpty ? null : os;
+          if (_cpMailingState != null &&
+              !kUsStateNames.contains(_cpMailingState)) {
+            _cpMailingState = null;
+          }
+          if (_cpOfficeState != null &&
+              !kUsStateNames.contains(_cpOfficeState)) {
+            _cpOfficeState = null;
+          }
+          _cpOfficeCountry.text = (d['office_country'] ?? '').toString();
+          _cpOfficeZip.text = (d['office_zip'] ?? '').toString();
+          final phoneRaw = (d['office_phone_number'] ?? '').toString();
+          _cpOfficePhone.text = formatPhoneNumberedit(phoneRaw);
+          _cpManagerName.text = (d['manager_name'] ?? '').toString();
+          _cpLoadedOnce = true;
+          _cpApiError = null;
+          _cpTakeSnapshot();
+        });
+      } else {
+        setState(() {
+          _cpLoadedOnce = true;
+          _cpApiError = decoded['message']?.toString();
+          _cpTakeSnapshot();
+        });
+      }
+    } catch (e) {
+      print('Company profile fetch failed: $e');
+      setState(() {
+        _cpLoadedOnce = true;
+        _cpApiError = 'Could not load company profile.';
+        _cpTakeSnapshot();
+      });
+    } finally {
+      if (mounted) setState(() => _cpLoading = false);
+    }
+  }
+
+  Future<void> _saveCompanyProfile() async {
+    if (!_hasCompanyProfileChanges()) {
+      return;
+    }
+    setState(() => _cpApiError = null);
+    if (!_validateCompanyProfileForm()) {
+      return;
+    }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final adminId = prefs.getString('adminId');
+    final token = prefs.getString('token');
+    final staffId = prefs.getString('staff_id');
+    if (adminId == null || token == null) {
+      setState(() => _cpApiError = 'Missing session. Please sign in again.');
+      return;
+    }
+
+    final mailingBlock = _cpComposeBlockAddress(
+      street: _cpMailingStreet.text,
+      city: _cpMailingCity.text,
+      state: _cpMailingState ?? '',
+      country: _cpMailingCountry.text,
+      zip: _cpMailingZip.text,
+    );
+    final officeBlock = _cpComposeBlockAddress(
+      street: _cpOfficeStreet.text,
+      city: _cpOfficeCity.text,
+      state: _cpOfficeState ?? '',
+      country: _cpOfficeCountry.text,
+      zip: _cpOfficeZip.text,
+    );
+
+    final body = <String, dynamic>{
+      'admin_id': adminId,
+      'company_name': _cpCompanyName.text.trim(),
+      'company_dba': '',
+      'is_web': kIsWeb,
+      'mailing_address': mailingBlock,
+      'mailing_street': _cpMailingStreet.text.trim(),
+      'mailing_city': _cpMailingCity.text.trim(),
+      'mailing_state': _cpMailingState ?? '',
+      'mailing_country': _cpMailingCountry.text.trim(),
+      'mailing_zip': _cpMailingZip.text.trim(),
+      'office_address': officeBlock,
+      'office_street': _cpOfficeStreet.text.trim(),
+      'office_city': _cpOfficeCity.text.trim(),
+      'office_state': _cpOfficeState ?? '',
+      'office_country': _cpOfficeCountry.text.trim(),
+      'office_zip': _cpOfficeZip.text.trim(),
+      'office_phone_number': _cpOfficePhone.text.trim(),
+      'manager_name': _cpManagerName.text.trim(),
+      'user_active_recently': true,
+    };
+
+    setState(() => _cpSaving = true);
+    try {
+      final res = await http.put(
+        Uri.parse('$Api_url/api/settings/company-profile'),
+        headers: _companyProfileAuthHeaders(
+          token: token,
+          adminId: adminId,
+          staffId: staffId,
+        ),
+        body: jsonEncode(body),
+      );
+      final decoded = jsonDecode(res.body);
+      if (decoded['statusCode'] == 200) {
+        _cpTakeSnapshot();
+        setState(() {
+          _cpApiError = null;
+        });
+        Fluttertoast.showToast(
+            msg: decoded['message']?.toString() ?? 'Company profile saved');
+      } else {
+        setState(() {
+          _cpApiError =
+              decoded['message']?.toString() ?? 'Save failed. Try again.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _cpApiError = 'Could not save: $e';
+      });
+    } finally {
+      if (mounted) setState(() => _cpSaving = false);
+    }
+  }
+
+  /// Matches [Profile_screen] vendor profile field styling.
+  Widget _cpLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _cpSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 12, left: 2),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: blueColor,
+        ),
+      ),
+    );
+  }
+
+  OutlineInputBorder _cpOutlineBorder(Color color, {double width = 1}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: color, width: width),
+    );
+  }
+
+  Widget _cpTextField({
+    required TextEditingController controller,
+    String? hint,
+    bool error = false,
+    List<TextInputFormatter>? inputFormatters,
+    TextInputType? keyboardType,
+    void Function(String)? onChanged,
+  }) {
+    final borderColor = error ? Colors.red : Colors.grey.shade400;
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      style: const TextStyle(fontSize: 14, color: Colors.black87),
+      cursorColor: blueColor,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+        filled: false,
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: _cpOutlineBorder(borderColor),
+        enabledBorder: _cpOutlineBorder(borderColor),
+        focusedBorder: _cpOutlineBorder(
+          error ? Colors.red : blueColor,
+          width: error ? 1 : 1.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _cpStateDropdownField({
+    required String? value,
+    required void Function(String?) onChanged,
+    required String hint,
+    bool error = false,
+  }) {
+    final borderColor = error ? Colors.red : Colors.grey.shade400;
+    final menuMaxH =
+        (MediaQuery.sizeOf(context).height * 0.35).clamp(200.0, 320.0);
+
+    return DropdownButtonHideUnderline(
+      child: DropdownButton2<String>(
+        isExpanded: true,
+        value: (value == null || value.isEmpty) ? null : value,
+        hint: Text(
+          hint,
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+        ),
+        items: kUsStateNames
+            .map((s) => DropdownMenuItem<String>(
+                  value: s,
+                  child: Text(
+                    s,
+                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        buttonStyleData: ButtonStyleData(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: borderColor),
+          ),
+        ),
+        iconStyleData: IconStyleData(
+          icon: Icon(Icons.keyboard_arrow_down_rounded,
+              color: blueColor, size: 22),
+        ),
+        dropdownStyleData: DropdownStyleData(
+          maxHeight: menuMaxH,
+          elevation: 3,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+        ),
+        menuItemStyleData: const MenuItemStyleData(
+          height: 42,
+          padding: EdgeInsets.symmetric(horizontal: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _cpErrorText(String? msg) {
+    if (msg == null || msg.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, left: 2),
+      child: Text(
+        msg,
+        style: const TextStyle(color: Colors.red, fontSize: 12),
+      ),
+    );
+  }
+
+  Widget _cpVendorCard({required List<Widget> children}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildCompanyProfileForm() {
+    final w = MediaQuery.of(context).size.width;
+    final narrow = w < 700;
+
+    if (_cpLoading && !_cpLoadedOnce) {
+      return  Padding(
+        padding: EdgeInsets.all(24),
+        child: Center(child: 
+         SpinKitFadingCircle(color: blueColor,size: 35,),
+        ),
+      );
+    }
+
+    Widget row4({
+      required Widget c1,
+      required Widget c2,
+      required Widget c3,
+      required Widget c4,
+    }) {
+      if (narrow) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            c1,
+            const SizedBox(height: 12),
+            c2,
+            const SizedBox(height: 12),
+            c3,
+            const SizedBox(height: 12),
+            c4,
+          ],
+        );
+      }
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: c1),
+          const SizedBox(width: 12),
+          Expanded(child: c2),
+          const SizedBox(width: 12),
+          Expanded(child: c3),
+          const SizedBox(width: 12),
+          Expanded(child: c4),
+        ],
+      );
+    }
+
+    final zipFormatters = [
+      FilteringTextInputFormatter.allow(RegExp(r'[\d-]')),
+      LengthLimitingTextInputFormatter(10),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Manage Company Profile',
+          style: TextStyle(
+            color: blueColor,
+            fontWeight: FontWeight.bold,
+            fontSize: w < 500 ? 20 : 24,
+          ),
+        ),
+        if (_cpApiError != null && _cpApiError!.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.red.shade200),
+            ),
+            child: Text(
+              _cpApiError!,
+              style: TextStyle(color: Colors.red.shade900, fontSize: 13),
+            ),
+          ),
+        ],
+        const SizedBox(height: 16),
+        _cpSectionTitle('Company'),
+        _cpVendorCard(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cpLabel('Company Name / DBA *'),
+                  _cpTextField(
+                    controller: _cpCompanyName,
+                    hint: 'Enter company name',
+                    error: _cpErrors.containsKey('company_name'),
+                    onChanged: (_) =>
+                        setState(() => _cpErrors.remove('company_name')),
+                  ),
+                  _cpErrorText(_cpErrors['company_name']),
+                ],
+              ),
+            ),
+          ],
+        ),
+        _cpSectionTitle('Mailing Address'),
+        _cpVendorCard(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cpLabel('Street *'),
+                  _cpTextField(
+                    controller: _cpMailingStreet,
+                    hint: 'Street address',
+                    error: _cpErrors.containsKey('mailing_street'),
+                    onChanged: (_) =>
+                        setState(() => _cpErrors.remove('mailing_street')),
+                  ),
+                  _cpErrorText(_cpErrors['mailing_street']),
+                ],
+              ),
+            ),
+            row4(
+              c1: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _cpLabel('City *'),
+                        _cpTextField(
+                          controller: _cpMailingCity,
+                          hint: 'Enter city',
+                          error: _cpErrors.containsKey('mailing_city'),
+                          onChanged: (_) =>
+                              setState(() => _cpErrors.remove('mailing_city')),
+                        ),
+                        _cpErrorText(_cpErrors['mailing_city']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              c2: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _cpLabel('State *'),
+                        _cpStateDropdownField(
+                          value: _cpMailingState,
+                          hint: 'Select State',
+                          error: _cpErrors.containsKey('mailing_state'),
+                          onChanged: (v) {
+                            setState(() {
+                              _cpMailingState = v;
+                              _cpErrors.remove('mailing_state');
+                            });
+                          },
+                        ),
+                        _cpErrorText(_cpErrors['mailing_state']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              c3: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _cpLabel('Country *'),
+                        _cpTextField(
+                          controller: _cpMailingCountry,
+                          hint: 'Enter country',
+                          error: _cpErrors.containsKey('mailing_country'),
+                          onChanged: (_) => setState(
+                              () => _cpErrors.remove('mailing_country')),
+                        ),
+                        _cpErrorText(_cpErrors['mailing_country']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              c4: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _cpLabel('Zip *'),
+                        _cpTextField(
+                          controller: _cpMailingZip,
+                          hint: 'Enter zip code',
+                          keyboardType: TextInputType.text,
+                          inputFormatters: zipFormatters,
+                          error: _cpErrors.containsKey('mailing_zip'),
+                          onChanged: (_) =>
+                              setState(() => _cpErrors.remove('mailing_zip')),
+                        ),
+                        _cpErrorText(_cpErrors['mailing_zip']),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        _cpSectionTitle('Office Address (if different)'),
+        _cpVendorCard(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cpLabel('Street'),
+                  _cpTextField(
+                    controller: _cpOfficeStreet,
+                    hint: 'Street address',
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ],
+              ),
+            ),
+            row4(
+              c1: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cpLabel('City'),
+                    _cpTextField(
+                      controller: _cpOfficeCity,
+                      hint: 'Enter city',
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ],
+                ),
+              ),
+              c2: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cpLabel('State'),
+                    _cpStateDropdownField(
+                      value: _cpOfficeState,
+                      hint: 'Select State',
+                      onChanged: (v) => setState(() => _cpOfficeState = v),
+                    ),
+                  ],
+                ),
+              ),
+              c3: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cpLabel('Country'),
+                    _cpTextField(
+                      controller: _cpOfficeCountry,
+                      hint: 'Enter country',
+                      onChanged: (_) => setState(() {}),
+                    ),
+                  ],
+                ),
+              ),
+              c4: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _cpLabel('Zip'),
+                    _cpTextField(
+                      controller: _cpOfficeZip,
+                      hint: 'Enter zip code',
+                      keyboardType: TextInputType.text,
+                      inputFormatters: zipFormatters,
+                      error: _cpErrors.containsKey('office_zip'),
+                      onChanged: (_) =>
+                          setState(() => _cpErrors.remove('office_zip')),
+                    ),
+                    _cpErrorText(_cpErrors['office_zip']),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        _cpSectionTitle('Contact'),
+        _cpVendorCard(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cpLabel('Office Phone Number *'),
+                  _cpTextField(
+                    controller: _cpOfficePhone,
+                    hint: '(xxx) xxx-xxxx',
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                      PhoneNumberFormatter(),
+                    ],
+                    error: _cpErrors.containsKey('office_phone'),
+                    onChanged: (_) =>
+                        setState(() => _cpErrors.remove('office_phone')),
+                  ),
+                  _cpErrorText(_cpErrors['office_phone']),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _cpLabel('Manager Name *'),
+                  _cpTextField(
+                    controller: _cpManagerName,
+                    hint: 'Enter manager name',
+                    error: _cpErrors.containsKey('manager_name'),
+                    onChanged: (_) =>
+                        setState(() => _cpErrors.remove('manager_name')),
+                  ),
+                  _cpErrorText(_cpErrors['manager_name']),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: (_cpSaving || !_hasCompanyProfileChanges())
+                  ? null
+                  : _saveCompanyProfile,
+              child: Opacity(
+                opacity:
+                    (_cpSaving || !_hasCompanyProfileChanges()) ? 0.5 : 1.0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 48,
+                      minWidth: w < 500 ? 228 : 268,
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: w < 500 ? 20 : 24,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0, 1),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                      child: _cpSaving
+                          ? SpinKitFadingCircle(
+                              color: Colors.white,
+                              size: 24,
+                            )
+                          : Text(
+                              'Save Company Profile',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: w < 500 ? 14 : 16,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
   Future<void> fetchTwilioSettings() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -938,7 +1929,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (hasError) {
         setState(() {});
         print("Please fill all required fields.");
-       // _showTwilioSnackBar("Please fill all required fields.");
+        // _showTwilioSnackBar("Please fill all required fields.");
         return;
       }
     }
@@ -1216,20 +2207,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
       buttons: [
         DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-        DialogButton(
           child: const Text(
             "Delete",
             style: TextStyle(color: Colors.white, fontSize: 18),
@@ -1242,6 +2219,20 @@ class _TabBarExampleState extends State<TabBarExample> {
             Navigator.pop(context);
           },
           color: blueColor,
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8), // Rounded corners
+          border: Border.all(
+            color: blueColor, // Blue border
+            width: 1.5,
+          ),
         ),
       ],
     ).show();
@@ -2118,33 +3109,36 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   static const List<String> _settingsTabTitles = [
     'Accounts',
+    'Company Profile',
     'Categories',
-    'Charges',
+    // 'Charges',
     'Date Format',
     'Late Fee Charge',
-    'Manage Template',
+    'Manage Templates',
     'Mail',
     'Work Order',
     'Property Owners',
     'Property Type',
     'Surcharge',
-    'Vendor',
- //   'Twilio',
+    'Vendors',
+
+    //   'Twilio',
   ];
 
   String _getCurrentSettingsTab() {
     if (isaccounts) return 'Accounts';
+    if (iscompanyprofile) return 'Company Profile';
     if (iscategories) return 'Categories';
     if (ischargesetting) return 'Charges';
     if (isdateformate) return 'Date Format';
     if (islatefee) return 'Late Fee Charge';
-    if (ismanagetemplate) return 'Manage Template';
+    if (ismanagetemplate) return 'Manage Templates';
     if (ismail) return 'Mail';
     if (isworkorder) return 'Work Order';
     if (ispropertyowner) return 'Property Owners';
     if (ispropertytype) return 'Property Type';
     if (issurge) return 'Surcharge';
-    if (isvendor) return 'Vendor';
+    if (isvendor) return 'Vendors';
     if (istwilio) return 'Twilio';
 
     return 'Accounts';
@@ -2153,15 +3147,16 @@ class _TabBarExampleState extends State<TabBarExample> {
   void _onSettingsTabChanged(String value) {
     setState(() {
       issurge = value == 'Surcharge';
+      iscompanyprofile = value == 'Company Profile';
       ismail = value == 'Mail';
       isaccounts = value == 'Accounts';
       islatefee = value == 'Late Fee Charge';
       isdateformate = value == 'Date Format';
       isworkorder = value == 'Work Order';
-      ismanagetemplate = value == 'Manage Template';
+      ismanagetemplate = value == 'Manage Templates';
       ischargesetting = value == 'Charges';
       iscategories = value == 'Categories';
-      isvendor = value == 'Vendor';
+      isvendor = value == 'Vendors' || value == 'Vendor';
       istwilio = value == 'Twilio';
       ispropertyowner = value == 'Property Owners';
       ispropertytype = value == 'Property Type';
@@ -2189,12 +3184,17 @@ class _TabBarExampleState extends State<TabBarExample> {
         fetchTwilioSettings();
       }
     });
+    if (value == 'Company Profile' && !_cpLoadedOnce) {
+      _fetchCompanyProfile();
+    }
   }
 
   static IconData _iconForSettingsTab(String title) {
     switch (title) {
       case 'Accounts':
         return Icons.account_balance;
+      case 'Company Profile':
+        return Icons.business;
       case 'Categories':
         return Icons.category;
       case 'Charges':
@@ -2203,7 +3203,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.calendar_today;
       case 'Late Fee Charge':
         return Icons.schedule;
-      case 'Manage Template':
+      case 'Manage Templates':
         return Icons.description;
       case 'Mail':
         return Icons.email;
@@ -2215,6 +3215,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.home;
       case 'Surcharge':
         return Icons.receipt;
+      case 'Vendors':
       case 'Vendor':
         return Icons.store;
       case 'Twilio':
@@ -3492,6 +4493,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ],
                               ),
+                            ],
+                          ),
+                        if (iscompanyprofile)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 15),
+                              _buildCompanyProfileForm(),
                             ],
                           ),
                         if (ismail)
@@ -8265,11 +9274,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       ),
                                     ),
                                   ),
-                                 
                                 ],
                               ),
-                             Row(children: [
-                               Switch(
+                              Row(
+                                children: [
+                                  Switch(
                                     value: twilioSmsEnabled,
                                     onChanged: (value) {
                                       setState(() {
@@ -8278,8 +9287,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     },
                                     activeColor: blueColor,
                                   ),
-                               
-                             ],),
+                                ],
+                              ),
                               const SizedBox(height: 10),
                               Row(children: [
                                 Text(
@@ -8303,7 +9312,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioAccountSidError!,
                                         style: const TextStyle(
@@ -8338,7 +9348,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioAuthTokenError!,
                                         style: const TextStyle(
@@ -8372,7 +9383,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 4, left: 5),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 5),
                                       child: Text(
                                         twilioPhoneNumberError!,
                                         style: const TextStyle(
@@ -8397,7 +9409,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     child: Center(
                                       child: Text(
                                         'Save Settings',
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
                                       ),
                                     ),
                                   ),
@@ -8678,6 +9693,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter account name',
                     controller: accountname,
+                    showElevation: false,
+                    
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8704,6 +9723,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         _selectedAccounttype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8730,6 +9751,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         _selectedFundtype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8751,6 +9774,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter notes',
                     controller: note,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 20),
                   Row(
@@ -8810,7 +9836,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     )
                                   : const Text(
                                       'Add',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                                     ),
                             ),
                           ),
@@ -8832,7 +9858,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Center(
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: blueColor),
+                                style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -8911,6 +9937,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter account name',
                     controller: editAccountName,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8937,6 +9966,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         editSelectedAccounttype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8963,6 +9994,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                         editSelectedFundtype = value;
                       });
                     },
+                    useBorderStyle: true,
+                    dropdownHeight: 50,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -8984,6 +10017,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                     keyboardType: TextInputType.text,
                     hintText: 'Enter notes',
                     controller: editNote,
+                    showElevation: false,
+                    borderColor: const Color(0xFFCED4DA),
+                    borderWidth: 1.0,
                   ),
                   const SizedBox(height: 30),
                   Row(
@@ -9058,7 +10094,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     )
                                   : const Text(
                                       'Update',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                                     ),
                             ),
                           ),
@@ -9080,7 +10116,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             child: Center(
                               child: Text(
                                 'Cancel',
-                                style: TextStyle(color: blueColor),
+                                style: TextStyle(color: blueColor,fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

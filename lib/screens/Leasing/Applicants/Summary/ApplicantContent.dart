@@ -1666,31 +1666,28 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: Material(
-                                            borderRadius:
-                                                BorderRadius.circular(4.0),
-                                            elevation: 4,
-                                            child: Container(
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(4),
-                                                border: Border.all(
-                                                    color: blueColor),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  'Email link to online rental application',
-                                                  style: TextStyle(
-                                                      color: blueColor,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: blueColor),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 8),
+                                              child: Text(
+                                                'Email link to online rental application',
+                                                style: TextStyle(
+                                                    color: blueColor,
+                                                    fontSize: 15,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ),
@@ -1707,31 +1704,28 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               });
                                               print('$showAddForm');
                                             },
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(4.0),
-                                              elevation: 4,
-                                              child: Container(
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                  border: Border.all(
-                                                      color: blueColor),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    'Manually enter application details',
-                                                    style: TextStyle(
-                                                        color: blueColor,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                            child: Container(
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                    color: blueColor),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                        horizontal: 8),
+                                                child: Text(
+                                                  'Manually enter application details',
+                                                  style: TextStyle(
+                                                      color: blueColor,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
                                             ),
@@ -1778,29 +1772,25 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   'Failed to send mail try again later');
                                         }
                                       },
-                                      child: Material(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                        elevation: 4,
-                                        child: Container(
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border:
-                                                Border.all(color: blueColor),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Email link to online rental application',
-                                              style: TextStyle(
-                                                  color: blueColor,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border:
+                                              Border.all(color: blueColor),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 8),
+                                          child: Text(
+                                            'Email link to online rental application',
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
@@ -1816,29 +1806,25 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         });
                                         print('$showAddForm');
                                       },
-                                      child: Material(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                        elevation: 4,
-                                        child: Container(
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                            border:
-                                                Border.all(color: blueColor),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Manually enter application details',
-                                              style: TextStyle(
-                                                  color: blueColor,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border:
+                                              Border.all(color: blueColor),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 8),
+                                          child: Text(
+                                            'Manually enter application details',
+                                            style: TextStyle(
+                                                color: blueColor,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),

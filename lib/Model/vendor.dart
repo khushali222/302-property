@@ -5,6 +5,7 @@ class Vendor {
   String? vendorPhoneNumber;
   String? vendorEmail;
   String? vendorPassword;
+  String? trade;
 
 
   Vendor({
@@ -15,6 +16,7 @@ class Vendor {
     this.vendorPhoneNumber,
     this.vendorEmail,
     this.vendorPassword,
+    this.trade,
   });
 
   factory Vendor.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class Vendor {
       vendorPhoneNumber: json['vendor_phoneNumber'].toString(),
       vendorEmail: json['vendor_email'],
       vendorPassword: json['vendor_password'],
+      trade: json['trade'],
     );
   }
 
@@ -35,6 +38,7 @@ class Vendor {
       'vendor_phoneNumber': vendorPhoneNumber,
       'vendor_email': vendorEmail,
       'vendor_password': vendorPassword,
+      'trade': trade,
     };
   }
 }

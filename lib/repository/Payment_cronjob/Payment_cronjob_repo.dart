@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -207,6 +208,7 @@ class PaymentCronjobRepository {
         "authorization": "CRM $token",
         "id": "CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
+        "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode({
         "voidDetails": {
@@ -346,6 +348,7 @@ class PaymentCronjobRepository {
         "authorization": "CRM $token",
         "id": "CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
+        "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode({"refundDetails": commonData}),
     );

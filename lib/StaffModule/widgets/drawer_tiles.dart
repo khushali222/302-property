@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/Send_email_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Communications/Send%20E-mail/send_mail.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
@@ -6,6 +7,7 @@ import '../../widgets/navigation_helper.dart';
 
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/Applicants/Applicants_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/lease_table.dart';
+import 'package:three_zero_two_property/screens/Leasing/Pending_lease/Pending_lease.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Vendor/Vendor_table.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder/Workorder_table.dart';
 // import 'package:three_zero_two_property/StaffModule/screen/Property_Type/Property_type_table.dart'; // Moved to Settings
@@ -16,13 +18,11 @@ import 'package:three_zero_two_property/StaffModule/screen/Rental/Tenants/Tenant
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportsMainScreen.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../../screens/Profile/Settings_screen.dart';
-import '../screen/Communications/E-mail Logs/email_log_table.dart';
-
 import '../screen/Communications/Templates/Templet_table.dart';
 import '../screen/Leasing/Scheduled_Payments/Scheduled_Payments_table.dart';
 import '../screen/Leasing/scheduled_charges/ScheduledCharge.dart';
 import '../screen/dashboard.dart';
-import '../screen/profile.dart';
+import '../screen/profile.dart'; 
 import '../screen/upcoming_renewal/upcoming_renewal.dart';
 import 'package:three_zero_two_property/screens/BidRoom/bid_room_table.dart';
 
@@ -91,6 +91,12 @@ Widget buildListTile(
             (context) => Tenants_table(),
             "Tenants",
           );
+        } else if (title == "Vendors" && active != true) {
+          NavigationHelper.navigateWithValidationBuilder(
+            context,
+            (context) => Vendor_table(),
+            "Vendors",
+          );
         } else if (title == "Settings") {
           NavigationHelper.navigateWithValidationBuilder(
             context,
@@ -118,12 +124,13 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
     "Mortgage": (context) => MortgageTable(),
     // "Rental Owner": (context) => Rentalowner_table(), // Moved to Settings as "Property Owners"
     // "Property Type": (context) => PropertyTable(), // Moved to Settings
-    "Vendor": (context) =>
-        Vendor_table(), // Vendor accessible through Settings, not sidebar
+    "Vendors": (context) => Vendor_table(),
+    "Vendor": (context) => Vendor_table(),
     "Work Orders": (context) => Workorder_table(),
     "Leases": (context) => Lease_table(),
     "Applicants": (context) => Applicants_table(),
     "Upcoming Renewal": (context) => Upcomingrenewal(),
+    "Pending Lease": (context) => const Pending_lease(useStaffLayout: true),
     "Templates": (context) => TempletTable(),
     //"E-mail Logs": (context) => Email_log_tablee(),
     "E-mail Logs": (context) => Send_Email_table(),
@@ -154,6 +161,208 @@ void navigateToOption(BuildContext context, String option, bool isActive) {
       option,
     );
   }
+}
+
+const _kCommLeafPages = ['Send E-mail', 'E-mail Logs', 'Templates'];
+const _kCommEmailPages = ['Send E-mail', 'E-mail Logs'];
+
+/// Communications → Email (nested) → Send E-mail / E-mail Logs; SMS (placeholder); Templates.
+Widget buildCommunicationsSection(
+  BuildContext context, {
+  required String currentpage,
+  required bool dropdown,
+}) {
+  final String? selected = dropdown ? currentpage : null;
+  final bool commOpen =
+      selected != null && _kCommLeafPages.contains(currentpage);
+  final bool emailOpen =
+      selected != null && _kCommEmailPages.contains(currentpage);
+
+  Widget iconForPage(String page, bool active) {
+    final Color c = active ? Colors.white : blueColor;
+    switch (page) {
+      case 'Send E-mail':
+        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 20, color: c);
+      case 'E-mail Logs':
+        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 20, color: c);
+      case 'Templates':
+        return FaIcon(FontAwesomeIcons.fileLines, size: 20, color: c);
+      default:
+        return FaIcon(FontAwesomeIcons.circle, size: 20, color: c);
+    }
+  }
+
+  /// Same row layout as staff [buildDropdownListTile] children.
+  Widget emailLeafTile(String title) {
+    final bool active = currentpage == title;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: active ? blueColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          leading: iconForPage(title, active),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 15,
+              color: active ? Colors.white : blueColor,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            navigateToOption(context, title, active);
+          },
+        ),
+      ),
+    );
+  }
+
+  final Color chevronCollapsed = Colors.grey.shade600;
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 14),
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: commOpen,
+        maintainState: true,
+        childrenPadding: EdgeInsets.zero,
+        iconColor: blueColor,
+        collapsedIconColor: chevronCollapsed,
+        leading: FaIcon(
+          FontAwesomeIcons.comments,
+          size: 20,
+          color: blueColor,
+        ),
+        title: Text(
+          'Communications',
+          style: TextStyle(
+            color: blueColor,
+            fontSize: 15,
+          ),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color:  Color(0xFFF7F8FA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Theme(
+                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ExpansionTile(
+                      initiallyExpanded: emailOpen,
+                      childrenPadding: EdgeInsets.zero,
+                      iconColor: blueColor,
+                      collapsedIconColor: chevronCollapsed,
+                      leading: FaIcon(
+                        FontAwesomeIcons.envelope,
+                        size: 20,
+                        color: blueColor,
+                      ),
+                      title: Text(
+                        'Email',
+                        style: TextStyle(
+                          color: blueColor,
+                          fontSize: 15,
+                        ),
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color:Color(0xFFF0F2F5),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                emailLeafTile('Send E-mail'),
+                                emailLeafTile('E-mail Logs'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    // ExpansionTile(
+                    //   initiallyExpanded: false,
+                    //   childrenPadding: EdgeInsets.zero,
+                    //   iconColor: blueColor,
+                    //   collapsedIconColor: chevronCollapsed,
+                    //   leading: FaIcon(
+                    //     FontAwesomeIcons.comment,
+                    //     size: 20,
+                    //     color: blueColor,
+                    //   ),
+                    //   title: Text(
+                    //     'SMS',
+                    //     style: TextStyle(
+                    //       color: blueColor,
+                    //       fontSize: 15,
+                    //     ),
+                    //   ),
+                    //   children: [
+                    //     Padding(
+                    //       padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                    //       child: Text(
+                    //         'Coming soon',
+                    //         style: TextStyle(
+                    //           fontSize: 13,
+                    //           color: Colors.grey.shade600,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 4),
+                      child: () {
+                        final bool active = currentpage == 'Templates';
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: active ? blueColor : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: ListTile(
+                            leading: iconForPage('Templates', active),
+                            title: Text(
+                              'Templates',
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: active ? Colors.white : blueColor,
+                              ),
+                            ),
+                            trailing: const SizedBox(
+                              width: 24,
+                              height: 24,
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                              navigateToOption(context, 'Templates', active);
+                            },
+                          ),
+                        );
+                      }(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget buildDropdownListTile(

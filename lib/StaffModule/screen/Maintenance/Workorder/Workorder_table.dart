@@ -29,8 +29,18 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Workorder_table extends StatefulWidget {
-  String? filter;
-  Workorder_table({super.key, this.filter});
+  final String? filter;
+  final bool embeddedMode;
+  final String? rentalIdFilter;
+  final bool showAddButton;
+
+  Workorder_table({
+    super.key,
+    this.filter,
+    this.embeddedMode = false,
+    this.rentalIdFilter,
+    this.showAddButton = true,
+  });
 
   @override
   State<Workorder_table> createState() => _Workorder_tableState();
@@ -277,6 +287,75 @@ class _Workorder_tableState extends State<Workorder_table> {
   String? selectedValue;
   String searchvalue = "";
 
+  Widget _mobileWorkOrderColumnHeader() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+      margin: const EdgeInsets.only(bottom: 2),
+      child: Row(
+        children: [
+          const SizedBox(width: 25),
+          Expanded(
+            flex: 3,
+            child: Text(
+              "Work Order",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+         SizedBox(width: 8),
+          Expanded(
+            flex: 2,
+            child: Text(
+              "Ticket #",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.start,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _workOrdersEmptyPlaceholder() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/no_data.jpg",
+              height: 160,
+              width: 160,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "No Data Available",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _loadWorkOrders() async {
     setState(() {
       futureworkorders = WorkOrderRepository().fetchWorkOrdersPaginated(
@@ -287,6 +366,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         status: selectedStatuses.contains('All') ? null : selectedStatuses,
         search: searchvalue.isEmpty ? null : searchvalue,
         billable: isChecked ? true : null,
+        rentalId: widget.rentalIdFilter,
       );
     });
     final result = await futureworkorders;
@@ -318,7 +398,7 @@ class _Workorder_tableState extends State<Workorder_table> {
 
   Widget _buildMultiSelectDropdown() {
     return Material(
-      elevation: 3,
+    //  elevation: 3,
       borderRadius: BorderRadius.circular(8),
       child: Container(
         height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
@@ -328,7 +408,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFF8A95A8)),
+          border: Border.all(color: Color(0xFFDBE0E5)),
           color: Colors.white,
         ),
         child: PopupMenuButton<String>(
@@ -540,7 +620,83 @@ class _Workorder_tableState extends State<Workorder_table> {
       ],
     ).show();
   }
+ 
+  void handleClose(Data workorder) {
+    _showCloseAlert(context, workorder.workOrderData!.workOrderId!);
+  }
 
+  void _showCloseAlert(BuildContext context, String workOrderId) {
+    final reason = TextEditingController();
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Close Work Order?",
+      desc:
+          "This work order will be marked as closed. You can add a reason below.",
+      style: const AlertStyle(
+        backgroundColor: Colors.white,
+      ),
+      content: Column(
+        children: [
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter reason for closing',
+                contentPadding: EdgeInsets.only(top: 8, left: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          child: const Text("Close",
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () async {
+            final text = reason.text.trim();
+            if (text.isEmpty) {
+              Fluttertoast.showToast(
+                  msg: "Please enter a reason for closing");
+              return;
+            }
+            Navigator.pop(context);
+            try {
+              await WorkOrderRepository().closeWorkOrder(
+                workOrderId: workOrderId,
+                message: text,
+                publicNotes: text,
+              );
+              if (mounted) _loadWorkOrders();
+            } catch (_) {}
+          },
+          color: blueColor,
+          radius: BorderRadius.circular(8),
+          border: Border.all(
+            color: blueColor,
+            width: 1.5,
+          ),
+        ),
+        DialogButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.white,
+          radius: BorderRadius.circular(8),
+          border: Border.all(
+            color: blueColor,
+            width: 1.5,
+          ),
+        ),
+      ],
+    ).show();
+  }
   List<Data> _tableData = [];
   int _rowsPerPage = 10;
   int _currentPage = 0;
@@ -785,88 +941,113 @@ class _Workorder_tableState extends State<Workorder_table> {
   }
 
   final _scrollController = ScrollController();
+
+  Widget _noInternetBody() {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Lottie.asset(
+            'assets/no_internet.json',
+            width: 200,
+            height: 200,
+            fit: BoxFit.fill,
+          ),
+          const Text(
+            'No Internet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Check your internet connection',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     final dateProvider = Provider.of<DateProvider>(context);
-    return Scaffold(
-      appBar: widget_302_Staff.App_Bar(context: context),
-      backgroundColor: Colors.white,
-      drawer: CustomDrawerStaff(
-        currentpage: "Work Orders",
-        dropdown: true,
-      ),
-      body: _connectivityResult != ConnectivityResult.none
-          ? SingleChildScrollView(
-              child: Column(
+    final scrollBody = SingleChildScrollView(
+      child: Column(
+        children: [
+          if (!widget.embeddedMode) const SizedBox(height: 20),
+        //  if (widget.embeddedMode) const SizedBox(height: 4),
+          //add Data
+          // Header Section with Title and Add Button
+          if (!widget.embeddedMode)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0, vertical: 8.0),
+              child: Row(
                 children: [
-                  SizedBox(height: 20),
-                  //add Data
-                  // Header Section with Title and Add Button
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Row(
-                      children: [
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(
-                            width: 13,
-                          ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: titleBar(
-                              width: double.infinity,
-                              title: 'Work Orders',
+                  if (MediaQuery.of(context).size.width > 500)
+                    const SizedBox(
+                      width: 13,
+                    ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: titleBar(
+                        width: double.infinity,
+                        title: 'Work Orders',
+                      ),
+                    ),
+                  ),
+                  if (widget.showAddButton)
+                    Flexible(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ResponsiveAddWorkOrder()));
+                            if (result == true) {
+                              _loadWorkOrders();
+                            }
+                          },
+                          child: Container(
+                            height:
+                                (MediaQuery.of(context).size.width < 768)
+                                    ? 50
+                                    : 60,
+                            decoration: BoxDecoration(
+                              color: blueColor,
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final result = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ResponsiveAddWorkOrder()));
-                                if (result == true) {
-                                  _loadWorkOrders();
-                                }
-                              },
-                              child: Container(
-                                height:
-                                    (MediaQuery.of(context).size.width < 768)
-                                        ? 50
-                                        : 60,
-                                decoration: BoxDecoration(
-                                  color: blueColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "+ Add",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                            child: const Center(
+                              child: Text(
+                                "+ Add",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 3),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 18),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                  if (widget.showAddButton &&
+                      MediaQuery.of(context).size.width < 500)
+                    const SizedBox(width: 3),
+                  if (widget.showAddButton &&
+                      MediaQuery.of(context).size.width > 500)
+                    const SizedBox(width: 18),
+                ],
+              ),
+            ),
+          if (!widget.embeddedMode) const SizedBox(height: 10),
+          if (widget.embeddedMode) const SizedBox(height: 6),
                   //search
                   Padding(
                     padding: const EdgeInsets.only(left: 11, right: 11),
@@ -877,7 +1058,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                         if (MediaQuery.of(context).size.width > 500)
                           const SizedBox(width: 18),
                         Material(
-                          elevation: 3,
+                        //  elevation: 3,
                           borderRadius: BorderRadius.circular(8),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -893,7 +1074,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
                                 border:
-                                    Border.all(color: const Color(0xFF8A95A8))),
+                                    Border.all(color: Color(0xFFDBE0E5))),
                             child: Stack(
                               children: [
                                 Positioned.fill(
@@ -966,7 +1147,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             Text(
                               "Billable To Tenants",
                               style: TextStyle(
-                                  color: Colors.grey,
+                                  color: Colors.grey.shade900,
                                   fontSize:
                                       MediaQuery.of(context).size.width > 500
                                           ? 20
@@ -1001,38 +1182,28 @@ class _Workorder_tableState extends State<Workorder_table> {
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
                     child: FutureBuilder<Map<String, dynamic>>(
                       future: futureworkorders,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return ColabShimmerLoadingWidget();
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _mobileWorkOrderColumnHeader(),
+                              const SizedBox(height: 8),
+                              ColabShimmerLoadingWidget(),
+                            ],
+                          );
                         } else if (!snapshot.hasData ||
                             (snapshot.data!['data'] as List).isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _mobileWorkOrderColumnHeader(),
+                              _workOrdersEmptyPlaceholder(),
+                            ],
                           );
                         } else {
                           final List<Data> data =
@@ -1067,6 +1238,18 @@ class _Workorder_tableState extends State<Workorder_table> {
                           // Billable filter is applied via API (billable=true param)
                           final List<Data> filteredData = searchFilteredData;
 
+                          if (filteredData.isEmpty) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _mobileWorkOrderColumnHeader(),
+                                  _workOrdersEmptyPlaceholder(),
+                                ],
+                              ),
+                            );
+                          }
+
                           final currentPageData = filteredData;
                           final totalPages = paginationInfo != null
                               ? paginationInfo!['totalPages'] as int
@@ -1080,6 +1263,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                             VoidCallback onEdit,
                             VoidCallback onDelete,
                             VoidCallback onViewSummary,
+                            VoidCallback? onClose,
                           ) {
                             return GestureDetector(
                               onTap: onExpandTap,
@@ -1123,20 +1307,36 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         SizedBox(width: 5),
                                         Expanded(
                                           flex: 3,
-                                          child: Text(
-                                            workOrder.rentalAddress
-                                                    ?.rentalAdress ??
-                                                'N/A',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                              color: blueColor,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                [
+                                                  workOrder.rentalAddress?.rentalAdress,
+                                                  workOrder.rentalUnit?.rentalUnit,
+                                                ].where((v) => v != null && v.isNotEmpty).join(' - '),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 13,
+                                                  color: blueColor,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                              if ((workOrder.workOrderData?.workSubject ?? '').isNotEmpty)
+                                                Text(
+                                                  workOrder.workOrderData!.workSubject!,
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.lightBlue,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                            ],
                                           ),
                                         ),
-                                        const Spacer(),
+                                        SizedBox(width: 2),
                                         Expanded(
                                           flex: 2,
                                           child: Text(
@@ -1252,15 +1452,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: 35,
-                                              ),
-                                              // Spacer(),
+                                              const SizedBox(width: 35),
                                               Expanded(
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 42),
+                                                          left: 20),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -1308,22 +1505,25 @@ class _Workorder_tableState extends State<Workorder_table> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 15),
-                                          Row(
+                                          const SizedBox(height: 12),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
                                               GestureDetector(
-                                                onTap: onDelete,
+                                                onTap: onViewSummary,
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          Colors.red.shade50),
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1333,11 +1533,11 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons
-                                                            .trashCan,
+                                                        FontAwesomeIcons.eye,
                                                         size: 15,
-                                                        color: Colors.red,
+                                                        color: Colors.black,
                                                       ),
+                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
@@ -1377,16 +1577,16 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                 width: 5,
                                               ),
                                               GestureDetector(
-                                                onTap: onViewSummary,
+                                                onTap: onDelete,
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.shade200,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
                                                   child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1396,16 +1596,52 @@ class _Workorder_tableState extends State<Workorder_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.eye,
+                                                        FontAwesomeIcons
+                                                            .trashCan,
                                                         size: 15,
-                                                        color: Colors.black,
+                                                        color: Colors.red,
                                                       ),
-                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
                                               ),
+                                            if (onClose != null) ...[
+                                                const SizedBox(width: 5),
+                                                GestureDetector(
+                                                  onTap: onClose,
+                                                  child: Container(
+                                                    height: 35,
+                                                    width: 35,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.shade200,
+                                                      borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .arrowRightFromBracket,
+                                                          size: 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 5),
+                                              ],
+                                           
                                             ],
+                                          ),
                                           ),
                                         ],
                                       ),
@@ -1418,50 +1654,7 @@ class _Workorder_tableState extends State<Workorder_table> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Color(0xFFF7F9FC),
-                                      border:
-                                          Border.all(color: Color(0xFFDBE0E5)),
-                                      borderRadius: BorderRadius.circular(8)),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 8),
-                                  margin: EdgeInsets.only(bottom: 2),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 25,
-                                      ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          "Work Order",
-                                          style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          "Ticket #",
-                                          style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                _mobileWorkOrderColumnHeader(),
                                 ...currentPageData.asMap().entries.map((entry) {
                                   int index = entry.key;
                                   Data workOrder = entry.value;
@@ -1510,6 +1703,12 @@ class _Workorder_tableState extends State<Workorder_table> {
                                         ),
                                       );
                                     },
+                                    (workOrder.workOrderData?.status ?? '')
+                                            .trim()
+                                            .toLowerCase() ==
+                                        'closed'
+                                        ? null
+                                        : () => handleClose(workOrder),
                                   );
                                 }).toList(),
                                 if (paginationInfo != null &&
@@ -1615,30 +1814,24 @@ class _Workorder_tableState extends State<Workorder_table> {
                   ),
                 ],
               ),
-            )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+            );
+
+    if (widget.embeddedMode) {
+      return _connectivityResult != ConnectivityResult.none
+          ? scrollBody
+          : _noInternetBody();
+    }
+
+    return Scaffold(
+      appBar: widget_302_Staff.App_Bar(context: context),
+      backgroundColor: Colors.white,
+      drawer: CustomDrawerStaff(
+        currentpage: "Work Orders",
+        dropdown: true,
+      ),
+      body: _connectivityResult != ConnectivityResult.none
+          ? scrollBody
+          : _noInternetBody(),
     );
   }
 

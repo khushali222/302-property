@@ -121,7 +121,10 @@ class Tenant {
         }
       }
     }
-    createdAt = json['createdAt'];
+    final createdRaw = json['createdAt']?.toString() ?? '';
+    createdAt = createdRaw.isEmpty
+        ? (json['updatedAt']?.toString())
+        : createdRaw;
     updatedAt = json['updatedAt'];
     rentalAddress = json['rental_adress'] ?? '';
 

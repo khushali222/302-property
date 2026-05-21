@@ -6,13 +6,22 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'CardModel.dart';
 
 class AddCardService {
-  // final String apiUrl =
-  //     'http://192.168.1.11:4000/api/nmipayment/create-customer-vault';
+  /// When true, API `id` header uses `staff_id` (Staff module); bodies still use `adminId`.
+  final bool useStaffIdHeader;
+
+  AddCardService({this.useStaffIdHeader = false});
+
+  String _crmHeaderId(SharedPreferences prefs) {
+    if (useStaffIdHeader) {
+      return prefs.getString('staff_id') ?? prefs.getString('adminId') ?? '';
+    }
+    return prefs.getString('adminId') ?? '';
+  }
 
   Future<CardResponse?> postCardDetails(CardModel card) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     final headers = {
@@ -49,7 +58,7 @@ class AddCardService {
 
   Future<CardResponse?> postCardWithVaultId(CardModel card) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     final headers = {
@@ -90,7 +99,7 @@ class AddCardService {
 
   Future<void> postAddCreditCard(AddCreditCard addCard) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     final headers = {
@@ -130,11 +139,12 @@ class AddCardService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final headerId = _crmHeaderId(prefs);
 
     final headers = {
       'Content-Type': 'application/json',
       'authorization': 'CRM $token',
-      'id': 'CRM $adminId',
+      'id': 'CRM $headerId',
     };
     final body = {
       'customer_vault_id': customerVaultId,
@@ -171,11 +181,12 @@ class AddCardService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final headerId = _crmHeaderId(prefs);
 
     final headers = {
       'Content-Type': 'application/json',
       'authorization': 'CRM $token',
-      'id': 'CRM $adminId',
+      'id': 'CRM $headerId',
     };
 
     try {
@@ -205,7 +216,7 @@ class AddCardService {
 
   Future<int> deleteCard(cardModelFordelete model) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     final headers = {
@@ -242,7 +253,7 @@ class AddCardService {
 
   Future<void> deletefromdatabaseCard(String billingId,String? tenant_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
 
     final headers = {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -61,7 +62,8 @@ class Lease_table extends StatefulWidget {
 }
 
 class _Lease_tableState extends State<Lease_table> {
-  late Future<List<Lease1>> futureLease;
+  late Future<LeasesPageResult> futureLease;
+  Timer? _searchDebounce;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
   bool sortAscending = true;
@@ -86,13 +88,37 @@ class _Lease_tableState extends State<Lease_table> {
   bool ascending1 = false;
   bool ascending2 = false;
   bool ascending3 = false;
-  void _attemptDeleteLease(BuildContext context, Lease1 lease) {
-    DateTime currentDate = DateTime.now();
-    DateTime startDate = DateTime.parse(lease.startDate!);
-    DateTime endDate = DateTime.parse(lease.endDate!);
 
+  /// Backend may send [end_date] as plain text e.g. "At Will" (any casing / hyphen).
+  bool _leaseEndIsAtWill(String? raw) {
+    if (raw == null) return false;
+    final s = raw.trim().toLowerCase().replaceAll('-', ' ');
+    if (s.isEmpty) return false;
+    if (s == 'at will') return true;
+    return s.contains('at will');
+  }
+
+  void _attemptDeleteLease(BuildContext context, Lease1 lease) {
+    final currentDate = DateTime.now();
+    final startDate = DateTime.parse(lease.startDate!);
+
+    if (_leaseEndIsAtWill(lease.endDate)) {
+      if (!currentDate.isBefore(startDate)) {
+        Fluttertoast.showToast(
+          backgroundColor: Colors.amberAccent.shade200,
+          msg: "Active lease cannot be deleted.",
+          toastLength: Toast.LENGTH_SHORT,
+          textColor: Colors.black,
+          gravity: ToastGravity.BOTTOM,
+        );
+      } else {
+        _showDeleteAlert(context, lease.leaseId!);
+      }
+      return;
+    }
+
+    final endDate = DateTime.parse(lease.endDate!);
     if (currentDate.isAfter(startDate) && currentDate.isBefore(endDate)) {
-      // The lease is active
       Fluttertoast.showToast(
         backgroundColor: Colors.amberAccent.shade200,
         msg: "Active lease cannot be deleted.",
@@ -101,7 +127,6 @@ class _Lease_tableState extends State<Lease_table> {
         gravity: ToastGravity.BOTTOM,
       );
     } else {
-      // Lease is not active, proceed with deletion
       _showDeleteAlert(context, lease.leaseId!);
     }
   }
@@ -111,8 +136,8 @@ class _Lease_tableState extends State<Lease_table> {
     data.sort((a, b) {
       String aEnd = a.endDate ?? "";
       String bEnd = b.endDate ?? "";
-      bool aAtWill = aEnd.isEmpty || aEnd.toLowerCase() == "at will";
-      bool bAtWill = bEnd.isEmpty || bEnd.toLowerCase() == "at will";
+      bool aAtWill = aEnd.isEmpty || _leaseEndIsAtWill(aEnd);
+      bool bAtWill = bEnd.isEmpty || _leaseEndIsAtWill(bEnd);
       if (aAtWill && bAtWill) return 0;
       if (aAtWill) return 1;
       if (bAtWill) return -1;
@@ -132,6 +157,165 @@ class _Lease_tableState extends State<Lease_table> {
       data.sort((a, b) => ascending3
           ? a.endDate!.compareTo(b.endDate!)
           : b.endDate!.compareTo(a.endDate!));
+    }
+  }
+
+  bool _useServerLeasePagination() => selectedRentalOwners.isEmpty;
+
+  String _apiLeaseStatus() {
+    switch (selectedStatus) {
+      case 'Expired':
+        return 'expired';
+      case 'Future':
+        return 'future';
+      case 'All':
+        return 'all';
+      case 'Active':
+      default:
+        return 'active';
+    }
+  }
+
+  MapEntry<String, String> _leaseApiSortParams() {
+    if (sorting1 && !sorting2 && !sorting3) {
+      return MapEntry(
+          'rental_adress', ascending1 ? 'ascending' : 'descending');
+    }
+    if (sorting2 && !sorting1 && !sorting3) {
+      return MapEntry('start_date', ascending2 ? 'ascending' : 'descending');
+    }
+    if (sorting3 && !sorting1 && !sorting2) {
+      return MapEntry('end_date', ascending3 ? 'ascending' : 'descending');
+    }
+    return const MapEntry('end_date', 'descending');
+  }
+
+  List<Lease1> _applyLocalLeaseFilters(List<Lease1> data) {
+    var list = List<Lease1>.from(data);
+    if (searchValue.isNotEmpty && searchValue != 'All') {
+      list = list.where((lease) {
+        final searchLower = searchValue.toLowerCase();
+        return (lease.rentalAddress?.toLowerCase().contains(searchLower) ??
+                false) ||
+            (lease.tenantNames?.toLowerCase().contains(searchLower) ?? false) ||
+            (lease.rentCycle?.toLowerCase().contains(searchLower) ?? false) ||
+            (lease.startDate?.toLowerCase().contains(searchLower) ?? false) ||
+            (lease.endDate?.toLowerCase().contains(searchLower) ?? false) ||
+            (lease.amount != null
+                ? lease.amount!
+                    .toStringAsFixed(2)
+                    .toLowerCase()
+                    .contains(searchLower)
+                : false) ||
+            (lease.remainingDays?.toLowerCase().contains(searchLower) ??
+                false) ||
+            (lease.rentDueDate?.toLowerCase().contains(searchLower) ?? false) ||
+            (lease.totalBalance != null
+                ? lease.totalBalance!
+                    .toStringAsFixed(2)
+                    .toLowerCase()
+                    .contains(searchLower)
+                : false);
+      }).toList();
+    }
+    if (selectedStatus == 'Active') {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      list = list.where((lease) {
+        if (lease.startDate == null) return false;
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return lease.startDate!.compareTo(today) <= 0;
+        }
+        return lease.startDate!.compareTo(today) <= 0 &&
+            lease.endDate!.compareTo(today) >= 0;
+      }).toList();
+    } else if (selectedStatus == 'Expired') {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      list = list.where((lease) {
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return false;
+        }
+        return lease.endDate!.compareTo(today) < 0;
+      }).toList();
+    } else if (selectedStatus == 'Future') {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      list = list.where((lease) {
+        if (lease.startDate == null) return false;
+        return lease.startDate!.compareTo(today) > 0;
+      }).toList();
+    }
+    if (selectedRentalOwners.isNotEmpty) {
+      list = list
+          .where((lease) => selectedRentalOwners.contains(lease.rentalOwnerName))
+          .toList();
+    }
+    return list;
+  }
+
+  Future<LeasesPageResult> _loadLeasesPage() async {
+    if (!_useServerLeasePagination()) {
+      var list = await LeaseRepository().fetchLease('');
+      list = _applyLocalLeaseFilters(list);
+      sortData(list);
+      return LeasesPageResult(items: list, pagination: null);
+    }
+    final sort = _leaseApiSortParams();
+    var result = await LeaseRepository().fetchLeasePage(
+      page: currentPage + 1,
+      limit: itemsPerPage,
+      search: searchValue,
+      status: _apiLeaseStatus(),
+      sortBy: sort.key,
+      sortOrder: sort.value,
+    );
+    final p = result.pagination;
+    if (p != null && p.totalPages > 0 && currentPage >= p.totalPages) {
+      final newPage = (p.totalPages - 1).clamp(0, p.totalPages - 1);
+      if (mounted) {
+        setState(() => currentPage = newPage);
+      }
+      result = await LeaseRepository().fetchLeasePage(
+        page: newPage + 1,
+        limit: itemsPerPage,
+        search: searchValue,
+        status: _apiLeaseStatus(),
+        sortBy: sort.key,
+        sortOrder: sort.value,
+      );
+    }
+    return result;
+  }
+
+  void _scheduleLeaseLoad() {
+    setState(() {
+      futureLease = _loadLeasesPage();
+    });
+  }
+
+  Future<void> _loadRentalOwnerDropdown() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final adminId = prefs.getString('adminId');
+      final owners = await RentalOwnerService().fetchRentalOwners(adminId);
+      final names = owners
+          .map((o) => o.rentalOwnername ?? '')
+          .where((n) => n.isNotEmpty)
+          .toSet()
+          .toList()
+        ..sort();
+      if (mounted) {
+        setState(() {
+          availableRentalOwners = names;
+          _selectedRentalOwnersNotifier.value = List.from(selectedRentalOwners);
+        });
+      }
+    } catch (_) {}
+  }
+
+  void _maybeReloadAfterSortTap() {
+    if (_useServerLeasePagination()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _scheduleLeaseLoad();
+      });
     }
   }
 
@@ -175,6 +359,7 @@ class _Lease_tableState extends State<Lease_table> {
 
                     // Sorting logic here
                   });
+                  _maybeReloadAfterSortTap();
                 },
                 child: Row(
                   children: [
@@ -231,6 +416,7 @@ class _Lease_tableState extends State<Lease_table> {
                     }
                     // Sorting logic here
                   });
+                  _maybeReloadAfterSortTap();
                 },
                 child: Row(
                   children: [
@@ -286,6 +472,7 @@ class _Lease_tableState extends State<Lease_table> {
 
                     // Sorting logic here
                   });
+                  _maybeReloadAfterSortTap();
                 },
                 child: Row(
                   children: [
@@ -335,9 +522,17 @@ class _Lease_tableState extends State<Lease_table> {
       });
     });
     checkInternet();
-    futureLease = LeaseRepository().fetchLease("");
+    futureLease = _loadLeasesPage();
+    _loadRentalOwnerDropdown();
 
     fetchLeaseadded();
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void checkInternet() async {
@@ -460,9 +655,7 @@ class _Lease_tableState extends State<Lease_table> {
             } else {
               await LeaseRepository().deleteLease(
                   leaseId: id, companyName: companyName, reason: reason.text);
-              setState(() {
-                futureLease = LeaseRepository().fetchLease("");
-              });
+              _scheduleLeaseLoad();
               fetchLeaseadded();
               Navigator.pop(context);
             }
@@ -608,6 +801,9 @@ class _Lease_tableState extends State<Lease_table> {
   // }
 
   String daydifference(String endDate) {
+    if (_leaseEndIsAtWill(endDate)) {
+      return '---';
+    }
     DateTime edate = DateFormat('yyyy-MM-dd').parse(endDate);
     DateTime now = DateTime.now();
 
@@ -627,6 +823,9 @@ class _Lease_tableState extends State<Lease_table> {
   String _formatDateSafely(String? dateValue, DateProvider dateProvider) {
     if (dateValue == null || dateValue.trim().isEmpty || dateValue == 'null') {
       return 'N/A';
+    }
+    if (_leaseEndIsAtWill(dateValue)) {
+      return 'At Will';
     }
 
     try {
@@ -708,10 +907,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     MaterialPageRoute(
                                         builder: (context) => addLease3()));
                                 if (result == true) {
-                                  setState(() {
-                                    futureLease =
-                                        LeaseRepository().fetchLease("");
-                                  });
+                                  _scheduleLeaseLoad();
                                 }
                               },
                               child: Container(
@@ -810,7 +1006,15 @@ class _Lease_tableState extends State<Lease_table> {
                                   onChanged: (value) {
                                     setState(() {
                                       searchValue = value;
-                                      if (currentPage != 0) currentPage = 0;
+                                    });
+                                    _searchDebounce?.cancel();
+                                    _searchDebounce = Timer(
+                                        const Duration(milliseconds: 400), () {
+                                      if (!mounted) return;
+                                      setState(() {
+                                        currentPage = 0;
+                                        futureLease = _loadLeasesPage();
+                                      });
                                     });
                                   },
                                   cursorColor: Colors.blue,
@@ -818,8 +1022,8 @@ class _Lease_tableState extends State<Lease_table> {
                                     border: InputBorder.none,
                                     hintText: "Search here...",
                                     hintStyle:
-                                        TextStyle(color: Color(0xFF8A95A8)),
-                                    contentPadding: EdgeInsets.all(11),
+                                        TextStyle(color: Color(0xFF8A95A8),fontSize: 14),
+                                    contentPadding: EdgeInsets.only(left: 15,bottom: 9),
                                   ),
                                 ),
                               ),
@@ -846,7 +1050,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     items: statusOptions.map((String status) {
                                       return DropdownMenuItem<String>(
                                         value: status,
-                                        child: Text(status),
+                                        child: Text(status,style: TextStyle(fontSize: 14),),
                                       );
                                     }).toList(),
                                     buttonStyleData: ButtonStyleData(
@@ -870,9 +1074,9 @@ class _Lease_tableState extends State<Lease_table> {
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         selectedStatus = newValue!;
-                                        if (currentPage != 0) currentPage = 0;
+                                        currentPage = 0;
+                                        futureLease = _loadLeasesPage();
                                       });
-                                      // widget.onStatusChanged(selectedStatus);
                                     },
                                     dropdownStyleData: DropdownStyleData(
                                       maxHeight: 250,
@@ -1003,14 +1207,29 @@ class _Lease_tableState extends State<Lease_table> {
                       ],
                     ),
                   ),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20, top: 6),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                            TextSpan(text: '$leaseCount', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
                     // padding: const EdgeInsets.all(10.0),
                     padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
-                    child: FutureBuilder<List<Lease1>>(
+                        MediaQuery.of(context).size.width < 500 ? 14 : 28),
+                    child: FutureBuilder<LeasesPageResult>(
                       future: futureLease,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -1020,7 +1239,7 @@ class _Lease_tableState extends State<Lease_table> {
                           return Center(
                               child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData ||
-                            snapshot.data!.isEmpty) {
+                            snapshot.data!.items.isEmpty) {
                           return Container(
                             height: MediaQuery.of(context).size.height * .5,
                             child: Center(
@@ -1048,135 +1267,59 @@ class _Lease_tableState extends State<Lease_table> {
                             ),
                           );
                         } else {
-                          var data = snapshot.data!;
+                          final pageResult = snapshot.data!;
+                          late List<Lease1> data;
+                          late int totalPages;
+                          late List<Lease1> currentPageData;
+                          late bool canChangePageSize;
 
-                          // Populate available rental owners from lease data
-                          if (data.isNotEmpty) {
-                            final uniqueRentalOwners = data
-                                .map((lease) => lease.rentalOwnerName)
-                                .where((name) =>
-                                    name != null &&
-                                    name.isNotEmpty &&
-                                    name != "N/A")
-                                .cast<String>()
-                                .toSet()
-                                .toList()
-                              ..sort();
-                            if (availableRentalOwners.toString() !=
-                                uniqueRentalOwners.toString()) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                setState(() {
-                                  availableRentalOwners = uniqueRentalOwners;
-                                  // Sync notifier with current selections
-                                  _selectedRentalOwnersNotifier.value =
-                                      List.from(selectedRentalOwners);
+                          if (_useServerLeasePagination() &&
+                              pageResult.pagination != null) {
+                            data = pageResult.items;
+                            totalPages =
+                                pageResult.pagination!.totalPages.clamp(1, 1 << 30);
+                            currentPageData = data;
+                            canChangePageSize = data.isNotEmpty ||
+                                (pageResult.pagination!.totalItems > 0);
+                          } else {
+                            data = pageResult.items;
+                            if (!_useServerLeasePagination() &&
+                                data.isNotEmpty) {
+                              final uniqueRentalOwners = data
+                                  .map((lease) => lease.rentalOwnerName)
+                                  .where((name) =>
+                                      name != null &&
+                                      name.isNotEmpty &&
+                                      name != 'N/A')
+                                  .cast<String>()
+                                  .toSet()
+                                  .toList()
+                                ..sort();
+                              if (availableRentalOwners.toString() !=
+                                  uniqueRentalOwners.toString()) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      availableRentalOwners =
+                                          uniqueRentalOwners;
+                                      _selectedRentalOwnersNotifier.value =
+                                          List.from(selectedRentalOwners);
+                                    });
+                                  }
                                 });
-                              });
+                              }
                             }
-                          }
-
-// Apply the search filter first
-                          if (searchValue != null &&
-                              searchValue.isNotEmpty &&
-                              searchValue != "All") {
-                            data = data.where((lease) {
-                              final searchLower = searchValue.toLowerCase();
-                              return (lease.rentalAddress
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.tenantNames
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.rentCycle
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.startDate
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.endDate
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.amount != null
-                                      ? lease.amount!
-                                          .toStringAsFixed(2)
-                                          .toLowerCase()
-                                          .contains(searchLower)
-                                      : false) ||
-                                  (lease.remainingDays
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.rentDueDate
-                                          ?.toLowerCase()
-                                          .contains(searchLower) ??
-                                      false) ||
-                                  (lease.totalBalance != null
-                                      ? lease.totalBalance!
-                                          .toStringAsFixed(2)
-                                          .toLowerCase()
-                                          .contains(searchLower)
-                                      : false);
-                            }).toList();
-                          }
-
-// Apply the status filter next
-                          if (selectedStatus == "Active") {
-                            final today =
-                                DateTime.now().toIso8601String().split("T")[0];
-                            data = data.where((lease) {
-                              if (lease.startDate == null) return false;
-
-                              // For "at will" or null end date, only check start date
-                              if (lease.endDate == null ||
-                                  lease.endDate!.toLowerCase() == "at will") {
-                                return lease.startDate!.compareTo(today) <= 0;
-                              }
-
-                              // For regular end dates, check both start and end dates
-                              if (lease.endDate == null) return false;
-                              return lease.startDate!.compareTo(today) <= 0 &&
-                                  lease.endDate!.compareTo(today) >= 0;
-                            }).toList();
-                          } else if (selectedStatus == "Expired") {
-                            final today =
-                                DateTime.now().toIso8601String().split("T")[0];
-                            data = data.where((lease) {
-                              // At will leases can't expire
-                              if (lease.endDate == null ||
-                                  lease.endDate!.toLowerCase() == "at will") {
-                                return false;
-                              }
-                              return lease.endDate!.compareTo(today) < 0;
-                            }).toList();
-                          } else if (selectedStatus == "Future") {
-                            final today =
-                                DateTime.now().toIso8601String().split("T")[0];
-                            data = data.where((lease) {
-                              if (lease.startDate == null) return false;
-                              return lease.startDate!.compareTo(today) > 0;
-                            }).toList();
-                          } else if (selectedStatus == "All") {
-                            // No additional filtering needed
-                            data = data;
-                          }
-
-                          // Apply rental owner filter
-                          if (selectedRentalOwners.isNotEmpty) {
-                            data = data
-                                .where((lease) => selectedRentalOwners
-                                    .contains(lease.rentalOwnerName))
+                            totalPages = (data.length / itemsPerPage)
+                                .ceil()
+                                .clamp(1, 1 << 30);
+                            currentPageData = data
+                                .skip(currentPage * itemsPerPage)
+                                .take(itemsPerPage)
                                 .toList();
+                            canChangePageSize = data.isNotEmpty;
                           }
-                          //  }
-                          // Remove data.reversed.toList() to let sortData handle the ordering
-                          // data = data.reversed.toList();
 
-                          sortData(data);
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (mounted) {
                               setState(() {
@@ -1184,17 +1327,11 @@ class _Lease_tableState extends State<Lease_table> {
                               });
                             }
                           });
-                          final totalPages =
-                              (data.length / itemsPerPage).ceil();
-                          final currentPageData = data
-                              .skip(currentPage * itemsPerPage)
-                              .take(itemsPerPage)
-                              .toList();
 
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                const SizedBox(height: 10),
+                                // const SizedBox(height: 10),
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Container(
@@ -1700,15 +1837,11 @@ class _Lease_tableState extends State<Lease_table> {
                                                                             )));
                                                                 if (check ==
                                                                     true) {
-                                                                  setState(() {
-                                                                    futureLease =
-                                                                        LeaseRepository()
-                                                                            .fetchLease("");
-                                                                    //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
-                                                                  });
+                                                                  _scheduleLeaseLoad();
                                                                 }
                                                               },
-                                                              child: Container(
+                                                              child: 
+                                                              Container(
                                                                 height: 35,
                                                                 width: 35,
                                                                 decoration: BoxDecoration(
@@ -1738,6 +1871,7 @@ class _Lease_tableState extends State<Lease_table> {
                                                                   ],
                                                                 ),
                                                               ),
+                                                           
                                                             ),
                                                             const SizedBox(
                                                               width: 5,
@@ -1838,15 +1972,16 @@ class _Lease_tableState extends State<Lease_table> {
                                                         Text(value.toString()),
                                                   );
                                                 }).toList(),
-                                                onChanged: data.length >
-                                                        itemsPerPageOptions
-                                                            .first // Condition to check if dropdown should be enabled
+                                                onChanged: canChangePageSize
                                                     ? (newValue) {
                                                         setState(() {
                                                           itemsPerPage =
                                                               newValue!;
-                                                          currentPage =
-                                                              0; // Reset to first page when items per page change
+                                                          currentPage = 0;
+                                                          if (_useServerLeasePagination()) {
+                                                            futureLease =
+                                                                _loadLeasesPage();
+                                                          }
                                                         });
                                                       }
                                                     : null,
@@ -1907,6 +2042,10 @@ class _Lease_tableState extends State<Lease_table> {
                                                   ? () {
                                                       setState(() {
                                                         currentPage++;
+                                                        if (_useServerLeasePagination()) {
+                                                          futureLease =
+                                                              _loadLeasesPage();
+                                                        }
                                                       });
                                                     }
                                                   : null,
@@ -2281,6 +2420,7 @@ class _Lease_tableState extends State<Lease_table> {
                           List.from(selectedRentalOwners);
                       setState(() {
                         if (currentPage != 0) currentPage = 0;
+                        futureLease = _loadLeasesPage();
                       });
                     },
                     child: Row(
@@ -2297,6 +2437,7 @@ class _Lease_tableState extends State<Lease_table> {
                                 List.from(selectedRentalOwners);
                             setState(() {
                               if (currentPage != 0) currentPage = 0;
+                              futureLease = _loadLeasesPage();
                             });
                           },
                           activeColor: blueColor,

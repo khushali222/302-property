@@ -70,7 +70,7 @@ class DailyTrasactionReport{
     String? id = prefs.getString("adminId");
     String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print("${Api_url}/api/payment/todayspayment/$id?selectedDate=$date");
+    // print("${Api_url}/api/payment/todayspayment/$id?selectedDate=$date");
     final response = await http.get(
       Uri.parse('${Api_url}/api/payment/todayspayment/$id?selectedDate=$date'),
       headers: {
@@ -79,7 +79,7 @@ class DailyTrasactionReport{
         "id": "CRM $staffid",
       },
     );
-    print(response.body);
+    // print(response.body);
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = json.decode(response.body)["data"];

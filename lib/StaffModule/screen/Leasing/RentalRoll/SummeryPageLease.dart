@@ -70,7 +70,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     with SingleTickerProviderStateMixin {
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
-  List formDataRecurringList = [];
   late Future<LeaseSummary> futureLeaseSummary;
   late Future<LeaseLedger?> _leaseLedgerFuture;
   late Future<LeaseCharges?> _leaseChargesFuture;
@@ -821,7 +820,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   leaseId: widget.leaseId,
                                   status:
                                       '${determineStatus(snapshot.data!.data?.startDate, snapshot.data!.data?.endDate).toString()}',
-                                  tenantId: ' ${snapshot.data!.data?.tenantId}',
+                                  tenantId: snapshot.data!.data?.tenantId?.isNotEmpty == true ? snapshot.data!.data!.tenantId!.first : '',
                                 ),
                               ),
                               Tenant(context),
@@ -874,7 +873,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             status: determineStatus(
                     snapshot.data?.startDate, snapshot.data?.endDate)
                 .toString(),
-            tenantId: ' ${snapshot.data?.tenantId}',
+            tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
           ),
         );
       case 2:
@@ -898,7 +897,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             status: determineStatus(
                     snapshot.data?.startDate, snapshot.data?.endDate)
                 .toString(),
-            tenantId: ' ${snapshot.data?.tenantId}',
+            tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
           ),
         );
       case 3:
@@ -911,8 +910,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   int? expandedIndex;
-  int?
-      recurringChargeExpandedIndex; // Separate variable for recurring charge table
   int?
       renewableHistoryExpandedIndex; // Separate variable for renewable history table
   bool isExpanded = false;
@@ -3437,377 +3434,378 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           const SizedBox(
                             height: 10,
                           ),
-                          if (MediaQuery.of(context).size.width < 500)
-                            if (leasesummery.data?.entry != null &&
-                                leasesummery.data!.entry!.length > 0)
-                              Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 2,
-                                      ),
-                                      Text(
-                                        "Recuring Charges",
-                                        style: TextStyle(
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //
-                                    //   color: blueColor,
-                                    //   borderRadius: const BorderRadius.only(
-                                    //     topLeft: Radius.circular(13),
-                                    //     topRight: Radius.circular(13),
-                                    //   ),
-                                    //
-                                    // ),
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFF4F8FF),
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: const Color(0xFFDBE0E5))),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Expanded(
-                                            flex: 3,
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: Row(
-                                                children: [
-                                                  width < 400
-                                                      ? Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 20.0),
-                                                          child: Text(
-                                                            "Date",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        )
-                                                      : Text("     Date",
-                                                          style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14),
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                  // Text("Property", style: TextStyle(color: Colors.white)),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 0.0),
-                                                    child: Text("Acount",
-                                                        style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14)),
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: InkWell(
-                                              onTap: () {},
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    "Amount",
-                                                    style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    // decoration: BoxDecoration(
-                                    //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
-                                    //     border: Border.all(
-                                    //         color: const Color.fromRGBO(
-                                    //             152, 162, 179, .5))),
-                                    // decoration: BoxDecoration(
-                                    //   border: Border.all(color: blueColor),
-                                    // ),
-                                    child: Column(
-                                      children: snapshot.data!.data!.entry!
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        int index = entry.key;
-                                        RecurringEntry lease = entry.value;
-                                        //return CustomExpansionTile(data: Propertytype, index: index);
-                                        return StatefulBuilder(
-                                          builder: (context, setRowState) {
-                                            bool isExpandedLocal =
-                                                recurringChargeExpandedIndex ==
-                                                    index;
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6),
-                                              decoration: BoxDecoration(
-                                                color: index % 2 != 0
-                                                    ? const Color(0xFFF4F8FF)
-                                                    : Colors.white,
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFFDBE0E5)),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.zero,
-                                                    title: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              2.0),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: <Widget>[
-                                                          InkWell(
-                                                            onTap: () {
-                                                              setRowState(() {
-                                                                if (recurringChargeExpandedIndex ==
-                                                                    index) {
-                                                                  recurringChargeExpandedIndex =
-                                                                      null;
-                                                                } else {
-                                                                  recurringChargeExpandedIndex =
-                                                                      index;
-                                                                }
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      left: 5),
-                                                              padding: !isExpandedLocal
-                                                                  ? const EdgeInsets
-                                                                      .only(
-                                                                      bottom:
-                                                                          10)
-                                                                  : const EdgeInsets
-                                                                      .only(
-                                                                      top: 10),
-                                                              child: FaIcon(
-                                                                isExpandedLocal
-                                                                    ? FontAwesomeIcons
-                                                                        .sortUp
-                                                                    : FontAwesomeIcons
-                                                                        .sortDown,
-                                                                size: 20,
-                                                                color:
-                                                                    blueColor,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            flex: 4,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                setRowState(() {
-                                                                  if (recurringChargeExpandedIndex ==
-                                                                      index) {
-                                                                    recurringChargeExpandedIndex =
-                                                                        null;
-                                                                  } else {
-                                                                    recurringChargeExpandedIndex =
-                                                                        index;
-                                                                  }
-                                                                });
-                                                              },
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            5.0),
-                                                                child: Text(
-                                                                  '${dateProvider.formatCurrentDate(lease.date!)}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        13,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .08,
-                                                          ),
-                                                          Expanded(
-                                                            flex: 4,
-                                                            child: Text(
-                                                              '${lease.account}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .03,
-                                                          ),
-                                                          Expanded(
-                                                            flex: 4,
-                                                            child: Text(
-                                                              '${formatCurrency(lease.amount?.toDouble() ?? 0.0)}',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .02,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  if (isExpandedLocal)
-                                                    Container(
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              bottom: 20),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                FaIcon(
-                                                                  isExpandedLocal
-                                                                      ? FontAwesomeIcons
-                                                                          .sortUp
-                                                                      : FontAwesomeIcons
-                                                                          .sortDown,
-                                                                  size: 50,
-                                                                  color: Colors
-                                                                      .transparent,
-                                                                ),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: <Widget>[
-                                                                      Text.rich(
-                                                                        TextSpan(
-                                                                          children: [
-                                                                            TextSpan(
-                                                                              text: 'Memo :- ',
-                                                                              style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
-                                                                            ),
-                                                                            TextSpan(
-                                                                              text: '${lease.memo}',
-                                                                              style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  //SizedBox(height: 13,),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          // if (MediaQuery.of(context).size.width < 500)
+                          //   if (leasesummery.data?.entry != null &&
+                          //       leasesummery.data!.entry!.length > 0)
+                          //     Column(
+                          //       children: [
+                          //         Row(
+                          //           children: [
+                          //             const SizedBox(
+                          //               width: 2,
+                          //             ),
+                          //             Text(
+                          //               "Recuring Charges",
+                          //               style: TextStyle(
+                          //                   color: blueColor,
+                          //                   fontWeight: FontWeight.bold,
+                          //                   fontSize: 16),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //         const SizedBox(
+                          //           height: 10,
+                          //         ),
+                          //         Container(
+                          //           // decoration: BoxDecoration(
+                          //           //
+                          //           //   color: blueColor,
+                          //           //   borderRadius: const BorderRadius.only(
+                          //           //     topLeft: Radius.circular(13),
+                          //           //     topRight: Radius.circular(13),
+                          //           //   ),
+                          //           //
+                          //           // ),
+                          //           decoration: BoxDecoration(
+                          //               color: const Color(0xFFF4F8FF),
+                          //               borderRadius: BorderRadius.circular(10),
+                          //               border: Border.all(
+                          //                   color: const Color(0xFFDBE0E5))),
+                          //           child: ListTile(
+                          //             contentPadding: EdgeInsets.zero,
+                          //             title: Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.start,
+                          //               children: <Widget>[
+                          //                 Expanded(
+                          //                   flex: 3,
+                          //                   child: InkWell(
+                          //                     onTap: () {},
+                          //                     child: Row(
+                          //                       children: [
+                          //                         width < 400
+                          //                             ? Padding(
+                          //                                 padding:
+                          //                                     EdgeInsets.only(
+                          //                                         left: 20.0),
+                          //                                 child: Text(
+                          //                                   "Date",
+                          //                                   style: TextStyle(
+                          //                                       color:
+                          //                                           blueColor,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .bold,
+                          //                                       fontSize: 14),
+                          //                                   textAlign: TextAlign
+                          //                                       .center,
+                          //                                 ),
+                          //                               )
+                          //                             : Text("     Date",
+                          //                                 style: TextStyle(
+                          //                                     color: blueColor,
+                          //                                     fontWeight:
+                          //                                         FontWeight
+                          //                                             .bold,
+                          //                                     fontSize: 14),
+                          //                                 textAlign:
+                          //                                     TextAlign.center),
+                          //                         // Text("Property", style: TextStyle(color: Colors.white)),
+                          //                       ],
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //                 Expanded(
+                          //                   flex: 2,
+                          //                   child: InkWell(
+                          //                     onTap: () {},
+                          //                     child: Row(
+                          //                       children: [
+                          //                         Padding(
+                          //                           padding: EdgeInsets.only(
+                          //                               left: 0.0),
+                          //                           child: Text("Acount",
+                          //                               style: TextStyle(
+                          //                                   color: blueColor,
+                          //                                   fontWeight:
+                          //                                       FontWeight.bold,
+                          //                                   fontSize: 14)),
+                          //                         ),
+                          //                         SizedBox(width: 5),
+                          //                       ],
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //                 Expanded(
+                          //                   flex: 2,
+                          //                   child: InkWell(
+                          //                     onTap: () {},
+                          //                     child: Row(
+                          //                       children: [
+                          //                         Text(
+                          //                           "Amount",
+                          //                           style: TextStyle(
+                          //                               color: blueColor,
+                          //                               fontWeight:
+                          //                                   FontWeight.bold,
+                          //                               fontSize: 14),
+                          //                           textAlign: TextAlign.center,
+                          //                         ),
+                          //                         SizedBox(width: 5),
+                          //                       ],
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         Container(
+                          //           // decoration: BoxDecoration(
+                          //           //     // color: index %2 != 0 ? Colors.white : blueColor.withOpacity(0.09),
+                          //           //     border: Border.all(
+                          //           //         color: const Color.fromRGBO(
+                          //           //             152, 162, 179, .5))),
+                          //           // decoration: BoxDecoration(
+                          //           //   border: Border.all(color: blueColor),
+                          //           // ),
+                          //           child: Column(
+                          //             children: snapshot.data!.data!.entry!
+                          //                 .asMap()
+                          //                 .entries
+                          //                 .map((entry) {
+                          //               int index = entry.key;
+                          //               RecurringEntry lease = entry.value;
+                          //               //return CustomExpansionTile(data: Propertytype, index: index);
+                          //               return StatefulBuilder(
+                          //                 builder: (context, setRowState) {
+                          //                   bool isExpandedLocal =
+                          //                       recurringChargeExpandedIndex ==
+                          //                           index;
+                          //                   return Container(
+                          //                     margin:
+                          //                         const EdgeInsets.symmetric(
+                          //                             vertical: 6),
+                          //                     decoration: BoxDecoration(
+                          //                       color: index % 2 != 0
+                          //                           ? const Color(0xFFF4F8FF)
+                          //                           : Colors.white,
+                          //                       border: Border.all(
+                          //                           color: const Color(
+                          //                               0xFFDBE0E5)),
+                          //                       borderRadius:
+                          //                           BorderRadius.circular(10),
+                          //                     ),
+                          //                     child: Column(
+                          //                       children: <Widget>[
+                          //                         ListTile(
+                          //                           contentPadding:
+                          //                               EdgeInsets.zero,
+                          //                           title: Padding(
+                          //                             padding:
+                          //                                 const EdgeInsets.all(
+                          //                                     2.0),
+                          //                             child: Row(
+                          //                               mainAxisAlignment:
+                          //                                   MainAxisAlignment
+                          //                                       .start,
+                          //                               crossAxisAlignment:
+                          //                                   CrossAxisAlignment
+                          //                                       .center,
+                          //                               children: <Widget>[
+                          //                                 InkWell(
+                          //                                   onTap: () {
+                          //                                     setRowState(() {
+                          //                                       if (recurringChargeExpandedIndex ==
+                          //                                           index) {
+                          //                                         recurringChargeExpandedIndex =
+                          //                                             null;
+                          //                                       } else {
+                          //                                         recurringChargeExpandedIndex =
+                          //                                             index;
+                          //                                       }
+                          //                                     });
+                          //                                   },
+                          //                                   child: Container(
+                          //                                     margin:
+                          //                                         const EdgeInsets
+                          //                                             .only(
+                          //                                             left: 5),
+                          //                                     padding: !isExpandedLocal
+                          //                                         ? const EdgeInsets
+                          //                                             .only(
+                          //                                             bottom:
+                          //                                                 10)
+                          //                                         : const EdgeInsets
+                          //                                             .only(
+                          //                                             top: 10),
+                          //                                     child: FaIcon(
+                          //                                       isExpandedLocal
+                          //                                           ? FontAwesomeIcons
+                          //                                               .sortUp
+                          //                                           : FontAwesomeIcons
+                          //                                               .sortDown,
+                          //                                       size: 20,
+                          //                                       color:
+                          //                                           blueColor,
+                          //                                     ),
+                          //                                   ),
+                          //                                 ),
+                          //                                 Expanded(
+                          //                                   flex: 4,
+                          //                                   child: InkWell(
+                          //                                     onTap: () {
+                          //                                       setRowState(() {
+                          //                                         if (recurringChargeExpandedIndex ==
+                          //                                             index) {
+                          //                                           recurringChargeExpandedIndex =
+                          //                                               null;
+                          //                                         } else {
+                          //                                           recurringChargeExpandedIndex =
+                          //                                               index;
+                          //                                         }
+                          //                                       });
+                          //                                     },
+                          //                                     child: Padding(
+                          //                                       padding:
+                          //                                           const EdgeInsets
+                          //                                               .only(
+                          //                                               left:
+                          //                                                   5.0),
+                          //                                       child: Text(
+                          //                                         '${dateProvider.formatCurrentDate(lease.date!)}',
+                          //                                         style:
+                          //                                             TextStyle(
+                          //                                           color:
+                          //                                               blueColor,
+                          //                                           fontWeight:
+                          //                                               FontWeight
+                          //                                                   .bold,
+                          //                                           fontSize:
+                          //                                               13,
+                          //                                         ),
+                          //                                       ),
+                          //                                     ),
+                          //                                   ),
+                          //                                 ),
+                          //                                 SizedBox(
+                          //                                   width: MediaQuery.of(
+                          //                                               context)
+                          //                                           .size
+                          //                                           .width *
+                          //                                       .08,
+                          //                                 ),
+                          //                                 Expanded(
+                          //                                   flex: 4,
+                          //                                   child: Text(
+                          //                                     '${lease.account}',
+                          //                                     style: TextStyle(
+                          //                                       color:
+                          //                                           blueColor,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .bold,
+                          //                                       fontSize: 12,
+                          //                                     ),
+                          //                                   ),
+                          //                                 ),
+                          //                                 SizedBox(
+                          //                                   width: MediaQuery.of(
+                          //                                               context)
+                          //                                           .size
+                          //                                           .width *
+                          //                                       .03,
+                          //                                 ),
+                          //                                 Expanded(
+                          //                                   flex: 4,
+                          //                                   child: Text(
+                          //                                     '${formatCurrency(lease.amount?.toDouble() ?? 0.0)}',
+                          //                                     style: TextStyle(
+                          //                                       color:
+                          //                                           blueColor,
+                          //                                       fontWeight:
+                          //                                           FontWeight
+                          //                                               .bold,
+                          //                                       fontSize: 12,
+                          //                                     ),
+                          //                                   ),
+                          //                                 ),
+                          //                                 SizedBox(
+                          //                                   width: MediaQuery.of(
+                          //                                               context)
+                          //                                           .size
+                          //                                           .width *
+                          //                                       .02,
+                          //                                 ),
+                          //                               ],
+                          //                             ),
+                          //                           ),
+                          //                         ),
+                          //                         if (isExpandedLocal)
+                          //                           Container(
+                          //                             margin:
+                          //                                 const EdgeInsets.only(
+                          //                                     bottom: 20),
+                          //                             child:
+                          //                                 SingleChildScrollView(
+                          //                               child: Column(
+                          //                                 children: [
+                          //                                   Row(
+                          //                                     mainAxisAlignment:
+                          //                                         MainAxisAlignment
+                          //                                             .start,
+                          //                                     children: [
+                          //                                       FaIcon(
+                          //                                         isExpandedLocal
+                          //                                             ? FontAwesomeIcons
+                          //                                                 .sortUp
+                          //                                             : FontAwesomeIcons
+                          //                                                 .sortDown,
+                          //                                         size: 50,
+                          //                                         color: Colors
+                          //                                             .transparent,
+                          //                                       ),
+                          //                                       Expanded(
+                          //                                         child: Column(
+                          //                                           crossAxisAlignment:
+                          //                                               CrossAxisAlignment
+                          //                                                   .start,
+                          //                                           children: <Widget>[
+                          //                                             Text.rich(
+                          //                                               TextSpan(
+                          //                                                 children: [
+                          //                                                   TextSpan(
+                          //                                                     text: 'Memo :- ',
+                          //                                                     style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
+                          //                                                   ),
+                          //                                                   TextSpan(
+                          //                                                     text: '${lease.memo}',
+                          //                                                     style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
+                          //                                                   ),
+                          //                                                 ],
+                          //                                               ),
+                          //                                             ),
+                          //                                           ],
+                          //                                         ),
+                          //                                       ),
+                          //                                     ],
+                          //                                   ),
+                          //                                 ],
+                          //                               ),
+                          //                             ),
+                          //                           ),
+                          //                         //SizedBox(height: 13,),
+                          //                       ],
+                          //                     ),
+                          //                   );
+                          //                 },
+                          //               );
+                          //             }).toList(),
+                          //           ),
+                          //         ),
+                          //       ],
+                          //     ),
+
                           if (MediaQuery.of(context).size.width < 500)
                             if (leasesummery.data?.renewLeases != null &&
                                 leasesummery.data!.renewLeases!.length > 0)

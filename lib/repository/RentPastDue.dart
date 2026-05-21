@@ -112,7 +112,13 @@ class AdminBalanceRepository {
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
+    String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
+    String? headerId = staffId ?? adminId;
+
+    print('DEBUG: Admin ID: $adminId');
+    print('DEBUG: Staff ID: $staffId');
+    print('DEBUG: Header ID used: $headerId');
     
     // Build query parameters
     Map<String, String> queryParams = {
@@ -140,7 +146,7 @@ class AdminBalanceRepository {
     }
     
     // Build URL with query parameters
-    Uri uri = Uri.parse('$baseUrl/$id').replace(queryParameters: queryParams);
+    Uri uri = Uri.parse('$baseUrl/$adminId').replace(queryParameters: queryParams);
     String url = uri.toString();
 
     print('Fetching Admin Balance from: $url');
@@ -149,7 +155,7 @@ class AdminBalanceRepository {
         uri,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $headerId",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );

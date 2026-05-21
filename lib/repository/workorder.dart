@@ -50,6 +50,7 @@ class WorkOrderRepository {
     List<String>? status,
     String? search,
     bool? billable,
+    String? rentalId,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -76,6 +77,10 @@ class WorkOrderRepository {
     // Add billable filter if provided (e.g. billable=true)
     if (billable != null) {
       queryParams['billable'] = billable.toString();
+    }
+
+    if (rentalId != null && rentalId.isNotEmpty) {
+      queryParams['rental_id'] = rentalId;
     }
 
     final uri = Uri.parse('$Api_url/api/work-order/work-orders/$id')
@@ -331,6 +336,48 @@ class WorkOrderRepository {
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);
       throw Exception('Failed to update work order');
+    }
+  }
+
+  Future<Map<String, dynamic>> closeWorkOrder({
+    required String workOrderId,
+    String message = '',
+    String publicNotes = '',
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    final Map<String, dynamic> payload = {
+      "workOrder": {
+        "admin_id": adminId,
+        "workOrder_id": workOrderId,
+        "status": "Closed",
+        "message": message,
+        "public_notes": publicNotes,
+      },
+    };
+
+    final http.Response response = await http.put(
+      Uri.parse('${Api_url}/api/work-order/work-order/$workOrderId'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(payload),
+    );
+
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(
+          msg: responseData["message"]?.toString() ??
+              "Work-Order updated Successfully");
+      return responseData;
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"]?.toString() ?? "Failed to close work order");
+      throw Exception('Failed to close work order');
     }
   }
 

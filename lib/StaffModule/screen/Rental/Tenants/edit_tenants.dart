@@ -924,7 +924,7 @@ class _EditTenantsState extends State<EditTenants> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    const Text('Comments',
+                                    const Text('Notes',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
@@ -962,7 +962,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             hintStyle: TextStyle(
                                                 fontSize: 13,
                                                 color: Color(0xFFb0b6c3)),
-                                            hintText: 'Enter the comment',
+                                            hintText: 'Enter notes',
                                           )),
                                     ),
                                     const SizedBox(
@@ -2005,7 +2005,7 @@ class _EditTenantsState extends State<EditTenants> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Comments',
+                                              const Text('Notes',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
@@ -2052,7 +2052,7 @@ class _EditTenantsState extends State<EditTenants> {
                                                           color: Color(
                                                               0xFFb0b6c3)),
                                                       hintText:
-                                                          'Enter the comment',
+                                                          'Enter notes',
                                                     )),
                                               ),
                                             ],

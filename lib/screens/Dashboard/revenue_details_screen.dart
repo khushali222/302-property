@@ -4,6 +4,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:three_zero_two_property/constant/constant.dart';
 
+int _parseMonthKey(dynamic raw) {
+  if (raw == null) return -1;
+  final n = raw is num ? raw.toInt() : int.tryParse(raw.toString());
+  if (n == null) return -1;
+  if (n >= 1 && n <= 12) return n;
+  if (n >= 0 && n <= 11) return n + 1; // Some APIs use 0-based months
+  return -1;
+}
+
+double _parseAmount(dynamic raw) {
+  if (raw == null) return 0.0;
+  if (raw is num) return raw.toDouble();
+  return double.tryParse(raw.toString()) ?? 0.0;
+}
+
 class RevenueDetailsScreen extends StatefulWidget {
   final String selectedYear;
 
@@ -17,8 +32,10 @@ class RevenueDetailsScreen extends StatefulWidget {
 class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
   List<MonthlyRevenue> monthlyData = [];
   bool isLoading = true;
-  String currentYear = '2025';
-  String previousYear = '2024';
+
+  /// Calendar years for labels (matches how the API buckets currentYear / lastYear).
+  String get _calendarCurrentYear => DateTime.now().year.toString();
+  String get _calendarPreviousYear => (DateTime.now().year - 1).toString();
 
   @override
   void initState() {
@@ -44,19 +61,21 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
         List<MonthlyRevenue> newData = [];
 
         // Get current year data
-        List currentYearData = data['currentYear'];
-        List previousYearData = data['lastYear'];
+        final List currentYearData = data['currentYear'] ?? [];
+        final List previousYearData = data['lastYear'] ?? [];
 
-        // Create a map for easy lookup
+        // Create a map for easy lookup (month keys normalized — JSON may send int or String)
         Map<int, double> currentYearMap = {};
         Map<int, double> previousYearMap = {};
 
         for (var item in currentYearData) {
-          currentYearMap[item['month']] = item['totalAmount'].toDouble();
+          final m = _parseMonthKey(item['month']);
+          if (m >= 1) currentYearMap[m] = _parseAmount(item['totalAmount']);
         }
 
         for (var item in previousYearData) {
-          previousYearMap[item['month']] = item['totalAmount'].toDouble();
+          final m = _parseMonthKey(item['month']);
+          if (m >= 1) previousYearMap[m] = _parseAmount(item['totalAmount']);
         }
 
         // Generate data for all 12 months based on selected year
@@ -168,8 +187,8 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
             ),
             Text(
               widget.selectedYear == 'Current Year'
-                  ? 'Current Year - $currentYear'
-                  : 'Previous Year - $previousYear',
+                  ? 'Current Year - $_calendarCurrentYear'
+                  : 'Previous Year - $_calendarPreviousYear',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 14,
@@ -246,7 +265,7 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${data.fullMonthName} ${widget.selectedYear == 'Current Year' ? currentYear : previousYear}',
+                                      '${data.fullMonthName} ${widget.selectedYear == 'Current Year' ? _calendarCurrentYear : _calendarPreviousYear}',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -269,7 +288,7 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    '\$${data.currentAmount}',
+                                    '\$${data.currentAmount.toStringAsFixed(2)}',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

@@ -642,7 +642,7 @@ class _MortgageTableState extends State<MortgageTable> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           // Search and Filter Section
           Padding(
             padding: const EdgeInsets.only(left: 11, right: 11),
@@ -655,7 +655,7 @@ class _MortgageTableState extends State<MortgageTable> {
                   elevation: 0,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    height: (MediaQuery.of(context).size.width < 768) ? 50 : 60,
+                    height: (MediaQuery.of(context).size.width < 768) ? 45 : 60,
                     width: MediaQuery.of(context).size.width * 0.49,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -681,11 +681,24 @@ class _MortgageTableState extends State<MortgageTable> {
                   ),
                 ),
                 const SizedBox(width: 10),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                          TextSpan(text: '${_mortgages.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
               ],
             ),
           ),
-          // const SizedBox(height: 25),
-
+          SizedBox(height: 5),
           // Content Section
           _isLoading
               ? const SizedBox(
@@ -732,7 +745,7 @@ class _MortgageTableState extends State<MortgageTable> {
                     )
                   : Padding(
                       padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width < 500 ? 10 : 28),
+                          MediaQuery.of(context).size.width < 500 ? 14 : 28),
                       child: Column(
                         children: [
                           _buildHeaders(),
@@ -938,25 +951,13 @@ class _MortgageTableState extends State<MortgageTable> {
                                                                             'loan_amount'])),
                                                                 'Interest Rate:',
                                                                 _getDisplayValue(
-                                                                    '${mortgage['interest_rate'] ?? 0}%'),
+                                                                    '${(mortgage['interest_rate'] ?? 0).toStringAsFixed(2)}%'),
                                                               ),
                                                               _buildTableRow(
                                                                 'Loan Number',
                                                                 _getDisplayValue(
                                                                     mortgage[
                                                                         'mortgage_no']),
-                                                                'Start Date',
-                                                                _getDisplayValue(
-                                                                    _formatDate(
-                                                                        mortgage['start_date']
-                                                                            ?.toString())),
-                                                              ),
-                                                              _buildTableRow(
-                                                                'End Date',
-                                                                _getDisplayValue(
-                                                                    _formatDate(
-                                                                        mortgage['end_date']
-                                                                            ?.toString())),
                                                                 'Balance',
                                                                 _getDisplayValue(
                                                                     _formatCurrency(

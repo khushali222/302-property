@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/bid_request.dart';
@@ -18,6 +23,8 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/screens/BidRoom/create_bid_room.dart';
+import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
+import 'package:three_zero_two_property/Model/All_categories_model.dart';
 
 class BidRoomTable extends StatefulWidget {
   /// When true, uses staff drawer, staff app bar, and staff repository.
@@ -61,6 +68,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
     });
     checkInternet();
     _fetchBidRequests();
+    _loadAllTradeTypes();
   }
 
   @override
@@ -107,13 +115,36 @@ class _BidRoomTableState extends State<BidRoomTable> {
   }
 
   void _extractTradeTypes() {
+    // Keep existing bid request types merged with any already-loaded API types
     Set<String> types = {'All'};
+    for (var t in _tradeTypes) {
+      if (t != 'All') types.add(t);
+    }
     for (var request in _bidRequests) {
       if (request.workCategory != null && request.workCategory!.isNotEmpty) {
         types.add(request.workCategory!);
       }
     }
     _tradeTypes = types.toList()..sort();
+  }
+
+  Future<void> _loadAllTradeTypes() async {
+    try {
+      final result = await FetchAllcategories().fetchAllCategories();
+      if (mounted) {
+        setState(() {
+          final Set<String> types = {'All'};
+          for (var c in result) {
+            if (c.name != null && c.name!.isNotEmpty && c.isDelete != true)
+              types.add(c.name!);
+          }
+          for (var t in _tradeTypes) {
+            if (t != 'All') types.add(t);
+          }
+          _tradeTypes = types.toList()..sort();
+        });
+      }
+    } catch (_) {}
   }
 
   void _applyFilters() {
@@ -170,21 +201,21 @@ class _BidRoomTableState extends State<BidRoomTable> {
     return address;
   }
 
-  String _formatDate(String? dateStr) {
+  String _formatDate(BuildContext context, String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
-      DateTime date = DateTime.parse(dateStr);
-      return DateFormat('yyyy-MM-dd').format(date);
+      return Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(dateStr);
     } catch (e) {
       return dateStr;
     }
   }
 
-  String _formatDateTime(String? dateStr) {
+  String _formatDateTime(BuildContext context, String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return 'N/A';
     try {
-      DateTime date = DateTime.parse(dateStr);
-      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
+      return Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDateTime(dateStr);
     } catch (e) {
       return dateStr;
     }
@@ -249,7 +280,228 @@ class _BidRoomTableState extends State<BidRoomTable> {
     });
   }
 
-   Widget _buildHeaders() {
+  Future<void> _deleteBidRequest(String bidRequestId, String reason) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    try {
+      final response = await http.delete(
+        Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          "Content-Type": "application/json",
+        },
+        body: json.encode({"reason": reason}),
+      );
+
+      final responseBody = json.decode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Fluttertoast.showToast(
+          msg: responseBody['message'] ?? 'Bid Room deleted successfully',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        if (mounted) {
+          setState(() {
+            expandedIndex = null;
+            expandedBidRequestId = null;
+          });
+          _fetchBidRequests();
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: responseBody['message'] ?? 'Failed to delete bid room',
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Error deleting bid room: $e',
+        toastLength: Toast.LENGTH_SHORT,
+      );
+    }
+  }
+
+  void _showDeleteDialog(BuildContext context, BidRequest request) {
+    final TextEditingController reasonController = TextEditingController();
+    bool isDeleting = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (dialogContext, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Orange warning icon circle
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.orange,
+                          width: 3,
+                        ),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '!',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Title
+                    const Text(
+                      'Are you sure?',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Subtitle
+                    Text(
+                      'Once deleted, you will not be able to recover this bid room!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[700],
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Reason text field
+                    TextField(
+                      controller: reasonController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter reason for deletion',
+                        hintStyle:
+                            TextStyle(fontSize: 13, color: Colors.grey[500]),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFDBE0E5)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFDBE0E5)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: blueColor, width: 2),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
+                        isDense: true,
+                      ),
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                    const SizedBox(height: 24),
+                    // Buttons row
+                    Row(
+                      children: [
+                        // Delete button
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: isDeleting
+                                ? null
+                                : () async {
+                                    final reason =
+                                        reasonController.text.trim();
+                                    if (reason.isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg: 'Please enter a reason');
+                                      return;
+                                    }
+                                    setDialogState(
+                                        () => isDeleting = true);
+                                    Navigator.of(dialogContext).pop();
+                                    await _deleteBidRequest(
+                                        request.bidRequestId!, reason);
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: isDeleting
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Cancel button
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: isDeleting
+                                ? null
+                                : () => Navigator.of(dialogContext).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: blueColor,
+                              side: BorderSide(color: blueColor),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildHeaders() {
     var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
@@ -270,15 +522,19 @@ class _BidRoomTableState extends State<BidRoomTable> {
             Expanded(
               flex: 3,
               child: InkWell(
-                 child: Row(
+                child: Row(
                   children: [
                     width < 400
                         ? Text("  #",
-                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold))
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold))
                         : Text("  #",
-                            style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold)),
-                    
-                   
+                            style: TextStyle(
+                                color: blueColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -299,9 +555,11 @@ class _BidRoomTableState extends State<BidRoomTable> {
                 },
                 child: Row(
                   children: [
-                  
                     Text("Bid Room",
-                        style: TextStyle(color: blueColor, fontSize: 14,fontWeight: FontWeight.bold )),
+                        style: TextStyle(
+                            color: blueColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
                     ascending1
                         ? Padding(
@@ -324,13 +582,11 @@ class _BidRoomTableState extends State<BidRoomTable> {
                 ),
               ),
             ),
-          
           ],
         ),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -430,147 +686,158 @@ class _BidRoomTableState extends State<BidRoomTable> {
                         if (MediaQuery.of(context).size.width > 500)
                           const SizedBox(width: 18),
                         Expanded(
-                          child: Material(
-                            elevation: 3,
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 45
-                                  : 50,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: const Color(0xFF8A95A8))),
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: TextField(
-                                      controller: _searchController,
-                                      style: TextStyle(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            height: MediaQuery.of(context).size.width < 500
+                                ? 45
+                                : 50,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border:
+                                    Border.all(color: const Color(0xFFDBE0E5))),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 12
+                                                : 14),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value;
+                                        if (_currentPage != 0) _currentPage = 0;
+                                        _applyFilters();
+                                      });
+                                    },
+                                    cursorColor: blueColor,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Search here...",
+                                      hintStyle: TextStyle(
+                                          color: const Color(0xFF495160),
+                                          fontWeight: FontWeight.bold,
                                           fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width <
                                                   500
-                                              ? 12
-                                              : 14),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _searchQuery = value;
-                                          if (_currentPage != 0)
-                                            _currentPage = 0;
-                                          _applyFilters();
-                                        });
-                                      },
-                                      cursorColor: blueColor,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
-                                            color: const Color(0xFF495160),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 14
-                                                : 18),
-                                        contentPadding: (const EdgeInsets.only(
-                                            left: 5, bottom: 12, top: 5)),
-                                      ),
+                                              ? 14
+                                              : 18),
+                                      contentPadding: (const EdgeInsets.only(
+                                          left: 5, bottom: 12, top: 5)),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: DropdownButtonHideUnderline(
-                            child: Material(
-                              elevation: 3,
-                              borderRadius: BorderRadius.circular(8),
-                              child: DropdownButton2<String>(
-                                isExpanded: true,
-                                hint: const Row(
-                                  children: [
-                                    SizedBox(width: 4),
-                                    Expanded(
-                                      child: Text(
-                                        'Trade Type',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF495160),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                'Trade Type',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF495160),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              items: _tradeTypes.map((String item) {
+                                final bool isSelected =
+                                    _selectedTradeType == item ||
+                                        (_selectedTradeType == null &&
+                                            item == 'All');
+                                return DropdownMenuItem<String>(
+                                  value: item,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.check,
+                                        size: 16,
+                                        color: isSelected
+                                            ? blueColor
+                                            : Colors.transparent,
                                       ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          item,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: isSelected
+                                                ? blueColor
+                                                : Colors.black87,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              value: _selectedTradeType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedTradeType = value;
+                                  if (_currentPage != 0) _currentPage = 0;
+                                  _applyFilters();
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: MediaQuery.of(context).size.width < 500
+                                    ? 48
+                                    : 54,
+                                width: MediaQuery.of(context).size.width < 500
+                                    ? MediaQuery.of(context).size.width * .37
+                                    : MediaQuery.of(context).size.width * .4,
+                                padding:
+                                    const EdgeInsets.only(left: 14, right: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: const Color(0xFFDBE0E5),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 320,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: const Color(0xFFDBE0E5)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
                                 ),
-                                items: _tradeTypes
-                                    .map((String item) =>
-                                        DropdownMenuItem<String>(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ))
-                                    .toList(),
-                                value: _selectedTradeType,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedTradeType = value;
-                                    if (_currentPage != 0) _currentPage = 0;
-                                    _applyFilters();
-                                  });
-                                },
-                                buttonStyleData: ButtonStyleData(
-                                  height:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 45
-                                          : 50,
-                                  width: MediaQuery.of(context).size.width < 500
-                                      ? MediaQuery.of(context).size.width * .37
-                                      : MediaQuery.of(context).size.width * .4,
-                                  padding: const EdgeInsets.only(
-                                      left: 14, right: 14),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(
-                                      color: const Color(0xFF8A95A8),
-                                    ),
-                                    color: Colors.white,
-                                  ),
-                                  elevation: 0,
+                                offset: const Offset(0, 4),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(8),
+                                  thickness: MaterialStateProperty.all(4),
+                                  thumbVisibility:
+                                      MaterialStateProperty.all(true),
                                 ),
-                                dropdownStyleData: DropdownStyleData(
-                                  maxHeight: 200,
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  offset: const Offset(-20, 0),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    radius: const Radius.circular(40),
-                                    thickness: MaterialStateProperty.all(6),
-                                    thumbVisibility:
-                                        MaterialStateProperty.all(true),
-                                  ),
-                                ),
-                                menuItemStyleData: const MenuItemStyleData(
-                                  height: 40,
-                                  padding: EdgeInsets.only(left: 14, right: 14),
-                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 48,
+                                padding: EdgeInsets.symmetric(horizontal: 12),
                               ),
                             ),
                           ),
@@ -802,24 +1069,50 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                   }
                                                                 });
                                                               },
-                                                              child: Text(
-                                                                _getBidRoomTitle(
-                                                                    request),
-                                                              
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blueColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 13,
-                                                                ),
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    _getBidRoomTitle(
+                                                                        request),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          13,
+                                                                    ),
+                                                                  ),
+                                                                  if ((request.description ??
+                                                                          '')
+                                                                      .isNotEmpty)
+                                                                    Text(
+                                                                      request
+                                                                          .description!,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlue,
+                                                                        fontSize:
+                                                                            11,
+                                                                      ),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
-                                                         SizedBox(width: 5),
-                                                         
+                                                          SizedBox(width: 5),
+
                                                           // Container(
                                                           //   height: 35,
                                                           //   width: 35,
@@ -886,15 +1179,17 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                         },
                                                                         children: [
                                                                           _buildTableRow(
-                                                                            'Category:',
+                                                                            'Trade Type:',
                                                                             request.workCategory ??
                                                                                 'N/A',
-                                                                            'Created Date:',
-                                                                            _formatDate(request.createdAt),
+                                                                            'Created On:',
+                                                                            _formatDate(context,
+                                                                                request.createdAt),
                                                                           ),
                                                                           _buildTableRow(
                                                                             'Due Date:',
-                                                                            _formatDate(request.dueDate),
+                                                                            _formatDate(context,
+                                                                                request.dueDate),
                                                                             'Status:',
                                                                             request.status ??
                                                                                 'N/A',
@@ -902,17 +1197,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                           _buildTableRow(
                                                                             'Submissions:',
                                                                             '${request.submissionCount ?? 0}',
-                                                                            'Created By:',
-                                                                            request.createdByName ??
-                                                                                'N/A',
-                                                                          ),
-                                                                          _buildTableRow(
-                                                                            'Description:',
-                                                                            request.description ??
-                                                                                'N/A',
-                                                                            'Unit:',
-                                                                            request.unit?.rentalUnit ??
-                                                                                'N/A',
+                                                                            '',
+                                                                            '',
                                                                           ),
                                                                         ],
                                                                       ),
@@ -939,10 +1225,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        // TODO: Delete bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Delete Bid Room feature coming soon');
+                                                                        if (request.bidRequestId != null) {
+                                                                          _showDeleteDialog(context, request);
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -980,16 +1265,20 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () async {
-                                                                        final result = await Navigator.of(context).push(
+                                                                        final result =
+                                                                            await Navigator.of(context).push(
                                                                           MaterialPageRoute(
-                                                                            builder: (context) => CreateBidRoom(
+                                                                            builder: (context) =>
+                                                                                CreateBidRoom(
                                                                               useStaffLayout: widget.useStaffLayout,
                                                                               existingBidRequest: request,
                                                                             ),
                                                                           ),
                                                                         );
-                                                                        if (result == true) {
-                                                                          setState(() => _fetchBidRequests());
+                                                                        if (result ==
+                                                                            true) {
+                                                                          setState(() =>
+                                                                              _fetchBidRequests());
                                                                         }
                                                                       },
                                                                       child:
@@ -1282,21 +1571,51 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                   }
                                                                 });
                                                               },
-                                                              child: Text(
-                                                                _getBidRoomTitle(
-                                                                    request),
-                                                                textAlign:
-                                                                    TextAlign
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
                                                                         .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      blueColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 13,
-                                                                ),
+                                                                children: [
+                                                                  Text(
+                                                                    _getBidRoomTitle(
+                                                                        request),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color:
+                                                                          blueColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          13,
+                                                                    ),
+                                                                  ),
+                                                                  if ((request.description ??
+                                                                          '')
+                                                                      .isNotEmpty)
+                                                                    Text(
+                                                                      request
+                                                                          .description!,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .lightBlue,
+                                                                        fontSize:
+                                                                            11,
+                                                                      ),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
@@ -1386,15 +1705,17 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                         },
                                                                         children: [
                                                                           _buildTableRow(
-                                                                            'Category:',
+                                                                            'Trade Type:',
                                                                             request.workCategory ??
                                                                                 'N/A',
-                                                                            'Created Date:',
-                                                                            _formatDate(request.createdAt),
+                                                                            'Created On:',
+                                                                            _formatDate(context,
+                                                                                request.createdAt),
                                                                           ),
                                                                           _buildTableRow(
                                                                             'Due Date:',
-                                                                            _formatDate(request.dueDate),
+                                                                            _formatDate(context,
+                                                                                request.dueDate),
                                                                             'Status:',
                                                                             request.status ??
                                                                                 'N/A',
@@ -1430,10 +1751,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        // TODO: Delete bid room
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'Delete Bid Room feature coming soon');
+                                                                        if (request.bidRequestId != null) {
+                                                                          _showDeleteDialog(context, request);
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1471,16 +1791,20 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () async {
-                                                                        final result = await Navigator.of(context).push(
+                                                                        final result =
+                                                                            await Navigator.of(context).push(
                                                                           MaterialPageRoute(
-                                                                            builder: (context) => CreateBidRoom(
+                                                                            builder: (context) =>
+                                                                                CreateBidRoom(
                                                                               useStaffLayout: widget.useStaffLayout,
                                                                               existingBidRequest: request,
                                                                             ),
                                                                           ),
                                                                         );
-                                                                        if (result == true) {
-                                                                          setState(() => _fetchBidRequests());
+                                                                        if (result ==
+                                                                            true) {
+                                                                          setState(() =>
+                                                                              _fetchBidRequests());
                                                                         }
                                                                       },
                                                                       child:
@@ -1835,7 +2159,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _formatDateTime(submission.submittedAt),
+                            _formatDateTime(context, submission.submittedAt),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[700],
@@ -1878,29 +2202,29 @@ class _BidRoomTableState extends State<BidRoomTable> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: Show price breakdown
-                      Fluttertoast.showToast(
-                          msg: 'View Breakdown feature coming soon');
-                    },
-                    icon: FaIcon(
-                      FontAwesomeIcons.eye,
-                      size: 14,
-                    ),
-                    label: Text('View Breakdown'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: blueColor,
-                      elevation: 0,
-                      side: BorderSide(color: blueColor),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                  ),
-                ),
+                // const SizedBox(height: 12),
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: ElevatedButton.icon(
+                //     onPressed: () {
+                //       // TODO: Show price breakdown
+                //       Fluttertoast.showToast(
+                //           msg: 'View Breakdown feature coming soon');
+                //     },
+                //     icon: FaIcon(
+                //       FontAwesomeIcons.eye,
+                //       size: 14,
+                //     ),
+                //     label: Text('View Breakdown'),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.white,
+                //       foregroundColor: blueColor,
+                //       elevation: 0,
+                //       side: BorderSide(color: blueColor),
+                //       padding: const EdgeInsets.symmetric(vertical: 8),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           );
