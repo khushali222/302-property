@@ -99,7 +99,7 @@ class _summery_pageState extends State<summery_page> {
             key.currentState!.openDrawer();
           }),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Properties'),
+      drawer: CustomDrawer(currentpage: 'Property'),
       body: _connectivityResult != ConnectivityResult.none
           ? _isLoading
           ? Center(

@@ -124,7 +124,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       ),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: 'Work Order',
+        currentpage: 'Work Orders',
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? Column(

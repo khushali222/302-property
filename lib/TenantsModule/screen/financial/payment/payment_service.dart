@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,8 @@ import 'package:uuid/uuid.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
 import '../../../../constant/constant.dart';
+
+String get _clientSource => Platform.isIOS ? 'mobile-ios' : 'mobile-android';
 
 class PaymentService {
   Future<String> makePaymentforcard({
@@ -54,7 +57,17 @@ class PaymentService {
         'processor_id': processorId,
         'notificationTime': notificationTime,
         'lease_id': leaseid,
-        'entry': entries,
+        'tenantName': '$firstName $lastName',
+        'source': 'tenant',
+        'entry': entries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+          'charge_type': e['charge_type'],
+        }).toList(),
         'scheduledPayment': scheduledPayment,
       };
       print(paymentDetails);
@@ -66,8 +79,9 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
       print("[CARD PAYMENT] /api/nmipayment/sale status: ${response.statusCode}");
@@ -193,6 +207,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -272,7 +287,17 @@ class PaymentService {
         'lease_id': leaseid,
         'address1': address1,
         'processor_id': processorId,
-        'entry': entries,
+        'tenantName': '$firstName $lastName',
+        'source': 'tenant',
+        'entry': entries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+          'charge_type': e['charge_type'],
+        }).toList(),
       };
       if (billingId != null && billingId.isNotEmpty && customerVaultId != null && customerVaultId.isNotEmpty) {
         paymentDetails['billing_id'] = billingId;
@@ -286,6 +311,7 @@ class PaymentService {
         paymentDetails['account_holder_type'] = account_holder_type;
       }
       print(paymentDetails);
+
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -293,6 +319,7 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
@@ -410,6 +437,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(body),
     );
@@ -482,8 +510,9 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
-        body: jsonEncode({"paymentDetails": paymentDetails}),
+        body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
       print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale status: ${response.statusCode}");
       print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale response: ${response.body}");
@@ -570,6 +599,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,

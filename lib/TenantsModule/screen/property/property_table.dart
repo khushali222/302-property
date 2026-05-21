@@ -674,7 +674,7 @@ class _PropertyTableState extends State<PropertyTable> {
       ),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: 'Properties',
+        currentpage: 'Property',
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(

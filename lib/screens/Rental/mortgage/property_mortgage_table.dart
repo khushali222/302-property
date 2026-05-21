@@ -862,17 +862,16 @@ print("mortgage call");
                                       children: [
                                         GestureDetector(
                                           onTap: () =>
-                                              _deleteMortgage(
-                                                  mortgage['_id']),
+                                              _viewMortgage(mortgage),
                                           child: Container(
                                             height: 35,
                                             width: 35,
                                             decoration: BoxDecoration(
+                                              color: Colors
+                                                  .grey.shade200,
                                               borderRadius:
                                               BorderRadius
                                                   .circular(8),
-                                              color:
-                                              Colors.red.shade50,
                                             ),
                                             child: const Row(
                                               mainAxisAlignment:
@@ -884,9 +883,9 @@ print("mortgage call");
                                               children: [
                                                 FaIcon(
                                                   FontAwesomeIcons
-                                                      .trashCan,
+                                                      .eye,
                                                   size: 15,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 ),
                                               ],
                                             ),
@@ -927,16 +926,17 @@ print("mortgage call");
                                         const SizedBox(width: 5),
                                         GestureDetector(
                                           onTap: () =>
-                                              _viewMortgage(mortgage),
+                                              _deleteMortgage(
+                                                  mortgage['_id']),
                                           child: Container(
                                             height: 35,
                                             width: 35,
                                             decoration: BoxDecoration(
-                                              color: Colors
-                                                  .grey.shade200,
                                               borderRadius:
                                               BorderRadius
                                                   .circular(8),
+                                              color:
+                                              Colors.red.shade50,
                                             ),
                                             child: const Row(
                                               mainAxisAlignment:
@@ -948,9 +948,9 @@ print("mortgage call");
                                               children: [
                                                 FaIcon(
                                                   FontAwesomeIcons
-                                                      .eye,
+                                                      .trashCan,
                                                   size: 15,
-                                                  color: Colors.black,
+                                                  color: Colors.red,
                                                 ),
                                               ],
                                             ),

@@ -240,7 +240,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         onDrawerIconPressed: () => key.currentState!.openDrawer(),
       ),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(currentpage: 'Work Order'),
+      drawer: CustomDrawer(currentpage: 'Work Orders'),
       body: _isLoading
           ? Center(child: SpinKitFadingCircle(color: blueColor, size: 50))
           : summery == null

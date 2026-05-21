@@ -1043,40 +1043,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                   children: [
                                                     GestureDetector(
                                                       onTap: () =>
-                                                          _deleteMortgage(
-                                                              tax['_id']),
-                                                      child: Container(
-                                                        height: 35,
-                                                        width: 35,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          color: Colors
-                                                              .red.shade50,
-                                                        ),
-                                                        child: const Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            FaIcon(
-                                                              FontAwesomeIcons
-                                                                  .trashCan,
-                                                              size: 15,
-                                                              color: Colors.red,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 5),
-                                                    GestureDetector(
-                                                      onTap: () =>
                                                           _editMortgage(tax),
                                                       child: Container(
                                                         height: 35,
@@ -1103,6 +1069,40 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
                                                               size: 15,
                                                               color:
                                                                   Colors.green,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                    GestureDetector(
+                                                      onTap: () =>
+                                                          _deleteMortgage(
+                                                              tax['_id']),
+                                                      child: Container(
+                                                        height: 35,
+                                                        width: 35,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: Colors
+                                                              .red.shade50,
+                                                        ),
+                                                        child: const Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .trashCan,
+                                                              size: 15,
+                                                              color: Colors.red,
                                                             ),
                                                           ],
                                                         ),

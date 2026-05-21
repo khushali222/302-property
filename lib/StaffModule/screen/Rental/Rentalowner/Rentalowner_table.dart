@@ -1020,18 +1020,27 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  _showDeleteAlert(context,
-                                                      rentals.rentalownerId!);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ResponsiveRentalSummary(
+                                                                rentalOwnersid:
+                                                                    rentals
+                                                                        .rentalownerId!,
+                                                                rentalowners:
+                                                                    rentals,
+                                                              )));
                                                 },
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          Colors.red.shade50),
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
                                                   child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1041,11 +1050,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons
-                                                            .trashCan,
+                                                        FontAwesomeIcons.eye,
                                                         size: 15,
-                                                        color: Colors.red,
+                                                        color: Colors.black,
                                                       ),
+                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
@@ -1104,27 +1113,18 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ResponsiveRentalSummary(
-                                                                rentalOwnersid:
-                                                                    rentals
-                                                                        .rentalownerId!,
-                                                                rentalowners:
-                                                                    rentals,
-                                                              )));
+                                                  _showDeleteAlert(context,
+                                                      rentals.rentalownerId!);
                                                 },
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.shade200,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
                                                   child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1134,11 +1134,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.eye,
+                                                        FontAwesomeIcons
+                                                            .trashCan,
                                                         size: 15,
-                                                        color: Colors.black,
+                                                        color: Colors.red,
                                                       ),
-                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),

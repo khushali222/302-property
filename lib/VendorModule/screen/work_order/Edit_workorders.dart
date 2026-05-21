@@ -432,7 +432,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     'false',
   ];
   String? _selectedStatus;
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed', 'Closed'];
   final List<String> _account = [
     'Advertising',
     'Association Fees',

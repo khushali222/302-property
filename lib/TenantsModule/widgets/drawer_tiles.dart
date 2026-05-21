@@ -38,11 +38,11 @@ Widget buildListTile(
             const Profile_screen(),
             "Profile",
           );
-        } else if (title == "Properties") {
+        } else if (title == "Property") {
           NavigationHelper.navigateWithValidation(
             context,
             PropertyTable(),
-            "Properties",
+            "Property",
           );
         } else if (title == "Ledger") {
           NavigationHelper.navigateWithValidation(
@@ -50,11 +50,11 @@ Widget buildListTile(
             FinancialTable(),
             "Ledger",
           );
-        } else if (title == "Work Order") {
+        } else if (title == "Work Orders") {
           NavigationHelper.navigateWithValidation(
             context,
             WorkOrderTable(),
-            "Work Order",
+            "Work Orders",
           );
         } else if (title == "Documents") {
           NavigationHelper.navigateWithValidation(
@@ -80,11 +80,11 @@ void navigateToOption(
     String option,
     ) {
   Map<String, Widget> routes = {
-    "Properties": PropertyTable(),
+    "Property": PropertyTable(),
     /* "RentalOwner": Rentalowner_table(),
     "Tenants": Tenants_table(),
     "Vendor": Vendor_table(),
-    "Work Order": Workorder_table(),
+    "Work Orders": Workorder_table(),
     "Rent Roll": Lease_table(),
     "Applicants": Applicants_table(),
     "Vendor": Vendor_table(),*/

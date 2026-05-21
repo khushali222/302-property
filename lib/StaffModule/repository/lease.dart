@@ -394,16 +394,10 @@ class LeaseRepository {
     final adminId = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final uri = Uri.parse('$Api_url/api/leases/leases/$adminId').replace(
-      queryParameters: {
-        'page': '$page',
-        'limit': '$limit',
-        'search': search,
-        'status': status,
-        'sortBy': sortBy,
-        'sortOrder': sortOrder,
-      },
-    );
+    final queryString = 'page=$page&limit=$limit'
+        '&search=${Uri.encodeQueryComponent(search)}'
+        '&status=$status&sortBy=$sortBy&sortOrder=$sortOrder';
+    final uri = Uri.parse('$Api_url/api/leases/leases/$adminId?$queryString');
     print(uri);
     final response = await http.get(
       uri,

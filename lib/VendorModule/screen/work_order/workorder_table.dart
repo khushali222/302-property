@@ -25,6 +25,7 @@ import '../../widgets/drawer_tiles.dart';
 import 'add_workorder.dart';
 import '../../model/workorder_model.dart';
 import '../work_order/workorder_summery.dart';
+import '../work_order/Edit_workorders.dart';
 
 class WorkOrderTable extends StatefulWidget {
   String? filter;
@@ -242,28 +243,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   }
 
   void handleEdit(WorkOrder property) async {
-    /* // Handle edit action
-    print('Edit ${property.sId}');
-    var check = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Edit_property_type(
-              property: property,
-            )));
-    if (check == true) {
-      setState(() {});
-    }*/
-    // final result = await Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => Edit_property_type(
-    //               property: property,
-    //             )));
-    /* if (result == true) {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Edit_Workorder(workorderId: property.workOrderId!),
+      ),
+    );
+    if (result == true) {
       setState(() {
-        futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
+        futureworkorder = WorkOrderRepository().fetchWorkOrders();
       });
-    }*/
+    }
   }
 
   void _showAlert(BuildContext context, String id) {
@@ -1186,49 +1176,63 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                     ],
                                                   ),
                                                   Row(
-                                                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     mainAxisAlignment: MainAxisAlignment.end,
                                                     children: [
-                                                      // SizedBox(width: 5,),
                                                       InkWell(
                                                         onTap: () {
                                                           Navigator.of(context).push(
                                                               MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          Workorder_summery(
-                                                                            workorder_id: workorder.workOrderId,
-                                                                          )));
+                                                                  builder: (context) => Workorder_summery(
+                                                                    workorder_id: workorder.workOrderId,
+                                                                  )));
                                                         },
-                                                        child: 
-                                                        Container(
-                                                                                                        height: 35,
-                                                                                                        width: 35,
-                                                                                                        decoration: BoxDecoration(
-                                                                                                          color: Colors.grey.shade200,
-                                                                                                          borderRadius:
-                                                      BorderRadius.circular(
-                                                          8),
-                                                                                                        ),
-                                                                                                        child: const Row(
-                                                                                                          mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                                                                          crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .center,
-                                                                                                          children: [
-                                                                                                            FaIcon(
-                                                      FontAwesomeIcons.eye,
-                                                      size: 15,
-                                                      color: Colors.black,
-                                                                                                            ),
-                                                                                                            SizedBox(width: 2),
-                                                                                                          ],
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.grey.shade200,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: const Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons.eye,
+                                                                size: 15,
+                                                                color: Colors.black,
+                                                              ),
+                                                              SizedBox(width: 2),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
+                                                      // SizedBox(width: 8),
+                                                      // InkWell(
+                                                      //   onTap: () {
+                                                      //     handleEdit(workorder);
+                                                      //   },
+                                                      //   child: Container(
+                                                      //     height: 35,
+                                                      //     width: 35,
+                                                      //     decoration: BoxDecoration(
+                                                      //       color: blueColor,
+                                                      //       borderRadius: BorderRadius.circular(8),
+                                                      //     ),
+                                                      //     child: const Row(
+                                                      //       mainAxisAlignment: MainAxisAlignment.center,
+                                                      //       crossAxisAlignment: CrossAxisAlignment.center,
+                                                      //       children: [
+                                                      //         FaIcon(
+                                                      //           FontAwesomeIcons.penToSquare,
+                                                      //           size: 15,
+                                                      //           color: Colors.white,
+                                                      //         ),
+                                                      //         SizedBox(width: 2),
+                                                      //       ],
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
                                                 ],

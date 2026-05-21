@@ -870,7 +870,7 @@ class _MakePaymentState extends State<MakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': _normalizeToIsoDate(_startDate.text),
         'newfield': true
       });
 
@@ -2916,7 +2916,7 @@ class _MakePaymentState extends State<MakePayment> {
                               "memo": selected_account == "rent"
                                   ? "Rent Income"
                                   : "Payment",
-                              "date": _startDate.text.trim(),
+                              "date": _normalizeToIsoDate(_startDate.text),
                               "charge_type":
                                   selected_account == "rent" ? "Rent" : "Payment",
                             }
@@ -3017,7 +3017,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   "memo": selected_account == "rent"
                                       ? "Rent Income"
                                       : "Payment",
-                                  "date": _startDate.text.trim(),
+                                  "date": _normalizeToIsoDate(_startDate.text),
                                   "charge_type":
                                       selected_account == "rent" ? "Rent" : "Payment",
                                 }
@@ -3057,7 +3057,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   surcharge: "${surchargeamount}",
                                   amount: "${totalamount}",
                                   tenantId: widget.tenantId,
-                                  date: _startDate.text.trim(),
+                                  date: _normalizeToIsoDate(_startDate.text),
                                   address1: checkname,
                                   processorId: processorId,
                                   leaseid: selectedTenantId!,
@@ -3100,70 +3100,71 @@ class _MakePaymentState extends State<MakePayment> {
                                 });
                                 return;
                               }
-                              await PaymentService()
-                                  .makePaymentforcard(
-                                scheduledPayment: scheduledPayment ?? false,
-                                entries: manualEntries,
-                                paymentAmountType: selected_account ?? '',
-                                adminId: id ?? "",
-                                firstName: first_name!,
-                                lastName: last_name!,
-                                emailName: email!,
-                                customerVaultId: _cardOnlyList[selectedcardindex!]
-                                    .customerVaultId!,
-                                billingId:
-                                    _cardOnlyList[selectedcardindex!].billingId!,
-                                surcharge: "${surchargeamount}",
-                                amount: "${totalamount}",
-                                tenantId: widget.tenantId,
-                                date: _startDate.text.trim(),
-                                address1:
-                                    _cardOnlyList[selectedcardindex!].address_1!,
-                                processorId: "",
-                                leaseid: selectedTenantId!,
-                                company_name: companyName,
-                                future_Date: futuredate!,
-                                notificationTime: notificationTime,
-                              )
-                                  .then((value) {
-                                Fluttertoast.showToast(msg: "$value");
-                                setState(() {
-                                  IsLoading = false;
-                                });
-                                Navigator.pop(context, true);
-                              }).catchError((e) {
-                                setState(() {
-                                  IsLoading = false;
-                                });
-                                //  print(e.toString().split("Exception")[1].toString().trimLeft());
-                                setState(() {
-                                  IsLoading = false;
-                                });
-                                Alert(
-                                  context: context,
-                                  type: AlertType.warning,
-                                  title: "Payment Failed!",
-                                  desc:
-                                      "${e.toString().split('Exception:')[1].toString().trimLeft()}",
-                                  style: AlertStyle(
-                                    backgroundColor: Colors.white,
-                                    //  overlayColor: Colors.black.withOpacity(.8)
-                                  ),
-                                  buttons: [
-                                    DialogButton(
-                                      child: Text(
-                                        "Ok",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 18),
+                              try {
+                                await PaymentService()
+                                    .makePaymentforcard(
+                                  scheduledPayment: scheduledPayment ?? false,
+                                  entries: manualEntries,
+                                  paymentAmountType: selected_account ?? '',
+                                  adminId: id ?? "",
+                                  firstName: first_name ?? "",
+                                  lastName: last_name ?? "",
+                                  emailName: email ?? "",
+                                  customerVaultId: _cardOnlyList[selectedcardindex!]
+                                          .customerVaultId ??
+                                      "",
+                                  billingId:
+                                      _cardOnlyList[selectedcardindex!].billingId ??
+                                          "",
+                                  surcharge: "${surchargeamount}",
+                                  amount: "${totalamount}",
+                                  tenantId: widget.tenantId,
+                                  date: _normalizeToIsoDate(_startDate.text),
+                                  address1:
+                                      _cardOnlyList[selectedcardindex!].address_1 ??
+                                          "",
+                                  processorId: "",
+                                  leaseid: selectedTenantId!,
+                                  company_name: companyName,
+                                  future_Date: futuredate!,
+                                  notificationTime: notificationTime,
+                                )
+                                    .then((value) {
+                                  Fluttertoast.showToast(msg: "$value");
+                                  setState(() {
+                                    IsLoading = false;
+                                  });
+                                  Navigator.pop(context, true);
+                                }).catchError((e) {
+                                  setState(() {
+                                    IsLoading = false;
+                                  });
+                                  final msg = e.toString().contains('Exception:')
+                                      ? e.toString().split('Exception:')[1].trimLeft()
+                                      : e.toString();
+                                  Alert(
+                                    context: context,
+                                    type: AlertType.warning,
+                                    title: "Payment Failed!",
+                                    desc: msg,
+                                    style: AlertStyle(backgroundColor: Colors.white),
+                                    buttons: [
+                                      DialogButton(
+                                        child: Text("Ok",
+                                            style: TextStyle(
+                                                color: Colors.white, fontSize: 18)),
+                                        onPressed: () => Navigator.pop(context),
+                                        color: blueColor,
                                       ),
-                                      onPressed: () => Navigator.pop(context),
-                                      color: blueColor,
-                                    ),
-                                  ],
-                                ).show();
-                      
-                                Fluttertoast.showToast(msg: "Payment failed $e");
-                              });
+                                    ],
+                                  ).show();
+                                  Fluttertoast.showToast(msg: "Payment failed $e");
+                                });
+                              } catch (e) {
+                                setState(() => IsLoading = false);
+                                print("[CARD PAYMENT] Sync error before API call: $e");
+                                Fluttertoast.showToast(msg: "Payment error: $e");
+                              }
                             } else {
                               setState(() {
                                 //iserror = totalpayamount < 0.0;
@@ -3455,5 +3456,24 @@ class _MakePaymentState extends State<MakePayment> {
         );
       },
     );
+  }
+
+  String _normalizeToIsoDate(String inputDate) {
+    inputDate = inputDate.trim();
+    final List<String> formats = [
+      'yyyy-MM-dd',
+      'yyyy-M-d',
+      'MM/dd/yyyy',
+      'M/d/yyyy',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+    ];
+    for (final fmt in formats) {
+      try {
+        final parsed = DateFormat(fmt).parseStrict(inputDate);
+        return DateFormat('yyyy-MM-dd').format(parsed);
+      } catch (_) {}
+    }
+    return inputDate;
   }
 }

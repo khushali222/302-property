@@ -31,6 +31,7 @@ import '../../../repository/payment/charge_responce.dart';
 import '../../../repository/payment/payment_service.dart';
 import '../../../repository/setting.dart';
 import '../../../repository/tenants.dart';
+import '../../../../provider/dateProvider.dart';
 import 'addcard/AddCard.dart';
 import 'addcard/CardModel.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -117,9 +118,16 @@ class _MakePaymentState extends State<MakePayment> {
     fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
-    DateTime today = DateTime.now();
-    _startDate.text = DateFormat('dd-MM-yyyy').format(today);
     fetchChargesAndBalance(widget.leaseId);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final dateProvider = Provider.of<DateProvider>(context);
+    _startDate.text = dateProvider.formatCurrentDate(
+      _startDate.text.isNotEmpty ? _startDate.text : DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    );
   }
 
   editpayment() {
@@ -886,7 +894,7 @@ class _MakePaymentState extends State<MakePayment> {
         'amount': 0.0,
         'memo': Memo.text.isNotEmpty ? Memo.text : "Payment",
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': reverseFormatDate(_startDate.text),
         'newfield': true
       });
 
@@ -1543,8 +1551,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   if (pickedDate != null) {
                                     bool isfuture =
                                         pickedDate.isAfter(DateTime.now());
-                                    String formattedDate =
-                                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                    String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                     setState(() {
                                       futuredate = isfuture;
                                       _startDate.text = formattedDate;
@@ -1762,12 +1770,11 @@ class _MakePaymentState extends State<MakePayment> {
                                               if (pickedDate != null) {
                                                 bool isfuture = pickedDate
                                                     .isAfter(DateTime.now());
-                                                String formattedDate =
-                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                                String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                                 setState(() {
                                                   futuredate = isfuture;
-                                                  _startDate.text =
-                                                      formattedDate;
+                                                  _startDate.text = formattedDate;
                                                 });
                                               }
                                             },
@@ -3888,9 +3895,9 @@ class _MakePaymentState extends State<MakePayment> {
                                     surcharge:
                                         "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                     amount:
-                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
+                                        "${_safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
-                                    date: _startDate.text.trim(),
+                                    date: reverseFormatDate(_startDate.text.trim()),
                                     address1: selectedBilling.address_1 ?? "",
                                     processorId: "",
                                     leaseid: widget.leaseId,
@@ -3983,7 +3990,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   surcharge: "${surchargecount ?? 0}",
                                   amount: "${achPrincipal}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: processor_id,
                                   leaseid: widget.leaseId,
@@ -4092,11 +4099,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   surcharge:
                                       "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
+                                      "${_safeParseAmountText()}",
                                   tenantId: selectedTenant != null
                                       ? selectedTenantId!
                                       : "",
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
@@ -4151,11 +4158,11 @@ class _MakePaymentState extends State<MakePayment> {
                                         surcharge:
                                             "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
                                         amount:
-                                            "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100) + _safeParseAmountText()}",
+                                            "${_safeParseAmountText()}",
                                         tenantId: selectedTenant != null
                                             ? selectedTenantId!
                                             : "",
-                                        date: _startDate.text.trim(),
+                                        date: reverseFormatDate(_startDate.text.trim()),
                                         address1: "",
                                         processorId: "",
                                         leaseid: widget.leaseId,

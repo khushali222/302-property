@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -14,7 +14,9 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
@@ -134,7 +136,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       selectedTenantId = widget.tenantId;
       tenantname =
           "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = formatDate(c_data.entry!.first.date!);
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      _startDate.text = dateProvider.formatCurrentDate(formatDate(c_data.entry!.first.date!));
       amountController.text = c_data.totalAmount.toString();
       customerVaultID = c_data.customer_vault_id ?? "";
       _selectedPaymentMethod = c_data.paymenttype;
@@ -629,7 +632,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': reverseFormatDate(_startDate.text),
         'newfield': true
       });
 
@@ -1188,8 +1191,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   if (pickedDate != null) {
                                     bool isfuture =
                                         pickedDate.isAfter(DateTime.now());
-                                    String formattedDate =
-                                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                    String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                     setState(() {
                                       futuredate = isfuture;
                                       _startDate.text = formattedDate;
@@ -1406,8 +1409,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               if (pickedDate != null) {
                                                 bool isfuture = pickedDate
                                                     .isAfter(DateTime.now());
-                                                String formattedDate =
-                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                                String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                                 setState(() {
                                                   futuredate = isfuture;
                                                   _startDate.text =
@@ -1755,19 +1758,19 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //                       String year = item.ccExp!.substring(2, 4);
                             //                       //  print(month);
                             //                       String currentMonth = DateTime.now().month.toString().padLeft(2, '0');
-                            //
+                            
                             //                       String currentYear = DateTime.now().year.toString().substring(2);
-                            //
+                            
                             //                       String currentMonthYear = currentMonth + currentYear;
                             //                       /* print(
                             //                               'Current: $currentMonthYear');*/
-                            //
+                            
                             //                       String expMonthYear = item.ccExp!;
                             //                       String expMonth = expMonthYear.substring(0, 2);
                             //                       String expYear = expMonthYear.substring(2, 4);
                             //                       bool isExpired =
                             //                           int.parse(expYear) < int.parse(currentYear) || (int.parse(expYear) == int.parse(currentYear) && int.parse(expMonth) < int.parse(currentMonth));
-                            //
+                            
                             //                       /* print(
                             //                               'Expiration date passed: $isExpired');
                             //           */
@@ -3391,7 +3394,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   amount:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
@@ -3438,7 +3441,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   amount:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,

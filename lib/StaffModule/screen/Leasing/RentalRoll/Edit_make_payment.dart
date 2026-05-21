@@ -15,6 +15,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
@@ -131,7 +132,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       selectedTenantId = widget.tenantId;
       tenantname =
           "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = formatDate(c_data.entry!.first.date!);
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      _startDate.text = dateProvider.formatCurrentDate(formatDate(c_data.entry!.first.date!));
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
       customerVaultId = c_data.customer_vault_id ?? "";
@@ -623,7 +625,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         'amount': 0.0,
         'memo': Memo.text,
         'charge_amount': 0.0,
-        'date': _startDate.text,
+        'date': reverseFormatDate(_startDate.text),
         'newfield': true
       });
 
@@ -1181,8 +1183,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   if (pickedDate != null) {
                                     bool isfuture =
                                         pickedDate.isAfter(DateTime.now());
-                                    String formattedDate =
-                                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                    String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                     setState(() {
                                       futuredate = isfuture;
                                       _startDate.text = formattedDate;
@@ -1399,8 +1401,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               if (pickedDate != null) {
                                                 bool isfuture = pickedDate
                                                     .isAfter(DateTime.now());
-                                                String formattedDate =
-                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                                String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                                 setState(() {
                                                   futuredate = isfuture;
                                                   _startDate.text =
@@ -1676,7 +1678,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            if (showCardNumberField) ...[
+                            if (showCardNumberField && widget.isEdit == null) ...[
                               const SizedBox(height: 15),
                               Container(
                                 decoration: BoxDecoration(
@@ -1684,8 +1686,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: FormField<String>(validator: (value) {
-                                  if (selectedcardindex == null ||
-                                      _selectedPaymentMethod!.isEmpty) {
+                                  if (widget.isEdit == null &&
+                                      (selectedcardindex == null ||
+                                          _selectedPaymentMethod!.isEmpty)) {
                                     return 'Please select a card';
                                   }
                                   return null;
@@ -3574,7 +3577,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
                                           amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                           tenantId: selectedTenantId!,
-                                          date: _startDate.text.trim(),
+                                          date: reverseFormatDate(_startDate.text.trim()),
                                           address1: cardDetails[selectedcardindex!].address_1!,
                                           processorId: "",
                                           leaseid: widget.leaseId,
@@ -3631,7 +3634,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         surcharge: "$surchargecount",
                                         amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                         tenantId: selectedTenantId!,
-                                        date: _startDate.text.trim(),
+                                        date: reverseFormatDate(_startDate.text.trim()),
                                         address1: "",
                                         processorId: "",
                                         leaseid: widget.leaseId,
@@ -3700,7 +3703,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   amount:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,
@@ -3747,7 +3750,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   amount:
                                       "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
                                   tenantId: selectedTenantId!,
-                                  date: _startDate.text.trim(),
+                                  date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
                                   processorId: "",
                                   leaseid: widget.leaseId,

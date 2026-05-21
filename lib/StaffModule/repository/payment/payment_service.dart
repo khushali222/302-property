@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
 import '../../../../constant/constant.dart';
+
+String get _clientSource => Platform.isIOS ? 'mobile-ios' : 'mobile-android';
 
 class PaymentService {
   Future<String> makePaymentforcard({
@@ -78,13 +81,21 @@ class PaymentService {
         'processor_id': processorId,
         'tenantName':tenantname,
         'notificationTime':notificationTime,
-        'entry':updatedEntries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         // OLD was: lease_id missing from staff card payload — backend couldn't identify which lease
         'lease_id': leaseid,
         // NEW: added to match web payload — backend uses these to identify source
         'user_active_recently': true,
       };
     //  log(paymentDetails.toString());
+
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -92,6 +103,7 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -99,11 +111,17 @@ class PaymentService {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
+          print("========== CARD PAYMENT SUCCESS ==========");
+          print("Transaction ID : ${jsonData["data"]["transactionid"]}");
+          print("Response       : ${jsonData["data"]["responsetext"]}");
+          print("Amount         : $amount  |  Surcharge: $surcharge");
+          print("---------- ENTRIES ----------");
+          for (var e in updatedEntries) {
+            print("  account: ${e['account']} | charge_type: ${e['charge_type']} | amount: ${e['amount']} | balance: ${e['balance']}");
+          }
+          print("==========================================");
 
           // NEW: backend now saves the payment record to DB internally after /api/nmipayment/sale
           // storePayment() removed to prevent duplicate transaction entries (same change as tenant module)
@@ -134,6 +152,8 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
+        print(response.statusCode);
+        print(response.body);
         throw Exception('Failed to make payment');
       }
     } else {
@@ -196,6 +216,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -295,7 +316,14 @@ class PaymentService {
         'amount': amount,
         'tenantId': tenantId,
         'date': date,
-        'entry': updatedEntries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         'address1': address1,
         'processor_id': processorId,
         'tenantName': tenantname,
@@ -318,6 +346,7 @@ class PaymentService {
         paymentDetails['account_holder_type'] = account_holder_type;
       }
       print(paymentDetails);
+
       final response = await http.post(
         Uri.parse(baseUrl),
         headers: {
@@ -325,6 +354,7 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -365,6 +395,8 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
+        print(response.statusCode);
+        print(response.body);
         throw Exception('Failed to make payment');
       }
     } else {
@@ -424,6 +456,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -527,7 +560,14 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
-        'entry': updatedEntries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         'date': date,
         'address1': address1,
         'processor_id': processorId,
@@ -542,6 +582,7 @@ class PaymentService {
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
@@ -573,6 +614,8 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
+        print(response.statusCode);
+        print(response.body);
         throw Exception('Failed to make payment');
       }
     } else {
@@ -631,6 +674,7 @@ class PaymentService {
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,

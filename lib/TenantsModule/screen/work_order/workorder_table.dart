@@ -223,13 +223,13 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   }
 
   final List<String> items = [
-    'New',
-    "In Progress",
-    "On Hold",
+    "All",
+    "Closed",
     "Completed",
+    "In Progress",
+    "New",
+    "On Hold",
     "Over Due",
-    'Closed',
-    "All"
   ];
   String? selectedValue;
   String searchvalue = "";
@@ -729,7 +729,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
       ),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: 'Work Order',
+        currentpage: 'Work Orders',
       ),
       body: _connectivityResult != ConnectivityResult.none
           ? SingleChildScrollView(
@@ -942,12 +942,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         ),
                         dropdownStyleData: DropdownStyleData(
                           maxHeight: 250,
-                          width: 200,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
                           ),
-                          offset: const Offset(-20, 0),
+                          offset: const Offset(0, 0),
                           scrollbarTheme: ScrollbarThemeData(
                             radius: const Radius.circular(40),
                             thickness: MaterialStateProperty.all(6),
@@ -1327,15 +1325,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                                 _getDisplayValue(workorder.status ??
                                                                     '-')),
                                                             _buildTableRow(
-                                                                'Created At :',
+                                                                'Created On :',
                                                                 '${workorder.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.createdAt}') : 'N/A'}',
-                                                                'Updated At :',
-                                                                '${workorder.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.updatedAt}') : 'N/A'}'),
-                                                            _buildTableRow(
                                                                 'Due Date :',
-                                                                '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}',
-                                                                '',
-                                                                ''),
+                                                                '${workorder.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${workorder.date}') : 'N/A'}'),
                                                           ],
                                                         ),
                                                       ),
@@ -1819,26 +1812,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                         16,
                                                         vertical: 20),
                                                     child: Text(
-                                                      'Created At',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold,
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                    padding: EdgeInsets
-                                                        .symmetric(
-                                                        horizontal:
-                                                        16,
-                                                        vertical: 20),
-                                                    child: Text(
-                                                      'Updated At',
+                                                      'Created On',
                                                       style: TextStyle(
                                                         color: blueColor,
                                                         fontWeight:
@@ -2020,30 +1994,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           child: Text(
                                                             _pagedData[i]
                                                                 .createdAt!,
-                                                            style:
-                                                            TextStyle(
-                                                              color:
-                                                              blueColor,
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .bold,
-                                                              fontSize:
-                                                              13,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                              horizontal:
-                                                              16,
-                                                              vertical:
-                                                              20),
-                                                          child: Text(
-                                                            _pagedData[i]
-                                                                .updatedAt!,
                                                             style:
                                                             TextStyle(
                                                               color:
