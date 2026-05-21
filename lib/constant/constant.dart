@@ -9,19 +9,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
+//String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.1.37:4000/api/images/get-file/";
-//String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
+String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
 //String Api_url = "http://192.168.1.33:4000";
 
-//String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
+String Api_url = "https://saas.cloudrentalmanager.com";
+//String Api_url = "https://staging.cloudrentalmanager.com";
 //String Api_url = "https://development.cloudrentalmanager.com";
 
-//String image_upload_url = "https://saas.cloudrentalmanager.com";
-String image_upload_url = "https://staging.cloudrentalmanager.com";
+String image_upload_url = "https://saas.cloudrentalmanager.com";
+//String image_upload_url = "https://staging.cloudrentalmanager.com";
 
 // formatDate(String dateTime) {
 //   //print(dateTime);
