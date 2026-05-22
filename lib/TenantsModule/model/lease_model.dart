@@ -49,7 +49,9 @@ class tenant_lease {
   tenant_lease.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     leaseId = json['lease_id'];
-    tenantId = json['tenant_id'].cast<String>();
+    tenantId = json['tenant_id'] != null
+        ? (json['tenant_id'] as List).cast<String>()
+        : <String>[];
     adminId = json['admin_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
@@ -59,7 +61,9 @@ class tenant_lease {
     leaseAmount = json['lease_amount'] != null
         ? (json['lease_amount'] as num).toDouble()
         : null;
-    uploadedFile = json['uploaded_file'].cast<String>();
+    uploadedFile = json['uploaded_file'] != null
+        ? (json['uploaded_file'] as List).cast<String>()
+        : <String>[];
     if (json['entry'] != null) {
       entry = <Entry>[];
       json['entry'].forEach((v) {
