@@ -76,6 +76,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
@@ -227,14 +228,15 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount':
-            (double.parse(totalAmount) - double.parse(surcharge)),
+        'total_amount': double.parse(totalAmount),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
       }),
     );
 
@@ -315,6 +317,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'entry': updatedEntries.map((e) => {
           'entry_id': e['entry_id'],
@@ -466,14 +469,15 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-      //  'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) -double.parse(surcharge)),
+        'total_amount': double.parse(totalAmount),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
       }),
     );
 
@@ -560,6 +564,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'entry': updatedEntries.map((e) => {
           'entry_id': e['entry_id'],
           'account': e['account'],
@@ -687,8 +692,15 @@ class PaymentService {
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
+        // Cash / Check / Money Order / Cashier's Check / Manual are recorded
+        // immediately by the staff, so the ledger needs response = "SUCCESS"
+        // (caller still passes "PENDING" but we ignore it here, matching the
+        // original behavior before the recent refactor). Do NOT change without
+        // also fixing the ledger filter.
         'response': "SUCCESS",
-        'notificationTime':notificationTime,
+        'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
       }),
     );
 

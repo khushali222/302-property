@@ -204,13 +204,15 @@ class PaymentService {
       'customer_vault_id': customerVaultId,
       'billing_id': billingId,
       'entry': entries,
-      'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
+      'total_amount': double.parse(totalAmount),
       'surcharge': surcharge,
       'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'transaction_id': transactionId,
       'response': responseText,
       'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
     };
     final response = await http.post(
       Uri.parse(baseUrl),
@@ -424,13 +426,15 @@ class PaymentService {
       'lease_id': leaseId,
       'payment_type': paymentType,
       'entry': entries,
-      'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
+      'total_amount': double.parse(totalAmount),
       'surcharge': surcharge,
       'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'transaction_id': transactionId,
       'response': responseText,
       'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
     };
     final response = await http.post(
       Uri.parse(baseUrl),
@@ -537,6 +541,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
@@ -648,11 +653,14 @@ class PaymentService {
       'payment_type': paymentType,
       'entry': entries,
       'total_amount': totalAmount,
+      'surcharge': surcharge,
       'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'check_number': checknumber,
-      'response': "SUCCESS",
+      'response': responseText,
       'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
     };
     final response = await http.put(
       Uri.parse(baseUrl),
@@ -704,7 +712,7 @@ class PaymentService {
       'entry': entries,
       'total_amount': totalAmount,
       'uploaded_file': uploadedFile ?? [],
-      'is_web': false,
+      'is_web': true,
       'user_active_recently': true,
     };
     final response = await http.put(

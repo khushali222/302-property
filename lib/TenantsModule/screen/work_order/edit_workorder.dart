@@ -58,7 +58,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     'In Progress',
     'Completed',
     'On Hold',
-    'Cancelled'
+    'Cancelled',
+    'Closed'
   ];
 
   @override

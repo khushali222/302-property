@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Payment Flow — Bug Report & Flow Analysis</title>
+<style>
+  :root {
+    --red: #ef4444; --red-bg: #fef2f2; --red-border: #fecaca;
+    --yellow: #d97706; --yellow-bg: #fffbeb; --yellow-border: #fde68a;
+    --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+    --blue: #2563eb; --blue-bg: #eff6ff; --blue-border: #bfdbfe;
+    --gray: #374151; --light: #f9fafb; --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f3f4f6; color: #111827; font-size: 14px; line-height: 1.6; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #6b7280; margin-bottom: 28px; font-size: 13px; }
+  h2 { font-size: 17px; font-weight: 700; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 14px; font-weight: 700; margin: 12px 0 6px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .summary-card { background: white; border-radius: 10px; padding: 16px; text-align: center; border: 1px solid var(--border); }
+  .summary-card .count { font-size: 32px; font-weight: 800; }
+  .summary-card .label { font-size: 12px; color: #6b7280; margin-top: 2px; }
+  .red .count { color: var(--red); }
+  .yellow .count { color: var(--yellow); }
+  .blue .count { color: var(--blue); }
+  .green .count { color: var(--green); }
+  .bug-card { background: white; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 14px; overflow: hidden; }
+  .bug-header { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .bug-header:hover { background: var(--light); }
+  .severity-badge { padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .sev-critical { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .sev-medium { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .sev-minor { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .bug-title { font-weight: 700; font-size: 14px; flex: 1; }
+  .bug-module { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .bug-body { padding: 0 16px 16px; border-top: 1px solid var(--border); }
+  .bug-body-inner { padding-top: 12px; }
+  .file-tag { display: inline-block; background: #f3f4f6; border: 1px solid var(--border); border-radius: 4px; padding: 1px 8px; font-family: monospace; font-size: 12px; color: #374151; margin: 2px 2px; }
+  .code-block { background: #1e293b; color: #e2e8f0; border-radius: 8px; padding: 12px 14px; font-family: monospace; font-size: 12px; margin: 8px 0; overflow-x: auto; white-space: pre; line-height: 1.7; }
+  .code-block .bad { color: #f87171; }
+  .code-block .good { color: #86efac; }
+  .code-block .comment { color: #94a3b8; }
+  .impact-box { background: var(--red-bg); border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 8px 12px; margin: 8px 0; font-size: 13px; }
+  .fix-box { background: var(--green-bg); border-left: 3px solid var(--green); border-radius: 0 6px 6px 0; padding: 8px 12px; margin: 8px 0; font-size: 13px; }
+  .flow-section { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; }
+  .flow-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .flow-card { background: var(--light); border-radius: 8px; border: 1px solid var(--border); padding: 14px; }
+  .flow-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--blue); }
+  .flow-step { display: flex; gap: 8px; margin-bottom: 6px; }
+  .step-num { background: var(--blue); color: white; border-radius: 99px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 12px; line-height: 1.5; }
+  .step-warn { color: var(--red); font-weight: 600; }
+  .api-pill { display: inline-block; background: #1e293b; color: #7dd3fc; border-radius: 4px; padding: 0 6px; font-family: monospace; font-size: 11px; }
+  .module-label { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+  .mod-admin { background: #dbeafe; color: #1d4ed8; }
+  .mod-staff { background: #f3e8ff; color: #7e22ce; }
+  .mod-tenant { background: #dcfce7; color: #15803d; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--light); padding: 8px 10px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--border); }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--red); font-weight: 700; }
+  .warn { color: var(--yellow); font-weight: 700; }
+  .toc { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 16px 20px; margin-bottom: 24px; }
+  .toc ul { list-style: none; columns: 2; column-gap: 24px; }
+  .toc li { margin-bottom: 4px; }
+  .toc a { color: var(--blue); text-decoration: none; font-size: 13px; }
+  .toc a:hover { text-decoration: underline; }
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  .toggle-hint { font-size: 11px; color: #9ca3af; margin-left: auto; }
+  .diff-row { display: flex; gap: 8px; }
+  .diff-col { flex: 1; }
+  .diff-col h5 { font-size: 11px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>🔍 Payment Flow — Bug Report & Flow Analysis</h1>
+  <div class="subtitle">Project: 302-property (Flutter) · Modules: Admin, Staff, Tenant · Generated: May 22, 2026 · Read-only analysis — no files modified</div>
+
+  <!-- Summary -->
+  <div class="summary-grid">
+    <div class="summary-card red"><div class="count">5</div><div class="label">🔴 Critical Bugs</div></div>
+    <div class="summary-card yellow"><div class="count">4</div><div class="label">🟡 Medium Bugs</div></div>
+    <div class="summary-card blue"><div class="count">5</div><div class="label">🔵 Minor / Code Quality</div></div>
+    <div class="summary-card green"><div class="count">3</div><div class="label">✅ Modules Analysed</div></div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3 style="margin-bottom:8px">Contents</h3>
+    <ul>
+      <li><a href="#flow">Payment Flow Overview</a></li>
+      <li><a href="#comparison">Module Comparison Table</a></li>
+      <li><a href="#critical">Critical Bugs (5)</a></li>
+      <li><a href="#medium">Medium Bugs (4)</a></li>
+      <li><a href="#minor">Minor / Code Quality (5)</a></li>
+      <li><a href="#apis">API Endpoints Used</a></li>
+    </ul>
+  </div>
+
+  <!-- ==================== FLOW OVERVIEW ==================== -->
+  <h2 id="flow">Payment Flow Overview</h2>
+
+  <div class="flow-section">
+    <div class="flow-grid">
+
+      <!-- Admin -->
+      <div class="flow-card">
+        <h4><span class="module-label mod-admin">ADMIN</span> — Make Payment</h4>
+        <div style="margin-bottom:8px;font-size:11px;color:#6b7280">File: lib/screens/Leasing/RentalRoll/make_payment.dart<br>Service: lib/repository/payment/payment_service.dart</div>
+
+        <div class="flow-step"><div class="step-num">1</div><div class="step-text">Admin opens Rental Roll → selects tenant → taps Make Payment</div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-text">Selects payment method: <b>Card</b> / <b>ACH</b> / <b>Check</b> / <b>Cash</b> / <b>Money Order</b></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-text">Adds charge entries (account, amount, memo)</div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-text">Selects date: today (immediate) or future (scheduled)</div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-text"><b>Card + Immediate:</b> POST <span class="api-pill">/nmipayment/sale</span> → backend stores to DB internally</div></div>
+        <div class="flow-step"><div class="step-num">6</div><div class="step-text"><b>Card + Future:</b> POST <span class="api-pill">/payment/payment</span> directly as PENDING</div></div>
+        <div class="flow-step"><div class="step-num">7</div><div class="step-text"><b>ACH + Immediate:</b> POST <span class="api-pill">/nmipayment/ACH_sale</span> → backend stores</div></div>
+        <div class="flow-step"><div class="step-num">8</div><div class="step-text"><b>ACH + Future:</b> POST <span class="api-pill">/payment/payment</span> as PENDING</div></div>
+        <div class="flow-step"><div class="step-num">9</div><div class="step-text"><span class="step-warn">⚠ Check/Cash + Immediate:</span> POST <span class="api-pill">/nmipayment/ACH_sale</span> (wrong endpoint!) → storePaymentAch with type "ACH" (wrong!)</div></div>
+        <div class="flow-step"><div class="step-num">10</div><div class="step-text"><span class="step-warn">⚠ Check/Cash + Future:</span> storePaymentfornormal with hardcoded response "SUCCESS" (not "PENDING"!)</div></div>
+      </div>
+
+      <!-- Admin Edit -->
+      <div class="flow-card">
+        <h4><span class="module-label mod-admin">ADMIN</span> — Edit Payment</h4>
+        <div style="margin-bottom:8px;font-size:11px;color:#6b7280">File: lib/screens/Leasing/RentalRoll/Edit_make_payment.dart<br>Service: lib/repository/payment/Edit_payment.dart</div>
+
+        <div class="flow-step"><div class="step-num">1</div><div class="step-text">Admin opens a PENDING payment record and edits it</div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-text">Modifies entries, amount, date, method</div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-text"><span class="step-warn">⚠ Card:</span> NMI charge is <b>entirely commented out</b>. Always calls storePayment as PENDING regardless of future_Date. Surcharge hardcoded "0".</div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-text"><b>ACH:</b> Skips NMI. PUT <span class="api-pill">/payment/payment/{id}</span> as PENDING</div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-text"><b>Normal (future):</b> PUT <span class="api-pill">/payment/payment/{id}</span> via storePaymentfornormal</div></div>
+        <div class="flow-step"><div class="step-num">6</div><div class="step-text">Returns "Payment Updated Successfully"</div></div>
+      </div>
+
+      <!-- Staff -->
+      <div class="flow-card">
+        <h4><span class="module-label mod-staff">STAFF</span> — Make Payment</h4>
+        <div style="margin-bottom:8px;font-size:11px;color:#6b7280">File: lib/StaffModule/screen/Leasing/RentalRoll/make_payment.dart<br>Service: lib/StaffModule/repository/payment/payment_service.dart</div>
+
+        <div class="flow-step"><div class="step-num">1</div><div class="step-text">Staff opens Rental Roll → selects tenant → taps Make Payment</div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-text">Flow is nearly identical to Admin module</div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-text"><b>Key difference:</b> Uses <code>staff_id</code> in header; adminId used in body from prefs</div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-text"><b>Card + Immediate:</b> POST <span class="api-pill">/nmipayment/sale</span> → backend stores</div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-text"><b>Card + Future:</b> storePayment with PENDING ✅</div></div>
+        <div class="flow-step"><div class="step-num">6</div><div class="step-text"><b>ACH + Immediate:</b> POST <span class="api-pill">/nmipayment/ACH_sale</span> → storePaymentAch ✅</div></div>
+        <div class="flow-step"><div class="step-num">7</div><div class="step-text"><b>ACH + Future:</b> storePaymentAch with PENDING ✅</div></div>
+        <div class="flow-step"><div class="step-num">8</div><div class="step-text"><span class="step-warn">⚠ Check/Cash + Immediate:</span> Same wrong ACH endpoint issue as Admin</div></div>
+        <div class="flow-step"><div class="step-num">9</div><div class="step-text"><span class="step-warn">⚠ Check/Cash + Future:</span> storePaymentfornormal — hardcoded "SUCCESS"</div></div>
+      </div>
+
+      <!-- Tenant -->
+      <div class="flow-card">
+        <h4><span class="module-label mod-tenant">TENANT</span> — Make Payment</h4>
+        <div style="margin-bottom:8px;font-size:11px;color:#6b7280">File: lib/TenantsModule/screen/financial/payment/make_payment.dart<br>Service: lib/TenantsModule/screen/financial/payment/payment_service.dart</div>
+
+        <div class="flow-step"><div class="step-num">1</div><div class="step-text">Tenant opens Financials → Make Payment</div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-text">Selects saved Card or ACH (from vault), or enters new ACH details</div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-text">Selects charges, date, paymentAmountType (full/partial)</div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-text"><b>Card + Immediate:</b> POST <span class="api-pill">/nmipayment/sale</span> with <code>source:'tenant'</code>, <code>scheduledPayment</code> → backend stores</div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-text"><b>Card + Future:</b> POST <span class="api-pill">/payment/tenant-payment</span> as PENDING</div></div>
+        <div class="flow-step"><div class="step-num">6</div><div class="step-text"><b>ACH + Immediate:</b> POST <span class="api-pill">/nmipayment/ACH_sale</span> → backend stores</div></div>
+        <div class="flow-step"><div class="step-num">7</div><div class="step-text"><b>ACH + Future:</b> POST <span class="api-pill">/payment/tenant-payment</span> as PENDING ✅</div></div>
+        <div class="flow-step"><div class="step-num">8</div><div class="step-text"><span class="step-warn">⚠ Check/Normal + Future:</span> storePaymentfornormal called WITHOUT await (fire and forget!)</div></div>
+        <div class="flow-step"><div class="step-num">9</div><div class="step-text"><span class="step-warn">⚠</span> <code>entries</code> NOT included in normal payment NMI payload</div></div>
+        <div class="flow-step"><div class="step-num">10</div><div class="step-text">Uses <span class="api-pill">/payment/tenant-payment</span> endpoint (different from Admin/Staff)</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== COMPARISON TABLE ==================== -->
+  <h2 id="comparison">Module Comparison Table</h2>
+  <div class="flow-section" style="padding:0;overflow:auto">
+    <table>
+      <tr>
+        <th>Feature</th>
+        <th><span class="module-label mod-admin">Admin</span></th>
+        <th><span class="module-label mod-staff">Staff</span></th>
+        <th><span class="module-label mod-tenant">Tenant</span></th>
+      </tr>
+      <tr>
+        <td><b>Auth header ID key</b></td>
+        <td><code>adminId</code></td>
+        <td><code>staff_id</code></td>
+        <td><code>tenant_id</code></td>
+      </tr>
+      <tr>
+        <td><b>Store payment endpoint</b></td>
+        <td><code>/api/payment/payment</code></td>
+        <td><code>/api/payment/payment</code></td>
+        <td><code>/api/payment/tenant-payment</code></td>
+      </tr>
+      <tr>
+        <td><b>Edit payment HTTP method</b></td>
+        <td>PUT with <code>/payment/{id}</code></td>
+        <td>PUT with <code>/payment/{id}</code></td>
+        <td>N/A (tenant has no edit screen)</td>
+      </tr>
+      <tr>
+        <td><b>surcharge subtracted from total_amount</b></td>
+        <td><span class="check">✅ Yes</span></td>
+        <td><span class="check">✅ Yes</span></td>
+        <td><span class="cross">❌ No — full amount sent</span></td>
+      </tr>
+      <tr>
+        <td><b>entries in NMI payload</b></td>
+        <td><span class="check">✅ Card + ACH</span> <span class="cross">❌ Normal</span></td>
+        <td><span class="check">✅ Card + ACH</span> <span class="cross">❌ Normal</span></td>
+        <td><span class="check">✅ Card + ACH</span> <span class="cross">❌ Normal</span></td>
+      </tr>
+      <tr>
+        <td><b>Check/Cash payment routing</b></td>
+        <td><span class="cross">❌ /nmipayment/ACH_sale (wrong)</span></td>
+        <td><span class="cross">❌ /nmipayment/ACH_sale (wrong)</span></td>
+        <td><span class="cross">❌ /nmipayment/ACH_sale (wrong)</span></td>
+      </tr>
+      <tr>
+        <td><b>Card payment — duplicate DB entries prevented</b></td>
+        <td><span class="check">✅ storePayment commented out</span></td>
+        <td><span class="check">✅ storePayment commented out</span></td>
+        <td><span class="check">✅ storePayment commented out</span></td>
+      </tr>
+      <tr>
+        <td><b>ACH payment — duplicate DB entries prevented</b></td>
+        <td><span class="check">✅ storePaymentAch commented out</span></td>
+        <td><span class="check">✅ storePaymentAch commented out</span></td>
+        <td><span class="check">✅ storePaymentAch commented out</span></td>
+      </tr>
+      <tr>
+        <td><b>Scheduled payment stored as PENDING</b></td>
+        <td><span class="check">✅ Card/ACH</span> <span class="cross">❌ Normal → hardcoded SUCCESS</span></td>
+        <td><span class="check">✅ Card/ACH</span> <span class="cross">❌ Normal → hardcoded SUCCESS</span></td>
+        <td><span class="check">✅ Card/ACH</span> <span class="warn">⚠ Normal → no await</span></td>
+      </tr>
+      <tr>
+        <td><b>is_web flag in body</b></td>
+        <td><code>true</code> (NMI calls)</td>
+        <td><code>true</code> (NMI calls)</td>
+        <td><code>true</code> (all calls)</td>
+      </tr>
+      <tr>
+        <td><b>X-Idempotency-Key header</b></td>
+        <td><span class="check">✅</span></td>
+        <td><span class="check">✅</span></td>
+        <td><span class="check">✅</span></td>
+      </tr>
+      <tr>
+        <td><b>source field in NMI payload</b></td>
+        <td><span class="cross">❌ Not set</span></td>
+        <td><span class="cross">❌ Not set</span></td>
+        <td><span class="check">✅ 'tenant'</span></td>
+      </tr>
+      <tr>
+        <td><b>paymentAmountType field</b></td>
+        <td><span class="cross">❌ Not set</span></td>
+        <td><span class="cross">❌ Not set</span></td>
+        <td><span class="check">✅ full/partial</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ==================== CRITICAL BUGS ==================== -->
+  <h2 id="critical">🔴 Critical Bugs</h2>
+
+  <!-- BUG 1 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-critical">Critical</span>
+          <div>
+            <div class="bug-title">BUG #1 — storePaymentfornormal hardcodes 'response': "SUCCESS" — scheduled payments saved as already paid</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;
+              · lib/repository/payment/payment_service.dart (line 706) · lib/StaffModule/repository/payment/payment_service.dart (line 690)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>When a Check / Cash / Money Order payment is scheduled for a <b>future date</b>, the code calls <code>storePaymentfornormal(responseText: "PENDING")</code>. However, inside <code>storePaymentfornormal</code>, the body ignores the passed <code>responseText</code> parameter and hardcodes <code>'response': "SUCCESS"</code>.</p>
+          <div class="code-block"><span class="comment">// admin  lib/repository/payment/payment_service.dart  ~line 695</span>
+Future&lt;Map&lt;String, dynamic&gt;&gt; storePaymentfornormal({
+  ...
+  required String responseText,  <span class="comment">// caller passes "PENDING"</span>
+  ...
+}) async {
+  final response = await http.post(
+    Uri.parse(baseUrl),
+    ...
+    body: jsonEncode(&lt;String, dynamic&gt;{
+      ...
+<span class="bad">      'response': "SUCCESS",  // ❌ BUG: hardcoded — responseText param is ignored!</span>
+<span class="good">      // 'response': responseText,  // ✅ FIX: use the passed parameter</span>
+    }),
+  );
+}</div>
+          <div class="impact-box">🔴 <b>Impact:</b> A Check/Cash payment scheduled for next month is recorded in the DB as "SUCCESS" (already paid) the moment the admin creates it. This corrupts the payment ledger, falsely reduces the tenant's outstanding balance, and means the cron-job scheduler may never fire because it only processes PENDING records.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Change <code>'response': "SUCCESS"</code> → <code>'response': responseText</code> in <code>storePaymentfornormal</code> in both Admin and Staff payment_service.dart files.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 2 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-critical">Critical</span>
+          <div>
+            <div class="bug-title">BUG #2 — Tenant makePaymentfornormal missing 'await' — scheduled payment silently dropped on failure</div>
+            <div class="bug-module">
+              <span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · lib/TenantsModule/screen/financial/payment/payment_service.dart (line 556)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>In the tenant module, when a normal (check/cash) payment is scheduled for a future date, <code>storePaymentfornormal()</code> is called without <code>await</code> and without a <code>try/catch</code>. The function fires-and-forgets. If the API call fails (network error, server error), the tenant sees "Payment Successfully" but nothing is stored.</p>
+          <div class="code-block"><span class="comment">// lib/TenantsModule/screen/financial/payment/payment_service.dart  ~line 554</span>
+} else {
+  try {
+<span class="bad">    storePaymentfornormal(   // ❌ Missing await! Fire and forget.</span>
+<span class="good">    await storePaymentfornormal(  // ✅ FIX: add await</span>
+        companyName: company_name,
+        ...
+        responseText: "PENDING",
+        ...
+    );
+    return "Payment Successfully";  <span class="comment">// returned even if storePayment failed</span>
+  } catch (e) {
+    throw Exception(e);
+  }
+}</div>
+          <div class="impact-box">🔴 <b>Impact:</b> A tenant schedules a future payment. The server call fails silently. The tenant app shows "Payment Successfully" but no record exists in the DB. The tenant thinks they've paid; the admin sees nothing.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Add <code>await</code> before <code>storePaymentfornormal()</code> so exceptions propagate to the catch block and the error is shown to the user.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 3 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-critical">Critical</span>
+          <div>
+            <div class="bug-title">BUG #3 — Edit Payment (Admin/Staff) card charges always stored with surcharge "0"</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;
+              · lib/repository/payment/Edit_payment.dart (line 165) · lib/StaffModule/repository/payment/Edit_payment.dart
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>In the Edit Payment service, <code>makePaymentforcard</code> hardcodes <code>surcharge: "0"</code> when calling <code>storePayment()</code>, regardless of the actual surcharge amount passed in. The <code>surcharge</code> parameter is even commented out from the function signature.</p>
+          <div class="code-block"><span class="comment">// lib/repository/payment/Edit_payment.dart</span>
+Future&lt;String&gt; makePaymentforcard({
+  required String adminId,
+<span class="bad">  // required String surcharge,  // ❌ commented out!</span>
+  required String amount,
+  ...
+}) async {
+  await storePayment(
+    ...
+    totalAmount: amount,
+<span class="bad">    surcharge: "0",  // ❌ hardcoded — always 0 regardless of actual surcharge</span>
+<span class="good">    // surcharge: surcharge,  // ✅ FIX</span>
+    ...
+  );
+}</div>
+          <div class="impact-box">🔴 <b>Impact:</b> When editing a card payment that had a surcharge (e.g., 3%), the edited record saves <code>surcharge=0</code>. The stored total_amount (which = amount − surcharge) will also be inflated since surcharge "0" is subtracted, resulting in a wrong total. Financial reports will be inaccurate.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Uncomment <code>surcharge</code> in the function parameters and pass the actual surcharge value to <code>storePayment()</code>.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 4 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-critical">Critical</span>
+          <div>
+            <div class="bug-title">BUG #4 — Edit Payment card NMI charge is fully commented out — editing an immediate card payment never charges the card</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;
+              · lib/repository/payment/Edit_payment.dart (lines 73–176)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>The entire card-charge block in <code>makePaymentforcard</code> inside Edit_payment.dart is commented out. Regardless of whether <code>future_Date</code> is true or false, the code <b>always</b> skips the NMI call and goes directly to <code>storePayment()</code> with <code>responseText: "PENDING"</code>. The <code>future_Date</code> parameter is accepted but never used.</p>
+          <div class="code-block"><span class="comment">// lib/repository/payment/Edit_payment.dart  ~lines 73–176</span>
+Future&lt;String&gt; makePaymentforcard({
+  ...
+  required bool future_Date,  <span class="comment">// accepted but NEVER checked below</span>
+  ...
+}) async {
+  <span class="bad">// if (future_Date == false) {  // ❌ entire block commented out
+  //   final String baseUrl = '/api/nmipayment/sale';
+  //   ...NMI charge logic...
+  // } else {</span>
+  try {
+    await storePayment(
+      ...
+<span class="bad">      responseText: "PENDING",  // ❌ always PENDING, never charged</span>
+      ...
+    );
+    return "Payment Updated Successfully";
+  } catch (e) {
+    throw Exception(e);
+  }
+  <span class="bad">// }</span>
+}</div>
+          <div class="impact-box">🔴 <b>Impact:</b> An admin edits a pending card payment and sets it to "today" (immediate). They expect the card to be charged now. Instead, the payment is just re-stored as PENDING — the card is never charged. The tenant keeps being billed without the payment being processed.</div>
+          <div class="fix-box">✅ <b>Fix (if intentional):</b> If edit is only supposed to update metadata (not re-charge), add a comment and UI indicator explaining this. <b>Fix (if unintentional):</b> Uncomment the NMI card charge block and restore the <code>if (future_Date == false)</code> branching logic.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 5 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-critical">Critical</span>
+          <div>
+            <div class="bug-title">BUG #5 — Tenant storePayment sends full amount including surcharge (does not subtract surcharge)</div>
+            <div class="bug-module">
+              <span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · lib/TenantsModule/screen/financial/payment/payment_service.dart (line ~215)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>In the tenant module, <code>storePayment()</code> sends <code>total_amount: double.parse(totalAmount)</code> — the full amount including surcharge. Admin and Staff both subtract surcharge from total_amount before sending to the DB. This means tenant payment records show a higher total than actual rent paid.</p>
+          <div class="code-block"><span class="comment">// Tenant: lib/TenantsModule/screen/financial/payment/payment_service.dart  ~line 215</span>
+<span class="bad">'total_amount': double.parse(totalAmount),   // ❌ includes surcharge</span>
+
+<span class="comment">// Admin: lib/repository/payment/payment_service.dart  ~line 229</span>
+<span class="good">'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),  // ✅ correct</span>
+
+<span class="comment">// Staff: lib/StaffModule/repository/payment/payment_service.dart  ~line 231</span>
+<span class="good">'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),  // ✅ correct</span></div>
+          <div class="impact-box">🔴 <b>Impact:</b> Tenant payment records in DB have total_amount that includes the surcharge fee. This inflates "amount paid" in reports, ledgers, and outstanding balance calculations for tenant-initiated payments. Admin and Staff records are correct but Tenant records are wrong.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Change to <code>'total_amount': double.parse(totalAmount) - double.parse(surcharge)</code> in tenant's <code>storePayment()</code>.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ==================== MEDIUM BUGS ==================== -->
+  <h2 id="medium">🟡 Medium Bugs</h2>
+
+  <!-- BUG 6 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-medium">Medium</span>
+          <div>
+            <div class="bug-title">BUG #6 — Check/Cash/Money Order payments routed through NMI ACH endpoint and stored as paymentType "ACH"</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;<span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · payment_service.dart → makePaymentfornormal (all modules)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>When a Check, Cash, or Money Order payment is made for an <b>immediate</b> date, it is routed through <code>/api/nmipayment/ACH_sale</code> (NMI's ACH bank transfer endpoint). These are physical payment methods that should NOT go through NMI at all. Additionally, the follow-up store call uses <code>paymentType: "ACH"</code> instead of "Check" / "Cash".</p>
+          <div class="code-block"><span class="comment">// lib/repository/payment/payment_service.dart  ~line 562 (Admin)</span>
+Future&lt;String&gt; makePaymentfornormal(...) async {
+  if (future_Date == false) {
+<span class="bad">    final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';  // ❌ wrong endpoint for physical payment</span>
+    ...
+    final response = await http.post(Uri.parse(baseUrl), ...);
+    if (jsonData["statusCode"] == 100) {
+      await storePaymentAch(
+        ...
+<span class="bad">        paymentType: "ACH",  // ❌ stored as ACH — should be "Check"/"Cash"</span>
+      );
+    }
+  }
+}</div>
+          <div class="impact-box">🟡 <b>Impact:</b> Payment reports will show Check/Cash payments as "ACH" type. If NMI rejects the request (no bank details provided), the payment fails even though it shouldn't need NMI at all. This is a logical routing error.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Check/Cash/Money Order payments should skip NMI and go directly to <code>storePaymentfornormal()</code> with the correct <code>payment_method</code> type. The NMI call should only be for Card and ACH bank transfers.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 7 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-medium">Medium</span>
+          <div>
+            <div class="bug-title">BUG #7 — Tenant makePaymentfornormal: 'entry' (charges) not included in NMI payload</div>
+            <div class="bug-module">
+              <span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · lib/TenantsModule/screen/financial/payment/payment_service.dart (lines ~487–504)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>For Card and ACH tenant payments, the <code>entry</code> array (charge breakdown) is included in the NMI payload. But for the normal/check payment flow, the <code>paymentDetails</code> map is built without including <code>'entry'</code>. The backend NMI handler likely uses entries to post charges — omitting them could mean charges are not applied.</p>
+          <div class="code-block"><span class="comment">// Tenant makePaymentfornormal — missing entries</span>
+Map&lt;String, dynamic&gt; paymentDetails = {
+  'admin_id': adminId,
+  'amount': amount,
+  'tenantId': tenantId,
+  'date': date,
+  'lease_id': leaseid,
+<span class="bad">  // ❌ 'entry': entries — missing! Card and ACH both include this</span>
+};
+
+<span class="comment">// Tenant makePaymentforcard — has entries ✅</span>
+<span class="good">'entry': entries.map((e) =&gt; {...}).toList(),</span></div>
+          <div class="impact-box">🟡 <b>Impact:</b> If the backend uses <code>entry</code> to apply ledger charges, normal tenant payments may not correctly allocate the payment to rent, fees, etc.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Add <code>'entry': entries.map((e) =&gt; {...}).toList()</code> to the <code>paymentDetails</code> map in <code>makePaymentfornormal</code> for the tenant module.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 8 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-medium">Medium</span>
+          <div>
+            <div class="bug-title">BUG #8 — Staff storePayment: staff_id used in auth header but adminId used in request body</div>
+            <div class="bug-module">
+              <span class="module-label mod-staff">Staff</span>&nbsp;
+              · lib/StaffModule/repository/payment/payment_service.dart (storePayment / storePaymentAch methods)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>In the Staff module, the HTTP request to store a scheduled payment sends <code>staff_id</code> in the authorization header (for identity) but sends <code>adminid</code> (from prefs) in the body as <code>admin_id</code>. This mismatch can cause the backend to reject the request if it cross-validates the header identity against the body.</p>
+          <div class="code-block"><span class="comment">// lib/StaffModule/repository/payment/payment_service.dart  storePayment()</span>
+String? adminid = prefs.getString("adminId");
+String? id = prefs.getString("staff_id");
+
+final response = await http.post(
+  ...
+  headers: {
+    "authorization": "CRM $token",
+<span class="bad">    "id": "CRM $id",       // ❌ staff_id in header</span>
+  },
+  body: jsonEncode({
+<span class="bad">    'admin_id': adminid,   // ❌ adminId in body — different from header</span>
+  }),
+);</div>
+          <div class="impact-box">🟡 <b>Impact:</b> If the backend uses the header ID for authorization/ownership and expects it to match the body's <code>admin_id</code>, scheduled staff payments may fail with 401/403 or be attributed to the wrong account.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Clarify with the backend team which ID should be in the header. Ensure consistency — either both use <code>staff_id</code> or both use <code>adminId</code> as appropriate for the authorization model.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 9 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-medium">Medium</span>
+          <div>
+            <div class="bug-title">BUG #9 — Admin makePaymentforcard (future) calls storePayment without await in a Future.wait — errors swallowed</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;
+              · lib/repository/payment/payment_service.dart (line 162)
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>For Admin scheduled card payment, <code>storePayment()</code> is called but NOT passed <code>await</code> inside <code>Future.wait([])</code> — the function call starts but the returned Future is not awaited, so exceptions thrown inside are swallowed silently. The comment in the Staff module (which fixed it) notes "OLD was: storePayment(...) without await — fire and forget, errors silently swallowed", but the Admin module still has this problem.</p>
+          <div class="code-block"><span class="comment">// lib/repository/payment/payment_service.dart  ~lines 161-186</span>
+await Future.wait([
+<span class="bad">  storePayment(    // ❌ missing await inside Future.wait</span>
+<span class="good">  storePayment(    // used incorrectly — storePayment should be awaited:</span>
+<span class="good">  // correct: just do  await storePayment(...)</span>
+      companyName: company_name,
+      ...
+      responseText: "PENDING",
+      ...
+  )
+]);</div>
+          <div class="impact-box">🟡 <b>Impact:</b> If the API call to store the scheduled card payment fails, the admin sees "Payment Scheduled Successfully" but no record was created. The tenant will not be charged on the scheduled date.</div>
+          <div class="fix-box">✅ <b>Fix:</b> Change to <code>await storePayment(...)</code> directly (remove the <code>Future.wait</code> wrapper since there's only one call) or ensure the Future returned by storePayment is properly yielded.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ==================== MINOR BUGS ==================== -->
+  <h2 id="minor">🔵 Minor / Code Quality Issues</h2>
+
+  <!-- BUG 10 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-minor">Minor</span>
+          <div>
+            <div class="bug-title">BUG #10 — Unreachable code after return/throw in 6+ places across all modules</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;<span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · All payment_service.dart files
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>In <code>makePaymentforcard</code>, <code>makePaymentforach</code>, and <code>makePaymentfornormal</code>, there is a <code>return jsonDecode(response.body)</code> statement after a <code>return "Payment Success"</code> or a <code>throw Exception(...)</code>. This code can never be reached and the compiler will warn about it.</p>
+          <div class="code-block"><span class="comment">// Example from lib/repository/payment/payment_service.dart  ~lines 150-156</span>
+if (jsonData["statusCode"] == 100) {
+  ...
+  return "Payment Success";   <span class="comment">// returns here</span>
+} else {
+  throw Exception(jsonData["message"]);   <span class="comment">// or throws here</span>
+}
+<span class="bad">return jsonDecode(response.body);  // ❌ UNREACHABLE — Dart will warn</span></div>
+          <div class="fix-box">✅ <b>Fix:</b> Remove the unreachable <code>return jsonDecode(response.body)</code> lines. They exist in all three payment methods across at least 4 service files.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 11 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-minor">Minor</span>
+          <div>
+            <div class="bug-title">BUG #11 — Inconsistent success messages (typo: "Payment Successfully" instead of "Payment Successfully Scheduled")</div>
+            <div class="bug-module">
+              <span class="module-label mod-admin">Admin</span>&nbsp;<span class="module-label mod-staff">Staff</span>&nbsp;<span class="module-label mod-tenant">Tenant</span>
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>Different methods return different success strings, including a grammatically incorrect one used across modules. This causes inconsistent toast/alert messages shown to users.</p>
+          <table>
+            <tr><th>Scenario</th><th>Message Returned</th><th>Issue</th></tr>
+            <tr><td>Card/ACH immediate</td><td>"Payment Success"</td><td>—</td></tr>
+            <tr><td>Card/ACH scheduled</td><td>"Payment Scheduled Successfully"</td><td>—</td></tr>
+            <tr><td>Check/Cash scheduled (Admin/Staff)</td><td>"Payment Successfully"</td><td class="cross">❌ grammatically wrong (missing noun)</td></tr>
+            <tr><td>Check/Cash scheduled (Tenant)</td><td>"Payment Successfully"</td><td class="cross">❌ same issue</td></tr>
+            <tr><td>Edit payment</td><td>"Payment Updated Successfully"</td><td>—</td></tr>
+          </table>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 12 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-minor">Minor</span>
+          <div>
+            <div class="bug-title">BUG #12 — Duplicate PaymentService class names across 4+ files with diverging implementations</div>
+            <div class="bug-module">All modules</div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>There are at least 4 separate files all declaring a class named <code>PaymentService</code> with different implementations:</p>
+          <ul style="margin:8px 0 8px 20px;font-size:13px;line-height:2">
+            <li><span class="file-tag">lib/repository/payment/payment_service.dart</span> — Admin make payment</li>
+            <li><span class="file-tag">lib/repository/payment/Edit_payment.dart</span> — Admin edit payment</li>
+            <li><span class="file-tag">lib/StaffModule/repository/payment/payment_service.dart</span> — Staff make payment</li>
+            <li><span class="file-tag">lib/StaffModule/repository/payment/Edit_payment.dart</span> — Staff edit payment</li>
+            <li><span class="file-tag">lib/TenantsModule/screen/financial/payment/payment_service.dart</span> — Tenant make payment</li>
+            <li><span class="file-tag">lib/StaffModule/repository/repository/payment/payment_service.dart</span> — appears to be duplicate/old</li>
+          </ul>
+          <div class="fix-box">✅ <b>Recommendation:</b> Rename each class to reflect its module and purpose, e.g., <code>AdminPaymentService</code>, <code>StaffPaymentService</code>, <code>TenantPaymentService</code>, <code>AdminEditPaymentService</code>. This prevents accidental import of the wrong service in a screen file.</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 13 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-minor">Minor</span>
+          <div>
+            <div class="bug-title">BUG #13 — is_web: true sent from mobile app (misleads backend)</div>
+            <div class="bug-module">All modules</div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>All modules send <code>"is_web": true</code> in payment request bodies even though this is a mobile Flutter app. Comments in the code say this was added intentionally to "match web payload". If the backend ever uses this flag to apply different business logic (different fees, different auth rules), mobile payments will be treated as web payments incorrectly.</p>
+          <div class="code-block"><span class="comment">// lib/repository/payment/payment_service.dart</span>
+<span class="bad">body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),  // ❌ mobile app</span></div>
+          <div class="fix-box">✅ <b>Fix:</b> Use <code>"is_web": false</code> or ideally derive this from a flag/constant. The X-Client-Source header already identifies the platform correctly (<code>mobile-ios</code> / <code>mobile-android</code>).</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- BUG 14 -->
+  <div class="bug-card">
+    <details>
+      <summary>
+        <div class="bug-header">
+          <span class="severity-badge sev-minor">Minor</span>
+          <div>
+            <div class="bug-title">BUG #14 — Tenant TenantLeaseRepository headers missing Content-Type</div>
+            <div class="bug-module">
+              <span class="module-label mod-tenant">Tenant</span>&nbsp;
+              · lib/repository/tenantDetail_payment/tenant_payment_repo.dart
+            </div>
+          </div>
+          <span class="toggle-hint">click to expand ▾</span>
+        </div>
+      </summary>
+      <div class="bug-body">
+        <div class="bug-body-inner">
+          <p>The <code>_headers()</code> helper in <code>TenantLeaseRepository</code> only sets <code>authorization</code> and <code>id</code> headers, missing <code>'Content-Type': 'application/json'</code>. This is a GET request so it may not matter, but it's inconsistent with other services and could cause issues if ever used for POST/PUT.</p>
+          <div class="code-block">static Future&lt;Map&lt;String, String&gt;&gt; _headers() async {
+  return {
+    'authorization': 'CRM $token',
+    'id': 'CRM $adminId',
+<span class="bad">    // ❌ Missing: 'Content-Type': 'application/json'</span>
+  };
+}</div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ==================== API ENDPOINTS ==================== -->
+  <h2 id="apis">API Endpoints Used in Payment Flow</h2>
+  <div class="flow-section" style="padding:0;overflow:auto">
+    <table>
+      <tr>
+        <th>Endpoint</th>
+        <th>Method</th>
+        <th>Used By</th>
+        <th>Purpose</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td><code>/api/nmipayment/sale</code></td>
+        <td>POST</td>
+        <td>Admin, Staff, Tenant</td>
+        <td>NMI card charge (immediate)</td>
+        <td>Backend now saves to DB internally. storePayment() removed.</td>
+      </tr>
+      <tr>
+        <td><code>/api/nmipayment/ACH_sale</code></td>
+        <td>POST</td>
+        <td>Admin, Staff, Tenant</td>
+        <td>NMI ACH/check charge (immediate)</td>
+        <td class="warn">⚠ Also incorrectly used for Check/Cash/Money Order</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/payment</code></td>
+        <td>POST</td>
+        <td>Admin, Staff</td>
+        <td>Store payment record (PENDING/SUCCESS)</td>
+        <td>Used for scheduled (future-dated) payments</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/payment/{id}</code></td>
+        <td>PUT</td>
+        <td>Admin, Staff</td>
+        <td>Edit/update existing payment</td>
+        <td>Used in Edit Payment screen</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/tenant-payment</code></td>
+        <td>POST</td>
+        <td>Tenant only</td>
+        <td>Store tenant payment record</td>
+        <td>Different endpoint than Admin/Staff</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/tenant_ledger/{leaseId}</code></td>
+        <td>GET</td>
+        <td>Admin, Staff</td>
+        <td>Fetch legacy ledger entries</td>
+        <td>Legacy — use lease_ledger instead</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/lease_ledger/{leaseId}</code></td>
+        <td>GET</td>
+        <td>Admin, Staff</td>
+        <td>Fetch all ledger entries for lease</td>
+        <td>Supports from_date, to_date, tenant_id, search params</td>
+      </tr>
+      <tr>
+        <td><code>/api/payment/exception-payments/{adminId}</code></td>
+        <td>GET</td>
+        <td>Admin</td>
+        <td>Payment exception report</td>
+        <td>—</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- BACKEND COMPARISON SECTION                                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div style="margin-top:36px">
+    <h2 style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 6px">
+      🔍 Backend File Comparison (Payment.js · NMI-response.js · NMIService.js · PaymentService.js)
+    </h2>
+    <p style="font-size:13px;color:#475569;margin:0 0 18px">
+      Verified by reading the actual backend source files uploaded. Each cell shows what the backend <b>reads / validates</b> vs. what each mobile module <b>sends</b>.
+      ✅ = match &nbsp; ❌ = mismatch / missing &nbsp; ⚠️ = partially correct &nbsp; 🔒 = security bypass
+    </p>
+
+    <!-- ── NEW CRITICAL BUGS CONFIRMED BY BACKEND ── -->
+    <div style="background:#fff5f5;border-left:4px solid #ef4444;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+      <div style="font-weight:700;color:#dc2626;font-size:14px;margin-bottom:10px">🚨 3 NEW CRITICAL BUGS CONFIRMED BY BACKEND CODE</div>
+
+      <div style="margin-bottom:14px">
+        <div style="font-weight:600;color:#b91c1c;font-size:13px">BUG A — Admin &amp; Staff storePayment() is REJECTED by backend (400 error every time)</div>
+        <div style="font-size:12px;color:#374151;margin-top:5px;line-height:1.6">
+          <b>Backend (Payment.js line 144-151):</b> validates <code>sum(entries) === total_amount</code>.<br>
+          Admin/Staff send <code>total_amount = amount − surcharge = 0.92</code>, but entries sum to <code>1.00</code>.<br>
+          Backend sees <b>1.00 ≠ 0.92</b> → returns HTTP 400: <i>"Integrity check failed — entries sum does not equal total_amount."</i><br>
+          <b>Result: ALL Admin and Staff card/ACH payments to /api/payment/payment FAIL with 400.</b>
+          The only reason payments ever appear to work is if the frontend ignores the error response.
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <div style="font-weight:600;color:#b91c1c;font-size:13px">BUG B — Edit payment (PUT) will fail if original payment had a surcharge</div>
+        <div style="font-size:12px;color:#374151;margin-top:5px;line-height:1.6">
+          <b>Backend (Payment.js line 2836 PUT route):</b> validates <code>sum(newEntries) === originalPayment.total_amount</code> (DB value, immutable).<br>
+          Edit_payment.dart hardcodes <code>surcharge: "0"</code>. So if original total was $1.08 (rent $1.00 + surcharge $0.08),
+          mobile sends entries summing to $1.00 only → Backend: <b>1.00 ≠ 1.08</b> → HTTP 400.<br>
+          <b>Result: Editing any payment that originally had a surcharge is ALWAYS rejected.</b>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-weight:600;color:#b91c1c;font-size:13px">BUG C — tenant_id (snake_case) missing from NMI paymentDetails → allow_card / allow_ach check BYPASSED 🔒</div>
+        <div style="font-size:12px;color:#374151;margin-top:5px;line-height:1.6">
+          <b>Backend (NMI-response.js line 238 /sale, line 300 /ACH_sale):</b> reads <code>paymentDetails?.tenant_id</code> (snake_case) to check if <code>allow_card</code> / <code>allow_ach</code> is enabled for that tenant.<br>
+          Mobile sends <code>tenantId</code> (camelCase) only — <code>tenant_id</code> (snake_case) is absent → the <code>if (tenantId)</code> block is never entered → the restriction check is silently skipped.<br>
+          <b>Result:</b> A tenant with <code>allow_card: false</code> or <code>allow_ach: false</code> can bypass that restriction and pay from the mobile app. This is a <b>security/business logic bypass</b>.<br>
+          Note: once inside <code>processSale</code>, the DB write correctly resolves <code>tenant_id || tenantId</code> — only the permission gate is broken.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── POST /api/nmipayment/sale FIELD TABLE ── -->
+    <div style="font-weight:700;color:#1e293b;font-size:14px;margin-bottom:8px">1. POST /api/nmipayment/sale — Card payment (NMI-response.js + NMIService.js processSale)</div>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1e293b;color:#fff">
+          <th style="padding:8px 10px;text-align:left;min-width:160px">Field (in paymentDetails)</th>
+          <th style="padding:8px 10px;text-align:left">What backend reads / does</th>
+          <th style="padding:8px 10px;text-align:left">Admin sends</th>
+          <th style="padding:8px 10px;text-align:left">Staff sends</th>
+          <th style="padding:8px 10px;text-align:left">Tenant sends</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>tenant_id</code> (snake_case)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Permission check: allow_card gate (line 238)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent — only <code>tenantId</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent — only <code>tenantId</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent — only <code>tenantId</code></td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>tenantId</code> (camelCase)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">DB write: <code>tenant_id || tenantId</code> (line ~4090)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>admin_id</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">getSecurityKey(), getCompany(), DB write</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>amount</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">NMI charge: <code>amount + surcharge</code>; DB: <code>total_amount = amount</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent (1.00)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent (1.00)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent (1.00)</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>surcharge</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Added to amount for NMI charge; stored separately</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>lease_id</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">LookupLeaseProcessorId(); DB write</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>customer_vault_id</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">NMI config + DB write</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>billing_id</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">NMI config + DB write</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>entry</code> array</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Stored in DB; used for ledger allocation</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>date</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Normalized to YYYY-MM-DD; DB write</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>paymentAmountType</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">DB write (stored)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ not confirmed</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ not confirmed</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px"><code>actor</code> (injected by backend)</td><td style="padding:7px 10px">Set by <code>getPaymentActor(req)</code> on backend; mobile doesn't need to send</td><td style="padding:7px 10px">✅ n/a</td><td style="padding:7px 10px">✅ n/a</td><td style="padding:7px 10px">✅ n/a</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- ── POST /api/nmipayment/ACH_sale FIELD TABLE ── -->
+    <div style="font-weight:700;color:#1e293b;font-size:14px;margin-bottom:8px">2. POST /api/nmipayment/ACH_sale — ACH/Check payment (NMI-response.js + NMIService.js processAchSale)</div>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1e293b;color:#fff">
+          <th style="padding:8px 10px;text-align:left;min-width:160px">Field (in paymentDetails)</th>
+          <th style="padding:8px 10px;text-align:left">What backend reads / does</th>
+          <th style="padding:8px 10px;text-align:left">Admin sends</th>
+          <th style="padding:8px 10px;text-align:left">Staff sends</th>
+          <th style="padding:8px 10px;text-align:left">Tenant sends</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>tenant_id</code> (snake_case)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">allow_ach gate (line 300); future task event</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔒 NOT sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>date</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">If <code>date &gt; today</code> → saves as PENDING task; else → immediate ACH charge</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>amount</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Future: <code>total_amount = amount</code>; Immediate: base for ACH charge</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ base rent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>checkaccount</code>, <code>checkaba</code>, <code>account_type</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">ACH bank details for NMI</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>entry</code> array</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Future: stored in PENDING task; Immediate: passed to updateACHSale</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (ACH)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (ACH)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ missing in normal/check flow</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px"><code>paymentType</code></td><td style="padding:7px 10px">ACH sub-type (check / ACH)</td><td style="padding:7px 10px">⚠️ Admin routes Check through ACH_sale with paymentType:"ACH" — wrong</td><td style="padding:7px 10px">⚠️ same issue</td><td style="padding:7px 10px">✅ sent as "check"</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- ── POST /api/payment/payment FIELD TABLE ── -->
+    <div style="font-weight:700;color:#1e293b;font-size:14px;margin-bottom:8px">3. POST /api/payment/payment — Store payment record (Payment.js lines 93-411)</div>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1e293b;color:#fff">
+          <th style="padding:8px 10px;text-align:left;min-width:160px">Field</th>
+          <th style="padding:8px 10px;text-align:left">What backend does</th>
+          <th style="padding:8px 10px;text-align:left">Admin sends</th>
+          <th style="padding:8px 10px;text-align:left">Staff sends</th>
+          <th style="padding:8px 10px;text-align:left">Tenant sends (/tenant-payment)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>total_amount</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Integrity check: <code>sum(entries) === total_amount</code>; then stored. If surcharge &gt; 0, backend adds surcharge entry and increments total_amount internally.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ sends <code>amount − surcharge</code> = 0.92 → FAILS validation (entries sum 1.00 ≠ 0.92)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ same bug → FAILS</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sends <code>amount</code> = 1.00 → entries sum matches</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>surcharge</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">If &gt; 0 → auto-adds Surcharge charge entry; increments total_amount</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (0.08)</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>entry</code> array</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Validated: sum must equal total_amount; stored to DB</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (sum=1.00)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent (sum=1.00)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>response</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Stored — "PENDING" for future, "SUCCESS" for completed</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ hardcoded "SUCCESS" even for scheduled payments</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ same hardcoded "SUCCESS"</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ dynamic</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>is_web</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Stored; may affect processing logic</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ not sent in storePayment body</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ not sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent as <code>true</code></td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>X-Idempotency-Key</code> header</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Required by <code>requireIdempotencyKey</code> middleware on POST route</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ sent</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px"><code>user_active_recently</code></td><td style="padding:7px 10px">Stored if present</td><td style="padding:7px 10px">❌ not sent</td><td style="padding:7px 10px">❌ not sent</td><td style="padding:7px 10px">✅ sent</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- ── PUT /api/payment/payment/:id FIELD TABLE ── -->
+    <div style="font-weight:700;color:#1e293b;font-size:14px;margin-bottom:8px">4. PUT /api/payment/payment/:id — Edit payment (Payment.js line 2836)</div>
+    <div style="overflow-x:auto;margin-bottom:24px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#1e293b;color:#fff">
+          <th style="padding:8px 10px;text-align:left;min-width:160px">Field</th>
+          <th style="padding:8px 10px;text-align:left">What backend does</th>
+          <th style="padding:8px 10px;text-align:left">Admin Edit sends</th>
+          <th style="padding:8px 10px;text-align:left">Staff Edit sends</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>entry</code> array (sum)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Validates <code>sum(entries) === DB payment.total_amount</code> (original total, immutable). Tolerance: ±$0.01. Returns 400 if mismatch.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ surcharge hardcoded "0" → entries sum excludes surcharge → if original had surcharge, sum ≠ original total → 400 REJECTED</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">❌ same issue</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>total_amount</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">IGNORED — backend uses DB value, not submitted value</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ submitted but ignored</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ submitted but ignored</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">NMI card charge</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">PUT route does NOT charge NMI — only updates DB record</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ card charge block commented out in mobile — matches backend (no NMI on edit)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">⚠️ same</td></tr>
+        <tr style="background:#f8fafc"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0"><code>X-Idempotency-Key</code> header</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">PUT route does NOT have <code>requireIdempotencyKey</code> middleware — not required</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ n/a (correct)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">✅ n/a (correct)</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px"><code>date</code></td><td style="padding:7px 10px">Normalized to YYYY-MM-DD before saving</td><td style="padding:7px 10px">✅ sent</td><td style="padding:7px 10px">✅ sent</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <!-- ── SUMMARY FIX TABLE ── -->
+    <div style="font-weight:700;color:#1e293b;font-size:14px;margin-bottom:8px">5. What the backend developer needs to fix (Mobile side)</div>
+    <div style="overflow-x:auto;margin-bottom:8px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:#0f172a;color:#fff">
+          <th style="padding:8px 10px;text-align:left">#</th>
+          <th style="padding:8px 10px;text-align:left">File</th>
+          <th style="padding:8px 10px;text-align:left">Fix Required</th>
+          <th style="padding:8px 10px;text-align:left">Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff0f0"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">1</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin &amp; Staff <code>payment_service.dart</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Change <code>total_amount: amount − surcharge</code> → <code>total_amount: amount</code>. Backend adds surcharge entry internally after validation.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔴 CRITICAL — payments rejected 400</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">2</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin &amp; Staff <code>payment_service.dart</code> (NMI payload)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Add <code>'tenant_id': tenantId</code> (snake_case) alongside existing <code>'tenantId'</code> in paymentDetails map sent to /nmipayment/sale and /nmipayment/ACH_sale.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔴 CRITICAL — allow_card/ACH check bypassed</td></tr>
+        <tr style="background:#fff0f0"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">3</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin &amp; Staff <code>Edit_payment.dart</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Pass real surcharge value (not hardcoded "0") so that edit entries sum equals original DB total_amount. Or fetch original surcharge before building entry list.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔴 CRITICAL — edit payments rejected 400</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">4</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin &amp; Staff <code>payment_service.dart storePaymentfornormal()</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Change hardcoded <code>'response': "SUCCESS"</code> → use <code>responseText</code> parameter so scheduled payments save as "PENDING".</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🔴 CRITICAL — scheduled payments marked as paid</td></tr>
+        <tr style="background:#fff0f0"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">5</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin <code>payment_service.dart makePaymentfornormal()</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Check/Cash payments routed to <code>/nmipayment/ACH_sale</code> — wrong endpoint. Should go to <code>/api/payment/payment</code> directly (no NMI charge for cash/check).</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🟠 HIGH</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">6</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">All NMI payloads (Admin, Staff, Tenant)</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Also add <code>'tenant_id': tenantId</code> (snake_case) to Tenant module NMI paymentDetails for consistency and correct permission gating.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🟠 HIGH — security</td></tr>
+        <tr style="background:#fff0f0"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">7</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Admin &amp; Staff <code>payment_service.dart storePayment()</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Add missing fields: <code>'is_web': true</code>, <code>'user_active_recently': true</code>, <code>'reference': ""</code> to match web payload.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🟡 MEDIUM</td></tr>
+        <tr style="background:#fff"><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">8</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Staff <code>payment_service.dart makePaymentfornormal()</code></td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">Add <code>await</code> before <code>storePaymentAch()</code> call — currently fire-and-forget, errors silently lost.</td><td style="padding:7px 10px;border-bottom:1px solid #e2e8f0">🟡 MEDIUM</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div style="margin-top:28px;padding:14px 18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;font-size:12px;color:#6b7280">
+    <b>Analysis scope:</b> Static code review only. No runtime testing performed. No files were modified.<br>
+    <b>Mobile files reviewed:</b> lib/repository/payment/, lib/StaffModule/repository/payment/, lib/TenantsModule/screen/financial/payment/, lib/screens/Leasing/RentalRoll/, lib/StaffModule/screen/Leasing/RentalRoll/, lib/repository/tenantDetail_payment/, lib/repository/payment_Exception.dart<br>
+    <b>Backend files reviewed:</b> Payment.js, PaymentService.js, NMIService.js (processSale line ~4000, processAchSale line ~4141), NMI-response.js (/sale route line 233, /ACH_sale route line 295)
+  </div>
+
+</div>
+</body>
+</html>

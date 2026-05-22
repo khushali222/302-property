@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(cd /C/CLoudeRentalManager/302-property && grep -n \"FontAwesomeIcons.eye\\\\|FontAwesomeIcons.edit\\\\|FontAwesomeIcons.trashCan\" \"lib/StaffModule/screen/Rental/Properties/Properties_table.dart\" | head -20)",
-      "Bash(cd /C/CLoudeRentalManager/302-property && grep -n \"FontAwesomeIcons.eye\\\\|FontAwesomeIcons.edit\\\\|FontAwesomeIcons.trashCan\" \"lib/StaffModule/screen/Leasing/Applicants/Applicants_table.dart\")"
+      "Bash(cd /C/CLoudeRentalManager/302-property && grep -n \"FontAwesomeIcons.eye\\\\|FontAwesomeIcons.edit\\\\|FontAwesomeIcons.trashCan\" \"lib/StaffModule/screen/Leasing/Applicants/Applicants_table.dart\")",
+      "Bash(python3 -c ' *)",
+      "Bash(git stash *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\CLoudeRentalManager\\\\302-property\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

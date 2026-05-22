@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
@@ -39,14 +38,11 @@ class _summery_pageState extends State<summery_page> {
           "${Api_url}/api/leases/lease_summary/${widget.lease_id}";
       final response = await http.get(Uri.parse('$apiUrl'),
           headers: {"authorization": "CRM $token", "id": "CRM $id"});
-      print('hello$apiUrl');
       final response_Data = jsonDecode(response.body);
       if (response_Data["statusCode"] == 200) {
-        print("hello");
         setState(() {
           profiledata =
               summery_property.fromJson(jsonDecode(response.body)["data"]);
-          print(profiledata!.rentalAdress);
           _isLoading = false;
         });
       } else {
@@ -71,7 +67,6 @@ class _summery_pageState extends State<summery_page> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -80,8 +75,7 @@ class _summery_pageState extends State<summery_page> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -98,125 +92,311 @@ class _summery_pageState extends State<summery_page> {
           onDrawerIconPressed: () {
             key.currentState!.openDrawer();
           }),
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFF5F7FA),
       drawer: CustomDrawer(currentpage: 'Property'),
       body: _connectivityResult != ConnectivityResult.none
           ? _isLoading
-          ? Center(
-        child: SpinKitFadingCircle(
-          color: Colors.black,
-          size: 50.0,
-        ),
-      )
-          : _hasError
-          ? Center(
-        child: Text('Error: $_errorMessage'),
-      )
-          : LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20),
-                    titleBar(
-                      width:
-                      MediaQuery.of(context).size.width * 0.9,
-                      title: 'Property Details',
-                    ),
-                    SizedBox(height: 30),
-
-                    // Property Details Section
-                    _buildPropertyDetailsCard(),
-                    SizedBox(height: 20),
-
-                    // Rental Owner Details Section
-                    _buildRentalOwnerCard(),
-                    SizedBox(height: 20),
-
-                    // Staff Details Section
-                    _buildStaffDetailsCard(),
-                    SizedBox(height: 20),
-
-                    // Unit Details Section
-                    _buildUnitDetailsCard(),
-                    SizedBox(height: 30),
-                  ],
-                ),
-              ),
-            );
-          }
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
-                  titleBar(
-                    width:
-                    MediaQuery.of(context).size.width * 0.9,
-                    title: 'Property Details',
+              ? Center(
+                  child: SpinKitFadingCircle(
+                    color: blueColor,
+                    size: 50.0,
                   ),
-                  SizedBox(height: 20),
-
-                  // Property Details Section
-                  _buildMobilePropertyDetailsCard(),
-                  SizedBox(height: 16),
-
-                  // Rental Owner Details Section
-                  _buildMobileRentalOwnerCard(),
-                  SizedBox(height: 16),
-
-                  // Staff Details Section
-                  _buildMobileStaffDetailsCard(),
-                  SizedBox(height: 16),
-
-                  // Unit Details Section
-                  _buildMobileUnitDetailsCard(),
-                  SizedBox(height: 20),
+                )
+              : _hasError
+                  ? Center(
+                      child: Text('Error: $_errorMessage'),
+                    )
+                  : profiledata == null
+                      ? Center(child: Text('No data available'))
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            if (constraints.maxWidth > 600) {
+                              return _buildTabletLayout();
+                            }
+                            return _buildMobileLayout();
+                          },
+                        )
+          : SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    'assets/no_internet.json',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    'No Internet',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Check your internet connection',
+                    style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
                 ],
               ),
             ),
-          );
-        },
-      )
-          : SizedBox(
-        width: double.infinity,
+    );
+  }
+
+  // ── MOBILE LAYOUT ─────────────────────────────────────────────────────────
+
+  Widget _buildMobileLayout() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Title header ──
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: titleBar(
+              width: double.infinity,
+              title: 'Property Details',
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── Card 1: image + property name + address + staff ──
+          _buildCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Property image
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: profiledata!.rentalImage != null &&
+                            profiledata!.rentalImage!.isNotEmpty
+                        ? Image.network(
+                            '$image_url${profiledata!.rentalImage}',
+                            width: double.infinity,
+                            height: 160,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _imgPlaceholder(),
+                          )
+                        : _imgPlaceholder(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _fieldItem('Name', profiledata!.propertysubType ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem(
+                        'Address',
+                        [
+                          profiledata!.rentalAdress,
+                          profiledata!.rentalCity,
+                          profiledata!.rentalCountry,
+                          profiledata!.rentalPostcode,
+                        ]
+                            .where((e) => e != null && e.isNotEmpty)
+                            .join(', '),
+                      ),
+                      const Divider(height: 28, color: Color(0xFFE5E7EB)),
+                      Text(
+                        'Staff Details',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: blueColor,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _fieldItem('Name', profiledata!.staffmember_name ?? 'N/A'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // ── Card 2: Rental Owner Details ──
+          _buildCard(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Rental Owner Details',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _innerFieldBox(
+                    children: [
+                      _fieldItem('Contact Name',
+                          profiledata!.rentalOwnerName ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Company Name',
+                          profiledata!.rentalOwnerCompanyName ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Email',
+                          profiledata!.rentalOwnerPrimaryEmail ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Phone No',
+                          profiledata!.rentalOwnerPhoneNumber ?? 'N/A'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // ── Card 3: Unit Details ──
+          _buildCard(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Unit Details',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _innerFieldBox(
+                    children: [
+                      _fieldItem('Unit', profiledata!.rentalUnit ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Unit Address',
+                          profiledata!.rentalUnitAdress ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Bed', profiledata!.rental_bed ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem('Bath', profiledata!.rental_bath ?? 'N/A'),
+                      const SizedBox(height: 12),
+                      _fieldItem(
+                          'Square Feet', profiledata!.rentalSqft ?? 'N/A'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: blueColor.withOpacity(0.18)),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _innerFieldBox({required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: blueColor.withOpacity(0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
+    );
+  }
+
+  Widget _fieldItem(String label, String value) {
+    final display = (value.trim().isEmpty) ? 'N/A' : value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: blueColor,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          display,
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _imgPlaceholder() {
+    return Image.asset(
+      'assets/images/noimage.png',
+      width: double.infinity,
+      height: 160,
+      fit: BoxFit.cover,
+    );
+  }
+
+  // ── TABLET LAYOUT ──────────────────────────────────────────────────────────
+
+  Widget _buildTabletLayout() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
+            SizedBox(height: 20),
+            titleBar(
+              width: MediaQuery.of(context).size.width * 0.9,
+              title: 'Property Details',
             ),
-            Text(
-              'No Internet',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
+            SizedBox(height: 30),
+            _buildPropertyDetailsCard(),
+            SizedBox(height: 20),
+            _buildRentalOwnerCard(),
+            SizedBox(height: 20),
+            _buildStaffDetailsCard(),
+            SizedBox(height: 20),
+            _buildUnitDetailsCard(),
+            SizedBox(height: 30),
           ],
         ),
       ),
     );
   }
 
-  // Helper methods for tablet layout
   Widget _buildPropertyDetailsCard() {
     if (profiledata == null) return SizedBox.shrink();
-
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor.withOpacity(0.2)),
@@ -226,65 +406,40 @@ class _summery_pageState extends State<summery_page> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Property Details",
-              style: TextStyle(
-                color: blueColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
+            Text("Property Details",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24)),
             SizedBox(height: 20),
-            // Property Details Grid
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'Property Type',
-                    profiledata!.propertysubType!,
-                    Icons.home,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Property Type', profiledata!.propertysubType!, Icons.home)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Address',
-                    profiledata!.rentalAdress!,
-                    Icons.location_on,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Address', profiledata!.rentalAdress!, Icons.location_on)),
               ],
             ),
             SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'City',
-                    profiledata!.rentalCity!,
-                    Icons.location_city,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'City', profiledata!.rentalCity!, Icons.location_city)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Country',
-                    profiledata!.rentalCountry!,
-                    Icons.public,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Country', profiledata!.rentalCountry!, Icons.public)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Post Code',
-                    profiledata!.rentalPostcode!,
-                    Icons.mail,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Post Code', profiledata!.rentalPostcode!, Icons.mail)),
               ],
             ),
             SizedBox(height: 20),
-            // Property Image
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
@@ -304,12 +459,9 @@ class _summery_pageState extends State<summery_page> {
 
   Widget _buildRentalOwnerCard() {
     if (profiledata == null) return SizedBox.shrink();
-
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor.withOpacity(0.2)),
@@ -319,52 +471,33 @@ class _summery_pageState extends State<summery_page> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Rental Owner Details",
-              style: TextStyle(
-                color: blueColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
+            Text("Rental Owner Details",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24)),
             SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'Contact Name',
-                    profiledata!.rentalOwnerName!,
-                    Icons.person,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Contact Name', profiledata!.rentalOwnerName!, Icons.person)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Company Name',
-                    profiledata!.rentalOwnerCompanyName!,
-                    Icons.business,
-                  ),
-                ),
+                    child: _buildInfoCard('Company Name',
+                        profiledata!.rentalOwnerCompanyName!, Icons.business)),
               ],
             ),
             SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'Email',
-                    profiledata!.rentalOwnerPrimaryEmail!,
-                    Icons.email,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Email', profiledata!.rentalOwnerPrimaryEmail!, Icons.email)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Phone Number',
-                    profiledata!.rentalOwnerPhoneNumber!,
-                    Icons.phone,
-                  ),
-                ),
+                    child: _buildInfoCard('Phone Number',
+                        profiledata!.rentalOwnerPhoneNumber!, Icons.phone)),
               ],
             ),
           ],
@@ -375,12 +508,9 @@ class _summery_pageState extends State<summery_page> {
 
   Widget _buildStaffDetailsCard() {
     if (profiledata == null) return SizedBox.shrink();
-
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor.withOpacity(0.2)),
@@ -390,20 +520,14 @@ class _summery_pageState extends State<summery_page> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Staff Details",
-              style: TextStyle(
-                color: blueColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
+            Text("Staff Details",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24)),
             SizedBox(height: 20),
             _buildInfoCard(
-              'Staff Member',
-              profiledata!.staffmember_name!,
-              Icons.person_outline,
-            ),
+                'Staff Member', profiledata!.staffmember_name!, Icons.person_outline),
           ],
         ),
       ),
@@ -412,12 +536,9 @@ class _summery_pageState extends State<summery_page> {
 
   Widget _buildUnitDetailsCard() {
     if (profiledata == null) return SizedBox.shrink();
-
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: blueColor.withOpacity(0.2)),
@@ -427,60 +548,37 @@ class _summery_pageState extends State<summery_page> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Unit Details",
-              style: TextStyle(
-                color: blueColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-              ),
-            ),
+            Text("Unit Details",
+                style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24)),
             SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'Unit',
-                    profiledata!.rentalUnit!,
-                    Icons.home_work,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Unit', profiledata!.rentalUnit!, Icons.home_work)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Unit Address',
-                    profiledata!.rentalUnitAdress!,
-                    Icons.location_on,
-                  ),
-                ),
+                    child: _buildInfoCard('Unit Address',
+                        profiledata!.rentalUnitAdress!, Icons.location_on)),
               ],
             ),
             SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoCard(
-                    'Bedrooms',
-                    profiledata!.rental_bed!,
-                    Icons.bed,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Bedrooms', profiledata!.rental_bed!, Icons.bed)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Bathrooms',
-                    profiledata!.rental_bath!,
-                    Icons.bathtub,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Bathrooms', profiledata!.rental_bath!, Icons.bathtub)),
                 SizedBox(width: 16),
                 Expanded(
-                  child: _buildInfoCard(
-                    'Square Feet',
-                    profiledata!.rentalSqft!,
-                    Icons.square_foot,
-                  ),
-                ),
+                    child: _buildInfoCard(
+                        'Square Feet', profiledata!.rentalSqft!, Icons.square_foot)),
               ],
             ),
           ],
@@ -505,265 +603,22 @@ class _summery_pageState extends State<summery_page> {
               Icon(icon, color: blueColor, size: 20),
               SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                  overflow: TextOverflow.visible,
-                ),
+                child: Text(label,
+                    style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14),
+                    overflow: TextOverflow.visible),
               ),
             ],
           ),
           SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
-            overflow: TextOverflow.visible,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Mobile helper methods
-  Widget _buildMobilePropertyDetailsCard() {
-    if (profiledata == null) return SizedBox.shrink();
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: blueColor.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.home, color: blueColor, size: 24),
-                SizedBox(width: 12),
-                Text(
-                  "Property Details",
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            _buildMobileInfoRow(
-                'Property Type', profiledata!.propertysubType!, Icons.home),
-            _buildMobileInfoRow(
-                'Address', profiledata!.rentalAdress!, Icons.location_on),
-            _buildMobileInfoRow(
-                'City', profiledata!.rentalCity!, Icons.location_city),
-            _buildMobileInfoRow(
-                'Country', profiledata!.rentalCountry!, Icons.public),
-            _buildMobileInfoRow(
-                'Post Code', profiledata!.rentalPostcode!, Icons.mail),
-            SizedBox(height: 20),
-            // Property Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                "$image_url${profiledata!.rentalImage}",
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileRentalOwnerCard() {
-    if (profiledata == null) return SizedBox.shrink();
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: blueColor.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.business, color: blueColor, size: 24),
-                SizedBox(width: 12),
-                Text(
-                  "Rental Owner Details",
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            _buildMobileInfoRow(
-                'Contact Name', profiledata!.rentalOwnerName!, Icons.person),
-            _buildMobileInfoRow('Company Name',
-                profiledata!.rentalOwnerCompanyName!, Icons.business),
-            _buildMobileInfoRow(
-                'Email', profiledata!.rentalOwnerPrimaryEmail!, Icons.email),
-            _buildMobileInfoRow('Phone Number',
-                profiledata!.rentalOwnerPhoneNumber!, Icons.phone),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileStaffDetailsCard() {
-    if (profiledata == null) return SizedBox.shrink();
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: blueColor.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.person_outline, color: blueColor, size: 24),
-                SizedBox(width: 12),
-                Text(
-                  "Staff Details",
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            _buildMobileInfoRow('Staff Member', profiledata!.staffmember_name!,
-                Icons.person_outline),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileUnitDetailsCard() {
-    if (profiledata == null) return SizedBox.shrink();
-
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: blueColor.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.home_work, color: blueColor, size: 24),
-                SizedBox(width: 12),
-                Text(
-                  "Unit Details",
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            _buildMobileInfoRow(
-                'Unit', profiledata!.rentalUnit!, Icons.home_work),
-            _buildMobileInfoRow('Unit Address', profiledata!.rentalUnitAdress!,
-                Icons.location_on),
-            _buildMobileInfoRow(
-                'Bedrooms', profiledata!.rental_bed!, Icons.bed),
-            _buildMobileInfoRow(
-                'Bathrooms', profiledata!.rental_bath!, Icons.bathtub),
-            _buildMobileInfoRow(
-                'Square Feet', profiledata!.rentalSqft!, Icons.square_foot),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMobileInfoRow(String label, String value, IconData icon) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: blueColor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: blueColor.withOpacity(0.1)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: blueColor, size: 20),
-          SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: blueColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                  overflow: TextOverflow.visible,
-                ),
-              ],
-            ),
-          ),
+          Text(value,
+              style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16),
+              overflow: TextOverflow.visible),
         ],
       ),
     );
@@ -784,18 +639,13 @@ class InfoRow extends StatelessWidget {
         children: [
           Expanded(
             flex: 1,
-            child: Text(
-              '$label',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            child: Text('$label',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
-          Text(":  "),
+          const Text(":  "),
           Expanded(
             flex: 2,
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey[700]),
-            ),
+            child: Text(value, style: TextStyle(color: Colors.grey[700])),
           ),
         ],
       ),
