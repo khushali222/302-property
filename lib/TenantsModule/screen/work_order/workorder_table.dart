@@ -1072,12 +1072,20 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     if (data.length == 0) {
                       return Column(
                         children: [
-                          SizedBox(
-                            height: 20,
+                          SizedBox(height: 14),
+                          _buildHeaders(),
+                          SizedBox(height: 30),
+                          Image.asset("assets/images/no_data.jpg", height: 120, width: 120),
+                          SizedBox(height: 10),
+                          Text(
+                            "No Data Available",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: blueColor,
+                              fontSize: 15,
+                            ),
                           ),
-                          Center(
-                            child: Text("No Work Order Added"),
-                          ),
+                          SizedBox(height: 20),
                         ],
                       );
                     }
@@ -1496,7 +1504,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             ),
                           ),
                           SizedBox(height: 20),
-                          if (data.length > 10)
+                          if (data.length > itemsPerPage)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [

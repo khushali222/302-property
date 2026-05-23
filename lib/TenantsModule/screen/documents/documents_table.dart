@@ -847,157 +847,30 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                   SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 13),
-                    child: Row(
-                      children: [
-                        if (MediaQuery.of(context).size.width < 500)
-                          SizedBox(width: 5),
-                        if (MediaQuery.of(context).size.width > 500)
-                          SizedBox(width: 22),
-                        Material(
-                          elevation: 3,
-                          borderRadius: BorderRadius.circular(2),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 40
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(2),
-                                // border: Border.all(color: Colors.grey),
-                                border: Border.all(color: Color(0xFF8A95A8))),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 12
-                                                : 14),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     cvverror = false;
-                                    //   });
-                                    // },
-                                    // controller: cvv,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        searchvalue = value;
-                                      });
-                                    },
-                                    cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                          // fontWeight: FontWeight.bold,
-                                          color: Color(0xFF8A95A8),
-                                        ),
-                                        contentPadding: EdgeInsets.only(
-                                            left: 5, bottom: 10, top: 14)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        /*  DropdownButtonHideUnderline(
-                    child: Material(
-                      elevation: 3,
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Row(
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Type',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  // fontWeight: FontWeight.bold,
-                                  color: Color(0xFF8A95A8),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ))
-                            .toList(),
-                        value: selectedValue,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Container(
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Color(0xFFDBE0E5)),
+                      ),
+                      child: TextField(
+                        style: TextStyle(fontSize: 14),
                         onChanged: (value) {
                           setState(() {
-                            selectedValue = value;
+                            searchvalue = value;
                           });
                         },
-                        buttonStyleData: ButtonStyleData(
-                          height:
-                          MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                          // width: 180,
-                          width: MediaQuery.of(context).size.width < 500
-                              ? MediaQuery.of(context).size.width * .35
-                              : MediaQuery.of(context).size.width * .4,
-                          padding: const EdgeInsets.only(left: 14, right: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            border: Border.all(
-                              // color: Colors.black26,
-                              color: Color(0xFF8A95A8),
-                            ),
-                            color: Colors.white,
-                          ),
-                          elevation: 0,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            //color: Colors.redAccent,
-                          ),
-                          offset: const Offset(-20, 0),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all(6),
-                            thumbVisibility: MaterialStateProperty.all(true),
-                          ),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 14, right: 14),
+                        cursorColor: blueColor,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search here...",
+                          hintStyle: TextStyle(color: Color(0xFF8A95A8), fontSize: 14),
+                          prefixIcon: Icon(Icons.search, color: Color(0xFF8A95A8), size: 20),
+                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
-                    ),
-                  ),*/
-                      ],
                     ),
                   ),
                   if (MediaQuery.of(context).size.width > 500)
@@ -1065,12 +938,14 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             if (data.length == 0) {
                               return Column(
                                 children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Text("No data Found"),
-                                  ),
+                                  SizedBox(height: 14),
+                                  _buildHeaders(),
+                                  SizedBox(height: 30),
+                                  Image.asset("assets/images/no_data.jpg", height: 120, width: 120),
+                                  SizedBox(height: 10),
+                                  Text("No Data Available",
+                                      style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 15)),
+                                  SizedBox(height: 20),
                                 ],
                               );
                             }
@@ -1488,6 +1363,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
+                                  if (data.length > itemsPerPage) ...[
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -1593,6 +1469,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                       ),
                                     ],
                                   ),
+                                  ],
                                 ],
                               ),
                             );
