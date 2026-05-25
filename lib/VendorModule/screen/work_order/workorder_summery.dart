@@ -366,7 +366,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             child: GestureDetector(
                                               onTap: () => _tabController!.animateTo(0),
                                               child: Container(
-                                                height: 45,
+                                                height: 38,
                                                 decoration: BoxDecoration(
                                                   color: _tabController!.index == 0 ? blueColor : Colors.white,
                                                   border: Border.all(color: blueColor),
@@ -388,7 +388,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             child: GestureDetector(
                                               onTap: () => _tabController!.animateTo(1),
                                               child: Container(
-                                                height: 45,
+                                                height: 38,
                                                 decoration: BoxDecoration(
                                                   color: _tabController!.index == 1 ? blueColor : Colors.white,
                                                   border: Border.all(color: blueColor),
@@ -1543,43 +1543,60 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                       ...(summery.workorderUpdates ?? []).reversed.take(visibleCount).map((update) {
-                        final dateStr = update.date != null && update.date!.isNotEmpty ? dateProvider.formatCurrentDate(update.date!) : 'N/A';
+                        const updLabel = TextStyle(
+                          color: Color(0xFF6B7A90),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                          letterSpacing: 0.6,
+                        );
+                        final updValue = TextStyle(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        );
+                        Widget field(String label, String value, {Color? valueColor}) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(label, style: updLabel),
+                              const SizedBox(height: 4),
+                              Text(value, style: updValue.copyWith(color: valueColor ?? blueColor)),
+                            ],
+                          );
+                        }
+                        final dateStr = update.date != null && update.date!.isNotEmpty
+                            ? dateProvider.formatCurrentDate(update.date!)
+                            : 'N/A';
                         return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(color: const Color(0xFFEEF2F8), border: Border.all(color: Color(0xFFDBE0E5)), borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEEF2F8),
+                            border: Border.all(color: const Color(0xFFDBE0E5)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(children: [
-                                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  const Text("Assignees", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13)),
-                                  const SizedBox(height: 6),
-                                  Text(update.staffmemberName ?? "N/A", style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 14)),
-                                ])),
-                                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                                  const Text("Due Date", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13)),
-                                  const SizedBox(height: 6),
-                                  Text(dateStr, style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 14)),
-                                ])),
-                              ]),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: field('Assignees', update.staffmemberName ?? 'N/A')),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: field('Due Date', dateStr)),
+                                ],
+                              ),
                               const SizedBox(height: 10),
-                              Row(children: [
-                                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                  const Text("Status", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13)),
-                                  const SizedBox(height: 6),
-                                  Text('${update.status ?? "N/A"}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green, fontSize: 14)),
-                                ])),
-                                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                                  const Text("Updated By", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13)),
-                                  const SizedBox(height: 6),
-                                  Text('${update.statusUpdatedBy ?? "N/A"}', style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 14)),
-                                ])),
-                              ]),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: field('Status', update.status ?? 'N/A', valueColor: const Color(0xFF1F9D55))),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: field('Updated By', update.statusUpdatedBy ?? 'N/A')),
+                                ],
+                              ),
                               const SizedBox(height: 10),
-                              const Text("Message", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13)),
-                              const SizedBox(height: 6),
-                              Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(fontWeight: FontWeight.bold, color: blueColor, fontSize: 13)),
+                              field('Message', '${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)'),
                             ],
                           ),
                         );
@@ -1864,132 +1881,113 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   height: 10,
                 ),
                 Container(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xFFDBE0E5)),
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.white,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${summery.workSubject ?? "N/A"}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: blueColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              '${summery.propertyData?.rentaladress ?? "N/A"} ${(summery.unitData?.rental_unit != null && summery.unitData!.rental_unit.toString().trim().isNotEmpty) ? '(${summery.unitData?.rental_unit})' : ''}',
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: blueColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Assignees", style: labelStyle),
-                                const SizedBox(height: 4),
-                                Text(
-                                  summery.staffData?.firstname ?? 'N/A',
-                                  style: valueStyle,
+                  child: Builder(builder: (context) {
+                    const labelPill = TextStyle(
+                      color: Color(0xFF6B7A90),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      letterSpacing: 0.6,
+                    );
+                    final valuePill = TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    );
+                    Widget pill({required String label, required String value, Color? valueColor, bool tinted = true}) {
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: tinted ? const Color(0xFFEEF2F8) : Colors.white,
+                          border: tinted ? null : Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label, style: labelPill),
+                            const SizedBox(height: 6),
+                            Text(value, style: valuePill.copyWith(color: valueColor ?? blueColor)),
+                          ],
+                        ),
+                      );
+                    }
+                    final dueDate = () {
+                      final d = _getDueDateForSummery(summery);
+                      return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                    }();
+                    final unitSuffix = (summery.unitData?.rental_unit != null &&
+                            summery.unitData!.rental_unit.toString().trim().isNotEmpty)
+                        ? ' (${summery.unitData?.rental_unit})'
+                        : '';
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${summery.workSubject ?? "N/A"}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 16, color: blueColor, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(fontSize: 13, color: Color(0xFF6B7A90), fontWeight: FontWeight.w500),
+                            children: [
+                              TextSpan(text: '${summery.propertyData?.rentaladress ?? "N/A"}'),
+                              if (unitSuffix.isNotEmpty)
+                                TextSpan(
+                                  text: unitSuffix,
+                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text("Due Date", style: labelStyle),
-                                const SizedBox(height: 4),
-                                Text(
-                                  () {
-                                    final d = _getDueDateForSummery(summery);
-                                    return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
-                                  }(),
-                                  style: valueStyle,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text("Description", style: labelStyle),
-                      const SizedBox(height: 4),
-                      Text(
-                        summery.workPerformed?.isNotEmpty == true ? summery.workPerformed! : "N/A",
-                        style: valueStyle,
-                        textAlign: TextAlign.justify,
-                      ),
-                      const SizedBox(height: 5),
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Permission to enter", style: labelStyle),
-                                const SizedBox(height: 4),
-                                Text(
-                                  summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A",
-                                  style: valueStyle,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text("Status", style: labelStyle),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${summery.status ?? "N/A"}',
-                                  style: valueStyle.copyWith(color: Colors.green),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text("Vendor Notes", style: labelStyle),
-                      const SizedBox(height: 4),
-                      Text(
-                        (summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes! : "N/A",
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.justify,
-                        style: valueStyle,
-                      ),
-                    ],
-                  ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(child: pill(label: 'Assignees', value: summery.staffData?.firstname ?? 'N/A')),
+                            const SizedBox(width: 10),
+                            Expanded(child: pill(label: 'Due Date', value: dueDate)),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(child: pill(
+                              label: 'Permission',
+                              value: summery.entryAllowed == true ? 'Yes' : summery.entryAllowed == false ? 'No' : 'N/A',
+                              valueColor: summery.entryAllowed == true ? const Color(0xFF1F9D55) : null,
+                            )),
+                            const SizedBox(width: 10),
+                            Expanded(child: pill(
+                              label: 'Status',
+                              value: (summery.status != null && summery.status!.isNotEmpty) ? summery.status! : 'N/A',
+                              valueColor: const Color(0xFF1F9D55),
+                            )),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        pill(
+                          label: 'Description',
+                          value: (summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed! : 'N/A',
+                          tinted: false,
+                        ),
+                        const SizedBox(height: 10),
+                        pill(
+                          label: 'Vendor Notes',
+                          value: (summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes! : 'N/A',
+                          tinted: false,
+                        ),
+                      ],
+                    );
+                  }),
                 ),
                 const SizedBox(
                   height: 10,
@@ -3163,121 +3161,113 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       height: 10,
                     ),
                     Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         border: Border.all(color: Color(0xFFDBE0E5)),
                         borderRadius: BorderRadius.circular(12),
                         color: Colors.white,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  '${summery.workSubject ?? "N/A"}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  '${summery.propertyData?.rentaladress ?? "N/A"} ${(summery.unitData?.rental_unit != null && summery.unitData!.rental_unit.toString().trim().isNotEmpty) ? '(${summery.unitData?.rental_unit})' : ''}',
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: blueColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Assignees", style: labelStyle),
-                                    const SizedBox(height: 4),
-                                    Text(summery.staffData?.firstname ?? 'N/A', style: valueStyle),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text("Due Date", style: labelStyle),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      () {
-                                        final d = _getDueDateForSummery(summery);
-                                        return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
-                                      }(),
-                                      style: valueStyle,
-                                      textAlign: TextAlign.end,
+                      child: Builder(builder: (context) {
+                        const labelPill = TextStyle(
+                          color: Color(0xFF6B7A90),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                          letterSpacing: 0.6,
+                        );
+                        final valuePill = TextStyle(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        );
+                        Widget pill({required String label, required String value, Color? valueColor, bool tinted = true}) {
+                          return Container(
+                        width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: tinted ? const Color(0xFFEEF2F8) : Colors.white,
+                              border: tinted ? null : Border.all(color: const Color(0xFFDBE0E5)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(label, style: labelPill),
+                                const SizedBox(height: 6),
+                                Text(value, style: valuePill.copyWith(color: valueColor ?? blueColor)),
+                              ],
+                            ),
+                          );
+                        }
+                        final dueDate = () {
+                          final d = _getDueDateForSummery(summery);
+                          return d != null ? dateProvider.formatCurrentDate(d) : 'N/A';
+                        }();
+                        final unitSuffix = (summery.unitData?.rental_unit != null &&
+                                summery.unitData!.rental_unit.toString().trim().isNotEmpty)
+                            ? ' (${summery.unitData?.rental_unit})'
+                            : '';
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${summery.workSubject ?? "N/A"}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 16, color: blueColor, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            RichText(
+                              text: TextSpan(
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF6B7A90), fontWeight: FontWeight.w500),
+                                children: [
+                                  TextSpan(text: '${summery.propertyData?.rentaladress ?? "N/A"}'),
+                                  if (unitSuffix.isNotEmpty)
+                                    TextSpan(
+                                      text: unitSuffix,
+                                      style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
                                     ),
-                                  ],
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Permission to enter", style: labelStyle),
-                                    const SizedBox(height: 4),
-                                    Text(summery.entryAllowed == true ? "Yes" : summery.entryAllowed == false ? "No" : "N/A", style: valueStyle),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text("Status", style: labelStyle),
-                                    const SizedBox(height: 4),
-                                    Text(summery.status ?? "N/A", style: valueStyle.copyWith(color: Colors.green), textAlign: TextAlign.end),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text("Description", style: labelStyle),
-                          const SizedBox(height: 4),
-                          Text(
-                            (summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed! : "N/A",
-                            style: valueStyle,
-                            textAlign: TextAlign.justify,
-                          ),
-                          const SizedBox(height: 16),
-                          Text("Vendor Notes", style: labelStyle),
-                          const SizedBox(height: 4),
-                          Text(
-                            (summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes! : "N/A",
-                            style: valueStyle,
-                            textAlign: TextAlign.justify,
-                          ),
-                        ],
-                      ),
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(child: pill(label: 'Assignees', value: summery.staffData?.firstname ?? 'N/A')),
+                                const SizedBox(width: 10),
+                                Expanded(child: pill(label: 'Due Date', value: dueDate)),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(child: pill(
+                                  label: 'Permission',
+                                  value: summery.entryAllowed == true ? 'Yes' : summery.entryAllowed == false ? 'No' : 'N/A',
+                                  valueColor: summery.entryAllowed == true ? const Color(0xFF1F9D55) : null,
+                                )),
+                                const SizedBox(width: 10),
+                                Expanded(child: pill(
+                                  label: 'Status',
+                                  value: (summery.status != null && summery.status!.isNotEmpty) ? summery.status! : 'N/A',
+                                  valueColor: const Color(0xFF1F9D55),
+                                )),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            pill(
+                              label: 'Description',
+                              value: (summery.workPerformed != null && summery.workPerformed!.isNotEmpty) ? summery.workPerformed! : 'N/A',
+                              tinted: false,
+                            ),
+                            const SizedBox(height: 10),
+                            pill(
+                              label: 'Vendor Notes',
+                              value: (summery.vendorNotes != null && summery.vendorNotes!.isNotEmpty) ? summery.vendorNotes! : 'N/A',
+                              tinted: false,
+                            ),
+                          ],
+                        );
+                      }),
                     ),
                     const SizedBox(
                       height: 10,
