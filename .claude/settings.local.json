@@ -6,7 +6,10 @@
       "Bash(python3 -c ' *)",
       "Bash(git stash *)",
       "Bash(Get-ChildItem -Path \"C:\\\\CLoudeRentalManager\\\\302-property\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "PowerShell($f = 'C:\\\\CLoudeRentalManager\\\\302-property\\\\lib\\\\TenantsModule\\\\screen\\\\work_order\\\\workorder_summery.dart'; $c = Get-Content $f -Raw -Encoding UTF8; $c = $c -replace 'Border\\\\.all\\\\\\(color: grey\\\\\\)', 'Border.all\\(color: Color\\(0xFFDBE0E5\\)\\)'; $c = $c -replace '0xFFF7F9FC', '0xFFEEF2F8'; [System.IO.File]::WriteAllText\\($f, $c, [System.Text.UTF8Encoding]::new\\($false\\)\\))",
+      "Bash(flutter analyze *)",
+      "Bash(cat /c/Users/Khushali/AppData/Local/Temp/claude/C--CLoudeRentalManager-302-property/fe372e44-56a1-4fd9-8916-43974ac211f4/tasks/b6xvvvt8v.output)"
     ]
   }
 }
