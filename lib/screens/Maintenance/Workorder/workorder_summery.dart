@@ -461,8 +461,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   int visibleCount = 5;
-  int _partsPage = 0;
-  static const int _partsPerPage = 5;
+  int _partsVisibleCount = 5;
+  final PageController _partsPageCtrl = PageController();
   List<String> _imageUrls = [];
   int selectedTabIndex = 0;
   bool showAllImages = false;
@@ -1787,6 +1787,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ],
                               ),
                               const SizedBox(height: 10),
+                              Container(height: 1, color: const Color(0xFFDBE0E5)),
+                              const SizedBox(height: 10),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -1796,15 +1798,46 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ],
                               ),
                               const SizedBox(height: 10),
-                              field('Message', '${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)'),
+                              Container(height: 1, color: const Color(0xFFDBE0E5)),
+                              const SizedBox(height: 10),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
                             ],
                           ),
                         );
                       }).toList(),
                       if (summery.workorderUpdates!.length > 5)
-                        TextButton(
-                          onPressed: () { setState(() { visibleCount = visibleCount == 5 ? summery.workorderUpdates!.length : 5; }); },
-                          child: Text(visibleCount == 5 ? 'View More' : 'View Less', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4, bottom: 4),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () => setState(() { visibleCount = visibleCount == 5 ? summery.workorderUpdates!.length : 5; }),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: const Color(0xFFDBE0E5)),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      visibleCount == 5 ? '+${summery.workorderUpdates!.length - 5} more' : 'View Less',
+                                      style: TextStyle(color: blueColor, fontWeight: FontWeight.w600, fontSize: 12),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      visibleCount == 5 ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                                      size: 16,
+                                      color: blueColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                           ],
                         ),
@@ -2329,16 +2362,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           child: Builder(
                             builder: (context) {
                               final parts = summery.partsandchargeData ?? [];
-                              final totalPages = parts.isEmpty ? 1 : ((parts.length + _partsPerPage - 1) ~/ _partsPerPage);
-                              final page = _partsPage.clamp(0, totalPages - 1);
-                              final start = page * _partsPerPage;
-                              final end = (start + _partsPerPage) > parts.length ? parts.length : (start + _partsPerPage);
-                              final pageItems = parts.sublist(start, end);
+                              final showCount = _partsVisibleCount > parts.length ? parts.length : _partsVisibleCount;
+                              final visibleItems = parts.take(showCount).toList();
+                              final hiddenCount = parts.length - showCount;
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Column(
-                                    children: pageItems.map((item) {
+                                    children: visibleItems.map((item) {
                                       return Container(
                                         margin: const EdgeInsets.only(bottom: 10),
                                         padding: const EdgeInsets.all(12),
@@ -2384,26 +2415,40 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       );
                                     }).toList(),
                                   ),
-                                  if (totalPages > 1)
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 8, top: 2),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: List.generate(totalPages, (i) {
-                                          final selected = i == page;
-                                          return GestureDetector(
-                                            onTap: () => setState(() => _partsPage = i),
-                                            child: Container(
-                                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                                              width: selected ? 8 : 6,
-                                              height: selected ? 8 : 6,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: selected ? blueColor : const Color(0xFFD3DAE5),
-                                              ),
+                                  if (parts.length > 5)
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 8, top: 2),
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.circular(20),
+                                          onTap: () => setState(() {
+                                            _partsVisibleCount = _partsVisibleCount >= parts.length ? 5 : parts.length;
+                                          }),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(color: const Color(0xFFDBE0E5)),
+                                              borderRadius: BorderRadius.circular(20),
                                             ),
-                                          );
-                                        }),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  hiddenCount > 0 ? '+$hiddenCount more' : 'View Less',
+                                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.w600, fontSize: 12),
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Icon(
+                                                  hiddenCount > 0 ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                                                  size: 16,
+                                                  color: blueColor,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   Container(
@@ -2482,155 +2527,55 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       ...summery.workorderUpdates!.reversed
                           .take(visibleCount)
                           .map((update) {
+                        const updLabel = TextStyle(color: Color(0xFF6B7A90), fontWeight: FontWeight.w600, fontSize: 13);
+                        final updValue = TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14);
+                        Widget field(String label, String value, {Color? valueColor}) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(label, style: updLabel),
+                              const SizedBox(height: 4),
+                              Text(value, style: updValue.copyWith(color: valueColor ?? blueColor)),
+                            ],
+                          );
+                        }
+                        final dateStr = (update.date != null && update.date!.isNotEmpty)
+                            ? dateProvider.formatCurrentDate(update.date!)
+                            : 'N/A';
                         return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEEF2F8),
-                            border: Border.all(color: Color(0xFFDBE0E5)),
+                            border: Border.all(color: const Color(0xFFDBE0E5)),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Assignees & Due Date
                               Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Assignees",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          update.staffmemberName ?? "N/A",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "Due Date",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          dateProvider.formatCurrentDate(
-                                              update.date ?? "N/A"),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 14,
-                                          ),
-                                          textAlign: TextAlign.end,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Status & Updated By
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Status",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          update.status ?? "N/A",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "Updated By",
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          update.statusUpdatedBy ?? "N/A",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 14,
-                                          ),
-                                          textAlign: TextAlign.end,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Message
-                              Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "Message",
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    '${update.statusUpdatedBy ?? ""} updated this work order (${update.updatedAt != null ? update.updatedAt : update.createdAt ?? "N/A"})',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize: 14,
-                                    ),
-                                  ),
+                                  Expanded(child: field('Assignees', update.staffmemberName ?? 'N/A')),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: field('Due Date', dateStr)),
                                 ],
                               ),
+                              const SizedBox(height: 10),
+                              Container(height: 1, color: const Color(0xFFDBE0E5)),
+                              const SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(child: field('Status', update.status ?? 'N/A', valueColor: const Color(0xFF1F9D55))),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: field('Updated By', update.statusUpdatedBy ?? 'N/A')),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Container(height: 1, color: const Color(0xFFDBE0E5)),
+                              const SizedBox(height: 10),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
                               if (update.workOrderUpdateimages != null &&
                                   update.workOrderUpdateimages!.isNotEmpty) ...[
                                 const SizedBox(height: 12),
@@ -2730,32 +2675,37 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         );
                       }).toList(),
                       if (summery.workorderUpdates!.length > 5)
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              visibleCount = visibleCount == 5
-                                  ? summery.workorderUpdates!.length
-                                  : 5;
-                            });
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                visibleCount == 5 ? 'View More' : 'View Less',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 4, bottom: 4),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () => setState(() { visibleCount = visibleCount == 5 ? summery.workorderUpdates!.length : 5; }),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: const Color(0xFFDBE0E5)),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      visibleCount == 5 ? '+${summery.workorderUpdates!.length - 5} more' : 'View Less',
+                                      style: TextStyle(color: blueColor, fontWeight: FontWeight.w600, fontSize: 12),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      visibleCount == 5 ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                                      size: 16,
+                                      color: blueColor,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 5),
-                              Icon(
-                                visibleCount == 5
-                                    ? Icons.keyboard_arrow_down_outlined
-                                    : Icons.keyboard_arrow_up,
-                                color: blueColor,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                     ],

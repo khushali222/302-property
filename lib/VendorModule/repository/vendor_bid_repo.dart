@@ -10,6 +10,9 @@ class VendorBidRepository {
     required String vendorId,
     int limit = 10000,
     int page = 1,
+    String sortBy = 'createdAt',
+    String sortOrder = 'desc',
+    String? status,
   }) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -17,14 +20,26 @@ class VendorBidRepository {
       // For vendor requests, we typically use the vendorId.
       // The API endpoint is: /api/bid-request/bid-requests/vendor/:vendorId
 
-      final url =
-          '${Api_url}/api/bid-request/bid-requests/vendor/$vendorId?limit=$limit&page=$page';
+      final queryParams = <String, String>{
+        'page': page.toString(),
+        'limit': limit.toString(),
+        'sortBy': sortBy,
+        'sortOrder': sortOrder,
+      };
+      if (status != null && status.isNotEmpty && status != 'All') {
+        queryParams['status'] = status;
+      }
+
+      final url = Uri.parse(
+              '${Api_url}/api/bid-request/bid-requests/vendor/$vendorId')
+          .replace(queryParameters: queryParams)
+          .toString();
 
       print('Fetching vendor bid requests from: $url');
 
       final response = await http.get(
         Uri.parse(url),
-        headers: {
+        headers: <String, String>{
           "authorization": "CRM $token",
           "id":
               "CRM $vendorId", // Assuming the header requires the ID of the requester
