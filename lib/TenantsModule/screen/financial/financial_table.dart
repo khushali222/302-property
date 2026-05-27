@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +33,7 @@ import '../../repository/tenant_repository.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'AddCard/AddCard.dart';
+import 'AddAchAccount/AddAchAccount.dart';
 
 class FinancialTable extends StatefulWidget {
   @override
@@ -284,6 +288,11 @@ class _FinancialTableState extends State<FinancialTable> {
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
 
+  // Add Card / Add ACH button visibility, driven by tenant payment settings
+  // (get_tenant: allow_card, allow_ach) — same source the Make Payment screen uses.
+  bool _allowCard = true;
+  bool _allowAch = false;
+
   @override
   void initState() {
     super.initState();
@@ -296,6 +305,33 @@ class _FinancialTableState extends State<FinancialTable> {
     });
     checkInternet();
     futureFinancial = TenantFinancialRepository().fetchTenantFinancial();
+    _fetchPaymentOptions();
+  }
+
+  Future<void> _fetchPaymentOptions() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? token = prefs.getString('token');
+      if (id == null || token == null) return;
+      final response = await http.get(
+        Uri.parse('$Api_url/api/tenant/get_tenant/$id'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $id',
+        },
+      );
+      if (response.statusCode == 200 && mounted) {
+        final data = json.decode(response.body);
+        final d = data is Map ? data['data'] : null;
+        if (d is Map<String, dynamic>) {
+          setState(() {
+            _allowCard = d['allow_card'] == true;
+            _allowAch = d['allow_ach'] == true;
+          });
+        }
+      }
+    } catch (_) {}
   }
 
   void checkInternet() async {
@@ -661,6 +697,219 @@ class _FinancialTableState extends State<FinancialTable> {
 
   final _scrollController = ScrollController();
 
+  Widget _financialActionButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final width = MediaQuery.of(context).size.width;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: width < 500 ? 44 : width * 0.065,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: width > 500 ? width * 0.024 : 14,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Filters the ledger by the search text. Matches tenant name first, then
+  /// type, account, memo, date, balance and amount. Used by both layouts.
+  List<Data> _applyFilters(List<Data> source) {
+    final q = searchvalue.trim().toLowerCase();
+    if (q.isEmpty) return List<Data>.from(source);
+    return source.where((d) {
+      final tenantName =
+          '${d.tenantData?.tenantFirstName ?? ''} ${d.tenantData?.tenantLastName ?? ''}'
+              .toLowerCase();
+      if (tenantName.contains(q)) return true;
+      if ((d.type ?? '').toLowerCase().contains(q)) return true;
+      if ((d.balance?.toString() ?? '').contains(q)) return true;
+      if ((d.totalAmount?.toString() ?? '').contains(q)) return true;
+      if (d.entry != null) {
+        for (final e in d.entry!) {
+          if ((e.account ?? '').toLowerCase().contains(q) ||
+              (e.memo ?? '').toLowerCase().contains(q) ||
+              (e.date ?? '').toLowerCase().contains(q)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }).toList();
+  }
+
+  Widget _noDataWidget() {
+    return Container(
+      height: MediaQuery.of(context).size.height * .5,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/no_data.jpg",
+              height: 200,
+              width: 200,
+            ),
+            SizedBox(height: 10),
+            Text(
+              "No Data Available",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Empty state for the mobile layout: keeps the Date/Type/Balance column
+  // header visible above the "No Data Available" message.
+  Widget _mobileNoData() {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        _buildHeaders(),
+        const SizedBox(height: 10),
+        _noDataWidget(),
+      ],
+    );
+  }
+
+  Widget _buildLedgerHeader() {
+    final isWide = MediaQuery.of(context).size.width >= 768;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: Container(
+        height: isWide ? 58 : 50,
+        width: double.infinity,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 28),
+        decoration: BoxDecoration(
+          color: blueColor,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(color: Colors.grey, offset: Offset(0, 1), blurRadius: 6),
+          ],
+        ),
+        child: const Text(
+          'Ledger',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFD1D5DB)),
+        ),
+        child: TextField(
+          onChanged: (value) => setState(() {
+            searchvalue = value;
+            currentPage = 0;
+            _currentPage = 0;
+          }),
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            isDense: true,
+            hintText: 'Search here...',
+            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            prefixIcon:
+                Icon(Icons.search, color: blueColor.withOpacity(0.7), size: 22),
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFinancialActionsRow(BuildContext context) {
+    final gap = MediaQuery.of(context).size.width < 500 ? 6.0 : 22.0;
+    final buttons = <Widget>[
+      if (_allowAch)
+        _financialActionButton(
+          label: "Add ACH",
+          onTap: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String? id = prefs.getString("tenant_id");
+            if (id == null) return;
+            final result = await Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => AddAchAccount(tenantId: id)));
+            if (result == true) {
+              setState(() {
+                futureFinancial =
+                    TenantFinancialRepository().fetchTenantFinancial();
+              });
+            }
+          },
+        ),
+      if (_allowCard)
+        _financialActionButton(
+          label: "Add Card",
+          onTap: () async {
+            final result = await Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AddCard()));
+            if (result == true) {
+              setState(() {
+                futureFinancial =
+                    TenantFinancialRepository().fetchTenantFinancial();
+              });
+            }
+          },
+        ),
+      _financialActionButton(
+        label: "Make Payment",
+        onTap: () async {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? id = prefs.getString("tenant_id");
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MakePayment(leaseId: '', tenantId: id!)));
+          if (result == true) {
+            setState(() {
+              futureFinancial =
+                  TenantFinancialRepository().fetchTenantFinancial();
+            });
+          }
+        },
+      ),
+    ];
+    return Row(
+      children: [
+        for (int i = 0; i < buttons.length; i++) ...[
+          if (i > 0) SizedBox(width: gap),
+          Expanded(child: buttons[i]),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -689,155 +938,39 @@ class _FinancialTableState extends State<FinancialTable> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 16,
                   ),
-                  //add propertytype
 
-                  if (!isFreePlan && permissions!.financialAdd)
+                  // 1) Ledger header (top)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 4.0),
+                    child: _buildLedgerHeader(),
+                  ),
+                  SizedBox(height: 12),
+
+                  // 2) Action buttons
+                  if (!isFreePlan && permissions!.financialAdd) ...[
                     Padding(
                       padding: (MediaQuery.of(context).size.width > 500)
                           ? EdgeInsets.symmetric(
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.045)
-                          : EdgeInsets.only(left: 13, right: 13),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => AddCard()));
-                              if (result == true) {
-                                setState(() {
-                                  futureFinancial = TenantFinancialRepository()
-                                      .fetchTenantFinancial();
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 40
-                                  : MediaQuery.of(context).size.width * 0.065,
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width > 500)
-                                  ? MediaQuery.of(context).size.width * 0.2
-                                  : MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Add Card",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width >
-                                                    500)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.028
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.034,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (MediaQuery.of(context).size.width < 500)
-                            SizedBox(width: 6),
-                          if (MediaQuery.of(context).size.width > 500)
-                            SizedBox(width: 22),
-                          GestureDetector(
-                            onTap: () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              String? id = prefs.getString("tenant_id");
-                              String? admin_id = prefs.getString("adminId");
-                              final result = await Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) => MakePayment(
-                                            leaseId: '',
-                                            tenantId: id!,
-                                          )));
-                              if (result == true) {
-                                setState(() {
-                                  futureFinancial = TenantFinancialRepository()
-                                      .fetchTenantFinancial();
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: (MediaQuery.of(context).size.width < 500)
-                                  ? 40
-                                  : MediaQuery.of(context).size.width * 0.065,
-                              // height:  MediaQuery.of(context).size.width * 0.07,
-                              // height:  40,
-                              width: (MediaQuery.of(context).size.width > 500)
-                                  ? MediaQuery.of(context).size.width * 0.3
-                                  : MediaQuery.of(context).size.width * 0.4,
-                              decoration: BoxDecoration(
-                                color: blueColor,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Make Payment",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            (MediaQuery.of(context).size.width >
-                                                    500)
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.028
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.034,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                          : const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildFinancialActionsRow(context),
                     ),
-                  SizedBox(height: 10),
+                    const SizedBox(height: 10),
+                  ],
 
-                  // Header Section with Title
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: titleBar(
-                      width: double.infinity,
-                      title: 'Ledger',
-                    ),
-                  ),
+                  // 3) Search
+                  _buildSearchBar(),
+                  SizedBox(height: 6),
 
                   if (MediaQuery.of(context).size.width > 500)
                     SizedBox(height: 25),
                   if (MediaQuery.of(context).size.width < 500)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: FutureBuilder<List<Data>>(
                         future: futureFinancial,
                         builder: (context, snapshot) {
@@ -849,66 +982,11 @@ class _FinancialTableState extends State<FinancialTable> {
                             );
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * .5,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/no_data.jpg",
-                                      height: 200,
-                                      width: 200,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "No Data Available",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueColor,
-                                          fontSize: 16),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
+                            return _mobileNoData();
                           } else {
-                            var data = snapshot.data!;
-                            if (selectedValue == null && searchvalue!.isEmpty) {
-                              data = snapshot.data!;
-                            } else if (selectedValue == "All") {
-                              data = snapshot.data!;
-                            } else if (searchvalue!.isNotEmpty) {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.entry!.first.account!
-                                          .toLowerCase()
-                                          .contains(
-                                              searchvalue!.toLowerCase()) ||
-                                      property.type!
-                                          .toLowerCase()
-                                          .contains(searchvalue!.toLowerCase()))
-                                  .toList();
-                            } else {
-                              data = snapshot.data!
-                                  .where((property) =>
-                                      property.type == selectedValue)
-                                  .toList();
-                            }
+                            var data = _applyFilters(snapshot.data!);
                             if (data.length == 0) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Center(
-                                    child: Text("No data found."),
-                                  ),
-                                ],
-                              );
+                              return _mobileNoData();
                             }
                             //sortData(data);
                             //  print(data);
@@ -1557,56 +1635,12 @@ class _FinancialTableState extends State<FinancialTable> {
                               child: Text('Error: ${snapshot.error}'));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * .5,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/no_data.jpg",
-                                    height: 200,
-                                    width: 200,
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "No Data Available",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                        fontSize: 16),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
+                          return _noDataWidget();
                         } else {
                           //  _tableData = snapshot.data!;
                           //var data = snapshot.data!;
-                          _tableData = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            _tableData = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            _tableData = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.entry!.first.account!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    property.type!
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()))
-                                .toList();
-                          } else {
-                            _tableData = snapshot.data!
-                                .where((property) =>
-                                    property.entry!.first.date == selectedValue)
-                                .toList();
-                          }
+                          _tableData = _applyFilters(snapshot.data!);
+                          if (_tableData.isEmpty) return _noDataWidget();
                           String formattedText =
                               'Manual ${snapshot.data!.first.type} ${snapshot.data!.first.response} For ${snapshot.data!.first.paymentType}';
                           String increase =
