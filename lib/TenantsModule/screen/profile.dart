@@ -3704,64 +3704,64 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 16),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.symmetric(
-                                    //       horizontal: 20.0),
-                                    //   child: Card(
-                                    //     elevation: 0,
-                                    //     shape: RoundedRectangleBorder(
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(6),
-                                    //     ),
-                                    //     child: Container(
-                                    //       decoration: BoxDecoration(
-                                    //           border:
-                                    //               Border.all(color: blueColor),
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(6)),
-                                    //       padding: const EdgeInsets.all(16.0),
-                                    //       child: Column(
-                                    //         children: [
-                                    //           buildWidget('Lease Type',
-                                    //               "${profiledata['leaseData']['lease_type']}"),
-                                    //           buildWidget(
-                                    //               'Property',
-                                    //               profiledata['leaseData']
-                                    //                       ['rental_adress'] ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Start Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['start_date']) ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'End Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['end_date']) ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Rent Cycle',
-                                    //               profiledata['leaseData']
-                                    //                       ['rent_cycle'] ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Rent Amount',
-                                    //               profiledata['leaseData']
-                                    //                       ['amount']
-                                    //                   .toString()),
-                                    //           buildWidget(
-                                    //               'Next Due Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['date']) ??
-                                    //                   "N/A"),
-                                    //         ],
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
+                                              // Padding(
+                                              //   padding: const EdgeInsets.symmetric(
+                                              //       horizontal: 20.0),
+                                              //   child: Card(
+                                              //     elevation: 0,
+                                              //     shape: RoundedRectangleBorder(
+                                              //       borderRadius:
+                                              //           BorderRadius.circular(6),
+                                              //     ),
+                                              //     child: Container(
+                                              //       decoration: BoxDecoration(
+                                              //           border:
+                                              //               Border.all(color: blueColor),
+                                              //           borderRadius:
+                                              //               BorderRadius.circular(6)),
+                                              //       padding: const EdgeInsets.all(16.0),
+                                              //       child: Column(
+                                              //         children: [
+                                              //           buildWidget('Lease Type',
+                                              //               "${profiledata['leaseData']['lease_type']}"),
+                                              //           buildWidget(
+                                              //               'Property',
+                                              //               profiledata['leaseData']
+                                              //                       ['rental_adress'] ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Start Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['start_date']) ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'End Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['end_date']) ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Rent Cycle',
+                                              //               profiledata['leaseData']
+                                              //                       ['rent_cycle'] ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Rent Amount',
+                                              //               profiledata['leaseData']
+                                              //                       ['amount']
+                                              //                   .toString()),
+                                              //           buildWidget(
+                                              //               'Next Due Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['date']) ??
+                                              //                   "N/A"),
+                                              //         ],
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
 
                                               buildLeaseTable(leaseData),
                                             ],

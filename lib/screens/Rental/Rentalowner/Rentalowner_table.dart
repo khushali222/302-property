@@ -566,7 +566,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 const SizedBox(width: 19),
               Expanded(
                 child: Material(
-                  elevation: 3,
+                  elevation: 0,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     height: (MediaQuery.of(context).size.width < 500) ? 45 : 50,
@@ -686,6 +687,30 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     const SizedBox(height: 10),
                     _buildHeaders(),
                     const SizedBox(height: 10),
+                    if (data.isEmpty)
+                      Container(
+                        height: MediaQuery.of(context).size.height * .35,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     Container(
                       // decoration: BoxDecoration(
                       //     borderRadius: BorderRadius.circular(10),

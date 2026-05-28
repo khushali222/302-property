@@ -6784,7 +6784,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   }).toList(),
                                                 ),
                                               ),
-                                              const SizedBox(height: 20),
+                                              if (totalPages > 1) ...[
+                                                const SizedBox(height: 20),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -6911,6 +6912,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ),
                                                 ],
                                               ),
+                                              ],
                                             ],
                                           ),
                                         );

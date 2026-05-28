@@ -280,7 +280,7 @@ class _PropertyTableState extends State<PropertyTable> {
     );
   }
 
-  final List<String> items = ['Residential', "Commercial", "All"];
+  final List<String> items = ['All', 'Commercial', 'Residential'];
   String? selectedValue;
   String searchvalue = "";
   @override
@@ -788,7 +788,8 @@ class _PropertyTableState extends State<PropertyTable> {
               //   SizedBox(width: 24),
               Expanded(
                 child: Material(
-                  elevation: 2,
+                  elevation: 0,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
@@ -848,7 +849,8 @@ class _PropertyTableState extends State<PropertyTable> {
               Expanded(
                 child: DropdownButtonHideUnderline(
                   child: Material(
-                    elevation: 3,
+                    elevation: 0,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     child: DropdownButton2<String>(
                       isExpanded: true,
@@ -1007,31 +1009,6 @@ class _PropertyTableState extends State<PropertyTable> {
                               .contains(searchvalue!.toLowerCase()))
                       .toList();
                 }
-                if (data.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/no_data.jpg",
-                          height: 200,
-                          width: 200,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "No Data Available",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: blueColor,
-                              fontSize: 16),
-                        )
-                      ],
-                    ),
-                  );
-                }
                 //  data = data.reversed.toList();
                 sortData(data);
                 final totalPages = (data.length / itemsPerPage).ceil();
@@ -1044,6 +1021,30 @@ class _PropertyTableState extends State<PropertyTable> {
                     const SizedBox(height: 10),
                     _buildHeaders(),
                     const SizedBox(height: 10),
+                    if (data.isEmpty)
+                      Container(
+                        height: MediaQuery.of(context).size.height * .35,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     Container(
                       // decoration: BoxDecoration(
                       //     border: Border.all(color: blueColor)),
@@ -1369,6 +1370,7 @@ class _PropertyTableState extends State<PropertyTable> {
                         }).toList(),
                       ),
                     ),
+                    if (totalPages > 1) ...[
                     SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1467,6 +1469,7 @@ class _PropertyTableState extends State<PropertyTable> {
                         ),
                       ],
                     ),
+                    ],
                   ],
                 );
 
