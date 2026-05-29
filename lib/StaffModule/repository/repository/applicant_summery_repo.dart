@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -14,7 +15,7 @@ class ApplicantSummeryRepository {
 
     print(jsonEncode(data.toJson()));
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/application/$applicantId'),
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ class ApplicantSummeryRepository {
 
     print(jsonEncode(data.toJson()));
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/application/$applicantId'),
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +114,7 @@ class ApplicantSummeryRepository {
   //   final url =
   //       Uri.parse('$Api_url/api/applicant/applicant_summary/$applicantId');
 
-  //   final response = await http.get(url, headers: {
+  //   final response = await apiGet(url, headers: {
   //     "authorization": "CRM $token",
   //     "id": "CRM $id",
   //   });
@@ -140,7 +141,7 @@ class ApplicantSummeryRepository {
         Uri.parse('$Api_url/api/applicant/applicant_summary/$applicantId');
 
     try {
-      final response = await http.get(url, headers: {
+      final response = await apiGet(url, headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -181,7 +182,7 @@ class ApplicantSummeryRepository {
 
     final body = jsonEncode(noteFile.toJson());
 
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(
           '$Api_url/api/applicant/applicant/note_attachment/$applicantId'),
       headers: {
@@ -208,7 +209,7 @@ class ApplicantSummeryRepository {
     String? token = prefs.getString('token');
     print('token ${token}');
 
-    final response = await http.delete(
+    final response = await apiDelete(
         Uri.parse(
             '$Api_url/api/applicant/applicant/note_attachment/$applicantId/$note__id'),
         headers: {
@@ -232,7 +233,7 @@ class ApplicantSummeryRepository {
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('$Api_url/api/applicant/applicant_details/$applicantId'),
           headers: {
             "id": "CRM $adminId",
@@ -274,7 +275,7 @@ class ApplicantSummeryRepository {
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$Api_url/api/applicant/status_data/$applicantId/Approved'),
         headers: {
           "id": "CRM $adminId",
@@ -301,7 +302,7 @@ class ApplicantSummeryRepository {
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$Api_url/api/applicant/status_data/$applicantId/Rejected'),
         headers: {
           "id": "CRM $adminId",
@@ -325,7 +326,7 @@ class ApplicantSummeryRepository {
   Future<void> updateApplicantStatus(String applicantId, String status) async {
     final url =
         Uri.parse('$Api_url/api/applicant/applicant/$applicantId/status');
-    final response = await http.put(
+    final response = await apiPut(
       url,
       headers: {
         'Content-Type': 'application/json',

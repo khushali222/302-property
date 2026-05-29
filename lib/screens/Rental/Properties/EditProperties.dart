@@ -30,6 +30,7 @@ import '../../../repository/Property_type.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../model/unitsummery_propeties.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -849,7 +850,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
           .add(await http.MultipartFile.fromPath('files', imageFile!.path));
     }
 
-    var response = await request.send();
+    var response = await apiSend(request);
     // Parse the response
     var responseData = await http.Response.fromStream(response);
     // print(responseData.body);

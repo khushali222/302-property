@@ -1,6 +1,7 @@
 // import 'dart:convert';
 // import 'package:flutter_quill/quill_delta.dart';
 // import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_quill/flutter_quill.dart' as quill;
 // import 'package:intl/intl.dart';
@@ -51,7 +52,7 @@
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? adminId = prefs.getString("adminId");
 //     String? token = prefs.getString('token');
-//     final response = await http.get(
+//     final response = await apiGet(
 //         Uri.parse("${Api_url}/api/tenant/lease-tenant/${adminId}"),
 //         headers: {
 //           "authorization": "CRM $token",
@@ -74,7 +75,7 @@
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? adminId = prefs.getString("adminId");
 //     String? token = prefs.getString('token');
-//     final response = await http.get(
+//     final response = await apiGet(
 //         Uri.parse("${Api_url}/api/templates/get/1736503150202"),
 //         headers: {
 //           "authorization": "CRM $token",
@@ -465,6 +466,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -500,7 +502,7 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse("${Api_url}/api/templates/get/1739444432258"),
       headers: {
         "authorization": "CRM $token",
@@ -559,7 +561,7 @@ class _EmailTemplateScreenState extends State<EmailTemplateScreen> {
       "is_active": false,
     };
 
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse("${Api_url}/api/templates/$selectedTemplateId"),
       headers: {
         "Content-Type": "application/json",

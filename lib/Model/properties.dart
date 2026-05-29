@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant/constant.dart';
@@ -329,7 +330,7 @@ class StaffMemberData {
 //     throw Exception('No adminId found in SharedPreferences');
 //   }
 //
-//   final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
+//   final response = await apiGet(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'));
 //   if (response.statusCode == 200) {
 //     List<dynamic> jsonResponse = json.decode(response.body);
 //     return jsonResponse.map((data) => Rentals.fromJson(data)).toList();

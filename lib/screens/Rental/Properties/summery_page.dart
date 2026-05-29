@@ -37,6 +37,7 @@ import '../../../repository/fetch_allcategories.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../repository/unit_data.dart';
 import '../../../widgets/Properties_revenue_table.dart';
 import '../../../widgets/summary_lease_info_expandable.dart';
@@ -324,7 +325,7 @@ class _Summery_pageState extends State<Summery_page>
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/taxes/${widget.properties.rentalId}'),
         headers: {
           'Content-Type': 'application/json',
@@ -351,7 +352,7 @@ class _Summery_pageState extends State<Summery_page>
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/mortgage/${widget.properties.rentalId}/financial-summary'),
         headers: {
@@ -1305,7 +1306,7 @@ class _Summery_pageState extends State<Summery_page>
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 
@@ -1355,7 +1356,7 @@ class _Summery_pageState extends State<Summery_page>
       String? token = prefs.getString('token');
       final String apiUrl =
           '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(apiUrl),
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -1402,7 +1403,7 @@ class _Summery_pageState extends State<Summery_page>
           '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
 
       // Send the PUT request to update the rental image to empty (or null) on the server
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(apiUrl),
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -5097,7 +5098,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 purchaseDateController
                                                                     .text);
                                                         final response =
-                                                            await http.put(
+                                                            await apiPut(
                                                           Uri.parse(
                                                               '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
                                                           headers: {

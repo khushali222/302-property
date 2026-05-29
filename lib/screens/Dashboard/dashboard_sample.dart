@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'RentPastDueReport.dart';
@@ -957,11 +958,11 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
       };
 
       // 2. Call balance API + preview-late-letters API (Total Unpaid = total_past_due_amount)
-      final balanceFuture = http.get(
+      final balanceFuture = apiGet(
         Uri.parse('${Api_url}/api/payment/admin_balance/$adminId'),
         headers: headers,
       );
-      final lateLettersFuture = http.get(
+      final lateLettersFuture = apiGet(
         Uri.parse('${Api_url}/api/leases/preview-late-letters/$adminId'),
         headers: headers,
       );

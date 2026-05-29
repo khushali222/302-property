@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../Model/Comunication_model/Send_email_table.dart';
 import '../../../constant/constant.dart';
@@ -18,7 +19,7 @@ class SendemailRepository {
     String? id = prefs.getString("adminId");
     String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl/$id?page=$page&limit=$limit'),
       headers: {
         "authorization": "CRM $token",
@@ -77,7 +78,7 @@ class SendemailRepository {
     String? token = prefs.getString('token');
     String?  adminid = prefs.getString('adminId');
     String? staffid = prefs.getString("staff_id");
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
         Uri.parse('$apiUrl/$email_id'),
         headers: <String, String>{
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Model/Dashbord_table/lease_expiring_table.dart';
 import '../../constant/constant.dart';
@@ -20,7 +21,7 @@ class LeaseExpiryService {
         '$Api_url/api/leases/expiring_leases/$adminId?page=$page&limit=$limit&sort=$sort&days=$days');
 
     try {
-      final response = await http.get(url, headers: {
+      final response = await apiGet(url, headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffId",
       });
@@ -52,7 +53,7 @@ class LeaseExpiryService {
         '$Api_url/api/leases/expired_leases/$adminId?page=$page&limit=$limit&sort=$sort&days=$days');
 
     try {
-      final response = await http.get(url, headers: {
+      final response = await apiGet(url, headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffId",
       });

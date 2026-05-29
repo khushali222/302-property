@@ -15,6 +15,7 @@ import 'package:lottie/lottie.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -111,7 +112,7 @@ class _applicant_summeryState extends State<applicant_summery>
     });
 
     try {
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/applicant/applicant/$applicantId/status'),
         headers: {
           'Content-Type': 'application/json',
@@ -971,7 +972,7 @@ class _applicant_summeryState extends State<applicant_summery>
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
       headers: <String, String>{
         "id": "CRM $id",
@@ -997,7 +998,7 @@ class _applicant_summeryState extends State<applicant_summery>
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     var checkvalue = {"applicant_checklist": applicant};
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(
           '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
       headers: <String, String>{

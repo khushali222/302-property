@@ -6,6 +6,7 @@ import '../../Model/Comunication_model/email_logtable.dart';
 import '../../constant/constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class EmailLogRepository {
   final String apiUrl = '${Api_url}/api/email-logs/logs';
 
@@ -17,7 +18,7 @@ class EmailLogRepository {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$apiUrl/$id?page=$page&limit=$limit'),
         headers: {
           "authorization": "CRM $token",

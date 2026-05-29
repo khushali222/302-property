@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -22,7 +23,7 @@ class UnitData {
     print(url);
 
     try {
-      final response = await http.get(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
       print("check for data of applience ${response.body}");
       print("check for url ${url}");
       print(["data"].first.length);
@@ -44,7 +45,7 @@ class UnitData {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final response = await http.get(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body)["data"];
@@ -58,7 +59,7 @@ class UnitData {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('${baseUrl}appliance/appliance_details/$applienceid'),
+    final response = await apiGet(Uri.parse('${baseUrl}appliance/appliance_details/$applienceid'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
     if (response.statusCode == 200) {

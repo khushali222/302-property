@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,7 +95,7 @@ class _MortgageTableState extends State<MortgageTable> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/'),
         headers: {
           'Content-Type': 'application/json',

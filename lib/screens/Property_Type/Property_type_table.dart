@@ -798,7 +798,7 @@ class _PropertyTableState extends State<PropertyTable> {
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         // Search and Filter Section - Original Design
         Padding(
           padding: EdgeInsets.only(

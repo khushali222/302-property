@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -98,7 +99,7 @@ class _SummaryContentState extends State<SummaryContent> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -1031,7 +1032,7 @@ class _SummaryContentState extends State<SummaryContent> {
     };
     // print(checkvalue);
 
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
       headers: <String, String>{
         "id": "CRM $id",
@@ -1058,7 +1059,7 @@ class _SummaryContentState extends State<SummaryContent> {
     String? token = prefs.getString('token');
     var checkvalue = {"applicant_checklist": applicant};
     print(applicant);
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(
           '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
       headers: <String, String>{

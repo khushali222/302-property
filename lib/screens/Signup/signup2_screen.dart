@@ -10,6 +10,7 @@ import '../Dashboard/dashboard_one.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../widgets/dialogbox.dart';
 import '../Login/login_screen.dart';
@@ -962,7 +963,7 @@ class _Signup2State extends State<Signup2> {
     });
 
     final response =
-        await http.post(Uri.parse('${Api_url}/api/admin/register'), body: {
+        await apiPost(Uri.parse('${Api_url}/api/admin/register'), body: {
       "email": email.text.trim(),
       "password": password.text.trim(),
       "first_name": firstname.text.trim(),

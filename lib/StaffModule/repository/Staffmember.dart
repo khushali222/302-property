@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/screens/Staff_Member/Edit_staff_member.dart';
 
@@ -30,7 +31,7 @@ class StaffMemberRepository {
     String? token = prefs.getString('token');
 
     String?  adminid = prefs.getString('adminId');
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -54,7 +55,7 @@ class StaffMemberRepository {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
-    final response = await http.get(Uri.parse('$apiUrl/$id'),
+    final response = await apiGet(Uri.parse('$apiUrl/$id'),
       headers: {"authorization" : "CRM $token","id":"CRM $staffid",},
     );
     if (response.statusCode == 200) {
@@ -91,7 +92,7 @@ class StaffMemberRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -118,7 +119,7 @@ class StaffMemberRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  adminid = prefs.getString('adminId');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization" : "CRM $token",

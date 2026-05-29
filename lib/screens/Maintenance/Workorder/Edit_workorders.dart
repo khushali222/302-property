@@ -28,6 +28,7 @@ import '../../../widgets/appbar.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../Rental/Tenants/add_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -523,7 +524,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       _isLoadingstaff = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
@@ -560,7 +561,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       _isLoadingtenant = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
@@ -925,7 +926,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 
@@ -3928,7 +3929,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       _isLoadingstaff = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
@@ -3966,7 +3967,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       _isLoadingtenant = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
@@ -4329,7 +4330,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 

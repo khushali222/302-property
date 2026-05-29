@@ -15,6 +15,7 @@ import '../../repository/Staffmember.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class Edit_staff_member extends StatefulWidget {
   Staffmembers? staff;
@@ -92,7 +93,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/staffmember/staff/member/${widget.staff?.staffmemberId}'),
+    final response = await apiGet(Uri.parse('$Api_url/api/staffmember/staff/member/${widget.staff?.staffmemberId}'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},
     );
     print('reponse ${response.body}');

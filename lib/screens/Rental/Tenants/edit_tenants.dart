@@ -3,6 +3,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -319,7 +320,7 @@ class _EditTenantsState extends State<EditTenants> {
     String? token = prefs.getString('token');
 
     // get_tenant returns allow_ach, allow_card, enable_override_fee, override_fee in data object
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/tenant/get_tenant/$tenantId'),
       headers: {
         "authorization": "CRM $token",

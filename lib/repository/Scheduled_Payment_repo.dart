@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant/constant.dart';
@@ -40,7 +41,7 @@ class Scheduled_Payment_repo {
     String? adminid = prefs.getString('adminId');
     String? companyName = prefs.getString('companyName');
     final http.Response response =
-        await http.delete(Uri.parse('$apiUrl?company_name=$companyName'),
+        await apiDelete(Uri.parse('$apiUrl?company_name=$companyName'),
             headers: <String, String>{
               "authorization": "CRM $token",
               "id": "CRM $adminid",

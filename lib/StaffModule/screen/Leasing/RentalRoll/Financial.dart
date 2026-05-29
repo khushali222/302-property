@@ -38,6 +38,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'addcard/AddCard.dart';
 import 'enterCharge.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
 
 class FinancialTable extends StatefulWidget {
@@ -455,7 +456,7 @@ class _FinancialTableState extends State<FinancialTable> {
       String? sid = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       // Perform the POST request
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
@@ -718,7 +719,7 @@ class _FinancialTableState extends State<FinancialTable> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '$Api_url/api/tenant/payment_settings/${widget.tenantId}/${widget.leaseId}'),
         headers: {

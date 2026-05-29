@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -157,7 +158,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       }
 
       // Download the file with authentication headers
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/lease-document/download-document/$documentId'),
         headers: {
           'authorization': 'CRM $token',
@@ -346,7 +347,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         return;
       }
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/lease-document/signature-tracking/${widget.leaseId}'),
         headers: {
           "authorization": "CRM $token",
@@ -550,7 +551,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       String? token = prefs.getString('token');
       String? adminid = prefs.getString('adminId');
       String? id = prefs.getString("staff_id");
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -1353,7 +1354,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('$Api_url/api/lease-document/get-documents/$leaseid'),
           headers: {
             "authorization": "CRM $token",

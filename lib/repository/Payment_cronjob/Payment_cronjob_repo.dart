@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +29,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('$apiUrl/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -87,7 +88,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/payment/payment_retry/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -148,7 +149,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/payment/payment_reschedule/$paymentid'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -202,7 +203,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/nmipayment/void-payment/$pay_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -255,7 +256,7 @@ class PaymentCronjobRepository {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/payment/payment/$paymentId'),
         headers: {
           "authorization": "CRM $token",
@@ -342,7 +343,7 @@ class PaymentCronjobRepository {
       commonData["billing_id"] = billingId;
     }
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrll),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -372,7 +373,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/payment/payment_bulk_retry'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -404,7 +405,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/payment/payment_bulk_reschedule'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -436,7 +437,7 @@ class PaymentCronjobRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/payment/payment_bulk_acknowledge'),
       headers: <String, String>{
         "authorization": "CRM $token",

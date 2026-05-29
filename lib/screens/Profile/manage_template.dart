@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Model/manage_template_model.dart';
 import '../../constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class manage_templates extends StatefulWidget {
   const manage_templates({super.key});
 
@@ -117,7 +118,7 @@ class _manage_templatesState extends State<manage_templates> {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
    // try {
-      final response = await http.get(Uri.parse("$Api_url/api/templates/settings/$id"), headers: {
+      final response = await apiGet(Uri.parse("$Api_url/api/templates/settings/$id"), headers: {
       "authorization" : "CRM $token",
       "id":"CRM $id",
       },);
@@ -420,7 +421,7 @@ class _manage_templatesState extends State<manage_templates> {
       if (templateId != null && templateId.isNotEmpty) {
         final url = Uri.parse('$Api_url/api/templates/settings/$templateId');
 
-        final response = await http.put(
+        final response = await apiPut(
           url,
           headers: {
             'authorization': 'CRM $token',
@@ -461,7 +462,7 @@ class _manage_templatesState extends State<manage_templates> {
 
     final url = Uri.parse('$Api_url/api/mail_preferences');
 
-    final response = await http.put(
+    final response = await apiPut(
       url,
       headers: {
         'authorization': 'CRM $token',

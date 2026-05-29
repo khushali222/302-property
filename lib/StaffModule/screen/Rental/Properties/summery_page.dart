@@ -44,6 +44,7 @@ import '../../../../provider/properties_workorders.dart';
 import '../../../repository/properties.dart';
 import '../../../repository/properties_summery.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../repository/unit_data.dart';
 import 'Additional Stats/Additional_Stats_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/Maintenance/maintenance_table.dart';
@@ -225,7 +226,7 @@ class _Summery_pageState extends State<Summery_page>
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     print("Rental ID ${rentalId}");
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$Api_url/api/rentals/rental_summary/$rentalId'),
         headers: {
           "authorization": "CRM $token",
@@ -353,7 +354,7 @@ class _Summery_pageState extends State<Summery_page>
       String? token = prefs.getString('token');
       String? staffid = prefs.getString("staff_id");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/taxes/${widget.properties.rentalId}'),
         headers: {
           'Content-Type': 'application/json',
@@ -380,7 +381,7 @@ class _Summery_pageState extends State<Summery_page>
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? staffid = prefs.getString("staff_id");
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/mortgage/${widget.properties.rentalId}/financial-summary'),
         headers: {
@@ -1233,7 +1234,7 @@ class _Summery_pageState extends State<Summery_page>
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print('response in upload image ${responseData.body}');
     print('response in upload image ${responseData.statusCode}');
@@ -1266,7 +1267,7 @@ class _Summery_pageState extends State<Summery_page>
           '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
 
       // Send the PUT request to update the rental image to empty (or null) on the server
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(apiUrl),
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -1329,7 +1330,7 @@ class _Summery_pageState extends State<Summery_page>
       String? token = prefs.getString('token');
       final String apiUrl =
           '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(apiUrl),
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -1370,7 +1371,7 @@ class _Summery_pageState extends State<Summery_page>
           '${Api_url}/api/rentals/proparty_image/${widget.properties.rentalId}';
 
       // Send the PUT request to update the rental image to empty (or null) on the server
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(apiUrl),
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -5761,7 +5762,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         : _convertToApiFormat(
                                                             purchaseDateController
                                                                 .text);
-                                                final response = await http.put(
+                                                final response = await apiPut(
                                                   Uri.parse(
                                                       '${Api_url}/api/rentals/rental/${widget.properties.rentalId}/purchase_info'),
                                                   headers: {
@@ -20840,7 +20841,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",

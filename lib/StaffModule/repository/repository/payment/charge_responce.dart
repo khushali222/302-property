@@ -5,6 +5,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import '../../../model/payments/fetch_payment_table.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class ChargeRepositorys {
 
   // Future<List<ChargeResponses>> fetchChargesTable(String leaseId, String tenantId) async {
@@ -12,7 +13,7 @@ class ChargeRepositorys {
   //  // adminId = prefs.getString("adminId");
   //   String?  id = prefs.getString('adminId');
   //   String? token = prefs.getString('token');
-  //   final response = await http.get(Uri.parse('$Api_url/api/charge/charges/$leaseId/$tenantId'),
+  //   final response = await apiGet(Uri.parse('$Api_url/api/charge/charges/$leaseId/$tenantId'),
   //     headers: {"authorization" : "CRM $token","id":"CRM $id",},);
   //   print('charge ${response.body}');
   //   print('$Api_url/api/charge/charges/$leaseId/$tenantId');
@@ -33,7 +34,7 @@ class ChargeRepositorys {
       String? token = prefs.getString('token');
       print(tenantId);
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/charge/charges/$leaseId/$tenantId'),
         headers: {
           "authorization": "CRM $token",

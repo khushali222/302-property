@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentPastDueModel.dart';
 
@@ -15,7 +16,7 @@ class AdminBalanceRepository {
   //
   //   print('Fetching Admin Balance from: $url');
   //   try {
-  //     final response = await http.get(
+  //     final response = await apiGet(
   //       Uri.parse(url),
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -55,7 +56,7 @@ class AdminBalanceRepository {
   //
   //   print('Fetching Admin Balance from: $url');
   //   try {
-  //     final response = await http.get(
+  //     final response = await apiGet(
   //       Uri.parse(url),
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ class AdminBalanceRepository {
 
     print('Fetching Admin Balance from: $url');
     try {
-      final response = await http.get(
+      final response = await apiGet(
         uri,
         headers: {
           "authorization": "CRM $token",

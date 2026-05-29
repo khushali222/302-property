@@ -9,6 +9,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -83,7 +84,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       // Use property-specific API endpoint
       print('Loading tax for property ID: ${widget.propertyId}');
       print('API URL: ${Api_url}/api/taxes/${widget.propertyId}');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/taxes/${widget.propertyId}'),
         headers: {
           'Content-Type': 'application/json',

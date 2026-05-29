@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -19,7 +20,7 @@ class VendorRepository {
     final url = Uri.parse('$Api_url/api/vendor/vendor');
     print("$Api_url/api/vendor/vendor");
     print(vendor.toJson());
-    final response = await http.post(
+    final response = await apiPost(
       url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",},
 
@@ -41,7 +42,7 @@ class VendorRepository {
     print("CRM $token");
     print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/vendors/$id');
-    final response = await http.get(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body)["data"];
@@ -59,7 +60,7 @@ class VendorRepository {
     print("CRM $token");
     print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/get_vendor/$vender_id');
-    final response = await http.get(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
     if (response.statusCode == 200) {
       final Map<String,dynamic> data = jsonDecode(response.body)["data"];
@@ -76,7 +77,7 @@ class VendorRepository {
     final url = Uri.parse('$Api_url/api/vendor/update_vendor/${vender_id}');
     print('$Api_url/api/vendor/update_vendor/${vender_id}');
     print(vendor.toJson());
-    final response = await http.put(
+    final response = await apiPut(
       url,
       headers: {"authorization" : "CRM $token","id":"CRM $id",},
 
@@ -99,7 +100,7 @@ class VendorRepository {
     String? token = prefs.getString('token');
     print('$Api_url/api/vendor/update_vendor/${vender_id}');
 
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$Api_url/api/vendor/delete_vendor/${vender_id}'),
         headers: {"authorization" : "CRM $token","id":"CRM $id",},
         body: jsonEncode({"reason":reason})

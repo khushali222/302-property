@@ -35,6 +35,7 @@ import '../RentalRoll/SummeryPageLease.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class ScheduledChargeTable extends StatefulWidget {
   String? leaseID;
@@ -364,7 +365,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     print(token);
     //   print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
       headers: {
         "authorization": "CRM $token",

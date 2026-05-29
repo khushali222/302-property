@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
@@ -60,7 +61,7 @@ class LoginProvider with ChangeNotifier {
   Future<void> submitEmail() async {
     print("Calling");
     // Make API call to check email
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('http://192.168.1.22:4000/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': _email}),
@@ -232,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     print("Calling  ${email.text}");
     // Make API call to check email
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('http://192.168.1.22:4000/api/admin/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
@@ -923,7 +924,7 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/token_check_api'),
       headers: {
         // "authorization": "CRM $token",
@@ -993,7 +994,7 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/staffmember/token_check'),
       headers: {
         // "authorization": "CRM $token",
@@ -1034,7 +1035,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
     // String rolename  =selectedroledata.first["role_name"];
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/tenant/token_check'),
       headers: {
         // "authorization": "CRM $token",
@@ -1072,7 +1073,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
     // String rolename  =selectedroledata.first["role_name"];
     // print('${Api_url}/api/${rolename.toLowerCase()}/token_check');
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/vendor/token_check'),
       headers: {
         // "authorization": "CRM $token",
@@ -1120,7 +1121,7 @@ class _LoginScreenState extends State<LoginScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
     print("${ Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/admin/check_company/${token}'),
       headers: {
         // "authorization": "CRM $token",
@@ -1165,7 +1166,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     print("${Api_url}/api/${rolename.toLowerCase()}/login");
    // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
-    final response = await http.post(Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
+    final response = await apiPost(Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
         body: {"email": email.text, "password": password.text,"admin_id":adminId,"company":selectedCompany});
     print(response.body);
     final jsonData = json.decode(response.body);
@@ -1223,7 +1224,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       loading = true;
     });
-    final response = await http.post(Uri.parse('${Api_url}/api/admin/login'),
+    final response = await apiPost(Uri.parse('${Api_url}/api/admin/login'),
         body: {"email": email.text,"password": password.text});
     print(response.body);
     final jsonData = json.decode(response.body);

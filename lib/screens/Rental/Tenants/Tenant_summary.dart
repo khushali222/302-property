@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/repository/lease_rental_insurance_repo.d
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/repository/AdminTenantInsuranceService/adminTenantinsuranceService.dart';
@@ -93,7 +94,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String url = '$Api_url/api/tenant/tenant_details/${widget.tenantId}';
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(url),
       headers: {
         "authorization": "CRM $token",
@@ -4144,7 +4145,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     String? token = prefs.getString('token');
 
     String url = '$Api_url/api/tenant/tenant_details/${widget.tenantId}';
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(url),
       headers: {
         "authorization": "CRM $token",

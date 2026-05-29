@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 import 'package:uuid/uuid.dart';
@@ -102,7 +103,7 @@ class PaymentService {
       };
       log(paymentDetails.toString());
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -209,7 +210,7 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -361,7 +362,7 @@ class PaymentService {
       }
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -461,7 +462,7 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -597,7 +598,7 @@ class PaymentService {
       };
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -688,7 +689,7 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -782,7 +783,7 @@ class PaymentService {
   //   print("Payment Details: $paymentDetails");
   //
   //   try {
-  //     final response = await http.post(
+  //     final response = await apiPost(
   //       Uri.parse(baseUrl),
   //       headers: {
   //         "authorization": "CRM $token",

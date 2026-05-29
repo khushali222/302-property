@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -11,7 +12,7 @@ class SubscriptionService {
     String? superadmin_id = prefs.getString('superadminId');
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/custom-delete-subscription'),
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +37,7 @@ class SubscriptionService {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('$Api_url/api/purchase/purchase/$purchaseId'),
         headers: {
           'Content-Type': 'application/json',

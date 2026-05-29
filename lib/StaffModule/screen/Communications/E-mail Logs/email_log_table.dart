@@ -24,6 +24,7 @@ import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class Email_log_tablee extends StatefulWidget {
   @override
@@ -505,7 +506,7 @@ class _Email_log_tableeState extends State<Email_log_tablee> {
                               );
 
                               // Call resend API endpoint
-                              final response = await http.post(
+                              final response = await apiPost(
                                 Uri.parse(
                                     '$Api_url/api/email-logs/resend-email'),
                                 headers: {

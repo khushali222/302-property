@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../Model/bid_request.dart';
@@ -37,7 +38,7 @@ class VendorBidRepository {
 
       print('Fetching vendor bid requests from: $url');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: <String, String>{
           "authorization": "CRM $token",

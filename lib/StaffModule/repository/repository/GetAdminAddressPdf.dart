@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class GetAddressAdminPdfService {
   final String apiUrl = "${Api_url}/api/admin/admin_profile/";
@@ -13,7 +14,7 @@ class GetAddressAdminPdfService {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl$id'),
       headers: {
         "authorization": "CRM $token",

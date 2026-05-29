@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -124,7 +125,7 @@ class _AddCardState extends State<AddCard> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final idHeader = _crmHeaderId(prefs);
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
       headers: {
         "authorization": "CRM $token",
@@ -157,7 +158,7 @@ class _AddCardState extends State<AddCard> {
     String? token = prefs.getString('token');
     print("token $token");
     print("Admin $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -238,7 +239,7 @@ class _AddCardState extends State<AddCard> {
     final String apiUrl = '${Api_url}/api/admin/admin_profile/$adminId';
 
     try {
-      final http.Response response = await http.get(
+      final http.Response response = await apiGet(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
@@ -275,7 +276,7 @@ class _AddCardState extends State<AddCard> {
       cardDetails = []; // Clear previous card details
     });
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -320,7 +321,7 @@ class _AddCardState extends State<AddCard> {
   Future<String> binCheck(String ccBin) async {
     final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
@@ -351,7 +352,7 @@ class _AddCardState extends State<AddCard> {
       "admin_id": adminId.toString(),
     };
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',

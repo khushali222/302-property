@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../constant/constant.dart';
@@ -96,7 +97,7 @@ class _Utilities_tableState extends State<Utilities_table> {
         throw Exception('Admin ID, Staff ID or token not found');
       }
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '$Api_url/api/utilities/rental/${widget.rentalId}?admin_id=$adminId'),
         headers: {
@@ -906,7 +907,7 @@ class _Utilities_tableState extends State<Utilities_table> {
 
       final Uri uri = Uri.parse('$Api_url/api/utilities/$utilityId');
 
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",

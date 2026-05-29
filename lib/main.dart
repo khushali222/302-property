@@ -17,6 +17,8 @@ import 'package:three_zero_two_property/provider/properties_workorders.dart';
 import 'package:three_zero_two_property/provider/property_summery.dart';
 import 'package:three_zero_two_property/repository/properties_summery.dart';
 import 'package:three_zero_two_property/screens/Splash_Screen/splash_screen.dart';
+import 'package:three_zero_two_property/services/api_client.dart';
+import 'package:three_zero_two_property/services/app_headers.dart';
 import 'StaffModule/repository/staffpermission_provider.dart';
 import 'TenantsModule/repository/permission_provider.dart';
 import 'VendorModule/repository/vendor_permission.dart';
@@ -91,8 +93,9 @@ import 'provider/notification_provider.dart';
 // }
 
 void main() {
-  runZonedGuarded(() {
+  runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await AppHeaders.init();
     timeago.setLocaleMessages('en_custom', CustomTimeAgo());
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -163,6 +166,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      navigatorKey: ApiClient.navigatorKey,
       theme: ThemeData(
         fontFamily: "Poppins",
         iconTheme: IconThemeData(color: blueColor),

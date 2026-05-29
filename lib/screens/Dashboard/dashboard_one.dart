@@ -32,6 +32,7 @@ import 'package:three_zero_two_property/widgets/pie_chart.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../../provider/NetworkProvider.dart';
 import '../../widgets/custom_drawer.dart';
@@ -239,7 +240,7 @@ class _DashboardState extends State<Dashboard> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/occupied_properties/$id'),
         headers: {
           "authorization": "CRM $token",

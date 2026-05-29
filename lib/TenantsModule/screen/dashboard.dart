@@ -19,6 +19,7 @@ import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart
 import '../../provider/dateProvider.dart';
 import '../repository/permission_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import 'financial/financial_table.dart';
 
@@ -161,7 +162,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       String? token = prefs.getString('token');
       print(id);
       print(token);
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
           headers: {
             "id": "CRM $id",
@@ -212,7 +213,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     print(admin_id);
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('${Api_url}/api/tenant/dashboard_workorder/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -249,7 +250,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString('token');
 
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/tenant/upcoming-tenant-payment/$lease_id'),
           headers: {
             "authorization": "CRM $token",
@@ -276,7 +277,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString('token');
 
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/tenant/tenant-recent-payments/$id'),
           headers: {
             "authorization": "CRM $token",

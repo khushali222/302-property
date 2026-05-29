@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/propertytype.dart';
@@ -24,7 +25,7 @@ class PropertyTypeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
      String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-     final http.Response response = await http.post(
+     final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -50,7 +51,7 @@ class PropertyTypeRepository {
      String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
 
-    final response = await http.get(Uri.parse('${Api_url}/api/propertytype/property_type/$id'),
+    final response = await apiGet(Uri.parse('${Api_url}/api/propertytype/property_type/$id'),
         headers: {
           "authorization": "CRM $token",
           "id":"CRM $id",
@@ -85,7 +86,7 @@ class PropertyTypeRepository {
      String? token = prefs.getString('token');
     String?  adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -114,7 +115,7 @@ class PropertyTypeRepository {
      String? token = prefs.getString('token');
     String?  adminid = prefs.getString('adminId');
 
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$apiUrl/$pro_id'),
       headers: <String, String>{
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/TenantsModule/model/lease_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -13,7 +14,7 @@ class TenantleaseRepository {
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/tenant/tenantleases/$id'), headers: {
+    final response = await apiGet(Uri.parse('$Api_url/api/tenant/tenantleases/$id'), headers: {
       "id":"CRM $id",
       "authorization": "CRM $token",
       "Content-Type": "application/json"
@@ -28,7 +29,7 @@ class TenantleaseRepository {
   }
 
 /*  Future<tenant_property> fetchTenantPropertyById(String id) async {
-    final response = await http.get(Uri.parse('$baseUrl/tenant_properties/$id'));
+    final response = await apiGet(Uri.parse('$baseUrl/tenant_properties/$id'));
 
     if (response.statusCode == 200) {
       return tenant_property.fromJson(jsonDecode(response.body));
@@ -38,7 +39,7 @@ class TenantleaseRepository {
   }
 
   Future<void> createTenantProperty(tenant_property property) async {
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$baseUrl/tenant_properties'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(property.toJson()),
@@ -50,7 +51,7 @@ class TenantleaseRepository {
   }
 
   Future<void> updateTenantProperty(String id, tenant_property property) async {
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$baseUrl/tenant_properties/$id'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(property.toJson()),
@@ -62,7 +63,7 @@ class TenantleaseRepository {
   }
 
   Future<void> deleteTenantProperty(String id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/tenant_properties/$id'));
+    final response = await apiDelete(Uri.parse('$baseUrl/tenant_properties/$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete tenant property');

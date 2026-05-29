@@ -31,6 +31,7 @@ import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
 import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Rentalowner_table extends StatefulWidget {
@@ -416,7 +417,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",
@@ -554,7 +555,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         // Search Bar - Original Design
         Padding(
           padding: const EdgeInsets.only(left: 0, right: 0),

@@ -29,6 +29,7 @@ import 'package:three_zero_two_property/screens/Property_Type/Edit_property_type
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../../../Model/LeaseLedgerModel.dart';
 import '../../../../../provider/dateProvider.dart';
@@ -359,7 +360,7 @@ class _FinancialTableState extends State<FinancialTable> {
       String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
       // Perform the POST request
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",

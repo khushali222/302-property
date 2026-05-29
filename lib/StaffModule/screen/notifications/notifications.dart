@@ -15,6 +15,7 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../Maintenance/Workorder/Edit_workorders.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
@@ -45,7 +46,7 @@ class _notificationsState extends State<notifications> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/notification/staff/$id'),
       headers: {
         "authorization": "CRM $token",
@@ -101,7 +102,7 @@ class _notificationsState extends State<notifications> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
         headers: {
           "authorization": "CRM $token",
@@ -133,7 +134,7 @@ class _notificationsState extends State<notifications> {
     print("Notification ID: $notificationId");
 
     try {
-      var response = await http.put(
+      var response = await apiPut(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -163,7 +164,7 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/applicant/applicant_details/$applicantId'),
         headers: {
           "id": "CRM $adminId",

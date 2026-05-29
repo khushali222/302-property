@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/model/properties.dart';
 import 'package:three_zero_two_property/model/properties_summery.dart';
 
@@ -22,8 +23,8 @@ import '../screens/Leasing/RentalRoll/addcard/CardModel.dart';
 //     //String? id = prefs.getString("rentalid");
 //     print(id);
 //
-//    // final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental_summary/$id'));
-//     final response = await http.get(Uri.parse('${Api_url}/api/api/tenant/rental_tenant/$id'));
+//    // final response = await apiGet(Uri.parse('${Api_url}/api/rentals/rental_summary/$id'));
+//     final response = await apiGet(Uri.parse('${Api_url}/api/api/tenant/rental_tenant/$id'));
 //     print(response.body);
 //     if (response.statusCode == 200) {
 //       List jsonResponse = json.decode(response.body)['data'];
@@ -44,7 +45,7 @@ class Properies_summery_Repo {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(id);
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
       headers: {
         "authorization": "CRM $token",
@@ -88,7 +89,7 @@ class Properies_summery_Repo {
 
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/unit/unit'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -115,7 +116,7 @@ class Properies_summery_Repo {
     String? id = prefs.getString('adminId');
     print(id);
     print("obj");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
       headers: {
         "authorization": "CRM $token",
@@ -183,7 +184,7 @@ class Properies_summery_Repo {
 
     print('Sending form data: ${json.encode(formData)}');
 
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/appliance/appliance'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -255,7 +256,7 @@ class Properies_summery_Repo {
 
     print('Sending form data for edit: ${json.encode(formData)}');
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -308,7 +309,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -338,7 +339,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('${Api_url}/api/appliance/appliance/$appliance_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -363,7 +364,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -384,7 +385,7 @@ class Properies_summery_Repo {
 
   // Future<Rentals> fetchrentalDetails(String rentalId) async {
   //
-  //   final response = await http.get(Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'));
+  //   final response = await apiGet(Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'));
   //
   //   print(response.body);
   //   print(rentalId);
@@ -407,7 +408,7 @@ class Properies_summery_Repo {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
         headers: {
           "authorization": "CRM $token",
@@ -440,7 +441,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/rentals/rental/$rentalId/property_values'),
       headers: {
         "authorization": "CRM $token",
@@ -478,7 +479,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
@@ -514,7 +515,7 @@ class Properies_summery_Repo {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.delete(
+    final response = await apiDelete(
       Uri.parse(
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
@@ -541,7 +542,7 @@ class Properies_summery_Repo {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(id);
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/leases/leases/$id/$unitId'),
       headers: {
         "authorization": "CRM $token",
@@ -570,7 +571,7 @@ class Properies_summery_Repo {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(id);
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/leases/revenue/$id/$unitId'),
       headers: {
         "authorization": "CRM $token",
@@ -599,7 +600,7 @@ class Properies_summery_Repo {
     String? token = prefs.getString('token');
 
     // Define the URL and headers for the request
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'),
       headers: {
         'authorization': 'CRM $token',
@@ -627,7 +628,7 @@ class Properies_summery_Repo {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     final http.Response response =
-        await http.post(Uri.parse('${Api_url}/api/recurring-cards/add-cards'),
+        await apiPost(Uri.parse('${Api_url}/api/recurring-cards/add-cards'),
             headers: <String, String>{
               "authorization": "CRM $token",
               "id": "CRM $id",
@@ -647,7 +648,7 @@ class tenant_cards {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -699,7 +700,7 @@ class tenant_cards {
       "admin_id": adminId.toString(),
     };
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
@@ -751,7 +752,7 @@ class tenant_cards {
   Future<String> binCheck(String ccBin) async {
     final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
@@ -776,7 +777,7 @@ class tenant_cards {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/tenant/payment_settings/$tenantId/$leaseId'),
       headers: {
         'Content-Type': 'application/json',
@@ -819,7 +820,7 @@ class tenant_cards {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/recurring-cards/disable-cards/$rentalId'),
       headers: {
         'Content-Type': 'application/json',

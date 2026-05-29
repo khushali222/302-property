@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -23,7 +24,7 @@ class ScheduledChargesRepository {
       }
 
       print(url);
-      final response = await http.get(Uri.parse(url), headers: <String, String>{
+      final response = await apiGet(Uri.parse(url), headers: <String, String>{
         "authorization" : "CRM $token",
         "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
@@ -82,12 +83,12 @@ class ScheduledChargesRepository {
     };
 
     final response = charge_id == null
-        ? await http.put(url, body: json.encode(body), headers: {
+        ? await apiPut(url, body: json.encode(body), headers: {
       "authorization": "CRM $token",
       "id": "CRM $Id",
       "Content-Type": "application/json",
     })
-        : await http.put(url, body: json.encode(body), headers: {
+        : await apiPut(url, body: json.encode(body), headers: {
       "authorization": "CRM $token",
       "id": "CRM $Id",
       "Content-Type": "application/json",
@@ -119,7 +120,7 @@ class ScheduledChargesRepository {
       final Uri uri = Uri.parse('$Api_url/api/charge/scheduled-charges/$noteid?company_name=$company_name');
 
 
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",

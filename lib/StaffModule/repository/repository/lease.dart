@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constant/constant.dart';
 import '../../model/EnterChargeModel.dart';
@@ -18,7 +19,7 @@ class LeaseRepository {
 
   // Future<void> postLease(Lease lease) async {
   //
-  //   final response = await http.post(
+  //   final response = await apiPost(
   //     Uri.parse('${Api_url}/api/leases/leases'),
   //     headers: {'Content-Type': 'application/json'},
   //     body: jsonEncode(lease.toJson()),
@@ -40,7 +41,7 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     try {
-      final response = await http.post(
+      final response = await apiPost(
         url,
         headers: {
           "authorization": "CRM $token",
@@ -96,7 +97,7 @@ class LeaseRepository {
     };
 
     try {
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(url),
         headers: {
           'authorization': 'CRM $token',
@@ -134,7 +135,7 @@ class LeaseRepository {
 
     try {
       print('Entering the try block');
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/leases/leases/${lease.leaseData.leaseId}'),
         headers: {
           "authorization": "CRM $token",
@@ -177,7 +178,7 @@ class LeaseRepository {
   // Future<List<Lease1>> fetchLease(String? adminId) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   adminId = prefs.getString("adminId");
-  //   final response = await http.get(Uri.parse('$Api_url/api/leases/leases/$adminId'));
+  //   final response = await apiGet(Uri.parse('$Api_url/api/leases/leases/$adminId'));
   //   print('$Api_url/api/leases/leases/$adminId');
   //   print(adminId);
   //   print(response.body);
@@ -195,7 +196,7 @@ class LeaseRepository {
     adminId = prefs.getString("adminId");
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/leases/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -229,7 +230,7 @@ class LeaseRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -260,7 +261,7 @@ class LeaseRepository {
     final String apiUrl = '${Api_url}/api/admin/admin_profile/$adminId';
 
     try {
-      final http.Response response = await http.get(
+      final http.Response response = await apiGet(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
@@ -292,7 +293,7 @@ class LeaseRepository {
   //   String?  id = prefs.getString('adminId');
   //   String? token = prefs.getString('token');
   //   final response =
-  //       await http.get(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+  //       await apiGet(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
   //   if (response.statusCode == 200) {
   //     List jsonResponse = json.decode(response.body)['data'];
   //     return jsonResponse.map((data) => LeaseData.fromJson(data)).toList();
@@ -306,7 +307,7 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     // Replace with your actual API call
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {
         "authorization": "CRM $token",
@@ -326,7 +327,7 @@ class LeaseRepository {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? token = prefs.getString('token');
   //   String?  id = prefs.getString('adminId');
-  //   final response = await http.put(
+  //   final response = await apiPut(
   //     Uri.parse('$Api_url/api/leases/leases/${lease.leaseId}'),
   //
   //     headers: {
@@ -364,7 +365,7 @@ class LeaseRepository {
 
     try {
       print('Entering the try block');
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/leases/leases/${lease.leaseData.leaseId}'),
         headers: {
           "authorization": "CRM $token",
@@ -408,7 +409,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
+    final response = await apiGet(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
     print(response.body);
@@ -438,7 +439,7 @@ class LeaseRepository {
     };
 
     try {
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse(url),
         headers: {
           'authorization': 'CRM $token',
@@ -466,7 +467,7 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
     print('$Api_url/api/leases/lease_summary/$leaseId');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {
         "authorization": "CRM $token",
@@ -485,7 +486,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
       headers: {
         "authorization": "CRM $token",
@@ -507,7 +508,7 @@ class LeaseRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/charge/charge'),
       headers: {
         'Content-Type': 'application/json',

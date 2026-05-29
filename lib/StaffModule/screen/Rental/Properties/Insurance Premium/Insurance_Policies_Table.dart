@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -66,7 +67,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       print('Loading insurance policies for property ID: ${widget.propertyId}');
       print('API URL: ${Api_url}/api/property-insurance/${widget.propertyId}');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/property-insurance/${widget.propertyId}'),
         headers: {
           'Content-Type': 'application/json',

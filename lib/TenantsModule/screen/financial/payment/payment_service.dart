@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -73,7 +74,7 @@ class PaymentService {
       };
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -201,7 +202,7 @@ class PaymentService {
       'date': date,
       'scheduleRecurring': scheduledPayment
     }));
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -314,7 +315,7 @@ class PaymentService {
       }
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -432,7 +433,7 @@ class PaymentService {
       'state': 'settling',
       'reference': '',
     };
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -506,7 +507,7 @@ class PaymentService {
         'processor_id': processorId,
       };
       print(paymentDetails);
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -595,7 +596,7 @@ class PaymentService {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",

@@ -25,6 +25,7 @@ import '../../../../constant/constant.dart';
 
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'Tenant_summary.dart';
 import 'edit_tenants.dart';
@@ -635,7 +636,7 @@ class _Tenants_tableState extends State<Tenants_table> {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/tenant/limitation/$adminid'),
       headers: {
         "authorization": "CRM $token",

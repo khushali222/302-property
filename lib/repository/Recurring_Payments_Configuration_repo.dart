@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Recurring_Payments_Configuration_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class Recurring_Payments_Configuration_Services{
 
   Future<Recurring_Payments_Configuration> fetchRecurringPaymentConfiguration()async{
@@ -12,7 +13,7 @@ class Recurring_Payments_Configuration_Services{
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('$Api_url/api/recurring-cards/recurring-payment-configuration/$adminId'),
           headers: {
             "authorization": "CRM $token",

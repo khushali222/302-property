@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 
 class Transaction {
@@ -71,7 +72,7 @@ class DailyTrasactionReport{
     String? staffid = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     // print("${Api_url}/api/payment/todayspayment/$id?selectedDate=$date");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/payment/todayspayment/$id?selectedDate=$date'),
       headers: {
         'Content-Type': 'application/json',

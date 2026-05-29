@@ -16,6 +16,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xls;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -54,7 +55,7 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
       // API Endpoint: GET /taxes/years
       // Example implementation:
       List<int> apiYears = [];
-      final response = await http.get(Uri.parse('${Api_url}/api/taxes/years'));
+      final response = await apiGet(Uri.parse('${Api_url}/api/taxes/years'));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
@@ -98,7 +99,7 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
       String? adminId = prefs.getString('adminId');
       String? token = prefs.getString('token');
       List<int> apiYears = [];
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/rentals/insured-years/$adminId'),
           headers: {
             "authorization": "CRM $token",

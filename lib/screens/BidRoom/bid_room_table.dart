@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -286,7 +287,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
         headers: {
           "authorization": "CRM $token",

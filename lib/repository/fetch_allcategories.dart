@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../Model/All_categories_model.dart';
 import '../constant/constant.dart';
 
@@ -13,7 +14,7 @@ class FetchAllcategories {
     String? staffId = prefs.getString("staff_id");
     String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/settings/allCategories/$adminId'),
       headers: {
         "authorization": "CRM $token",

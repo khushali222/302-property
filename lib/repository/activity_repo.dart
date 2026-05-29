@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -12,7 +13,7 @@ class ActivityRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('$Api_url/api/activity/$id?pageSize=$pageSize&pageNumber=$pageNumber'),
+    final response = await apiGet(Uri.parse('$Api_url/api/activity/$id?pageSize=$pageSize&pageNumber=$pageNumber'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id":"CRM $id",

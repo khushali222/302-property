@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/screens/Signup/signup2_screen.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../constant/constant.dart';
 
@@ -57,7 +58,7 @@ class _SignupState extends State<Signup> {
       loading = true;
     });
     final url = Uri.parse('${Api_url}/api/admin/check_email');
-    final response = await http.post(url, body: {'email': email});
+    final response = await apiPost(url, body: {'email': email});
     print(response.statusCode);
       final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {

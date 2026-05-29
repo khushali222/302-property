@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/PropertyRevenueReportModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -33,7 +34,7 @@ class PropertyRevenueReportService {
 
       print('API URL: $uri');
 
-      final response = await http.get(uri, headers: {
+      final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
         "Content-Type": "application/json",

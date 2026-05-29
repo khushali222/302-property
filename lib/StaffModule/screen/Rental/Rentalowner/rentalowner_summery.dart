@@ -14,6 +14,7 @@ import '../../../model/staffpermission.dart';
 import '../../../repository/staffpermission_provider.dart';
 import '../../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
@@ -103,7 +104,7 @@ class _RentalownersSummeryForMobileState
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(
           '${Api_url}/api/payment/rental_owner/setting/${widget.rentalowners?.rentalownerId}'),
       headers: {

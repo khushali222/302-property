@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
@@ -59,7 +60,7 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
       String? token = prefs.getString('token');
 
       if (adminId != null && token != null) {
-        final response = await http.get(
+        final response = await apiGet(
           Uri.parse('${Api_url}/api/taxes/report/$adminId/$selectedYear'),
           headers: {
             "authorization": "CRM $token",

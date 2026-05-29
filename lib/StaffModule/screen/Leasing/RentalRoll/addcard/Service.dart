@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -25,7 +26,7 @@ class AddCardService {
     final body = jsonEncode(card.toJson());
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/create-customer-vault'),
         headers: headers,
         body: body,
@@ -64,7 +65,7 @@ class AddCardService {
     final body = jsonEncode(card.toJson());
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/create-customer-billing'),
         headers: headers,
         body: body,
@@ -105,7 +106,7 @@ class AddCardService {
     final body = jsonEncode(addCard.toJson());
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/creditcard/addCreditCard'),
         headers: headers,
         body: body,
@@ -146,7 +147,7 @@ class AddCardService {
     };
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/delete-customer-vault'),
         headers: headers,
         body: json.encode(body), // Encode the body to JSON
@@ -184,7 +185,7 @@ class AddCardService {
     };
 
     try {
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('$Api_url/api/creditcard/deleteCardVault/$customerVaultId'),
         headers: headers,
       );
@@ -219,7 +220,7 @@ class AddCardService {
     final body = jsonEncode(model.toJson());
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/delete-customer-billing'),
         headers: headers,
         body: body,
@@ -256,7 +257,7 @@ class AddCardService {
     };
 
     try {
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
         headers: headers,
       );

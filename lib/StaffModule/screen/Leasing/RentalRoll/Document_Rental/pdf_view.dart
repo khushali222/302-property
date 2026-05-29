@@ -3,6 +3,7 @@
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:path_provider/path_provider.dart';
 // import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 // import 'dart:io';
 //
 // import '../../../../widgets/appbar.dart';
@@ -30,7 +31,7 @@
 //
 //   Future<void> _downloadAndSavePdf() async {
 //     try {
-//       final response = await http.get(Uri.parse(widget.pdfUrl));
+//       final response = await apiGet(Uri.parse(widget.pdfUrl));
 //       final directory = await getApplicationDocumentsDirectory();
 //       final file = File("${directory.path}/temp.pdf");
 //       await file.writeAsBytes(response.bodyBytes);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/constant.dart';
 
@@ -25,7 +26,7 @@ class ApplianceNoteService {
 
       print('Request body: ${json.encode(requestBody)}');
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/appliance/add_note'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -64,7 +65,7 @@ class ApplianceNoteService {
         throw Exception('Authentication credentials not found');
       }
 
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('$Api_url/api/appliance/delete_note/$noteId'),
         headers: {
           'authorization': 'CRM $token',
@@ -109,7 +110,7 @@ class ApplianceNoteService {
       };
       print('Request body: ${json.encode(requestBody)}');
 
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/appliance/update_note'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',

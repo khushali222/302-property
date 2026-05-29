@@ -33,6 +33,7 @@ import '../../../widgets/drawer_tiles.dart';
 
 import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Rentalowner_table extends StatefulWidget {
@@ -528,7 +529,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$adminid'),
       headers: {
         "authorization": "CRM $token",

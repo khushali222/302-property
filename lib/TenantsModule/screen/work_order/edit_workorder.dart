@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../constant/constant.dart';
 import '../../../Model/All_categories_model.dart';
@@ -165,7 +166,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {

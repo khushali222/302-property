@@ -15,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -92,7 +93,7 @@ class _Change_passwordState extends State<Change_password> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -1411,7 +1412,7 @@ class _Change_passwordState extends State<Change_password> {
         'password': password.text.trim(),
         "currentPassword": currentpassword.text.trim()
       };
-      final http.Response response = await http.put(
+      final http.Response response = await apiPut(
         Uri.parse('$Api_url/api/staffmember/reset_password/$email'),
         headers: <String, String>{
           "authorization": "CRM $token",

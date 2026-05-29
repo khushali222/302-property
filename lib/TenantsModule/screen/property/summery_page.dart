@@ -11,6 +11,7 @@ import '../../model/sumery_model.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class summery_page extends StatefulWidget {
   final String? lease_id;
@@ -36,7 +37,7 @@ class _summery_pageState extends State<summery_page> {
       String? token = prefs.getString('token');
       final String apiUrl =
           "${Api_url}/api/leases/lease_summary/${widget.lease_id}";
-      final response = await http.get(Uri.parse('$apiUrl'),
+      final response = await apiGet(Uri.parse('$apiUrl'),
           headers: {"authorization": "CRM $token", "id": "CRM $id"});
       final response_Data = jsonDecode(response.body);
       if (response_Data["statusCode"] == 200) {

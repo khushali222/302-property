@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../provider/dateProvider.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -76,7 +77,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
 
       // Use property-specific API endpoint
       print('Loading mortgages for property ID: ${widget.propertyId}');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/${widget.propertyId}'),
         headers: {
           'Content-Type': 'application/json',

@@ -7,6 +7,7 @@ import '../../Model/lease_communication.dart';
 import '../../constant/constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class EmailLogRepository {
   final String apiUrl = '${Api_url}/api/email-logs/emaillogs_lease';
 
@@ -21,7 +22,7 @@ class EmailLogRepository {
       String? ApiUrl = isTenant ? '${Api_url}/api/email-logs/tenant-email/$lease_id?page=$page&limit=$limit' :'$apiUrl/$lease_id?page=$page&limit=$limit';
       print(ApiUrl);
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$ApiUrl'),
         headers: {
           "authorization": "CRM $token",

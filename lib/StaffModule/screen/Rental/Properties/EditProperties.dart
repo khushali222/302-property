@@ -36,6 +36,7 @@ import '../../../repository/properties_summery.dart';
 import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/rental_widget.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../../model/unitsummery_propeties.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/appbar.dart';
@@ -849,7 +850,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // request.files.add(multipartFile);
 
     // Send the request
-    var response = await request.send();
+    var response = await apiSend(request);
     // Parse the response
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);

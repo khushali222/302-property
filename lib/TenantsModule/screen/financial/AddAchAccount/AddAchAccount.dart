@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -101,7 +102,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
       }
       final url = '$Api_url/api/creditcard/getCreditCards/${widget.tenantId}';
       if (kDebugMode) debugPrint('[ACH] GET $url');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           'id': 'CRM $headerId',
@@ -140,7 +141,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
     try {
       final historyUrl = '$Api_url/api/payment/charges_payments/${widget.leaseId}';
       if (kDebugMode) debugPrint('[ACH] GET $historyUrl (vault_id fallback)');
-      final res = await http.get(
+      final res = await apiGet(
         Uri.parse(historyUrl),
         headers: {'id': 'CRM $headerId', 'authorization': 'CRM $token'},
       );
@@ -188,7 +189,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
     String? token = prefs.getString('token');
     if (headerId == null || token == null) return;
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/tenant/tenant_profile/${widget.tenantId}'),
         headers: {
           'authorization': 'CRM $token',
@@ -232,7 +233,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
       }
       final postUrl = '$Api_url/api/nmipayment/get-billing-customer-vault';
       if (kDebugMode) debugPrint('[ACH] POST $postUrl body={"customer_vault_id":"$vaultId","admin_id":"$adminId"}');
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(postUrl),
         headers: {
           'Content-Type': 'application/json',
@@ -343,7 +344,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
       debugPrint('add-tenant-ach body $masked');
     }
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',

@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/custom_history_table.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,7 +62,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/mortgage/details/${widget.mortgageData!['_id']}'),
         headers: {
@@ -1959,7 +1960,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    return http.get(Uri.parse(url), headers: {
+    return apiGet(Uri.parse(url), headers: {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     }).timeout(const Duration(seconds: 30));
@@ -2124,7 +2125,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       String? id = prefs.getString('adminId');
       final mortgageId = mortgageData!['_id'] ?? widget.mortgageData!['_id'];
 
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('${Api_url}/api/mortgage/$mortgageId/documents/$filename'),
         headers: {
           'Content-Type': 'application/json',
@@ -2458,7 +2459,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         print('  file[$i]: ${f.name} | ${f.size} bytes | ${f.path != null ? "path" : "bytes"}');
       }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await apiSend(request);
       final response = await http.Response.fromStream(streamedResponse);
       sw.stop();
 

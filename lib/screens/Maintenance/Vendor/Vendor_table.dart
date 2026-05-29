@@ -18,6 +18,7 @@ import '../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../Model/All_categories_model.dart';
 import '../../../repository/fetch_allcategories.dart';
@@ -755,7 +756,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ],
           ),
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 20),
         //search
         Padding(
           padding: EdgeInsets.symmetric(

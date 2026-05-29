@@ -25,7 +25,9 @@
       "PowerShell(flutter --version)",
       "PowerShell(cmd /c \"flutter analyze > analyze_output.txt 2>&1\"; \"ANALYZE DONE exit=$LASTEXITCODE\")",
       "PowerShell(if \\(Test-Path analyze_output.txt\\) { $c = Get-Content analyze_output.txt; \"lines so far: $\\($c.Count\\)\"; \"--- last 5 ---\"; $c | Select-Object -Last 5 } else { \"no output file yet\" })",
-      "Bash(dart format *)"
+      "Bash(dart format *)",
+      "Bash(flutter --version)",
+      "Bash(echo \"---TEST EXIT: $?---\")"
     ]
   }
 }

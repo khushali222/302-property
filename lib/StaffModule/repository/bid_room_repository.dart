@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
@@ -26,7 +27,7 @@ class StaffBidRoomRepository {
       final url =
           '${Api_url}/api/bid-request/bid-requests/$finalAdminId?limit=$limit&page=$page';
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
@@ -63,7 +64,7 @@ class StaffBidRoomRepository {
 
       final url = '${Api_url}/api/bid-request/bid-request/$bidRequestId';
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",

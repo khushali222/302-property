@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/Model/InsurancePremiumReportModel.dart';
@@ -12,7 +13,7 @@ class InsurancePremiumReportService {
     String? staffId = prefs.getString('staff_id');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/rentals/insurance-premium-years/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -45,7 +46,7 @@ class InsurancePremiumReportService {
     String? staffId = prefs.getString('staff_id');
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/rentals/insurance-premium-report'),
         headers: {
           "authorization": "CRM $token",

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -202,7 +203,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       final url =
           Uri.parse('$Api_url/api/leases/lease_history/${widget.leaseId}');
 
-      final response = await http.get(
+      final response = await apiGet(
         url,
         headers: {
           "authorization": "CRM $token",

@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../Model/categories_model.dart';
 import '../constant/constant.dart';
@@ -23,7 +24,7 @@ class SurchargeRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -54,7 +55,7 @@ class SurchargeRepository {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
     final response =
-        await http.put(Uri.parse('${Api_url}/api/surcharge/surcharge/$adminId'),
+        await apiPut(Uri.parse('${Api_url}/api/surcharge/surcharge/$adminId'),
             headers: {
               "authorization": "CRM $token",
               "id": "CRM $id",
@@ -81,7 +82,7 @@ class SurchargeRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1  staff $id");
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {
         "authorization": "CRM $token",
@@ -110,7 +111,7 @@ class SurchargeRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
       headers: {
         "authorization": "CRM $token",
@@ -141,7 +142,7 @@ class latefeeRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -170,7 +171,7 @@ class latefeeRepository {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
 
     print("id of id 1 $id");
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
       headers: {
         "authorization": "CRM $token",
@@ -201,7 +202,7 @@ class latefeeRepository {
 
     print("$Api_url/api/latefee/latefee");
     print(data);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/latefee/latefee'),
       headers: {
         "authorization": "CRM $token",
@@ -231,7 +232,7 @@ class mailserviceRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$baseUrl/api/mail_permission/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -260,7 +261,7 @@ class mailserviceRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/mail_permission/$adminid'),
       headers: {
         "authorization": "CRM $token",
@@ -287,7 +288,7 @@ class mailserviceRepository {
     print("id of id 1 $id");
     print("$Api_url/api/mail_permission");
     print(data);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/mail_permission'),
       headers: {
         "authorization": "CRM $token",
@@ -314,7 +315,7 @@ class accountRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/accounts/accounts/$adminid'),
       headers: {
         'authorization': 'CRM $token',
@@ -354,7 +355,7 @@ class accountRepository {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
 
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/accounts/accounts'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -398,7 +399,7 @@ class accountRepository {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/accounts/accounts/$accountId'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -430,7 +431,7 @@ class accountRepository {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
 
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -457,7 +458,7 @@ class accountRepository {
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
     print("id of id 1 $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/settings/categories/$adminid'),
       headers: {
         'authorization': 'CRM $token',
@@ -482,7 +483,7 @@ class accountRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
         Uri.parse('${Api_url}/api/settings/categories/$adminid/$categories_id'),
         headers: <String, String>{
           "authorization": "CRM $token",

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -640,7 +641,7 @@ class _Applicants_tableState extends State<Applicants_table>
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/applicant/pending-invites/$id'),
           headers: {"authorization": "CRM $token", "id": "CRM $id"});
       final jsonData = json.decode(response.body);
@@ -666,7 +667,7 @@ class _Applicants_tableState extends State<Applicants_table>
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/applicant/deleted-invites/$id'),
           headers: {"authorization": "CRM $token", "id": "CRM $id"});
       final jsonData = json.decode(response.body);
@@ -695,7 +696,7 @@ class _Applicants_tableState extends State<Applicants_table>
       final String? adminId = prefs.getString('adminId');
       final String? token = prefs.getString('token');
       if (adminId == null || token == null) return;
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/invite'),
         headers: {
           'Content-Type': 'application/json',
@@ -817,7 +818,7 @@ class _Applicants_tableState extends State<Applicants_table>
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString('adminId');
       String? token = prefs.getString('token');
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('$Api_url/api/applicant/pending-invite/$adminId'),
         headers: {
           'Content-Type': 'application/json',
@@ -2782,7 +2783,7 @@ class _Applicants_tableState extends State<Applicants_table>
                 String? adminId = prefs.getString('adminId');
                 String? token = prefs.getString('token');
 
-                final response = await http.post(
+                final response = await apiPost(
                   Uri.parse('$Api_url/api/applicant/invite'),
                   headers: {
                     'Content-Type': 'application/json',

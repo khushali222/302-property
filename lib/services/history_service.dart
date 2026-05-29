@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/history_item_model.dart';
 import '../enums/history_type.dart';
@@ -40,7 +41,7 @@ class HistoryService {
       // print('🔵 EntityId: $entityId');
       // print('🔵 Page: $page, Limit: $limit');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",

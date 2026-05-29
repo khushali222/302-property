@@ -16,6 +16,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
 
 // import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
@@ -3521,7 +3522,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //   String? id = prefs.getString("adminId");
   //   String? token = prefs.getString('token');
   //   var checkvalue = {"applicant_checkedChecklist": applicantChecklist};
-  //   final response = await http.put(
+  //   final response = await apiPut(
   //     Uri.parse('$Api_url/api/applicant/applicant/${widget.applicant_id}'),
   //     headers: <String, String>{
   //       "id": "CRM $id",
@@ -3547,7 +3548,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //   String? id = prefs.getString("adminId");
   //   String? token = prefs.getString('token');
   //   var checkvalue = {"applicant_checklist": applicant};
-  //   final response = await http.put(
+  //   final response = await apiPut(
   //     Uri.parse(
   //         '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
   //     headers: <String, String>{

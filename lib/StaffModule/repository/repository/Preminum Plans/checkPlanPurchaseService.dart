@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Preminum%20Plans/checkPlanPurchaseModel.dart';
@@ -17,7 +18,7 @@ class CheckPlanPurchaseService {
 
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/purchase/plan-purchase/$adminId'),
         headers: headers,
       );

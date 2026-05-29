@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/upcoming_renewal.dart';
 import '../../../constant/constant.dart';
 import '../../../repository/upcoming_renewal_repo.dart';
@@ -1538,7 +1539,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       print(token);
       // print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/leases/update_not_renewing/$leaseid'),
         headers: {
           "authorization": "CRM $token",
@@ -1570,7 +1571,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       print(token);
       // print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('$Api_url/api/leases/undo_renewing/$leaseid'),
         headers: {
           "authorization": "CRM $token",

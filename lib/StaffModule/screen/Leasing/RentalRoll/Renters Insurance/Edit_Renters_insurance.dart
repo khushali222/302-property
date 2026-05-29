@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -160,7 +161,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -300,7 +301,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     String? token = prefs.getString('token');
     print("token $token");
     print("Admin $id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -737,7 +738,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
   //   print(values);
   //   print('entry');
   //
-  //   final http.Response response = await http.post(
+  //   final http.Response response = await apiPost(
   //     Uri.parse(
   //         '$Api_url/api/renter-insurance/add-policy'),
   //     headers: <String, String>{
@@ -793,7 +794,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
 
       print(jsonEncode(values)); // Debugging: Check final JSON format
 
-      final http.Response response = await http.put(
+      final http.Response response = await apiPut(
         Uri.parse(
             '$Api_url/api/renter-insurance/edit-policy/${widget.renters_insurance_id}'),
         headers: <String, String>{

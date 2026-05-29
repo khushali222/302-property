@@ -37,6 +37,7 @@ import '../model/staffpermission.dart';
 import '../repository/staffpermission_provider.dart';
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../../repository/RentPastDue.dart';
 import '../../provider/dateProvider.dart';
@@ -149,7 +150,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       print('DEBUG [Dashboard Staff]: Staff ID: $id');
       print('DEBUG [Dashboard Staff]: Admin ID: $admin_id');
 
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/count/${id!}/${admin_id}'),
           headers: {
             "id": "CRM $id",
@@ -168,7 +169,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         });
         // Rent balance data from admin balance API
         try {
-          final balanceRes = await http.get(
+          final balanceRes = await apiGet(
             Uri.parse('${Api_url}/api/payment/admin_balance/$admin_id'),
             headers: {
               "id": "CRM $id",
@@ -220,7 +221,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rentals/rentals/$adminid'),
       headers: {"authorization": "CRM $token", "id": "CRM $id"},
     );
@@ -355,7 +356,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     print(admin_id);
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/staffmember/dashboard_workorder/$id/$admin_id'),
         headers: {
@@ -393,7 +394,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     String? token = prefs.getString('token');
     print(rentalId);
     // Define the URL and headers for the request
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/work-order/work-orders/$adminid'),
       headers: {
         'authorization': 'CRM $token',

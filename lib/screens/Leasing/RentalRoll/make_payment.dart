@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -150,7 +151,7 @@ class _MakePaymentState extends State<MakePayment> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}'),
         headers: {
@@ -270,7 +271,7 @@ class _MakePaymentState extends State<MakePayment> {
       String? hdrId = prefs.getString('adminId');
       String? adminId = prefs.getString('adminId');
       String? token = prefs.getString('token');
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
         headers: {
           'Content-Type': 'application/json',
@@ -343,7 +344,7 @@ class _MakePaymentState extends State<MakePayment> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString("adminId");
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
         headers: {
           "authorization": "CRM $token",
@@ -442,7 +443,7 @@ class _MakePaymentState extends State<MakePayment> {
     print(token);
     print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -567,7 +568,7 @@ class _MakePaymentState extends State<MakePayment> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -704,7 +705,7 @@ class _MakePaymentState extends State<MakePayment> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
         headers: {
           "authorization": "CRM $token",
@@ -933,7 +934,7 @@ class _MakePaymentState extends State<MakePayment> {
       achAccounts = [];
     });
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -999,7 +1000,7 @@ class _MakePaymentState extends State<MakePayment> {
   Future<String> binCheck(String ccBin) async {
     final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
@@ -1029,7 +1030,7 @@ class _MakePaymentState extends State<MakePayment> {
       "admin_id": adminId.toString(),
     };
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
@@ -1113,7 +1114,7 @@ class _MakePaymentState extends State<MakePayment> {
     String? token = prefs.getString('token');
     print(adminId);
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
       headers: {
         "id": "CRM $adminId",

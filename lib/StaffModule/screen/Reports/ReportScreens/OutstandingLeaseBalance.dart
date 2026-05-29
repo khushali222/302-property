@@ -14,6 +14,7 @@ import '../../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -251,7 +252,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
       String? staffId = prefs.getString('staff_id');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/rentals/rental-owners/$id'),
         headers: {
           "authorization": "CRM $token",

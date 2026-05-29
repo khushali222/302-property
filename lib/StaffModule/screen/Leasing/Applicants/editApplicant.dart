@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,7 @@ class _EditApplicantState extends State<EditApplicant> {
 
   //   try {
   //     final response =
-  //         await http.get(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
+  //         await apiGet(Uri.parse('${Api_url}/api/rentals/rentals/$id'));
   //     print('${Api_url}/api/rentals/rentals/$id');
 
   //     if (response.statusCode == 200) {
@@ -138,7 +139,7 @@ class _EditApplicantState extends State<EditApplicant> {
 
   //   try {
   //     final response =
-  //         await http.get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
+  //         await apiGet(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'));
   //     print('$Api_url/api/unit/rental_unit/$rentalId');
 
   //     if (response.statusCode == 200) {

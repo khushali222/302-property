@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/rental_properties.dart';
 
@@ -42,7 +43,7 @@ class Rental_PropertiesRepository{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -91,7 +92,7 @@ class Rental_PropertiesRepository{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -153,7 +154,7 @@ class Rental_PropertiesRepository{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -195,7 +196,7 @@ class Rental_PropertiesRepository{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -220,7 +221,7 @@ class Rental_PropertiesRepository{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         "authorization" : "CRM $token",

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 import 'package:uuid/uuid.dart';
@@ -95,7 +96,7 @@ class PaymentService {
     //     // 'entry':entries,
     //   };
     //   log(paymentDetails.toString());
-    //   final response = await http.post(
+    //   final response = await apiPost(
     //     Uri.parse(baseUrl),
     //     headers: {
     //       "authorization": "CRM $token",
@@ -217,7 +218,7 @@ class PaymentService {
       'is_web': true,
       'user_active_recently': true,
     };
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -365,7 +366,7 @@ class PaymentService {
       'is_web': true,
       'user_active_recently': true,
     };
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -481,7 +482,7 @@ class PaymentService {
       };
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
@@ -591,7 +592,7 @@ class PaymentService {
       'is_web': true,
       'user_active_recently': true,
     };
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -644,7 +645,7 @@ class PaymentService {
       'is_web': true,
       'user_active_recently': true,
     };
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
@@ -718,7 +719,7 @@ class PaymentService {
 //   print("Payment Details: $paymentDetails");
 //
 //   try {
-//     final response = await http.post(
+//     final response = await apiPost(
 //       Uri.parse(baseUrl),
 //       headers: {
 //         "authorization": "CRM $token",

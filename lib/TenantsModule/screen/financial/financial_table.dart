@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -314,7 +315,7 @@ class _FinancialTableState extends State<FinancialTable> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString('token');
       if (id == null || token == null) return;
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/tenant/get_tenant/$id'),
         headers: {
           'authorization': 'CRM $token',
