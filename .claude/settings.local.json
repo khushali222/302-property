@@ -27,7 +27,15 @@
       "PowerShell(if \\(Test-Path analyze_output.txt\\) { $c = Get-Content analyze_output.txt; \"lines so far: $\\($c.Count\\)\"; \"--- last 5 ---\"; $c | Select-Object -Last 5 } else { \"no output file yet\" })",
       "Bash(dart format *)",
       "Bash(flutter --version)",
-      "Bash(echo \"---TEST EXIT: $?---\")"
+      "Bash(echo \"---TEST EXIT: $?---\")",
+      "Bash(tasklist)",
+      "Bash(echo \"ANALYZE_EXIT:$?\")",
+      "Bash(echo \"TEST_EXIT:$?\")",
+      "Bash(rm -f /tmp/analyze_fresh.txt /tmp/test_fresh.txt)",
+      "Bash(awk '-F - ' '{print $NF}')",
+      "Bash(rm -f /tmp/analyze_302_*.txt && echo \"Temp files cleaned. Repo untouched.\")",
+      "Bash(git -C \".claude/worktrees/keen-meninsky-452d4d\" status --short -- \"lib/StaffModule/screen/Rental/Tenants/Tenants_table.dart\" \"lib/screens/Rental/Tenants/Tenants_table.dart\")",
+      "Bash(git -C \".claude/worktrees/objective-booth-8969db\" status --short -- \"lib/StaffModule/screen/Rental/Tenants/Tenants_table.dart\" \"lib/screens/Rental/Tenants/Tenants_table.dart\")"
     ]
   }
 }
