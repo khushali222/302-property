@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/workorder_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -16,7 +17,7 @@ class WorkOrderRepository {
  //    String? admin_id = prefs.getString("adminId");
  //    String? token = prefs.getString('token');
  //
- //    final response = await http.get(
+ //    final response = await apiGet(
  //      Uri.parse('${Api_url}/api/work-order/vendor_work/$id'),
  //      headers: {
  //        'authorization': 'CRM $token',
@@ -42,7 +43,7 @@ class WorkOrderRepository {
     print('admin_id: $admin_id');
     print('token: $token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/work-order/vendor_work/$id'),
       headers: {
         'authorization': 'CRM $token',
@@ -96,7 +97,7 @@ class WorkOrderRepository {
   //   String? token = prefs.getString('token');
   //
   //   // Sending the request
-  //   final http.Response response = await http.post(
+  //   final http.Response response = await apiPost(
   //     Uri.parse('$Api_url/api/work-order/work-order'),
   //     headers: <String, String>{
   //       "authorization": "CRM $token",
@@ -158,7 +159,7 @@ class WorkOrderRepository {
     print('Request data: $data');
 
     // Sending the request
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('$Api_url/api/work-order/work-order'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -192,7 +193,7 @@ class WorkOrderRepository {
 
     final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
-    final response = await http.get(
+    final response = await apiGet(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",}
     );
@@ -212,7 +213,7 @@ class WorkOrderRepository {
     //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
-    final response = await http.put(
+    final response = await apiPut(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},
         body: jsonEncode({

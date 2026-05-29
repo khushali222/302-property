@@ -9,11 +9,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/widgets/custom_switch.dart';
@@ -127,7 +129,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
     final String apiUrl = "${Api_url}/api/tenant/tenant_profile/$id";
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl'),
       headers: {
         "authorization": "CRM $token",
@@ -188,7 +190,7 @@ class _Profile_screenState extends State<Profile_screen> {
       _isLoading = true;
     });
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/2fa/2fa-status/${id}?user_type=tenant'),
       headers: {
         "authorization": "CRM $token",
@@ -252,7 +254,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? token = prefs.getString("token");
     String? userid = prefs.getString("userId");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(
           '${Api_url}/api/backup-codes/backup-codes/${userid}?user_type=tenant'),
       headers: {
@@ -291,7 +293,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/enable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -352,7 +354,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/verify-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -428,7 +430,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/send-disable-2fa-code'),
         headers: {
           "authorization": "CRM $token",
@@ -491,7 +493,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/disable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -558,7 +560,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(
             '${Api_url}/api/backup-codes/send-regenerate-backup-codes-code'),
         headers: {
@@ -616,7 +618,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? token = prefs.getString("token");
       String? userid = prefs.getString("userId");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/backup-codes/generate-backup-codes'),
         headers: {
           "authorization": "CRM $token",
@@ -888,7 +890,7 @@ class _Profile_screenState extends State<Profile_screen> {
           key.currentState!.openDrawer();
         },
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF2F4F8),
       drawer: CustomDrawer(
         currentpage: 'Profile',
       ),
@@ -1656,10 +1658,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 Text(
                                                   "Two-Factor Authentication (2FA)",
                                                   style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.grey[800],
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                                 CustomSwitch(
@@ -2479,11 +2480,6 @@ class _Profile_screenState extends State<Profile_screen> {
                             return Container(
                               margin: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 10),
-                              decoration: BoxDecoration(
-                                //   color: Colors.white,
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2494,11 +2490,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                   //       0.91,
                                   // ),
 
-                                  // Single White Card with Profile and 2FA - matching image exactly
+                                  // Profile Card
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 3.0),
                                     child: Container(
+                                      width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(12),
@@ -2513,29 +2510,47 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(10.0),
+                                        child: ProfileCard(
+                                          profiledata: {
+                                            'tenant_firstName':
+                                                '${profiledata['tenant_firstName']}',
+                                            'tenant_lastName':
+                                                '${profiledata['tenant_lastName']}',
+                                            'tenant_phoneNumber':
+                                                '${profiledata['tenant_phoneNumber']}',
+                                            'tenant_email':
+                                                '${profiledata['tenant_email']}',
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // 2FA Card
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3.0),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
                                         child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            // Avatar and Name Section
-                                            ProfileCard(
-                                              profiledata: {
-                                                'tenant_firstName':
-                                                    '${profiledata['tenant_firstName']}',
-                                                'tenant_lastName':
-                                                    '${profiledata['tenant_lastName']}',
-                                                'tenant_phoneNumber':
-                                                    '${profiledata['tenant_phoneNumber']}',
-                                                'tenant_email':
-                                                    '${profiledata['tenant_email']}',
-                                              },
-                                            ),
-                                            const SizedBox(height: 20),
-                                            // Divider
-                                            Container(
-                                              height: 1,
-                                              color: Colors.grey[300],
-                                            ),
-                                            const SizedBox(height: 20),
-                                            // 2FA Section - integrated in same card
+                                            // 2FA Section
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -2544,10 +2559,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 Text(
                                                   "Two-Factor Authentication (2FA)",
                                                   style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    color: Colors.grey[800],
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
                                                   ),
                                                 ),
                                                 CustomSwitch(
@@ -3648,88 +3662,114 @@ class _Profile_screenState extends State<Profile_screen> {
                                   ),
                                   const SizedBox(height: 20),
                                   if (leaseData.isNotEmpty) ...[
-                                    // Modern Lease Details Section
+                                    // Lease Details Card
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Lease Details',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: blueColor,
+                                          horizontal: 3.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                              spreadRadius: 1,
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 2),
                                             ),
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20.0),
+                                                child: Text(
+                                                  'Lease Details',
+                                                  style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              // Padding(
+                                              //   padding: const EdgeInsets.symmetric(
+                                              //       horizontal: 20.0),
+                                              //   child: Card(
+                                              //     elevation: 0,
+                                              //     shape: RoundedRectangleBorder(
+                                              //       borderRadius:
+                                              //           BorderRadius.circular(6),
+                                              //     ),
+                                              //     child: Container(
+                                              //       decoration: BoxDecoration(
+                                              //           border:
+                                              //               Border.all(color: blueColor),
+                                              //           borderRadius:
+                                              //               BorderRadius.circular(6)),
+                                              //       padding: const EdgeInsets.all(16.0),
+                                              //       child: Column(
+                                              //         children: [
+                                              //           buildWidget('Lease Type',
+                                              //               "${profiledata['leaseData']['lease_type']}"),
+                                              //           buildWidget(
+                                              //               'Property',
+                                              //               profiledata['leaseData']
+                                              //                       ['rental_adress'] ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Start Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['start_date']) ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'End Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['end_date']) ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Rent Cycle',
+                                              //               profiledata['leaseData']
+                                              //                       ['rent_cycle'] ??
+                                              //                   "N/A"),
+                                              //           buildWidget(
+                                              //               'Rent Amount',
+                                              //               profiledata['leaseData']
+                                              //                       ['amount']
+                                              //                   .toString()),
+                                              //           buildWidget(
+                                              //               'Next Due Date',
+                                              //               formatDate4(profiledata[
+                                              //                           'leaseData']
+                                              //                       ['date']) ??
+                                              //                   "N/A"),
+                                              //         ],
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
+
+                                              buildLeaseTable(leaseData),
+                                            ],
                                           ),
-                                          const SizedBox(height: 16),
-                                        ],
+                                        ),
                                       ),
                                     ),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.symmetric(
-                                    //       horizontal: 20.0),
-                                    //   child: Card(
-                                    //     elevation: 0,
-                                    //     shape: RoundedRectangleBorder(
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(6),
-                                    //     ),
-                                    //     child: Container(
-                                    //       decoration: BoxDecoration(
-                                    //           border:
-                                    //               Border.all(color: blueColor),
-                                    //           borderRadius:
-                                    //               BorderRadius.circular(6)),
-                                    //       padding: const EdgeInsets.all(16.0),
-                                    //       child: Column(
-                                    //         children: [
-                                    //           buildWidget('Lease Type',
-                                    //               "${profiledata['leaseData']['lease_type']}"),
-                                    //           buildWidget(
-                                    //               'Property',
-                                    //               profiledata['leaseData']
-                                    //                       ['rental_adress'] ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Start Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['start_date']) ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'End Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['end_date']) ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Rent Cycle',
-                                    //               profiledata['leaseData']
-                                    //                       ['rent_cycle'] ??
-                                    //                   "N/A"),
-                                    //           buildWidget(
-                                    //               'Rent Amount',
-                                    //               profiledata['leaseData']
-                                    //                       ['amount']
-                                    //                   .toString()),
-                                    //           buildWidget(
-                                    //               'Next Due Date',
-                                    //               formatDate4(profiledata[
-                                    //                           'leaseData']
-                                    //                       ['date']) ??
-                                    //                   "N/A"),
-                                    //         ],
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
-
-                                    buildLeaseTable(leaseData),
                                   ],
                                   const SizedBox(height: 20),
                                 ],
@@ -3824,31 +3864,30 @@ class _Profile_screenState extends State<Profile_screen> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F9FC),
-              border: Border.all(color: const Color(0xFFDBE0E5)),
-              borderRadius: BorderRadius.circular(6),
+              color: const Color(0xFFEEF1F8),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Text(
                     "Property",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: blueColor,
-                      fontSize: 12,
+                      fontSize: 15,
                     ),
                   ),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Text(
                     "Lease Type",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: blueColor,
-                      fontSize: 12,
+                      fontSize: 15,
                     ),
                   ),
                 ),
@@ -3885,12 +3924,12 @@ class _Profile_screenState extends State<Profile_screen> {
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 12.0),
+                            horizontal: 16.0, vertical: 14.0),
                         child: Row(
                           children: [
                             // Property address with dropdown icon
                             Expanded(
-                              flex: 2,
+                              flex: 3,
                               child: Row(
                                 children: [
                                   Icon(
@@ -3900,29 +3939,29 @@ class _Profile_screenState extends State<Profile_screen> {
                                     color: Colors.grey[500],
                                     size: 18,
                                   ),
+                                  const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       '${lease['rental_adress']}',
                                       style: TextStyle(
                                         color: Colors.grey[800],
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 12,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 16),
                             // Lease type
                             Expanded(
-                              flex: 1,
+                              flex: 2,
                               child: Text(
                                 '${lease['lease_type']}',
                                 style: TextStyle(
-                                  color: Colors.grey[700],
+                                  color: Colors.grey[600],
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 12,
+                                  fontSize: 13,
                                 ),
                               ),
                             ),
@@ -3932,28 +3971,28 @@ class _Profile_screenState extends State<Profile_screen> {
                     ),
                     if (isExpanded)
                       Container(
-                        padding: const EdgeInsets.all(16.0),
+                        width: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
                         decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
+                          border: Border(
+                            top: BorderSide(color: Colors.grey[200]!),
                           ),
                         ),
                         child: Column(
                           children: [
-                            // Lease details in a modern grid layout
+                            // Lease details aligned with the table columns
                             Row(
                               children: [
                                 Expanded(
+                                  flex: 3,
                                   child: _buildDetailItem(
                                     "Start Date",
                                     dateProvider
                                         .formatCurrentDate(lease['start_date']),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
                                 Expanded(
+                                  flex: 2,
                                   child: _buildDetailItem(
                                     "End Date",
                                     dateProvider
@@ -3962,37 +4001,19 @@ class _Profile_screenState extends State<Profile_screen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 14),
                             Row(
                               children: [
                                 Expanded(
+                                  flex: 3,
                                   child: _buildDetailItem(
-                                    "Rent Cycle",
-                                    lease['rent_cycle'],
+                                    "Monthly Rent",
+                                    _formatCurrency(lease['amount']),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
                                 Expanded(
-                                  child: _buildDetailItem(
-                                    "Rent Amount",
-                                    "\$${lease['amount']}",
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildDetailItem(
-                                    "Next Due Date",
-                                    dateProvider
-                                        .formatCurrentDate(lease['date']),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Container(), // Empty for alignment
+                                  flex: 2,
+                                  child: _buildStatusItem(lease['end_date']),
                                 ),
                               ],
                             ),
@@ -4050,20 +4071,57 @@ class _Profile_screenState extends State<Profile_screen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          "$label :",
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.grey[600],
+            color: blueColor,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           value,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey[800],
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatCurrency(dynamic amount) {
+    final value = double.tryParse(amount?.toString() ?? '') ?? 0;
+    return NumberFormat.currency(symbol: '\$', decimalDigits: 2).format(value);
+  }
+
+  Widget _buildStatusItem(dynamic endDate) {
+    bool isActive = true;
+    try {
+      final end = DateTime.parse(endDate.toString());
+      isActive = !DateTime.now().isAfter(end);
+    } catch (_) {
+      isActive = true;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Status :",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: blueColor,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          isActive ? "Active" : "Expired",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: isActive ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
           ),
         ),
       ],
@@ -4139,7 +4197,7 @@ class ProfileCard extends StatelessWidget {
   const ProfileCard({
     Key? key,
     required this.profiledata,
-    this.blueColor = const Color(0xFF0A2E5D),
+    this.blueColor = const Color.fromRGBO(21, 43, 81, 1),
   }) : super(key: key);
 
   @override
@@ -4181,12 +4239,15 @@ class ProfileCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              Text(
-                "$firstName $lastName",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[900],
+              Expanded(
+                child: Text(
+                  "$firstName $lastName",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: blueColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
 

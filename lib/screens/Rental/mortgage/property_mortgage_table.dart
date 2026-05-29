@@ -9,6 +9,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../provider/dateProvider.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -76,7 +77,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
 
       // Use property-specific API endpoint
       print('Loading mortgages for property ID: ${widget.propertyId}');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/${widget.propertyId}'),
         headers: {
           'Content-Type': 'application/json',
@@ -862,17 +863,16 @@ print("mortgage call");
                                       children: [
                                         GestureDetector(
                                           onTap: () =>
-                                              _deleteMortgage(
-                                                  mortgage['_id']),
+                                              _viewMortgage(mortgage),
                                           child: Container(
                                             height: 35,
                                             width: 35,
                                             decoration: BoxDecoration(
+                                              color: Colors
+                                                  .grey.shade200,
                                               borderRadius:
                                               BorderRadius
                                                   .circular(8),
-                                              color:
-                                              Colors.red.shade50,
                                             ),
                                             child: const Row(
                                               mainAxisAlignment:
@@ -884,9 +884,9 @@ print("mortgage call");
                                               children: [
                                                 FaIcon(
                                                   FontAwesomeIcons
-                                                      .trashCan,
+                                                      .eye,
                                                   size: 15,
-                                                  color: Colors.red,
+                                                  color: Colors.black,
                                                 ),
                                               ],
                                             ),
@@ -927,16 +927,17 @@ print("mortgage call");
                                         const SizedBox(width: 5),
                                         GestureDetector(
                                           onTap: () =>
-                                              _viewMortgage(mortgage),
+                                              _deleteMortgage(
+                                                  mortgage['_id']),
                                           child: Container(
                                             height: 35,
                                             width: 35,
                                             decoration: BoxDecoration(
-                                              color: Colors
-                                                  .grey.shade200,
                                               borderRadius:
                                               BorderRadius
                                                   .circular(8),
+                                              color:
+                                              Colors.red.shade50,
                                             ),
                                             child: const Row(
                                               mainAxisAlignment:
@@ -948,9 +949,9 @@ print("mortgage call");
                                               children: [
                                                 FaIcon(
                                                   FontAwesomeIcons
-                                                      .eye,
+                                                      .trashCan,
                                                   size: 15,
-                                                  color: Colors.black,
+                                                  color: Colors.red,
                                                 ),
                                               ],
                                             ),

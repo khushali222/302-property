@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,7 +121,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rentals/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -245,7 +246,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
         headers: {
           "authorization": "CRM $token",
@@ -284,7 +285,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/vendors/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -458,7 +459,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       await http.MultipartFile.fromPath('files', imageFile.path),
     );
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     var responseBody = json.decode(responseData.body);
 
@@ -547,7 +548,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           setState(() => _isLoading = false);
           return;
         }
-        final response = await http.put(
+        final response = await apiPut(
           Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
           headers: {
             "authorization": "CRM $token",
@@ -571,7 +572,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           );
         }
       } else {
-        final response = await http.post(
+        final response = await apiPost(
           Uri.parse('${Api_url}/api/bid-request/bid-request'),
           headers: {
             "authorization": "CRM $token",

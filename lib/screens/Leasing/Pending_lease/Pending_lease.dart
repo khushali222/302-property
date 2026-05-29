@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -180,7 +181,7 @@ class _Pending_leaseState extends State<Pending_lease> {
       }
 
       final uri = Uri.parse('$Api_url/api/leases/pending-leases-list/$adminId');
-      final response = await http.get(
+      final response = await apiGet(
         uri,
         headers: {
           'authorization': 'CRM $token',

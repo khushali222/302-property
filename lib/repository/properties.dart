@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/model/properties.dart';
 
 import '../constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../model/add_property.dart';
 
@@ -58,7 +59,7 @@ class PropertiesRepository {
       },
     );
 
-    final response = await http.get(
+    final response = await apiGet(
       uri,
       headers: {
         "authorization": "CRM $token",
@@ -171,7 +172,7 @@ class PropertiesRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -308,7 +309,7 @@ class PropertiesRepository {
     print('Request Headers: $headers');
     print('Request Body: $body');
 
-    final response = await http.put(url, headers: headers, body: body);
+    final response = await apiPut(url, headers: headers, body: body);
     final responseBody = jsonDecode(response.body);
 
     print('Response Status Code: ${response.statusCode}');
@@ -336,7 +337,7 @@ class PropertiesRepository {
     String? companyName = prefs.getString('companyName');
     print('company name $companyName');
     print(adminid);
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
         Uri.parse('${Api_url}/api/rentals/rental/$id')
             .replace(queryParameters: {
           'company_name': companyName,
@@ -369,7 +370,7 @@ class PropertiesRepository {
   }
 
   // Future<LeaseDetails> fetchLeaseDetails(String leaseId) async {
-  //   final response = await http.get(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId')); // Update with your actual API URL
+  //   final response = await apiGet(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId')); // Update with your actual API URL
   //   print(response.body);
   //   print(leaseId);
   //   print(leaseId);

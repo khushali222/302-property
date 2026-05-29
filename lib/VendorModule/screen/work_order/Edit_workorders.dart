@@ -23,6 +23,7 @@ import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/All_categories_model.dart';
 import '../../../repository/fetch_allcategories.dart';
 
@@ -329,7 +330,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       _isLoadingstaff = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
@@ -370,7 +371,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       _isLoadingtenant = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
@@ -432,7 +433,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     'false',
   ];
   String? _selectedStatus;
-  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed'];
+  final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed', 'Closed'];
   final List<String> _account = [
     'Advertising',
     'Association Fees',
@@ -716,7 +717,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 

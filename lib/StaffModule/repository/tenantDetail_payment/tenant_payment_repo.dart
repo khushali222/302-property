@@ -7,6 +7,7 @@ import '../../../Model/LeaseLedgerModel.dart';
 import '../../../constant/constant.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 class TenantLeaseRepository {
 
   String baseUrl = '$Api_url/api/payment/tenant_ledger';
@@ -24,7 +25,7 @@ class TenantLeaseRepository {
     print(' lease url $url');
     try {
       print('entry');
-      final response = await http.get(Uri.parse(url), headers: {
+      final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });

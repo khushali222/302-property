@@ -21,6 +21,7 @@ import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'SummeryPageLease.dart';
 import 'newAddLease.dart';
 
@@ -238,7 +239,7 @@ class _RenewleaseState extends State<Renewlease> {
       String? token = prefs.getString('token');
       String? id = prefs.getString("adminId");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -327,7 +328,7 @@ class _RenewleaseState extends State<Renewlease> {
 
       // Test if the API endpoint is reachable
       try {
-        final testResponse = await http.get(
+        final testResponse = await apiGet(
           Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
           headers: {
             "authorization": "CRM $token",
@@ -340,7 +341,7 @@ class _RenewleaseState extends State<Renewlease> {
       }
 
       final response =
-          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
+          await apiPost(Uri.parse('$Api_url/api/leases/renew_lease'),
               headers: {
                 "authorization": "CRM $token",
                 "id": "CRM $id",
@@ -451,7 +452,7 @@ class _RenewleaseState extends State<Renewlease> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -473,7 +474,7 @@ class _RenewleaseState extends State<Renewlease> {
     String? id = prefs.getString("adminId");
 
     print('$Api_url/api/leases/lease_summary/${widget.leaseId}');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",

@@ -4,6 +4,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -69,7 +70,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       print('Loading insurance premiums for property ID: ${widget.propertyId}');
       print(
           'API URL: ${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}'),
         headers: {
@@ -704,38 +705,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   GestureDetector(
-                                                    onTap: () => _deletePremium(
-                                                        premium['_id']),
-                                                    child: Container(
-                                                      height: 35,
-                                                      width: 35,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        color:
-                                                            Colors.red.shade50,
-                                                      ),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
-                                                            size: 15,
-                                                            color: Colors.red,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  GestureDetector(
                                                     onTap: () =>
                                                         _editPremium(premium),
                                                     child: Container(
@@ -761,6 +730,38 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
                                                                 .edit,
                                                             size: 15,
                                                             color: Colors.green,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  GestureDetector(
+                                                    onTap: () => _deletePremium(
+                                                        premium['_id']),
+                                                    child: Container(
+                                                      height: 35,
+                                                      width: 35,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        color:
+                                                            Colors.red.shade50,
+                                                      ),
+                                                      child: const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .trashCan,
+                                                            size: 15,
+                                                            color: Colors.red,
                                                           ),
                                                         ],
                                                       ),

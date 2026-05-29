@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import '../../../../../Model/All_categories_model.dart';
 import '../../../../../model/properties.dart';
@@ -353,7 +354,7 @@ class _AddApplienceState extends State<AddApplience> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 

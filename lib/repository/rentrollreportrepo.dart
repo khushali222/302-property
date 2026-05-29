@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -40,7 +41,7 @@ class RentRollReportService {
     }
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
           uri,
          // Uri.parse("http://192.168.1.10:4000/api/"),
           headers: {

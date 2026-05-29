@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -32,7 +33,7 @@ class LeaseMoveoutRepository {
     String?  id = prefs.getString('adminId');
 
     print(data);
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/moveout/lease_multiplemoveout/$leaseId'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -108,7 +109,7 @@ class LeaseMoveoutRepository {
     }
 
     // Send the request
-    final response = await request.send();
+    final response = await apiSend(request);
     final responseBody = await http.Response.fromStream(response);
     var responseData = json.decode(responseBody.body);
 
@@ -139,7 +140,7 @@ class LeaseMoveoutRepository {
     String?  id = prefs.getString('adminId');
 
     print(data);
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/moveout/lease_movein/$leaseId'),
       headers: <String, String>{
         "authorization": "CRM $token",

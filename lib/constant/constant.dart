@@ -9,19 +9,19 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
+//String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.1.37:4000/api/images/get-file/";
-//String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
+String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
-//String Api_url = "http://192.168.1.55:4000";
+//String Api_url = "http://192.168.1.33:4000";
 
-//String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
+String Api_url = "https://saas.cloudrentalmanager.com";
+//String Api_url = "https://staging.cloudrentalmanager.com";
 //String Api_url = "https://development.cloudrentalmanager.com";
 
-//String image_upload_url = "https://saas.cloudrentalmanager.com";
-String image_upload_url = "https://staging.cloudrentalmanager.com";
+String image_upload_url = "https://saas.cloudrentalmanager.com";
+//String image_upload_url = "https://staging.cloudrentalmanager.com";
 
 // formatDate(String dateTime) {
 //   //print(dateTime);
@@ -246,6 +246,28 @@ Color blueColorDisabled = blueColor.withOpacity(0.6);
 
 Color greyColor = Color.fromRGBO(73, 81, 96, 1);
 Color grey = Color.fromRGBO(21, 43, 83, .5);
+
+// ===== Unified mobile palette (Work Order + shared screens) =====
+const Color navyClr      = Color(0xFF1C2D4E); // primary navy
+const Color navyHoverClr = Color(0xFF16243F); // pressed/hover
+const Color tintBg       = Color(0xFFEEF2F8); // card header / alt row
+const Color tint2        = Color(0xFFE1E9F4); // nested sub-cards
+const Color pageBg       = Color(0xFFF4F6F9); // app background
+const Color borderClr    = Color(0xFFE4E8EF); // outer card border
+const Color innerBdClr   = Color(0xFFD8DDE6); // inner divider
+const Color outlineClr   = Color(0xFFD3DAE5); // outlined button border
+const Color checkOffClr  = Color(0xFFB6BFCD); // unchecked checkbox border
+const Color mutedClr     = Color(0xFF6B7A90); // secondary text / labels
+const Color subjectClr   = Color(0xFF5A86B8); // subject / unit accent
+const Color greenClr     = Color(0xFF1F9D55); // success / New / Completed
+const Color greenBg      = Color(0xFFDCFCE7); // green pill bg
+const Color orangeClr    = Color(0xFFD97706); // in-progress / charge
+const Color orangeBg     = Color(0xFFFEF3C7); // orange pill bg
+const Color statusBlue   = Color(0xFF2868A0); // New status / view icon
+const Color statusBlueBg = Color(0xFFE8F0FA); // view button bg
+const Color closedClr    = Color(0xFF6B7A90); // closed status
+const Color redClr       = Color(0xFFDC3545); // delete / error
+const Color redDotClr    = Color(0xFFE62E2E); // notification dot
 TableRow buildTableRow(
     String leftLabel, String leftValue, String rightLabel, String rightValue) {
   return TableRow(

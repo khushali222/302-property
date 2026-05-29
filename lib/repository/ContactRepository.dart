@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constant/constant.dart';
@@ -54,7 +55,7 @@ class ContactRepository {
     }
 
     // Sending the request (same as work order pattern)
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization": "CRM $token",

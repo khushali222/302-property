@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/repository/setting.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/enterCharge.dart';
 import '../../../constant/constant.dart';
@@ -150,7 +151,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
     String? id = prefs.getString("adminId");
 
     print('$Api_url/api/leases/lease_summary/${widget.leaseId}');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
@@ -247,7 +248,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
       print('lease ${renewlease}');
       String? id = prefs.getString("adminId");
       final response =
-          await http.post(Uri.parse('$Api_url/api/leases/renew_lease'),
+          await apiPost(Uri.parse('$Api_url/api/leases/renew_lease'),
               headers: {
                 "authorization": "CRM $token",
                 "id": "CRM $id",
@@ -393,7 +394,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
       print("Evicting tenants with data: $evictData");
 
       try {
-        final response = await http.post(
+        final response = await apiPost(
           Uri.parse("$Api_url/api/tenant/evict-tenant"),
           headers: {
             "authorization": "CRM $token",

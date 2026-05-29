@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -421,7 +422,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/mortgage/'),
         headers: {
           'Content-Type': 'application/json',
@@ -484,7 +485,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/properties/list'),
         headers: {
           'Content-Type': 'application/json',
@@ -606,7 +607,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       // String? token = prefs.getString('token');
       // String? id = prefs.getString('adminId');
       //
-      // final response = await http.get(
+      // final response = await apiGet(
       //   Uri.parse('$Api_url/api/mortgage/${widget.mortgageId}'),
       //   headers: {
       //     'Content-Type': 'application/json',

@@ -19,12 +19,14 @@ import '../../../constant/constant.dart';
 import '../../../screens/Maintenance/Vendor/add_vendor.dart';
 import '../../../widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/All_categories_model.dart';
 import '../../../repository/fetch_allcategories.dart';
 
@@ -60,7 +62,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
     var responseBody = json.decode(responseData.body);
@@ -269,7 +271,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
     var responseBody = json.decode(responseData.body);
@@ -294,7 +296,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
     try {
       final response =
-      await http.get(Uri.parse('${Api_url}/api/tenant/tenant_property/$id'),
+      await apiGet(Uri.parse('${Api_url}/api/tenant/tenant_property/$id'),
           //api/tenant/tenant_property
           headers: {
             "authorization": "CRM $token",
@@ -356,7 +358,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse(
               '$Api_url/api/unit/rental_unit_dropdown/$rentalId?tenant_id=$id'),
           headers: {
@@ -446,7 +448,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           }),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: 'Work Order',
+        currentpage: 'Work Orders',
       ),
       body: Form(
         key: _formkey,

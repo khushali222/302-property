@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _openStore() async {
     final url = Platform.isAndroid
         ? 'https://play.google.com/store/apps/details?id=com.hostmerchantservices.cloudrentalmanager'
-        : 'https://apps.apple.com/app/id0000000000'; // TODO: replace with real iOS app id
+        : 'https://apps.apple.com/app/id6642569353';
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);

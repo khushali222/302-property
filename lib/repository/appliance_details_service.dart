@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constant/constant.dart';
 import '../Model/unit.dart';
@@ -18,7 +19,7 @@ class ApplianceDetailsService {
       print('Fetching appliance details for ID: $applianceId');
       print('API URL: $Api_url/api/appliance/appliance_details/$applianceId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/appliance/appliance_details/$applianceId'),
         headers: {
           'authorization': 'CRM $token',
@@ -61,7 +62,7 @@ class ApplianceDetailsService {
       throw Exception('Authentication credentials not found');
     }
 
-    final response = await http.delete(
+    final response = await apiDelete(
       Uri.parse('$Api_url/api/appliance/delete_note/$noteId/$applianceId'),
       headers: {
         'authorization': 'CRM $token',

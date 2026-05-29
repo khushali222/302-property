@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Preminum%20Plans/purchaseFormModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -19,7 +20,7 @@ class purchaseFormService {
     final body = jsonEncode(purchaseForm.toJson());
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/purchase/purchase'),
         headers: headers,
         body: body,

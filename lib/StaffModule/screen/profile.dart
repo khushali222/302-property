@@ -11,6 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -91,7 +92,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final String apiUrl = "${Api_url}/api/staffmember/staffmember_profile/$id";
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl'),
       headers: {
         "authorization": "CRM $token",
@@ -150,7 +151,7 @@ class _Profile_screenState extends State<Profile_screen> {
       _isLoading = true;
     });
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/2fa/2fa-status/${id}?user_type=staff'),
       headers: {
         "authorization": "CRM $token",
@@ -214,7 +215,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? token = prefs.getString("token");
     String? userid = prefs.getString("userId");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(
           '${Api_url}/api/backup-codes/backup-codes/${userid}?user_type=staff'),
       headers: {
@@ -251,7 +252,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/enable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -313,7 +314,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/verify-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -394,7 +395,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/send-disable-2fa-code'),
         headers: {
           "authorization": "CRM $token",
@@ -466,7 +467,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/disable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -537,7 +538,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(
             '${Api_url}/api/backup-codes/send-regenerate-backup-codes-code'),
         headers: {
@@ -603,7 +604,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? token = prefs.getString("token");
       String? userid = prefs.getString("userId");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/backup-codes/generate-backup-codes'),
         headers: {
           "authorization": "CRM $token",

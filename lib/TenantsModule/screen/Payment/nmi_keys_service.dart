@@ -3,6 +3,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -22,7 +23,7 @@ class NmiKeysService {
 
     // For admin-level APIs (like NMI keys), use adminId in the "id" header
     // Even when called from tenant module, admin APIs need adminId
-    final response = await http.get(
+    final response = await apiGet(
       url,
       headers: {
         "authorization": "CRM $token",

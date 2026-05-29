@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../constant/constant.dart';
+
+String get _clientSource => Platform.isIOS ? 'mobile-ios' : 'mobile-android';
 
 class PaymentService {
   Future<String> makePaymentforcard({
@@ -79,25 +83,34 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
         'tenantName': tenantname,
         'notificationTime': notificationTime,
         'lease_id': leaseid,
-        'entry': updatedEntries,
-        // 'entry':entries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         // NEW: added to match web payload — backend uses these to identify source
         'user_active_recently': true,
       };
       log(paymentDetails.toString());
-      final response = await http.post(
+
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -197,13 +210,14 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
         "X-Idempotency-Key": Uuid().v4(),
+        "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -214,13 +228,15 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
+        'total_amount': double.parse(totalAmount),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
         'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
         // NMI response fields — only available for immediate (non-PENDING) payments
         // Commented out to prevent null crash on future-dated (PENDING) payments where nmiResponse is null
         // Restore if backend needs these fields for settled card payments:
@@ -313,13 +329,21 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
         'tenantName': tenantname,
         'notificationTime': notificationTime,
         'lease_id': leaseid,
-        'entry': updatedEntries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         'user_active_recently': true,
       };
       if (billingId != null &&
@@ -337,13 +361,15 @@ class PaymentService {
         paymentDetails['account_holder_type'] = account_holder_type;
       }
       print(paymentDetails);
-      final response = await http.post(
+
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         // NEW: added is_web: true at body level to match web payload
         // OLD was: body: jsonEncode({"paymentDetails": paymentDetails})
@@ -436,13 +462,14 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
         "X-Idempotency-Key": Uuid().v4(),
+        "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -452,14 +479,15 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
+        'total_amount': double.parse(totalAmount),
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
         'response': responseText,
         'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
       }),
     );
 
@@ -552,24 +580,32 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
         'lease_id': leaseid,
-        'entry': updatedEntries,
-        //'entry': entries,
+        'entry': updatedEntries.map((e) => {
+          'entry_id': e['entry_id'],
+          'account': e['account'],
+          'amount': e['amount'],
+          'balance': e['balance'],
+          'memo': e['memo'],
+          'date': e['date'],
+        }).toList(),
         // 'notificationTime':notificationTime,
         'user_active_recently': true,
       };
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
@@ -653,13 +689,14 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
         "X-Idempotency-Key": Uuid().v4(),
+        "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
         'company_name': companyName,
@@ -673,8 +710,15 @@ class PaymentService {
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'check_number': checknumber,
+        // Cash / Check / Money Order / Cashier's Check / Manual are recorded
+        // immediately by the admin, so the ledger needs response = "SUCCESS"
+        // (caller still passes "PENDING" but we ignore it here, matching the
+        // original behavior before the recent refactor). Do NOT change without
+        // also fixing the ledger filter.
         'response': "SUCCESS",
         'notificationTime': notificationTime,
+        'is_web': true,
+        'user_active_recently': true,
       }),
     );
 
@@ -739,7 +783,7 @@ class PaymentService {
   //   print("Payment Details: $paymentDetails");
   //
   //   try {
-  //     final response = await http.post(
+  //     final response = await apiPost(
   //       Uri.parse(baseUrl),
   //       headers: {
   //         "authorization": "CRM $token",

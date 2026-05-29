@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../Model/bid_request.dart';
@@ -28,7 +29,7 @@ class BidRequestRepository {
 
       print('Fetching bid requests from: $url');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
@@ -71,7 +72,7 @@ class BidRequestRepository {
 
       print('Fetching bid request details from: $url');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",

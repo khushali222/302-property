@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/gallery_photo_model.dart';
 import '../constant/constant.dart';
@@ -23,7 +24,7 @@ class GalleryService {
   /// GET /api/rentals/gallery/{rental_id}
   static Future<GalleryResponse> getGallery(String rentalId) async {
     final url = '$Api_url/api/rentals/gallery/$rentalId';
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(url),
       headers: await _headers(),
     );
@@ -44,7 +45,7 @@ class GalleryService {
     for (final file in files) {
       request.files.add(await http.MultipartFile.fromPath('files', file.path));
     }
-    final streamed = await request.send();
+    final streamed = await apiSend(request);
     final response = await http.Response.fromStream(streamed);
     final body = jsonDecode(response.body);
     if (body['status'] == 'ok' && body['files'] != null) {
@@ -62,7 +63,7 @@ class GalleryService {
     String description = '',
   }) async {
     final url = '$Api_url/api/rentals/gallery/$rentalId';
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(url),
       headers: await _headers(),
       body: jsonEncode({'image': image, 'description': description}),
@@ -85,7 +86,7 @@ class GalleryService {
     final body = <String, dynamic>{};
     if (description != null) body['description'] = description;
     if (image != null) body['image'] = image;
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(url),
       headers: await _headers(),
       body: jsonEncode(body),
@@ -101,7 +102,7 @@ class GalleryService {
   static Future<GalleryResponse> deletePhoto(
       String rentalId, String photoId) async {
     final url = '$Api_url/api/rentals/gallery/$rentalId/$photoId';
-    final response = await http.delete(
+    final response = await apiDelete(
       Uri.parse(url),
       headers: await _headers(),
     );
@@ -116,7 +117,7 @@ class GalleryService {
   static Future<GalleryResponse> setCover(
       String rentalId, String photoId) async {
     final url = '$Api_url/api/rentals/gallery/$rentalId/$photoId/set-cover';
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(url),
       headers: await _headers(),
       body: jsonEncode({}),
@@ -145,7 +146,7 @@ class GalleryService {
       'category': 'Gallery',
       'metadata': {'description': description},
     };
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(url),
       headers: await _headers(),
       body: jsonEncode(body),

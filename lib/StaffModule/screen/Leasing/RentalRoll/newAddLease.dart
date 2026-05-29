@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -1042,7 +1043,7 @@ class _addLease3State extends State<addLease3>
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -5347,7 +5348,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
@@ -5437,7 +5438,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String adminId = prefs.getString('adminId').toString();
   //   final response =
-  //       await http.get(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+  //       await apiGet(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
   //   print(response.body);
   //   if (response.statusCode == 200) {
   //     final data = json.decode(response.body);
@@ -6353,7 +6354,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",

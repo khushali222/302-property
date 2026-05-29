@@ -22,6 +22,7 @@ import '../../../../widgets/titleBar.dart';
 import 'add_vendor.dart';
 import 'edit_vendor.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../widgets/custom_drawer.dart';
 import '../../../../Model/All_categories_model.dart';
@@ -737,7 +738,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                 const SizedBox(width: 18),
               Expanded(
                 child: Material(
-                  elevation: 3,
+                  elevation: 0,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -784,7 +786,8 @@ class _Vendor_tableState extends State<Vendor_table> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Material(
-                    elevation: 3,
+                    elevation: 0,
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       height: MediaQuery.of(context).size.width < 500 ? 45 : 50,
@@ -874,8 +877,9 @@ class _Vendor_tableState extends State<Vendor_table> {
             ],
           ),
         ),
+        const SizedBox(height: 12),
         Padding(
-          padding: const EdgeInsets.only(left: 18, right: 18, top: 8),
+          padding: const EdgeInsets.only(left: 18, right: 18),
           child: Align(
             alignment: Alignment.centerRight,
             child: RichText(
@@ -888,7 +892,7 @@ class _Vendor_tableState extends State<Vendor_table> {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 12),
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: widget.isEmbedded ? 0 : 18,
@@ -961,6 +965,30 @@ class _Vendor_tableState extends State<Vendor_table> {
                     const SizedBox(height: 10),
                     _buildHeaders(),
                     const SizedBox(height: 10),
+                    if (data.isEmpty)
+                      Container(
+                        height: MediaQuery.of(context).size.height * .35,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     Container(
                       child: Column(
                         children: currentPageData.asMap().entries.map((entry) {
@@ -1283,6 +1311,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                         }).toList(),
                       ),
                     ),
+                    if (totalPages > 1) ...[
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -1361,6 +1390,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                         ),
                       ],
                     ),
+                    ],
                   ],
                 );
 

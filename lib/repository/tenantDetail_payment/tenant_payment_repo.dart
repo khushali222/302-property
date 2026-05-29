@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constant/constant.dart';
 import 'package:three_zero_two_property/Model/LeaseLedgerModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class TenantLeaseRepository {
   static Future<Map<String, String>> _headers() async {
@@ -26,7 +27,7 @@ class TenantLeaseRepository {
     }
     try {
       final response =
-          await http.get(Uri.parse(url), headers: await _headers());
+          await apiGet(Uri.parse(url), headers: await _headers());
       if (response.statusCode == 200) {
         return LeaseLedger.fromJson(jsonDecode(response.body));
       }
@@ -51,7 +52,7 @@ class TenantLeaseRepository {
     final uri = Uri.parse('$Api_url/api/payment/lease_ledger/$leaseId')
         .replace(queryParameters: params.isEmpty ? null : params);
     try {
-      final response = await http.get(uri, headers: await _headers());
+      final response = await apiGet(uri, headers: await _headers());
       if (response.statusCode == 200) {
         return LeaseLedger.fromJson(jsonDecode(response.body));
       }
@@ -77,7 +78,7 @@ class TenantLeaseRepository {
     final uri = Uri.parse('$Api_url/api/payment/lease_ledger/$leaseId')
         .replace(queryParameters: params);
     try {
-      final response = await http.get(uri, headers: await _headers());
+      final response = await apiGet(uri, headers: await _headers());
       if (response.statusCode == 200) {
         return LeaseLedger.fromJson(jsonDecode(response.body));
       }

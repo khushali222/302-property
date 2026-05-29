@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../constant/constant.dart';
@@ -269,7 +270,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
     final String apiUrl = "${Api_url}/api/vendor/get_vendor/$id";
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl'),
       headers: {
         "authorization": "CRM $token",
@@ -393,7 +394,7 @@ class _Profile_screenState extends State<Profile_screen> {
         'user_active_recently': true,
         'is_web': true,
       };
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('${Api_url}/api/vendor/update_vendor/$id'),
         headers: {
           "authorization": "CRM $token",

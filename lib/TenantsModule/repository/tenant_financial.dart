@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constant/constant.dart';
@@ -13,7 +14,7 @@ class TenantFinancialRepository {
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/payment/tenant_financial/$id'), headers: {
+    final response = await apiGet(Uri.parse('$Api_url/api/payment/tenant_financial/$id'), headers: {
       "id":"CRM $id",
       "authorization": "CRM $token",
       "Content-Type": "application/json"

@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/appbar.dart';
@@ -140,7 +141,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       await http.MultipartFile.fromPath('files', imageFile.path),
     );
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     print(responseData.body);
 

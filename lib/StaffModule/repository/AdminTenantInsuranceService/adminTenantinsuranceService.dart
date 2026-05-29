@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AdminTenantInsuranceModel/adminTenantInsuranceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -17,7 +18,7 @@ class AdminTenantInsuranceRepository {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
         headers: headers);
 
@@ -51,7 +52,7 @@ class AdminTenantInsuranceRepository {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-    final response = await http.delete(
+    final response = await apiDelete(
       Uri.parse(
           '$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
       headers: <String, String>{

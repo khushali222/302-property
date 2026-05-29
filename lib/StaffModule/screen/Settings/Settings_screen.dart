@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../screens/Leasing/RentalRoll/addcard/AddCard.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
@@ -3572,6 +3573,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             }).toList(),
                                           ),
                                         ),
+                                        if (totalPages > 1) ...[
                                         const SizedBox(height: 20),
                                         Row(
                                           mainAxisAlignment:
@@ -3688,6 +3690,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             ),
                                           ],
                                         ),
+                                        ],
                                       ],
                                     ),
                                   );

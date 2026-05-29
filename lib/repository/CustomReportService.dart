@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/CustomReportDataModel.dart';
 import 'package:three_zero_two_property/Model/SavedReportModel.dart';
@@ -15,7 +16,7 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
-      final response = await http.get(uri, headers: {
+      final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
         "Content-Type": "application/json",
@@ -62,7 +63,7 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
-      final response = await http.get(uri, headers: {
+      final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
         "Content-Type": "application/json",
@@ -147,7 +148,7 @@ class CustomReportService {
       print('[CustomReport POST] dynamicFieldConfigs: ${bodyMap['dynamicFieldConfigs']}');
       print('[CustomReport POST] full body: $body');
 
-      final response = await http.post(
+      final response = await apiPost(
         uri,
         headers: {
           "authorization": "CRM $token",
@@ -232,7 +233,7 @@ class CustomReportService {
         body['report_id'] = reportId;
       }
 
-      final response = await http.post(
+      final response = await apiPost(
         uri,
         headers: {
           "authorization": "CRM $token",
@@ -278,7 +279,7 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
-      final response = await http.delete(
+      final response = await apiDelete(
         uri,
         headers: {
           "authorization": "CRM $token",
@@ -341,7 +342,7 @@ class CustomReportService {
         'dynamicFieldConfigs': dynamicFieldConfigs ?? {},
       };
 
-      final response = await http.put(
+      final response = await apiPut(
         uri,
         headers: {
           "authorization": "CRM $token",

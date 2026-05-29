@@ -6,6 +6,7 @@ import 'package:three_zero_two_property/screens/Rental/Rentalowner/rentalowner_s
 
 import '../../Model/RentalOwnersData.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../constant/constant.dart';
 import '../../../model/rentalOwner.dart';
@@ -19,7 +20,7 @@ class RentalOwnerService {
     adminId = prefs.getString("adminId");
     String?  id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    final response = await http.get(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
+    final response = await apiGet(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     print('$Api_url/api/rentals/rental-owners/$adminId');
     print(adminId);
@@ -35,7 +36,7 @@ class RentalOwnerService {
     }
   }
   // Future<bool> addRentalOwner(RentalOwnerData rentalOwner) async {
-  //   final response = await http.post(
+  //   final response = await apiPost(
   //     Uri.parse("$Api_url/api/rental_owner/rental_owner"),
   //     headers: {
   //       'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ class RentalOwnerService {
     print(rentalOwner.processorList!.length);
     print(' Body: ${jsonEncode(rentalOwner.toJson())}');
     try {
-      final response = await http.post(
+      final response = await apiPost(
         url,
         headers: {
           "authorization" : "CRM $token",
@@ -137,7 +138,7 @@ class RentalOwnerService {
   //     },
   //
   //   });
-  //   final response = await http.put(url, headers: headers, body: body);
+  //   final response = await apiPut(url, headers: headers, body: body);
   //   print(response.body);
   //   if (response.statusCode == 200) {
   //
@@ -200,7 +201,7 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     final http.Response response = await
-    http.put(
+    apiPut(
        Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -227,7 +228,7 @@ class RentalOwnerService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
       headers: <String, String>{
         "authorization" : "CRM $token",
@@ -255,7 +256,7 @@ class RentalOwnerService {
    //  rentalOwnerId = "1718715476950"
     print(rentalOwnerId);
     print(rentalOwnerId);
-    final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
+    final response = await apiGet(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
 
       headers: {"authorization" : "CRM $token","id":"CRM $id",},
     );
@@ -274,7 +275,7 @@ class RentalOwnerService {
   //
   // Future<List<RentalOwnerSummey>> fetchRentalOwnersSummary(String rentalOwnerId) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/$rentalOwnerId'));
+  //   final response = await apiGet(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/$rentalOwnerId'));
   //
   //   if (response.statusCode == 200) {
   //     List<dynamic> jsonResponse = json.decode(response.body);
@@ -285,7 +286,7 @@ class RentalOwnerService {
   // }
 
   // Future<RentalOwnerSummey> fetchRentalOwnerSummary(String rentalOwnerId) async {
-  //   final response = await http.get(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/$rentalOwnerId'));
+  //   final response = await apiGet(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/$rentalOwnerId'));
   // print(response.body);
   // print(rentalOwnerId);
   //   if (response.statusCode == 200) {

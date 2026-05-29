@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import '../../constant/constant.dart';
 import 'changepassword.dart';
@@ -30,7 +31,7 @@ class _otp_verifyState extends State<otp_verify> {
       loading = true; // Set loading to true while verifying OTP
     });
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/verifyOTP'),
       headers:{
     'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ class _otp_verifyState extends State<otp_verify> {
       loading = true; // Show loading indicator while sending OTP
     });
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/admin/sendOTP'),
       body: {'email': email},
     );

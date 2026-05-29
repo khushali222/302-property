@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -13,7 +14,7 @@ class StaffPermissionService {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$Api_url/api/permission/permission/$admin_id'),
         headers: {
           "id": "CRM $id",

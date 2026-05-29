@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -24,7 +25,7 @@ class AccountTotalsReportsServices {
     // }
     print(url);
     try {
-      final response = await http.get(Uri.parse(url), headers: {
+      final response = await apiGet(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         "authorization": "CRM $token",
         "id": "CRM $id",

@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
     as widget_302_Staff;
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../Model/categories_model.dart';
 import '../../StaffModule/widgets/custom_drawer.dart';
@@ -851,7 +852,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         throw Exception("Missing ID or token in SharedPreferences");
       }
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/charge-setting/$adminid'),
         headers: {
           "authorization": "CRM $token",
@@ -924,7 +925,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     print("id of id 1 $id");
 
     print(data);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/charge-setting'),
       headers: {
         "authorization": "CRM $token",
@@ -1150,10 +1151,10 @@ class _TabBarExampleState extends State<TabBarExample> {
         staffId: staffId,
       );
       var uri = Uri.parse('$Api_url/api/settings/company-profile/$adminId');
-      var res = await http.get(uri, headers: hdr);
+      var res = await apiGet(uri, headers: hdr);
       if (res.statusCode != 200) {
         uri = Uri.parse('$Api_url/api/settings/company-profile');
-        res = await http.get(uri, headers: hdr);
+        res = await apiGet(uri, headers: hdr);
       }
       final decoded = jsonDecode(res.body);
       if (decoded['statusCode'] == 200 && decoded['data'] != null) {
@@ -1263,7 +1264,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     setState(() => _cpSaving = true);
     try {
-      final res = await http.put(
+      final res = await apiPut(
         Uri.parse('$Api_url/api/settings/company-profile'),
         headers: _companyProfileAuthHeaders(
           token: token,
@@ -1870,7 +1871,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       String? token = prefs.getString('token');
       String? id = await _getApiId();
       if (adminId == null || token == null || id == null) return;
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/settings/twilio/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -1950,7 +1951,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "authToken": twilioAuthToken.text.trim(),
         "phoneNumber": twilioPhoneNumber.text.trim(),
       };
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/settings/twilio'),
         headers: {
           "authorization": "CRM $token",
@@ -2648,7 +2649,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       _isLoadingtenant = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
@@ -2742,7 +2743,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       _isLoadingstaff = true;
     });
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/staff_member/$adminId'),
           headers: {
             "authorization": "CRM $token",
@@ -2823,7 +2824,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     try {
       final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
+          await apiPost(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
       print('add and update workorder  \\${responseData}');
@@ -2922,7 +2923,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     print('Admin ID: $adminId');
 
     try {
-      final response = await http.get(Uri.parse(url), headers: headers);
+      final response = await apiGet(Uri.parse(url), headers: headers);
       print('Response status code: ${response.statusCode}');
       print('Response body: ${response.body}');
 
@@ -3039,7 +3040,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     try {
       final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
+          await apiPost(Uri.parse(url), headers: headers, body: body);
       var responseData = json.decode(response.body);
 
       if (responseData["statusCode"] == 200) {
@@ -3069,7 +3070,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
     print("id of id 1 $id");
     final url = Uri.parse('${Api_url}/api/themes/date-format');
-    final response = await http.post(
+    final response = await apiPost(
       url,
       headers: {
         "authorization": "CRM $token",
@@ -6784,7 +6785,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   }).toList(),
                                                 ),
                                               ),
-                                              const SizedBox(height: 20),
+                                              if (totalPages > 1) ...[
+                                                const SizedBox(height: 20),
                                               Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -6911,6 +6913,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ),
                                                 ],
                                               ),
+                                              ],
                                             ],
                                           ),
                                         );
@@ -9546,7 +9549,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
 
     final url = Uri.parse('${Api_url}/api/settings/categories');
-    final response = await http.post(
+    final response = await apiPost(
       url,
       headers: {
         "authorization": "CRM $token",

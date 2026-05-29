@@ -1,5 +1,6 @@
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 // import 'package:three_zero_two_property/constant/constant.dart';
@@ -16,7 +17,7 @@
 //     print(url);
 //
 //     try {
-//       final response = await http.get(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+//       final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 //       print("check the home applience data ${response.body}");
 //       print(["data"].first.length);
 //       if (response.statusCode == 200) {
@@ -34,6 +35,7 @@
 // }
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -51,7 +53,7 @@ class Home_system_reportService {
     print(url);
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         url,
         headers: {
           "authorization": "CRM $token",

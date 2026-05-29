@@ -18,6 +18,7 @@ import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -119,7 +120,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
       print('https://logo.clearbit.com/$cardTypeName.com');
 
       try {
-        final response = await http.get(Uri.parse(logoUrl));
+        final response = await apiGet(Uri.parse(logoUrl));
         if (response.statusCode == 200) {
           setState(() {
             cardLogo = logoUrl;

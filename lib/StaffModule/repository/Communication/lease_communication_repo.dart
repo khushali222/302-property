@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../Model/lease_communication.dart';
 import '../../../constant/constant.dart';
@@ -20,7 +21,7 @@ class EmailLogRepository {
       String? token = prefs.getString('token');
       String? staffid = prefs.getString("staff_id");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$apiUrl/$lease_id?page=$page&limit=$limit'),
         headers: {
           "authorization": "CRM $token",

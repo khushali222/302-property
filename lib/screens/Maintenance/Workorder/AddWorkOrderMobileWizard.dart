@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,7 +110,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final prefs = await SharedPreferences.getInstance();
       final id = prefs.getString('adminId');
       final token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rentals/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
@@ -148,7 +149,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final prefs = await SharedPreferences.getInstance();
       final id = prefs.getString('adminId');
       final token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
@@ -183,7 +184,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final prefs = await SharedPreferences.getInstance();
       final id = prefs.getString('adminId');
       final token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/leases/get_tenants/$rentalId/$unitId'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
@@ -230,7 +231,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final prefs = await SharedPreferences.getInstance();
       final id = prefs.getString('adminId');
       final token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
@@ -259,7 +260,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final prefs = await SharedPreferences.getInstance();
       final id = prefs.getString('adminId');
       final token = prefs.getString('token');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/vendors/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
@@ -285,7 +286,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
     final uri = Uri.parse('${image_upload_url}/api/images/upload');
     final request = http.MultipartRequest('POST', uri);
     request.files.add(await http.MultipartFile.fromPath('files', file.path));
-    final stream = await request.send();
+    final stream = await apiSend(request);
     final response = await http.Response.fromStream(stream);
     final body = json.decode(response.body) as Map<String, dynamic>;
     if (body['status'] == 'ok') {

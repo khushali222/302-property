@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
@@ -180,7 +181,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString("token");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse("${Api_url}/api/templates/get/${widget.templetid}"),
       headers: {
         "authorization": "CRM $token",
@@ -253,7 +254,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
   //     "mail_type": _selectedEvent,
   //   };
   //
-  //   final response = await http.post(
+  //   final response = await apiPost(
   //     Uri.parse("${Api_url}/api/templates"),
   //     headers: {
   //       "Content-Type": "application/json",

@@ -22,6 +22,7 @@ import '../widgets/appbar.dart';
 import '../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class Change_password extends StatefulWidget {
   const Change_password({super.key});
@@ -96,7 +97,7 @@ class _Change_passwordState extends State<Change_password> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -1420,7 +1421,7 @@ class _Change_passwordState extends State<Change_password> {
       "currentPassword": currentpassword.text.trim()
     };
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('$Api_url/api/tenant/reset_password/$email'),
       headers: <String, String>{
         "authorization": "CRM $token",

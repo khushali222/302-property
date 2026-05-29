@@ -27,6 +27,7 @@ import '../../../provider/add_property.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../repository/Property_type.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Add_new_property extends StatefulWidget {
@@ -190,7 +191,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),
       headers: {
         "id": "CRM $id",
@@ -356,7 +357,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
           .add(await http.MultipartFile.fromPath('files', imageFile!.path));
     }
 
-    var response = await request.send();
+    var response = await apiSend(request);
     // Parse the response
     var responseData = await http.Response.fromStream(response);
     // print(responseData.body);
@@ -5425,7 +5426,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
     print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/rentals/rentals'),
       headers: <String, String>{
         "authorization": "CRM $token",

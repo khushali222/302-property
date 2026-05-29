@@ -3,6 +3,7 @@ import 'package:d_chart/d_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/lease.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -21,7 +22,7 @@ class ApplicantRepository {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/applicant/applicant'),
       headers: <String, String>{
         "id": "CRM $id",
@@ -76,7 +77,7 @@ class ApplicantRepository {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/applicant/applicant/$applicantId'),
       headers: <String, String>{
         "id": "CRM $id",
@@ -104,7 +105,7 @@ class ApplicantRepository {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
         Uri.parse('$Api_url/api/applicant/applicant/$Applicantid'),
         headers: <String, String>{
           "authorization": "CRM $token",

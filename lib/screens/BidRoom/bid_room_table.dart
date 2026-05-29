@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -286,7 +287,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.delete(
+      final response = await apiDelete(
         Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
         headers: {
           "authorization": "CRM $token",
@@ -1225,9 +1226,10 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        if (request.bidRequestId != null) {
-                                                                          _showDeleteDialog(context, request);
-                                                                        }
+                                                                        // TODO: View bid room details
+                                                                        Fluttertoast.showToast(
+                                                                            msg:
+                                                                                'View Bid Room feature coming soon');
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1240,8 +1242,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(8),
                                                                           color: Colors
-                                                                              .red
-                                                                              .shade50,
+                                                                              .grey
+                                                                              .shade200,
                                                                         ),
                                                                         child:
                                                                             const Row(
@@ -1251,9 +1253,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                               CrossAxisAlignment.center,
                                                                           children: [
                                                                             FaIcon(
-                                                                              FontAwesomeIcons.trashCan,
+                                                                              FontAwesomeIcons.eye,
                                                                               size: 15,
-                                                                              color: Colors.red,
+                                                                              color: Colors.black87,
                                                                             ),
                                                                           ],
                                                                         ),
@@ -1317,10 +1319,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        // TODO: View bid room details
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'View Bid Room feature coming soon');
+                                                                        if (request.bidRequestId != null) {
+                                                                          _showDeleteDialog(context, request);
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1333,8 +1334,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(8),
                                                                           color: Colors
-                                                                              .grey
-                                                                              .shade200,
+                                                                              .red
+                                                                              .shade50,
                                                                         ),
                                                                         child:
                                                                             const Row(
@@ -1344,9 +1345,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                               CrossAxisAlignment.center,
                                                                           children: [
                                                                             FaIcon(
-                                                                              FontAwesomeIcons.eye,
+                                                                              FontAwesomeIcons.trashCan,
                                                                               size: 15,
-                                                                              color: Colors.black87,
+                                                                              color: Colors.red,
                                                                             ),
                                                                           ],
                                                                         ),
@@ -1751,9 +1752,10 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        if (request.bidRequestId != null) {
-                                                                          _showDeleteDialog(context, request);
-                                                                        }
+                                                                        // TODO: View bid room details
+                                                                        Fluttertoast.showToast(
+                                                                            msg:
+                                                                                'View Bid Room feature coming soon');
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1766,8 +1768,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(8),
                                                                           color: Colors
-                                                                              .red
-                                                                              .shade50,
+                                                                              .grey
+                                                                              .shade200,
                                                                         ),
                                                                         child:
                                                                             const Row(
@@ -1777,9 +1779,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                               CrossAxisAlignment.center,
                                                                           children: [
                                                                             FaIcon(
-                                                                              FontAwesomeIcons.trashCan,
+                                                                              FontAwesomeIcons.eye,
                                                                               size: 15,
-                                                                              color: Colors.red,
+                                                                              color: Colors.black87,
                                                                             ),
                                                                           ],
                                                                         ),
@@ -1843,10 +1845,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
-                                                                        // TODO: View bid room details
-                                                                        Fluttertoast.showToast(
-                                                                            msg:
-                                                                                'View Bid Room feature coming soon');
+                                                                        if (request.bidRequestId != null) {
+                                                                          _showDeleteDialog(context, request);
+                                                                        }
                                                                       },
                                                                       child:
                                                                           Container(
@@ -1859,8 +1860,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(8),
                                                                           color: Colors
-                                                                              .grey
-                                                                              .shade200,
+                                                                              .red
+                                                                              .shade50,
                                                                         ),
                                                                         child:
                                                                             const Row(
@@ -1870,9 +1871,9 @@ class _BidRoomTableState extends State<BidRoomTable> {
                                                                               CrossAxisAlignment.center,
                                                                           children: [
                                                                             FaIcon(
-                                                                              FontAwesomeIcons.eye,
+                                                                              FontAwesomeIcons.trashCan,
                                                                               size: 15,
-                                                                              color: Colors.black87,
+                                                                              color: Colors.red,
                                                                             ),
                                                                           ],
                                                                         ),

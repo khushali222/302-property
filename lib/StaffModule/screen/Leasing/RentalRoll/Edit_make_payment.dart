@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,6 +16,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/repository/lease.dart';
 
@@ -131,7 +133,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       selectedTenantId = widget.tenantId;
       tenantname =
           "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = formatDate(c_data.entry!.first.date!);
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      _startDate.text = dateProvider.formatCurrentDate(formatDate(c_data.entry!.first.date!));
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
       customerVaultId = c_data.customer_vault_id ?? "";
@@ -212,7 +215,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
@@ -262,7 +265,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       print(token);
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -386,7 +389,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
@@ -715,7 +718,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       cardDetails = []; // Clear previous card details
     });
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
     );
@@ -761,7 +764,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   Future<String> binCheck(String ccBin) async {
     final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         'Content-Type': 'application/json',
@@ -791,7 +794,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       "admin_id": adminId.toString(),
     };
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
@@ -861,7 +864,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     String? token = prefs.getString('token');
     print(adminId);
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
       headers: {
         "id": "CRM $adminId",
@@ -1181,8 +1184,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   if (pickedDate != null) {
                                     bool isfuture =
                                         pickedDate.isAfter(DateTime.now());
-                                    String formattedDate =
-                                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                    String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                     setState(() {
                                       futuredate = isfuture;
                                       _startDate.text = formattedDate;
@@ -1399,8 +1402,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               if (pickedDate != null) {
                                                 bool isfuture = pickedDate
                                                     .isAfter(DateTime.now());
-                                                String formattedDate =
-                                                    "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                final dateProvider = Provider.of<DateProvider>(context, listen: false);
+                                                String formattedDate = dateProvider.formatCurrentDate(DateFormat('yyyy-MM-dd').format(pickedDate));
                                                 setState(() {
                                                   futuredate = isfuture;
                                                   _startDate.text =
@@ -1676,7 +1679,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            if (showCardNumberField) ...[
+                            if (showCardNumberField && widget.isEdit == null) ...[
                               const SizedBox(height: 15),
                               Container(
                                 decoration: BoxDecoration(
@@ -1684,8 +1687,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: FormField<String>(validator: (value) {
-                                  if (selectedcardindex == null ||
-                                      _selectedPaymentMethod!.isEmpty) {
+                                  if (widget.isEdit == null &&
+                                      (selectedcardindex == null ||
+                                          _selectedPaymentMethod!.isEmpty)) {
                                     return 'Please select a card';
                                   }
                                   return null;

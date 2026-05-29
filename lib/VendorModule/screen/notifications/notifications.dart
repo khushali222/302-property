@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/titleBar.dart';
 import '../../../constant/constant.dart';
 import '../work_order/workorder_summery.dart';
@@ -32,7 +33,7 @@ class _notificationsState extends State<notifications> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/notification/vendor/$id'),
       headers: {
         "authorization": "CRM $token",
@@ -90,7 +91,7 @@ class _notificationsState extends State<notifications> {
 
     try {
       // Make the PUT request to the API
-      var response = await http.put(
+      var response = await apiPut(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",

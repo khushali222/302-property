@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:three_zero_two_property/model/lease.dart';
 
 import '../../../constant/constant.dart';
+
+String get _clientSource => Platform.isIOS ? 'mobile-ios' : 'mobile-android';
 
 class PaymentService {
   Future<String> makePaymentforcard({
@@ -91,13 +95,14 @@ class PaymentService {
         // 'entry':entries,
       };
       log(paymentDetails.toString());
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
@@ -191,31 +196,35 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     print(entries);
-    final response = await http.post(
+    final Map<String, dynamic> requestBody = {
+      'company_name': companyName,
+      'admin_id': id,
+      'tenant_id': tenantId,
+      'lease_id': leaseId,
+      'payment_type': paymentType,
+      'customer_vault_id': customerVaultId,
+      'billing_id': billingId,
+      'entry': entries,
+      'total_amount': double.parse(totalAmount),
+      'surcharge': surcharge,
+      'is_leaseAdded': isLeaseAdded,
+      'uploaded_file': uploadedFile,
+      'transaction_id': transactionId,
+      'response': responseText,
+      'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
+    };
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffId",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
-      body: jsonEncode(<String, dynamic>{
-        'company_name': companyName,
-        'admin_id': id,
-        'tenant_id': tenantId,
-        'lease_id': leaseId,
-        'payment_type': paymentType,
-        'customer_vault_id': customerVaultId,
-        'billing_id': billingId,
-        'entry': entries,
-        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
-        'surcharge': surcharge,
-        'is_leaseAdded': isLeaseAdded,
-        'uploaded_file': uploadedFile,
-        'transaction_id': transactionId,
-        'response': responseText,
-        'notificationTime': notificationTime,
-      }),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200) {
@@ -317,13 +326,14 @@ class PaymentService {
         // 'entry': entries,
       };
       print(paymentDetails);
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
@@ -410,31 +420,33 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.post(
+    final Map<String, dynamic> requestBody = {
+      'company_name': companyName,
+      'admin_id': id,
+      'tenant_id': tenantId,
+      'lease_id': leaseId,
+      'payment_type': paymentType,
+      'entry': entries,
+      'total_amount': double.parse(totalAmount),
+      'surcharge': surcharge,
+      'is_leaseAdded': isLeaseAdded,
+      'uploaded_file': uploadedFile,
+      'transaction_id': transactionId,
+      'response': responseText,
+      'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
+    };
+    final response = await apiPost(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffId",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
-      body: jsonEncode(<String, dynamic>{
-        'company_name': companyName,
-        'admin_id': id,
-        'tenant_id': tenantId,
-        'lease_id': leaseId,
-        'payment_type': paymentType,
-
-        'entry': entries,
-        // 'total_amount': totalAmount,
-        'total_amount': (double.parse(totalAmount) - double.parse(surcharge)),
-        'surcharge': surcharge,
-        'is_leaseAdded': isLeaseAdded,
-        'uploaded_file': uploadedFile,
-        'transaction_id': transactionId,
-        'response': responseText,
-        'notificationTime': notificationTime,
-      }),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200) {
@@ -530,6 +542,7 @@ class PaymentService {
         'surcharge': surcharge,
         'amount': amount,
         'tenantId': tenantId,
+        'tenant_id': tenantId,
         'date': date,
         'address1': address1,
         'processor_id': processorId,
@@ -540,13 +553,14 @@ class PaymentService {
       };
       print(paymentDetails);
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
         },
         body: jsonEncode({
           "paymentDetails": paymentDetails,
@@ -631,29 +645,34 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.put(
+    final Map<String, dynamic> requestBody = {
+      'company_name': companyName,
+      'admin_id': id,
+      'tenant_id': tenantId,
+      'lease_id': leaseId,
+      'payment_id': paymentId,
+      'payment_type': paymentType,
+      'entry': entries,
+      'total_amount': totalAmount,
+      'surcharge': surcharge,
+      'is_leaseAdded': isLeaseAdded,
+      'uploaded_file': uploadedFile,
+      'check_number': checknumber,
+      'response': responseText,
+      'notificationTime': notificationTime,
+      'is_web': true,
+      'user_active_recently': true,
+    };
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
+          "X-Client-Source": _clientSource,
       },
-      body: jsonEncode(<String, dynamic>{
-        'company_name': companyName,
-        'admin_id': id,
-        'tenant_id': tenantId,
-        'lease_id': leaseId,
-        'payment_id': paymentId,
-        'payment_type': paymentType,
-        'entry': entries,
-        'total_amount': totalAmount,
-        'is_leaseAdded': isLeaseAdded,
-        'uploaded_file': uploadedFile,
-        'check_number': checknumber,
-        'response': "SUCCESS",
-        'notificationTime': notificationTime,
-      }),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200) {
@@ -683,28 +702,30 @@ class PaymentService {
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
 
-    final response = await http.put(
+    final Map<String, dynamic> requestBody = {
+      'payment_id': paymentId,
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+      'tenantName': tenantName,
+      'lease_id': leaseId,
+      'customer_vault_id': customerVaultId,
+      'billing_id': billingId,
+      'entry': entries,
+      'total_amount': totalAmount,
+      'uploaded_file': uploadedFile ?? [],
+      'is_web': true,
+      'user_active_recently': true,
+    };
+    final response = await apiPut(
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
         "X-Idempotency-Key": Uuid().v4(),
+        "X-Client-Source": _clientSource,
       },
-      body: jsonEncode(<String, dynamic>{
-        'payment_id': paymentId,
-        'admin_id': adminId,
-        'tenant_id': tenantId,
-        'tenantName': tenantName,
-        'lease_id': leaseId,
-        'customer_vault_id': customerVaultId,
-        'billing_id': billingId,
-        'entry': entries,
-        'total_amount': totalAmount,
-        'uploaded_file': uploadedFile ?? [],
-        'is_web': false,
-        'user_active_recently': true,
-      }),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200) {
@@ -769,7 +790,7 @@ class PaymentService {
 //   print("Payment Details: $paymentDetails");
 //
 //   try {
-//     final response = await http.post(
+//     final response = await apiPost(
 //       Uri.parse(baseUrl),
 //       headers: {
 //         "authorization": "CRM $token",

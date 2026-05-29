@@ -31,6 +31,7 @@ import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
 import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
 class Rentalowner_table extends StatefulWidget {
@@ -416,7 +417,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",
@@ -554,7 +555,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
             ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         // Search Bar - Original Design
         Padding(
           padding: const EdgeInsets.only(left: 0, right: 0),
@@ -566,7 +567,8 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                 const SizedBox(width: 19),
               Expanded(
                 child: Material(
-                  elevation: 3,
+                  elevation: 0,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     height: (MediaQuery.of(context).size.width < 500) ? 45 : 50,
@@ -686,6 +688,30 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                     const SizedBox(height: 10),
                     _buildHeaders(),
                     const SizedBox(height: 10),
+                    if (data.isEmpty)
+                      Container(
+                        height: MediaQuery.of(context).size.height * .35,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/images/no_data.jpg",
+                                height: 200,
+                                width: 200,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor,
+                                    fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     Container(
                       // decoration: BoxDecoration(
                       //     borderRadius: BorderRadius.circular(10),
@@ -888,18 +914,27 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  _showDeleteAlert(context,
-                                                      rentals.rentalownerId!);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ResponsiveRentalSummary(
+                                                                rentalOwnersid:
+                                                                    rentals
+                                                                        .rentalownerId!,
+                                                                rentalowners:
+                                                                    rentals,
+                                                              )));
                                                 },
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      color:
-                                                          Colors.red.shade50),
+                                                    color: Colors.grey.shade200,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
                                                   child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -909,11 +944,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons
-                                                            .trashCan,
+                                                        FontAwesomeIcons.eye,
                                                         size: 15,
-                                                        color: Colors.red,
+                                                        color: Colors.black,
                                                       ),
+                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),
@@ -972,27 +1007,18 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                               ),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ResponsiveRentalSummary(
-                                                                rentalOwnersid:
-                                                                    rentals
-                                                                        .rentalownerId!,
-                                                                rentalowners:
-                                                                    rentals,
-                                                              )));
+                                                  _showDeleteAlert(context,
+                                                      rentals.rentalownerId!);
                                                 },
                                                 child: Container(
                                                   height: 35,
                                                   width: 35,
                                                   decoration: BoxDecoration(
-                                                    color: Colors.grey.shade200,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                  ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color:
+                                                          Colors.red.shade50),
                                                   child: const Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1002,11 +1028,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                             .center,
                                                     children: [
                                                       FaIcon(
-                                                        FontAwesomeIcons.eye,
+                                                        FontAwesomeIcons
+                                                            .trashCan,
                                                         size: 15,
-                                                        color: Colors.black,
+                                                        color: Colors.red,
                                                       ),
-                                                      SizedBox(width: 2),
                                                     ],
                                                   ),
                                                 ),

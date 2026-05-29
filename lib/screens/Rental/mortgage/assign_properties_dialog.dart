@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -113,7 +114,7 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       final id = prefs.getString('adminId');
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/mortgage/properties/list'),
         headers: {
           'Content-Type': 'application/json',

@@ -16,6 +16,7 @@ import '../../../../widgets/CustomTableShimmer.dart';
 import '../../../../widgets/appbar.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class NotesTable extends StatefulWidget {
   String? leaseid;
@@ -124,7 +125,7 @@ class _NotesTableState extends State<NotesTable> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -183,12 +184,12 @@ class _NotesTableState extends State<NotesTable> {
     };
 
     final response = noteId == null
-        ? await http.post(url, body: json.encode(body), headers: {
+        ? await apiPost(url, body: json.encode(body), headers: {
             "authorization": "CRM $token",
             "id": "CRM $Id",
             "Content-Type": "application/json",
           })
-        : await http.put(url, body: json.encode(body), headers: {
+        : await apiPut(url, body: json.encode(body), headers: {
             "authorization": "CRM $token",
             "id": "CRM $Id",
             "Content-Type": "application/json",

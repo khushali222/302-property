@@ -31,6 +31,7 @@ import '../../../repository/Rental_ownersData.dart';
 import '../../../../Model/RentalOwnersData.dart' as RentalOwnerModel;
 import '../../../widgets/drawer_tiles.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'EditProperties.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -353,7 +354,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         if (mounted) setState(() {});
         return;
       }
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/limitation/$adminid'),
         headers: {
           "authorization": "CRM $token",
@@ -2422,7 +2423,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('${Api_url}/api/rentals/rental/$rentalId/availability'),
         headers: {
           "authorization": "CRM $token",

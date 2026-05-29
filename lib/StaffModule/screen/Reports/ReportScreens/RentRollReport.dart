@@ -39,6 +39,7 @@ import '../../../../Model/rentrollreportmodel.dart';
 
 import '../../../widgets/custom_drawer.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class RentersInsurances extends StatefulWidget {
   @override
@@ -631,7 +632,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rental-owners/$adminid'),
         headers: {
           "authorization": "CRM $token",

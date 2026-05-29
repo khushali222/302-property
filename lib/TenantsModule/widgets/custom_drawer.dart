@@ -109,12 +109,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   FaIcon(
                     FontAwesomeIcons.house,
                     size: 20,
-                    color: widget.currentpage == "Properties"
+                    color: widget.currentpage == "Property"
                         ? Colors.white
                         : blueColor,
                   ),
-                  "Properties",
-                  widget.currentpage == "Properties",
+                  "Property",
+                  widget.currentpage == "Property",
                 ),
               if (permissions!.financialView)
                 buildListTile(
@@ -132,7 +132,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               if (permissions!.workorderView)
                 buildListTile(
                   context,
-                  widget.currentpage == "Work Order"
+                  widget.currentpage == "Work Orders"
                       ? SvgPicture.asset(
                     "assets/images/tenants/Work Light.svg",
                     fit: BoxFit.cover,
@@ -145,8 +145,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     height: 20,
                     width: 20,
                   ),
-                  "Work Order",
-                  widget.currentpage == "Work Order",
+                  "Work Orders",
+                  widget.currentpage == "Work Orders",
                 ),
               if (permissions!.documentsView)
                 buildListTile(

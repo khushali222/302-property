@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constant/constant.dart';
 
@@ -57,7 +58,7 @@ class MaintenanceHistoryService {
       // print('Form fields: ${request.fields}');
       // print('Files count: ${request.files.length}');
 
-      var response = await request.send();
+      var response = await apiSend(request);
       var responseData = await response.stream.bytesToString();
       var jsonResponse = json.decode(responseData);
 

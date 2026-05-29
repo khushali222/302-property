@@ -16,6 +16,7 @@ import '../../../../repository/properties_summery.dart';
 import '../../../../repository/unit_data.dart';
 import '../../../../Model/unit.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'ApplianceSummary.dart';
 import 'edit_appliences.dart';
 import '../summery_page.dart';
@@ -399,7 +400,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",

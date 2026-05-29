@@ -39,6 +39,7 @@ import '../../Staff_Member/Add_staffmember.dart';
 import '../../Staff_Member/Edit_staff_member.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'newAddLease.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -1777,107 +1778,6 @@ class _Lease_tableState extends State<Lease_table> {
                                                           children: [
                                                             GestureDetector(
                                                               onTap: () {
-                                                                _attemptDeleteLease(
-                                                                    context,
-                                                                    lease);
-                                                              },
-                                                              child: Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .red
-                                                                        .shade50),
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () async {
-                                                                Provider.of<SelectedCosignersProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearCosigner();
-                                                                Provider.of<SelectedTenantsProvider>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .clearTenant();
-                                                                // handleEdit(Propertytype);
-                                                                var check = await Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => Edit_lease(
-                                                                              lease: lease,
-                                                                              leaseId: lease.leaseId!,
-                                                                            )));
-                                                                if (check ==
-                                                                    true) {
-                                                                  _scheduleLeaseLoad();
-                                                                }
-                                                              },
-                                                              child: 
-                                                              Container(
-                                                                height: 35,
-                                                                width: 35,
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8),
-                                                                    color: Colors
-                                                                        .green
-                                                                        .shade50), // color:Colors.grey[100],
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .edit,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                           
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap: () {
                                                                 Navigator.push(
                                                                     context,
                                                                     MaterialPageRoute(
@@ -1919,6 +1819,107 @@ class _Lease_tableState extends State<Lease_table> {
                                                                     SizedBox(
                                                                         width:
                                                                             2),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                Provider.of<SelectedCosignersProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .clearCosigner();
+                                                                Provider.of<SelectedTenantsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false)
+                                                                    .clearTenant();
+                                                                // handleEdit(Propertytype);
+                                                                var check = await Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => Edit_lease(
+                                                                              lease: lease,
+                                                                              leaseId: lease.leaseId!,
+                                                                            )));
+                                                                if (check ==
+                                                                    true) {
+                                                                  _scheduleLeaseLoad();
+                                                                }
+                                                              },
+                                                              child:
+                                                              Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .green
+                                                                        .shade50), // color:Colors.grey[100],
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .edit,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _attemptDeleteLease(
+                                                                    context,
+                                                                    lease);
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                8),
+                                                                    color: Colors
+                                                                        .red
+                                                                        .shade50),
+                                                                child:
+                                                                    const Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .trashCan,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .red,
+                                                                    ),
                                                                   ],
                                                                 ),
                                                               ),
@@ -2005,6 +2006,10 @@ class _Lease_tableState extends State<Lease_table> {
                                               : () {
                                                   setState(() {
                                                     currentPage--;
+                                                    if (_useServerLeasePagination()) {
+                                                      futureLease =
+                                                          _loadLeasesPage();
+                                                    }
                                                   });
                                                 },
                                         ),

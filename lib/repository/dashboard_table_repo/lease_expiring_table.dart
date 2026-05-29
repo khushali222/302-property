@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Dashbord_table/lease_expiring_table.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
@@ -13,7 +14,7 @@ class Lease_expiring_tableService {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('$Api_url/api/leases/expiring_leases/$adminId'),
           headers: {
             "authorization": "CRM $token",

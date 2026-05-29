@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -19,7 +20,7 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
 
     // Define the URL and headers for the request
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/work-order/work-orders/$id'),
       headers: {
         'authorization': 'CRM $token',
@@ -96,7 +97,7 @@ class WorkOrderRepository {
 
     // Sending the request
     //print(jsonEncode({"workOrder": data}));
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/work-order/work-order'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -126,7 +127,7 @@ class WorkOrderRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('vendor_id');
-    final response = await http.get(Uri.parse('${Api_url}/api/work-order/workorder_details/$workorderId'),
+    final response = await apiGet(Uri.parse('${Api_url}/api/work-order/workorder_details/$workorderId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
     //print('hello${response.body}');
@@ -198,7 +199,7 @@ class WorkOrderRepository {
 
     print(" workorder data $data");
 
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -234,7 +235,7 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
 
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('$Api_url/api/work-order/delete_workorder/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",

@@ -28,8 +28,8 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   List<BidRequest> _filteredBidRequests = [];
   bool _isLoading = false;
   String _searchQuery = '';
-  String? _selectedStatus;
-  List<String> _statuses = ['All'];
+  String _selectedStatus = 'All';
+  final List<String> _statuses = const ['All', 'Open', 'Closed'];
   int _currentPage = 0;
   int _rowsPerPage = 10;
   final TextEditingController _searchController = TextEditingController();
@@ -90,12 +90,12 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
         vendorId: vendorId,
         limit: 10000,
         page: 1,
+        status: _selectedStatus,
       );
 
       if (mounted) {
         setState(() {
           _bidRequests = response.data ?? [];
-          _extractStatuses();
           _applyFilters();
           _isLoading = false;
         });
@@ -110,39 +110,18 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
     }
   }
 
-  void _extractStatuses() {
-    Set<String> types = {'All'};
-    for (var request in _bidRequests) {
-      if (request.status != null && request.status!.isNotEmpty) {
-        types.add(request.status!);
-      }
-    }
-    _statuses = types.toList()..sort();
-  }
-
   void _applyFilters() {
     _filteredBidRequests = _bidRequests.where((request) {
-      // Search filter
-      bool matchesSearch = true;
-      if (_searchQuery.isNotEmpty) {
-        final searchLower = _searchQuery.toLowerCase();
-        matchesSearch = (request.rental?.rentalAddress ?? '')
-                .toLowerCase()
-                .contains(searchLower) ||
-            (request.workCategory ?? '').toLowerCase().contains(searchLower) ||
-            (request.description ?? '').toLowerCase().contains(searchLower) ||
-            (request.unit?.rentalUnit ?? '')
-                .toLowerCase()
-                .contains(searchLower);
-      }
-
-      // Status filter
-      bool matchesStatus = true;
-      if (_selectedStatus != null && _selectedStatus != 'All') {
-        matchesStatus = request.status == _selectedStatus;
-      }
-
-      return matchesSearch && matchesStatus;
+      if (_searchQuery.isEmpty) return true;
+      final searchLower = _searchQuery.toLowerCase();
+      return (request.rental?.rentalAddress ?? '')
+              .toLowerCase()
+              .contains(searchLower) ||
+          (request.workCategory ?? '').toLowerCase().contains(searchLower) ||
+          (request.description ?? '').toLowerCase().contains(searchLower) ||
+          (request.unit?.rentalUnit ?? '')
+              .toLowerCase()
+              .contains(searchLower);
     }).toList();
 
     // Apply sorting
@@ -405,7 +384,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                       children: [
                         Expanded(
                           child: Container(
-                            height: 50,
+                            height: 42,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -424,6 +403,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                             ),
                             child: TextField(
                               controller: _searchController,
+                              textAlignVertical: TextAlignVertical.center,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Color(0xFF495160),
@@ -436,22 +416,23 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                 });
                               },
                               cursorColor: blueColor,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
+                                isCollapsed: true,
                                 border: InputBorder.none,
                                 hintText: "Search here...",
-                                hintStyle: const TextStyle(
+                                hintStyle: TextStyle(
                                   color: Color(0xFF8A95A8),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.search,
                                   color: Color(0xFF8A95A8),
                                   size: 20,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
+                                contentPadding: EdgeInsets.symmetric(
                                   horizontal: 0,
-                                  vertical: 14,
+                                  vertical: 0,
                                 ),
                               ),
                             ),
@@ -460,7 +441,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Container(
-                            height: 50,
+                            height: 42,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -480,6 +461,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton2<String>(
                                 isExpanded: true,
+                                alignment: AlignmentDirectional.centerStart,
                                 hint: const Padding(
                                   padding: EdgeInsets.only(left: 10),
                                   child: Text(
@@ -492,13 +474,30 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                                selectedItemBuilder: (context) => _statuses
+                                    .map((item) => Container(
+                                          alignment:
+                                              AlignmentDirectional.centerStart,
+                                          padding: const EdgeInsets.only(
+                                              left: 10),
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFF495160),
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ))
+                                    .toList(),
                                 items: _statuses
                                     .map((String item) =>
                                         DropdownMenuItem<String>(
                                           value: item,
                                           child: Padding(
                                             padding:
-                                                const EdgeInsets.only(left: 0),
+                                                const EdgeInsets.only(left: 10),
                                             child: Text(
                                               item,
                                               style: const TextStyle(
@@ -513,14 +512,15 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                     .toList(),
                                 value: _selectedStatus,
                                 onChanged: (value) {
+                                  if (value == null) return;
                                   setState(() {
                                     _selectedStatus = value;
                                     if (_currentPage != 0) _currentPage = 0;
-                                    _applyFilters();
                                   });
+                                  _fetchBidRequests();
                                 },
                                 buttonStyleData: ButtonStyleData(
-                                  height: 50,
+                                  height: 42,
                                   padding: const EdgeInsets.only(
                                     left: 0,
                                     right: 10,
@@ -567,16 +567,29 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                           child: ColabShimmerLoadingWidget(),
                         )
                       : _filteredBidRequests.isEmpty
-                          ? Container(
-                              height: 300,
-                              child: Center(
-                                child: Text(
-                                  "No data available",
-                                  style: TextStyle(
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Column(
+                                children: [
+                                  _buildHeaders(),
+                                  const SizedBox(height: 30),
+                                  Image.asset(
+                                    "assets/images/no_data.jpg",
+                                    height: 120,
+                                    width: 120,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    "No Data Available",
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,
-                                      fontSize: 16),
-                                ),
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
                               ),
                             )
                           : Padding(

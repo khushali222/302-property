@@ -63,12 +63,12 @@ class WideScreenLayout extends StatelessWidget {
               Expanded(
                 child: ReportCard(
                   title: "Tenant's Insurance",
-                  description: "Produces a list of all insured units",
+                  description: "View your renter's insurance policies",
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DocumentsInsuranceTable(),),
+                          builder: (context) => DocumentsInsuranceTable()),
                     );
                   },
                 ),
@@ -77,13 +77,12 @@ class WideScreenLayout extends StatelessWidget {
               Expanded(
                 child: ReportCard(
                   title: "Tenant's Leases",
-                  description: "Produces a list of leases",
+                  description: "View your lease documents",
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>Lease_Table(),),
+                      MaterialPageRoute(builder: (context) => Lease_Table()),
                     );
-                    // Navigate to the appropriate screen
                   },
                 ),
               ),
@@ -376,42 +375,32 @@ class WideScreenLayout extends StatelessWidget {
 class NarrowScreenLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = screenWidth > 600 ? 3 : 2;
-
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        titleBar(
-          title: 'Documents',
-          width: MediaQuery.of(context).size.width * .89,
-        ),
         Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 2.5, // Adjust the aspect ratio as needed
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-
-            ),
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: reportCards.length,
-            itemBuilder: (context, index) {
-              return ReportCard(
-                title: reportCards[index].title,
-                description: reportCards[index].description,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: titleBar(width: double.infinity, title: 'Documents'),
+        ),
+        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: reportCards.map((card) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ReportCard(
+                title: card.title,
+                description: card.description,
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => reportCards[index].destination!,
+                      builder: (context) => card.destination!,
                     ),
                   );
                 },
-              );
-            },
+              ),
+            )).toList(),
           ),
         ),
       ],
@@ -431,48 +420,53 @@ class ReportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Color(0xFFDBE0E5)),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: blueColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
-                ),
-              ),
-              //padding: EdgeInsets.all(17.0),
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  SizedBox(height: 6),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: blueColor,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
+            SizedBox(width: 12),
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Color(0xFFF0F2F5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_outward,
+                color: Colors.grey[600],
+                size: 16,
               ),
             ),
           ],
@@ -496,12 +490,12 @@ class ReportCardModel {
 List<ReportCardModel> reportCards = [
   ReportCardModel(
     title: "Tenant's Insurance",
-    description: "Produces a list of all insured units",
+    description: "View your renter's insurance policies",
     destination: DocumentsInsuranceTable(),
   ),
   ReportCardModel(
     title: "Tenant's Leases",
-    description: "Produces a list of leases",
+    description: "View your lease documents",
     destination: Lease_Table(),
   ),
   /*ReportCardModel(

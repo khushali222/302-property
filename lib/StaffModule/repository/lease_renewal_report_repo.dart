@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/lease_renewal_report.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -36,7 +37,7 @@ class LeaseRenewalReportRepository {
     }
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",

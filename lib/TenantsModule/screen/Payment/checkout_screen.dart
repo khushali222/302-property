@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:io' show Platform, SocketException, HttpException;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'payment_configurations.dart';
 import 'nmi_keys_service.dart';
@@ -507,7 +508,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       Map<String, dynamic>? leaseData;
       try {
-        final leaseResponse = await http.get(
+        final leaseResponse = await apiGet(
           Uri.parse('$Api_url/api/leases/get_leases/$id'),
           headers: {
             "authorization": "CRM $token",

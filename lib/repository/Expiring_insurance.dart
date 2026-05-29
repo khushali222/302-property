@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Expiring_insurance_model.dart';
 import 'package:three_zero_two_property/Model/ReportExpiringLease.dart';
@@ -21,7 +22,7 @@ class ExpiringInsuranceTableService {
 
     try {
       print('entry');
-      final response = await http.get(Uri.parse(url), headers: {
+      final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });

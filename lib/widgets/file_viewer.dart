@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:printing/printing.dart';
@@ -297,7 +298,7 @@ class _FileViewerState extends State<FileViewer> {
       }
 
       // Download the file with authentication headers
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(widget.fileUrl!),
         headers: {
           'authorization': 'CRM $token',

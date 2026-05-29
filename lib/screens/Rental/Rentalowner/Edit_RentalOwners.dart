@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/RentalOwnersData.dart';
 import '../../../model/rentalOwner.dart';
 import '../../../model/rentalowners_summery.dart';
@@ -528,7 +529,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(
           '${Api_url}/api/payment/rental_owner/setting/${widget.rentalOwner.rentalownerId}'),
       headers: {
@@ -578,7 +579,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
 
     try {
       final response =
-          await http.post(Uri.parse(url), headers: headers, body: body);
+          await apiPost(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
       print('update card type ${responseData}');

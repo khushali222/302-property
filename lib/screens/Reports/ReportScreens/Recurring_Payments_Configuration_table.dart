@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
@@ -54,7 +55,7 @@ class _Recurring_Payments_Configuration_ReportState
       String? adminId = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '$Api_url/api/recurring-cards/recurring-payment-configuration/$adminId'),
         headers: {

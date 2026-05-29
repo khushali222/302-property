@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Model/profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../../constant/constant.dart';
 
@@ -18,7 +19,7 @@ class ProfileRepository {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$apiUrl$id'),
       headers: {
         "authorization": "CRM $token",
@@ -43,7 +44,7 @@ class ProfileRepository {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$apiUrl$id'),
       body: data,
       headers: {

@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -43,7 +44,7 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
     request.files
         .add(await http.MultipartFile.fromPath('files', file.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
     var responseBody = json.decode(responseData.body);
 
@@ -146,7 +147,7 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
         'user_active_recently': true,
       };
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/bid-request/bid-submission'),
         headers: {
           'authorization': 'CRM $token',

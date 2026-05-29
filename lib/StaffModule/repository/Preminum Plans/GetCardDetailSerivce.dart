@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Preminum%20Plans/GetCardDetailModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 
 class GetCardDetailService {
@@ -9,7 +10,7 @@ class GetCardDetailService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/nmi-keys/nmi-keys/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -31,7 +32,7 @@ class GetCardDetailService {
     String? token = prefs.getString('token');
 
     final url = Uri.parse('$Api_url/api/plans/plans');
-    final response = await http.get(
+    final response = await apiGet(
       url,
       headers: {
         "authorization": "CRM $token",

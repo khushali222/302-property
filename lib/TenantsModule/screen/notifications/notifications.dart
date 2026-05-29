@@ -17,6 +17,7 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 
 class notifications extends StatefulWidget {
@@ -35,7 +36,7 @@ class _notificationsState extends State<notifications> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/notification/tenant/$id'),
       headers: {
         "authorization": "CRM $token",
@@ -118,7 +119,7 @@ class _notificationsState extends State<notifications> {
 
     try {
       // Make the PUT request to the API
-      var response = await http.put(
+      var response = await apiPut(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../constant/constant.dart';
 class NotificationProvider with ChangeNotifier {
@@ -24,7 +25,7 @@ class NotificationProvider with ChangeNotifier {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/notification/admin/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -55,7 +56,7 @@ class NotificationProvider with ChangeNotifier {
       String? adminid = prefs.getString("adminId");
       String? token = prefs.getString("token");
       String? id = prefs.getString("staff_id");
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/notification/staff/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -87,7 +88,7 @@ class NotificationProvider with ChangeNotifier {
       String? token = prefs.getString("token");
       String? id = prefs.getString("tenant_id");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/notification/tenant/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -118,7 +119,7 @@ class NotificationProvider with ChangeNotifier {
       String? token = prefs.getString("token");
       String? id = prefs.getString("vendor_id");
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/notification/vendor/$id'),
         headers: {
           "authorization": "CRM $token",

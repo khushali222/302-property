@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,7 +62,7 @@ class _MakePaymentState extends State<MakePayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"authorization": "CRM $token","id":"CRM $id",},
     );
@@ -94,7 +95,7 @@ class _MakePaymentState extends State<MakePayment> {
       print(token);
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {"authorization": "CRM $token","id":"CRM $id",},
       );
@@ -244,7 +245,7 @@ class _MakePaymentState extends State<MakePayment> {
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
-    var response = await request.send();
+    var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);

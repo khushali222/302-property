@@ -1207,32 +1207,32 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(width: 8),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          handleEdit(workorder);
-                                                        },
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration: BoxDecoration(
-                                                            color: blueColor,
-                                                            borderRadius: BorderRadius.circular(8),
-                                                          ),
-                                                          child: const Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              FaIcon(
-                                                                FontAwesomeIcons.penToSquare,
-                                                                size: 15,
-                                                                color: Colors.white,
-                                                              ),
-                                                              SizedBox(width: 2),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
+                                                      // SizedBox(width: 8),
+                                                      // InkWell(
+                                                      //   onTap: () {
+                                                      //     handleEdit(workorder);
+                                                      //   },
+                                                      //   child: Container(
+                                                      //     height: 35,
+                                                      //     width: 35,
+                                                      //     decoration: BoxDecoration(
+                                                      //       color: blueColor,
+                                                      //       borderRadius: BorderRadius.circular(8),
+                                                      //     ),
+                                                      //     child: const Row(
+                                                      //       mainAxisAlignment: MainAxisAlignment.center,
+                                                      //       crossAxisAlignment: CrossAxisAlignment.center,
+                                                      //       children: [
+                                                      //         FaIcon(
+                                                      //           FontAwesomeIcons.penToSquare,
+                                                      //           size: 15,
+                                                      //           color: Colors.white,
+                                                      //         ),
+                                                      //         SizedBox(width: 2),
+                                                      //       ],
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
                                                 ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import '../Model/applicant_summery.dart';
@@ -18,7 +19,7 @@ class ApplicantSummeryRepository {
 
     final url = Uri.parse('$Api_url/api/applicant/applicant_summary/$applicantId');
     print('$Api_url/api/applicant/applicant_summary/$applicantId');
-    final response = await http.get(
+    final response = await apiGet(
       url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",}
     );

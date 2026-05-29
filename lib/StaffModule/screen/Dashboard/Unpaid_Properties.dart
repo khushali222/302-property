@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -186,7 +187,7 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
   Future<void> _fetchRentalOwners() async {
     if (_adminId == null || _token == null) return;
     try {
-      final res = await http.get(
+      final res = await apiGet(
         Uri.parse('$Api_url/api/rentals/rental-owners/$_adminId'),
         headers: {
           'authorization': 'CRM $_token',
@@ -209,7 +210,7 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
     if (_adminId == null || _token == null) return;
     setState(() => _loadingLetters = true);
     try {
-      final res = await http.get(
+      final res = await apiGet(
         Uri.parse('$Api_url/api/leases/preview-late-letters/$_adminId'),
         headers: {
           'authorization': 'CRM $_token',
@@ -245,7 +246,7 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
     if (_token == null || _feesCache.containsKey(leaseId)) return;
     setState(() => _loadingFees[leaseId] = true);
     try {
-      final res = await http.get(
+      final res = await apiGet(
         Uri.parse('$Api_url/api/leases/lease/unpaid-fees/$leaseId'),
         headers: {
           'authorization': 'CRM $_token',

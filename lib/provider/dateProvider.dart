@@ -4,6 +4,7 @@
 // import 'package:intl/intl.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 //
 // import '../constant/constant.dart';
 //
@@ -36,7 +37,7 @@
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? id = prefs.getString("adminId");
 //     String? token = prefs.getString('token');
-//    //  final response = await http.post(
+//    //  final response = await apiPost(
 //    //    Uri.parse('${Api_url}/api/themes/date-format'),
 //    //    headers: {
 //    //      "authorization": "CRM $token",
@@ -66,7 +67,7 @@
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     String? id = prefs.getString("adminId");
 //     String? token = prefs.getString('token');
-//     final response = await http.post(
+//     final response = await apiPost(
 //       Uri.parse('${Api_url}/api/themes/date-format'),
 //       headers: {
 //         "authorization": "CRM $token",
@@ -144,7 +145,7 @@
 //       final prefs = await SharedPreferences.getInstance();
 //       final adminId = prefs.getString("adminId");
 //
-//       final response = await http.post(
+//       final response = await apiPost(
 //         Uri.parse('${Api_url}/api/auth'),
 //         headers: {
 //           "authorization": "CRM $token",
@@ -175,6 +176,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -231,7 +233,7 @@ class DateProvider with ChangeNotifier {
     String? token = prefs.getString('token');
     print(_dateFormat);
     if (token != null) {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/themes/date-format'),
         headers: {
           "authorization": "CRM $token",
@@ -417,7 +419,7 @@ class DateProvider with ChangeNotifier {
   //     final prefs = await SharedPreferences.getInstance();
   //     final adminId = prefs.getString("adminId");
   //
-  //     final response = await http.post(
+  //     final response = await apiPost(
   //       Uri.parse('${Api_url}/api/auth'),
   //       headers: {
   //         "authorization": "CRM $token",
@@ -458,7 +460,7 @@ class DateProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final adminId = prefs.getString("adminId");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/auth'),
         headers: {
           "authorization": "CRM $token",

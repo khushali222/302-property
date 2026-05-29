@@ -21,6 +21,7 @@ import '../Property_Type/Add_property_type.dart';
 import '../Property_Type/Edit_property_type.dart';
 import '../Staff_Member/Edit_staff_member.dart';
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 
 // void main() {
@@ -171,7 +172,7 @@ class _Staff_tableState extends State<Staff_table> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     final response =
-    await http.get(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
+    await apiGet(Uri.parse('${Api_url}/api/staffmember/limitation/$id'));
     final jsonData = json.decode(response.body);
     print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201 ) {

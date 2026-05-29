@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -549,7 +550,7 @@ class _Tenant_communicationState extends State<Tenant_communication> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
       String? staffid = prefs.getString("staff_id");
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",

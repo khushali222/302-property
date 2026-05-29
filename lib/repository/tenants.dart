@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Model/tenants.dart';
 import '../constant/constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class TenantsPagination {
   final int currentPage;
@@ -135,7 +136,7 @@ class TenantsRepository {
       },
     );
     debugPrint('[Tenants v2][Admin] REQUEST GET $uri');
-    final response = await http.get(
+    final response = await apiGet(
       uri,
       headers: {
         "authorization": "CRM $token",
@@ -185,7 +186,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/tenant/tenants/$tenantId'),
       headers: {
         "authorization": "CRM $token",
@@ -211,7 +212,7 @@ class TenantsRepository {
 
     print(jsonEncode(tenant.toJson()));
     try {
-      final response = await http.post(
+      final response = await apiPost(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -297,7 +298,7 @@ class TenantsRepository {
   //
   //   // Making the PUT request
   //
-  //   final http.Response response = await http.put(
+  //   final http.Response response = await apiPut(
   //     Uri.parse('$apiUrl/$tenantId'),
   //     headers: <String, String>{
   //       'Content-Type': 'application/json; charset=UTF-8',
@@ -363,7 +364,7 @@ class TenantsRepository {
   //   print('$apiUrl/$tenantId');
   //
   //   try {
-  //     final http.Response response = await http.put(
+  //     final http.Response response = await apiPut(
   //       Uri.parse('$apiUrl/$tenantId'),
   //       headers: <String, String>{
   //         'Content-Type': 'application/json; charset=UTF-8',
@@ -443,7 +444,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final http.Response response = await http.put(
+    final http.Response response = await apiPut(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -519,7 +520,7 @@ class TenantsRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
-      final http.Response response = await http.delete(uri,
+      final http.Response response = await apiDelete(uri,
           headers: <String, String>{
             "authorization": "CRM $token",
             "id": "CRM $id",
@@ -548,7 +549,7 @@ class TenantsRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     print(tenantId);
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
       headers: {
         "authorization": "CRM $token",
@@ -576,7 +577,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId/emergency-contacts'),
       headers: {
         "authorization": "CRM $token",
@@ -604,7 +605,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId/emergency-contact'),
       headers: {
         "authorization": "CRM $token",
@@ -633,7 +634,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse(
           '$Api_url/api/tenant/tenants/$tenantId/emergency-contacts/$contactId'),
       headers: {
@@ -656,7 +657,7 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    final response = await http.delete(
+    final response = await apiDelete(
       Uri.parse(
           '$Api_url/api/tenant/tenants/$tenantId/emergency-contacts/$contactId'),
       headers: {
@@ -675,7 +676,7 @@ class TenantsRepository {
     final String apiUrl = '$Api_url/api/admin/admin_profile/$adminId';
 
     try {
-      final http.Response response = await http.get(
+      final http.Response response = await apiGet(
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",

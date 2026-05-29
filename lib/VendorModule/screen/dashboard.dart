@@ -24,6 +24,7 @@ import 'package:three_zero_two_property/screens/Rental/Properties/properties.dar
 
 import '../widgets/appbar.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../widgets/drawer_tiles.dart';
 
@@ -145,7 +146,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       String? token = prefs.getString('token');
       //print(id);
       /// print(token);
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
           headers: {
             "id": "CRM $id",
@@ -194,7 +195,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     print(admin_id);
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/dashboard_workorder/$id/$admin_id'),
         headers: {
           "authorization": "CRM $token",

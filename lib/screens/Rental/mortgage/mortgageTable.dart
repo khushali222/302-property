@@ -7,6 +7,7 @@ import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'Addmortgage.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,7 +95,7 @@ class _MortgageTableState extends State<MortgageTable> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/'),
         headers: {
           'Content-Type': 'application/json',
@@ -990,20 +991,19 @@ class _MortgageTableState extends State<MortgageTable> {
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () =>
-                                                              _deleteMortgage(
-                                                                  mortgage[
-                                                                      '_id']),
+                                                              _viewMortgage(
+                                                                  mortgage),
                                                           child: Container(
                                                             height: 35,
                                                             width: 35,
                                                             decoration:
                                                                 BoxDecoration(
+                                                              color: Colors.grey
+                                                                  .shade200,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           8),
-                                                              color: Colors
-                                                                  .red.shade50,
                                                             ),
                                                             child: const Row(
                                                               mainAxisAlignment:
@@ -1015,10 +1015,10 @@ class _MortgageTableState extends State<MortgageTable> {
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
-                                                                      .trashCan,
+                                                                      .eye,
                                                                   size: 15,
                                                                   color: Colors
-                                                                      .red,
+                                                                      .black,
                                                                 ),
                                                               ],
                                                             ),
@@ -1066,19 +1066,20 @@ class _MortgageTableState extends State<MortgageTable> {
                                                             width: 5),
                                                         GestureDetector(
                                                           onTap: () =>
-                                                              _viewMortgage(
-                                                                  mortgage),
+                                                              _deleteMortgage(
+                                                                  mortgage[
+                                                                      '_id']),
                                                           child: Container(
                                                             height: 35,
                                                             width: 35,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors.grey
-                                                                  .shade200,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           8),
+                                                              color: Colors
+                                                                  .red.shade50,
                                                             ),
                                                             child: const Row(
                                                               mainAxisAlignment:
@@ -1090,10 +1091,10 @@ class _MortgageTableState extends State<MortgageTable> {
                                                               children: [
                                                                 FaIcon(
                                                                   FontAwesomeIcons
-                                                                      .eye,
+                                                                      .trashCan,
                                                                   size: 15,
                                                                   color: Colors
-                                                                      .black,
+                                                                      .red,
                                                                 ),
                                                               ],
                                                             ),

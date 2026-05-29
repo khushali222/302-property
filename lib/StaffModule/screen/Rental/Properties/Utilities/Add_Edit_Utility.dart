@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../StaffModule/widgets/appbar.dart';
@@ -214,7 +215,7 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
       }
 
       final response = widget.utilityData != null
-          ? await http.put(
+          ? await apiPut(
               Uri.parse('$Api_url/api/utilities/${widget.utilityId}'),
               headers: {
                 'Content-Type': 'application/json',
@@ -223,7 +224,7 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
               },
               body: jsonEncode(requestData),
             )
-          : await http.post(
+          : await apiPost(
               Uri.parse('$Api_url/api/utilities/utilities'),
               headers: {
                 'Content-Type': 'application/json',

@@ -13,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -236,7 +237,7 @@ class _Profile_screenState extends State<Profile_screen> {
     });
 
     print(" userid ${userid}");
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('${Api_url}/api/admin/app/reset_password'),
       headers: {
         'Content-Type': 'application/json',
@@ -290,7 +291,7 @@ class _Profile_screenState extends State<Profile_screen> {
     });
 
     print(" userid ${userid}");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/2fa/2fa-status/${id}'),
       headers: {
         "authorization": "CRM $token",
@@ -360,7 +361,7 @@ class _Profile_screenState extends State<Profile_screen> {
     String? token = prefs.getString("token");
     String? userid = prefs.getString("userId");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse(
           '${Api_url}/api/backup-codes/backup-codes/${userid}?user_type=admin'),
       headers: {
@@ -2844,7 +2845,7 @@ class _Profile_screenState extends State<Profile_screen> {
         },
       );
 
-      final response = await http.put(
+      final response = await apiPut(
         Uri.parse('${Api_url}/api/admin/togglestatus/$id'),
         headers: {
           "authorization": "CRM $token",
@@ -2957,7 +2958,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/enable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -3033,7 +3034,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/verify-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -3115,7 +3116,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/send-disable-2fa-code'),
         headers: {
           "authorization": "CRM $token",
@@ -3189,7 +3190,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/2fa/disable-2fa'),
         headers: {
           "authorization": "CRM $token",
@@ -3258,7 +3259,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? id = prefs.getString("adminId");
       String? token = prefs.getString("token");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse(
             '${Api_url}/api/backup-codes/send-regenerate-backup-codes-code'),
         headers: {
@@ -3334,7 +3335,7 @@ class _Profile_screenState extends State<Profile_screen> {
       String? token = prefs.getString("token");
       String? userid = prefs.getString("userId");
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/backup-codes/generate-backup-codes'),
         headers: {
           "authorization": "CRM $token",

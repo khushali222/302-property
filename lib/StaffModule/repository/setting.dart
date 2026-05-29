@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 
 import '../../../constant/constant.dart';
@@ -19,7 +20,7 @@ class SurchargeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(
+    final response = await apiGet(
         Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
         headers: {
           "authorization": "CRM $token",
@@ -43,7 +44,7 @@ class SurchargeRepository {
     print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http.put(
+    final response = await apiPut(
         Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),
         headers: {"authorization" : "CRM $token","id":"CRM $id",},
         body:data );
@@ -60,7 +61,7 @@ class SurchargeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {
         "authorization" : "CRM $token",
@@ -84,7 +85,7 @@ class SurchargeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
       headers: {
         "authorization" : "CRM $token",
@@ -109,7 +110,7 @@ class latefeeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -127,7 +128,7 @@ class latefeeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
       headers: {
         "authorization" : "CRM $token",
@@ -152,7 +153,7 @@ class latefeeRepository {
     String?  id = prefs.getString('adminId');
     print("$Api_url/api/latefee/latefee");
     print(data);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/latefee/latefee'),
       headers: {
         "authorization" : "CRM $token",
@@ -179,7 +180,7 @@ class mailserviceRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.get(Uri.parse('$baseUrl/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('$baseUrl/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     final response_Data = jsonDecode(response.body);
     print('mail data $response_Data');
     if (response_Data["statusCode"] == 200) {
@@ -198,7 +199,7 @@ class mailserviceRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await http.put(
+    final response = await apiPut(
       Uri.parse('$Api_url/api/mail_permission/$id'),
       headers: {
         "authorization" : "CRM $token",
@@ -220,7 +221,7 @@ class mailserviceRepository {
     String?  id = prefs.getString('adminId');
     print("$Api_url/api/mail_permission");
     print(data);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/mail_permission'),
       headers: {
         "authorization" : "CRM $token",
@@ -248,7 +249,7 @@ class accountRepository{
     String? id = prefs.getString('adminId');
     String? staffid = prefs.getString("staff_id");
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/accounts/accounts/$id'),
       headers: {
         'authorization': 'CRM $token',
@@ -285,7 +286,7 @@ class accountRepository{
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     String? stffid = prefs.getString("staff_id");
-    final http.Response response = await http.post(
+    final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/accounts/accounts'),
       headers: <String, String>{
         "authorization": "CRM $token",
@@ -319,7 +320,7 @@ class accountRepository{
     String? id = prefs.getString("staff_id");
 
 
-    final http.Response response = await http.delete(
+    final http.Response response = await apiDelete(
       Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
       headers: <String, String>{
         "authorization": "CRM $token",

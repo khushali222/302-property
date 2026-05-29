@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Model/upcoming_renewal.dart';
@@ -12,7 +13,7 @@ class Upcoming_renewal_repo{
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
 
-    final response = await http.get(Uri.parse('${Api_url}/api/leases/renewal_leases/$id'),
+    final response = await apiGet(Uri.parse('${Api_url}/api/leases/renewal_leases/$id'),
         headers: {
           "authorization": "CRM $token",
           "id":"CRM $id",

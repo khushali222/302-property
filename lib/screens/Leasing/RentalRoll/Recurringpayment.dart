@@ -18,6 +18,7 @@ import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/titleBar.dart';
 import 'addcard/AddCard.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class RecurringPayment extends StatefulWidget {
   Data leaseData;
@@ -108,7 +109,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/accounts/accounts/$id'),
       headers: {
         'authorization': 'CRM $token',
@@ -156,7 +157,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         "user_active_recently": true,
       };
 
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
         headers: {
           'authorization': 'CRM $token',
@@ -1382,7 +1383,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     customervaultid.add(0); // keep tenant index alignment even on errors
 
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
         headers: {"id": "CRM $id", "authorization": "CRM $token"},
       );
@@ -1437,7 +1438,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   Future<String> binCheck(String ccBin) async {
     final String apiUrl = 'https://bin-info.p.rapidapi.com/bin.php/?bin=$ccBin';
 
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse(apiUrl),
       headers: {
         'X-RapidAPI-Key': '46e85a3cb0msh33efbb0c9360ff4p106ebcjsncf1a23d6dda1',
@@ -1468,7 +1469,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       "admin_id": adminId.toString(),
     };
     print(requestBody);
-    final response = await http.post(
+    final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
@@ -1531,7 +1532,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     try {
-      final response = await http.post(
+      final response = await apiPost(
         url,
         headers: {
           "authorization": "CRM $token",
@@ -1573,7 +1574,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
     try {
-      final response = await http.put(
+      final response = await apiPut(
         url,
         headers: {
           "authorization": "CRM $token",

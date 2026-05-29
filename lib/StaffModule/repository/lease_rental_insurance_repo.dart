@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/Renters_Insurnce/Edit_insurnce.dart';
@@ -16,7 +17,7 @@ class RentersInsuranceService {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse(
             '$Api_url/api/renter-insurance/policies-by-tenant/$tenantId'),
         headers: {
@@ -56,7 +57,7 @@ class RentersInsuranceService {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     try {
-      final response = await http.get(
+      final response = await apiGet(
           Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'),
           headers: {
             "authorization": "CRM $token",
@@ -103,7 +104,7 @@ class RentersInsuranceService {
       String? token = prefs.getString('token');
       String? adminid = prefs.getString('adminId');
       String? id = prefs.getString("staff_id");
-      final http.Response response = await http.delete(
+      final http.Response response = await apiDelete(
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
@@ -133,7 +134,7 @@ class RentersInsuranceService {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
     String? id = prefs.getString("staff_id");
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('${Api_url}/api/renter-insurance/policy/$renters_insurance_id'),
       headers: {
         "authorization": "CRM $token",

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -752,7 +753,7 @@ class _EditDocumentState extends State<EditDocument> {
       String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
       String? token = prefs.getString('token');
 
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/leases/tenants/${widget.leaseId}'),
         headers: <String, String>{
           'authorization': 'CRM $token',
@@ -845,7 +846,7 @@ class _EditDocumentState extends State<EditDocument> {
 
       print(
           'Sending PUT request to: $Api_url/api/lease-document/update-document');
-      var streamedResponse = await request.send();
+      var streamedResponse = await apiSend(request);
       var response = await http.Response.fromStream(streamedResponse);
 
       print('Response status: ${response.statusCode}');

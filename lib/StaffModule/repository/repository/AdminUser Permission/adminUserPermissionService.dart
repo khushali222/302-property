@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/AdminUser%20Permission/adminUserPermissionModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -12,7 +13,7 @@ class PermissionService {
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await http.get(
+    final response = await apiGet(
       Uri.parse('$Api_url/api/permission/permission/$adminId'),
       headers: {
         "authorization": "CRM $token",
@@ -34,7 +35,7 @@ class PermissionService {
     String? token = prefs.getString('token');
 
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/permission/permission/'),
         headers: {
           'Content-Type': 'application/json',

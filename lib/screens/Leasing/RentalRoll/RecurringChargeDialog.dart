@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,7 +82,7 @@ class _RecurringChargeDialogContentState
     String? adminId = prefs.getString('adminId');
     if (adminId == null || token == null) return;
     try {
-      final response = await http.get(
+      final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           'authorization': 'CRM $token',
@@ -179,7 +180,7 @@ class _RecurringChargeDialogContentState
       'rent_cycle': _selectedFrequency,
     };
     try {
-      final response = await http.post(
+      final response = await apiPost(
         Uri.parse('$Api_url/api/leases/${widget.leaseId}/add-recurring-charge'),
         headers: {
           'authorization': 'CRM $token',
