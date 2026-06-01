@@ -35,7 +35,27 @@
       "Bash(awk '-F - ' '{print $NF}')",
       "Bash(rm -f /tmp/analyze_302_*.txt && echo \"Temp files cleaned. Repo untouched.\")",
       "Bash(git -C \".claude/worktrees/keen-meninsky-452d4d\" status --short -- \"lib/StaffModule/screen/Rental/Tenants/Tenants_table.dart\" \"lib/screens/Rental/Tenants/Tenants_table.dart\")",
-      "Bash(git -C \".claude/worktrees/objective-booth-8969db\" status --short -- \"lib/StaffModule/screen/Rental/Tenants/Tenants_table.dart\" \"lib/screens/Rental/Tenants/Tenants_table.dart\")"
+      "Bash(git -C \".claude/worktrees/objective-booth-8969db\" status --short -- \"lib/StaffModule/screen/Rental/Tenants/Tenants_table.dart\" \"lib/screens/Rental/Tenants/Tenants_table.dart\")",
+      "Bash(grep -oE '[a-z_]+$')",
+      "Bash(grep -E ' - dead_code$' /tmp/flutter_analyze_302.txt)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(grep -oE '[a-z_]+$' /tmp/an302.txt)",
+      "Bash(grep -oE '\\(lib|test\\)\\\\\\\\[^ ]+\\\\.dart' /tmp/an302.txt)",
+      "Bash(grep -E 'unrelated_type_equality_checks$' /tmp/an302.txt)",
+      "Bash(grep -E 'collection_methods_unrelated_type$' /tmp/an302.txt)",
+      "Bash(grep -E 'empty_catches$|empty_statements$|unused_catch_stack$' /tmp/an302.txt)",
+      "Bash(grep -E 'body_might_complete_normally_nullable$' /tmp/an302.txt)",
+      "Bash(rm -f /tmp/an302.txt; echo \"cleaned\")",
+      "Bash(dart analyze *)",
+      "Bash(tee /tmp/wo_analyze.txt)",
+      "Bash(Get-ChildItem \"C:\\\\CLoudeRentalManager\\\\302-property\\\\lib\\\\screens\\\\Maintenance\\\\Workorder\\\\\" -Filter \"*dWorkorder*.dart\" -ErrorAction SilentlyContinue)",
+      "Bash(command -v flutter dart)",
+      "Bash(echo \"error count: $\\(dart analyze lib/screens/Maintenance/Workorder/AddWorkOrderMobileWizard.dart 2>&1)",
+      "Bash(echo \"error count: $\\(dart analyze lib/screens/Maintenance/Workorder/Add_workorder.dart 2>&1)",
+      "Bash(echo \"error count: $\\(dart analyze lib/screens/Maintenance/Workorder/Edit_workorders.dart 2>&1)",
+      "Bash(flutter devices *)",
+      "Bash(flutter emulators *)",
+      "PowerShell(Get-Process git -ErrorAction SilentlyContinue)"
     ]
   }
 }

@@ -382,6 +382,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         "id": "CRM $id",
       });
       print('${Api_url}/api/rentals/rentals/$id');
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -430,6 +431,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       });
       print('Loading units for rental: $rentalId');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> unitAddresses = {};
@@ -495,6 +497,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> names = {};
@@ -532,6 +535,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
@@ -569,6 +573,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -674,8 +679,33 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     });
   }
 
+  @override
+  void dispose() {
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    vendornote.dispose();
+    _dateController.dispose();
+    for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
+    }
+    super.dispose();
+  }
+
   void deleteRow(int index) {
     setState(() {
+      final row = partsAndLabor[index];
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
       partsAndLabor.removeAt(index);
       updateTotalAmount();
     });
@@ -3614,7 +3644,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           fontSize: 16.0,
         );
 
-        Navigator.pop(context, true);
+        if (mounted) Navigator.pop(context, true);
       } catch (e) {
         // Error
         Fluttertoast.showToast(
@@ -3629,9 +3659,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         print(e);
       } finally {
         // Final cleanup
-        setState(() {
-          isloading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isloading = false;
+          });
+        }
       }
     } else {
       setState(() {
@@ -3818,6 +3850,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         "id": "CRM $id",
       });
       print('${Api_url}/api/rentals/rentals/$id');
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -3861,6 +3894,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> unitAddresses = {};
@@ -3900,6 +3934,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> names = {};
@@ -3937,6 +3972,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
@@ -3975,6 +4011,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -4080,8 +4117,33 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     });
   }
 
+  @override
+  void dispose() {
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    vendornote.dispose();
+    _dateController.dispose();
+    for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
+    }
+    super.dispose();
+  }
+
   void deleteRow(int index) {
     setState(() {
+      final row = partsAndLabor[index];
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
       partsAndLabor.removeAt(index);
       updateTotalAmount();
     });
@@ -7198,6 +7260,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
       )
           .then((value) {
+        if (!mounted) return;
         setState(() {
           widget.property?.workSubject = subject.text;
         });
@@ -7226,9 +7289,11 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         print(e);
       }).whenComplete(() {
         // Final cleanup
-        setState(() {
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       });
     } else {
       setState(() {

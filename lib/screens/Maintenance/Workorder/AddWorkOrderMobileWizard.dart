@@ -114,6 +114,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         Uri.parse('${Api_url}/api/rentals/rentals/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
+      if (!mounted) return;
       if (response.statusCode == 200) {
         final list = (json.decode(response.body) as Map)['data'] as List;
         final map = <String, String>{};
@@ -134,6 +135,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _loadingProperties = false);
       }
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingProperties = false);
     }
   }
@@ -153,6 +155,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
+      if (!mounted) return;
       if (response.statusCode == 200) {
         final list = (json.decode(response.body) as Map)['data'] as List;
         final map = <String, String>{};
@@ -170,6 +173,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _loadingUnits = false);
       }
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingUnits = false);
     }
   }
@@ -188,6 +192,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         Uri.parse('$Api_url/api/leases/get_tenants/$rentalId/$unitId'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
+      if (!mounted) return;
       if (response.statusCode == 200) {
         final list = (json.decode(response.body) as Map)['data'] as List;
         final map = <String, String>{};
@@ -206,6 +211,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _loadingTenants = false);
       }
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingTenants = false);
     }
   }
@@ -216,11 +222,13 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final cats = await FetchAllcategories().fetchAllCategories();
       cats.sort((a, b) =>
           (a.name ?? '').toLowerCase().compareTo((b.name ?? '').toLowerCase()));
+      if (!mounted) return;
       setState(() {
         _categories = cats;
         _loadingCategories = false;
       });
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingCategories = false);
     }
   }
@@ -235,6 +243,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
+      if (!mounted) return;
       if (response.statusCode == 200) {
         final list = (json.decode(response.body) as Map)['data'] as List;
         final map = <String, String>{};
@@ -250,6 +259,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _loadingStaff = false);
       }
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingStaff = false);
     }
   }
@@ -264,6 +274,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         Uri.parse('${Api_url}/api/vendor/vendors/$id'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
       );
+      if (!mounted) return;
       if (response.statusCode == 200) {
         final list = (json.decode(response.body) as Map)['data'] as List;
         final map = <String, String>{};
@@ -278,6 +289,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _loadingVendors = false);
       }
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingVendors = false);
     }
   }
@@ -460,6 +472,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
         setState(() => _uploadedFileNames.add(name));
       }
     } catch (_) {
+      if (!mounted) return;
       if (mounted) {
         setState(() => _imageFiles.removeLast());
         Fluttertoast.showToast(msg: 'Upload failed');
@@ -854,6 +867,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
                 lastDate: DateTime.now().add(const Duration(days: 365)),
               );
               if (date != null) _dueDateController.text = DateFormat('yyyy-MM-dd').format(date);
+              if (!mounted) return;
               setState(() {});
             },
             child: Container(

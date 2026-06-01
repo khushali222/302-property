@@ -174,6 +174,10 @@ class WorkOrderData_summery {
 class WorkorderUpdates {
   String? status;
   String? date;
+  String? reopenDate;
+  String? message;
+  String? publicNotes;
+  String? privateNotes;
   String? staffmemberName;
   String? createdAt;
   String? updatedAt;
@@ -184,6 +188,10 @@ class WorkorderUpdates {
   WorkorderUpdates(
       {this.status,
         this.date,
+        this.reopenDate,
+        this.message,
+        this.publicNotes,
+        this.privateNotes,
         this.staffmemberName,
         this.createdAt,
         this.updatedAt,
@@ -195,6 +203,10 @@ class WorkorderUpdates {
     print(' image as ${ json['workOrderUpdate_images']}');
     status = json['status'];
     date = json['date'];
+    reopenDate = json['reopen_date'];
+    message = json['message'];
+    publicNotes = json['public_notes'];
+    privateNotes = json['private_notes'];
     staffmemberName = json['staffmember_name'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -207,6 +219,10 @@ class WorkorderUpdates {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     data['date'] = this.date;
+    data['reopen_date'] = this.reopenDate;
+    data['message'] = this.message;
+    data['public_notes'] = this.publicNotes;
+    data['private_notes'] = this.privateNotes;
     data['staffmember_name'] = this.staffmemberName;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;

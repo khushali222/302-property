@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -76,30 +77,54 @@ class _Workorder_summeryState extends State<Workorder_summery>
   List<String> items = ["Approved", "Rejected"];
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
 
   @override
   void initState() {
     print(widget.workorder_id);
     // TODO: implement initState
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
     checkInternet();
 
-    futureworkorderSummary =
-        WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
+    futureworkorderSummary = widget.workorder_id != null
+        ? WorkOrderRepository.getworkorderSummary(widget.workorder_id!)
+        : Future<WorkOrderData_summery>.error('No work order id provided');
     print('id work ${widget.workorder_id}');
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     _loadStaff();
   }
 
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    _tabController?.dispose();
+    _partsPageCtrl.dispose();
+    startdateController.dispose();
+    enddateController.dispose();
+    checkvalue.dispose();
+    super.dispose();
+  }
+
+  void _reloadSummary() {
+    if (!mounted) return;
+    setState(() {
+      futureworkorderSummary =
+          WorkOrderRepository.getworkorderSummary(widget.workorder_id!);
+    });
+  }
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -127,7 +152,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",
-          });
+          }).timeout(const Duration(seconds: 20));
       print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (response.statusCode == 200) {
@@ -138,6 +163,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
               data['staffmember_name'].toString();
         });
 
+        if (!mounted) return;
         setState(() {
           staffs = staffnames;
           _isLoadingstaff = false;
@@ -146,6 +172,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
         throw Exception('Failed to load data');
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoadingstaff = false;
       });
@@ -450,6 +477,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       print('Starting image upload...');
       String? fileName = await uploadImage(imageFile);
       print('Image uploaded successfully: $fileName');
+      if (!mounted || fileName == null) return;
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
@@ -1802,6 +1830,22 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               Container(height: 1, color: const Color(0xFFDBE0E5)),
                               const SizedBox(height: 10),
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
+                              if ((update.publicNotes ?? '').trim().isNotEmpty)
+                                _historyNoteBlock(
+                                  label: 'Public Notes',
+                                  badgeText: 'VISIBLE TO ALL',
+                                  badgeBg: const Color(0xFFE7F6EC),
+                                  badgeFg: const Color(0xFF1F9D55),
+                                  value: update.publicNotes!,
+                                ),
+                              if ((update.privateNotes ?? '').trim().isNotEmpty)
+                                _historyNoteBlock(
+                                  label: 'Private Notes',
+                                  badgeText: 'ADMIN & STAFF ONLY',
+                                  badgeBg: const Color(0xFFFDF1DD),
+                                  badgeFg: const Color(0xFFB7791F),
+                                  value: update.privateNotes!,
+                                ),
                             ],
                           ),
                         );
@@ -2577,6 +2621,22 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               Container(height: 1, color: const Color(0xFFDBE0E5)),
                               const SizedBox(height: 10),
                               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
+                              if ((update.publicNotes ?? '').trim().isNotEmpty)
+                                _historyNoteBlock(
+                                  label: 'Public Notes',
+                                  badgeText: 'VISIBLE TO ALL',
+                                  badgeBg: const Color(0xFFE7F6EC),
+                                  badgeFg: const Color(0xFF1F9D55),
+                                  value: update.publicNotes!,
+                                ),
+                              if ((update.privateNotes ?? '').trim().isNotEmpty)
+                                _historyNoteBlock(
+                                  label: 'Private Notes',
+                                  badgeText: 'ADMIN & STAFF ONLY',
+                                  badgeBg: const Color(0xFFFDF1DD),
+                                  badgeFg: const Color(0xFFB7791F),
+                                  value: update.privateNotes!,
+                                ),
                               if (update.workOrderUpdateimages != null &&
                                   update.workOrderUpdateimages!.isNotEmpty) ...[
                                 const SizedBox(height: 12),
@@ -4325,58 +4385,186 @@ class _Workorder_summeryState extends State<Workorder_summery>
   //     },
   //   );
   // }
+  Widget _historyNoteBlock({
+    required String label,
+    required String badgeText,
+    required Color badgeBg,
+    required Color badgeFg,
+    required String value,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Container(height: 1, color: const Color(0xFFDBE0E5)),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF6B7A90),
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+                letterSpacing: 0.4,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: badgeBg,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                badgeText,
+                style: TextStyle(
+                  color: badgeFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 9,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: blueColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+
   void showUpdateDialog(BuildContext context) {
     String? selectedStatus;
     TextEditingController message = TextEditingController();
+    TextEditingController privateNotes = TextEditingController();
     TextEditingController selectedDate = TextEditingController();
+    String dueDateApi = '';
+    bool loadingStaff = staffs.isEmpty;
+    bool staffFetchStarted = false;
+
+    Future<void> reloadStaff(StateSetter setLocal) async {
+      setLocal(() => loadingStaff = true);
+      await _loadStaff();
+      setLocal(() => loadingStaff = false);
+    }
 
     // Error state variables
     String? assignedError;
     String? dueDateError;
     String? statusError;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.99,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+
+    Widget notesField({
+      required String label,
+      required String badgeText,
+      required Color badgeBg,
+      required Color badgeFg,
+      required TextEditingController controller,
+      required String hint,
+    }) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  badgeText,
+                  style: TextStyle(
+                    color: badgeFg,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: TextFormField(
+              controller: controller,
+              maxLines: 3,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 12),
+                hintText: hint,
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              if (!staffFetchStarted && staffs.isEmpty) {
+                staffFetchStarted = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  reloadStaff(setState);
+                });
+              }
+              return Scaffold(
+                backgroundColor: const Color(0xFFF4F6F9),
+                appBar: widget_302.App_Bar(context: context),
+                drawer: CustomDrawer(
+                  currentpage: "Work Orders",
+                  dropdown: true,
+                ),
+                body: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    titleBar(
+                      width: MediaQuery.of(context).size.width * .91,
+                      title: 'Update Work Order',
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(12),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border:
+                                Border.all(color: const Color(0xFFDBE0E5)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // Header with title and close button
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Update Work Order',
-                              style: TextStyle(
-                                color: Color(0xFF101828),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.of(context).pop(),
-                              child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: blueColor),
-                                  ),
-                                  child: Icon(Icons.close, color: blueColor)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
                         //assined and Due date
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -4388,19 +4576,95 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Text(
                                     'Assigned *',
                                     style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
-                                  _isLoadingstaff
-                                      ? const Center(
-                                          child: SpinKitFadingCircle(
-                                            color: Colors.black,
-                                            size: 50.0,
+                                  loadingStaff
+                                      ? Container(
+                                          height: 50,
+                                          margin:
+                                              const EdgeInsets.only(top: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 14),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                                color: Colors.grey.shade300),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SpinKitFadingCircle(
+                                                  color: blueColor, size: 20),
+                                              const SizedBox(width: 10),
+                                              Text(
+                                                'Loading...',
+                                                style: TextStyle(
+                                                    color: Colors.grey[500],
+                                                    fontSize: 14),
+                                              ),
+                                            ],
                                           ),
                                         )
-                                      : Column(
+                                      : staffs.isEmpty
+                                          ? Container(
+                                              height: 50,
+                                              margin: const EdgeInsets.only(
+                                                  top: 8),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 14),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade300),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      "Couldn't load staff",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.red[400],
+                                                          fontSize: 13),
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () =>
+                                                        reloadStaff(setState),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Icon(Icons.refresh,
+                                                            size: 16,
+                                                            color: blueColor),
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        Text('Retry',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    blueColor,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 13)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          : Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
@@ -4552,8 +4816,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Text(
                                     'Due Date *',
                                     style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -4604,23 +4868,41 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         );
                                         if (pickedDate != null) {
                                           setState(() {
+                                            dueDateApi =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(pickedDate);
                                             selectedDate.text =
-                                                "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                                Provider.of<DateProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .formatCurrentDate(
+                                                        dueDateApi);
                                           });
                                         }
                                       },
+                                      style: TextStyle(
+                                          fontSize: 14, color: blueColor),
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
+                                        isDense: true,
                                         contentPadding:
                                             const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 16),
-                                        hintText: "dd-mm-yyyy",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey[400]),
+                                                horizontal: 8, vertical: 14),
+                                        hintText: Provider.of<DateProvider>(
+                                                context,
+                                                listen: false)
+                                            .dateFormat
+                                            .toLowerCase(),
+                                        hintStyle: TextStyle(
+                                            color: Colors.grey[400],
+                                            fontSize: 14),
                                         suffixIcon: const Icon(
                                             Icons.calendar_today,
-                                            size: 20,
+                                            size: 18,
                                             color: Colors.grey),
+                                        suffixIconConstraints:
+                                            const BoxConstraints(
+                                                minWidth: 34, minHeight: 34),
                                       ),
                                     ),
                                   ),
@@ -4651,8 +4933,8 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   Text(
                                     'Status *',
                                     style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -4761,45 +5043,25 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Message',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 11),
-                                  Container(
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade300),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: TextFormField(
-                                      controller: message,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 16),
-                                        hintText: "Some description here",
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey[400],
-                                            fontSize: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
+                        ),
+                        const SizedBox(height: 20),
+                        notesField(
+                          label: 'Public Notes',
+                          badgeText: 'VISIBLE TO ALL',
+                          badgeBg: const Color(0xFFE7F6EC),
+                          badgeFg: const Color(0xFF1F9D55),
+                          controller: message,
+                          hint: 'Notes visible to all users',
+                        ),
+                        const SizedBox(height: 20),
+                        notesField(
+                          label: 'Private Notes',
+                          badgeText: 'ADMIN & STAFF ONLY',
+                          badgeBg: const Color(0xFFFDF1DD),
+                          badgeFg: const Color(0xFFB7791F),
+                          controller: privateNotes,
+                          hint: 'Notes visible only to admin and staff',
                         ),
                         const SizedBox(height: 20),
                         // Upload Photo Section
@@ -5052,9 +5314,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       formatter.format(DateTime.now());
 
                                   Map<String, dynamic> values = {
-                                    "date": reverseFormatDate(
-                                        selectedDate.text.trim()),
+                                    "date": dueDateApi,
                                     "message": message.text.trim(),
+                                    "public_notes": message.text.trim(),
+                                    "private_notes": privateNotes.text.trim(),
                                     "status": selectedStatus,
                                     "statusUpdatedBy": "Admin",
                                     "staffmember_name": _selectedStaffs,
@@ -5064,22 +5327,30 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                     'notificationTime': notificationTime,
                                   };
 
-                                  await WorkOrderRepository
-                                          .updateworkorderSummary(
-                                              values, widget.workorder_id!)
-                                      .then((value) {
-                                    setState(() {
-                                      futureworkorderSummary =
-                                          WorkOrderRepository
-                                              .getworkorderSummary(
-                                                  widget.workorder_id!);
-                                    });
-                                  });
-
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    isLoading = false;
-                                  });
+                                  try {
+                                    await WorkOrderRepository
+                                        .updateworkorderSummary(
+                                            values, widget.workorder_id!);
+                                    _reloadSummary();
+                                    if (context.mounted) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Failed to update work order: $e')),
+                                      );
+                                    }
+                                  } finally {
+                                    if (context.mounted) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    }
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: blueColor,
@@ -5112,13 +5383,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
                         ),
                       ],
                     ),
+                    ),
                   ),
                 ),
+                ],
               ),
             );
           },
         );
       },
+      ),
     );
   }
 
