@@ -134,6 +134,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController twilioAuthToken = TextEditingController();
   TextEditingController twilioPhoneNumber = TextEditingController();
   late Future<List<categories_model>> futureCategories;
+  // category_id currently being edited; null means we're in "add" mode
+  String? _editingCategoryId;
   late Future<List<Vendor>> futureVendors;
   bool rentDueReminderEmail = false;
 
@@ -1160,7 +1162,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (decoded['statusCode'] == 200 && decoded['data'] != null) {
         final d = decoded['data'] as Map<String, dynamic>;
         setState(() {
-          _cpCompanyName.text = (d['company_name'] ?? '').toString();
+          _cpCompanyName.text = (d['company_dba'] ?? '').toString();
           _cpMailingStreet.text = (d['mailing_street'] ?? '').toString();
           _cpMailingCity.text = (d['mailing_city'] ?? '').toString();
           final ms = (d['mailing_state'] ?? '').toString().trim();
@@ -1242,8 +1244,7 @@ class _TabBarExampleState extends State<TabBarExample> {
 
     final body = <String, dynamic>{
       'admin_id': adminId,
-      'company_name': _cpCompanyName.text.trim(),
-      'company_dba': '',
+      'company_dba': _cpCompanyName.text.trim(),
       'is_web': kIsWeb,
       'mailing_address': mailingBlock,
       'mailing_street': _cpMailingStreet.text.trim(),
@@ -3114,13 +3115,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     'Categories',
     // 'Charges',
     'Date Format',
-    'Late Fee Charge',
-    'Manage Templates',
-    'Mail',
-    'Work Order',
+    'Late Fees',
+    'Email Services',
     'Property Owners',
     'Property Type',
-    'Surcharge',
+    'Surcharges',
+    'Templates',
+    'Work Order',
     'Vendors',
 
     //   'Twilio',
@@ -3132,13 +3133,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (iscategories) return 'Categories';
     if (ischargesetting) return 'Charges';
     if (isdateformate) return 'Date Format';
-    if (islatefee) return 'Late Fee Charge';
-    if (ismanagetemplate) return 'Manage Templates';
-    if (ismail) return 'Mail';
+    if (islatefee) return 'Late Fees';
+    if (ismanagetemplate) return 'Templates';
+    if (ismail) return 'Email Services';
     if (isworkorder) return 'Work Order';
     if (ispropertyowner) return 'Property Owners';
     if (ispropertytype) return 'Property Type';
-    if (issurge) return 'Surcharge';
+    if (issurge) return 'Surcharges';
     if (isvendor) return 'Vendors';
     if (istwilio) return 'Twilio';
 
@@ -3147,14 +3148,14 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   void _onSettingsTabChanged(String value) {
     setState(() {
-      issurge = value == 'Surcharge';
+      issurge = value == 'Surcharges';
       iscompanyprofile = value == 'Company Profile';
-      ismail = value == 'Mail';
+      ismail = value == 'Email Services';
       isaccounts = value == 'Accounts';
-      islatefee = value == 'Late Fee Charge';
+      islatefee = value == 'Late Fees';
       isdateformate = value == 'Date Format';
       isworkorder = value == 'Work Order';
-      ismanagetemplate = value == 'Manage Templates';
+      ismanagetemplate = value == 'Templates';
       ischargesetting = value == 'Charges';
       iscategories = value == 'Categories';
       isvendor = value == 'Vendors' || value == 'Vendor';
@@ -3172,7 +3173,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         timeformate1 = DateFormat('HH:mm:ss').format(now);
         timeformate2 = DateFormat('h:mm:ss a').format(now);
       }
-      if (value == 'Late Fee Charge') {
+      if (value == 'Late Fees') {
         fetchAccountsData();
         fetchlatefeeData();
       }
@@ -3202,11 +3203,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.attach_money;
       case 'Date Format':
         return Icons.calendar_today;
-      case 'Late Fee Charge':
+      case 'Late Fees':
         return Icons.schedule;
-      case 'Manage Templates':
+      case 'Templates':
         return Icons.description;
-      case 'Mail':
+      case 'Email Services':
         return Icons.email;
       case 'Work Order':
         return Icons.build;
@@ -3214,7 +3215,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.people;
       case 'Property Type':
         return Icons.home;
-      case 'Surcharge':
+      case 'Surcharges':
         return Icons.receipt;
       case 'Vendors':
       case 'Vendor':
@@ -3224,6 +3225,457 @@ class _TabBarExampleState extends State<TabBarExample> {
       default:
         return Icons.settings;
     }
+  }
+
+  // ===================== Date & Time Settings (redesigned) =====================
+  Widget _buildDateTimeSettings() {
+    final dateProvider = Provider.of<DateProvider>(context);
+    final bool isNarrow = MediaQuery.of(context).size.width < 500;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          "Manage Date & Time Format",
+          style: TextStyle(
+            color: blueColor,
+            fontWeight: FontWeight.w800,
+            fontSize: isNarrow ? 18 : 22,
+          ),
+        ),
+        const SizedBox(height: 14),
+        _dtDateCard(
+          dateProvider: dateProvider,
+          value: 0,
+          label: "MM/DD/YYYY",
+          format: 'MM/dd/yyyy',
+          preview: dateformate1,
+        ),
+        const SizedBox(height: 12),
+        _dtDateCard(
+          dateProvider: dateProvider,
+          value: 1,
+          label: "YYYY-MM-DD",
+          format: 'yyyy-MM-dd',
+          preview: dateformate2,
+        ),
+        const SizedBox(height: 12),
+        _dtDateCard(
+          dateProvider: dateProvider,
+          value: 2,
+          label: "YYYY-MMM-DD",
+          format: 'yyyy-MMM-dd',
+          preview: dateformate3,
+        ),
+        const SizedBox(height: 12),
+        _dtDateCard(
+          dateProvider: dateProvider,
+          value: 3,
+          label: "Custom",
+          format: null,
+          preview: null,
+        ),
+        if (dateformateselect == 3) ...[
+          const SizedBox(height: 12),
+          TextFormField(
+            initialValue: customdate != null && customdate!.isNotEmpty
+                ? customdate
+                : dateProvider.dateFormat.toUpperCase(),
+            onChanged: (value) {
+              setState(() {
+                customdate = value;
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Custom format (e.g. DD-MM-YYYY)',
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: blueColor, width: 2),
+              ),
+            ),
+          ),
+        ],
+        const SizedBox(height: 26),
+        // Time Format section
+        Row(
+          children: [
+            Icon(Icons.access_time, color: blueColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              "Time Format",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.bold,
+                fontSize: isNarrow ? 15 : 18,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        _dtTimeCard(
+          dateProvider: dateProvider,
+          value: 0,
+          title: "24-hour format",
+          example: "e.g. 14:00:00",
+          format: '24',
+          preview: timeformate1,
+        ),
+        const SizedBox(height: 12),
+        _dtTimeCard(
+          dateProvider: dateProvider,
+          value: 1,
+          title: "12-hour format",
+          example: "e.g. 2:00:00 PM",
+          format: '12',
+          preview: timeformate2,
+        ),
+        const SizedBox(height: 26),
+        // How it appears
+        _dtHowItAppears(dateProvider),
+        const SizedBox(height: 26),
+        // Action buttons
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  final dp =
+                      Provider.of<DateProvider>(context, listen: false);
+                  await dp.loadDateFormat();
+                  setState(() {
+                    dateformateselect = dp.dateformateselect;
+                    timeformateselect = dp.timeformateselect;
+                    customdate = null;
+                    _customDateController.text = "";
+                  });
+                  Fluttertoast.showToast(
+                    msg: "Reset to saved settings",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.black87,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                },
+                child: Container(
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: blueColor, width: 1.5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Reset",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  customdate = customdate != null && customdate!.isNotEmpty
+                      ? customdate
+                      : dateProvider.dateFormat;
+                  if (dateformateselect == 0) {
+                    context
+                        .read<DateProvider>()
+                        .updateDateFormat('MM/dd/yyyy', 0);
+                  } else if (dateformateselect == 1) {
+                    context
+                        .read<DateProvider>()
+                        .updateDateFormat('yyyy-MM-dd', 1);
+                  } else if (dateformateselect == 2) {
+                    context
+                        .read<DateProvider>()
+                        .updateDateFormat('yyyy-MMM-dd', 2);
+                  } else if (dateformateselect == 3 && customdate != null) {
+                    String fixedDate = fixDateFormat(customdate!);
+                    context
+                        .read<DateProvider>()
+                        .updateDateFormat(fixedDate, 3);
+                  }
+                  Fluttertoast.showToast(
+                    msg: "Date format updated successfully",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.black87,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                },
+                child: Container(
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check, color: Colors.white, size: 20),
+                        SizedBox(width: 8),
+                        Text(
+                          "Save Changes",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _dtRadioCircle(bool selected) {
+    return Container(
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: selected ? blueColor : Colors.grey.shade400,
+          width: 2,
+        ),
+      ),
+      child: selected
+          ? Center(
+              child: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: blueColor,
+                ),
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _dtPreviewChip(String text, bool selected) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: selected ? Colors.white : const Color(0xFFEDF0F5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: selected ? blueColor.withOpacity(0.35) : Colors.transparent,
+        ),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'monospace',
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+          color: selected ? blueColor : Colors.grey.shade600,
+        ),
+      ),
+    );
+  }
+
+  Widget _dtDateCard({
+    required DateProvider dateProvider,
+    required int value,
+    required String label,
+    required String? format,
+    required String? preview,
+  }) {
+    final bool selected = dateformateselect == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (format != null) {
+            dateProvider.updateDateFormatLocally(format, value);
+          } else {
+            customdate = "";
+            _customDateController.text = "";
+          }
+          dateformateselect = value;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? blueColor : Colors.grey.shade300,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            _dtRadioCircle(selected),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: blueColor,
+                ),
+              ),
+            ),
+            if (preview != null && preview.isNotEmpty)
+              _dtPreviewChip(preview, selected),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dtTimeCard({
+    required DateProvider dateProvider,
+    required int value,
+    required String title,
+    required String example,
+    required String format,
+    required String? preview,
+  }) {
+    final bool selected = timeformateselect == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          dateProvider.updateTimeFormat(format, value);
+          timeformateselect = value;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? blueColor : Colors.grey.shade300,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            _dtRadioCircle(selected),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    example,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (preview != null && preview.isNotEmpty)
+              _dtPreviewChip(preview, selected),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dtHowItAppears(DateProvider dateProvider) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+            decoration: const BoxDecoration(
+              color: Color(0xFFEFF3FB),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.calendar_month, size: 18, color: blueColor),
+                const SizedBox(width: 8),
+                Text(
+                  "HOW IT APPEARS",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                    letterSpacing: 1.1,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Date & Time",
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  dateProvider.getFormattedDateTimePreview(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: blueColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSettingsTabDropdown() {
@@ -3353,8 +3805,6 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   @override
   Widget build(BuildContext context) {
-    final dateProvider = Provider.of<DateProvider>(context);
-    //dateProvider.loadDateFormat();
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -7123,612 +7573,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 ),
                             ],
                           ),
-                        if (isdateformate)
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 15),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Manage Date Format",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 18
-                                              : 25,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                ],
-                              ),
-                              const SizedBox(height: 15),
-                              // Row(
-                              //   children: [
-                              //     Text(
-                              //       "Current Date Format :- dd-mm-yyyy",
-                              //       style: TextStyle(
-                              //         fontWeight: FontWeight.normal,
-                              //         color: blueColor,
-                              //         fontSize:
-                              //             MediaQuery.of(context).size.width <
-                              //                     500
-                              //                 ? 16
-                              //                 : 25,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              // SizedBox(height: 15),
-                              Text(
-                                "Select Date Format",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: blueColor,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width < 500
-                                          ? 16
-                                          : 25,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                              height: 20,
-                                              width: 30,
-                                              child: Radio(
-                                                  value: 0,
-                                                  groupValue: dateformateselect,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      dateProvider
-                                                          .updateDateFormatLocally(
-                                                              'MM/dd/yyyy',
-                                                              value);
-                                                      dateformateselect =
-                                                          value!;
-                                                    });
-                                                  })),
-                                          const Text(
-                                            "MM/DD/YYYY",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                        width: 150,
-                                        child: TextFormField(
-                                          enabled: false,
-                                          initialValue: dateformate1 ?? "",
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15),
-                                            border: const OutlineInputBorder(),
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                              height: 20,
-                                              width: 30,
-                                              child: Radio(
-                                                  value: 1,
-                                                  groupValue: dateformateselect,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      dateProvider
-                                                          .updateDateFormatLocally(
-                                                              'yyyy-MM-dd',
-                                                              value);
-                                                      dateformateselect =
-                                                          value!;
-                                                    });
-                                                  })),
-                                          const Text(
-                                            "YYYY-MM-DD",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                        width: 150,
-                                        child: TextFormField(
-                                          enabled: false,
-                                          initialValue: dateformate2 ?? "",
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15),
-                                            border: const OutlineInputBorder(),
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                              height: 20,
-                                              width: 30,
-                                              child: Radio(
-                                                  value: 2,
-                                                  groupValue: dateformateselect,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      dateProvider
-                                                          .updateDateFormatLocally(
-                                                              'yyyy-MMM-dd',
-                                                              value);
-                                                      dateformateselect =
-                                                          value!;
-                                                    });
-                                                  })),
-                                          const Text(
-                                            "YYYY-MMM-DD",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                        width: 150,
-                                        child: TextFormField(
-                                          initialValue: dateformate3 ?? "",
-                                          enabled: false,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15),
-                                            border: const OutlineInputBorder(),
-                                            filled: true,
-                                            fillColor: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                              height: 20,
-                                              width: 30,
-                                              child: Radio(
-                                                  value: 3,
-                                                  groupValue: dateformateselect,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      dateformateselect =
-                                                          value!;
-                                                      customdate =
-                                                          ""; // Clear the custom date format when switched to custom
-                                                      _customDateController
-                                                          .text = "";
-                                                    });
-                                                  })),
-                                          const Text(
-                                            "Custom",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      SizedBox(
-                                        height: 50,
-                                        width: 150,
-                                        child: TextFormField(
-                                          // controller: _customDateController,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              customdate = value;
-                                              //  print("custom date  $customdate");
-                                            });
-                                          },
-                                          initialValue: customdate != null
-                                              ? customdate
-                                              : dateProvider.dateFormat
-                                                      .toUpperCase() ??
-                                                  "",
-                                          enabled: dateformateselect == 3,
-                                          decoration: InputDecoration(
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 15),
-                                            border: const OutlineInputBorder(),
-                                            filled: dateformateselect != 3,
-                                            fillColor: Colors.grey.shade200,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 30),
-                                  Text(
-                                    "Select Time Format",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      color: blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 25,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 15),
-                                  Column(
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                  height: 20,
-                                                  width: 30,
-                                                  child: Radio(
-                                                      value: 0,
-                                                      groupValue:
-                                                          timeformateselect,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          dateProvider
-                                                              .updateTimeFormat(
-                                                                  '24', value);
-                                                          timeformateselect =
-                                                              value!;
-                                                        });
-                                                      })),
-                                              const Text(
-                                                "24-hour format (14:00:00)",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          SizedBox(
-                                            height: 50,
-                                            width: 150,
-                                            child: TextFormField(
-                                              enabled: false,
-                                              initialValue: timeformate1 ?? "",
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 15),
-                                                border:
-                                                    const OutlineInputBorder(),
-                                                filled: true,
-                                                fillColor: Colors.grey.shade200,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                  height: 20,
-                                                  width: 30,
-                                                  child: Radio(
-                                                      value: 1,
-                                                      groupValue:
-                                                          timeformateselect,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          dateProvider
-                                                              .updateTimeFormat(
-                                                                  '12', value);
-                                                          timeformateselect =
-                                                              value!;
-                                                        });
-                                                      })),
-                                              const Text(
-                                                "12-hour format (2:00:00 PM)",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          SizedBox(
-                                            height: 50,
-                                            width: 150,
-                                            child: TextFormField(
-                                              enabled: false,
-                                              initialValue: timeformate2 ?? "",
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 15),
-                                                border:
-                                                    const OutlineInputBorder(),
-                                                filled: true,
-                                                fillColor: Colors.grey.shade200,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    "Formatted Date and Time Preview:",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      color: blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 16
-                                              : 25,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    padding: const EdgeInsets.all(15),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: blueColor),
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: Colors.grey.shade50,
-                                    ),
-                                    child: Text(
-                                      dateProvider
-                                          .getFormattedDateTimePreview(),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: blueColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  customdate = customdate != null &&
-                                          customdate!.isNotEmpty
-                                      ? customdate
-                                      : dateProvider.dateFormat;
-
-                                  print("Custom Date: $customdate");
-
-                                  // Save the date format based on selection
-                                  if (dateformateselect == 0) {
-                                    context
-                                        .read<DateProvider>()
-                                        .updateDateFormat('MM/dd/yyyy', 0);
-                                  } else if (dateformateselect == 1) {
-                                    context
-                                        .read<DateProvider>()
-                                        .updateDateFormat('yyyy-MM-dd', 1);
-                                  } else if (dateformateselect == 2) {
-                                    context
-                                        .read<DateProvider>()
-                                        .updateDateFormat('yyyy-MMM-dd', 2);
-                                  } else if (dateformateselect == 3 &&
-                                      customdate != null) {
-                                    // Save the custom date format
-                                    String fixedDate =
-                                        fixDateFormat(customdate!);
-                                    context
-                                        .read<DateProvider>()
-                                        .updateDateFormat(fixedDate!, 3);
-                                  }
-
-                                  // Show success message
-                                  Fluttertoast.showToast(
-                                    msg: "Date format updated successfully",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    backgroundColor: Colors.black87,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0,
-                                  );
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child: Container(
-                                    height:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 40
-                                            : 50,
-                                    width:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 100
-                                            : 150,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                      color: blueColor,
-                                      boxShadow: [
-                                        const BoxShadow(
-                                          color: Colors.grey,
-                                          offset: Offset(0.0, 1.0), //(x,y)
-                                          blurRadius: 6.0,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Save",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 16
-                                                : 20),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              // Text("Select text color",style: TextStyle(
-                              //   fontWeight: FontWeight.normal,
-                              //   color: blueColor,
-                              //   fontSize: MediaQuery.of(context).size.width < 500
-                              //       ? 16
-                              //       : 25,
-                              // ),),
-                              // Card(
-                              //   elevation: 4,
-                              //   child: ListTile(
-                              //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
-                              //     trailing: Icon(Icons.color_lens, color: _selectedColor),
-                              //     // onTap: _showColorPicker,
-                              //     // onTap: () {
-                              //     //   _showColorPicker(_selectedColor, (Color color) {
-                              //     //     setState(() {
-                              //     //       _selectedColor = color;
-                              //     //     });
-                              //     //     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-                              //     //     themeProvider.updateColor(_selectedColor);
-                              //     //   //  _saveColorPreference(_selectedColor,_selectedColor);
-                              //     //   }, 'Select a text color','_selectedColor');
-                              //     // },
-                              //     onTap: () {
-                              //       _showColorPicker(_selectedColor, (Color color) {
-                              //         setState(() {
-                              //           _selectedColor = color;
-                              //         });
-                              //       }, 'Select a text color', 'selectedColor');
-                              //     },
-                              //   ),
-                              // ),
-                              // Text("Select label color",style: TextStyle(
-                              //   fontWeight: FontWeight.normal,
-                              //   color: blueColor,
-                              //   fontSize: MediaQuery.of(context).size.width < 500
-                              //       ? 16
-                              //       : 25,
-                              // ),),
-                              // Card(
-                              //   elevation: 4,
-                              //   child: ListTile(
-                              //     title: Text('Choose a color', style: TextStyle(fontSize: 18)),
-                              //     trailing: Icon(Icons.color_lens, color: _selectedLabelColor),
-                              //     // onTap: _showColorPicker,
-                              //     onTap: () {
-                              //       // _showColorPicker(_selectedLabelColor, (Color color) {
-                              //       //   setState(() {
-                              //       //     _selectedLabelColor = color;
-                              //       //   });
-                              //       //   final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-                              //       //   themeProvider.updatelabelColor(_selectedLabelColor);
-                              //       //    //_saveColorPreference(_selectedLabelColor,_selectedLabelColor);
-                              //       // }, 'Select a label color','labelColor');
-                              //       _showColorPicker(_selectedColor, (Color color) {
-                              //         setState(() {
-                              //           _selectedColor = color;
-                              //         });
-                              //       }, 'Select a label color', 'labelColor');
-                              //     },
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                        if (isdateformate) _buildDateTimeSettings(),
                         if (isworkorder)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -9068,7 +8913,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      addCategory();
+                                      if (_editingCategoryId == null) {
+                                        addCategory();
+                                      } else {
+                                        updateCategory();
+                                      }
                                     },
                                     child: Container(
                                       height: 43,
@@ -9081,15 +8930,49 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       alignment: Alignment.center,
-                                      child: const Text(
-                                        'Add Category',
-                                        style: TextStyle(
+                                      child: Text(
+                                        _editingCategoryId == null
+                                            ? 'Add Category'
+                                            : 'Update',
+                                        style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
                                   ),
+                                  if (_editingCategoryId != null) ...[
+                                    const SizedBox(width: 12),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _editingCategoryId = null;
+                                          categories.clear();
+                                        });
+                                      },
+                                      child: Container(
+                                        height: 43,
+                                        width: 110,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border:
+                                              Border.all(color: blueColor),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                               const SizedBox(
@@ -9112,8 +8995,74 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             Text('Error: \\${snapshot.error}'));
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
-                                    return const Center(
-                                        child: Text('No categories found'));
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Header
+                                        Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey.shade400,
+                                              width: 1,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            color: const Color(0xFFF4F8FF),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 8),
+                                          child: const Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  'CATEGORY NAME',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: 1.1,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                'ACTION',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1.1,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 30),
+                                        Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/no_data.jpg",
+                                                height: 120,
+                                                width: 120,
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                "No Data Available",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: blueColor,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                      ],
+                                    );
                                   } else {
                                     final categoriesList = snapshot.data!;
                                     return Column(
@@ -9196,19 +9145,79 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     ),
                                                   ),
                                                 ),
-                                                IconButton(
-                                                  icon: const Icon(Icons.delete,
-                                                      color: Colors.red),
-                                                  onPressed: () {
-                                                    print(
-                                                        "caling delete categories ");
+                                                /* edit button temporarily disabled
+                                                GestureDetector(
+                                                  onTap: () {
                                                     setState(() {
-                                                      _showDeleteCategoryAlert(
-                                                          context,
-                                                          cat.categoryId ?? '');
+                                                      categories.text =
+                                                          cat.name ?? '';
+                                                      _editingCategoryId =
+                                                          cat.categoryId;
                                                     });
                                                   },
+                                                  child: Container(
+                                                    height: 35,
+                                                    width: 35,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.green.shade50,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons.edit,
+                                                          size: 15,
+                                                          color: Colors.green,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
+                                                const SizedBox(width: 10),
+                                                */
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    _showDeleteCategoryAlert(
+                                                        context,
+                                                        cat.categoryId ?? '');
+                                                  },
+                                                  child: Container(
+                                                    height: 35,
+                                                    width: 35,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.red.shade50,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    child: const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FaIcon(
+                                                          FontAwesomeIcons
+                                                              .trashCan,
+                                                          size: 15,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
                                               ],
                                             ),
                                           );
@@ -9577,6 +9586,60 @@ class _TabBarExampleState extends State<TabBarExample> {
         SnackBar(
             content: Text(responseData["message"] ?? 'Failed to add category')),
       );
+    }
+  }
+
+  // Update an existing category (PUT /api/settings/categories/{admin_id}/{category_id})
+  Future<void> updateCategory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString('adminId');
+    String? token = prefs.getString('token');
+    String categoryName = categories.text.trim();
+    String? categoryId = _editingCategoryId;
+
+    if (categoryName.isEmpty) {
+      Fluttertoast.showToast(msg: 'Please enter a category name');
+      return;
+    }
+    if (adminId == null || adminId.isEmpty) {
+      Fluttertoast.showToast(msg: 'Admin ID is missing');
+      return;
+    }
+    if (categoryId == null || categoryId.isEmpty) {
+      Fluttertoast.showToast(msg: 'No category selected to update');
+      return;
+    }
+
+    final url =
+        Uri.parse('${Api_url}/api/settings/categories/$adminId/$categoryId');
+    final response = await apiPut(
+      url,
+      headers: {
+        "authorization": "CRM $token",
+        "id": "CRM $adminId",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "admin_id": adminId,
+        "name": categoryName,
+        "user_active_recently": true,
+        "is_web": true,
+      }),
+    );
+
+    final responseData = jsonDecode(response.body);
+    print("response update category $responseData");
+    if (response.statusCode == 200 && responseData["statusCode"] == 200) {
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? 'Category updated successfully');
+      categories.clear();
+      setState(() {
+        _editingCategoryId = null;
+        futureCategories = accountRepository().fetchCategories();
+      });
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? 'Failed to update category');
     }
   }
 

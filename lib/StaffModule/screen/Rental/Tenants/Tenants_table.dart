@@ -343,7 +343,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                   tenantId: '',
                 )));
     if (check == true) {
-      setState(() {});
+      _scheduleTenantsLoad();
     }
     /* if (result == true) {
       setState(() {
@@ -651,7 +651,7 @@ class _Tenants_tableState extends State<Tenants_table> {
       setState(() {
         rentalCount = jsonData['rentalCount'];
         print(rentalCount);
-        propertyCountLimit = jsonData['propertyCountLimit'];
+        //propertyCountLimit = jsonData['propertyCountLimit'];
         print(propertyCountLimit);
       });
     } else {
@@ -1366,7 +1366,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                                       ),
                                                                       TextSpan(
                                                                         text:
-                                                                            '${dateProvider.formatCurrentDate(tenants.createdAt ?? DateTime.now().toString()) ?? ''}',
+                                                                            '${tenants.createdAt != null && tenants.createdAt!.isNotEmpty ? (dateProvider.formatCurrentDate(tenants.createdAt!) ?? 'Invalid date') : 'Invalid date'}',
                                                                         style: TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.w700,

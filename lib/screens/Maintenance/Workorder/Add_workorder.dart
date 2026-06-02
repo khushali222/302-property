@@ -134,6 +134,19 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    vendornote.dispose();
+    _dateController.dispose();
+    for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
+    }
     super.dispose();
   }
 
@@ -292,6 +305,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
         "id": "CRM $id",
       });
       print('${Api_url}/api/rentals/rentals/$id');
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -341,6 +355,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       });
       print('Loading units for rental: $rentalId');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> unitAddresses = {};
@@ -406,6 +421,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> names = {};
@@ -443,6 +459,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
@@ -481,6 +498,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -590,6 +608,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
 
   void deleteRow(int index) {
     setState(() {
+      final row = partsAndLabor[index];
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
       partsAndLabor.removeAt(index);
       updateTotalAmount();
     });
@@ -3390,7 +3415,6 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     );
   }
 
-  bool isLoading = false;
   bool isloading = false;
   bool formValid = true;
 
@@ -3452,7 +3476,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         )
             .then((value) {
-          Navigator.pop(context, true);
+          if (mounted) Navigator.pop(context, true);
         });
         // Fluttertoast.showToast(
         //     msg: "Work order added successfully",
@@ -3474,9 +3498,11 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
             fontSize: 16.0);
         print(e);
       } finally {
-        setState(() {
-          isloading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isloading = false;
+          });
+        }
       }
     } else {
       setState(() {
@@ -3534,6 +3560,19 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
 
   @override
   void dispose() {
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    vendornote.dispose();
+    _dateController.dispose();
+    for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
+    }
     super.dispose();
   }
 
@@ -3563,6 +3602,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
         "id": "CRM $id",
       });
       print('${Api_url}/api/rentals/rentals/$id');
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -3609,6 +3649,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       });
       print('Loading units for rental: $rentalId');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> unitAddresses = {};
@@ -3674,6 +3715,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> names = {};
@@ -3714,6 +3756,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> staffnames = {};
@@ -3755,6 +3798,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
+      if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -3864,6 +3908,13 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
 
   void deleteRow(int index) {
     setState(() {
+      final row = partsAndLabor[index];
+      (row['qtyController'] as TextEditingController?)?.dispose();
+      (row['accountController'] as TextEditingController?)?.dispose();
+      (row['descriptionController'] as TextEditingController?)?.dispose();
+      (row['priceController'] as TextEditingController?)?.dispose();
+      (row['totalController'] as TextEditingController?)?.dispose();
+      (row['subtotalcontroller'] as TextEditingController?)?.dispose();
       partsAndLabor.removeAt(index);
       updateTotalAmount();
     });
@@ -6583,7 +6634,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
         //     textColor: Colors.white,
         //     fontSize: 16.0
         // );
-        Navigator.pop(context, true);
+        if (mounted) Navigator.pop(context, true);
       } catch (e) {
         Fluttertoast.showToast(
             msg: "Failed to add work order: $e",
@@ -6595,9 +6646,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
             fontSize: 16.0);
         print(e);
       } finally {
-        setState(() {
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       }
     } else {
       setState(() {
