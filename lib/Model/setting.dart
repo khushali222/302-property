@@ -143,9 +143,11 @@ class Setting3 {
   String? adminId;
   bool? remindermail;
   String? duration;
+  String? replyTo;
 
   // Constructor
-  Setting3({this.id, this.adminId, this.remindermail, this.duration});
+  Setting3(
+      {this.id, this.adminId, this.remindermail, this.duration, this.replyTo});
 
   // Method to parse JSON
   Setting3.fromJson(Map<String, dynamic> json) {
@@ -154,9 +156,11 @@ class Setting3 {
     adminId = json['admin_id'];
     remindermail = json['remindermail'];
     duration = json['duration'].toString();
+    replyTo = json['reply_to'];
 
     print("reminder mail $remindermail");
     print("duration $duration");
+    print("reply to $replyTo");
   }
 
   // Method to convert object to JSON
@@ -166,6 +170,7 @@ class Setting3 {
     data['admin_id'] = adminId;
     data['remindermail'] = remindermail;
     data['duration'] = duration;
+    data['reply_to'] = replyTo;
 
     return data;
   }

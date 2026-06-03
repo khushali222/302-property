@@ -556,19 +556,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   // Check if Mail Service fields have been modified
-  bool _hasMailServiceChanges() {
-    if (!mailupdate) {
-      // For new entries, check if any field has a value
-      return replyToEmail.text.trim().isNotEmpty ||
-          durationmail.text.trim().isNotEmpty ||
-          rentDueReminderEmail;
-    }
-
-    // For updates, compare current values with original values
-    return replyToEmail.text.trim() != _originalReplyToEmail ||
-        durationmail.text.trim() != _originalDurationMail ||
-        rentDueReminderEmail != _originalRentDueReminderEmail;
-  }
 
   Future<void> updateSurcharge() async {
     print("calling");
@@ -810,6 +797,7 @@ class _TabBarExampleState extends State<TabBarExample> {
           mailupdate = true;
           print(latefee.duration);
           durationmail.text = latefee.duration.toString();
+          replyToEmail.text = latefee.replyTo ?? "";
           //  rentDueReminderEmail = true;
           if (latefee.remindermail != null) {
             rentDueReminderEmail = latefee.remindermail!;
@@ -819,7 +807,6 @@ class _TabBarExampleState extends State<TabBarExample> {
           // Store original values for change tracking
           _originalDurationMail = latefee.duration?.toString() ?? "";
           _originalRentDueReminderEmail = latefee.remindermail ?? false;
-          // Note: replyToEmail is not in Setting3 API response, track from current value
           _originalReplyToEmail = replyToEmail.text.trim();
         });
       }
@@ -877,11 +864,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateMail() async {
-    // Check if there are any changes before proceeding
-    if (!_hasMailServiceChanges()) {
-      return; // No changes made, don't proceed with update
-    }
-
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -889,10 +871,13 @@ class _TabBarExampleState extends State<TabBarExample> {
     try {
       Map<String, dynamic> data = {
         "admin_id": id,
-        "duration": durationmail.text.trim().isNotEmpty
-            ? double.parse(durationmail.text.trim())
-            : null,
+        "duration": rentDueReminderEmail
+            ? (durationmail.text.trim().isNotEmpty
+                ? double.parse(durationmail.text.trim())
+                : null)
+            : 0,
         "replyToEmail": replyToEmail.text.trim(),
+        "remindermail": rentDueReminderEmail,
       };
 
       bool success = await mailrepository.updateMailData(data);
@@ -960,11 +945,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> Addmail() async {
-    // Check if there are any changes before proceeding
-    if (!_hasMailServiceChanges()) {
-      return; // No changes made, don't proceed with add
-    }
-
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -973,9 +953,12 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "replyToEmail": replyToEmail.text.trim(),
-        "duration": durationmail.text.trim().isNotEmpty
-            ? int.parse(durationmail.text.trim())
-            : null,
+        "duration": rentDueReminderEmail
+            ? (durationmail.text.trim().isNotEmpty
+                ? int.parse(durationmail.text.trim())
+                : null)
+            : 0,
+        "remindermail": rentDueReminderEmail,
       };
 
       bool success = await mailrepository.AddMailData(id, data);
@@ -4954,318 +4937,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               _buildCompanyProfileForm(),
                             ],
                           ),
-                        if (ismail)
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Mail Service",
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 18
-                                              : 25,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Add Your Reply to Address",
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      height: 50,
-                                      width: MediaQuery.of(context).size.width *
-                                          .5,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: grey),
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Stack(
-                                        children: [
-                                          Positioned.fill(
-                                            child: TextFormField(
-                                              controller: replyToEmail,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  //  passworderror = false;
-                                                });
-                                              },
-                                              //  controller: password,
-                                              cursorColor: const Color.fromRGBO(
-                                                  21, 43, 81, 1),
-                                              decoration: InputDecoration(
-                                                hintText: "Enter email",
-                                                hintStyle: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .037,
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                ),
-                                                border: InputBorder.none,
-                                                contentPadding:
-                                                    const EdgeInsets.all(13),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 190),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              _buildRentDueReminderSwitch(),
-                              /*  SizedBox(
-                          height: 10,
-                        ),*/
-                              if (rentDueReminderEmail)
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            "You can set a duration for send reminder email before rent due date to tenant",
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        500
-                                                    ? 15
-                                                    : 20,
-                                                color: const Color(0xFF8A95A8),
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          "Duration",
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
-                                              color: blueColor,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 5),
-                                        Expanded(
-                                          child: Container(
-                                            height: 50,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .5,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: grey),
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Stack(
-                                              children: [
-                                                Positioned.fill(
-                                                  child: TextFormField(
-                                                    controller: durationmail,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        //  passworderror = false;
-                                                      });
-                                                    },
-                                                    //  controller: password,
-                                                    cursorColor:
-                                                        const Color.fromRGBO(
-                                                            21, 43, 81, 1),
-                                                    decoration: InputDecoration(
-                                                      // hintText: "Enter password",
-                                                      hintStyle: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                        color: const Color(
-                                                            0xFF8A95A8),
-                                                      ),
-
-                                                      border: InputBorder.none,
-                                                      contentPadding:
-                                                          const EdgeInsets.all(
-                                                              13),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 190),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  if (MediaQuery.of(context).size.width < 500)
-                                    const SizedBox(width: 2),
-                                  if (MediaQuery.of(context).size.width > 500)
-                                    const SizedBox(width: 2),
-                                  GestureDetector(
-                                    onTap: _hasMailServiceChanges()
-                                        ? () async {
-                                            if (mailupdate)
-                                              await updateMail();
-                                            else
-                                              await Addmail();
-                                          }
-                                        : null,
-                                    child: Opacity(
-                                      opacity:
-                                          _hasMailServiceChanges() ? 1.0 : 0.5,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 35
-                                              : 50,
-                                          width: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 100
-                                              : 150,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            color: blueColor,
-                                            boxShadow: [
-                                              const BoxShadow(
-                                                color: Colors.grey,
-                                                offset:
-                                                    Offset(0.0, 1.0), //(x,y)
-                                                blurRadius: 6.0,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Save",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 16
-                                                          : 20),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      durationmail.clear();
-                                    },
-                                    child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 120,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: blueColor,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Center(
-                                            child: Text(
-                                          "Reset",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 16
-                                                  : 20),
-                                        ))),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        if (ismail) _buildMailServiceSection(),
                         if (islatefee)
                           Column(
                             children: [
@@ -9145,7 +8817,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                     ),
                                                   ),
                                                 ),
-                                                /* edit button temporarily disabled
                                                 GestureDetector(
                                                   onTap: () {
                                                     setState(() {
@@ -9183,7 +8854,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   ),
                                                 ),
                                                 const SizedBox(width: 10),
-                                                */
                                                 GestureDetector(
                                                   onTap: () {
                                                     _showDeleteCategoryAlert(
@@ -9478,6 +9148,240 @@ class _TabBarExampleState extends State<TabBarExample> {
         return match
             .group(0)!; // Return the character unchanged if it doesn't match
       },
+    );
+  }
+
+  Widget _buildMailServiceSection() {
+    final bool isSmall = MediaQuery.of(context).size.width < 500;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 15),
+        // ===== Card 1: Mail Service =====
+        _buildSettingsCard(
+          icon: Icons.mail_outline,
+          title: "MAIL SERVICE",
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Reply-To Address",
+                style: TextStyle(
+                  fontSize: isSmall ? 15 : 20,
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _buildMailTextField(
+                controller: replyToEmail,
+                hint: "Enter email",
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Tenant replies to automated emails will go to this address.",
+                style: TextStyle(
+                  fontSize: isSmall ? 12 : 15,
+                  color: const Color(0xFF8A95A8),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        // ===== Card 2: Rent Due Reminder =====
+        _buildSettingsCard(
+          icon: Icons.notifications_none,
+          title: "RENT DUE REMINDER",
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRentDueReminderSwitch(),
+              Text(
+                "You can set a duration for send reminder email before rent due date to tenant",
+                style: TextStyle(
+                  fontSize: isSmall ? 12 : 15,
+                  color: const Color(0xFF8A95A8),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (rentDueReminderEmail) ...[
+                const SizedBox(height: 14),
+                Text(
+                  "Duration (days before rent due)",
+                  style: TextStyle(
+                    fontSize: isSmall ? 15 : 20,
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _buildMailTextField(
+                  controller: durationmail,
+                  hint: "1",
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        // ===== Buttons: Reset + Save Changes =====
+        Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    replyToEmail.text = _originalReplyToEmail;
+                    durationmail.text = _originalDurationMail;
+                    rentDueReminderEmail = _originalRentDueReminderEmail;
+                  });
+                },
+                child: Container(
+                  height: isSmall ? 44 : 52,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: blueColor),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Reset",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isSmall ? 16 : 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  if (mailupdate)
+                    await updateMail();
+                  else
+                    await Addmail();
+                },
+                child: Container(
+                  height: isSmall ? 44 : 52,
+                  decoration: BoxDecoration(
+                    color: blueColor,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(0.0, 1.0),
+                        blurRadius: 6.0,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.check, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Save Changes",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: isSmall ? 16 : 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSettingsCard({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFD9DEE8)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: const BoxDecoration(
+              color: Color(0xFFEAEFF6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10),
+                topRight: Radius.circular(10),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: blueColor, size: 20),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: blueColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: child,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMailTextField({
+    required TextEditingController controller,
+    required String hint,
+    TextInputType? keyboardType,
+  }) {
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        border: Border.all(color: grey),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        cursorColor: const Color.fromRGBO(21, 43, 81, 1),
+        onChanged: (value) {
+          setState(() {});
+        },
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(
+            fontSize: MediaQuery.of(context).size.width * .037,
+            color: const Color(0xFF8A95A8),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.all(13),
+        ),
+      ),
     );
   }
 
