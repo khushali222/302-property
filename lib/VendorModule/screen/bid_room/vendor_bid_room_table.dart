@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +36,9 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   int _rowsPerPage = 10;
   final TextEditingController _searchController = TextEditingController();
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   bool sorting1 = false;
   bool ascending1 = false;
-  int? expandedIndex;
   String? expandedBidRequestId;
 
   // We can add detail fetching if needed, similar to the admin side.
@@ -46,7 +48,10 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
       });
@@ -57,6 +62,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
 
   @override
   void dispose() {
+    _connectivitySubscription?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -64,6 +70,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -140,6 +147,17 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
     // Sorting by description or address as per requirement.
     // Screenshot shows "Bid Room" column has "test" (description).
     return request.description ?? '';
+  }
+
+  Color _statusColor(String? status) {
+    switch ((status ?? '').toLowerCase()) {
+      case 'open':
+        return Colors.green;
+      case 'closed':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   String _formatDate(String? dateStr) {
@@ -604,15 +622,20 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                         _pagedData.asMap().entries.map((entry) {
                                       int index = entry.key;
                                       BidRequest request = entry.value;
-                                      bool isExpanded = expandedIndex == index;
+                                      final String bidKey =
+                                          request.bidRequestId ??
+                                              request.id ??
+                                              '$index';
+                                      bool isExpanded =
+                                          expandedBidRequestId == bidKey;
 
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            if (expandedIndex == index) {
-                                              expandedIndex = null;
+                                            if (expandedBidRequestId == bidKey) {
+                                              expandedBidRequestId = null;
                                             } else {
-                                              expandedIndex = index;
+                                              expandedBidRequestId = bidKey;
                                             }
                                           });
                                         },
@@ -641,13 +664,13 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                     InkWell(
                                                       onTap: () {
                                                         setState(() {
-                                                          if (expandedIndex ==
-                                                              index) {
-                                                            expandedIndex =
+                                                          if (expandedBidRequestId ==
+                                                              bidKey) {
+                                                            expandedBidRequestId =
                                                                 null;
                                                           } else {
-                                                            expandedIndex =
-                                                                index;
+                                                            expandedBidRequestId =
+                                                                bidKey;
                                                           }
                                                         });
                                                       },
@@ -702,8 +725,8 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                                                       child: Text(
                                                         request.status ?? "N/A",
                                                         style: TextStyle(
-                                                            color: Colors
-                                                                .green,
+                                                            color: _statusColor(
+                                                                request.status),
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13),

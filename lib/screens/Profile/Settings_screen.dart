@@ -147,6 +147,9 @@ class _TabBarExampleState extends State<TabBarExample> {
   String selectedAccountId = "";
   String selectedAccountName = "";
   List<Setting4> accounts = [];
+  List<PropertyOwnerOverride> propertyOwners = [];
+  String selectedPropertyOwnerId = "";
+  bool isLoadingPropertyOwners = false;
   // Original values for Late Fee Charge change tracking
   String _originalDuration = "";
   String _originalLateFee = "";
@@ -154,6 +157,13 @@ class _TabBarExampleState extends State<TabBarExample> {
   String _originalCalculationType = "fixed";
   String _originalDescription = "";
   String _originalSelectedAccountName = "";
+  // Original values for Surcharge change tracking
+  String _originalCredit = "";
+  String _originalDebit = "";
+  String _originalPercent = "";
+  String _originalFlat = "";
+  String? _originalSelectedAccount;
+  int _originalSelectedRadio = 0;
   // Original values for Mail Service change tracking
   String _originalReplyToEmail = "";
   String _originalDurationMail = "";
@@ -227,6 +237,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool vendorAscending2 = false;
   ConnectivityResult? _connectivityResult;
   String? selectedAccount;
+  String? _accountError;
   // 1. Add state variables
   List<allcategories_model> _dropdownCategories = [];
   allcategories_model? _selectedDropdownCategory;
@@ -264,6 +275,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     futureaccount = accountRepository().fetchAccounts();
     fetchSurchargeData();
     fetchlatefeeData();
+    fetchPropertyOwners();
     fetchMailData();
     accountname = TextEditingController();
     note = TextEditingController();
@@ -391,6 +403,18 @@ class _TabBarExampleState extends State<TabBarExample> {
     });
   }
 
+  fetchPropertyOwners() async {
+    setState(() {
+      isLoadingPropertyOwners = true;
+    });
+    List<PropertyOwnerOverride> fetched =
+        await PropertyOwnerOverrideRepository().fetchPropertyOwners();
+    setState(() {
+      propertyOwners = fetched;
+      isLoadingPropertyOwners = false;
+    });
+  }
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
@@ -475,6 +499,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                   : surcharges.surchargeFlatACH != 0.0
                       ? 2
                       : 0;
+          _originalCredit = credit.text.trim();
+          _originalDebit = debit.text.trim();
+          _originalPercent = percent.text.trim();
+          _originalFlat = flat.text.trim();
+          _originalSelectedAccount = selectedAccount;
+          _originalSelectedRadio = _selectedRadio;
         });
       }
     } catch (e) {
@@ -557,7 +587,21 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   // Check if Mail Service fields have been modified
 
+  bool _hasSurchargeChanges() {
+    return credit.text.trim() != _originalCredit ||
+        debit.text.trim() != _originalDebit ||
+        percent.text.trim() != _originalPercent ||
+        flat.text.trim() != _originalFlat ||
+        selectedAccount != _originalSelectedAccount ||
+        _selectedRadio != _originalSelectedRadio;
+  }
+
   Future<void> updateSurcharge() async {
+    // Check if there are any changes before proceeding
+    if (!_hasSurchargeChanges()) {
+      return; // No changes made, don't proceed with update
+    }
+
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -590,6 +634,15 @@ class _TabBarExampleState extends State<TabBarExample> {
           await surchargeRepository.updateSurchargeData('$surge_id', data);
 
       if (success) {
+        // Update original values after successful save
+        setState(() {
+          _originalCredit = credit.text.trim();
+          _originalDebit = debit.text.trim();
+          _originalPercent = percent.text.trim();
+          _originalFlat = flat.text.trim();
+          _originalSelectedAccount = selectedAccount;
+          _originalSelectedRadio = _selectedRadio;
+        });
         Fluttertoast.showToast(msg: "Surcharge Updated Successfully");
         // ScaffoldMessenger.of(context).showSnackBar(
         //     SnackBar(content: Text('Surcharge Updated Successfully')));
@@ -779,6 +832,61 @@ class _TabBarExampleState extends State<TabBarExample> {
       print('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
+      Fluttertoast.showToast(msg: 'Error: $e');
+    }
+  }
+
+  // Whether the Late Fee Save button should be enabled.
+  bool _canSaveLateFee() {
+    if (selectedPropertyOwnerId.isNotEmpty) {
+      // Property Owner override: enable when any field has a value.
+      return duration.text.trim().isNotEmpty ||
+          late_fee.text.trim().isNotEmpty ||
+          grace_balance.text.trim().isNotEmpty ||
+          description.text.trim().isNotEmpty ||
+          selectedAccountName.isNotEmpty;
+    }
+    return _hasLateFeeChanges();
+  }
+
+  // Save late fee rules for a specific Property Owner (override).
+  Future<void> saveLateFeeOverride() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString('adminId');
+    try {
+      Map<String, dynamic> lateFeeRules = {
+        "calculation_type": calculationType,
+        "late_fee": late_fee.text.trim().isNotEmpty
+            ? num.tryParse(late_fee.text.trim())
+            : null,
+        "duration": duration.text.trim().isNotEmpty
+            ? int.tryParse(duration.text.trim())
+            : null,
+        "grace_balance": grace_balance.text.trim().isNotEmpty
+            ? int.tryParse(grace_balance.text.trim())
+            : null,
+        "charge_account":
+            selectedAccountName.isNotEmpty ? selectedAccountName : null,
+        "description":
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
+      };
+      Map<String, dynamic> data = {
+        "rentalowner_id": selectedPropertyOwnerId,
+        "admin_id": adminId,
+        "is_web": true,
+        "user_active_recently": true,
+        "late_fee_rules": lateFeeRules,
+      };
+      bool success =
+          await PropertyOwnerOverrideRepository().saveLateFeeOverride(data);
+      if (success) {
+        Fluttertoast.showToast(
+            msg: 'Property Owner override saved successfully');
+      } else {
+        Fluttertoast.showToast(msg: 'Failed to save Property Owner override');
+      }
+    } catch (e) {
+      print('Failed to save property owner override: $e');
       Fluttertoast.showToast(msg: 'Error: $e');
     }
   }
@@ -3210,6 +3318,564 @@ class _TabBarExampleState extends State<TabBarExample> {
     }
   }
 
+  // ===================== Surcharge (redesigned) =====================
+  Widget _surchargeNumberField({
+    required TextEditingController controller,
+    bool showPercent = false,
+    String hint = '',
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: TextField(
+        controller: controller,
+        cursorColor: blueColor,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+        ],
+        onChanged: (value) {
+          setState(() {});
+        },
+        style: TextStyle(
+          color: blueColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(
+            color: Colors.grey.shade400,
+            fontWeight: FontWeight.w500,
+          ),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          suffixText: showPercent ? '%' : null,
+          suffixStyle: TextStyle(
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _achOptionCard({required int value, required String label}) {
+    final bool selected = _selectedRadio == value;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedRadio = value;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? blueColor : Colors.grey.shade300,
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            _dtRadioCircle(selected),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: blueColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===================== Late Fee (redesigned) =====================
+  Widget _lateFeeLabel(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 14,
+        color: blueColor,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _lateFeeField({
+    required TextEditingController controller,
+    bool dollar = false,
+    bool percent = false,
+    bool numeric = true,
+    bool decimal = true,
+    String hint = '',
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: TextField(
+        controller: controller,
+        cursorColor: blueColor,
+        textAlign: dollar ? TextAlign.right : TextAlign.left,
+        keyboardType: numeric
+            ? TextInputType.numberWithOptions(decimal: decimal)
+            : TextInputType.text,
+        inputFormatters: numeric
+            ? [
+                FilteringTextInputFormatter.allow(
+                    RegExp(decimal ? r'[0-9.]' : r'[0-9]')),
+              ]
+            : null,
+        onChanged: (value) {
+          setState(() {});
+        },
+        style: TextStyle(
+          color: blueColor,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(
+            color: Colors.grey.shade400,
+            fontWeight: FontWeight.w500,
+          ),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          prefixIcon: dollar
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 6),
+                  child: Center(
+                    widthFactor: 1.0,
+                    child: Text(
+                      '\$',
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
+          prefixIconConstraints: dollar
+              ? const BoxConstraints(minWidth: 30, maxWidth: 34)
+              : null,
+          suffixText: percent ? '%' : null,
+          suffixStyle: TextStyle(
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _lateFeeCalcOption(String value, String label) {
+    final bool selected = calculationType == value;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            calculationType = value;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? blueColor : Colors.grey.shade300,
+              width: selected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              _dtRadioCircle(selected),
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: blueColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLateFeeSection() {
+    final bool isNarrow = MediaQuery.of(context).size.width < 500;
+    final List<String> accountOptions = <String>{
+      "Late Fee Income",
+      ...accounts.map((a) => a.account ?? '').where((a) => a.isNotEmpty),
+    }.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          "Late Fee Charge",
+          style: TextStyle(
+            color: blueColor,
+            fontWeight: FontWeight.bold,
+            fontSize: isNarrow ? 20 : 25,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "You can set the default late fee charge from here.",
+          style: TextStyle(
+            fontSize: isNarrow ? 14 : 18,
+            color: const Color(0xFF8A95A8),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 22),
+        Row(
+          children: [
+            Icon(Icons.person_outline, color: blueColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              "Property Owner",
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.w600,
+                fontSize: isNarrow ? 15 : 16,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFF22C55E),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Text(
+                "NEW",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            const Spacer(),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          height: 54,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              buttonStyleData: ButtonStyleData(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              value: (selectedPropertyOwnerId.isEmpty ||
+                      propertyOwners.any(
+                          (po) => po.rentalownerId == selectedPropertyOwnerId))
+                  ? selectedPropertyOwnerId
+                  : "",
+              style: TextStyle(
+                fontSize: 15,
+                color: blueColor,
+                fontWeight: FontWeight.w600,
+              ),
+              iconStyleData: IconStyleData(
+                icon: isLoadingPropertyOwners
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(Icons.keyboard_arrow_down, color: blueColor),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 260,
+                offset: const Offset(0, -4),
+                elevation: 2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 48,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              items: [
+                const DropdownMenuItem<String>(
+                  value: "",
+                  child: Text(
+                    "Default (All Properties)",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                ...propertyOwners
+                    .where((po) =>
+                        (po.rentalownerId ?? '').isNotEmpty &&
+                        (po.rentalOwnerName ?? '').isNotEmpty)
+                    .map((po) {
+                  return DropdownMenuItem<String>(
+                    value: po.rentalownerId,
+                    child: Text(
+                      po.rentalOwnerName ?? '',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }),
+              ],
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedPropertyOwnerId = newValue ?? '';
+                });
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _lateFeeLabel("Number of Grace Period Days"),
+        const SizedBox(height: 8),
+        _lateFeeField(controller: duration, decimal: false, hint: '0'),
+        const SizedBox(height: 20),
+        _lateFeeLabel("Late Fee Calculation"),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            _lateFeeCalcOption("fixed", "Fixed"),
+            const SizedBox(width: 12),
+            _lateFeeCalcOption("percent", "Percent"),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _lateFeeLabel(
+                      calculationType == "fixed" ? "Amount" : "Percentage"),
+                  const SizedBox(height: 8),
+                  calculationType == "fixed"
+                      ? _lateFeeField(controller: late_fee, dollar: true)
+                      : _lateFeeField(controller: late_fee, percent: true),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _lateFeeLabel("Min. Balance"),
+                  const SizedBox(height: 8),
+                  _lateFeeField(controller: grace_balance, dollar: true),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "Minimum balance owed before a late fee is charged.",
+          style: TextStyle(
+            fontSize: 13,
+            color: const Color(0xFF8A95A8),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _lateFeeLabel("Charge Account"),
+        const SizedBox(height: 8),
+        Container(
+          height: 54,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton2<String>(
+              isExpanded: true,
+              buttonStyleData: ButtonStyleData(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              value: accountOptions.contains(selectedAccountName)
+                  ? selectedAccountName
+                  : null,
+              hint: Text(
+                "Select Account",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              style: TextStyle(
+                fontSize: 15,
+                color: blueColor,
+                fontWeight: FontWeight.w600,
+              ),
+              iconStyleData: IconStyleData(
+                icon: Icon(Icons.keyboard_arrow_down, color: blueColor),
+              ),
+              dropdownStyleData: DropdownStyleData(
+                maxHeight: 260,
+                offset: const Offset(0, -4),
+                elevation: 2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+              ),
+              menuItemStyleData: const MenuItemStyleData(
+                height: 48,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              items: accountOptions.map((String accountName) {
+                return DropdownMenuItem<String>(
+                  value: accountName,
+                  child: Text(
+                    accountName,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedAccountName = newValue ?? '';
+                  if (newValue == "Late Fee Income") {
+                    selectedAccountId = "";
+                  } else {
+                    Setting4? selectedAccount = accounts.firstWhere(
+                      (account) => account.account == newValue,
+                      orElse: () => Setting4(),
+                    );
+                    selectedAccountId = selectedAccount.accountId ?? '';
+                  }
+                });
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _lateFeeLabel("Description"),
+        const SizedBox(height: 8),
+        _lateFeeField(controller: description, numeric: false),
+        const SizedBox(height: 28),
+        Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                onTap: () {
+                  duration.clear();
+                  late_fee.clear();
+                },
+                child: Container(
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: blueColor, width: 1.5),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Reset",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              flex: 3,
+              child: GestureDetector(
+                onTap: _canSaveLateFee()
+                    ? () async {
+                        if (selectedPropertyOwnerId.isNotEmpty)
+                          await saveLateFeeOverride();
+                        else if (islatefeeupdate)
+                          await updateLatefee();
+                        else
+                          await AddLatefeedata();
+                      }
+                    : null,
+                child: Opacity(
+                  opacity: _canSaveLateFee() ? 1.0 : 0.5,
+                  child: Container(
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.check, color: Colors.white, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Save",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
   // ===================== Date & Time Settings (redesigned) =====================
   Widget _buildDateTimeSettings() {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -3877,1053 +4543,381 @@ class _TabBarExampleState extends State<TabBarExample> {
                         ),
                         if (issurge)
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(
-                                height: 10,
+                              const SizedBox(height: 12),
+                              Text(
+                                "Surcharge",
+                                style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 20
+                                          : 25,
+                                ),
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Surcharge",
+                              const SizedBox(height: 6),
+                              Text(
+                                "You can set the default surcharge percentage from here.",
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 14
+                                          : 18,
+                                  color: const Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 22),
+                              Text(
+                                "Account to receive surcharges",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton2<String?>(
+                                    isExpanded: true,
+                                    value: selectedAccount != null &&
+                                            accounts.any((account) =>
+                                                account.accountId ==
+                                                selectedAccount)
+                                        ? selectedAccount
+                                        : null,
+                                    hint: Text(
+                                      "Select Account",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey.shade500,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     style: TextStyle(
+                                      fontSize: 15,
                                       color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 18
-                                              : 25,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "You can set default surcharge percentage from here",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: const Color(0xFF8A95A8),
-                                          fontWeight: FontWeight.bold),
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(
-                              //         width: 5,
-                              //       ),
-                              //       Text(
-                              //         "Credit Card Surcharge Percent",
-                              //         style: TextStyle(
-                              //             fontSize:
-                              //                 MediaQuery.of(context).size.width <
-                              //                         500
-                              //                     ? 15
-                              //                     : 20,
-                              //             color: blueColor,
-                              //             fontWeight: FontWeight.bold),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 10,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(width: 5),
-                              //       Expanded(
-                              //         child: Material(
-                              //           elevation: 4,
-                              //           borderRadius: BorderRadius.circular(10),
-                              //           child: Container(
-                              //             height: 50,
-                              //             width:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .6,
-                              //             decoration: BoxDecoration(
-                              //               color: Colors.white,
-                              //               borderRadius:
-                              //                   BorderRadius.circular(10),
-                              //             ),
-                              //             child: Stack(
-                              //               children: [
-                              //                 Positioned.fill(
-                              //                   child: TextField(
-                              //                     onChanged: (value) {
-                              //                       setState(() {
-                              //                         //  passworderror = false;
-                              //                       });
-                              //                     },
-                              //                     controller: credit,
-                              //                     cursorColor: Color.fromRGBO(
-                              //                         21, 43, 81, 1),
-                              //                     decoration: InputDecoration(
-                              //                       // hintText: "Enter password",
-                              //                       hintStyle: TextStyle(
-                              //                         fontSize:
-                              //                             MediaQuery.of(context)
-                              //                                     .size
-                              //                                     .width *
-                              //                                 .037,
-                              //                         color: Color(0xFF8A95A8),
-                              //                       ),
-                              //                       // enabledBorder: passworderror
-                              //                       //     ? OutlineInputBorder(
-                              //                       //   borderRadius:
-                              //                       //   BorderRadius.circular(2),
-                              //                       //   borderSide: BorderSide(
-                              //                       //     color: Colors.red,
-                              //                       //   ),
-                              //                       // )
-                              //                       //     : InputBorder.none,
-                              //                       border: InputBorder.none,
-                              //                       contentPadding:
-                              //                           EdgeInsets.all(13),
-                              //                       suffixIcon: Icon(
-                              //                         Icons.percent,
-                              //                         color: Color.fromRGBO(
-                              //                             21, 43, 81, 1),
-                              //                         size: 18,
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       SizedBox(width: 100),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 20,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(width: 5),
-                              //       Text(
-                              //         "Debit Card Surcharge Percent",
-                              //         style: TextStyle(
-                              //             fontSize:
-                              //                 MediaQuery.of(context).size.width <
-                              //                         500
-                              //                     ? 15
-                              //                     : 20,
-                              //             color: blueColor,
-                              //             fontWeight: FontWeight.bold),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 10,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(width: 5),
-                              //       Expanded(
-                              //         child: Material(
-                              //           elevation: 4,
-                              //           borderRadius: BorderRadius.circular(10),
-                              //           child: Container(
-                              //             height: 50,
-                              //             width:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .6,
-                              //             decoration: BoxDecoration(
-                              //               color: Colors.white,
-                              //               borderRadius:
-                              //                   BorderRadius.circular(10),
-                              //             ),
-                              //             child: Stack(
-                              //               children: [
-                              //                 Positioned.fill(
-                              //                   child: TextField(
-                              //                     onChanged: (value) {
-                              //                       setState(() {
-                              //                         //  passworderror = false;
-                              //                       });
-                              //                     },
-                              //                     controller: debit,
-                              //                     cursorColor: Color.fromRGBO(
-                              //                         21, 43, 81, 1),
-                              //                     decoration: InputDecoration(
-                              //                       // hintText: "Enter password",
-                              //                       hintStyle: TextStyle(
-                              //                         fontSize:
-                              //                             MediaQuery.of(context)
-                              //                                     .size
-                              //                                     .width *
-                              //                                 .037,
-                              //                         color: Color(0xFF8A95A8),
-                              //                       ),
-                              //                       // enabledBorder: passworderror
-                              //                       //     ? OutlineInputBorder(
-                              //                       //   borderRadius:
-                              //                       //   BorderRadius.circular(2),
-                              //                       //   borderSide: BorderSide(
-                              //                       //     color: Colors.red,
-                              //                       //   ),
-                              //                       // )
-                              //                       //     : InputBorder.none,
-                              //                       border: InputBorder.none,
-                              //                       contentPadding:
-                              //                           EdgeInsets.all(13),
-                              //                       suffixIcon: Icon(
-                              //                         Icons.percent,
-                              //                         color: Color.fromRGBO(
-                              //                             21, 43, 81, 1),
-                              //                         size: 18,
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       SizedBox(width: 100),
-                              //     ],
-                              //   ),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // First Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Credit Card Surcharge Percent",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .5,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(color: grey),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: TextField(
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          //  passworderror = false;
-                                                        });
-                                                      },
-                                                      controller: credit,
-                                                      cursorColor: blueColor,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        // hintText: "Enter password",
-                                                        hintStyle: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: const Color(
-                                                              0xFF8A95A8),
-                                                        ),
-                                                        // enabledBorder: passworderror
-                                                        //     ? OutlineInputBorder(
-                                                        //   borderRadius:
-                                                        //   BorderRadius.circular(2),
-                                                        //   borderSide: BorderSide(
-                                                        //     color: Colors.red,
-                                                        //   ),
-                                                        // )
-                                                        //     : InputBorder.none,
-                                                        border:
-                                                            InputBorder.none,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .all(13),
-                                                        suffixIcon: Icon(
-                                                          Icons.percent,
-                                                          color: blueColor,
-                                                          size: 18,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                    iconStyleData: IconStyleData(
+                                      icon: Icon(Icons.keyboard_arrow_down,
+                                          color: blueColor),
+                                      iconSize: 26,
+                                    ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: 260,
+                                      offset: const Offset(0, -6),
+                                      elevation: 3,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.grey.shade200),
                                       ),
-                                      const SizedBox(width: 16),
-                                      // Second Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Debit Card Surcharge Percent",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .5,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(color: grey),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: TextField(
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          //  passworderror = false;
-                                                        });
-                                                      },
-                                                      controller: debit,
-                                                      cursorColor: blueColor,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        // hintText: "Enter password",
-                                                        hintStyle: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: const Color(
-                                                              0xFF8A95A8),
-                                                        ),
-                                                        // enabledBorder: passworderror
-                                                        //     ? OutlineInputBorder(
-                                                        //   borderRadius:
-                                                        //   BorderRadius.circular(2),
-                                                        //   borderSide: BorderSide(
-                                                        //     color: Colors.red,
-                                                        //   ),
-                                                        // )
-                                                        //     : InputBorder.none,
-                                                        border:
-                                                            InputBorder.none,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .all(13),
-                                                        suffixIcon: Icon(
-                                                          Icons.percent,
-                                                          color: blueColor,
-                                                          size: 18,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // First Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Credit Card Surcharge Percent",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Material(
-                                              elevation: 4,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Stack(
-                                                  children: [
-                                                    Positioned.fill(
-                                                      child: TextField(
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            //  passworderror = false;
-                                                          });
-                                                        },
-                                                        controller: credit,
-                                                        cursorColor: blueColor,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          // hintText: "Enter password",
-                                                          hintStyle: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .037,
-                                                            color: const Color(
-                                                                0xFF8A95A8),
-                                                          ),
-                                                          // enabledBorder: passworderror
-                                                          //     ? OutlineInputBorder(
-                                                          //   borderRadius:
-                                                          //   BorderRadius.circular(2),
-                                                          //   borderSide: BorderSide(
-                                                          //     color: Colors.red,
-                                                          //   ),
-                                                          // )
-                                                          //     : InputBorder.none,
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(13),
-                                                          suffixIcon: Icon(
-                                                            Icons.percent,
-                                                            color: blueColor,
-                                                            size: 18,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      // Second Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Debit Card Surcharge Percent",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Material(
-                                              elevation: 4,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Stack(
-                                                  children: [
-                                                    Positioned.fill(
-                                                      child: TextField(
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            //  passworderror = false;
-                                                          });
-                                                        },
-                                                        controller: debit,
-                                                        cursorColor: blueColor,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          // hintText: "Enter password",
-                                                          hintStyle: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .037,
-                                                            color: const Color(
-                                                                0xFF8A95A8),
-                                                          ),
-                                                          // enabledBorder: passworderror
-                                                          //     ? OutlineInputBorder(
-                                                          //   borderRadius:
-                                                          //   BorderRadius.circular(2),
-                                                          //   borderSide: BorderSide(
-                                                          //     color: Colors.red,
-                                                          //   ),
-                                                          // )
-                                                          //     : InputBorder.none,
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(13),
-                                                          suffixIcon: Icon(
-                                                            Icons.percent,
-                                                            color: blueColor,
-                                                            size: 18,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "You can set default ACH percentage or ACH flat fee or both from here",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: const Color(0xFF8A95A8),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              RadioListTile<int>(
-                                activeColor: Colors.black,
-                                title: Text(
-                                  'Add ACH surcharge percentage',
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                value: 1,
-                                groupValue: _selectedRadio,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedRadio = value!;
-                                  });
-                                },
-                              ),
-                              RadioListTile<int>(
-                                activeColor: Colors.black,
-                                title: Text(
-                                  'Add ACH flat fee',
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                value: 2,
-                                groupValue: _selectedRadio,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedRadio = value!;
-                                  });
-                                },
-                              ),
-                              RadioListTile<int>(
-                                activeColor: Colors.black,
-                                title: Text(
-                                  'Add both ACH surcharge percentage and flat fee',
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                value: 3,
-                                groupValue: _selectedRadio,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedRadio = value!;
-                                  });
-                                },
-                              ),
-                              if (_selectedRadio == 1 ||
-                                  _selectedRadio == 3) ...[
-                                const SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    Text(
-                                      'Add ACH Surcharge Percentage',
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                // TextField(
-                                //   decoration: InputDecoration(
-                                //     border: OutlineInputBorder(),
-                                //     labelText: 'ACH Surcharge Percentage',
-                                //   ),
-                                // ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .5,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: TextField(
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    //  passworderror = false;
-                                                  });
-                                                },
-                                                controller: percent,
-                                                cursorColor: blueColor,
-                                                decoration: InputDecoration(
-                                                  // hintText: "Enter password",
-                                                  hintStyle: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                    color:
-                                                        const Color(0xFF8A95A8),
-                                                  ),
-                                                  // enabledBorder: passworderror
-                                                  //     ? OutlineInputBorder(
-                                                  //   borderRadius:
-                                                  //   BorderRadius.circular(2),
-                                                  //   borderSide: BorderSide(
-                                                  //     color: Colors.red,
-                                                  //   ),
-                                                  // )
-                                                  //     : InputBorder.none,
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.all(13),
-                                                  suffixIcon: const Icon(
-                                                    Icons.percent,
-                                                    color: Color.fromRGBO(
-                                                        21, 43, 81, 1),
-                                                    size: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(8),
+                                        thickness: WidgetStateProperty.all(5),
+                                        thumbVisibility:
+                                            WidgetStateProperty.all(true),
                                       ),
                                     ),
-                                    if (MediaQuery.of(context).size.width < 500)
-                                      const SizedBox(width: 190),
-                                    if (MediaQuery.of(context).size.width > 500)
-                                      const SizedBox(width: 380),
-                                  ],
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 48,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 16),
+                                    ),
+                                    items: accounts.map((Setting4 account) {
+                                      return DropdownMenuItem<String>(
+                                        value: account.accountId,
+                                        child: Text(
+                                          account.account!,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedAccount = newValue;
+                                        _accountError = null;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              if (_accountError != null) ...[
+                                const SizedBox(height: 6),
+                                Text(
+                                  _accountError!,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
-                              if (_selectedRadio == 2 ||
-                                  _selectedRadio == 3) ...[
-                                const SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'Add ACH Flat Fee',
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                // TextField(
-                                //   decoration: InputDecoration(
-                                //     border: OutlineInputBorder(),
-                                //     labelText: 'ACH Flat Fee',
-                                //   ),
-                                // ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    const SizedBox(width: 5),
-                                    Expanded(
-                                      child: Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .5,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                              const SizedBox(height: 24),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Credit Card Surcharge %",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        child: Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: TextField(
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    //  passworderror = false;
-                                                  });
-                                                },
-                                                controller: flat,
-                                                cursorColor: blueColor,
-                                                decoration: InputDecoration(
-                                                  // hintText: "Enter password",
-                                                  hintStyle: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                    color:
-                                                        const Color(0xFF8A95A8),
-                                                  ),
-                                                  // enabledBorder: passworderror
-                                                  //     ? OutlineInputBorder(
-                                                  //   borderRadius:
-                                                  //   BorderRadius.circular(2),
-                                                  //   borderSide: BorderSide(
-                                                  //     color: Colors.red,
-                                                  //   ),
-                                                  // )
-                                                  //     : InputBorder.none,
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.all(13),
-                                                  // suffixIcon: const Icon(
-                                                  //   Icons.percent,
-                                                  //   color: Color.fromRGBO(
-                                                  //       21, 43, 81, 1),
-                                                  //   size: 18,
-                                                  // ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                        const SizedBox(height: 8),
+                                        _surchargeNumberField(
+                                          controller: credit,
+                                          showPercent: true,
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                    if (MediaQuery.of(context).size.width < 500)
-                                      const SizedBox(width: 190),
-                                    if (MediaQuery.of(context).size.width > 500)
-                                      const SizedBox(width: 380),
-                                  ],
-                                ),
-                              ],
-
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Debit Card Surcharge %",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: blueColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        _surchargeNumberField(
+                                          controller: debit,
+                                          showPercent: true,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
                               Container(
                                 width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border:
+                                      Border.all(color: Colors.grey.shade200),
+                                ),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Text(
-                                      "Account to receive surcharges",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: const Color(0xFF8A95A8),
-                                          fontWeight: FontWeight.bold),
-                                    ),
                                     Container(
-                                      height: 42,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String?>(
-                                          value: selectedAccount != null &&
-                                                  accounts.any((account) =>
-                                                      account.accountId ==
-                                                      selectedAccount)
-                                              ? selectedAccount
-                                              : null,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          hint: const Text(
-                                            "Select Account",
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                          items:
-                                              accounts.map((Setting4 account) {
-                                            return DropdownMenuItem<String>(
-                                              value: account
-                                                  .accountId, // This must be unique (account ID)
-                                              child: Text(account
-                                                  .account!), // This is what the user sees (account name)
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              selectedAccount =
-                                                  newValue; // This stores the accountId (unique)
-                                            });
-                                            print(
-                                                "Selected Account ID: $newValue");
-                                            // Find the account name for the selected ID
-                                            String? accountName = accounts
-                                                .firstWhere((account) =>
-                                                    account.accountId ==
-                                                    newValue)
-                                                .account;
-                                            print(
-                                                "Selected Account Name: $accountName");
-                                          },
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 18, vertical: 16),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFEFF3F9),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(16),
+                                          topRight: Radius.circular(16),
                                         ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "ACH SURCHARGE",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: blueColor,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Supports a percentage, a flat fee, or both.",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFF8A95A8),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          _achOptionCard(
+                                            value: 1,
+                                            label: "Percentage only",
+                                          ),
+                                          _achOptionCard(
+                                            value: 2,
+                                            label: "Flat fee only",
+                                          ),
+                                          _achOptionCard(
+                                            value: 3,
+                                            label:
+                                                "Both percentage and flat fee",
+                                          ),
+                                          if (_selectedRadio == 1 ||
+                                              _selectedRadio == 3) ...[
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              "ACH Percentage",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            _surchargeNumberField(
+                                              controller: percent,
+                                              showPercent: true,
+                                            ),
+                                          ],
+                                          if (_selectedRadio == 2 ||
+                                              _selectedRadio == 3) ...[
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              "ACH Flat Fee",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: blueColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            _surchargeNumberField(
+                                              controller: flat,
+                                              hint: '\$0.00',
+                                            ),
+                                          ],
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 28),
                               Row(
                                 children: [
-                                  const SizedBox(
-                                    width: 2,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      if (isupdate)
-                                        await updateSurcharge();
-                                      else
-                                        await AddSurgedata();
-                                    },
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5.0),
+                                  Expanded(
+                                    flex: 2,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        debit.clear();
+                                        credit.clear();
+                                        flat.clear();
+                                        percent.clear();
+                                        setState(() {
+                                          selectedAccount = null;
+                                        });
+                                      },
                                       child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 150,
+                                        height: 54,
                                         decoration: BoxDecoration(
+                                          color: Colors.white,
                                           borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          color: blueColor,
-                                          boxShadow: [
-                                            const BoxShadow(
-                                              color: Colors.grey,
-                                              offset: Offset(0.0, 1.0), //(x,y)
-                                              blurRadius: 6.0,
-                                            ),
-                                          ],
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: blueColor, width: 1.5),
                                         ),
                                         child: Center(
                                           child: Text(
-                                            "Update",
+                                            "Reset",
                                             style: TextStyle(
-                                              color: Colors.white,
+                                              color: blueColor,
                                               fontWeight: FontWeight.bold,
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
+                                              fontSize: 16,
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      debit.clear();
-                                      credit.clear();
-                                      flat.clear();
-                                      percent.clear();
-                                      setState(() {
-                                        selectedAccount = null;
-                                      });
-                                    },
-                                    child: Container(
-                                        height:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                        width:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 100
-                                                : 100,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    flex: 3,
+                                    child: GestureDetector(
+                                      onTap: _hasSurchargeChanges()
+                                          ? () async {
+                                              if (selectedAccount == null) {
+                                                setState(() {
+                                                  _accountError =
+                                                      "Please select an account";
+                                                });
+                                                return;
+                                              }
+                                              setState(() {
+                                                _accountError = null;
+                                              });
+                                              if (isupdate)
+                                                await updateSurcharge();
+                                              else
+                                                await AddSurgedata();
+                                            }
+                                          : null,
+                                      child: Opacity(
+                                        opacity: _hasSurchargeChanges()
+                                            ? 1.0
+                                            : 0.5,
+                                        child: Container(
+                                          height: 54,
+                                          decoration: BoxDecoration(
                                             color: blueColor,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(Icons.check,
+                                                  color: Colors.white,
+                                                  size: 20),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                "Update",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        child: Center(
-                                            child: Text(
-                                          "Reset",
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width <
-                                                      500
-                                                  ? 15
-                                                  : 20,
-                                              fontWeight: FontWeight.bold),
-                                        ))),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -4938,1535 +4932,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ],
                           ),
                         if (ismail) _buildMailServiceSection(),
-                        if (islatefee)
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "Late Fee Charge",
-                                    style: TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 18
-                                              : 25,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      "You can set default Late fee charge from here",
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 15
-                                              : 20,
-                                          color: const Color(0xFF8A95A8),
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Number Of Grace Period Days",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .5,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: TextFormField(
-                                                controller: duration,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    //  passworderror = false;
-                                                  });
-                                                },
-                                                //  controller: password,
-                                                cursorColor: blueColor,
-                                                decoration: InputDecoration(
-                                                  // hintText: "Enter password",
-                                                  hintStyle: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                    color:
-                                                        const Color(0xFF8A95A8),
-                                                  ),
-                                                  // enabledBorder: passworderror
-                                                  //     ? OutlineInputBorder(
-                                                  //   borderRadius:
-                                                  //   BorderRadius.circular(2),
-                                                  //   borderSide: BorderSide(
-                                                  //     color: Colors.red,
-                                                  //   ),
-                                                  // )
-                                                  //     : InputBorder.none,
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.all(13),
-                                                  // suffixIcon: Icon(
-                                                  //   Icons.percent,
-                                                  //   color: blueColor,
-                                                  //   size: 18,
-                                                  // ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Late Fee Calculation",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Radio<String>(
-                                                value: "fixed",
-                                                groupValue: calculationType,
-                                                onChanged: (String? value) {
-                                                  setState(() {
-                                                    calculationType = value!;
-                                                  });
-                                                },
-                                                activeColor: blueColor,
-                                              ),
-                                              Text(
-                                                "Fixed",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 14
-                                                          : 16,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(width: 20),
-                                          Row(
-                                            children: [
-                                              Radio<String>(
-                                                value: "percent",
-                                                groupValue: calculationType,
-                                                onChanged: (String? value) {
-                                                  setState(() {
-                                                    calculationType = value!;
-                                                  });
-                                                },
-                                                activeColor: blueColor,
-                                              ),
-                                              Text(
-                                                "Percent",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 14
-                                                          : 16,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // First Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              calculationType == "fixed"
-                                                  ? "Amount"
-                                                  : "Percentage",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .5,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(color: grey),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: TextFormField(
-                                                      controller: late_fee,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          //  passworderror = false;
-                                                        });
-                                                      },
-                                                      //  controller: password,
-                                                      textAlign:
-                                                          calculationType ==
-                                                                  "fixed"
-                                                              ? TextAlign.right
-                                                              : TextAlign.left,
-                                                      cursorColor: blueColor,
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                              decimal: true),
-                                                      decoration:
-                                                          InputDecoration(
-                                                        // hintText: "Enter password",
-                                                        hintStyle: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: const Color(
-                                                              0xFF8A95A8),
-                                                        ),
-                                                        // enabledBorder: passworderror
-                                                        //     ? OutlineInputBorder(
-                                                        //   borderRadius:
-                                                        //   BorderRadius.circular(2),
-                                                        //   borderSide: BorderSide(
-                                                        //     color: Colors.red,
-                                                        //   ),
-                                                        // )
-                                                        //     : InputBorder.none,
-                                                        border:
-                                                            InputBorder.none,
-                                                        contentPadding:
-                                                            calculationType ==
-                                                                    "fixed"
-                                                                ? const EdgeInsets
-                                                                    .only(
-                                                                    left: 8,
-                                                                    top: 13,
-                                                                    bottom: 13,
-                                                                    right: 13)
-                                                                : const EdgeInsets
-                                                                    .all(13),
-                                                        prefixIcon:
-                                                            calculationType ==
-                                                                    "fixed"
-                                                                ? Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            12,
-                                                                        right:
-                                                                            8),
-                                                                    child:
-                                                                        Center(
-                                                                      widthFactor:
-                                                                          1.0,
-                                                                      child:
-                                                                          Text(
-                                                                        '\$',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : null,
-                                                        prefixIconConstraints:
-                                                            calculationType ==
-                                                                    "fixed"
-                                                                ? const BoxConstraints(
-                                                                    minWidth:
-                                                                        28,
-                                                                    maxWidth:
-                                                                        32)
-                                                                : null,
-                                                        suffixIcon:
-                                                            calculationType ==
-                                                                    "percent"
-                                                                ? Icon(
-                                                                    Icons
-                                                                        .percent,
-                                                                    color:
-                                                                        blueColor,
-                                                                    size: 18,
-                                                                  )
-                                                                : null,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      // Second Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Grace Balance",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Container(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .5,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(color: grey),
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Stack(
-                                                children: [
-                                                  Positioned.fill(
-                                                    child: TextFormField(
-                                                      controller: grace_balance,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          //  passworderror = false;
-                                                        });
-                                                      },
-                                                      //  controller: password,
-                                                      textAlign:
-                                                          TextAlign.right,
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                              decimal: true),
-                                                      cursorColor: blueColor,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        // hintText: "Enter password",
-                                                        hintStyle: TextStyle(
-                                                          fontSize: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                          color: const Color(
-                                                              0xFF8A95A8),
-                                                        ),
-                                                        // enabledBorder: passworderror
-                                                        //     ? OutlineInputBorder(
-                                                        //   borderRadius:
-                                                        //   BorderRadius.circular(2),
-                                                        //   borderSide: BorderSide(
-                                                        //     color: Colors.red,
-                                                        //   ),
-                                                        // )
-                                                        //     : InputBorder.none,
-                                                        border:
-                                                            InputBorder.none,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 8,
-                                                                top: 13,
-                                                                bottom: 13,
-                                                                right: 13),
-                                                        prefixIcon: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 12,
-                                                                  right: 8),
-                                                          child: Center(
-                                                            widthFactor: 1.0,
-                                                            child: Text(
-                                                              '\$',
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        prefixIconConstraints:
-                                                            const BoxConstraints(
-                                                                minWidth: 28,
-                                                                maxWidth: 32),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 10,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(
-                              //         width: 10,
-                              //       ),
-                              //       Text(
-                              //         "Percentage",
-                              //         style: TextStyle(
-                              //             fontSize:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .035,
-                              //             color: blueColor,
-                              //             fontWeight: FontWeight.bold),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 10,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(width: 5),
-                              //       Expanded(
-                              //         child: Material(
-                              //           elevation: 4,
-                              //           borderRadius: BorderRadius.circular(10),
-                              //           child: Container(
-                              //             height: 50,
-                              //             width:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .6,
-                              //             decoration: BoxDecoration(
-                              //               color: Colors.white,
-                              //               borderRadius:
-                              //                   BorderRadius.circular(10),
-                              //             ),
-                              //             child: Stack(
-                              //               children: [
-                              //                 Positioned.fill(
-                              //                   child: TextFormField(
-                              //                     controller: late_fee,
-                              //                     onChanged: (value) {
-                              //                       setState(() {
-                              //                         //  passworderror = false;
-                              //                       });
-                              //                     },
-                              //                     //  controller: password,
-                              //                     cursorColor: Color.fromRGBO(
-                              //                         21, 43, 81, 1),
-                              //                     decoration: InputDecoration(
-                              //                       // hintText: "Enter password",
-                              //                       hintStyle: TextStyle(
-                              //                         fontSize:
-                              //                             MediaQuery.of(context)
-                              //                                     .size
-                              //                                     .width *
-                              //                                 .037,
-                              //                         color: Color(0xFF8A95A8),
-                              //                       ),
-                              //                       // enabledBorder: passworderror
-                              //                       //     ? OutlineInputBorder(
-                              //                       //   borderRadius:
-                              //                       //   BorderRadius.circular(2),
-                              //                       //   borderSide: BorderSide(
-                              //                       //     color: Colors.red,
-                              //                       //   ),
-                              //                       // )
-                              //                       //     : InputBorder.none,
-                              //                       border: InputBorder.none,
-                              //                       contentPadding:
-                              //                           EdgeInsets.all(13),
-                              //                       suffixIcon: Icon(
-                              //                         Icons.percent,
-                              //                         color: Color.fromRGBO(
-                              //                             21, 43, 81, 1),
-                              //                         size: 18,
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       SizedBox(width: 90),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 20,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(
-                              //         width: 10,
-                              //       ),
-                              //       Text(
-                              //         "Duration",
-                              //         style: TextStyle(
-                              //             fontSize:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .035,
-                              //             color: blueColor,
-                              //             fontWeight: FontWeight.bold),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   SizedBox(
-                              //     height: 10,
-                              //   ),
-                              // if (MediaQuery.of(context).size.width < 500)
-                              //   Row(
-                              //     children: [
-                              //       SizedBox(width: 5),
-                              //       Expanded(
-                              //         child: Material(
-                              //           elevation: 4,
-                              //           borderRadius: BorderRadius.circular(10),
-                              //           child: Container(
-                              //             height: 50,
-                              //             width:
-                              //                 MediaQuery.of(context).size.width *
-                              //                     .6,
-                              //             decoration: BoxDecoration(
-                              //               color: Colors.white,
-                              //               borderRadius:
-                              //                   BorderRadius.circular(10),
-                              //             ),
-                              //             child: Stack(
-                              //               children: [
-                              //                 Positioned.fill(
-                              //                   child: TextFormField(
-                              //                     controller: duration,
-                              //                     onChanged: (value) {
-                              //                       setState(() {
-                              //                         //  passworderror = false;
-                              //                       });
-                              //                     },
-                              //                     //  controller: password,
-                              //                     cursorColor: Color.fromRGBO(
-                              //                         21, 43, 81, 1),
-                              //                     decoration: InputDecoration(
-                              //                       // hintText: "Enter password",
-                              //                       hintStyle: TextStyle(
-                              //                         fontSize:
-                              //                             MediaQuery.of(context)
-                              //                                     .size
-                              //                                     .width *
-                              //                                 .037,
-                              //                         color: Color(0xFF8A95A8),
-                              //                       ),
-                              //                       // enabledBorder: passworderror
-                              //                       //     ? OutlineInputBorder(
-                              //                       //   borderRadius:
-                              //                       //   BorderRadius.circular(2),
-                              //                       //   borderSide: BorderSide(
-                              //                       //     color: Colors.red,
-                              //                       //   ),
-                              //                       // )
-                              //                       //     : InputBorder.none,
-                              //                       border: InputBorder.none,
-                              //                       contentPadding:
-                              //                           EdgeInsets.all(13),
-                              //                       suffixIcon: Icon(
-                              //                         Icons.percent,
-                              //                         color: Color.fromRGBO(
-                              //                             21, 43, 81, 1),
-                              //                         size: 18,
-                              //                       ),
-                              //                     ),
-                              //                   ),
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       SizedBox(width: 90),
-                              //     ],
-                              //   ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // First Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              calculationType == "fixed"
-                                                  ? "Amount"
-                                                  : "Percentage",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Material(
-                                              elevation: 4,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Stack(
-                                                  children: [
-                                                    Positioned.fill(
-                                                      child: TextFormField(
-                                                        controller: late_fee,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            //  passworderror = false;
-                                                          });
-                                                        },
-                                                        //  controller: password,
-                                                        textAlign:
-                                                            calculationType ==
-                                                                    "fixed"
-                                                                ? TextAlign
-                                                                    .right
-                                                                : TextAlign
-                                                                    .left,
-                                                        cursorColor: blueColor,
-                                                        keyboardType: TextInputType
-                                                            .numberWithOptions(
-                                                                decimal: true),
-                                                        decoration:
-                                                            InputDecoration(
-                                                          // hintText: "Enter password",
-                                                          hintStyle: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .037,
-                                                            color: const Color(
-                                                                0xFF8A95A8),
-                                                          ),
-                                                          // enabledBorder: passworderror
-                                                          //     ? OutlineInputBorder(
-                                                          //   borderRadius:
-                                                          //   BorderRadius.circular(2),
-                                                          //   borderSide: BorderSide(
-                                                          //     color: Colors.red,
-                                                          //   ),
-                                                          // )
-                                                          //     : InputBorder.none,
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              calculationType ==
-                                                                      "fixed"
-                                                                  ? const EdgeInsets
-                                                                      .only(
-                                                                      left: 8,
-                                                                      top: 13,
-                                                                      bottom:
-                                                                          13,
-                                                                      right: 13)
-                                                                  : const EdgeInsets
-                                                                      .all(13),
-                                                          prefixIcon:
-                                                              calculationType ==
-                                                                      "fixed"
-                                                                  ? Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              12,
-                                                                          right:
-                                                                              8),
-                                                                      child:
-                                                                          Center(
-                                                                        widthFactor:
-                                                                            1.0,
-                                                                        child:
-                                                                            Text(
-                                                                          '\$',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : null,
-                                                          prefixIconConstraints:
-                                                              calculationType ==
-                                                                      "fixed"
-                                                                  ? const BoxConstraints(
-                                                                      minWidth:
-                                                                          28,
-                                                                      maxWidth:
-                                                                          32)
-                                                                  : null,
-                                                          suffixIcon:
-                                                              calculationType ==
-                                                                      "percent"
-                                                                  ? Icon(
-                                                                      Icons
-                                                                          .percent,
-                                                                      color:
-                                                                          blueColor,
-                                                                      size: 18,
-                                                                    )
-                                                                  : null,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      // Second Column
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Duration",
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 15
-                                                          : 20,
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Material(
-                                              elevation: 4,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: Container(
-                                                height: 50,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Stack(
-                                                  children: [
-                                                    Positioned.fill(
-                                                      child: TextFormField(
-                                                        controller: duration,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            //  passworderror = false;
-                                                          });
-                                                        },
-                                                        //  controller: password,
-                                                        cursorColor: blueColor,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          // hintText: "Enter password",
-                                                          hintStyle: TextStyle(
-                                                            fontSize: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                .037,
-                                                            color: const Color(
-                                                                0xFF8A95A8),
-                                                          ),
-                                                          // enabledBorder: passworderror
-                                                          //     ? OutlineInputBorder(
-                                                          //   borderRadius:
-                                                          //   BorderRadius.circular(2),
-                                                          //   borderSide: BorderSide(
-                                                          //     color: Colors.red,
-                                                          //   ),
-                                                          // )
-                                                          //     : InputBorder.none,
-                                                          border:
-                                                              InputBorder.none,
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(13),
-                                                          // suffixIcon: Icon(
-                                                          //   Icons.percent,
-                                                          //   color: blueColor,
-                                                          //   size: 18,
-                                                          // ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              const SizedBox(height: 15),
-                              // Account Dropdown
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Charge Account",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Row(
-                                              children: [
-                                                const SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Account',
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 14
-                                                              : 16,
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: [
-                                              // Combine "Late Fee Income" with accounts and sort alphabetically
-                                              ...([
-                                                "Late Fee Income",
-                                                ...accounts
-                                                    .map((a) => a.account ?? '')
-                                                    .where((a) => a.isNotEmpty)
-                                              ]..sort((a, b) => a
-                                                      .toLowerCase()
-                                                      .compareTo(
-                                                          b.toLowerCase())))
-                                                  .map((String accountName) {
-                                                return DropdownMenuItem<String>(
-                                                  value: accountName,
-                                                  child: Text(
-                                                    accountName,
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 14
-                                                              : 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ],
-                                            value:
-                                                selectedAccountName.isNotEmpty
-                                                    ? selectedAccountName
-                                                    : null,
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                selectedAccountName =
-                                                    newValue ?? '';
-                                                // Handle static "Late Fee Income" option
-                                                if (newValue ==
-                                                    "Late Fee Income") {
-                                                  selectedAccountId = "";
-                                                } else {
-                                                  // Find the account ID for the selected account
-                                                  Setting4? selectedAccount =
-                                                      accounts.firstWhere(
-                                                    (account) =>
-                                                        account.account ==
-                                                        newValue,
-                                                    orElse: () => Setting4(),
-                                                  );
-                                                  selectedAccountId =
-                                                      selectedAccount
-                                                              .accountId ??
-                                                          '';
-                                                }
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .98, // Leave small margin
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .98, // Match button width
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                color: Colors.white,
-                                              ),
-                                              offset: const Offset(-2, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                                thumbColor:
-                                                    MaterialStateProperty.all(
-                                                        Colors.grey.shade400),
-                                                trackColor:
-                                                    MaterialStateProperty.all(
-                                                        Colors.grey.shade100),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Charge Account",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: const Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      DropdownButtonHideUnderline(
-                                        child: Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            hint: Row(
-                                              children: [
-                                                const SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Select Account',
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            items: [
-                                              // Combine "Late Fee Income" with accounts and sort alphabetically
-                                              ...([
-                                                "Late Fee Income",
-                                                ...accounts
-                                                    .map((a) => a.account ?? '')
-                                                    .where((a) => a.isNotEmpty)
-                                              ]..sort((a, b) => a
-                                                      .toLowerCase()
-                                                      .compareTo(
-                                                          b.toLowerCase())))
-                                                  .map((String accountName) {
-                                                return DropdownMenuItem<String>(
-                                                  value: accountName,
-                                                  child: Text(
-                                                    accountName,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                );
-                                              }).toList(),
-                                            ],
-                                            value:
-                                                selectedAccountName.isNotEmpty
-                                                    ? selectedAccountName
-                                                    : null,
-                                            onChanged: (String? newValue) {
-                                              setState(() {
-                                                selectedAccountName =
-                                                    newValue ?? '';
-                                                // Handle static "Late Fee Income" option
-                                                if (newValue ==
-                                                    "Late Fee Income") {
-                                                  selectedAccountId = "";
-                                                } else {
-                                                  // Find the account ID for the selected account
-                                                  Setting4? selectedAccount =
-                                                      accounts.firstWhere(
-                                                    (account) =>
-                                                        account.account ==
-                                                        newValue,
-                                                    orElse: () => Setting4(),
-                                                  );
-                                                  selectedAccountId =
-                                                      selectedAccount
-                                                              .accountId ??
-                                                          '';
-                                                }
-                                              });
-                                            },
-                                            buttonStyleData: ButtonStyleData(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .6,
-                                              padding: const EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color:
-                                                      const Color(0xFF8A95A8),
-                                                ),
-                                                color: Colors.white,
-                                              ),
-                                              elevation: 0,
-                                            ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                              maxHeight: 250,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .6, // Match button width
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(14),
-                                                color: Colors.white,
-                                              ),
-                                              offset: const Offset(0, 0),
-                                              scrollbarTheme:
-                                                  ScrollbarThemeData(
-                                                radius:
-                                                    const Radius.circular(40),
-                                                thickness:
-                                                    MaterialStateProperty.all(
-                                                        6),
-                                                thumbVisibility:
-                                                    MaterialStateProperty.all(
-                                                        true),
-                                                thumbColor:
-                                                    MaterialStateProperty.all(
-                                                        Colors.grey.shade400),
-                                                trackColor:
-                                                    MaterialStateProperty.all(
-                                                        Colors.grey.shade100),
-                                              ),
-                                            ),
-                                            menuItemStyleData:
-                                                const MenuItemStyleData(
-                                              height: 40,
-                                              padding: EdgeInsets.only(
-                                                  left: 14, right: 14),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              const SizedBox(height: 15),
-                              // Description Field
-                              if (MediaQuery.of(context).size.width < 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Description",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: blueColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Container(
-                                        height: 50,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(color: grey),
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: TextFormField(
-                                                controller: description,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    //  passworderror = false;
-                                                  });
-                                                },
-                                                cursorColor: blueColor,
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    fontSize:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .037,
-                                                    color:
-                                                        const Color(0xFF8A95A8),
-                                                  ),
-                                                  border: InputBorder.none,
-                                                  contentPadding:
-                                                      const EdgeInsets.all(13),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (MediaQuery.of(context).size.width > 500)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 2.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Description",
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 15
-                                                : 20,
-                                            color: const Color(0xFF8A95A8),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Material(
-                                        elevation: 4,
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Container(
-                                          height: 50,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .6,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              Positioned.fill(
-                                                child: TextFormField(
-                                                  controller: description,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      //  passworderror = false;
-                                                    });
-                                                  },
-                                                  cursorColor: blueColor,
-                                                  decoration: InputDecoration(
-                                                    hintStyle: TextStyle(
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .037,
-                                                      color: const Color(
-                                                          0xFF8A95A8),
-                                                    ),
-                                                    border: InputBorder.none,
-                                                    contentPadding:
-                                                        const EdgeInsets.all(
-                                                            13),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              const SizedBox(height: 30),
-                              Row(
-                                children: [
-                                  if (MediaQuery.of(context).size.width < 500)
-                                    const SizedBox(width: 2),
-                                  if (MediaQuery.of(context).size.width > 500)
-                                    const SizedBox(width: 2),
-                                  GestureDetector(
-                                    onTap: _hasLateFeeChanges()
-                                        ? () async {
-                                            if (islatefeeupdate)
-                                              await updateLatefee();
-                                            else
-                                              await AddLatefeedata();
-                                          }
-                                        : null,
-                                    child: Opacity(
-                                      opacity: _hasLateFeeChanges() ? 1.0 : 0.5,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        child: Container(
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 35
-                                              : 50,
-                                          width: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 100
-                                              : 150,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            color: blueColor,
-                                            boxShadow: [
-                                              const BoxShadow(
-                                                color: Colors.grey,
-                                                offset:
-                                                    Offset(0.0, 1.0), //(x,y)
-                                                blurRadius: 6.0,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Save",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 16
-                                                          : 20),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      duration.clear();
-                                      late_fee.clear();
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                            height: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 35
-                                                : 50,
-                                            width: MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    500
-                                                ? 100
-                                                : 120,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: blueColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Center(
-                                                child: Text(
-                                              "Reset",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width <
-                                                              500
-                                                          ? 16
-                                                          : 20),
-                                            ))),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        if (islatefee) _buildLateFeeSection(),
                         if (isaccounts)
                           Column(
                             children: [
@@ -8689,7 +7155,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  'CATEGORY NAME',
+                                                  'Category Name',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     letterSpacing: 1.1,
@@ -8699,7 +7165,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               ),
                                               SizedBox(width: 10),
                                               Text(
-                                                'ACTION',
+                                                'Action',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   letterSpacing: 1.1,
@@ -8759,7 +7225,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  'CATEGORY NAME',
+                                                  'Category Name',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     letterSpacing: 1.1,
@@ -8769,7 +7235,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               ),
                                               SizedBox(width: 10),
                                               Text(
-                                                'ACTION',
+                                                'Action',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   letterSpacing: 1.1,

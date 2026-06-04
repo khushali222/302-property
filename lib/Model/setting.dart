@@ -318,3 +318,35 @@ class Setting4 {
     return data;
   }
 }
+
+class PropertyOwnerOverride {
+  String? sId;
+  String? rentalownerId;
+  String? adminId;
+  String? rentalOwnerName;
+  String? rentalOwnerCompanyName;
+  String? rentalOwnerPrimaryEmail;
+  bool? hasOverride;
+
+  PropertyOwnerOverride({
+    this.sId,
+    this.rentalownerId,
+    this.adminId,
+    this.rentalOwnerName,
+    this.rentalOwnerCompanyName,
+    this.rentalOwnerPrimaryEmail,
+    this.hasOverride,
+  });
+
+  factory PropertyOwnerOverride.fromJson(Map<String, dynamic> json) {
+    return PropertyOwnerOverride(
+      sId: json['_id'],
+      rentalownerId: json['rentalowner_id'],
+      adminId: json['admin_id'],
+      rentalOwnerName: json['rentalOwner_name'],
+      rentalOwnerCompanyName: json['rentalOwner_companyName'],
+      rentalOwnerPrimaryEmail: json['rentalOwner_primaryEmail'],
+      hasOverride: json['has_override'],
+    );
+  }
+}

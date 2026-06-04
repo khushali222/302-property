@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -24,6 +25,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   int _selectedIndex = 0;
   String _workOrderFilter = "";
   // List of screens corresponding to each BottomNavigationBarItem
@@ -35,7 +37,10 @@ class _MainScreenState extends State<MainScreen> {
   ];
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
       setState(() {
         print(result);
         _connectivityResult = result;
@@ -59,9 +64,16 @@ class _MainScreenState extends State<MainScreen> {
     ];
   }
 
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
+  }
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
