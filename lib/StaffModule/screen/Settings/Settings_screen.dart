@@ -28,6 +28,25 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../screens/Leasing/RentalRoll/addcard/AddCard.dart';
 import '../Leasing/RentalRoll/newAddLease.dart';
 
+/// One tappable row in the redesigned settings menu.
+/// [tabKey] selects which content section to show.
+class _SettingsMenuItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final String tabKey;
+  final String? badge;
+  const _SettingsMenuItem(this.title, this.subtitle, this.icon, this.tabKey,
+      {this.badge});
+}
+
+/// A titled group of settings rows (e.g. FINANCIAL, COMPANY).
+class _SettingsMenuSection {
+  final String header;
+  final List<_SettingsMenuItem> items;
+  const _SettingsMenuSection(this.header, this.items);
+}
+
 class TabBarExample extends StatefulWidget {
   @override
   State<TabBarExample> createState() => _TabBarExampleState();
@@ -62,6 +81,15 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool isLoading = false;
   bool isdateformate = false;
 
+  // ---- Redesigned settings menu state ----
+  // When true, the categorized menu (search + cards) is shown.
+  // When false, the selected section's content is shown with a back button.
+  bool _showSettingsMenu = true;
+  String _currentSettingsTitle = '';
+  final TextEditingController _settingsSearchController =
+      TextEditingController();
+  String _settingsSearchQuery = '';
+
   @override
   void initState() {
     // TODO: implement initState
@@ -79,6 +107,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   void dispose() {
     accountname.dispose();
     note.dispose();
+    _settingsSearchController.dispose();
     super.dispose();
   }
 
@@ -998,6 +1027,325 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   );
   // }
 
+  // ===================== Redesigned settings menu =====================
+  // Categorized list of every settings section available to staff. Each
+  // item's [tabKey] toggles the same content flags used by the old buttons.
+  List<_SettingsMenuSection> get _settingsMenuSections => const [
+        _SettingsMenuSection('FINANCIAL', [
+          _SettingsMenuItem('Surcharge', 'Default surcharge percentages',
+              Icons.receipt_long_outlined, 'surcharge'),
+          _SettingsMenuItem('Late Fee', 'Grace period & penalty rules',
+              Icons.schedule_outlined, 'latefee'),
+        ]),
+        _SettingsMenuSection('COMPANY', [
+          _SettingsMenuItem('Manage Accounts', 'Bank & liability accounts',
+              Icons.account_balance_outlined, 'accounts'),
+        ]),
+        _SettingsMenuSection('PREFERENCES', [
+          _SettingsMenuItem('Mail Service', 'SMTP & notification senders',
+              Icons.mail_outline, 'mail'),
+        ]),
+      ];
+
+  Widget _buildSettingsMenu() {
+    final q = _settingsSearchQuery.trim().toLowerCase();
+    final filtered = _settingsMenuSections
+        .map((s) => _SettingsMenuSection(
+            s.header,
+            s.items
+                .where((it) =>
+                    q.isEmpty ||
+                    it.title.toLowerCase().contains(q) ||
+                    it.subtitle.toLowerCase().contains(q))
+                .toList()))
+        .where((s) => s.items.isNotEmpty)
+        .toList();
+
+    return Container(
+      color: const Color(0xFFF1F4F9),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 30),
+        children: [
+          _buildSettingsSearchField(),
+          const SizedBox(height: 20),
+          if (filtered.isEmpty)
+            _buildNoSettingsResults()
+          else
+            ...filtered.map(_buildSettingsMenuSection),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsSearchField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _settingsSearchController,
+        onChanged: (v) => setState(() => _settingsSearchQuery = v),
+        cursorColor: blueColor,
+        style: TextStyle(
+            color: blueColor, fontSize: 16, fontWeight: FontWeight.w500),
+        decoration: InputDecoration(
+          hintText: 'Search settings',
+          hintStyle: const TextStyle(
+            color: Color(0xFF8A95A8),
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: const Icon(Icons.search, color: Color(0xFF8A95A8)),
+          suffixIcon: _settingsSearchQuery.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.close,
+                      color: Color(0xFF8A95A8), size: 20),
+                  onPressed: () {
+                    setState(() {
+                      _settingsSearchController.clear();
+                      _settingsSearchQuery = '';
+                    });
+                    FocusScope.of(context).unfocus();
+                  },
+                )
+              : null,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsMenuSection(_SettingsMenuSection section) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(6, 4, 6, 10),
+          child: Text(
+            section.header,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.1,
+              color: Color(0xFF8A95A8),
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              for (int i = 0; i < section.items.length; i++) ...[
+                _buildSettingsMenuTile(section.items[i]),
+                if (i != section.items.length - 1)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 74, right: 16),
+                    child: Divider(
+                        height: 1, thickness: 1, color: Color(0xFFEEF1F5)),
+                  ),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+      ],
+    );
+  }
+
+  Widget _buildSettingsMenuTile(_SettingsMenuItem item) {
+    final bool isActive = _currentSettingsTitle == item.title;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _openSettingsSection(item.tabKey, item.title),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isActive ? const Color(0xFFEEF1FB) : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEEF1FB),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(item.icon, color: blueColor, size: 22),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: TextStyle(
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w700,
+                        color: blueColor,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      item.subtitle,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF8A95A8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (item.badge != null) ...[
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDFF3E4),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    item.badge!,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: Color(0xFF2E7D45),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              const Icon(Icons.chevron_right,
+                  color: Color(0xFFAEB7C7), size: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoSettingsResults() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 60),
+      child: Column(
+        children: [
+          Icon(Icons.search_off, size: 54, color: Colors.grey.shade400),
+          const SizedBox(height: 14),
+          Text(
+            'No settings found',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: blueColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Try a different search term',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openSettingsSection(String key, String title) {
+    setState(() {
+      issurge = key == 'surcharge';
+      islatefee = key == 'latefee';
+      ismail = key == 'mail';
+      isaccounts = key == 'accounts';
+      isdateformate = false;
+      _currentSettingsTitle = title;
+      _showSettingsMenu = false;
+      _settingsSearchController.clear();
+      _settingsSearchQuery = '';
+    });
+    FocusScope.of(context).unfocus();
+  }
+
+  void _backToSettingsMenu() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _showSettingsMenu = true;
+    });
+  }
+
+  Widget _buildSettingsDetailHeader() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 16, 14),
+            child: Row(
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: _backToSettingsMenu,
+                    child: Container(
+                      width: 46,
+                      height: 46,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF1F5),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(Icons.chevron_left,
+                          color: blueColor, size: 28),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    _currentSettingsTitle.isEmpty
+                        ? 'Settings'
+                        : _currentSettingsTitle,
+                    style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize:
+                          MediaQuery.of(context).size.width < 500 ? 24 : 28,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, thickness: 1, color: Color(0xFFE7EBF1)),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
@@ -1010,212 +1358,26 @@ class _TabBarExampleState extends State<TabBarExample> {
           currentpage: "Settings",
           dropdown: false,
         ),
-        body: ListView(children: [
+        body: _showSettingsMenu
+            ? _buildSettingsMenu()
+            : Container(
+                color: const Color(0xFFF1F4F9),
+                child: ListView(padding: EdgeInsets.zero, children: [
+          _buildSettingsDetailHeader(),
           const SizedBox(
-            height: 25,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5.0),
-              child: Container(
-                height: MediaQuery.of(context).size.width < 500 ? 45 : 55,
-                padding: const EdgeInsets.only(top: 10, left: 10),
-                width: MediaQuery.of(context).size.width * .91,
-                margin: const EdgeInsets.only(bottom: 6.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: blueColor,
-                  boxShadow: [
-                    const BoxShadow(
-                      color: Colors.grey,
-                      offset: Offset(0.0, 1.0),
-                      blurRadius: 6.0,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  "Setting ",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize:
-                          MediaQuery.of(context).size.width < 500 ? 16 : 25),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
+            height: 16,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 18, right: 18),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 //border: Border.all(color: blueColor),
               ),
               child: Column(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width: MediaQuery.of(context).size.width < 500 ? 850 : 900,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                issurge = true;
-                                ismail = false;
-                                isaccounts = false;
-                                islatefee = false;
-                                isdateformate = false;
-                              });
-                            },
-                            child: Container(
-                              height: MediaQuery.of(context).size.width < 500
-                                  ? 40
-                                  : 50,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                color: !issurge ? Colors.white : blueColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Surcharge",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: issurge ? Colors.white : blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                issurge = false;
-                                ismail = false;
-                                isaccounts = false;
-                                isdateformate = false;
-                                islatefee = true;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                color: !islatefee ? Colors.white : blueColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Late Fee",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          islatefee ? Colors.white : blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.width < 500 ? 40 : 50,
-                    width: MediaQuery.of(context).size.width < 500 ? 850 : 900,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                issurge = false;
-                                isaccounts = false;
-                                ismail = true;
-                                islatefee = false;
-                                isdateformate = false;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                color: !ismail ? Colors.white : blueColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Mail Service",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: ismail ? Colors.white : blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                issurge = false;
-                                ismail = false;
-                                isaccounts = true;
-                                islatefee = false;
-                                isdateformate = false;
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: blueColor),
-                                color: !isaccounts ? Colors.white : blueColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Manage Accounts",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          isaccounts ? Colors.white : blueColor,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width <
-                                                  500
-                                              ? 15
-                                              : 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 8),
                   if (issurge)
                     Column(
                       children: [
@@ -3611,7 +3773,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               ),
             ),
           ),
-        ]),
+        ])),
       ),
     );
   }

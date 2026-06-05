@@ -202,6 +202,8 @@ class WorkOrderRepository {
     final body = <String, dynamic>{"workOrder": workorder};
     if (notificationTime != null) body['notificationTime'] = notificationTime;
     if (categoryId != null) body['category_id'] = categoryId;
+    print('=== UpdateWorkOrder (TENANT) PUT $url ===');
+    print('Request body: ${jsonEncode(body)}');
     final response = await apiPut(
       url,
       headers: {

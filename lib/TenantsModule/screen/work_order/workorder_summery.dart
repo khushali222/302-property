@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/Model/tenants.dart';
 import 'package:three_zero_two_property/TenantsModule/model/workorder_summery_model.dart';
 import 'package:three_zero_two_property/TenantsModule/repository/workorder.dart';
+import 'update_workorder.dart';
 import 'package:three_zero_two_property/TenantsModule/widgets/drawer_tiles.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -107,6 +108,63 @@ class _Workorder_summeryState extends State<Workorder_summery>
     setState(() {
       _connectivityResult = connectiondata;
     });
+  }
+
+  // Note block used inside Update History cards (matches Admin/Staff design).
+  Widget _historyNoteBlock({
+    required String label,
+    required String badgeText,
+    required Color badgeBg,
+    required Color badgeFg,
+    required String value,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Container(height: 1, color: const Color(0xFFDBE0E5)),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF6B7A90),
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+                letterSpacing: 0.4,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: badgeBg,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                badgeText,
+                style: TextStyle(
+                  color: badgeFg,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 9,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            color: blueColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
   }
 
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
@@ -1581,7 +1639,26 @@ class _Workorder_summeryState extends State<Workorder_summery>
                           children: [
                             Text('Update History', style: TextStyle(fontSize: 16, color: blueColor, fontWeight: FontWeight.bold)),
                             InkWell(
-                              onTap: () { showUpdateDialog(context); },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UpdateWorkOrderTenant(
+                                      workorderId: widget.workorder_id!,
+                                      summery: summery,
+                                    ),
+                                  ),
+                                ).then((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      futureworkorderSummary =
+                                          WorkOrderRepository
+                                              .getworkorderSummary(
+                                                  widget.workorder_id!);
+                                    });
+                                  }
+                                });
+                              },
                               child: Container(
                                 height: 30,
                                 width: 85,
@@ -1658,14 +1735,94 @@ class _Workorder_summeryState extends State<Workorder_summery>
                               const SizedBox(height: 10),
                               Container(height: 1, color: const Color(0xFFDBE0E5)),
                               const SizedBox(height: 10),
-                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text('Message', style: updLabel),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)',
-                                  style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
+                              if ((update.publicNotes ?? '').trim().isNotEmpty)
+                                _historyNoteBlock(
+                                  label: 'Notes',
+                                  badgeText: 'VISIBLE TO ALL',
+                                  badgeBg: const Color(0xFFE7F6EC),
+                                  badgeFg: const Color(0xFF1F9D55),
+                                  value: update.publicNotes!,
                                 ),
-                              ]),
+                              if (update.workOrderUpdateimages != null &&
+                                  update.workOrderUpdateimages!.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: update.workOrderUpdateimages!
+                                      .map<Widget>((imageUrl) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => Dialog(
+                                            backgroundColor: Colors.transparent,
+                                            child: Stack(
+                                              children: [
+                                                Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(20),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl:
+                                                          "$image_url$imageUrl",
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          const CircularProgressIndicator(),
+                                                      errorWidget: (context, url,
+                                                              error) =>
+                                                          const Icon(
+                                                              Icons.error),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 10,
+                                                  right: 10,
+                                                  child: IconButton(
+                                                    icon: const Icon(Icons.close,
+                                                        size: 30,
+                                                        color: Colors.white),
+                                                    onPressed: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width:
+                                            (MediaQuery.of(context).size.width /
+                                                    3) -
+                                                20,
+                                        height: 90,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: CachedNetworkImage(
+                                            imageUrl: "$image_url$imageUrl",
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                SpinKitFadingCircle(
+                                                    color: blueColor,
+                                                    size: 30.0),
+                                            errorWidget: (context, url, error) =>
+                                                const Icon(Icons.error),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
                             ],
                           ),
                         );
@@ -2321,7 +2478,24 @@ class _Workorder_summeryState extends State<Workorder_summery>
                             ),
                             InkWell(
                               onTap: () {
-                                showUpdateDialog(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UpdateWorkOrderTenant(
+                                      workorderId: widget.workorder_id!,
+                                      summery: summery,
+                                    ),
+                                  ),
+                                ).then((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      futureworkorderSummary =
+                                          WorkOrderRepository
+                                              .getworkorderSummary(
+                                                  widget.workorder_id!);
+                                    });
+                                  }
+                                });
                               },
                               child: Material(
                                 elevation: 1,
@@ -2399,6 +2573,98 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 Container(height: 1, color: const Color(0xFFDBE0E5)),
                                 const SizedBox(height: 10),
                                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Message', style: updLabel), const SizedBox(height: 4), Text('${update.statusUpdatedBy ?? ""} updated this work order ($dateStr)', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14))]),
+                                if ((update.publicNotes ?? '').trim().isNotEmpty)
+                                  _historyNoteBlock(
+                                    label: 'Notes',
+                                    badgeText: 'VISIBLE TO ALL',
+                                    badgeBg: const Color(0xFFE7F6EC),
+                                    badgeFg: const Color(0xFF1F9D55),
+                                    value: update.publicNotes!,
+                                  ),
+                                if (update.workOrderUpdateimages != null &&
+                                    update.workOrderUpdateimages!.isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: update.workOrderUpdateimages!
+                                        .map<Widget>((imageUrl) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => Dialog(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              child: Stack(
+                                                children: [
+                                                  Center(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20),
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            "$image_url$imageUrl",
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            const CircularProgressIndicator(),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            const Icon(
+                                                                Icons.error),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 10,
+                                                    right: 10,
+                                                    child: IconButton(
+                                                      icon: const Icon(
+                                                          Icons.close,
+                                                          size: 30,
+                                                          color: Colors.white),
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: (MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  3) -
+                                              20,
+                                          height: 90,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: CachedNetworkImage(
+                                              imageUrl: "$image_url$imageUrl",
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  SpinKitFadingCircle(
+                                                      color: blueColor,
+                                                      size: 30.0),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
                               ],
                             ),
                           );
@@ -4312,313 +4578,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     fontSize: 13,
   );
 
-  void showUpdateDialog(BuildContext context) {
-    // Initialize variables to store user input
-    String? selectedStatus;
-    //  DateTime? selectedDate;
-    //String? message;
-    TextEditingController message = TextEditingController();
-    TextEditingController selectedDate = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Update Work Order',
-            style: TextStyle(color: blueColor),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Status', style: TextStyle(color: blueColor)),
-                DropdownButtonHideUnderline(
-                  child: DropdownButtonFormField2<String>(
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    isExpanded: true,
-                    hint: const Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Select Status',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFb0b6c3),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    items: ['New', 'In Progress', 'On Hold', 'Completed']
-                        .map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(
-                          status,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    value: selectedStatus,
-                    onChanged: (value) {
-                      selectedStatus = value;
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 45,
-                      width: double.infinity,
-                      padding: const EdgeInsets.only(left: 14, right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
-                      ),
-                      elevation: 2,
-                    ),
-                    iconStyleData: const IconStyleData(
-                      icon: Icon(Icons.arrow_drop_down),
-                      iconSize: 24,
-                      iconEnabledColor: Color(0xFFb0b6c3),
-                      iconDisabledColor: Colors.grey,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: Colors.white,
-                      ),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(6),
-                        thickness: MaterialStateProperty.all(6),
-                        thumbVisibility: MaterialStateProperty.all(true),
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 14, right: 14),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select an option';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Text('Due Date', style: TextStyle(color: blueColor)),
-                const SizedBox(height: 8.0),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: 45,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: TextFormField(
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                          helpText: "Due Date",
-                          locale: const Locale('en', 'US'),
-                          builder: (BuildContext context, Widget? child) {
-                            return Theme(
-                              data: ThemeData.light().copyWith(
-                                colorScheme: const ColorScheme.light(
-                                  primary: Color.fromRGBO(
-                                      21, 43, 83, 1), // header background color
-                                  onPrimary: Colors.white, // header text color
-                                  onSurface: Color.fromRGBO(
-                                      21, 43, 83, 1), // body text color
-                                ),
-                                textButtonTheme: TextButtonThemeData(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: const Color.fromRGBO(
-                                        21, 43, 83, 1), // button text color
-                                  ),
-                                ),
-                              ),
-                              child: child!,
-                            );
-                          },
-                        );
-
-                        if (pickedDate != null) {
-                          String formattedDate =
-                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
-                          setState(() {
-                            selectedDate.text = formattedDate;
-                          });
-                        }
-                      },
-                      //  obscureText: widget.obscureText,
-                      readOnly: true,
-                      controller: selectedDate,
-                      decoration: InputDecoration(
-                        suffixIcon:
-                        Icon(Icons.calendar_today, color: blueColor),
-                        // hintStyle:
-                        // TextStyle(fontSize: 13, color: blueColor),
-                        border: InputBorder.none,
-                        hintText: "dd-mm-yyyy",
-                      ),
-                    ),
-                  ),
-                ),
-                /* ElevatedButton(
-                  onPressed: () async {
-                    final DateTime? pickedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (pickedDate != null) {
-                      selectedDate = pickedDate;
-                    }
-                  },
-                  child: Text(selectedDate == null
-                      ? 'Select Date'
-                      : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}'),
-                ),*/
-                const SizedBox(height: 16.0),
-                Text('Message', style: TextStyle(color: blueColor)),
-                Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      //border: Border.all(color: blueColor),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.black.withOpacity(0.2),
-                      //     offset: Offset(4, 4),
-                      //     blurRadius: 3,
-                      //   ),
-                      // ],
-                    ),
-                    child: TextFormField(
-                      /*    onTap: ()async{
-                        final DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          selectedDate = pickedDate;
-                        }
-                      },*/
-                      //  obscureText: widget.obscureText,
-                      // readOnly: true,
-                      //keyboardType: widget.keyboardType,
-                      /* validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          state.validate();
-                        }
-                        return null;
-                      },*/
-                      controller: message,
-
-                      decoration: InputDecoration(
-                        //  suffixIcon: widget.suffixIcon,
-                        hintStyle: TextStyle(fontSize: 13, color: blueColor),
-                        border: InputBorder.none,
-                        //   hintText: widget.hintText,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: blueColor),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: blueColor),
-              onPressed: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                String? firstName = prefs.getString("first_name");
-                String? lastName = prefs.getString("last_name");
-                final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-                String notificationTime = formatter.format(DateTime.now());
-                Map<String, dynamic> values = {
-                  "date": reverseFormatDate(selectedDate.text.trim()),
-                  "message": message.text.trim(),
-                  "status": selectedStatus,
-                  "statusUpdatedBy": "$firstName $lastName(Tenant)",
-                  'notificationTime': notificationTime,
-                };
-                await WorkOrderRepository.updateworkorderSummary(
-                    values, widget.workorder_id!)
-                    .then((value) {
-                  setState(() {
-                    futureworkorderSummary =
-                        WorkOrderRepository.getworkorderSummary(
-                            widget.workorder_id!);
-                  });
-                });
-
-                // Save the data and close the dialog
-                /*  WorkorderUpdates update = WorkorderUpdates(
-                  status: selectedStatus,
-                  date: selectedDate,
-                  message: message,
-                );*/
-                // Here you can handle saving the update data
-                // print('Status: ${update.status}');
-                // print('Date: ${update.date}');
-                // print('Message: ${update.message}');
-                Navigator.of(context).pop();
-                setState(() {
-                  isLoading = true;
-                });
-                // Close the dialog
-              },
-              child: isLoading
-                  ? const Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.white,
-                  size: 25.0,
-                ),
-              )
-                  : const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 class PartWidget extends StatelessWidget {
