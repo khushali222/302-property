@@ -28,6 +28,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../Model/categories_model.dart';
 import '../../StaffModule/widgets/custom_drawer.dart';
 import '../../constant/constant.dart';
+import '../Team_Access/team_access_section.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
 import '../../widgets/CustomTableShimmer.dart';
@@ -204,6 +205,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool ispropertytype = false;
   bool _isStaffUser = false;
   bool istwilio = false;
+  bool isteamaccess = false; // Settings → Team & Access section (placeholder)
 
   // ---- Redesigned settings menu state ----
   // When true, the categorized menu (search + cards) is shown.
@@ -3267,6 +3269,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (issurge) return 'Surcharges';
     if (isvendor) return 'Vendors';
     if (istwilio) return 'Twilio';
+    if (isteamaccess) return 'Team & Access';
 
     return 'Accounts';
   }
@@ -3287,6 +3290,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       istwilio = value == 'Twilio';
       ispropertyowner = value == 'Property Owners';
       ispropertytype = value == 'Property Type';
+      isteamaccess = value == 'Team & Access';
       if (value == 'Date Format') {
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         dateformateselect = dateProvider.dateformateselect;
@@ -3347,9 +3351,19 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.store;
       case 'Twilio':
         return Icons.phone;
+      case 'Team & Access':
+        return Icons.manage_accounts_outlined;
       default:
         return Icons.settings;
     }
+  }
+
+  // ===================== Team & Access =====================
+  // Settings -> "Team & Access". The section UI lives in its own widget
+  // (TeamAccessSection) which fetches admins + staff via TeamRepository and
+  // renders the Admins / Staff / Permissions tabs.
+  Widget _buildTeamAccessSection() {
+    return const TeamAccessSection();
   }
 
   // ===================== Surcharge (redesigned) =====================
@@ -4499,6 +4513,10 @@ class _TabBarExampleState extends State<TabBarExample> {
           _SettingsMenuItem('Categories', 'Income & expense categories',
               Icons.category_outlined),
         ]),
+        _SettingsMenuSection('TEAM', [
+          _SettingsMenuItem('Team & Access', 'Team members, roles & permissions',
+              Icons.manage_accounts_outlined),
+        ]),
         _SettingsMenuSection('FINANCIAL', [
           _SettingsMenuItem('Surcharges', 'Recurring fees & add-ons',
               Icons.receipt_long_outlined),
@@ -5257,6 +5275,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                             ],
                           ),
+                        if (isteamaccess) _buildTeamAccessSection(),
                         if (iscompanyprofile)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

@@ -367,17 +367,20 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Reports",
                 widget.currentpage == "Reports",
               ),
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.userClock,
-                  size: 18,
-                  color:
-                      widget.currentpage == "Staff" ? Colors.white : blueColor,
-                ),
-                "Staff",
-                widget.currentpage == "Staff",
-              ),
+              // ── Staff entry hidden for now ───────────────────────────────
+              // Will be migrated into Settings → "Team & Access". Keep this
+              // code for future use (do NOT delete). Re-enable by uncommenting.
+              // buildListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.userClock,
+              //     size: 18,
+              //     color:
+              //         widget.currentpage == "Staff" ? Colors.white : blueColor,
+              //   ),
+              //   "Staff",
+              //   widget.currentpage == "Staff",
+              // ),
               buildListTile(
                 context,
                 FaIcon(
