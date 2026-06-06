@@ -143,9 +143,11 @@ class Setting3 {
   String? adminId;
   bool? remindermail;
   String? duration;
+  String? replyTo;
 
   // Constructor
-  Setting3({this.id, this.adminId, this.remindermail, this.duration});
+  Setting3(
+      {this.id, this.adminId, this.remindermail, this.duration, this.replyTo});
 
   // Method to parse JSON
   Setting3.fromJson(Map<String, dynamic> json) {
@@ -154,9 +156,11 @@ class Setting3 {
     adminId = json['admin_id'];
     remindermail = json['remindermail'];
     duration = json['duration'].toString();
+    replyTo = json['reply_to'];
 
     print("reminder mail $remindermail");
     print("duration $duration");
+    print("reply to $replyTo");
   }
 
   // Method to convert object to JSON
@@ -166,6 +170,7 @@ class Setting3 {
     data['admin_id'] = adminId;
     data['remindermail'] = remindermail;
     data['duration'] = duration;
+    data['reply_to'] = replyTo;
 
     return data;
   }
@@ -311,5 +316,37 @@ class Setting4 {
     data['is_delete'] = this.isDelete;
     data['__v'] = this.iV;
     return data;
+  }
+}
+
+class PropertyOwnerOverride {
+  String? sId;
+  String? rentalownerId;
+  String? adminId;
+  String? rentalOwnerName;
+  String? rentalOwnerCompanyName;
+  String? rentalOwnerPrimaryEmail;
+  bool? hasOverride;
+
+  PropertyOwnerOverride({
+    this.sId,
+    this.rentalownerId,
+    this.adminId,
+    this.rentalOwnerName,
+    this.rentalOwnerCompanyName,
+    this.rentalOwnerPrimaryEmail,
+    this.hasOverride,
+  });
+
+  factory PropertyOwnerOverride.fromJson(Map<String, dynamic> json) {
+    return PropertyOwnerOverride(
+      sId: json['_id'],
+      rentalownerId: json['rentalowner_id'],
+      adminId: json['admin_id'],
+      rentalOwnerName: json['rentalOwner_name'],
+      rentalOwnerCompanyName: json['rentalOwner_companyName'],
+      rentalOwnerPrimaryEmail: json['rentalOwner_primaryEmail'],
+      hasOverride: json['has_override'],
+    );
   }
 }

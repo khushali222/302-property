@@ -177,6 +177,10 @@ class WorkorderUpdates {
   String? status;
   String? date;
   String? staffmemberName;
+  String? staffmemberId;
+  String? publicNotes;
+  String? privateNotes;
+  List<dynamic>? workOrderUpdateimages;
   String? createdAt;
   String? updatedAt;
   String? statusUpdatedBy;
@@ -186,6 +190,9 @@ class WorkorderUpdates {
       {this.status,
         this.date,
         this.staffmemberName,
+        this.staffmemberId,
+        this.publicNotes,
+        this.privateNotes,
         this.createdAt,
         this.updatedAt,
         this.statusUpdatedBy,
@@ -195,6 +202,10 @@ class WorkorderUpdates {
     status = json['status'];
     date = json['date'];
     staffmemberName = json['staffmember_name'];
+    staffmemberId = json['staffmember_id'];
+    publicNotes = json['public_notes'];
+    privateNotes = json['private_notes'];
+    workOrderUpdateimages = json['workOrderUpdate_images'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     statusUpdatedBy = json['statusUpdatedBy'];
@@ -206,6 +217,9 @@ class WorkorderUpdates {
     data['status'] = this.status;
     data['date'] = this.date;
     data['staffmember_name'] = this.staffmemberName;
+    data['staffmember_id'] = this.staffmemberId;
+    data['public_notes'] = this.publicNotes;
+    data['private_notes'] = this.privateNotes;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['statusUpdatedBy'] = this.statusUpdatedBy;

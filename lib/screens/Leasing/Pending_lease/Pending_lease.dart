@@ -16,6 +16,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/SummeryPageLease.dart'
     as admin_summary;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as admin_appbar;
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
@@ -96,6 +97,15 @@ class _PendingLeaseRow {
 
 class _Pending_leaseState extends State<Pending_lease> {
   static const double _kFontSize = 14;
+
+  /// Shared leading geometry so the list header and each row line up exactly.
+  static const double _kLeadingIconWidth = 26;
+  static const double _kRowLeftInset = 6;
+
+  /// Left inset applied to every column's text (header, collapsed rows, and the
+  /// expanded detail table) so both columns line up across all three. Matches
+  /// the detail table's cell padding (4).
+  static const double _kCellLeftPad = 4;
 
   List<_PendingLeaseRow> _raw = [];
   bool _loading = true;
@@ -430,20 +440,23 @@ class _Pending_leaseState extends State<Pending_lease> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xFFDBE0E5)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(_kRowLeftInset, 12, 2, 12),
       child: Row(
         children: [
-          SizedBox(
-            width: 10,
-            child: Icon(Icons.expand_less, color: Colors.transparent, size: 20),
+          const SizedBox(width: _kLeadingIconWidth),
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.only(left: _kCellLeftPad),
+              child: Text('Sr No', style: _styleLabel),
+            ),
           ),
           Expanded(
             flex: 1,
-            child: Text('Sr No', style: _styleLabel),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('    Address', style: _styleLabel),
+            child: Padding(
+              padding: const EdgeInsets.only(left: _kCellLeftPad),
+              child: Text('Address', style: _styleLabel),
+            ),
           ),
         ],
       ),
@@ -557,51 +570,64 @@ class _Pending_leaseState extends State<Pending_lease> {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Padding(
-                        padding: const EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.fromLTRB(
+                          _kRowLeftInset,
+                          2,
+                          2,
+                          2,
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            InkWell(
-                              onTap: () => _toggleExpandPendingRow(
-                                r.leaseId,
-                                forUnsignedSection,
-                              ),
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.only(left: 5, right: 5),
-                                padding: !isExpanded
-                                    ? const EdgeInsets.only(bottom: 10)
-                                    : const EdgeInsets.only(top: 10),
-                                child: FaIcon(
-                                  isExpanded
-                                      ? FontAwesomeIcons.sortUp
-                                      : FontAwesomeIcons.sortDown,
-                                  size: 18,
-                                  color: blueColor,
+                            SizedBox(
+                              width: _kLeadingIconWidth,
+                              child: InkWell(
+                                onTap: () => _toggleExpandPendingRow(
+                                  r.leaseId,
+                                  forUnsignedSection,
+                                ),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: !isExpanded
+                                      ? const EdgeInsets.only(bottom: 10)
+                                      : const EdgeInsets.only(top: 10),
+                                  child: FaIcon(
+                                    isExpanded
+                                        ? FontAwesomeIcons.sortUp
+                                        : FontAwesomeIcons.sortDown,
+                                    size: 18,
+                                    color: blueColor,
+                                  ),
                                 ),
                               ),
                             ),
                             Expanded(
                               flex: 1,
-                              child: Text('  $sr', style: _styleRowPrimary),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: _kCellLeftPad,
+                                ),
+                                child: Text('$sr', style: _styleRowPrimary),
+                              ),
                             ),
                             Expanded(
-                              flex: 2,
+                              flex: 1,
                               child: InkWell(
                                 onTap: () => _toggleExpandPendingRow(
                                   r.leaseId,
                                   forUnsignedSection,
                                 ),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 6, right: 8),
+                                  padding: const EdgeInsets.only(
+                                    left: _kCellLeftPad,
+                                    right: 8,
+                                  ),
                                   child: Text(
                                     r.propertyAddress.isEmpty
                                         ? 'N/A'
                                         : r.propertyAddress,
                                     style: _styleRowAddress,
                                     maxLines: 3,
-
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -613,15 +639,16 @@ class _Pending_leaseState extends State<Pending_lease> {
                     ),
                     if (isExpanded)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(2, 0, 2, 8),
+                        padding: const EdgeInsets.fromLTRB(
+                          _kRowLeftInset,
+                          0,
+                          2,
+                          8,
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 40,
-                              color: Colors.transparent,
-                            ),
+                            const SizedBox(width: _kLeadingIconWidth),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -635,14 +662,14 @@ class _Pending_leaseState extends State<Pending_lease> {
                                       _pendingDetailTableRow(
                                         'Tenant Name:',
                                         _displayValue(r.tenantNames),
-                                        'Start Date:',
+                                        'Lease Start:',
                                         _formatDate(
                                           r.startDate,
                                           dateProvider,
                                         ),
                                       ),
                                       _pendingDetailTableRow(
-                                        'End Date:',
+                                        'Lease End:',
                                         _formatDate(r.endDate, dateProvider),
                                         'Rent Cycle:',
                                         _displayValue(r.rentCycle),
@@ -881,9 +908,14 @@ class _Pending_leaseState extends State<Pending_lease> {
                     ),
                   ),
                   if (_loading)
-                    const SliverFillRemaining(
+                    SliverFillRemaining(
                       hasScrollBody: false,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: SpinKitFadingCircle(
+                          color: blueColor,
+                          size: 40.0,
+                        ),
+                      ),
                     )
                   else ...[
                     SliverToBoxAdapter(

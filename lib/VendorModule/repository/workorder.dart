@@ -213,6 +213,8 @@ class WorkOrderRepository {
     //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
     print('$Api_url/api/work-order/workorder_details/$workorderId');
+    print('=== UpdateWorkOrder (VENDOR) PUT $url ===');
+    print('Request body: ${jsonEncode({"workOrder": workorder})}');
     final response = await apiPut(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},

@@ -502,3 +502,56 @@ class accountRepository {
     }
   }
 }
+
+class PropertyOwnerOverrideRepository {
+  Future<List<PropertyOwnerOverride>> fetchPropertyOwners() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    final response = await apiGet(
+      Uri.parse('${Api_url}/api/property-owner-overrides/list/$adminid'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body)['data'] ?? [];
+      return jsonResponse
+          .map((data) => PropertyOwnerOverride.fromJson(data))
+          .toList();
+    } else {
+      print('Failed to fetch property owners: ${response.body}');
+      return [];
+    }
+  }
+
+  Future<bool> saveLateFeeOverride(Map<String, dynamic> data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? adminid = prefs.getString('adminId');
+    String? staffid = prefs.getString("staff_id");
+
+    String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
+    final response = await apiPost(
+      Uri.parse('${Api_url}/api/property-owner-overrides'),
+      headers: {
+        'authorization': 'CRM $token',
+        'id': 'CRM $id',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    print('save property owner override: ${response.body}');
+    var responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
