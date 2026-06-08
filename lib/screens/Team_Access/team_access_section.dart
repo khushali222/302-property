@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
 
+import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
 import '../../Model/team_member.dart';
 import '../../repository/team_repo.dart';
 import 'add_admin_screen.dart';
@@ -25,7 +25,7 @@ const Color _cancelFg = Color(0xFFE03B3B);
 /// Three tabs:
 ///   - ADMINS       driven by GET /api/admin/team/team (admins[])
 ///   - STAFF        driven by GET /api/admin/team/team (staff[])
-///   - PERMISSIONS  uses the existing permissions API/screen (UserPermissionScreen)
+///   - PERMISSIONS  inline Staff / Vendor / Tenant matrix (PermissionService)
 ///
 /// Intentionally non-scrolling (uses Columns, not inner ListViews) so it
 /// composes cleanly inside the parent Settings ListView.
@@ -384,7 +384,9 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   }
 
   // ---------------------------------------------------------------------------
-  // Permissions tab (interim — reuses existing UserPermissionScreen)
+  // Permissions tab — links out to the standalone (redesigned) User Permission
+  // screen for now. To embed the matrix inline again, re-add the
+  // `permission_matrix_view.dart` import and return `const PermissionMatrixView()`.
   // ---------------------------------------------------------------------------
   Widget _buildPermissionsTab() {
     return Column(
@@ -406,9 +408,7 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
         ),
         const SizedBox(height: 8),
         const Text(
-          'Control what staff, vendors and tenants can access. The full inline '
-          'permissions matrix (per the new design) is the next step — for now you '
-          'can manage permissions on the existing screen.',
+          'Control what staff, vendors and tenants can access.',
           style: TextStyle(fontSize: 13.5, height: 1.45, color: _muted),
         ),
         const SizedBox(height: 18),
@@ -419,8 +419,7 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
             borderRadius: BorderRadius.circular(12),
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (_) => const UserPermissionScreen()),
+              MaterialPageRoute(builder: (_) => const UserPermissionScreen()),
             ),
             child: Container(
               height: 52,
@@ -587,8 +586,8 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
                   ),
 
                   // 2) Cancel pending invitation — only when is_pending == true.
-                  //    UI preview: shows the confirm dialog; the actual cancel
-                  //    API call is still TODO (no endpoint yet).
+                  //    Shows a confirm dialog, then cancels via the API and
+                  //    refreshes the list.
                   if (isPending) ...[
                     const SizedBox(width: 12),
                     _iconBtn(
@@ -600,15 +599,16 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
                     ),
                   ],
 
-                  // ── Still commented until backend exists: ──
-                  // 3) Promote / demote role (admin -> demote to staff,
-                  //    staff -> promote to admin). Wire onTap when API ready:
+                  // 3) Promote (staff -> admin) / demote (admin -> staff).
+                  //    Temporarily hidden — uncomment to re-enable the role-
+                  //    change action (handler + dialogs are kept below).
                   // const SizedBox(width: 12),
                   // _iconBtn(
                   //   icon: Icons.swap_vert,
                   //   bg: _emailBtnBg,
                   //   fg: _navy,
-                  //   onTap: () {/* promote / demote */},
+                  //   onTap: () => _confirmMoveRole(
+                  //       name: name, userType: userType, userId: userId),
                   // ),
                 ],
               ),
@@ -895,10 +895,209 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
     }
   }
 
+  // Promote a staff member to admin, or demote an admin to staff, via
+  // POST /api/admin/team/move-role. Shows a confirmation dialog, then on
+  // success a "Moved / Promoted" dialog (matching the web), and refreshes so
+  // the member moves tabs.
+  // Kept for future use — the promote/demote button is commented out for now.
+  // ignore: unused_element
+  Future<void> _confirmMoveRole({
+    required String name,
+    required String userType,
+    required String? userId,
+  }) async {
+    final bool promote = userType == 'staffmember'; // staff -> admin
+    final String targetRole = promote ? 'admin' : 'staff';
+    final String title =
+        promote ? 'Promote to Administrator: $name?' : 'Move to Staff: $name?';
+    final String body = promote
+        ? 'They will gain full Administrator access to this company. Their '
+            'email and password stay the same.'
+        : 'They will lose Administrator access and become a Staff member. '
+            'Their email and password stay the same.';
+    final String confirmLabel =
+        promote ? 'Promote to Administrator' : 'Move to Staff';
+
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.info_outline,
+                  color: Color(0xFFB7C2D0), size: 72),
+              const SizedBox(height: 18),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 19.5,
+                    fontWeight: FontWeight.w700,
+                    height: 1.3,
+                    color: _navy),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  body,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 14, height: 1.55, color: Color(0xFF6B7688)),
+                ),
+              ),
+              const SizedBox(height: 26),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(ctx).pop(false),
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0x80152B51)),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: _navy),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(ctx).pop(true),
+                      child: Container(
+                        height: 54,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          color: _navy,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          confirmLabel,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (confirmed != true) return;
+    if (userId == null || userId.isEmpty) {
+      Fluttertoast.showToast(msg: 'Missing user id');
+      return;
+    }
+    try {
+      await _repo.moveRole(userId: userId, targetRole: targetRole);
+      if (!mounted) return;
+      _load(); // refresh so the member moves to the other tab (behind dialog)
+      _showMoveRoleSuccessDialog(name: name, promote: promote);
+    } catch (_) {
+      // failure already surfaced via toast in the repository
+    }
+  }
+
+  // Success confirmation after a role change (matches the web "Moved /
+  // Promoted" dialog). OK just closes — the list refreshed underneath.
+  void _showMoveRoleSuccessDialog(
+      {required String name, required bool promote}) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 76,
+                height: 76,
+                decoration: const BoxDecoration(
+                  color: _greenBg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check, color: _greenText, size: 38),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                promote ? 'Promoted to Administrator' : 'Moved to Staff',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    height: 1.3,
+                    color: _navy),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  promote
+                      ? '$name is now an Administrator.'
+                      : '$name is now a Staff member.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 14, height: 1.5, color: Color(0xFF6B7688)),
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: _navy,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => Navigator.of(ctx).pop(),
+                    child: Container(
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildLoading() {
     return const Padding(
       padding: EdgeInsets.only(top: 60),
-      child: Center(child: SpinKitThreeBounce(color: _navy, size: 26)),
+      child: Center(child: SpinKitFadingCircle(color: _navy, size: 40)),
     );
   }
 

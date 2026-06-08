@@ -207,4 +207,43 @@ class TeamRepository {
       throw Exception('Failed to cancel invitation');
     }
   }
+
+  /// POST /api/admin/team/move-role
+  /// Promotes a staff member to admin (target_role: "admin") or demotes an
+  /// admin to staff (target_role: "staff"). Payload matches the web platform.
+  Future<Map<String, dynamic>> moveRole({
+    required String? userId,
+    required String targetRole, // "admin" | "staff"
+  }) async {
+    final Map<String, dynamic> data = {
+      "user_id": userId,
+      "target_role": targetRole,
+      "user_active_recently": true,
+      "is_web": true,
+    };
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+
+    final response = await apiPost(
+      Uri.parse('${Api_url}/api/admin/team/move-role'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+    print('move-role: ${response.body}');
+    final responseData = json.decode(response.body);
+    if (responseData["statusCode"] == 200) {
+      // Success UI (the confirmation dialog) is handled by the caller.
+      return responseData;
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? "Failed to update role");
+      throw Exception('Failed to move role');
+    }
+  }
 }
