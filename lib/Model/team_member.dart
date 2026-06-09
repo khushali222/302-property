@@ -6,6 +6,13 @@
 //
 // Field naming / null-handling follows the existing model style (see
 // `lib/Model/staffmember.dart`) so it stays consistent with the rest of the app.
+//
+// Every field is parsed through the shared safe-coercion helpers in
+// `constant/constant.dart` (asStr / asBool / asObjectList), so a loosely-typed
+// backend value (e.g. a phone number sent as a number on production) can never
+// throw a TypeError — on any environment.
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class TeamData {
   final List<TeamAdmin> admins;
@@ -15,14 +22,9 @@ class TeamData {
 
   factory TeamData.fromJson(Map<String, dynamic> json) {
     return TeamData(
-      admins: (json['admins'] as List?)
-              ?.map((e) => TeamAdmin.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      staff: (json['staff'] as List?)
-              ?.map((e) => TeamStaff.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      admins:
+          asObjectList(json['admins']).map((e) => TeamAdmin.fromJson(e)).toList(),
+      staff: asObjectList(json['staff']).map((e) => TeamStaff.fromJson(e)).toList(),
     );
   }
 }
@@ -57,18 +59,18 @@ class TeamAdmin {
   });
 
   TeamAdmin.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'] ?? "";
-    adminId = json['admin_id'] ?? "";
-    firstName = json['first_name'] ?? "";
-    lastName = json['last_name'] ?? "";
-    email = json['email'] ?? "";
-    phoneNumber = json['phone_number'] ?? "";
-    isPending = json['is_pending'] ?? false;
-    invitedAt = json['invited_at']?.toString() ?? "";
-    invitedByAdminId = json['invited_by_admin_id']?.toString() ?? "";
-    isAdminDelete = json['isAdmin_delete'] ?? false;
-    createdAt = json['createdAt'] ?? "";
-    updatedAt = json['updatedAt'] ?? "";
+    sId = asStr(json['_id']);
+    adminId = asStr(json['admin_id']);
+    firstName = asStr(json['first_name']);
+    lastName = asStr(json['last_name']);
+    email = asStr(json['email']);
+    phoneNumber = asStr(json['phone_number']);
+    isPending = asBool(json['is_pending']);
+    invitedAt = asStr(json['invited_at']);
+    invitedByAdminId = asStr(json['invited_by_admin_id']);
+    isAdminDelete = asBool(json['isAdmin_delete']);
+    createdAt = asStr(json['createdAt']);
+    updatedAt = asStr(json['updatedAt']);
   }
 
   Map<String, dynamic> toJson() => {
@@ -122,19 +124,20 @@ class TeamStaff {
   });
 
   TeamStaff.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'] ?? "";
-    adminId = json['admin_id'] ?? "";
-    staffmemberId = json['staffmember_id'] ?? "";
-    staffmemberName = json['staffmember_name'] ?? "";
-    staffmemberEmail = json['staffmember_email'] ?? "";
-    staffmemberPhoneNumber = json['staffmember_phoneNumber'] ?? "";
-    staffmemberDesignation = json['staffmember_designation'] ?? "";
-    isPending = json['is_pending'] ?? false;
-    invitedAt = json['invited_at']?.toString() ?? "";
-    invitedByAdminId = json['invited_by_admin_id']?.toString() ?? "";
-    isDelete = json['is_delete'] ?? false;
-    createdAt = json['createdAt'] ?? "";
-    updatedAt = json['updatedAt'] ?? "";
+    sId = asStr(json['_id']);
+    adminId = asStr(json['admin_id']);
+    staffmemberId = asStr(json['staffmember_id']);
+    staffmemberName = asStr(json['staffmember_name']);
+    staffmemberEmail = asStr(json['staffmember_email']);
+    // Phone can arrive as a number (e.g. 7125551212) or a string across envs.
+    staffmemberPhoneNumber = asStr(json['staffmember_phoneNumber']);
+    staffmemberDesignation = asStr(json['staffmember_designation']);
+    isPending = asBool(json['is_pending']);
+    invitedAt = asStr(json['invited_at']);
+    invitedByAdminId = asStr(json['invited_by_admin_id']);
+    isDelete = asBool(json['is_delete']);
+    createdAt = asStr(json['createdAt']);
+    updatedAt = asStr(json['updatedAt']);
   }
 
   Map<String, dynamic> toJson() => {

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:three_zero_two_property/User%20Permission/UserPermissionScreen.dart';
 import '../../Model/team_member.dart';
 import '../../repository/team_repo.dart';
 import 'add_admin_screen.dart';
 import 'add_staff_screen.dart';
+import 'permission_matrix_view.dart';
 
 const Color _navy = Color(0xFF152B51); // == blueColor RGBO(21,43,81,1)
 const Color _muted = Color(0xFF8A95A8);
@@ -41,6 +42,7 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
 
   bool _loading = true;
   TeamData _data = TeamData();
+  bool _isStaff = false; // staff users can't manage the team (admins/staff tabs)
 
   int _selectedTab = 0; // 0 = Admins, 1 = Staff, 2 = Permissions
 
@@ -54,7 +56,21 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   @override
   void initState() {
     super.initState();
-    _load();
+    _init();
+  }
+
+  // Staff users can't manage team members, so skip the team fetch for them and
+  // show a message on the Admins/Staff tabs (the Permissions tab still works).
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final staffId = prefs.getString('staff_id');
+    final isStaff = staffId != null && staffId.isNotEmpty;
+    if (!mounted) return;
+    setState(() {
+      _isStaff = isStaff;
+      if (isStaff) _loading = false; // no team API call for staff
+    });
+    if (!isStaff) _load();
   }
 
   @override
@@ -65,12 +81,20 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    final data = await _repo.fetchTeam();
-    if (!mounted) return;
-    setState(() {
-      _data = data;
-      _loading = false;
-    });
+    try {
+      final data = await _repo.fetchTeam();
+      if (!mounted) return;
+      setState(() {
+        _data = data;
+        _loading = false;
+      });
+    } catch (e) {
+      // Never leave the screen stuck on the spinner — show the empty state
+      // and a message instead (e.g. a network error or a bad field type).
+      if (!mounted) return;
+      setState(() => _loading = false);
+      Fluttertoast.showToast(msg: "Couldn't load team. Please try again.");
+    }
   }
 
   // Kept for future use (the email button currently shows the reset dialog).
@@ -99,14 +123,16 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
         const SizedBox(height: 18),
         _buildTabBar(),
         const SizedBox(height: 18),
-        if (_loading)
+        if (_selectedTab == 2)
+          _buildPermissionsTab() // loads on its own — never waits for the team API
+        else if (_isStaff)
+          _buildStaffRestricted() // staff can't manage admins/staff
+        else if (_loading)
           _buildLoading()
         else if (_selectedTab == 0)
           _buildAdminsTab()
-        else if (_selectedTab == 1)
-          _buildStaffTab()
         else
-          _buildPermissionsTab(),
+          _buildStaffTab(),
         const SizedBox(height: 24),
       ],
     );
@@ -384,58 +410,46 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   }
 
   // ---------------------------------------------------------------------------
-  // Permissions tab — links out to the standalone (redesigned) User Permission
-  // screen for now. To embed the matrix inline again, re-add the
-  // `permission_matrix_view.dart` import and return `const PermissionMatrixView()`.
+  // Permissions tab — full inline Staff / Vendor / Tenant matrix (shared widget,
+  // also used by the standalone User Permission screen).
   // ---------------------------------------------------------------------------
   Widget _buildPermissionsTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Row(
-          children: [
-            Icon(Icons.shield_outlined, color: _navy, size: 22),
-            SizedBox(width: 8),
-            Text(
-              'User Permissions',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: _navy,
-              ),
+    return const PermissionMatrixView();
+  }
+
+  // Shown on the Admins / Staff tabs when the signed-in user is a staff member
+  // (they can't manage the team). The Permissions tab is unaffected.
+  Widget _buildStaffRestricted() {
+    return Container(
+      height: MediaQuery.of(context).size.height * .5,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 92,
+            height: 92,
+            decoration: const BoxDecoration(
+              color: _emailBtnBg,
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'Control what staff, vendors and tenants can access.',
-          style: TextStyle(fontSize: 13.5, height: 1.45, color: _muted),
-        ),
-        const SizedBox(height: 18),
-        Material(
-          color: _navy,
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const UserPermissionScreen()),
-            ),
-            child: Container(
-              height: 52,
-              alignment: Alignment.center,
-              child: const Text(
-                'Open User Permissions',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            child: const Icon(Icons.lock_outline, color: _navy, size: 44),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Only an Admin can manage team members.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: _cancelFg,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              height: 1.4,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -600,16 +614,14 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
                   ],
 
                   // 3) Promote (staff -> admin) / demote (admin -> staff).
-                  //    Temporarily hidden — uncomment to re-enable the role-
-                  //    change action (handler + dialogs are kept below).
-                  // const SizedBox(width: 12),
-                  // _iconBtn(
-                  //   icon: Icons.swap_vert,
-                  //   bg: _emailBtnBg,
-                  //   fg: _navy,
-                  //   onTap: () => _confirmMoveRole(
-                  //       name: name, userType: userType, userId: userId),
-                  // ),
+                  const SizedBox(width: 12),
+                  _iconBtn(
+                    icon: Icons.swap_vert,
+                    bg: _emailBtnBg,
+                    fg: _navy,
+                    onTap: () => _confirmMoveRole(
+                        name: name, userType: userType, userId: userId),
+                  ),
                 ],
               ),
             ),
@@ -899,8 +911,6 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   // POST /api/admin/team/move-role. Shows a confirmation dialog, then on
   // success a "Moved / Promoted" dialog (matching the web), and refreshes so
   // the member moves tabs.
-  // Kept for future use — the promote/demote button is commented out for now.
-  // ignore: unused_element
   Future<void> _confirmMoveRole({
     required String name,
     required String userType,
