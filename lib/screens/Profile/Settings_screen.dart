@@ -4513,10 +4513,14 @@ class _TabBarExampleState extends State<TabBarExample> {
           _SettingsMenuItem('Categories', 'Income & expense categories',
               Icons.category_outlined),
         ]),
-        _SettingsMenuSection('TEAM', [
-          _SettingsMenuItem('Team & Access', 'Team members, roles & permissions',
-              Icons.manage_accounts_outlined),
-        ]),
+        // ── Team & Access hidden for now ────────────────────────────────────
+        // Temporarily removed from Settings until the production team API
+        // (/api/admin/team/*) is live — it currently hangs on prod. Re-enable
+        // by uncommenting this section.
+        // _SettingsMenuSection('TEAM', [
+        //   _SettingsMenuItem('Team & Access', 'Team members, roles & permissions',
+        //       Icons.manage_accounts_outlined),
+        // ]),
         _SettingsMenuSection('FINANCIAL', [
           _SettingsMenuItem('Surcharges', 'Recurring fees & add-ons',
               Icons.receipt_long_outlined),
