@@ -215,30 +215,6 @@ class _applicant_summeryState extends State<applicant_summery>
                                   style:  TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold)),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              SizedBox(
-                                width:
-                                MediaQuery.of(context).size.width > 500 ? 200 : 240,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 1),
-                                  child: Text(
-                                    '${snapshot.data!.leaseData?.rentalAdress}',
-                                    textAlign: TextAlign.justify,
-                                    maxLines: 5, // Set maximum number of lines
-                                    overflow: TextOverflow
-                                        .ellipsis, // Handle overflow with ellipsis
-                                    style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.width < 500
-                                          ? 13
-                                          : 18,
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
                               // Text('${snapshot.data!.leaseData!.rentalAdress}',
                               //     style: const TextStyle(
                               //         color: Colors.grey,

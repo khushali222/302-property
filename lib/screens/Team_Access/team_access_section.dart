@@ -918,8 +918,6 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   }) async {
     final bool promote = userType == 'staffmember'; // staff -> admin
     final String targetRole = promote ? 'admin' : 'staff';
-    final String title =
-        promote ? 'Promote to Administrator: $name?' : 'Move to Staff: $name?';
     final String body = promote
         ? 'They will gain full Administrator access to this company. Their '
             'email and password stay the same.'
@@ -942,7 +940,7 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
                   color: Color(0xFFB7C2D0), size: 72),
               const SizedBox(height: 18),
               Text(
-                title,
+                '$confirmLabel : $name ?',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 19.5,

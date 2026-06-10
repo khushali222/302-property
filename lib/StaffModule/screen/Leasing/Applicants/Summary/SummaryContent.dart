@@ -208,6 +208,13 @@ class _SummaryContentState extends State<SummaryContent> {
     return formatPhoneNumber(raw);
   }
 
+  /// Returns 'N/A' for null, empty, or literal "null" values.
+  String _orNA(String? raw) {
+    final v = raw?.trim() ?? '';
+    if (v.isEmpty || v.toLowerCase() == 'null') return 'N/A';
+    return v;
+  }
+
   Widget _sectionCard({required String title, required List<Widget> children}) {
     return Container(
       width: double.infinity,
@@ -570,15 +577,6 @@ class _SummaryContentState extends State<SummaryContent> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Applicant',
-                    style: TextStyle(
-                      color: grey,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
                   const SizedBox(height: 12),
                   _contactRow(
                     icon: Icons.home_outlined,
@@ -604,6 +602,33 @@ class _SummaryContentState extends State<SummaryContent> {
                   ),
                 ],
               ),
+              // ── Property Detail (temporarily disabled — re-enable when ready) ──
+              /*
+              _sectionCard(
+                title: 'Property Detail',
+                children: [
+                  Text(
+                    'Interest Property',
+                    style: TextStyle(
+                      color: grey,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _contactRow(
+                    icon: Icons.location_on_outlined,
+                    text: _orNA(widget.summery.leaseData?.rentalAdress),
+                  ),
+                  _contactRow(
+                    icon: Icons.home_outlined,
+                    text: _orNA(widget.summery.leaseData?.rentalUnit) == 'N/A'
+                        ? 'N/A'
+                        : 'Unit :  ${_orNA(widget.summery.leaseData?.rentalUnit)}',
+                  ),
+                ],
+              ),
+              */
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 14),

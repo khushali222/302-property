@@ -2229,24 +2229,38 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 .end,
                                                         children: [
                                                           GestureDetector(
-                                                            onTap: () {
-                                                              _showDeleteAlert(
-                                                                  context,
-                                                                  applicant
-                                                                      .applicantId
-                                                                      .toString());
+                                                            onTap: () async {
+                                                              bool?
+                                                                  refreshNeeded =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => applicant_summery(
+                                                                                applicant_id: applicant.applicantId,
+                                                                              )));
+
+                                                              if (refreshNeeded ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureApplicantdata =
+                                                                      ApplicantRepository()
+                                                                          .fetchApplicants();
+                                                                });
+                                                              }
                                                             },
                                                             child: Container(
                                                               height: 35,
                                                               width: 35,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  color: Colors
-                                                                      .red
-                                                                      .shade50),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
                                                               child: Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
@@ -2257,11 +2271,13 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 children: [
                                                                   FaIcon(
                                                                     FontAwesomeIcons
-                                                                        .trashCan,
+                                                                        .eye,
                                                                     size: 15,
                                                                     color: Colors
-                                                                        .red,
+                                                                        .black,
                                                                   ),
+                                                                  SizedBox(
+                                                                      width: 2),
                                                                 ],
                                                               ),
                                                             ),
@@ -2323,38 +2339,24 @@ class _Applicants_tableState extends State<Applicants_table>
                                                             width: 5,
                                                           ),
                                                           GestureDetector(
-                                                            onTap: () async {
-                                                              bool?
-                                                                  refreshNeeded =
-                                                                  await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => applicant_summery(
-                                                                                applicant_id: applicant.applicantId,
-                                                                              )));
-
-                                                              if (refreshNeeded ==
-                                                                  true) {
-                                                                setState(() {
-                                                                  futureApplicantdata =
-                                                                      ApplicantRepository()
-                                                                          .fetchApplicants();
-                                                                });
-                                                              }
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  applicant
+                                                                      .applicantId
+                                                                      .toString());
                                                             },
                                                             child: Container(
                                                               height: 35,
                                                               width: 35,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade200,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                              ),
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
                                                               child: Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
@@ -2365,13 +2367,11 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 children: [
                                                                   FaIcon(
                                                                     FontAwesomeIcons
-                                                                        .eye,
+                                                                        .trashCan,
                                                                     size: 15,
                                                                     color: Colors
-                                                                        .black,
+                                                                        .red,
                                                                   ),
-                                                                  SizedBox(
-                                                                      width: 2),
                                                                 ],
                                                               ),
                                                             ),
