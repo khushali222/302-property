@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 
@@ -19,11 +20,12 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/lease_provider.dart';
 
 import '../../../../repository/applicant_summery_repo.dart';
 import 'ApplicantContent.dart';
-import 'ApprovedContenct.dart';
-import 'RejectedContent.dart';
+import 'ContactInfoContent.dart';
 import 'SummaryContent.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/newAddLease.dart';
 
@@ -98,17 +100,20 @@ class _applicant_summeryState extends State<applicant_summery>
   }
 
   Future<bool> updateApplicantStatus(
-      String applicantId, String status, String rentalId, String unitId) async {
+      String applicantId, String status, String rentalId, String unitId,
+      {String rejectionReason = ''}) async {
     print(status);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
     final body = jsonEncode({
-      "statusUpdatedBy": "Admin",
+      // Web parity: statusUpdatedBy is NOT sent — the backend resolves the
+      // real user from the auth token (hardcoding "Admin" mislabeled history).
       "status": status,
       "rental_id": rentalId,
       "unit_id": unitId,
+      "rejection_reason": rejectionReason,
     });
 
     try {
@@ -157,7 +162,7 @@ class _applicant_summeryState extends State<applicant_summery>
       Scaffold(
       // appBar: widget302.,
       appBar: widget_302_Staff.App_Bar(context: context),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF4F6F9),
       drawer: CustomDrawerStaff(
         currentpage: "Applicants",
         dropdown: true,
@@ -204,64 +209,363 @@ class _applicant_summeryState extends State<applicant_summery>
                       Row(
                         children: [
                           const SizedBox(
-                            width: 10,
+                            width: 12,
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  'Applicant : ${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
-                                  style:  TextStyle(
-                                      color: blueColor,
-                                      fontWeight: FontWeight.bold)),
-                              // Text('${snapshot.data!.leaseData!.rentalAdress}',
-                              //     style: const TextStyle(
-                              //         color: Colors.grey,
-                              //         fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                          const Spacer(),
-                          Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(5),
-                                  ),
-                                  child: Container(
-                                    height: 40,
-                                    width: 80,
-                                    decoration:  BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(5),
-                                      ),
-                                    ),
-                                    child: const Center(
-                                        child: Text(
-                                      "Back",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white),
-                                    )),
-                                  ),
-                                ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: const Color(0xFFDBE0E5)),
                               ),
-                            ],
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                size: 18,
+                                color: blueColor,
+                              ),
+                            ),
                           ),
                           const SizedBox(
-                            width: 10,
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: Text(
+                              '${snapshot.data!.applicantFirstName} ${snapshot.data!.applicantLastName}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 12,
                           ),
                         ],
                       ),
                       const SizedBox(
                         height: 10,
                       ),
+                      // ── Status action buttons (design swap of the old
+                      // dropdown + MOVE IN; handlers unchanged) ──
+                      Builder(
+                        builder: (context) {
+                          final statusList = snapshot.data!.applicantStatus;
+                          final String? lastStatus =
+                              (statusList != null && statusList.isNotEmpty)
+                                  ? statusList.last.status
+                                  : null;
+                          final bool isMovedin =
+                              snapshot.data!.isMovedin ?? false;
+
+                          Future<void> changeStatus(String value,
+                              {String rejectionReason = ''}) async {
+                            setState(() {
+                              _selectedValue = value;
+                            });
+                            final rentalId =
+                                snapshot.data?.leaseData?.rentalId;
+                            final unitId = snapshot.data?.leaseData?.unitId;
+
+                            // Call the API to update the applicant status
+                            // (web sends these empty when no lease data —
+                            // never crash on a missing leaseData).
+                            bool success = await updateApplicantStatus(
+                                widget.applicant_id!,
+                                value,
+                                rentalId ?? '',
+                                unitId ?? '',
+                                rejectionReason: rejectionReason);
+
+                            if (success) {
+                              print('Status update successful');
+                              Fluttertoast.showToast(
+                                msg:
+                                    'The Applicant Status has been changed to $value',
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                              );
+                              // Web parity: stay on the page and refresh so
+                              // the buttons/tabs update in place.
+                              setState(() {
+                                futureLeaseSummary = ApplicantSummeryRepository
+                                    .getApplicantSummary(widget.applicant_id!);
+                              });
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: 'Failed to update applicant status',
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                              );
+                            }
+                          }
+
+                          // Web parity: rejecting requires a reason, saved
+                          // with the status entry in the history.
+                          void openRejectDialog() {
+                            TextEditingController reasonController =
+                                TextEditingController();
+                            Alert(
+                              context: context,
+                              type: AlertType.warning,
+                              title: "Reject Applicant",
+                              desc:
+                                  "Please enter a reason for rejecting this applicant. This will be saved in the applicant history.",
+                              content: Column(
+                                children: <Widget>[
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    height: 45,
+                                    child: TextField(
+                                      controller: reasonController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: 'Enter reason for rejection',
+                                        contentPadding: EdgeInsets.only(
+                                            top: 8, left: 15),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              style: const AlertStyle(
+                                backgroundColor: Colors.white,
+                              ),
+                              buttons: [
+                                DialogButton(
+                                  child: const Text(
+                                    "Reject",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18),
+                                  ),
+                                  onPressed: () {
+                                    if (reasonController.text.trim().isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "Please enter a reason for rejection");
+                                    } else {
+                                      Navigator.pop(context);
+                                      changeStatus('Rejected',
+                                          rejectionReason:
+                                              reasonController.text.trim());
+                                    }
+                                  },
+                                  color: const Color(0xFFDC3545),
+                                ),
+                                DialogButton(
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: () => Navigator.pop(context),
+                                  color: Colors.white,
+                                  radius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: blueColor, width: 1.5),
+                                ),
+                              ],
+                            ).show();
+                          }
+
+                          void openCreateLease() {
+                            // Mirror admin + web: clear stale selections and
+                            // pass leaseId so the add-lease form prefills
+                            // (web staff route also carries lease_id).
+                            Provider.of<SelectedCosignersProvider>(context,
+                                    listen: false)
+                                .clearCosigner();
+                            Provider.of<SelectedTenantsProvider>(context,
+                                    listen: false)
+                                .clearTenant();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => addLease3(
+                                  applicantId: widget.applicant_id,
+                                  rentalId: snapshot.data?.leaseData?.rentalId,
+                                  unitId: snapshot.data?.leaseData?.unitId,
+                                  leaseId: snapshot.data?.leaseData?.leaseId,
+                                ),
+                              ),
+                            );
+                          }
+
+                          Widget actionButton({
+                            required Widget child,
+                            required Color background,
+                            Color? borderColor,
+                            VoidCallback? onTap,
+                          }) {
+                            return GestureDetector(
+                              onTap: onTap,
+                              child: Container(
+                                height: 44,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: background,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: borderColor != null
+                                      ? Border.all(
+                                          color: borderColor, width: 1.5)
+                                      : null,
+                                ),
+                                child: Center(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: child,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (lastStatus == 'Approved') {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: actionButton(
+                                      background:
+                                          isMovedin ? Colors.grey : blueColor,
+                                      onTap:
+                                          isMovedin ? null : openCreateLease,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Icon(Icons.description_outlined,
+                                              color: Colors.white, size: 20),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Create Lease',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: actionButton(
+                                      background: Colors.white,
+                                      borderColor: isMovedin
+                                          ? Colors.grey
+                                          : const Color(0xFFDC3545),
+                                      onTap: isMovedin
+                                          ? null
+                                          : openRejectDialog,
+                                      child: Text(
+                                        'Change to Reject',
+                                        style: TextStyle(
+                                          color: isMovedin
+                                              ? Colors.grey
+                                              : const Color(0xFFDC3545),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          if (lastStatus == 'Rejected') {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: actionButton(
+                                      background: Colors.white,
+                                      borderColor: isMovedin
+                                          ? Colors.grey
+                                          : const Color(0xFF28A745),
+                                      onTap: isMovedin
+                                          ? null
+                                          : () => changeStatus('Approved'),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.check,
+                                            color: isMovedin
+                                                ? Colors.grey
+                                                : const Color(0xFF28A745),
+                                            size: 20,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'Approve Applicant',
+                                            style: TextStyle(
+                                              color: isMovedin
+                                                  ? Colors.grey
+                                                  : const Color(0xFF28A745),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: actionButton(
+                                      background: const Color(0xFFFDECEC),
+                                      borderColor: const Color(0xFFF1AEB5),
+                                      onTap: null,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Icon(Icons.close,
+                                              color: Color(0xFFDC3545),
+                                              size: 20),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Rejected',
+                                            style: TextStyle(
+                                              color: Color(0xFFDC3545),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // Undecided — no action buttons (Back button in
+                          // the header is the only action).
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      // ── OLD status dropdown + MOVE IN button (kept for
+                      // reference — replaced by the status buttons above) ──
+                      /*
                       Row(
                         children: [
                           const SizedBox(
@@ -390,10 +694,7 @@ class _applicant_summeryState extends State<applicant_summery>
                                             .contains(MaterialState.disabled)) {
                                           return Colors.grey; // Disabled color
                                         }
-                                        return blueColor
-
-
-                  ; // Enabled color
+                                        return blueColor; // Enabled color
                                       },
                                     ),
                                     shape: MaterialStateProperty.all(
@@ -433,6 +734,7 @@ class _applicant_summeryState extends State<applicant_summery>
                                 ),
                         ],
                       ),
+                      */
                       /* Row(
                         children: [
                           SizedBox(
@@ -450,49 +752,69 @@ class _applicant_summeryState extends State<applicant_summery>
                         height: 20,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+                        // 8 + the container's 4px inner gap = 12, so the
+                        // pills line up exactly with the buttons above.
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                         child: Container(
                           height: 50,
-                          //margin: const EdgeInsets.all(5),
-                          // padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE9EBF2),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                           child: Row(
-                            children: List.generate(4, (index) {
-                              final tabTitles = ['Summary', 'Application', 'Approved', 'Rejected'];
-                              final isSelected = _selectedIndex == index;
-
-                              return Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
+                            children: (() {
+                              // Tabs are built per-applicant: 'Contact Info'
+                              // only exists once the latest status is
+                              // Approved/Rejected (same rule as the web app).
+                              final tabTitles = _tabTitles(snapshot.data!);
+                              if (_selectedIndex >= tabTitles.length) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (mounted &&
+                                      _selectedIndex >= tabTitles.length) {
                                     setState(() {
-                                      _selectedIndex = index;
+                                      _selectedIndex = 0;
                                     });
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: Duration(milliseconds: 250),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      // gradient: isSelected
-                                      //     ? LinearGradient(
-                                      //   colors: [Color(0xFF6A1B9A), Color(0xFFAB47BC)],
-                                      // )
-                                      //     : null,
-                                      color: isSelected ? blueColor : Colors.grey.shade200,
-                                      borderRadius:isSelected ?  BorderRadius.circular(5) :BorderRadius.circular(0) ,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        tabTitles[index],
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: isSelected ? Colors.white : Colors.grey.shade800,
-                                          fontWeight: FontWeight.bold,
+                                  }
+                                });
+                              }
+                              final selectedIndex =
+                                  _selectedIndex < tabTitles.length
+                                      ? _selectedIndex
+                                      : 0;
+                              return List.generate(tabTitles.length, (index) {
+                                final isSelected = selectedIndex == index;
+
+                                return Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedIndex = index;
+                                      });
+                                    },
+                                    child: AnimatedContainer(
+                                      duration: Duration(milliseconds: 250),
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      decoration: BoxDecoration(
+                                        color: isSelected ? blueColor : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          tabTitles[index],
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: isSelected ? Colors.white : const Color(0xFF8A95A8),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }),
+                                );
+                              });
+                            })(),
                           ),
                         ),
                       ),
@@ -531,27 +853,43 @@ class _applicant_summeryState extends State<applicant_summery>
     );
   }
   int _selectedIndex = 0;
+  /// Latest applicant status decides whether the Contact Info tab exists
+  /// (same rule as the web app's isApprovedOrRejected()).
+  bool _isApprovedOrRejected(applicant_summery_details data) {
+    if (data.applicantStatus == null || data.applicantStatus!.isEmpty) {
+      return false;
+    }
+    final status = data.applicantStatus!.last.status;
+    return status == 'Approved' || status == 'Rejected';
+  }
+
+  List<String> _tabTitles(applicant_summery_details data) {
+    final tabs = <String>['Summary', 'Application'];
+    if (_isApprovedOrRejected(data)) {
+      tabs.add('Contact Info');
+    }
+    return tabs;
+  }
+
   Widget _buildTabContent(applicant_summery_details data) {
-    switch (_selectedIndex) {
-      case 0:
+    final tabTitles = _tabTitles(data);
+    final index = _selectedIndex < tabTitles.length ? _selectedIndex : 0;
+    switch (tabTitles[index]) {
+      case 'Summary':
         return SummaryContent(
           applicant_id: widget.applicant_id!,
           summery: data,
         );
-      case 1:
+      case 'Application':
         return ApplicantContent(
           applicant_id: widget.applicant_id!,
           applicantDetail: data,
         );
-      case 2:
-        return
-
-     ApprovedContent(
-          applicantId: widget.applicant_id!,
-          applicantDetail:data,
-        );
-      case 3:
-        return RejectedContent(
+      case 'Contact Info':
+        return ContactInfoContent(
+          // Remount (and refetch) whenever a new status entry is added so
+          // the cards reflect the latest approve/reject without leaving.
+          key: ValueKey('contact-info-${data.applicantStatus?.length ?? 0}'),
           applicantId: widget.applicant_id!,
           applicantDetail: data,
         );

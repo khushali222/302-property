@@ -602,8 +602,6 @@ class _SummaryContentState extends State<SummaryContent> {
                   ),
                 ],
               ),
-              // ── Property Detail (temporarily disabled — re-enable when ready) ──
-              /*
               _sectionCard(
                 title: 'Property Detail',
                 children: [
@@ -628,7 +626,6 @@ class _SummaryContentState extends State<SummaryContent> {
                   ),
                 ],
               ),
-              */
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 14),

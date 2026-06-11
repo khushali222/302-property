@@ -597,17 +597,35 @@ class ApproveRejectApplicantDetail {
   });
 
   ApproveRejectApplicantDetail.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    leaseId = json['lease_id'];
-    applicantId = json['applicant_id'];
-    adminId = json['admin_id'];
-    rentalId = json['rental_id'];
-    unitId = json['unit_id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    v = json['__v'];
-    rentalAddress = json['rental_adress'];
-    rentalUnit = json['rental_unit'];
+    id = json['_id']?.toString();
+    leaseId = json['lease_id']?.toString();
+    applicantId = json['applicant_id']?.toString();
+    adminId = json['admin_id']?.toString();
+    // API sometimes sends rental_id / rental_adress / rental_unit as lists
+    // (same quirk LeaseData.fromJson already handles).
+    if (json['rental_id'] is List) {
+      rentalId = (json['rental_id'] as List).isNotEmpty
+          ? json['rental_id'][0].toString()
+          : null;
+    } else {
+      rentalId = json['rental_id']?.toString();
+    }
+    unitId = json['unit_id']?.toString();
+    createdAt = json['createdAt']?.toString();
+    updatedAt = json['updatedAt']?.toString();
+    v = json['__v'] is int ? json['__v'] : int.tryParse('${json['__v']}');
+    if (json['rental_adress'] is List) {
+      rentalAddress = (json['rental_adress'] as List).join(', ');
+    } else {
+      rentalAddress = json['rental_adress']?.toString();
+    }
+    if (json['rental_unit'] is List) {
+      rentalUnit = (json['rental_unit'] as List)
+          .where((u) => u != null && u.toString().trim().isNotEmpty)
+          .join(', ');
+    } else {
+      rentalUnit = json['rental_unit']?.toString();
+    }
   }
 
   Map<String, dynamic> toJson() {

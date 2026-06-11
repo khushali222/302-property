@@ -2324,6 +2324,8 @@ class _Applicants_tableState extends State<Applicants_table>
                                   ),
                                 ),
                                 const SizedBox(height: 20),
+                                // Hide pagination when all rows fit on one page
+                                if (data.length > 10)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

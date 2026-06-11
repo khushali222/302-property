@@ -99,7 +99,8 @@ class _addLease3State extends State<addLease3>
     try {
       // Fetch lease details from the repository
       LeaseDetails fetchedDetails =
-          await LeaseRepository().fetchLeaseDetails(leaseId);
+          await LeaseRepository()
+              .fetchLeaseDetails(leaseId, applicantId: widget.applicantId);
       print('Lease type: ${fetchedDetails.lease.leaseType}');
 
       // Optional delay for demonstration purposes
@@ -113,16 +114,20 @@ class _addLease3State extends State<addLease3>
           // Update state variables
           _selectedProperty = fetchedDetails.rental.rentalId ?? "";
           renderId = fetchedDetails.rental.rentalId ?? "";
+          // The rentals-list API is paginated and may not include this
+          // rental — inject it so the dropdown can preselect it.
+          _ensureRentalInProperties(fetchedDetails.rental.rentalId,
+              fetchedDetails.rental.rentalAddress);
           //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
           print("calling stage 1");
-          if (fetchedDetails.lease.startDate != null) {
+          if (fetchedDetails.lease.startDate.isNotEmpty) {
             final dateProvider =
                 Provider.of<DateProvider>(context, listen: false);
             startDateController.text =
                 dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
           }
           print("calling stage 2");
-          if (fetchedDetails.lease.endDate != null) {
+          if (fetchedDetails.lease.endDate.isNotEmpty) {
             final dateProvider =
                 Provider.of<DateProvider>(context, listen: false);
             endDateController.text =
@@ -206,6 +211,22 @@ class _addLease3State extends State<addLease3>
   List<bool> selected = [];
   bool _isLoading = true;
   List<Map<String, String>> properties = [];
+
+  // Rental carried by the lease being edited/created from an applicant —
+  // injected into [properties] when the paginated rentals list omits it.
+  Map<String, String>? _injectedRental;
+
+  void _ensureRentalInProperties(String? rentalId, String? address) {
+    if (rentalId == null || rentalId.isEmpty) return;
+    _injectedRental = {
+      'rental_id': rentalId,
+      'rental_adress':
+          (address == null || address.isEmpty) ? rentalId : address,
+    };
+    if (!properties.any((p) => p['rental_id'] == rentalId)) {
+      properties = [...properties, _injectedRental!];
+    }
+  }
   List<Map<String, String>> units = [];
   String? _selectedProperty;
   String? _selectedUnit;
@@ -250,6 +271,13 @@ class _addLease3State extends State<addLease3>
           };
         }).toList();
 
+        // Guard against duplicate rental_ids from the API — the dropdown
+        // asserts when a value matches more than one item.
+        final seenRentalIds = <String>{};
+        addresses = addresses
+            .where((a) => seenRentalIds.add(a['rental_id'] ?? ''))
+            .toList();
+
         // Sort properties alphabetically by address (A-Z)
         addresses.sort((a, b) => (a['rental_adress'] ?? '')
             .toLowerCase()
@@ -257,6 +285,13 @@ class _addLease3State extends State<addLease3>
 
         setState(() {
           properties = addresses;
+          // Re-apply the lease's rental if the paginated list misses it,
+          // so the preselected value stays valid.
+          if (_injectedRental != null &&
+              !properties.any((p) =>
+                  p['rental_id'] == _injectedRental!['rental_id'])) {
+            properties = [...properties, _injectedRental!];
+          }
           _isLoading = false;
         });
       } else {
@@ -1312,7 +1347,17 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                 );
                                               }).toList(),
-                                              value: _selectedProperty,
+                                              // Only preselect when the id is
+                                              // present exactly once, else the
+                                              // dropdown asserts and crashes.
+                                              value: properties
+                                                          .where((p) =>
+                                                              p['rental_id'] ==
+                                                              _selectedProperty)
+                                                          .length ==
+                                                      1
+                                                  ? _selectedProperty
+                                                  : null,
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
@@ -8901,19 +8946,35 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   String reverseFormatDate(String inputDate) {
-    DateTime parsedDate;
+    final String trimmed = inputDate.trim();
+    DateTime? parsedDate;
 
-    try {
-      // Try parsing the date as yyyy-MM-dd
-      parsedDate = DateFormat('yyyy-MM-dd').parseStrict(inputDate);
-    } catch (e) {
+    // Controllers are written in the user's display format (provider
+    // dateFormat, e.g. MM/dd/yyyy) or ISO — try those first so the API
+    // always receives yyyy-MM-dd like the web sends.
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final List<String> formats = [
+      'yyyy-MM-dd',
+      dateProvider.dateFormat,
+      'dd-MM-yyyy',
+      'MM/dd/yyyy',
+      'M/d/yyyy',
+      'MM-dd-yyyy',
+      'dd/MM/yyyy',
+    ];
+
+    for (final format in formats) {
       try {
-        // If the above fails, try parsing the date as dd-MM-yyyy
-        parsedDate = DateFormat('dd-MM-yyyy').parseStrict(inputDate);
-      } catch (e) {
-        // Handle invalid date format or return an error
-        throw FormatException("Invalid date format");
+        parsedDate = DateFormat(format).parseStrict(trimmed);
+        break;
+      } catch (_) {
+        continue;
       }
+    }
+
+    if (parsedDate == null) {
+      // Handle invalid date format or return an error
+      throw FormatException("Invalid date format");
     }
 
     // Return the date in the yyyy-MM-dd format

@@ -658,12 +658,18 @@ class LeaseRepository {
     }
   }*/
 
-  Future<LeaseDetails> fetchLeaseDetails(String leaseId) async {
+  Future<LeaseDetails> fetchLeaseDetails(String leaseId,
+      {String? applicantId}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
+    // Web parity: passing applicant_id makes the backend return the
+    // enriched lease (default start/end dates, unit data, etc.).
+    final String url = (applicantId != null && applicantId.isNotEmpty)
+        ? '${Api_url}/api/leases/get_lease/$leaseId?applicant_id=$applicantId'
+        : '${Api_url}/api/leases/get_lease/$leaseId';
     final response = await apiGet(
-      Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
+      Uri.parse(url),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
