@@ -118,7 +118,11 @@ class _addLease3State extends State<addLease3>
           // rental — inject it so the dropdown can preselect it.
           _ensureRentalInProperties(fetchedDetails.rental.rentalId,
               fetchedDetails.rental.rentalAddress);
-          //_selectedLeaseType = fetchedDetails.lease.leaseType ?? "";
+          // Preselect Lease Type when the lease carries one — guarded to
+          // dropdown values so an unexpected API string can't crash it.
+          if (leaseTypeitems.contains(fetchedDetails.lease.leaseType)) {
+            _selectedLeaseType = fetchedDetails.lease.leaseType;
+          }
           print("calling stage 1");
           if (fetchedDetails.lease.startDate.isNotEmpty) {
             final dateProvider =
@@ -1309,6 +1313,11 @@ class _addLease3State extends State<addLease3>
                                           DropdownButtonHideUnderline(
                                             child: DropdownButtonFormField2<
                                                 String>(
+                                              // FormField caches its initial
+                                              // value — key it so the async
+                                              // prefill actually displays.
+                                              key: ValueKey(
+                                                  'property-$_selectedProperty-${properties.length}'),
                                               decoration: const InputDecoration(
                                                 border: InputBorder.none,
                                               ),
@@ -1476,6 +1485,11 @@ class _addLease3State extends State<addLease3>
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
+                                                // FormField caches its initial
+                                                // value — key it so the async
+                                                // prefill actually displays.
+                                                key: ValueKey(
+                                                    'unit-$_selectedUnit-${units.length}'),
                                                 decoration:
                                                     const InputDecoration(
                                                   border: InputBorder.none,
