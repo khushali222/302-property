@@ -218,7 +218,10 @@ class _SummaryContentState extends State<SummaryContent> {
     return v;
   }
 
-  Widget _sectionCard({required String title, required List<Widget> children}) {
+  Widget _sectionCard(
+      {required String title,
+      required List<Widget> children,
+      Widget? trailing}) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 14),
@@ -231,13 +234,19 @@ class _SummaryContentState extends State<SummaryContent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: blueColor,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                ),
+              ),
+              if (trailing != null) trailing,
+            ],
           ),
           const SizedBox(height: 14),
           ...children,
@@ -348,6 +357,15 @@ class _SummaryContentState extends State<SummaryContent> {
             : (statusList.length < 5 ? statusList.length : 5));
     applicantChecklist =
         List<String>.from(widget.summery.applicantCheckedChecklist!);
+    final List customChecklistItems = widget.summery.applicantChecklist ?? [];
+    final int checklistTotal =
+        applicantCheckedChecklist.length + customChecklistItems.length;
+    final int checklistDone = applicantCheckedChecklist
+            .where((item) => applicantChecklist.contains(item))
+            .length +
+        customChecklistItems
+            .where((item) => applicantChecklist.contains(item))
+            .length;
 
     return ColoredBox(
       color: _kPageBg,
@@ -359,6 +377,14 @@ class _SummaryContentState extends State<SummaryContent> {
             children: [
               _sectionCard(
                 title: 'Application Checklist',
+                trailing: Text(
+                  '$checklistDone/$checklistTotal done',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF8A95A8),
+                  ),
+                ),
                 children: [
                   ...applicantCheckedChecklist.map((item) {
                     return _checklistItemBox(

@@ -390,11 +390,18 @@ class _Applicants_tableState extends State<Applicants_table>
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => applicant_summery(
-                        applicant_id: applicant.applicantId,
-                      )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => applicant_summery(
+                            applicant_id: applicant.applicantId,
+                          )))
+              .then((_) {
+            if (mounted) {
+              setState(() {
+                futureApplicantdata = ApplicantRepository().fetchApplicants();
+              });
+            }
+          });
         },
         child: Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 16),

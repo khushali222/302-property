@@ -254,6 +254,59 @@ class _applicant_summeryState extends State<applicant_summery>
                       const SizedBox(
                         height: 10,
                       ),
+                      // ── Web parity: show the stored rejection reason
+                      // under the header when the applicant is rejected ──
+                      Builder(
+                        builder: (context) {
+                          final statusList = snapshot.data!.applicantStatus;
+                          final last =
+                              (statusList != null && statusList.isNotEmpty)
+                                  ? statusList.last
+                                  : null;
+                          final reason = last?.rejectionReason?.trim() ?? '';
+                          if (last?.status != 'Rejected' || reason.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    color: const Color(0xFFDBE0E5)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Reason for rejection',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
+                                      color: Color(0xFF8A95A8),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    reason,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       // ── Status action buttons (design swap of the old
                       // dropdown + MOVE IN; handlers unchanged) ──
                       Builder(
@@ -270,6 +323,8 @@ class _applicant_summeryState extends State<applicant_summery>
                               {String rejectionReason = ''}) async {
                             setState(() {
                               _selectedValue = value;
+                              _statusUpdating = true;
+                              _updatingStatusValue = value;
                             });
                             final rentalId =
                                 snapshot.data?.leaseData?.rentalId;
@@ -305,6 +360,12 @@ class _applicant_summeryState extends State<applicant_summery>
                                 backgroundColor: Colors.red,
                                 textColor: Colors.white,
                               );
+                            }
+                            if (mounted) {
+                              setState(() {
+                                _statusUpdating = false;
+                                _updatingStatusValue = '';
+                              });
                             }
                           }
 
@@ -432,6 +493,42 @@ class _applicant_summeryState extends State<applicant_summery>
                           }
 
                           if (lastStatus == 'Approved') {
+                            // Web parity: once the lease exists the web
+                            // shows a green "Lease Created" badge instead
+                            // of the action buttons.
+                            if (isMovedin) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12),
+                                child: Container(
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE8F5E9),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: const Color(0xFF4CAF50)),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    children: const [
+                                      Icon(Icons.check,
+                                          color: Color(0xFF2E7D32),
+                                          size: 18),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Lease Created',
+                                        style: TextStyle(
+                                          color: Color(0xFF2E7D32),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
@@ -441,8 +538,9 @@ class _applicant_summeryState extends State<applicant_summery>
                                     child: actionButton(
                                       background:
                                           isMovedin ? Colors.grey : blueColor,
-                                      onTap:
-                                          isMovedin ? null : openCreateLease,
+                                      onTap: (isMovedin || _statusUpdating)
+                                          ? null
+                                          : openCreateLease,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: const [
@@ -468,19 +566,30 @@ class _applicant_summeryState extends State<applicant_summery>
                                       borderColor: isMovedin
                                           ? Colors.grey
                                           : const Color(0xFFDC3545),
-                                      onTap: isMovedin
+                                      onTap: (isMovedin || _statusUpdating)
                                           ? null
                                           : openRejectDialog,
-                                      child: Text(
-                                        'Change to Reject',
-                                        style: TextStyle(
-                                          color: isMovedin
-                                              ? Colors.grey
-                                              : const Color(0xFFDC3545),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
+                                      child: (_statusUpdating &&
+                                              _updatingStatusValue ==
+                                                  'Rejected')
+                                          ? const SizedBox(
+                                              height: 18,
+                                              width: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Color(0xFFDC3545),
+                                              ),
+                                            )
+                                          : Text(
+                                              'Change to Reject',
+                                              style: TextStyle(
+                                                color: isMovedin
+                                                    ? Colors.grey
+                                                    : const Color(0xFFDC3545),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
+                                            ),
                                     ),
                                   ),
                                 ],
@@ -500,32 +609,46 @@ class _applicant_summeryState extends State<applicant_summery>
                                       borderColor: isMovedin
                                           ? Colors.grey
                                           : const Color(0xFF28A745),
-                                      onTap: isMovedin
+                                      onTap: (isMovedin || _statusUpdating)
                                           ? null
                                           : () => changeStatus('Approved'),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.check,
-                                            color: isMovedin
-                                                ? Colors.grey
-                                                : const Color(0xFF28A745),
-                                            size: 20,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Approve Applicant',
-                                            style: TextStyle(
-                                              color: isMovedin
-                                                  ? Colors.grey
-                                                  : const Color(0xFF28A745),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
+                                      child: (_statusUpdating &&
+                                              _updatingStatusValue ==
+                                                  'Approved')
+                                          ? const SizedBox(
+                                              height: 18,
+                                              width: 18,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Color(0xFF28A745),
+                                              ),
+                                            )
+                                          : Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.check,
+                                                  color: isMovedin
+                                                      ? Colors.grey
+                                                      : const Color(
+                                                          0xFF28A745),
+                                                  size: 20,
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  'Approve Applicant',
+                                                  style: TextStyle(
+                                                    color: isMovedin
+                                                        ? Colors.grey
+                                                        : const Color(
+                                                            0xFF28A745),
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -853,6 +976,10 @@ class _applicant_summeryState extends State<applicant_summery>
     );
   }
   int _selectedIndex = 0;
+  // Web parity: disable the status buttons + show a spinner while the
+  // status-update API call is in flight (prevents double-fire).
+  bool _statusUpdating = false;
+  String _updatingStatusValue = '';
   /// Latest applicant status decides whether the Contact Info tab exists
   /// (same rule as the web app's isApprovedOrRejected()).
   bool _isApprovedOrRejected(applicant_summery_details data) {

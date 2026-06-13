@@ -170,14 +170,21 @@ class ApplicantStatus {
   String? updateAt;
   String? statusUpdatedBy;
   String? sId;
+  String? rejectionReason;
 
-  ApplicantStatus({this.status, this.updateAt, this.statusUpdatedBy, this.sId});
+  ApplicantStatus(
+      {this.status,
+      this.updateAt,
+      this.statusUpdatedBy,
+      this.sId,
+      this.rejectionReason});
 
   ApplicantStatus.fromJson(Map<String, dynamic> json) {
     status = json['status']?.toString();
     updateAt = json['updateAt']?.toString();
     statusUpdatedBy = json['statusUpdatedBy']?.toString();
     sId = json['_id']?.toString();
+    rejectionReason = json['rejection_reason']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -186,6 +193,7 @@ class ApplicantStatus {
     data['updateAt'] = this.updateAt;
     data['statusUpdatedBy'] = this.statusUpdatedBy;
     data['_id'] = this.sId;
+    data['rejection_reason'] = this.rejectionReason;
     return data;
   }
 }
@@ -265,12 +273,20 @@ class ApplicantContentDetails {
   Data? data;
   String? message;
 
+  /// Raw `data` json — the new web schema (address_history,
+  /// employment_history, vehicles, pets, ...) consumed by the
+  /// web-parity Application tab read view.
+  Map<String, dynamic>? raw;
+
   ApplicantContentDetails({this.statusCode, this.data, this.message});
 
   ApplicantContentDetails.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message']?.toString();
+    raw = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : null;
   }
 
   Map<String, dynamic> toJson() {

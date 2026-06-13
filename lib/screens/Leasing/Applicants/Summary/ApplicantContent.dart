@@ -7,9 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/editapplicationsummaryForm.dart';
 import 'package:three_zero_two_property/repository/applicant_summery_repo.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/SummaryEditApplicant.dart';
+import 'package:three_zero_two_property/widgets/application_details_view.dart';
+import 'package:three_zero_two_property/widgets/application_edit_form.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/editApplicant.dart';
 import 'package:three_zero_two_property/widgets/CustomDateField.dart';
 import 'package:three_zero_two_property/widgets/CustomEmailField.dart';
@@ -215,6 +218,56 @@ class _ApplicantContentState extends State<ApplicantContent> {
             var data = snapshot.data!.data;
 
             print(data!.isApplicantDataEmpty.toString());
+
+            // Web-parity "Enter Applicant Details" form (edit + manual-entry
+            // add). Replaces the legacy inline form for both flows.
+            if (showEditForm || showAddForm) {
+              return SingleChildScrollView(
+                child: ApplicationEditForm(
+                  raw: snapshot.data!.raw ?? const {},
+                  applicantId: widget.applicant_id,
+                  dateFormat:
+                      Provider.of<DateProvider>(context, listen: false)
+                          .dateFormat,
+                  onSave: (payload) => ApplicantSummeryRepository()
+                      .saveApplicationRaw(payload, widget.applicant_id),
+                  onCancel: () => setState(() {
+                    showEditForm = false;
+                    showAddForm = false;
+                  }),
+                  // Web parity: after a successful save, return to the
+                  // Applicants table (it refetches on return).
+                  onSaved: () {
+                    showEditForm = false;
+                    showAddForm = false;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+            }
+
+            // Web-parity Application tab (read view): when application data
+            // exists, render the new-schema sections. The legacy display
+            // below is bypassed (kept for reference); the empty-state, add
+            // form and both edit-form flows continue to use the original
+            // branches untouched.
+            if (data!.isApplicantDataEmpty != true &&
+                !editFormState.showEditForm &&
+                !showEditForm) {
+              final dateProvider =
+                  Provider.of<DateProvider>(context, listen: false);
+              return SingleChildScrollView(
+                child: ApplicationDetailsView(
+                  raw: snapshot.data!.raw ?? const {},
+                  dateFormat: dateProvider.dateFormat,
+                  onEdit: () {
+                    setState(() {
+                      showEditForm = true;
+                    });
+                  },
+                ),
+              );
+            }
 
             return SingleChildScrollView(
               child: data!.isApplicantDataEmpty == true
@@ -2056,8 +2109,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 Expanded(
                                                   child: Text(
@@ -2067,9 +2118,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           TextOverflow.fade,
                                                       style: TextStyle(
                                                           color: blueColor,
-                                                          fontSize: 18,
+                                                          fontSize: 17,
                                                           fontWeight:
-                                                              FontWeight.w500)),
+                                                              FontWeight.bold)),
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
@@ -2078,41 +2129,27 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     });
                                                   },
                                                   child: Container(
-                                                    child: Material(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 9),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              4.0),
-                                                      elevation: 4,
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: blueColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                          border: Border.all(
-                                                              color: const Color
-                                                                  .fromRGBO(21,
-                                                                  43, 81, 1)),
-                                                        ),
-                                                        child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  8.0),
-                                                          child: Text(
-                                                            'Cancel',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ),
+                                                              8),
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFFDBE0E5)),
+                                                    ),
+                                                    child: const Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                          color: Color(
+                                                              0xFF748097),
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600),
                                                     ),
                                                   ),
                                                 ),
@@ -2125,7 +2162,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Applicant information',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.bold,
                                                   color: blueColor),
                                             ),
                                             const SizedBox(
@@ -2134,12 +2171,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                  color: Colors.white,
                                                   border: Border.all(
-                                                    color: blueColor,
+                                                    color: const Color(0xFFDBE0E5),
                                                   ),
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0)),
+                                                      BorderRadius.circular(12.0)),
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.all(16.0),
@@ -2150,16 +2187,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'First name',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'First Name',
                                                       controller:
                                                           _applicantFirstNameController,
@@ -2170,16 +2209,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Last Name',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Last Name',
                                                       controller:
                                                           _applicantLastNameController,
@@ -2190,16 +2231,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Birth Date',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     CustomDateField(
+                                                      borderColor: const Color(0xFFDBE0E5),
+                                                      borderRadius: 8,
                                                       hintText:
                                                           'Pick date of birth',
                                                       controller:
@@ -2211,16 +2254,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Email',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Email',
                                                       controller:
                                                           _applicantEmailController,
@@ -2231,16 +2276,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Phone Number',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Phone Number',
                                                       controller:
                                                           _applicantPhoneNumberController,
@@ -2258,7 +2305,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Applicant Street Address',
                                               style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.bold,
                                                   color: blueColor),
                                             ),
                                             const SizedBox(
@@ -2267,11 +2314,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                color: Colors.white,
                                                 border: Border.all(
-                                                  color: blueColor,
+                                                  color: const Color(0xFFDBE0E5),
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -2283,16 +2331,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Street Address',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Street Address',
                                                       controller:
@@ -2304,16 +2354,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'City',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'City',
                                                       controller:
                                                           _applicantCityController,
@@ -2324,16 +2376,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'State',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'State',
                                                       controller:
                                                           _applicantStateController,
@@ -2344,16 +2398,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Country',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Country',
                                                       controller:
                                                           _applicantCountryController,
@@ -2364,16 +2420,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Postal Code',
                                                       style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.bold,
                                                           color:
-                                                              Colors.grey[500]),
+                                                              const Color.fromRGBO(21, 43, 81, 1)),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Postal Code',
                                                       controller:
                                                           _applicantPostalCodeController,
@@ -2396,7 +2454,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Emergency contact',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.bold,
                                                 color: blueColor,
                                               ),
                                             ),
@@ -2406,11 +2464,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                color: Colors.white,
                                                 border: Border.all(
-                                                  color: blueColor,
+                                                  color: const Color(0xFFDBE0E5),
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -2422,16 +2481,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'First Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'First Name',
                                                       controller:
                                                           _emergencyFirstNameController,
@@ -2442,16 +2503,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Last Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Last Name',
                                                       controller:
                                                           _emergencyLastNameController,
@@ -2462,16 +2525,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Relationship',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Relationship',
                                                       controller:
                                                           _emergencyRelationshipController,
@@ -2482,16 +2547,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Email',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Email',
                                                       controller:
                                                           _emergencyEmailController,
@@ -2502,16 +2569,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Phone Number',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Phone Number',
                                                       controller:
                                                           _emergencyPhoneNumberController,
@@ -2539,11 +2608,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                color: Colors.white,
                                                 border: Border.all(
-                                                  color: blueColor,
+                                                  color: const Color(0xFFDBE0E5),
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -2565,6 +2635,8 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Rental Address',
                                                       controller:
@@ -2576,16 +2648,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'City',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'City',
                                                       controller:
                                                           _rentalCityController,
@@ -2596,16 +2670,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'State',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'State',
                                                       controller:
                                                           _rentalStateController,
@@ -2616,16 +2692,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Country',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Country',
                                                       controller:
                                                           _rentalCountryController,
@@ -2636,16 +2714,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Postcode',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Postcode',
                                                       controller:
                                                           _rentalPostcodeController,
@@ -2662,16 +2742,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Start Date',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Start Date',
                                                       controller:
                                                           _startDateController,
@@ -2682,16 +2764,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'End Date',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'End Date',
                                                       controller:
                                                           _endDateController,
@@ -2702,16 +2786,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Rent Amount',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Rent Amount',
                                                       controller:
                                                           _rentController,
@@ -2722,16 +2808,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Reason for Leaving',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Reason for Leaving',
                                                       controller:
@@ -2749,7 +2837,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Rental owner information',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.bold,
                                                 color: blueColor,
                                               ),
                                             ),
@@ -2759,11 +2847,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                color: Colors.white,
                                                 border: Border.all(
-                                                  color: blueColor,
+                                                  color: const Color(0xFFDBE0E5),
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -2775,16 +2864,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'First Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'First Name',
                                                       controller:
                                                           _rentalOwnerFirstNameController,
@@ -2795,16 +2886,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Last Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Last Name',
                                                       controller:
                                                           _rentalOwnerLastNameController,
@@ -2815,16 +2908,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Email',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Email',
                                                       controller:
                                                           _rentalOwnerEmailController,
@@ -2835,16 +2930,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Phone Number',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Phone Number',
                                                       controller:
                                                           _rentalOwnerPhoneNumberController,
@@ -2861,7 +2958,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               'Employment',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.w500,
+                                                fontWeight: FontWeight.bold,
                                                 color: blueColor,
                                               ),
                                             ),
@@ -2871,11 +2968,12 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                             Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
+                                                color: Colors.white,
                                                 border: Border.all(
-                                                  color: blueColor,
+                                                  color: const Color(0xFFDBE0E5),
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                                    BorderRadius.circular(12.0),
                                               ),
                                               child: Padding(
                                                 padding:
@@ -2887,16 +2985,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Company Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Company Name',
                                                       controller:
                                                           _employmentNameController,
@@ -2907,16 +3007,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Street Address',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Street Address',
                                                       controller:
@@ -2928,16 +3030,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'City',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'City',
                                                       controller:
                                                           _employmentCityController,
@@ -2948,16 +3052,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'State',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'State',
                                                       controller:
                                                           _employmentStateController,
@@ -2968,16 +3074,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Country',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Country',
                                                       controller:
                                                           _employmentCountryController,
@@ -2988,16 +3096,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Postal Code',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Postal Code',
                                                       controller:
                                                           _employmentPostalCodeController,
@@ -3014,16 +3124,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Primary Email',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Primary Email',
                                                       controller:
                                                           _employmentPrimaryEmailController,
@@ -3034,16 +3146,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Phone Number',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Phone Number',
                                                       controller:
                                                           _employmentPhoneNumberController,
@@ -3054,16 +3168,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Position',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText: 'Position',
                                                       controller:
                                                           _employmentPositionController,
@@ -3074,16 +3190,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Supervisor First Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Supervisor First Name',
                                                       controller:
@@ -3095,16 +3213,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Supervisor Last Name',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Supervisor Last Name',
                                                       controller:
@@ -3116,16 +3236,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     Text(
                                                       'Supervisor Title',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey[500],
+                                                            FontWeight.bold,
+                                                        color: const Color.fromRGBO(21, 43, 81, 1),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       height: 5,
                                                     ),
                                                     NewCustomTextField(
+                                                      showElevation: false,
+                                                      borderColor: const Color(0xFFDBE0E5),
                                                       hintText:
                                                           'Supervisor Title',
                                                       controller:
@@ -3136,6 +3258,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 ),
                                               ),
                                             ),
+                                            /* Web parity: Terms & conditions paragraph + "Agreed to" checkbox removed from edit form; kept commented.
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 bottom: 16.0,
@@ -3185,13 +3308,14 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                           TextOverflow.fade,
                                                       style: TextStyle(
                                                           color:
-                                                              Colors.grey[500],
-                                                          fontSize: 16,
+                                                              const Color.fromRGBO(21, 43, 81, 1),
+                                                          fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.w400)),
+                                                              FontWeight.w600)),
                                                 ),
                                               ],
                                             ),
+                                            */
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 left: 4.0,
@@ -3200,18 +3324,21 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                   softWrap: true,
                                                   overflow: TextOverflow.fade,
                                                   style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 16,
+                                                      color: const Color.fromRGBO(21, 43, 81, 1),
+                                                      fontSize: 13,
                                                       fontWeight:
-                                                          FontWeight.w600)),
+                                                          FontWeight.bold)),
                                             ),
                                             const SizedBox(
                                               height: 10,
                                             ),
                                             NewCustomTextField(
+                                              showElevation: false,
+                                              borderColor: const Color(0xFFDBE0E5),
                                               hintText: 'Agreed by...',
                                               controller: _agreeByController,
                                             ),
+                                            /* Web parity: Privacy Policy / Terms of Service block removed from edit form; kept commented.
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 bottom: 16.0,
@@ -3250,9 +3377,17 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                             FontWeight.w500)),
                                               ])),
                                             ),
-                                            ElevatedButton(
+                                            */
+                                            SizedBox(
+                                              width: double.infinity,
+                                              height: 50,
+                                              child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
-                                                  backgroundColor: blueColor),
+                                                  backgroundColor: blueColor,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(10))),
                                               onPressed: () async {
                                                 if (_formKey.currentState!
                                                     .validate()) {
@@ -3469,9 +3604,11 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                               child: const Text(
                                                 'Save Applicant',
                                                 style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600),
                                               ),
+                                            ),
                                             ),
                                           ],
                                         ),
