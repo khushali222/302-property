@@ -730,12 +730,15 @@ class _Applicants_tableState extends State<Applicants_table>
       );
       return;
     }
+    final String email = invite['email']?.toString() ?? '';
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
-      title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this applicant!",
+      title: "Delete invitation?",
+      desc: email.isNotEmpty
+          ? "Do you want to delete the invitation for $email? Please provide a reason below."
+          : "Do you want to delete this invitation? Please provide a reason below.",
       content: Column(
         children: [
           const SizedBox(height: 10),
@@ -750,35 +753,88 @@ class _Applicants_tableState extends State<Applicants_table>
               ),
             ),
           ),
+          const SizedBox(height: 18),
+          // Delete stays greyed-out/disabled until a reason is entered (matches web).
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: reason,
+            builder: (ctx, value, _) {
+              final bool canDelete = value.text.trim().isNotEmpty;
+              return Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: canDelete
+                          ? () async {
+                              Navigator.pop(context);
+                              await _deletePendingInvite(
+                                  inviteId, reason.text.trim(), email);
+                            }
+                          : null,
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: canDelete ? blueColor : Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                            color:
+                                canDelete ? Colors.white : Colors.grey.shade600,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: blueColor, width: 1.5),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: blueColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
         ],
       ),
-      style: const AlertStyle(backgroundColor: Colors.white),
-      buttons: [
-        DialogButton(
-          child: const Text("Delete",
-              style: TextStyle(color: Colors.white, fontSize: 18)),
-          onPressed: () async {
-            if (reason.text.trim().isEmpty) {
-              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              Navigator.pop(context);
-              await _deletePendingInvite(inviteId, reason.text.trim(), invite['email']?.toString() ?? '');
-            }
-          },
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+        buttonAreaPadding: EdgeInsets.zero,
+        titleStyle: TextStyle(
           color: blueColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
         ),
-        DialogButton(
-          child: Text("Cancel",
-              style: TextStyle(
-                  color: blueColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8),
-          border: Border.all(color: blueColor, width: 1.5),
+        descStyle: TextStyle(
+          color: greyColor,
+          fontWeight: FontWeight.w400,
+          fontSize: 15,
+          height: 1.4,
         ),
-      ],
+      ),
+      buttons: const [],
     ).show();
   }
 
