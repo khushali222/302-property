@@ -92,19 +92,22 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   "Properties",
                   widget.currentpage == "Properties",
                 ),
-              if (permissions != null && permissions.mortgageView == true)
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.handHoldingDollar,
-                    size: 20,
-                    color: widget.currentpage == "Mortgage"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  "Mortgage",
-                  widget.currentpage == "Mortgage",
-                ),
+              // ── Mortgage moved to Reports → "Loan Summary Report" ─────────
+              // Hidden from the sidebar (kept for future use — do NOT delete).
+              // Re-enable by uncommenting (gated on permissions.mortgageView).
+              // if (permissions != null && permissions.mortgageView == true)
+              //   buildListTile(
+              //     context,
+              //     FaIcon(
+              //       FontAwesomeIcons.handHoldingDollar,
+              //       size: 20,
+              //       color: widget.currentpage == "Mortgage"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ),
+              //     "Mortgage",
+              //     widget.currentpage == "Mortgage",
+              //   ),
               // Tenants as top-level menu item (with permission check)
               if (permissions != null && permissions.tenantView == true)
                 buildListTile(

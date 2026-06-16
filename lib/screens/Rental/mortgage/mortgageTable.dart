@@ -276,7 +276,7 @@ class _MortgageTableState extends State<MortgageTable> {
       context,
       MaterialPageRoute(
         builder: (context) => const AddMortgageScreen(
-          drawerCurrentPage: 'Mortgage',
+          drawerCurrentPage: 'Reports',
         ),
       ),
     ).then((_) {
@@ -336,7 +336,7 @@ class _MortgageTableState extends State<MortgageTable> {
         builder: (context) => AddMortgageScreen(
           mortgageId: mortgage['_id'],
           mortgageData: mortgage,
-          drawerCurrentPage: 'Mortgage',
+          drawerCurrentPage: 'Reports',
         ),
       ),
     ).then((_) {
@@ -589,7 +589,7 @@ class _MortgageTableState extends State<MortgageTable> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(
-        currentpage: "Mortgage",
+        currentpage: "Reports",
         dropdown: true,
       ),
       body: SingleChildScrollView(
@@ -609,7 +609,7 @@ class _MortgageTableState extends State<MortgageTable> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: titleBar(
                       width: double.infinity,
-                      title: 'Mortgage',
+                      title: 'Mortgages',
                     ),
                   ),
                 ),
@@ -1153,6 +1153,7 @@ class _MortgageTableState extends State<MortgageTable> {
                                 }).toList(),
                               ),
                             ),
+                            if (totalPages > 1) ...[
                             const SizedBox(height: 20),
 
                             // Pagination Controls
@@ -1236,6 +1237,7 @@ class _MortgageTableState extends State<MortgageTable> {
                                 ),
                               ],
                             ),
+                            ],
                           ],
                         ),
                     ),

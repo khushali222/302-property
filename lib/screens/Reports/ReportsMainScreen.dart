@@ -20,6 +20,7 @@ import '../../widgets/custom_drawer.dart';
 import 'ReportScreens/Home_System_Report.dart';
 import 'ReportScreens/InsurancePremiumReport.dart';
 import 'ReportScreens/LoanSummaryReport.dart';
+import 'package:three_zero_two_property/screens/Rental/mortgage/mortgageTable.dart';
 import 'ReportScreens/PortfolioOverviewReport.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
 import 'ReportScreens/RentRollReport.dart';
@@ -786,11 +787,17 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'KPI overview of your property portfolio',
                   "navigate": PortfolioOverviewReport()
                 },
-                // {
-                //   'title': 'Loan Summary Report',
-                //   'subtitle': 'Summary of all loans with balance and properties',
-                //   "navigate": Loansummaryreport()
-                // },
+                {
+                  'title': 'Loan Summary Report',
+                  'subtitle': 'Summary of all loans with balance and properties',
+                  "navigate": Loansummaryreport()
+                },
+                {
+                  'title': 'Mortgages',
+                  'subtitle':
+                      'Mortgages by property — balances, payoff history, and details',
+                  "navigate": MortgageTable()
+                },
               ],
               "Track payments, transactions, and owner accounts.",
               context),
