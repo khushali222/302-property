@@ -150,10 +150,10 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
         'yyyy-MM-dd',
         'yyyy-MMM-dd',
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
         'dd/MM/yyyy',
         'dd-MM-yyyy',
         'dd/MMM/yyyy'

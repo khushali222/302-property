@@ -122,10 +122,10 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
         'yyyy-MM-dd',
         'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];

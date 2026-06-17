@@ -201,9 +201,10 @@ class _Summery_pageState extends State<Summery_page>
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd',
         'MM/dd/yyyy',
         'MM-dd-yyyy',
-        'yyyy-MM-dd',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];

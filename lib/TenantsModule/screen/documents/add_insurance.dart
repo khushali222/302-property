@@ -53,10 +53,10 @@ class _add_insuranceState extends State<add_insurance> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
         'yyyy-MM-dd',
         'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];
@@ -80,10 +80,53 @@ class _add_insuranceState extends State<add_insurance> {
     }
   }
 
-  Future<void> _pickPdfFiles() async {
+  // Gallery can't show pdf/csv, so we let the user pick the source:
+  // Photo Gallery (images) or Browse Files (png/jpeg/pdf/csv).
+  void _showUploadOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              ListTile(
+                leading: Icon(Icons.photo_library, color: blueColor),
+                title: const Text('Photo Gallery'),
+                subtitle: const Text('.png, .jpeg'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickFiles(FileType.image, null);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.insert_drive_file, color: blueColor),
+                title: const Text('Browse Files'),
+                subtitle: const Text('.png, .jpeg, .pdf, .csv'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickFiles(
+                      FileType.custom, ['png', 'jpeg', 'jpg', 'pdf', 'csv']);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFiles(
+      FileType type, List<String>? allowedExtensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      type: type,
+      allowedExtensions: allowedExtensions,
       allowMultiple: true,
     );
 
@@ -139,6 +182,7 @@ class _add_insuranceState extends State<add_insurance> {
     if (responseBody['status'] == 'ok') {
       Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
+      print('🔵 Uploaded file -> ${file.first["filename"]}');
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -264,20 +308,20 @@ class _add_insuranceState extends State<add_insurance> {
             key.currentState!.openDrawer();
           },
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF4F6F9),
         drawer: CustomDrawer(
           currentpage: 'Documents',
         ),
         body: Form(
           key: _formkey,
           child: Container(
-            color: Colors.white,
+            color: const Color(0xFFF4F6F9),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(
-                    height: 25,
+                    height: 12,
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
@@ -285,20 +329,17 @@ class _add_insuranceState extends State<add_insurance> {
                     // size: 18,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04,
-                        vertical: 10),
+                    padding: const EdgeInsets.all(16.0),
                     child: Container(
                       width: double.infinity,
-                      // height: !form_valid ? 860 : 830,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 103, 1),
+                            color: const Color(0xFFDBE0E5),
                           )),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -306,11 +347,13 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
                               hintText: 'Enter Provider Name',
                               controller: provider,
@@ -329,11 +372,13 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
                               hintText: 'Enter Policy Id',
                               controller: policy,
@@ -355,11 +400,13 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               onTap: () {
                                 _selectDate(context);
                               },
@@ -388,11 +435,13 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               onTap: () {
                                 _selectDateexpiration(context);
                               },
@@ -421,7 +470,7 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
@@ -439,6 +488,8 @@ class _add_insuranceState extends State<add_insurance> {
                             //   },
                             // ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
@@ -465,134 +516,181 @@ class _add_insuranceState extends State<add_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              height: 40,
-                              width: 125,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
+                            // Empty state: tap-to-upload card (matches the
+                            // work order / appliance upload cards).
+                            if (_uploadedFileNames.isEmpty)
+                              GestureDetector(
+                                onTap: _showUploadOptions,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/Upload.png',
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Upload your document here',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        'Maximum File Size is 20MB',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                      const Text(
+                                        'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                onPressed: _pickPdfFiles,
-                                child: const Text('Choose Files'),
                               ),
-                            ),
-                            SingleChildScrollView(
-                              child: Column(
-                                children: _uploadedFileNames.map((fileName) {
-                                  int index =
-                                      _uploadedFileNames.indexOf(fileName);
-                                  return ListTile(
-                                    title: Text(
-                                      fileName,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF748097),
+                            // Filled state: show the uploaded file with a remove (X).
+                            if (_uploadedFileNames.isNotEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.insert_drive_file,
+                                        color: Color(0xFF748097), size: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        _uploadedFileNames.first,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF748097),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    trailing: IconButton(
+                                    IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          _uploadedFileNames.removeAt(index);
+                                          _uploadedFileNames.clear();
                                         });
                                       },
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.remove,
-                                        color: Color(0xFF748097),
-                                      ),
+                                      icon: const Icon(Icons.close,
+                                          color: Color(0xFF748097), size: 20),
                                     ),
-                                  );
-                                }).toList(),
+                                  ],
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * .04),
+                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 30.0),
                     child: Row(
                       children: [
-                        Container(
-                          height: 50,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                               ),
-                            ),
-                            onPressed: () {
-                              if (_formkey.currentState!.validate()) {
-                                if (_validateDates()) {
-                                  setState(() {
-                                    isLoading = true; // Show loading spinner
-                                  });
-                                  addinsurance().then((_) {
+                              onPressed: () {
+                                if (_formkey.currentState!.validate()) {
+                                  if (_validateDates()) {
                                     setState(() {
-                                      isLoading =
-                                          false; // Hide loading spinner after adding insurance
+                                      isLoading = true; // Show loading spinner
                                     });
-                                  }).catchError((error) {
-                                    setState(() {
-                                      isLoading =
-                                          false; // Hide loading spinner in case of error
+                                    addinsurance().then((_) {
+                                      setState(() {
+                                        isLoading =
+                                            false; // Hide loading spinner after adding insurance
+                                      });
+                                    }).catchError((error) {
+                                      setState(() {
+                                        isLoading =
+                                            false; // Hide loading spinner in case of error
+                                      });
+                                      // Optionally, handle the error here, such as showing a message
                                     });
-                                    // Optionally, handle the error here, such as showing a message
-                                  });
+                                  }
                                 }
-                              }
-                            },
-                            child: isLoading
-                                ? const Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 55.0,
+                              },
+                              child: isLoading
+                                  ? const Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          color: Color(0xFFf7f8f9),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15),
                                     ),
-                                  )
-                                : const Text(
-                                    'Save',
-                                    style: TextStyle(color: Color(0xFFf7f8f9)),
-                                  ),
+                            ),
                           ),
                         ),
                         const SizedBox(
-                          width: 8,
+                          width: 12,
                         ),
-                        Container(
+                        Expanded(
+                          child: SizedBox(
                             height: 50,
-                            width: 120,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0)),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFffffff),
+                                    elevation: 0,
+                                    side: const BorderSide(
+                                        color: Color(0xFFDBE0E5)),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(10.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                                 child: const Text(
                                   'Cancel',
-                                  style: TextStyle(color: Color(0xFF748097)),
-                                )))
+                                  style: TextStyle(
+                                      color: Color(0xFF748097),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                )),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -614,21 +712,33 @@ class _add_insuranceState extends State<add_insurance> {
       "policy_id": policy.text.trim(),
       "EffectiveDate": _convertToApiFormat(effective.text.trim()),
       "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
-      "LiabilityCoverage": liablity.text.trim(),
+      // Web parity: LiabilityCoverage is sent as a number (the web sends 100,
+      // not "100"). Falls back to the raw string only if parsing ever fails.
+      "LiabilityCoverage": num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
+
+    // ===== DEBUG: Insurance ADD flow — remove before release =====
+    print('🔵 ===== ADD INSURANCE =====');
+    print('🔵 Effective : shown "${effective.text.trim()}"  ->  API "${values["EffectiveDate"]}"');
+    print('🔵 Expiration: shown "${expiration.text.trim()}"  ->  API "${values["ExpirationDate"]}"');
+    print('🔵 LiabilityCoverage: raw "${liablity.text.trim()}"  ->  sent ${values["LiabilityCoverage"]} (${values["LiabilityCoverage"].runtimeType})');
+    print('🔵 Policy file: "${values["Policy"]}"');
+    print('🔵 POST $Api_url/api/tenantinsurance/tenantinsurance/$id');
+    print('🔵 JSON body: ${jsonEncode(values)}');
+    // =============================================================
 
     final http.Response response = await apiPost(
       Uri.parse('$Api_url/api/tenantinsurance/tenantinsurance/$id'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM $id",
-        //'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: values,
+      body: jsonEncode(values),
     );
 
-    print(response.body);
+    print('🔵 Response (${response.statusCode}): ${response.body}');
     var responseData = json.decode(response.body);
 
     if (responseData["statusCode"] == 200) {

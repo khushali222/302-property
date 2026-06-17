@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -384,11 +385,29 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
   }
 
   void _showAlert(BuildContext context, String id) {
+    final TextEditingController reasonController = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this Insurance!",
+      content: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reasonController,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
       style: AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -413,8 +432,13 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            var data =
-                await InsuranceRepository().deleteInsurancesProperties(id);
+            if (reasonController.text.trim().isEmpty) {
+              Fluttertoast.showToast(
+                  msg: "Please enter a reason for deletion");
+              return;
+            }
+            var data = await InsuranceRepository()
+                .deleteInsurancesProperties(id, reasonController.text.trim());
             // Add your delete logic here
 
             if (data == true)

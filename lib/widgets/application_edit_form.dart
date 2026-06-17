@@ -717,6 +717,17 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
                 initialDate: initial,
                 firstDate: DateTime(1900),
                 lastDate: DateTime(2100),
+                // Match the app's standard date picker theme (navy).
+                builder: (context, child) => Theme(
+                  data: ThemeData.light().copyWith(
+                    primaryColor: blueColor,
+                    colorScheme: ColorScheme.light(primary: blueColor),
+                    buttonTheme: const ButtonThemeData(
+                      textTheme: ButtonTextTheme.primary,
+                    ),
+                  ),
+                  child: child!,
+                ),
               );
               if (picked != null) {
                 setState(() => c.text = DateFormat(_df).format(picked));
@@ -782,61 +793,12 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
   }
 
   /// Resident dropdown (primary applicant + named residents).
-  Widget _residentDropdown(_Rep r) {
-    final options = <String, String>{};
-    final primaryName = '${_first.text.trim()} ${_last.text.trim()}'.trim();
-    options[primaryName.isEmpty ? 'Primary Applicant' : primaryName] = 'primary';
-    for (int i = 0; i < _residents.length; i++) {
-      final nm = _residents[i].t['name']?.text.trim() ?? '';
-      if (nm.isNotEmpty) options[nm] = 'resident_$i';
-    }
-    final currentVal = r.d['resident_id'] ?? 'primary';
-    final currentLabel = options.entries
-        .firstWhere((e) => e.value == currentVal,
-            orElse: () => options.entries.first)
-        .key;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _label('Resident'),
-          DropdownButtonFormField2<String>(
-            value: currentLabel,
-            isExpanded: true,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF3A3A3A)),
-            decoration: _dec('Select'),
-            iconStyleData: const IconStyleData(
-              icon: Icon(Icons.keyboard_arrow_down),
-              iconEnabledColor: Color(0xFF8A95A8),
-            ),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 300,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.white,
-                border: Border.all(color: _border),
-              ),
-              offset: const Offset(0, -4),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-                height: 44, padding: EdgeInsets.symmetric(horizontal: 14)),
-            items: options.keys
-                .map((o) => DropdownMenuItem(value: o, child: Text(o)))
-                .toList(),
-            onChanged: (v) =>
-                setState(() => r.d['resident_id'] = options[v] ?? 'primary'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _checkRow(String label, bool value, ValueChanged<bool> onChanged) {
+  Widget _checkRow(String label, bool value, ValueChanged<bool> onChanged,
+      {bool enabled = true}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
-        onTap: () => onChanged(!value),
+        onTap: enabled ? () => onChanged(!value) : null,
         child: Row(
           children: [
             SizedBox(
@@ -844,7 +806,7 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
               height: 22,
               child: Checkbox(
                 value: value,
-                onChanged: (v) => onChanged(v ?? false),
+                onChanged: enabled ? (v) => onChanged(v ?? false) : null,
                 activeColor: blueColor,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape:
@@ -861,6 +823,51 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
         ),
       ),
     );
+  }
+
+  /// Read-only / disabled field (greyed) — matches web's non-editable fields
+  /// (Resident, Agreed by). Shows the value but the user can't change it.
+  Widget _disabledField(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _label(label),
+          Container(
+            width: double.infinity,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F3F6),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: _border),
+            ),
+            child: Text(
+              value.trim().isEmpty ? '—' : value,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF8A95A8)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Resolves an employment row's resident_id to a display name.
+  String _residentDisplayName(_Rep r) {
+    final id = (r.d['resident_id'] ?? 'primary').toString();
+    if (id == 'primary') {
+      final n = '${_first.text.trim()} ${_last.text.trim()}'.trim();
+      return n.isEmpty ? 'Primary Applicant' : n;
+    }
+    if (id.startsWith('resident_')) {
+      final idx = int.tryParse(id.substring('resident_'.length));
+      if (idx != null && idx >= 0 && idx < _residents.length) {
+        final nm = _residents[idx].t['name']?.text.trim() ?? '';
+        if (nm.isNotEmpty) return nm;
+      }
+    }
+    return id;
   }
 
   Widget _yesNo(String question, String value, ValueChanged<String> onChanged,
@@ -1078,15 +1085,18 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
           // Web parity: only the first job carries the "Current Employment"
           // checkbox; every additional job is a "Previous Employment #N".
           if (i == 0)
+            // Web parity: "Current Employment" is disabled (the first job is
+            // always current; user can't toggle it).
             _checkRow('Current Employment', _employments[0].flag,
-                (v) => setState(() => _employments[0].flag = v))
+                (v) {}, enabled: false)
           else
             _entryLabel('Previous Employment #$i',
                 onRemove: () => setState(() {
                       _employments[i].dispose();
                       _employments.removeAt(i);
                     })),
-          _residentDropdown(_employments[i]),
+          // Web parity: Resident is display-only (not editable).
+          _disabledField('Resident', _residentDisplayName(_employments[i])),
           _text('Employer Name', _employments[i].t['employer']!,
               hint: 'Enter employer'),
           _date('From Date', _employments[i].t['from_date']!),
@@ -1281,7 +1291,8 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
             style: TextStyle(
                 color: blueColor, fontSize: 16, fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
-        _text('Agreed by', _agreeBy, hint: 'Agreed by...'),
+        // Web parity: Agreed by is display-only (not editable).
+        _disabledField('Agreed by', _agreeBy.text),
       ],
     );
   }

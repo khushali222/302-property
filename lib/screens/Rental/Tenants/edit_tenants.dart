@@ -71,9 +71,10 @@ class _EditTenantsState extends State<EditTenants> {
       try {
         // Try to parse the date using common formats since it's now in user's preferred format
         List<String> dateFormats = [
+          'yyyy-MM-dd',
+          'yyyy-MMM-dd',
           'MM/dd/yyyy',
           'MM-dd-yyyy',
-          'yyyy-MM-dd',
           'dd/MM/yyyy',
           'dd-MM-yyyy'
         ];
@@ -281,9 +282,10 @@ class _EditTenantsState extends State<EditTenants> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
+        'yyyy-MM-dd',
+        'yyyy-MMM-dd',
         'MM/dd/yyyy',
         'MM-dd-yyyy',
-        'yyyy-MM-dd',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];
