@@ -1733,7 +1733,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  if (totalPages > 1) SizedBox(height: 20),
+                                  if (totalPages > 1)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

@@ -53,17 +53,15 @@ class _Tenants_tableState extends State<Tenants_table> {
   // Filter checkbox
   bool includeFormerTenants = false;
 
-  // Method to get filtered data based on checkbox selection
+  // Show every tenant the server returns for this page (current + former),
+  // matching the web. The "Include Former" checkbox drives the server query
+  // (tenantType=current vs all) via _tenantsPageFuture — we must NOT re-filter
+  // client-side, otherwise rows get hidden and disagree with the page count.
   List<Tenant> getFilteredData(Map<String, List<Tenant>> categorizedData) {
     List<Tenant> filteredData = [];
 
-    // Always include current tenants
     filteredData.addAll(categorizedData['currentTenants'] ?? []);
-
-    // Include former tenants if checkbox is checked
-    if (includeFormerTenants) {
-      filteredData.addAll(categorizedData['formerTenants'] ?? []);
-    }
+    filteredData.addAll(categorizedData['formerTenants'] ?? []);
 
     return filteredData;
   }
@@ -1551,7 +1549,7 @@ GestureDetector(
                                   ),
                                 ),
                                 SizedBox(height: 20),
-                                if (data.isNotEmpty)
+                                if (totalPages > 1)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

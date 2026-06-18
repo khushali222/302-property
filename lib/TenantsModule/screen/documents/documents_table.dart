@@ -67,44 +67,121 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
   void _showAddInsuranceAlert(
       BuildContext context, VoidCallback onConfirm, Insurance_data? property) {
     var id = property?.status == 'ACTIVE' ? property?.policyId : null;
-    print('property status ${id}');
-    Alert(
+    showDialog(
       context: context,
-      type: AlertType.warning,
-      title: "Add New Insurance",
-      desc:
-          "If you add new renters insurance, the older one with active Policy ID ${id} will get expired!",
-      style: const AlertStyle(
-        backgroundColor: Colors.white,
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 26, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border:
+                        Border.all(color: const Color(0xFFECA14E), width: 2.5),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      '!',
+                      style: TextStyle(
+                        color: Color(0xFFECA14E),
+                        fontSize: 34,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  "Are you sure you want to add a new renter's insurance policy?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(21, 43, 81, 1),
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "The currently active policy (Policy ID: ${id ?? '-'}) will be marked as expired.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[600],
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            side: const BorderSide(color: Color(0xFFDBE0E5)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            onConfirm();
+                          },
+                          child: Text(
+                            'Yes',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFCEBEB),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Color(0xFFE24B4A),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        DialogButton(
-          child: const Text(
-            "Yes",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () {
-            Navigator.pop(context); // Close the alert
-            onConfirm(); // Execute the confirm action
-          },
-          color: Colors.red,
-        ),
-      ],
-    ).show();
+        );
+      },
+    );
   }
 
   int? expandedIndex;
@@ -171,7 +248,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     Padding(
                             padding: const EdgeInsets.only(left: 20.0),
                             child: Text(
-                              "Insurance \nCompany ",
+                              "Company",
                               style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -183,7 +260,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Text(
-                        "Insurance \nCompany ",
+                        "Company",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -296,7 +373,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                 child: Row(
                   children: [
                     Text(
-                      "Expiration\nDate",
+                      "Expiration",
                       style: TextStyle(
                           color: blueColor,
                           fontWeight: FontWeight.bold,
@@ -342,7 +419,6 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });

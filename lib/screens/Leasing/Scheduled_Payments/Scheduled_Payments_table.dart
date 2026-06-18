@@ -1318,7 +1318,8 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

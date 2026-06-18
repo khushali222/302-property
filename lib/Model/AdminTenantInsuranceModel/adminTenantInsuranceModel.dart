@@ -13,6 +13,10 @@ class AdminTenantInsuranceModel {
   bool? isDelete;
   String? sId;
   int? iV;
+  // New-API fields
+  String? leaseId;
+  String? phoneNumber;
+  String? rentersInsuranceId;
 
   AdminTenantInsuranceModel(
       {this.tenantInsuranceId,
@@ -28,23 +32,35 @@ class AdminTenantInsuranceModel {
       this.createdAt,
       this.isDelete,
       this.sId,
-      this.iV});
+      this.iV,
+      this.leaseId,
+      this.phoneNumber,
+      this.rentersInsuranceId});
 
   AdminTenantInsuranceModel.fromJson(Map<String, dynamic> json) {
     tenantInsuranceId = json['TenantInsurance_id'];
-    tenantId = json['tenant_id'];
+    // new API returns tenants as a list; old API returns a single tenant_id
+    tenantId = json['tenant_id'] ??
+        (json['tenants'] is List && (json['tenants'] as List).isNotEmpty
+            ? (json['tenants'] as List).first?.toString()
+            : null);
     adminId = json['admin_id'];
     policyId = json['policy_id'];
-    provider = json['Provider'];
-    liabilityCoverage = json['LiabilityCoverage'].toString();
-    effectiveDate = json['EffectiveDate'];
-    expirationDate = json['ExpirationDate'];
-    policy = json['Policy'];
+    provider = json['Provider'] ?? json['insurance_company'];
+    liabilityCoverage =
+        (json['LiabilityCoverage'] ?? json['liability_coverage'])?.toString();
+    effectiveDate = json['EffectiveDate'] ?? json['effective_date'];
+    expirationDate = json['ExpirationDate'] ?? json['expiration_date'];
+    policy = json['Policy'] ?? json['insurance_policy_document'];
     status = json['status'];
-    createdAt = json['createdAt'];
+    createdAt = json['createdAt'] ?? json['date_created'];
     isDelete = json['is_delete'];
     sId = json['_id'];
     iV = json['__v'];
+    // new-API only fields
+    leaseId = json['lease_id'];
+    phoneNumber = json['insurance_company_phone_number'];
+    rentersInsuranceId = json['renters_insurance_id'];
   }
 
   Map<String, dynamic> toJson() {

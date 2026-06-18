@@ -87,35 +87,117 @@ class _add_insuranceState extends State<add_insurance> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
+        Widget sourceTile({
+          required IconData icon,
+          required String title,
+          required String subtitle,
+          required VoidCallback onPick,
+        }) {
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              onPick();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: blueColor, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                ],
+              ),
+            ),
+          );
+        }
+
         return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8),
-              ListTile(
-                leading: Icon(Icons.photo_library, color: blueColor),
-                title: const Text('Photo Gallery'),
-                subtitle: const Text('.png, .jpeg'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickFiles(FileType.image, null);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.insert_drive_file, color: blueColor),
-                title: const Text('Browse Files'),
-                subtitle: const Text('.png, .jpeg, .pdf, .csv'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickFiles(
-                      FileType.custom, ['png', 'jpeg', 'jpg', 'pdf', 'csv']);
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDBE0E5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Upload Insurance Document',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(21, 43, 81, 1),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Choose where to pick your document from',
+                  style: TextStyle(fontSize: 12.5, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 18),
+                sourceTile(
+                  icon: Icons.photo_library_rounded,
+                  title: 'Photo Gallery',
+                  subtitle: '.png, .jpeg',
+                  onPick: () => _pickFiles(FileType.image, null),
+                ),
+                const SizedBox(height: 12),
+                sourceTile(
+                  icon: Icons.insert_drive_file_rounded,
+                  title: 'Browse Files',
+                  subtitle: '.png, .jpeg, .pdf, .csv',
+                  onPick: () => _pickFiles(
+                      FileType.custom, ['png', 'jpeg', 'jpg', 'pdf', 'csv']),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         );
       },
@@ -163,12 +245,10 @@ class _add_insuranceState extends State<add_insurance> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -178,11 +258,9 @@ class _add_insuranceState extends State<add_insurance> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
-      print('🔵 Uploaded file -> ${file.first["filename"]}');
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -355,7 +433,7 @@ class _add_insuranceState extends State<add_insurance> {
                               showElevation: false,
                               borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Provider Name',
+                              hintText: 'Enter provider name',
                               controller: provider,
                               //   label: "",
                               validator: (value) {
@@ -380,7 +458,7 @@ class _add_insuranceState extends State<add_insurance> {
                               showElevation: false,
                               borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Policy Id',
+                              hintText: 'Enter policy id',
                               controller: policy,
                               // inputFormatters: [
                               //   // Only allow alphanumeric characters (letters and digits)
@@ -493,6 +571,7 @@ class _add_insuranceState extends State<add_insurance> {
                               keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
+                              suffixIcon: IconButton(icon: const Icon(Icons.check), color: blueColor, tooltip: 'Done', onPressed: () => FocusScope.of(context).unfocus()),
                               textInputAction: TextInputAction.done,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(
@@ -718,16 +797,6 @@ class _add_insuranceState extends State<add_insurance> {
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
 
-    // ===== DEBUG: Insurance ADD flow — remove before release =====
-    print('🔵 ===== ADD INSURANCE =====');
-    print('🔵 Effective : shown "${effective.text.trim()}"  ->  API "${values["EffectiveDate"]}"');
-    print('🔵 Expiration: shown "${expiration.text.trim()}"  ->  API "${values["ExpirationDate"]}"');
-    print('🔵 LiabilityCoverage: raw "${liablity.text.trim()}"  ->  sent ${values["LiabilityCoverage"]} (${values["LiabilityCoverage"].runtimeType})');
-    print('🔵 Policy file: "${values["Policy"]}"');
-    print('🔵 POST $Api_url/api/tenantinsurance/tenantinsurance/$id');
-    print('🔵 JSON body: ${jsonEncode(values)}');
-    // =============================================================
-
     final http.Response response = await apiPost(
       Uri.parse('$Api_url/api/tenantinsurance/tenantinsurance/$id'),
       headers: <String, String>{
@@ -738,7 +807,6 @@ class _add_insuranceState extends State<add_insurance> {
       body: jsonEncode(values),
     );
 
-    print('🔵 Response (${response.statusCode}): ${response.body}');
     var responseData = json.decode(response.body);
 
     if (responseData["statusCode"] == 200) {

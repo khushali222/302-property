@@ -1042,7 +1042,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -1547,7 +1548,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

@@ -527,11 +527,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       constraints: BoxConstraints(minHeight: 28),
+      decoration: BoxDecoration(
+        color: Color(0xFFE2E3E5),
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Center(
         child: Text(
           'Not Sent',
           style: TextStyle(
-            color: Colors.grey[600],
+            color: Color(0xFF6C757D),
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -1260,7 +1264,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                           }).toList(),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      if (totalPages > 1) const SizedBox(height: 20),
+                      if (totalPages > 1)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

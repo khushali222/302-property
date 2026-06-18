@@ -2131,6 +2131,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                   builder: (context) =>
                                                       AdminAddTenantInsurance(
                                                     tenantid: widget.tenantId,
+                                                    leaseId: _leaseIdForAddCard ?? widget.tenantId,
+                                                    tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                   ),
                                                 ),
                                               );
@@ -2443,7 +2445,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                               style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                             ),
                                                                                             TextSpan(
-                                                                                              text: '${Propertytype.liabilityCoverage ?? ''}',
+                                                                                              text: '\$${Propertytype.liabilityCoverage ?? ''}',
                                                                                               style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                             ),
                                                                                           ],
@@ -2527,6 +2529,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                     MaterialPageRoute(
                                                                                         builder: (context) => editAdminInsurance(
                                                                                           data: Propertytype,
+                                                                                          tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                                                         )));
                                                                                 if (check == true) {
                                                                                   setState(() {
@@ -2575,7 +2578,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                     tenantInsuranceId: Propertytype.sId,
                                                                                                     policy: Propertytype.insurancePolicyDocument,
                                                                                                     status: Propertytype.policyStatus?.toLowerCase() ?? 'expired',
+                                                                                                    phoneNumber: Propertytype.insuranceCompanyPhoneNumber,
+                                                                                                    rentersInsuranceId: Propertytype.rentersInsuranceId,
+                                                                                                    leaseId: Propertytype.leaseId,
                                                                                                   ),
+                                                                                                  tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                                                                 )));
                                                                                     if (check == true) {
                                                                                       setState(() {
@@ -2898,7 +2905,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             _pagedData[i].policyId!,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].liabilityCoverage.toString()!,
+                                                                            '\$${_pagedData[i].liabilityCoverage ?? ''}',
                                                                           ),
                                                                           _buildDataCell(
                                                                             _pagedData[i].active == true
@@ -5594,8 +5601,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                 .push(MaterialPageRoute(
                                                     builder: (context) =>
                                                         AdminAddTenantInsurance(
-                                                          tenantid:
-                                                              widget.tenantId,
+                                                          tenantid: widget.tenantId,
+                                                          leaseId: (widget.tenants != null ? _tabletLeaseIdForAddCard(widget.tenants!) : null) ?? widget.tenantId,
+                                                          tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                         )));
                                             if (result == true) {
                                               setState(() {

@@ -3525,7 +3525,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                               style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                             ),
                                                                                             TextSpan(
-                                                                                              text: '${policy.liabilityCoverage ?? ''}',
+                                                                                              text: '\$${policy.liabilityCoverage ?? ''}',
                                                                                               style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                             ),
                                                                                           ],
@@ -3975,8 +3975,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                 '',
                                                                           ),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].liabilityCoverage?.toString() ??
-                                                                                '',
+                                                                            '\$${_pagedData[i].liabilityCoverage ?? ''}',
                                                                           ),
                                                                           _buildDataCell(
                                                                             _pagedData[i].policyStatus ??
@@ -5944,8 +5943,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                               '',
                                                                         ),
                                                                         _buildDataCell(
-                                                                          _pagedData[i].liabilityCoverage?.toString() ??
-                                                                              '',
+                                                                          '\$${_pagedData[i].liabilityCoverage ?? ''}',
                                                                         ),
                                                                         _buildDataCell(
                                                                           _pagedData[i].policyStatus ??
