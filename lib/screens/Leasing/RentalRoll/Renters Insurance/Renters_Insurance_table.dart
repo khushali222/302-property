@@ -270,6 +270,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -310,7 +311,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 ),
               ),
             ),
+            SizedBox(width: 10),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -333,7 +336,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 },
                 child: Row(
                   children: [
-                    Text("     Expiration\n        Date",
+                    Text("Effective\nDate",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -343,7 +346,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 ),
               ),
             ),
+            SizedBox(width: 25),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -366,7 +371,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 },
                 child: Row(
                   children: [
-                    Text("      Effective\n         Date",
+                    Text("Expiration\nDate",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -700,12 +705,12 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                        item.expirationDate
+                                                        item.effectiveDate
                                                                     ?.isNotEmpty ==
                                                                 true
                                                             ? dateProvider
                                                                 .formatCurrentDate(
-                                                                    '${item?.expirationDate?.split('T').first}')
+                                                                    '${item?.effectiveDate?.split('T').first}')
                                                             : 'N/A',
                                                         style: TextStyle(
                                                           color: blueColor,
@@ -719,12 +724,12 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                        item.effectiveDate
+                                                        item.expirationDate
                                                                     ?.isNotEmpty ==
                                                                 true
                                                             ? dateProvider
                                                                 .formatCurrentDate(
-                                                                    '${item?.effectiveDate?.split('T').first}')
+                                                                    '${item?.expirationDate?.split('T').first}')
                                                             : 'N/A',
                                                         style: TextStyle(
                                                           color: blueColor,
