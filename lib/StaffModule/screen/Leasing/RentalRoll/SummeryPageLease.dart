@@ -645,8 +645,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       alignment: Alignment.centerLeft,
                                       child: Row(
                                         children: [
-                                          Image.asset(iconPath,
-                                              width: 20, height: 20),
+                                          index == 6
+                                              ? Icon(
+                                                  Icons.sticky_note_2_outlined,
+                                                  size: 22,
+                                                  color: blueColor)
+                                              : Image.asset(iconPath,
+                                                  width: 20, height: 20),
                                           const SizedBox(width: 12),
                                           Text(
                                             item,
@@ -721,8 +726,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       ),
                                       child: Row(
                                         children: [
-                                          Image.asset(iconPath,
-                                              width: 20, height: 20),
+                                          index == 6
+                                              ? Icon(
+                                                  Icons.sticky_note_2_outlined,
+                                                  size: 22,
+                                                  color: blueColor)
+                                              : Image.asset(iconPath,
+                                                  width: 20, height: 20),
                                           const SizedBox(width: 12),
                                           Expanded(
                                             child: Text(

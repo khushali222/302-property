@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Ins
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
@@ -716,7 +717,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                           color: blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 14,
+                                                          fontSize: 13,
                                                         ),
                                                       ),
                                                     ),
@@ -735,7 +736,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                           color: blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 14,
+                                                          fontSize: 13,
                                                         ),
                                                       ),
                                                     ),
@@ -914,6 +915,64 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                         width:
                                                                             2),
                                                                   ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                final hasDoc = (item.insurancePolicyDocument ??
+                                                                            '')
+                                                                        .isNotEmpty;
+                                                                if (hasDoc) {
+                                                                  viewInsuranceDocument(
+                                                                      context,
+                                                                      item.insurancePolicyDocument);
+                                                                } else {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    const SnackBar(
+                                                                      content: Text(
+                                                                          'No document attached'),
+                                                                      behavior:
+                                                                          SnackBarBehavior
+                                                                              .floating,
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: (item.insurancePolicyDocument ??
+                                                                              '')
+                                                                          .isNotEmpty
+                                                                      ? const Color(
+                                                                          0xFFE8F0FA)
+                                                                      : Colors.grey
+                                                                          .shade100,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Center(
+                                                                  child: FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .fileLines,
+                                                                    size: 15,
+                                                                    color: (item.insurancePolicyDocument ??
+                                                                                '')
+                                                                            .isNotEmpty
+                                                                        ? blueColor
+                                                                        : Colors.grey
+                                                                            .shade400,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),

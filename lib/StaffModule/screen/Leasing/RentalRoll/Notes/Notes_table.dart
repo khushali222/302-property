@@ -39,6 +39,14 @@ class _NotesTableState extends State<NotesTable> {
   int? expandedRowIndex;
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
   int? expandedIndex;
+  String selectedNoteFilter = "All Types";
+  final List<String> filterTypeList = [
+    "All Types",
+    "General",
+    "Reminder",
+    "Legal",
+    "Lease Payment",
+  ];
   void _changeRowsPerPage(int selectedRowsPerPage) {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
@@ -250,6 +258,9 @@ class _NotesTableState extends State<NotesTable> {
       barrierDismissible: false,
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
+          final bool canSubmit = (selectedNoteType != null &&
+                  selectedNoteType!.trim().isNotEmpty) &&
+              contentController.text.trim().isNotEmpty;
           return Dialog(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -263,12 +274,46 @@ class _NotesTableState extends State<NotesTable> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      noteId == null ? 'Add Note' : 'Edit Note',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          noteId == null ? 'Add Note' : 'Edit Note',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => Navigator.of(context).pop(),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F3F6),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              size: 22,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     Form(
@@ -280,13 +325,22 @@ class _NotesTableState extends State<NotesTable> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                " Notes Type *",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
+                              Text.rich(
+                                TextSpan(
+                                  text: "Notes Type ",
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                  children: const [
+                                    TextSpan(
+                                      text: "*",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(height: 8),
                               DropdownButtonHideUnderline(
                                 child: DropdownButtonFormField2<String>(
                                   isExpanded: true,
@@ -296,7 +350,8 @@ class _NotesTableState extends State<NotesTable> {
                                     child: Text(
                                       "Select Note Type",
                                       style: TextStyle(
-                                          fontSize: 14, color: Colors.black),
+                                          fontSize: 15,
+                                          color: Color(0xFF9AA0AA)),
                                     ),
                                   ),
                                   decoration: InputDecoration(
@@ -338,7 +393,7 @@ class _NotesTableState extends State<NotesTable> {
                                   dropdownStyleData: DropdownStyleData(
                                     maxHeight: 300,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(10),
                                       color: Colors.white,
                                     ),
                                     scrollbarTheme: ScrollbarThemeData(
@@ -349,21 +404,21 @@ class _NotesTableState extends State<NotesTable> {
                                     ),
                                   ),
                                   buttonStyleData: ButtonStyleData(
-                                    height: 50,
+                                    height: 56,
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 3),
+                                        horizontal: 8),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(10),
                                       color: Colors.white,
                                       border: Border.all(
-                                          color: Colors.grey.shade400),
+                                          color: Colors.grey.shade300),
                                     ),
-                                    elevation: 2,
                                   ),
-                                  iconStyleData: const IconStyleData(
-                                    icon: Icon(Icons.arrow_drop_down),
-                                    iconSize: 24,
-                                    iconEnabledColor: Color(0xFFb0b6c3),
+                                  iconStyleData: IconStyleData(
+                                    icon:
+                                        const Icon(Icons.keyboard_arrow_down),
+                                    iconSize: 26,
+                                    iconEnabledColor: blueColor,
                                     iconDisabledColor: Colors.grey,
                                   ),
                                   menuItemStyleData: const MenuItemStyleData(
@@ -380,21 +435,46 @@ class _NotesTableState extends State<NotesTable> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                " Content *",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
+                              Text.rich(
+                                TextSpan(
+                                  text: "Content ",
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                  children: const [
+                                    TextSpan(
+                                      text: "*",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
+                                ),
                               ),
+                              const SizedBox(height: 8),
                               TextFormField(
                                 controller: contentController,
                                 maxLines: 5,
+                                maxLength: 500,
+                                onChanged: (_) => setState(() {}),
                                 decoration: InputDecoration(
-                                  // labelText: 'Content',
-                                  hintText: 'Content...',
+                                  hintText: 'Write your note here...',
+                                  hintStyle: TextStyle(
+                                      color: Colors.grey.shade500,
+                                      fontSize: 14),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        BorderSide(color: Colors.grey.shade300),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        BorderSide(color: blueColor, width: 1.5),
                                   ),
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 14),
@@ -413,76 +493,95 @@ class _NotesTableState extends State<NotesTable> {
                     ),
                     const SizedBox(height: 24),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey[700],
-                          ),
-                          child: const Text('Cancel'),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (!_formKey.currentState!.validate()) return;
-
-                            // Check if editing and no changes were made
-                            if (noteId != null) {
-                              bool hasChanges =
-                                  (selectedNoteType != originalNoteType) ||
-                                      (contentController.text.trim() !=
-                                          (originalContent ?? '').trim());
-
-                              if (!hasChanges) {
-                                Fluttertoast.showToast(
-                                  msg: "No changes made",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                );
-                                return;
-                              }
-                            }
-
-                            setState(() {
-                              isLoading = true;
-                            });
-
-                            await submitNote(
-                              leaseId: leaseId,
-                              adminId: adminId,
-                              noteId: noteId,
-                              noteType: selectedNoteType,
-                              content: contentController.text,
-                            ).then((value) {
-                              setState(() {
-                                isLoading = false;
-                                // _futureleasenotes = fetchleasenotedata();
-                              });
-                              reloadScreen();
-                            });
-                            //
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.grey[800],
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              side: BorderSide(color: Colors.grey.shade300),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white),
-                                )
-                              : Text(
-                                  noteId == null ? 'Add' : 'Update',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: !canSubmit
+                                ? null
+                                : () async {
+                                    if (!_formKey.currentState!.validate())
+                                      return;
+
+                                    // Check if editing and no changes were made
+                                    if (noteId != null) {
+                                      bool hasChanges = (selectedNoteType !=
+                                              originalNoteType) ||
+                                          (contentController.text.trim() !=
+                                              (originalContent ?? '').trim());
+
+                                      if (!hasChanges) {
+                                        Fluttertoast.showToast(
+                                          msg: "No changes made",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                        );
+                                        return;
+                                      }
+                                    }
+
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+
+                                    await submitNote(
+                                      leaseId: leaseId,
+                                      adminId: adminId,
+                                      noteId: noteId,
+                                      noteType: selectedNoteType,
+                                      content: contentController.text,
+                                    ).then((value) {
+                                      setState(() {
+                                        isLoading = false;
+                                        // _futureleasenotes = fetchleasenotedata();
+                                      });
+                                      reloadScreen();
+                                    });
+                                    //
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              disabledBackgroundColor: Colors.grey.shade300,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2, color: Colors.white),
+                                  )
+                                : Text(
+                                    noteId == null ? 'Add Note' : 'Update Note',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                          ),
                         ),
                       ],
                     )
@@ -643,6 +742,133 @@ class _NotesTableState extends State<NotesTable> {
           children: [
             Row(
               children: [
+                const SizedBox(width: 7),
+                Container(
+                  height: (MediaQuery.of(context).size.width < 500)
+                      ? 44
+                      : MediaQuery.of(context).size.width * 0.063,
+                  width: (MediaQuery.of(context).size.width < 500)
+                      ? MediaQuery.of(context).size.width * 0.42
+                      : MediaQuery.of(context).size.width * 0.2,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      value: selectedNoteFilter,
+                      selectedItemBuilder: (context) {
+                        return filterTypeList
+                            .map((type) => Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    type,
+                                    style: TextStyle(
+                                      fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                              500
+                                          ? 15
+                                          : 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                ))
+                            .toList();
+                      },
+                      items: filterTypeList.asMap().entries.map((entry) {
+                        final int idx = entry.key;
+                        final String type = entry.value;
+                        final bool isSelected = type == selectedNoteFilter;
+                        final bool isLast =
+                            idx == filterTypeList.length - 1;
+                        return DropdownMenuItem<String>(
+                          value: type,
+                          child: Container(
+                            width: double.infinity,
+                            height: 52,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFFEAF0FB)
+                                  : Colors.white,
+                              border: isLast
+                                  ? null
+                                  : const Border(
+                                      bottom: BorderSide(
+                                          color: Color(0xFFEEF1F4)),
+                                    ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    type,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: blueColor,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Icon(Icons.check,
+                                      size: 20, color: blueColor),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedNoteFilter = value!;
+                          currentPage = 0;
+                          expandedRowIndex = null;
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(
+                        padding: EdgeInsets.zero,
+                      ),
+                      iconStyleData: IconStyleData(
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        openMenuIcon: const Icon(Icons.keyboard_arrow_up),
+                        iconSize: 24,
+                        iconEnabledColor: blueColor,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: 400,
+                        width: (MediaQuery.of(context).size.width < 500)
+                            ? MediaQuery.of(context).size.width * 0.42
+                            : MediaQuery.of(context).size.width * 0.2,
+                        padding: EdgeInsets.zero,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        offset: const Offset(0, -4),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 52,
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                ),
                 Spacer(),
                 GestureDetector(
                   onTap: () async {
@@ -668,24 +894,39 @@ class _NotesTableState extends State<NotesTable> {
                   },
                   child: Container(
                     height: (MediaQuery.of(context).size.width < 500)
-                        ? 35
+                        ? 44
                         : MediaQuery.of(context).size.width * 0.063,
                     width: (MediaQuery.of(context).size.width < 500)
                         ? MediaQuery.of(context).size.width * 0.35
                         : MediaQuery.of(context).size.width * 0.2,
                     decoration: BoxDecoration(
                       color: blueColor,
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
-                      child: Text(
-                        "+ Add Note",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 14 : 22,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: MediaQuery.of(context).size.width < 500
+                                ? 18
+                                : 26,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            "Add Note",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.width < 500
+                                      ? 14
+                                      : 22,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -706,37 +947,66 @@ class _NotesTableState extends State<NotesTable> {
                     );
                   } else if (snapshot.hasError) {
                     print(snapshot.error);
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Container(
-                      height: MediaQuery.of(context).size.height * .45,
-                      child: Center(
+                  }
+
+                  var data = snapshot.data ?? <lease_notes>[];
+                  if (selectedNoteFilter != "All Types") {
+                    data = data
+                        .where((note) => note.noteType == selectedNoteFilter)
+                        .toList();
+                  }
+
+                  if (data.isEmpty) {
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(7.0),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              "assets/images/no_data.jpg",
-                              height: 200,
-                              width: 200,
+                            _buildHeaders(),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: MediaQuery.of(context).size.height * .45,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "No Data Available",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueColor,
-                                  fontSize: 16),
-                            )
                           ],
                         ),
                       ),
                     );
                   }
 
-                  var data = snapshot.data!;
                   final totalPages = (data.length / itemsPerPage).ceil();
+                  // Keep the current page within the valid range so that
+                  // changing the filter / page size or deleting a note never
+                  // leaves us on a non-existent (blank) page.
+                  if (currentPage > totalPages - 1) {
+                    currentPage = totalPages - 1;
+                  }
+                  if (currentPage < 0) {
+                    currentPage = 0;
+                  }
                   final currentPageData = data
                       .skip(currentPage * itemsPerPage)
                       .take(itemsPerPage)
@@ -1042,6 +1312,7 @@ class _NotesTableState extends State<NotesTable> {
                             ),
                           ),
                           const SizedBox(height: 20),
+                          if (totalPages > 1)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
