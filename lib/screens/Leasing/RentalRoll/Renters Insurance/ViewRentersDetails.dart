@@ -175,7 +175,8 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                       ],
                     ),
 
-                    // ── Documents ──
+                    // ── Documents ── (TEMPORARILY COMMENTED OUT — revisit next day)
+                    /*
                     _sectionCard(
                       title: 'Documents',
                       children: [
@@ -205,8 +206,10 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                         ],
                       ],
                     ),
+                    */
 
-                    // ── History (real audit history via shared CustomHistoryTable) ──
+                    // ── History (real audit history) ── (TEMPORARILY COMMENTED OUT — revisit next day)
+                    /*
                     Container(
                       width: double.infinity,
                       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -224,6 +227,7 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                         itemsPerPage: 10,
                       ),
                     ),
+                    */
                   ],
                 );
               },

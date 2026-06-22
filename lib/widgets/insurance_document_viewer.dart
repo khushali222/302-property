@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -56,44 +57,44 @@ void _previewImage(BuildContext context, String filename) {
           clipBehavior: Clip.none,
           children: [
             Container(
-              constraints: BoxConstraints(maxHeight: screenH * 0.7),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
+              // Hug the image: the card sizes to the picture (no empty white),
+              // bounded so it's never huge and never a thin bar.
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(ctx).size.width - 56,
+                maxHeight: screenH * 0.6,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: InteractiveViewer(
-                  minScale: 0.8,
-                  maxScale: 5.0,
-                  child: Image.network(
-                    url,
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return const SizedBox(
-                        height: 260,
-                        child: Center(
-                          child: SpinKitFadingCircle(
-                              color: Color(0xFF152B51), size: 44),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stack) => const SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.broken_image,
-                                color: Colors.grey, size: 48),
-                            SizedBox(height: 8),
-                            Text('Could not load image',
-                                style: TextStyle(color: Colors.grey)),
-                          ],
-                        ),
+                borderRadius: BorderRadius.circular(10),
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.contain,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (context, _) => const SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Center(
+                      child: SpinKitFadingCircle(
+                          color: Color(0xFF152B51), size: 44),
+                    ),
+                  ),
+                  errorWidget: (context, _, error) => const SizedBox(
+                    width: 220,
+                    height: 170,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.broken_image,
+                              color: Colors.grey, size: 48),
+                          SizedBox(height: 8),
+                          Text('Could not load image',
+                              style: TextStyle(color: Colors.grey)),
+                        ],
                       ),
                     ),
                   ),
