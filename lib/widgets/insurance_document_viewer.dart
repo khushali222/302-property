@@ -73,7 +73,10 @@ void _previewImage(BuildContext context, String filename) {
                 child: CachedNetworkImage(
                   imageUrl: url,
                   fit: BoxFit.contain,
-                  fadeInDuration: const Duration(milliseconds: 200),
+                  // No cross-fade: prevents the loading spinner from briefly
+                  // layering on top of the image as it fades in.
+                  fadeInDuration: Duration.zero,
+                  fadeOutDuration: Duration.zero,
                   placeholder: (context, _) => const SizedBox(
                     width: 200,
                     height: 200,
