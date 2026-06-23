@@ -328,30 +328,39 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Work Orders",
                 widget.currentpage == "Work Orders",
               ),
-              // Bid Room as direct item
-              buildListTile(
+              // ── Bid Room & Vendors grouped under "Property Maintenance" ───
+              // Web-aligned: these two are now nested inside the collapsible
+              // "Property Maintenance" group below. The old direct tiles are
+              // kept (commented) for future use — re-enable by uncommenting
+              // and removing the buildPropertyMaintenanceSection call.
+              // buildListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.fileLines,
+              //     size: 20,
+              //     color: widget.currentpage == "Bid Room"
+              //         ? Colors.white
+              //         : blueColor,
+              //   ),
+              //   "Bid Room",
+              //   widget.currentpage == "Bid Room",
+              // ),
+              // buildListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.solidCircleUser,
+              //     size: 20,
+              //     color: widget.currentpage == "Vendors"
+              //         ? Colors.white
+              //         : blueColor,
+              //   ),
+              //   "Vendors",
+              //   widget.currentpage == "Vendors",
+              // ),
+              buildPropertyMaintenanceSection(
                 context,
-                FaIcon(
-                  FontAwesomeIcons.fileLines,
-                  size: 20,
-                  color: widget.currentpage == "Bid Room"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Bid Room",
-                widget.currentpage == "Bid Room",
-              ),
-              buildListTile(
-                context,
-                FaIcon(
-                  FontAwesomeIcons.solidCircleUser,
-                  size: 20,
-                  color: widget.currentpage == "Vendors"
-                      ? Colors.white
-                      : blueColor,
-                ),
-                "Vendors",
-                widget.currentpage == "Vendors",
+                currentpage: widget.currentpage,
+                dropdown: widget.dropdown,
               ),
               buildCommunicationsSection(
                 context,

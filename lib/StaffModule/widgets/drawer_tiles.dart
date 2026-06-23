@@ -365,6 +365,116 @@ Widget buildCommunicationsSection(
   );
 }
 
+const _kPropertyMaintenancePages = ['Bid Room', 'Vendors'];
+
+/// Property Maintenance → Bid Room / Vendors (grouped collapsible section).
+///
+/// Web-aligned grouping: Bid Room and Vendors are nested under a single
+/// "Property Maintenance" parent. Mirrors [buildCommunicationsSection] styling.
+/// Permission gating is preserved by the caller via [showBidRoom] /
+/// [showVendors]; if neither is visible the whole group is hidden.
+/// Auto-expands whenever the current page is one of its children.
+Widget buildPropertyMaintenanceSection(
+  BuildContext context, {
+  required String currentpage,
+  required bool dropdown,
+  bool showBidRoom = true,
+  bool showVendors = true,
+}) {
+  if (!showBidRoom && !showVendors) return const SizedBox.shrink();
+
+  final bool sectionOpen = _kPropertyMaintenancePages.contains(currentpage);
+
+  Widget iconForPage(String page, bool active) {
+    final Color c = active ? Colors.white : blueColor;
+    switch (page) {
+      case 'Bid Room':
+        return FaIcon(FontAwesomeIcons.fileLines, size: 20, color: c);
+      case 'Vendors':
+        return FaIcon(FontAwesomeIcons.user, size: 20, color: c);
+      default:
+        return FaIcon(FontAwesomeIcons.circle, size: 20, color: c);
+    }
+  }
+
+  /// Same row layout as the Communications leaf tiles.
+  Widget leafTile(String title) {
+    final bool active = currentpage == title;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: active ? blueColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          leading: iconForPage(title, active),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 15,
+              color: active ? Colors.white : blueColor,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            navigateToOption(context, title, active);
+          },
+        ),
+      ),
+    );
+  }
+
+  final Color chevronCollapsed = Colors.grey.shade600;
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 14),
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: sectionOpen,
+        maintainState: true,
+        childrenPadding: EdgeInsets.zero,
+        iconColor: blueColor,
+        collapsedIconColor: chevronCollapsed,
+        leading: FaIcon(
+          FontAwesomeIcons.fileCirclePlus,
+          size: 20,
+          color: blueColor,
+        ),
+        title: Text(
+          'Property Maintenance',
+          style: TextStyle(
+            color: blueColor,
+            fontSize: 15,
+          ),
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F8FA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 4),
+                  if (showBidRoom) leafTile('Bid Room'),
+                  if (showVendors) leafTile('Vendors'),
+                  const SizedBox(height: 4),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 Widget buildDropdownListTile(
   BuildContext context,
   Widget leadingIcon,

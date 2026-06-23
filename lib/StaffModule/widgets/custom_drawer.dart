@@ -282,31 +282,44 @@ class _CustomDrawerStaffState extends State<CustomDrawerStaff> {
                   widget.currentpage == "Work Orders",
                 ),
            
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.buildingUser,
-                    size: 20,
-                    color: widget.currentpage == "Bid Room"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  "Bid Room",
-                  widget.currentpage == "Bid Room",
-                ),
-              if (permissions != null && permissions.vendorView == true)
-                buildListTile(
-                  context,
-                  FaIcon(
-                    FontAwesomeIcons.solidCircleUser,
-                    size: 20,
-                    color: widget.currentpage == "Vendors"
-                        ? Colors.white
-                        : blueColor,
-                  ),
-                  "Vendors",
-                  widget.currentpage == "Vendors",
-                ),
+              // ── Bid Room & Vendors grouped under "Property Maintenance" ───
+              // Web-aligned: nested inside the collapsible "Property
+              // Maintenance" group below. Old direct tiles kept (commented)
+              // for future use — re-enable by uncommenting and removing the
+              // buildPropertyMaintenanceSection call. Bid Room stays
+              // always-visible; Vendors stays gated on vendorView.
+              // buildListTile(
+              //   context,
+              //   FaIcon(
+              //     FontAwesomeIcons.buildingUser,
+              //     size: 20,
+              //     color: widget.currentpage == "Bid Room"
+              //         ? Colors.white
+              //         : blueColor,
+              //   ),
+              //   "Bid Room",
+              //   widget.currentpage == "Bid Room",
+              // ),
+              // if (permissions != null && permissions.vendorView == true)
+              //   buildListTile(
+              //     context,
+              //     FaIcon(
+              //       FontAwesomeIcons.solidCircleUser,
+              //       size: 20,
+              //       color: widget.currentpage == "Vendors"
+              //           ? Colors.white
+              //           : blueColor,
+              //     ),
+              //     "Vendors",
+              //     widget.currentpage == "Vendors",
+              //   ),
+              buildPropertyMaintenanceSection(
+                context,
+                currentpage: widget.currentpage,
+                dropdown: widget.dropdown,
+                showBidRoom: true,
+                showVendors: permissions != null && permissions.vendorView == true,
+              ),
               // Commented out Maintenance dropdown - Vendor removed (shown in Settings)
               // Uncomment below if you need to show Maintenance dropdown with Vendor and Work Orders in future
               // if (permissions != null &&
