@@ -188,6 +188,27 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   double lastMonthRentPaid = 0.0;
   double totalRentPastDue = 0.0;
 
+  // Vendor dashboard "Statistics" chart data (last 12 months).
+  List<MonthStat> _monthStats = [];
+  bool _statsLoading = true;
+
+  Future<void> fetchStats() async {
+    try {
+      final stats = await WorkOrderRepository().fetchVendorWorkOrderStats();
+      if (!mounted) return;
+      setState(() {
+        _monthStats = stats;
+        _statsLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching vendor stats: $e');
+      if (!mounted) return;
+      setState(() {
+        _statsLoading = false;
+      });
+    }
+  }
+
   Future<void> fetchData() async {
     print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -397,6 +418,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     //  fetchDatacount();
     fetchWorkOrdersAndRentalData();
     fetchData();
+    fetchStats();
     _loadName();
     // Fetch work orders and rental data
     // fetchDatafinancial();
@@ -1060,137 +1082,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                             Padding(
                               padding: const EdgeInsets.only(
                                   left: 0, right: 8),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets
-                                        .symmetric(
-                                        horizontal: 20.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        const Text(
-                                          "Statistics",
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight:
-                                              FontWeight
-                                                  .bold),
-                                        ),
-                                        const SizedBox(
-                                          width: 30,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          width: 220,
-                                          decoration:
-                                          BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(6),
-                                            color: const Color
-                                                .fromRGBO(
-                                                206, 233, 255, 1),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Container(
-                                                height: 20,
-                                                width: 20,
-                                                decoration:
-                                                BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      2),
-                                                  color:
-                                                  blueColor,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const Text(
-                                                "New Work Orders",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 30,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          width: 250,
-                                          decoration:
-                                          BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius
-                                                .circular(6),
-                                            color: const Color
-                                                .fromRGBO(
-                                                206, 233, 255, 1),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Container(
-                                                height: 20,
-                                                width: 20,
-                                                decoration:
-                                                BoxDecoration(
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      2),
-                                                  color: const Color
-                                                      .fromRGBO(
-                                                      90,
-                                                      134,
-                                                      213,
-                                                      1),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const Text(
-                                                "Overdue Work Orders",
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .bold),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  BarchartTablet(),
-                                ],
+                              child: VendorStatisticsCard(
+                                stats: _monthStats,
+                                isLoading: _statsLoading,
+                                isTablet: true,
                               ),
                             ),
                           ],
@@ -1261,128 +1156,11 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
                           const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.only(
-                                left: 5, right: 8),
-                            child: Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment.start,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 12, bottom: 10),
-                                  child: Text(
-                                    "Statistics",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight:
-                                        FontWeight.bold),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(
-                                      horizontal: 12),
-                                  child: Wrap(
-                                    spacing:
-                                    10.0, // Horizontal space between children
-                                    runSpacing:
-                                    10.0, // Vertical space between rows
-                                    children: [
-                                      Container(
-                                        height: 40,
-                                        width: 162,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius
-                                              .circular(6),
-                                          color: const Color
-                                              .fromRGBO(
-                                              206, 233, 255, 1),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Container(
-                                              height: 15,
-                                              width: 15,
-                                              decoration:
-                                              BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    2),
-                                                color: blueColor,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            const Text(
-                                              "New Work Orders",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 40,
-                                        width: 192,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius
-                                              .circular(6),
-                                          color: const Color
-                                              .fromRGBO(
-                                              206, 233, 255, 1),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Container(
-                                              height: 15,
-                                              width: 15,
-                                              decoration:
-                                              BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    2),
-                                                color: const Color
-                                                    .fromRGBO(90,
-                                                    134, 213, 1),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            const Text(
-                                              "Overdue Work Orders",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .bold),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Barchart(),
-                              ],
+                                left: 15, right: 15),
+                            child: VendorStatisticsCard(
+                              stats: _monthStats,
+                              isLoading: _statsLoading,
+                              isTablet: false,
                             ),
                           ),
                         ],

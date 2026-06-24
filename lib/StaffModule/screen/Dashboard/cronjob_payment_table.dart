@@ -590,28 +590,34 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 // Rental Address & Actions
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (data.leaseId != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SummeryPageLease(
-                                        leaseId: data.leaseId!,
-                                        enddate:
-                                            null, // You can pass the end date if available
-                                      )));
-                        }
-                      },
-                      child: Text(
-                        address,
-                        style: subTextStyle.copyWith(
-                          decoration: TextDecoration.underline,
-                          color: blueColor.withOpacity(0.8),
+                    Flexible(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (data.leaseId != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SummeryPageLease(
+                                          leaseId: data.leaseId!,
+                                          enddate:
+                                              null, // You can pass the end date if available
+                                        )));
+                          }
+                        },
+                        child: Text(
+                          address,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: subTextStyle.copyWith(
+                            decoration: TextDecoration.underline,
+                            color: blueColor.withOpacity(0.8),
+                          ),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     if (data.response == "FAILURE")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
