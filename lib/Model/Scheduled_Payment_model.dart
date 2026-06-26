@@ -28,7 +28,11 @@ class Scheduled_Payment {
     tenant = json['tenant'] != null ? Tenant.fromJson(json['tenant']) : null;
     totalAmount = (json['total_amount'] is int)
         ? (json['total_amount'] as int).toDouble()
-        : json['total_amount'];
+        : (json['total_amount'] is String)
+            ? double.tryParse(json['total_amount'])
+            : (json['total_amount'] is double)
+                ? json['total_amount']
+                : null;
     paymentType = json['payment_type'];
     account = json["account"];
     date = json['date'];

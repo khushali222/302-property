@@ -21,6 +21,7 @@ import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/dashboard_table_repo/cronjob_payment_table.dart';
 import '../../repository/tenants.dart';
 import '../../widgets/CustomTableShimmer.dart';
+import '../../widgets/payment_action_dialogs.dart';
 import '../../widgets/titleBar.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
@@ -570,6 +571,27 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
+  // Failed Payments "Ignore" — mirrors the web FailedPaymentsTable confirm:
+  // "Are you sure you want to ignore this payment failure?" Yes / No.
+  // Yes acknowledges the failure (same endpoint as the Payments-table
+  // acknowledge); kept separate so the Payments section dialog is untouched.
+  void _showAlertIgnore(BuildContext context, String id) {
+    showIgnorePaymentFailureDialog(
+      context,
+      onConfirm: () async {
+        var data = await PaymentCronjobRepository().Paymentacknowledge(
+            paymentid: id,
+            failureacknowledged: failureacknowledged,
+            context: context);
+        if (data != null)
+          setState(() {
+            futurecronjobpayment = cronjob_payment_tableService()
+                .fetchCronjob_payment(limit: itemsPerPage);
+          });
+      },
+    );
+  }
+
   void _showAlertRetry(BuildContext context, String id) {
     TextEditingController retrydate = TextEditingController();
     Alert(
@@ -634,176 +656,60 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
-  void _showAlertSchedule(BuildContext context, String id) {
-    TextEditingController retrydate = TextEditingController();
-    Alert(
-      context: context,
-      type: AlertType.warning,
-      title: null,
-      desc: null,
-      content: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 15),
-          const Text(
-            "Reschedule Payment",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Please select a payment date to retry. The date must be tomorrow or later:",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 60,
-            child: CustomTextField(
-              onTap: () async {
-                DateTime now = DateTime.now();
-                DateTime tomorrow = now.add(const Duration(days: 1));
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: tomorrow,
-                  firstDate: tomorrow,
-                  lastDate: DateTime(2101),
-                  locale: const Locale('en', 'US'),
-                  builder: (BuildContext context, Widget? child) {
-                    return Theme(
-                      data: ThemeData.light().copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: blueColor,
-                          onPrimary: Colors.white,
-                          onSurface: blueColor,
-                        ),
-                        textButtonTheme: TextButtonThemeData(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: blueColor,
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
-
-                if (pickedDate != null) {
-                  setState(() {
-                    retrydate.text =
-                        pickedDate.toLocal().toString().split(' ')[0];
-                  });
-                }
-              },
-              readOnnly: true,
-              suffixIcon: IconButton(
-                onPressed: () async {
-                  DateTime now = DateTime.now();
-                  DateTime tomorrow = now.add(const Duration(days: 1));
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: tomorrow,
-                    firstDate: tomorrow,
-                    lastDate: DateTime(2101),
-                    locale: const Locale('en', 'US'),
-                    builder: (BuildContext context, Widget? child) {
-                      return Theme(
-                        data: ThemeData.light().copyWith(
-                          colorScheme: ColorScheme.light(
-                            primary: blueColor,
-                            onPrimary: Colors.white,
-                            onSurface: blueColor,
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: blueColor,
-                            ),
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      retrydate.text =
-                          pickedDate.toLocal().toString().split(' ')[0];
-                    });
-                  }
-                },
-                icon: const Icon(Icons.date_range_rounded),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select end date';
-                }
-                return null;
-              },
-              optional: true,
-              keyboardType: TextInputType.text,
-              hintText: 'Select a date',
-              controller: retrydate,
-            ),
-          ),
-        ],
+  // Failed Payments "Reprocess" chooser — mirrors the web FailedPaymentsTable
+  // dialog: Cancel / Schedule / Process Now. Schedule opens the date-picker
+  // reschedule flow; Process Now runs an immediate retry.
+  void _showAlertReprocess(BuildContext context, String id) {
+    showReprocessFailedPaymentDialog(
+      context,
+      onSchedule: () => _showAlertSchedule(
+        context,
+        id,
+        title: "Schedule Payment",
+        message: "Pick a future date (starting tomorrow)",
+        confirmLabel: "Schedule",
       ),
-      style: const AlertStyle(
-        backgroundColor: Colors.white,
-      ),
-      buttons: [
-        DialogButton(
-          child: const Text(
-            "Confirm",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          // onPressed: (){},
-          onPressed: () async {
-            if (retrydate.text.isEmpty) {
-              // setState(() {
-              //  _errorText == true;
-              // });
-              Fluttertoast.showToast(msg: "Please select the retry date");
-            } else {
-              Navigator.pop(context);
-              var data = await PaymentCronjobRepository().PaymentReSchedule(
-                retryDate: retrydate.text,
-                paymentid: id,
-                context: context,
-              );
-              // Add your delete logic here
-              if (data != null)
-                setState(() {
-                  futurecronjobpayment = cronjob_payment_tableService()
-                      .fetchCronjob_payment(limit: itemsPerPage);
-                });
-              // Navigator.pop(context);
-            }
-          },
-          color: blueColor,
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-      ],
-    ).show();
+      onProcessNow: () async {
+        var data = await PaymentCronjobRepository().PaymentRetry(
+          retryDate: "",
+          paymentid: id,
+          context: context,
+        );
+        if (data != null)
+          setState(() {
+            futurecronjobpayment = cronjob_payment_tableService()
+                .fetchCronjob_payment(limit: itemsPerPage);
+          });
+      },
+    );
+  }
+
+  void _showAlertSchedule(
+    BuildContext context,
+    String id, {
+    String title = "Reschedule Payment",
+    String message =
+        "Please select a payment date to retry. The date must be tomorrow or later:",
+    String confirmLabel = "Confirm",
+  }) async {
+    final picked = await showSchedulePaymentDialog(
+      context,
+      title: title,
+      message: message,
+      confirmLabel: confirmLabel,
+    );
+    if (picked != null && picked.isNotEmpty) {
+      var data = await PaymentCronjobRepository().PaymentReSchedule(
+        retryDate: picked,
+        paymentid: id,
+        context: context,
+      );
+      if (data != null)
+        setState(() {
+          futurecronjobpayment = cronjob_payment_tableService()
+              .fetchCronjob_payment(limit: itemsPerPage);
+        });
+    }
   }
 
   TextStyle cardTextStyle = const TextStyle(
@@ -1113,8 +1019,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         GestureDetector(
                           onTap: () {
                             if (data.id != null) {
-                              _showAlertAcknowledgement(
-                                  context, data.id!, failureacknowledged);
+                              _showAlertIgnore(context, data.id!);
                             }
                           },
                           child: Container(
@@ -1132,7 +1037,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                         GestureDetector(
                           onTap: () {
                             if (data.id != null) {
-                              _showAlertRetry(context, data.id!);
+                              _showAlertReprocess(context, data.id!);
                             }
                           },
                           child: Container(
