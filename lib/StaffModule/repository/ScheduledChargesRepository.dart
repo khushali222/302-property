@@ -112,6 +112,7 @@ class ScheduledChargesRepository {
 
   Future<Map<String, dynamic>> deleteNote({
     required String noteid,
+    String? reason,
   }) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -129,7 +130,7 @@ class ScheduledChargesRepository {
           "id": "CRM $staffid",
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({}),
+        body: jsonEncode({"reason": reason}),
       );
 
       var responseData = json.decode(response.body);
