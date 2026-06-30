@@ -108,8 +108,6 @@ class _AddDocumentState extends State<AddDocument> {
                           keyboardType: TextInputType.text,
                           hintText: 'Enter name',
                           controller: firstName,
-                          height: 50,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                         ),
                         const SizedBox(height: 16),
                         Text('Document Type *',

@@ -165,8 +165,6 @@ class _EditDocumentState extends State<EditDocument> {
                           keyboardType: TextInputType.text,
                           hintText: 'Enter document name',
                           controller: firstName,
-                          height: 50,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                         ),
                         const SizedBox(height: 16),
                         Text('Document Type *',
