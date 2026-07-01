@@ -203,6 +203,53 @@ class TenantsRepository {
     }
   }
 
+  // Web-aligned Add Tenant (Admin). Takes a ready-made body that mirrors the
+  // web POST /tenant/tenants payload exactly, instead of Tenant.toJson(). The
+  // legacy addTenant(Tenant) below is left untouched for the Staff module and
+  // any other existing callers.
+  Future<bool> addTenantPayload(Map<String, dynamic> body) async {
+    final url = Uri.parse('${Api_url}/api/tenant/tenants');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+
+    print(jsonEncode(body));
+    try {
+      final response = await apiPost(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode(body),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print(" add tenant $responseData");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully added tenant');
+          return true;
+        } else {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add tenant');
+          return false;
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to add tenant');
+        return false;
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
@@ -389,6 +436,36 @@ class TenantsRepository {
   //     throw Exception('Failed to update tenant');
   //   }
   // }
+
+  // Web-aligned Edit Tenant (Admin). Takes a ready-made body mirroring the
+  // web PUT /tenant/tenants/:id payload (no admin_id/company_name/tenant_id in
+  // body; emergency_contacts array; legacy emergency_contact cleared). The
+  // legacy editTenant(...) below is left untouched for other callers.
+  Future<bool> editTenantPayload(
+      String tenantId, Map<String, dynamic> body) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('adminId');
+    print('edit payload ${jsonEncode(body)}');
+    final http.Response response = await apiPut(
+      Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(body),
+    );
+    var responseData = json.decode(response.body);
+    print('edit tenant ${response.body}');
+    if (responseData["statusCode"] == 200) {
+      return true;
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? 'Failed to update tenant');
+      return false;
+    }
+  }
 
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
