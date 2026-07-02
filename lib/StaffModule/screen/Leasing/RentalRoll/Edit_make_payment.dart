@@ -890,7 +890,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             if (overrideFee == null || overrideFee == "null")
               surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
             else
-              surCharge = int.parse(overrideFee) ?? 0;
+              surCharge = int.tryParse(overrideFee) ?? 0;
           });
         }
       }
@@ -3399,8 +3399,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       buildAmountContainer(
                                           'Amount',
                                           amountController.text.isNotEmpty
-                                              ? double.parse(
-                                                  amountController.text)
+                                              ? (double.tryParse(
+                                                  amountController.text) ?? 0.0)
                                               : 0.0),
                                     const SizedBox(
                                       height: 5,
@@ -3409,8 +3409,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       buildAmountContainer(
                                           'Surcharge included',
                                           amountController.text.isNotEmpty
-                                              ? double.parse(
-                                                      amountController.text) *
+                                              ? (double.tryParse(
+                                                          amountController.text) ??
+                                                      0.0) *
                                                   (surCharge ?? 0.0) /
                                                   100
                                               : 0.0),
@@ -3425,12 +3426,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         amountController.text.isNotEmpty &&
                                                 (_selectedPaymentMethod ==
                                                     "Card")
-                                            ? (double.parse(
-                                                        amountController.text) *
+                                            ? ((double.tryParse(
+                                                            amountController.text) ??
+                                                        0.0) *
                                                     (surCharge ?? 0.0) /
                                                     100) +
-                                                double.parse(
-                                                    amountController.text)
+                                                (double.tryParse(
+                                                        amountController.text) ??
+                                                    0.0)
                                             : amountController
                                                         .text.isNotEmpty &&
                                                     (_selectedPaymentMethod ==
@@ -3438,8 +3441,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 ? finaltotal!
                                                 : amountController
                                                         .text.isNotEmpty
-                                                    ? double.parse(
-                                                        amountController.text)
+                                                    ? (double.tryParse(
+                                                            amountController
+                                                                .text) ??
+                                                        0.0)
                                                     : 0.0),
                                   ],
                                 ),
@@ -3478,6 +3483,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             String? id = prefs.getString('adminId');
                             if ((_formKey.currentState?.validate() ?? false) &&
                                 validationMessage == null) {
+                              if ((double.tryParse(amountController.text) ??
+                                      0.0) <=
+                                  0) {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter a valid amount");
+                                return;
+                              }
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
@@ -3516,7 +3528,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       customerVaultId: customerVaultId,
                                       billingId: billingId,
                                       entries: rows!,
-                                      totalAmount: double.parse(amountController.text.trim()),
+                                      totalAmount: (double.tryParse(amountController.text.trim()) ?? 0.0),
                                       uploadedFile: _uploadedFileNames,
                                     )
                                     .then((value) {
@@ -3575,8 +3587,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           emailName: selectedTenant["email"]!,
                                           customerVaultId: cardDetails[selectedcardindex!].customerVaultId!,
                                           billingId: cardDetails[selectedcardindex!].billingId!,
-                                          surcharge: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
-                                          amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                          surcharge: "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
+                                          amount: "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                                           tenantId: selectedTenantId!,
                                           date: reverseFormatDate(_startDate.text.trim()),
                                           address1: cardDetails[selectedcardindex!].address_1!,
@@ -3633,7 +3645,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         lastName: selectedTenant["last_name"]!,
                                         emailName: selectedTenant["email"]!,
                                         surcharge: "$surchargecount",
-                                        amount: "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                        amount: "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                                         tenantId: selectedTenantId!,
                                         date: reverseFormatDate(_startDate.text.trim()),
                                         address1: "",
@@ -3700,9 +3712,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3747,9 +3759,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
                                   surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3844,9 +3856,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //                   cardDetails[selectedcardindex!]
                             //                       .billingId!,
                             //               surcharge:
-                            //                   "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //                   "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
                             //               amount:
-                            //                   "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //                   "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                             //               tenantId: selectedTenantId!,
                             //               date: _startDate.text.trim(),
                             //               address1:
@@ -3917,7 +3929,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //             emailName: selectedTenant["email"]!,
                             //             surcharge: "$surchargecount",
                             //             amount:
-                            //                 "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //                 "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                             //             tenantId: selectedTenantId!,
                             //             date: _startDate.text.trim(),
                             //             address1: "",
@@ -3991,9 +4003,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //       lastName: selectedTenant["last_name"]!,
                             //       emailName: selectedTenant["email"]!,
                             //       surcharge:
-                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //           "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
                             //       amount:
-                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //           "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                             //       tenantId: selectedTenantId!,
                             //       date: _startDate.text.trim(),
                             //       address1: "",
@@ -4036,9 +4048,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //       lastName: selectedTenant["last_name"]!,
                             //       emailName: selectedTenant["email"]!,
                             //       surcharge:
-                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                            //           "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
                             //       amount:
-                            //           "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                            //           "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
                             //       tenantId: selectedTenantId!,
                             //       date: _startDate.text.trim(),
                             //       address1: "",
@@ -4174,22 +4186,22 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100) +
+              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100) +
                   surChargeAchflat;
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null && surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchper != null && surChargeAchper != 0.0)) {
         setState(() {
           surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100);
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       }
     }

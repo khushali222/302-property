@@ -3825,6 +3825,13 @@ class _MakePaymentState extends State<MakePayment> {
                             String? id = prefs.getString('adminId');
                             if ((_formKey.currentState?.validate() ?? false) &&
                                 validationMessage == null) {
+                              if ((double.tryParse(amountController.text) ??
+                                      0.0) <=
+                                  0) {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter a valid amount");
+                                return;
+                              }
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
@@ -4330,7 +4337,7 @@ class _MakePaymentState extends State<MakePayment> {
     } else if (_selectedPaymentMethod == "ACH" &&
         (surChargeAchflat != null || surChargeAchflat != 0.0)) {
       setState(() {
-        surchargecount = double.parse(surChargeAchflat.toString());
+        surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
         finaltotal = amount + (surchargecount ?? 0.0);
         // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
       });

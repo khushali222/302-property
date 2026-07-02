@@ -168,7 +168,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
       String amountStr = _premiumAmountController.text
           .replaceAll('\$', '')
           .replaceAll(',', '');
-      double premiumAmount = double.parse(amountStr);
+      double premiumAmount = double.tryParse(amountStr) ?? 0.0;
 
       if (widget.premiumId != null) {
         // Edit mode - PUT request

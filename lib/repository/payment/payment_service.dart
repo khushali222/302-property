@@ -228,7 +228,7 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -479,7 +479,7 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,

@@ -806,13 +806,16 @@ class _MakePaymentState extends State<MakePayment> {
 
         if (selected_account == "full") {
           totalamount = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           totalpayamount = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           totalrent = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           if (_selectedPaymentMethod == 'ACH') {
             final achPct = surChargeAchper != null
@@ -1382,7 +1385,7 @@ class _MakePaymentState extends State<MakePayment> {
             }
             print(totalamount);
           } else {
-            surCharge = int.parse(override_fee) ?? 0;
+            surCharge = int.tryParse(override_fee) ?? 0;
           }
         });
       }
@@ -2597,7 +2600,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '\$${lease_data != null ? double.parse(lease_data!["total_due_amount"].toString()).toStringAsFixed(2) : "0.00"}',
+                            '\$${lease_data != null ? (double.tryParse(lease_data!["total_due_amount"].toString()) ?? 0.0).toStringAsFixed(2) : "0.00"}',
                             style: TextStyle(
                                 color: Color.fromRGBO(73, 81, 96, 1),
                                 fontSize: 15),
@@ -2656,9 +2659,10 @@ class _MakePaymentState extends State<MakePayment> {
                             selected_account = "full";
                             partialamount = false;
                             if (lease_data != null) {
-                              totalamount = double.parse(double.parse(
-                                      lease_data!["total_due_amount"]
-                                          .toString())
+                              totalamount = double.parse((double.tryParse(
+                                          lease_data!["total_due_amount"]
+                                              .toString()) ??
+                                      0.0)
                                   .toStringAsFixed(2));
                               if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
@@ -2692,7 +2696,8 @@ class _MakePaymentState extends State<MakePayment> {
                           setState(() {
                             selected_account = "partial";
                             if (amountController.text.isNotEmpty) {
-                              totalamount = double.parse(amountController.text);
+                              totalamount =
+                                  double.tryParse(amountController.text) ?? 0.0;
                               if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
                                     ? (double.tryParse(
@@ -2747,9 +2752,10 @@ class _MakePaymentState extends State<MakePayment> {
                             hintText: 'Enter Amount',
                             controller: amountController
                               ..text = lease_data != null &&
-                                      double.parse(
+                                      (double.tryParse(
                                               lease_data!["total_due_amount"]
-                                                  .toString()) >
+                                                  .toString()) ??
+                                          0.0) >
                                           0
                                   ? amountController.text
                                   : '0',
@@ -2761,7 +2767,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   if (inputAmount >
                                       lease_data!["total_due_amount"]) {
                                     inputAmount =
-                                        double.parse(amountController.text);
+                                        double.tryParse(amountController.text) ??
+                                            0.0;
                                   }
                                   totalamount = inputAmount;
                                   totalpayamount = inputAmount;
@@ -3366,23 +3373,23 @@ class _MakePaymentState extends State<MakePayment> {
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
           surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100) +
+              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100) +
                   surChargeAchflat;
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = double.parse(amountController.text) + surchargecount!;
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
+          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
+          // surchargecount = (double.tryParse(amountController.text) ?? 0.0) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchper != null || surChargeAchper != 0.0)) {
         setState(() {
           surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100);
+          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       }
     } catch (e) {

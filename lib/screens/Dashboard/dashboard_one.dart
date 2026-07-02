@@ -176,13 +176,15 @@ class _DashboardState extends State<Dashboard> {
         final data = jsonData["data"];
         setState(() {
           currentMonthRentDue =
-              double.parse(data['currentMonthRentDue'].toString());
-          lastMonthRentDue = double.parse(data['lastMonthRentDue'].toString());
+              double.tryParse(data['currentMonthRentDue'].toString()) ?? 0.0;
+          lastMonthRentDue =
+              double.tryParse(data['lastMonthRentDue'].toString()) ?? 0.0;
           currentMonthRentPaid =
-              double.parse(data['currentMonthRentPaid'].toString());
+              double.tryParse(data['currentMonthRentPaid'].toString()) ?? 0.0;
           lastMonthRentPaid =
-              double.parse(data['lastMonthRentPaid'].toString());
-          totalRentPastDue = double.parse(data['totalRentPastDue'].toString());
+              double.tryParse(data['lastMonthRentPaid'].toString()) ?? 0.0;
+          totalRentPastDue =
+              double.tryParse(data['totalRentPastDue'].toString()) ?? 0.0;
         });
       } else {
         throw Exception('Failed to load dataaaaaaaa');

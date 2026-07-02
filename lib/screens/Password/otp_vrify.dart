@@ -166,11 +166,11 @@ class _otp_verifyState extends State<otp_verify> {
                   contentPadding: EdgeInsets.symmetric(vertical: 10.0), // Adjust padding if necessary
                   textStyle: TextStyle(fontSize: 20),
                   onCodeChanged: (String code) {
-                    otp = int.parse(code); // Update OTP variable as user types
+                    otp = int.tryParse(code) ?? 0; // Update OTP variable as user types
                   },
                   onSubmit: (String verificationCode) {
                     setState(() {
-                      otp = int.parse(verificationCode);
+                      otp = int.tryParse(verificationCode) ?? 0;
                     });
                   }, // end onSubmit
                 ),

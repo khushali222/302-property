@@ -76,7 +76,7 @@ class ScheduledChargesRepository {
     final body = {
       "account": account,
       "action_date": action_date,
-      "amount": double.parse(amount!),
+      "amount": double.tryParse(amount ?? "") ?? 0.0,
       "chargeType": chargeType,
       "company_name": company_name,
       "description": description,

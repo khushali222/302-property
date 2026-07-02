@@ -1386,7 +1386,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               paymentId: id,
               paymentType: refund?.paymentType ?? "",
               transactionId: refund?.transactionId ?? "",
-              refundAmount: double.parse(amount.text),
+              refundAmount: double.tryParse(amount.text) ?? 0.0,
               refundDate: retrydate.text,
               memo: memo.text,
               tenantFirstName: refund?.tenantData?.tenantFirstName ?? "",

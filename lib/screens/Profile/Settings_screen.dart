@@ -646,16 +646,16 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent": credit.text.trim().isNotEmpty
-            ? double.parse(credit.text.trim())
+            ? double.tryParse(credit.text.trim())
             : null,
         "surcharge_percent_debit": debit.text.trim().isNotEmpty
-            ? double.parse(debit.text.trim())
+            ? double.tryParse(debit.text.trim())
             : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
-            ? double.parse(percent.text.trim())
+            ? double.tryParse(percent.text.trim())
             : null, // Add your logic to get this value
         "surcharge_flat_ACH":
-            flat.text.trim().isNotEmpty ? double.parse(flat.text.trim()) : null,
+            flat.text.trim().isNotEmpty ? double.tryParse(flat.text.trim()) : null,
         "surcharge_account": selectedAccount != null
             ? (accounts.any((account) => account.accountId == selectedAccount)
                 ? accounts
@@ -704,15 +704,15 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent": credit.text.trim().isNotEmpty
-            ? int.parse(credit.text.trim())
+            ? int.tryParse(credit.text.trim())
             : null,
         "surcharge_percent_debit":
-            debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
+            debit.text.trim().isNotEmpty ? int.tryParse(debit.text.trim()) : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
-            ? int.parse(percent.text.trim())
+            ? int.tryParse(percent.text.trim())
             : null, // Add your logic to get this value
         "surcharge_flat_ACH":
-            flat.text.trim().isNotEmpty ? int.parse(flat.text.trim()) : null,
+            flat.text.trim().isNotEmpty ? int.tryParse(flat.text.trim()) : null,
         "surcharge_account": selectedAccount
         // Add your logic to get this value
       };
@@ -748,13 +748,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "duration": duration.text.trim().isNotEmpty
-            ? int.parse(duration.text.trim())
+            ? int.tryParse(duration.text.trim())
             : null,
         "grace_balance": grace_balance.text.trim().isNotEmpty
-            ? int.parse(grace_balance.text.trim())
+            ? int.tryParse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
-            ? double.parse(late_fee.text.trim())
+            ? double.tryParse(late_fee.text.trim())
             : null,
         "calculation_type": calculationType,
         "description":
@@ -802,7 +802,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   //       "admin_id": id,
   //       "remindermail":rentDueReminderEmail,
   //       "duration":
-  //       rentDueReminderEmail ? double.parse(email_duration.text) : 0,
+  //       rentDueReminderEmail ? double.tryParse(email_duration.text) : 0,
   //     };
   //
   //     bool success =
@@ -835,13 +835,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "duration": duration.text.trim().isNotEmpty
-            ? int.parse(duration.text.trim())
+            ? int.tryParse(duration.text.trim())
             : null,
         "grace_balance": grace_balance.text.trim().isNotEmpty
-            ? int.parse(grace_balance.text.trim())
+            ? int.tryParse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
-            ? int.parse(late_fee.text.trim())
+            ? int.tryParse(late_fee.text.trim())
             : null,
         "calculation_type": calculationType,
         "description":
@@ -1017,7 +1017,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "admin_id": id,
         "duration": rentDueReminderEmail
             ? (durationmail.text.trim().isNotEmpty
-                ? double.parse(durationmail.text.trim())
+                ? double.tryParse(durationmail.text.trim())
                 : null)
             : 0,
         "replyToEmail": replyToEmail.text.trim(),
@@ -1099,7 +1099,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "replyToEmail": replyToEmail.text.trim(),
         "duration": rentDueReminderEmail
             ? (durationmail.text.trim().isNotEmpty
-                ? int.parse(durationmail.text.trim())
+                ? int.tryParse(durationmail.text.trim())
                 : null)
             : 0,
         "remindermail": rentDueReminderEmail,

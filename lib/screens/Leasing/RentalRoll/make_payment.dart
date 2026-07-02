@@ -3824,6 +3824,13 @@ class _MakePaymentState extends State<MakePayment> {
                             // }
                             if ((_formKey.currentState?.validate() ?? false) &&
                                 validationMessage == null) if (isChecked) {
+                              if ((double.tryParse(amountController.text) ??
+                                      0.0) <=
+                                  0) {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter a valid amount");
+                                return;
+                              }
                               setState(() {
                                 _isLoading = true; // Show loading indicator
                               });
@@ -4737,7 +4744,7 @@ class _MakePaymentState extends State<MakePayment> {
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
+          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
           finaltotal = amount + (surchargecount ?? 0.0);
           // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
         });

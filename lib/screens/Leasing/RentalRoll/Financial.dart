@@ -213,7 +213,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           paymentType: data.paymenttype!,
                           paymentId: data.paymentId!, // Add your paymentId here
                           responseData: data,
-                          amount: double.parse(_amountController.text),
+                          amount: double.tryParse(_amountController.text) ?? 0.0,
                           date: reverseFormatDate(_dateController.text),
                           memo: _memoController.text,
                           adminId: adminId!,

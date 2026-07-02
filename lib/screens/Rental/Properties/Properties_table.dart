@@ -2421,7 +2421,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         },
         body: jsonEncode({
           "is_available": !isAvailable ? true : false,
-          "published_rent_amount": double.parse(rentAmount),
+          "published_rent_amount": double.tryParse(rentAmount) ?? 0.0,
         }),
       );
       print(response.body);

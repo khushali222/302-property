@@ -41,7 +41,7 @@ class RentalOwnerReport {
     } else if (subTotal is String) {
       print("String callling");
       // Try to parse the string to double
-      final parsedValue = double.parse(subTotal);
+      final parsedValue = double.tryParse(subTotal) ?? 0.0;
       print(parsedValue.runtimeType);
       return parsedValue ; // Return 0.0 if parsing fails
     }

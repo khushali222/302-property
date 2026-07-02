@@ -1681,8 +1681,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                 return '';
               }
             } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
+                (double.tryParse(widget.controller!.text.trim()) ?? 0.0) >
+                    (double.tryParse(widget.max_amount!) ?? 0.0))
               setState(() {
                 _errorMessage = '${widget.error_mess}';
               });

@@ -182,7 +182,7 @@ class PaymentService {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
     print(totalAmount);
-    print((double.parse(totalAmount) - double.parse(surcharge)).toString());
+    print(((double.tryParse(totalAmount) ?? 0.0) - (double.tryParse(surcharge) ?? 0.0)).toString());
     log(jsonEncode(<String, dynamic>{
       'company_name': companyName,
       'admin_id': adminId,
@@ -193,8 +193,8 @@ class PaymentService {
       'customer_vault_id': customerVaultId,
       'billing_id': billingId,
       'notificationTime': notificationTime,
-      'total_amount': double.parse(totalAmount),
-      'surcharge': double.parse(surcharge),
+      'total_amount': (double.tryParse(totalAmount) ?? 0.0),
+      'surcharge': (double.tryParse(surcharge) ?? 0.0),
       'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'transaction_id': transactionId,
@@ -221,8 +221,8 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'notificationTime': notificationTime,
-        'total_amount': double.parse(totalAmount),
-        'surcharge': double.parse(surcharge),
+        'total_amount': (double.tryParse(totalAmount) ?? 0.0),
+        'surcharge': (double.tryParse(surcharge) ?? 0.0),
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,

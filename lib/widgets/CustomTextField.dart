@@ -714,8 +714,8 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                     // Return an empty string or handle accordingly
                     return '';
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
+                      (double.tryParse(widget.controller!.text) ?? 0.0) >
+                          (double.tryParse(widget.max_amount!) ?? 0.0))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
@@ -775,8 +775,8 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                       return '';
                     }
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
+                      (double.tryParse(widget.controller!.text) ?? 0.0) >
+                          (double.tryParse(widget.max_amount!) ?? 0.0))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });

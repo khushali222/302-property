@@ -6313,7 +6313,8 @@ String formatCurrency(dynamic amount) {
   if (amount == null) return '\$0.00';
   try {
     // Handle both String and numeric types
-    double value = amount is String ? double.parse(amount) : amount.toDouble();
+    double value =
+        amount is String ? (double.tryParse(amount) ?? 0.0) : amount.toDouble();
     // Format with currency symbol and 2 decimal places
     final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
     return formatter.format(value);
