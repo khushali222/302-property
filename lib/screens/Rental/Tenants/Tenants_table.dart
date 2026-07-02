@@ -501,6 +501,13 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
+  // Resend setup / password-reset email from the tenant table (web parity).
+  // The server picks the right template (setup / resend / reset) from the
+  // tenant's welcome_email_sent_at / password_set_at state.
+  Future<void> _handleResendSetupEmail(Tenant data) async {
+    await TenantsRepository().sendSetupEmail(data.tenantId ?? '');
+  }
+
   Widget _buildActionsCell(Tenant data) {
     return TableCell(
       child: Padding(
@@ -520,6 +527,16 @@ class _Tenants_tableState extends State<Tenants_table> {
                 child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () => _handleResendSetupEmail(data),
+                child: const FaIcon(
+                  FontAwesomeIcons.envelope,
+                  size: 27,
                 ),
               ),
               const SizedBox(
@@ -1494,6 +1511,30 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                             ),
                                                           ),
                                                           SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () => _handleResendSetupEmail(tenants),
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(8),
+                                                                  color: Colors.blue.shade50),
+                                                              child: const Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons.envelope,
+                                                                    size: 15,
+                                                                    color: Colors.blue,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
                                                             width: 5,
                                                           ),
 GestureDetector(

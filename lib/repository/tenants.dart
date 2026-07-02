@@ -250,6 +250,42 @@ class TenantsRepository {
     }
   }
 
+  // Web-aligned Account & Login action: send account-setup / resend / reset-
+  // password email. One endpoint for all three; the server picks the template
+  // based on the tenant's welcome_email_sent_at / password_set_at state.
+  Future<bool> sendSetupEmail(String tenantId) async {
+    final url =
+        Uri.parse('${Api_url}/api/tenant/tenants/$tenantId/send-setup-email');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    try {
+      final response = await apiPost(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode({}),
+      );
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData['statusCode'] == 200) {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Email sent successfully.');
+        return true;
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to send email');
+        return false;
+      }
+    } catch (error) {
+      print('sendSetupEmail error: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
