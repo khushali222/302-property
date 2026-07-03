@@ -136,9 +136,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     setState(() {
       selectedTenantId = widget.tenantId;
       tenantname =
-          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
+          "${(c_data.tenantData ?? {})["tenant_firstName"]} ${(c_data.tenantData ?? {})["tenant_lastName"]}";
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
-      _startDate.text = dateProvider.formatCurrentDate(formatDate(c_data.entry!.first.date!));
+      if ((c_data.entry?.isNotEmpty ?? false) &&
+          c_data.entry!.first.date != null) {
+        _startDate.text = dateProvider
+            .formatCurrentDate(formatDate(c_data.entry!.first.date!));
+      }
       amountController.text = c_data.totalAmount.toString();
       customerVaultID = c_data.customer_vault_id ?? "";
       _selectedPaymentMethod = c_data.paymenttype;
@@ -187,11 +191,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             };
           }).toList() ??
           [];
-      for (var i = 0; i < c_data.entry!.length; i++) {
+      for (var i = 0; i < (c_data.entry ?? []).length; i++) {
         if (i == 0) {
-          charges_balances[0] = c_data.entry![i].amount!.toDouble();
+          charges_balances[0] = (c_data.entry![i].amount ?? 0).toDouble();
         } else {
-          charges_balances.add(c_data.entry![i].amount!.toDouble());
+          charges_balances.add((c_data.entry![i].amount ?? 0).toDouble());
         }
       }
       print("rows length:- ${rows!.length}");
@@ -202,7 +206,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
       print(rows);
-      totalAmount = c_data.totalAmount!;
+      totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
     AddFields();
@@ -824,7 +828,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
       for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        if (i < cardDetailsList.length) {
+          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        }
       }
 
       //
@@ -884,8 +890,23 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
-      var surchargeData = jsonResponse['data'][0];
+      final dataList = jsonResponse['data'];
+      if (dataList is! List || dataList.isEmpty) {
+        setState(() {
+          surCharge = 0;
+        });
+        return;
+      }
+      var surchargeData = dataList[0];
       if (_selectedPaymentMethod == "Card") {
+        if (selectedcardindex == null ||
+            selectedcardindex! < 0 ||
+            selectedcardindex! >= cardDetails.length) {
+          setState(() {
+            surCharge = 0;
+          });
+          return;
+        }
         if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
           setState(() {
             surCharge = surchargeData['surcharge_percent'];
@@ -3389,6 +3410,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
+                                if (filteredTenants.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Tenant details not found");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
                                 await PaymentService()
@@ -3409,7 +3438,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: true,
-                                  paymentId: widget.data!.paymentId!,
+                                  paymentId: widget.data?.paymentId ?? "",
                                   Check_number: checknumber.text.trim(),
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
@@ -3435,12 +3464,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
+                                if (filteredTenants.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Tenant details not found");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
-                                  paymentId: widget.data!.paymentId!,
+                                  paymentId: widget.data?.paymentId ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,

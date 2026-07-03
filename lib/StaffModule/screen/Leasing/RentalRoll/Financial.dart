@@ -203,6 +203,12 @@ class _FinancialTableState extends State<FinancialTable> {
                   children: [
                     InkWell(
                       onTap: () async {
+                        if (_amountController.text.trim().isEmpty ||
+                            (double.tryParse(_amountController.text) ?? 0) <= 0) {
+                          Fluttertoast.showToast(
+                              msg: "Please enter a valid refund amount");
+                          return;
+                        }
                         setState(() {
                           isLoading =
                               true; // Set loading to true when starting the refund process
@@ -211,6 +217,17 @@ class _FinancialTableState extends State<FinancialTable> {
                             await SharedPreferences.getInstance();
                         String? adminId = prefs.getString("adminId");
                         print(data.paymentId);
+                        if (adminId == null ||
+                            adminId.isEmpty ||
+                            data.paymentId == null ||
+                            data.paymenttype == null) {
+                          Fluttertoast.showToast(
+                              msg: "Missing payment details for refund");
+                          setState(() {
+                            isLoading = false;
+                          });
+                          return;
+                        }
                         final message = await processRefund(
                           paymentType: data.paymenttype!,
                           paymentId: data.paymentId!, // Add your paymentId here
@@ -400,13 +417,13 @@ class _FinancialTableState extends State<FinancialTable> {
               'amount': amount,
               'payment_type': responseData.paymenttype,
               'total_amount': amount,
-              'tenant_firstName': responseData.tenantData["tenant_firstName"],
-              'tenant_lastName': responseData.tenantData["tenant_firstName"],
-              'tenant_id': responseData.tenantData["tenant_id"],
+              'tenant_firstName': (responseData.tenantData ?? {})["tenant_firstName"],
+              'tenant_lastName': (responseData.tenantData ?? {})["tenant_lastName"],
+              'tenant_id': (responseData.tenantData ?? {})["tenant_id"],
               'lease_id': responseData.leaseId,
-              'email_name': responseData.tenantData["tenant_email"],
+              'email_name': (responseData.tenantData ?? {})["tenant_email"],
               'type': responseData.type,
-              'entry': responseData.entry!.map((entry) {
+              'entry': (responseData.entry ?? []).map((entry) {
                 return {
                   'amount': entry.amount,
                   'account': entry.account,
@@ -421,16 +438,16 @@ class _FinancialTableState extends State<FinancialTable> {
               'amount': amount,
               'payment_type': responseData.paymenttype,
               'total_amount': amount,
-              'tenant_firstName': responseData.tenantData["tenant_firstName"],
-              'tenant_lastName': responseData.tenantData["tenant_firstName"],
-              'tenant_id': responseData.tenantData["tenant_id"],
+              'tenant_firstName': (responseData.tenantData ?? {})["tenant_firstName"],
+              'tenant_lastName': (responseData.tenantData ?? {})["tenant_lastName"],
+              'tenant_id': (responseData.tenantData ?? {})["tenant_id"],
               //'tenant_firstName': responseData.tenantData.firstName,
               //'tenant_lastName': responseData.tenantData.lastName,
               //'tenant_id': responseData.tenantId,
               'lease_id': responseData.leaseId,
-              'email_name': responseData.tenantData["tenant_email"],
+              'email_name': (responseData.tenantData ?? {})["tenant_email"],
               'type': responseData.type,
-              'entry': responseData.entry!.map((entry) {
+              'entry': (responseData.entry ?? []).map((entry) {
                 return {
                   'amount': entry.amount,
                   'account': entry.account,
@@ -466,16 +483,26 @@ class _FinancialTableState extends State<FinancialTable> {
         body: jsonEncode({'refundDetails': commonData}),
       );
 
-      final responsedata = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
         // Handle successful refund response
         print('Refund processed successfully: ${response.body}');
         return "success";
       } else {
-        return responsedata["data"]["error"];
-        // Handle error case
+        // Handle error case safely (body may be empty/HTML on failure)
         print('Refund failed: ${response.statusCode} ${response.body}');
+        try {
+          final responsedata = jsonDecode(response.body);
+          if (responsedata is Map) {
+            final data = responsedata["data"];
+            if (data is Map && data["error"] != null) {
+              return data["error"].toString();
+            }
+            if (responsedata["message"] != null) {
+              return responsedata["message"].toString();
+            }
+          }
+        } catch (_) {}
+        return "Refund failed";
       }
     } catch (e) {
       return e.toString();

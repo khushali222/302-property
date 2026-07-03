@@ -2765,7 +2765,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   double inputAmount =
                                       double.tryParse(value) ?? 0.0;
                                   if (inputAmount >
-                                      lease_data!["total_due_amount"]) {
+                                      (double.tryParse(lease_data!["total_due_amount"]
+                                                  .toString()) ??
+                                          0.0)) {
                                     inputAmount =
                                         double.tryParse(amountController.text) ??
                                             0.0;
@@ -3059,9 +3061,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 await PaymentService()
                                     .makePaymentforach(
                                   adminId: id ?? "",
-                                  firstName: first_name!,
-                                  lastName: last_name!,
-                                  emailName: email!,
+                                  firstName: first_name ?? "",
+                                  lastName: last_name ?? "",
+                                  emailName: email ?? "",
                                   surcharge: "${surchargeamount}",
                                   amount: "${totalamount}",
                                   tenantId: widget.tenantId,

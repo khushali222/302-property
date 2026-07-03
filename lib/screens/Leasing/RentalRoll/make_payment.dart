@@ -196,8 +196,10 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       selectedTenantId = widget.tenantId;
       tenantname =
-          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = c_data.entry!.first.date!;
+          "${(c_data.tenantData ?? {})["tenant_firstName"]} ${(c_data.tenantData ?? {})["tenant_lastName"]}";
+      _startDate.text = (c_data.entry?.isNotEmpty ?? false)
+          ? (c_data.entry!.first.date ?? "")
+          : "";
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
 
@@ -215,11 +217,11 @@ class _MakePaymentState extends State<MakePayment> {
             };
           }).toList() ??
           [];
-      for (var i = 0; i < c_data.entry!.length; i++) {
+      for (var i = 0; i < (c_data.entry ?? []).length; i++) {
         if (i == 0) {
-          charges_balances[0] = c_data.entry![i].amount!.ceil().toDouble();
+          charges_balances[0] = (c_data.entry![i].amount ?? 0).ceil().toDouble();
         } else {
-          charges_balances.add(c_data.entry![i].amount!.ceil().toDouble());
+          charges_balances.add((c_data.entry![i].amount ?? 0).ceil().toDouble());
         }
       }
       print("rows length:- ${rows!.length}");
@@ -230,7 +232,7 @@ class _MakePaymentState extends State<MakePayment> {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
       print(rows);
-      totalAmount = c_data.totalAmount!;
+      totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
     AddFields();

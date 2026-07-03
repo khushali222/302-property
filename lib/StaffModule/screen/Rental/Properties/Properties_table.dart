@@ -2406,6 +2406,11 @@ class _PropertiesTableState extends State<PropertiesTable> {
                   Fluttertoast.showToast(msg: "Please enter a rent amount");
                   return;
                 }
+                if (double.tryParse(rentAmount) == null) {
+                  Fluttertoast.showToast(
+                      msg: "Please enter a valid rent amount");
+                  return;
+                }
                 Navigator.of(context).pop();
                 await _publishRentAmount(rentalId, rentAmount);
               },

@@ -7688,20 +7688,15 @@ class _Summery_pageState extends State<Summery_page>
                           runSpacing: MediaQuery.of(context).size.width * 0.035,
                           children: List.generate(
                             tenants.length,
-                            (index) => Material(
-                              elevation: 3,
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                height: 245,
-                                width: MediaQuery.of(context).size.width * .44,
-                                decoration: BoxDecoration(
-                                  color:
-                                      Colors.white, // Change as per your need
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: blueColor),
-                                ),
-                                child: buildTenantCard(tenants[index]),
+                            (index) => Container(
+                              height: 245,
+                              width: MediaQuery.of(context).size.width * .44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: borderClr),
                               ),
+                              child: buildTenantCard(tenants[index]),
                             ),
                           ),
                         ),
@@ -7735,17 +7730,11 @@ class _Summery_pageState extends State<Summery_page>
                                   right: 20,
                                   top: 20,
                                 ),
-                                child: Material(
-                                  elevation: 3,
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    //height: 230,
-                                    //  width: MediaQuery.of(context).size.width * .44,
+                                child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors
-                                          .white, // Change as per your need
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: blueColor),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: borderClr),
                                     ),
                                     child: buildTenantCard(tenants[index],
                                         tenants: tenants,
@@ -7759,7 +7748,6 @@ class _Summery_pageState extends State<Summery_page>
                                                 ? true
                                                 : false),
                                   ),
-                                ),
                               );
                             }),
                           ),
@@ -7779,67 +7767,58 @@ class _Summery_pageState extends State<Summery_page>
   Widget buildTenantCard(TenantData tenant,
       {bool? isMoveouts, List<TenantData>? tenants}) {
     final dateProvider = Provider.of<DateProvider>(context);
-    return Column(
+    final fn = '${tenant.firstName ?? ''}'.trim();
+    final ln = '${tenant.lastName ?? ''}'.trim();
+    final initials = ((fn.isNotEmpty ? fn[0] : '') +
+            (ln.isNotEmpty ? ln[0] : ''))
+        .toUpperCase();
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(width: 15),
             Container(
-              height: 30,
-              width: 30,
+              height: 48,
+              width: 48,
               decoration: BoxDecoration(
                 color: blueColor,
-                borderRadius: BorderRadius.circular(5),
+                shape: BoxShape.circle,
               ),
               child: Center(
-                child: FaIcon(
-                  FontAwesomeIcons.user,
-                  size: MediaQuery.of(context).size.width < 500 ? 16 : 20,
-                  color: Colors.white,
+                child: initials.isEmpty
+                    ? const FaIcon(
+                        FontAwesomeIcons.user,
+                        size: 20,
+                        color: Colors.white,
+                      )
+                    : Text(
+                        initials,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '$fn $ln',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize:
+                      MediaQuery.of(context).size.width < 500 ? 16 : 19,
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
                 ),
               ),
             ),
-            const SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const SizedBox(width: 2),
-                    Container(
-                      width: 150,
-                      child: Text(
-                        '${tenant.firstName} ${tenant.lastName}',
-                        style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.width < 500 ? 16 : 19,
-                          fontWeight: FontWeight.bold,
-                          color: blueColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    const SizedBox(width: 2),
-                    Text(
-                      dateProvider.formatCurrentDate('${tenant.endDate}'),
-                      style: TextStyle(
-                        fontSize:
-                            MediaQuery.of(context).size.width < 500 ? 15 : 17,
-                        color: const Color(0xFF8A95A8),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const Spacer(),
+            const SizedBox(width: 8),
 
             if (tenant.moveoutDate == null)
               InkWell(
@@ -7964,69 +7943,54 @@ class _Summery_pageState extends State<Summery_page>
             const SizedBox(width: 8),
           ],
         ),
-        const SizedBox(height: 15),
-        Row(
-          children: [
-            const SizedBox(width: 65),
-            Text(
-              '${dateProvider.formatCurrentDate('${tenant.startDate}')}  to',
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: blueColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              '${dateProvider.formatCurrentDate('${tenant.endDate}')}',
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: blueColor,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+        const SizedBox(height: 20),
+        Text(
+          '${dateProvider.formatCurrentDate('${tenant.startDate}')} to ${dateProvider.formatCurrentDate('${tenant.endDate}')}',
+          style: const TextStyle(
+            fontSize: 15,
+            color: mutedClr,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         Row(
           children: [
-            const SizedBox(width: 65),
-            FaIcon(
+            const FaIcon(
               FontAwesomeIcons.phone,
-              size: 15,
-              color: blueColor,
+              size: 16,
+              color: mutedClr,
             ),
-            const SizedBox(width: 5),
-            Text(
-              formatPhoneNumber(
-                '${tenant.phoneNumber}',
-              ),
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                color: blueColor,
-                fontWeight: FontWeight.w500,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                formatPhoneNumber(
+                  '${tenant.phoneNumber}',
+                ),
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: mutedClr,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 14),
         Row(
           children: [
-            const SizedBox(width: 65),
-            FaIcon(
-              FontAwesomeIcons.solidEnvelope,
-              size: 15,
-              color: blueColor,
+            const FaIcon(
+              FontAwesomeIcons.envelope,
+              size: 16,
+              color: mutedClr,
             ),
-            const SizedBox(width: 5),
-            SizedBox(
-              width: 230,
+            const SizedBox(width: 10),
+            Expanded(
               child: Text(
                 '${tenant.email}',
                 maxLines: 2,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 16,
-                  color: blueColor,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: mutedClr,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -8092,6 +8056,7 @@ class _Summery_pageState extends State<Summery_page>
           ),
         const SizedBox(height: 10),
       ],
+      ),
     );
   }
 

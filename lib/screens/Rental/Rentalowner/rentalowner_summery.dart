@@ -144,10 +144,9 @@ class _RentalownersSummeryForMobileState
   Future<void> fetchRentalOwner() async {
     setState(() => isLoading = true);
     List<RentalOwnerData> data = await RentalOwnerService().fetchRentalOwners("");
-    RentalOwnerData? matchedOwner = data.firstWhere(
-          (owner) => owner.rentalownerId == widget.rentalOwnersid,
-     // orElse: () => null, // fallback if not found
-    );
+    final matches =
+        data.where((owner) => owner.rentalownerId == widget.rentalOwnersid);
+    RentalOwnerData? matchedOwner = matches.isNotEmpty ? matches.first : null;
 
     setState(() {
       widget.rentalowners = matchedOwner;
@@ -249,6 +248,9 @@ class _RentalownersSummeryForMobileState
                     SizedBox(width: MediaQuery.of(context).size.width * 0.065),
                     GestureDetector(
                       onTap: () async {
+                        if (widget.rentalowners == null) {
+                          return;
+                        }
                         var check = await    Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -1115,7 +1117,10 @@ class _RentalownersSummeryForTabletState
               return Text('Error: ${snapshot.error}');
             } else {
               List<RentalOwnerData> rentalownersummery = snapshot.data ?? [];
-              print(snapshot.data!.length);
+              if (rentalownersummery.isEmpty) {
+                return const Center(child: Text("No owner details found"));
+              }
+              print(rentalownersummery.length);
               //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
               return ListView(
                 scrollDirection: Axis.vertical,
