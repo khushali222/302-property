@@ -3,7 +3,7 @@ class Charge {
   String tenantId;
   String leaseId;
   List<Entry> entry;
-  int totalAmount;
+  num totalAmount;
   List<String> uploadedFile;
   bool isLeaseAdded;
 
@@ -44,12 +44,13 @@ class Charge {
 
 class Entry {
   String account;
-  int amount;
-  int dueAmount;
+  num amount;
+  num dueAmount;
   String memo;
   String date;
   String chargeType;
   bool isRepeatable;
+  String? entryId;
 
   Entry({
     required this.account,
@@ -59,6 +60,7 @@ class Entry {
     required this.date,
     required this.chargeType,
     required this.isRepeatable,
+    this.entryId,
   });
 
   factory Entry.fromJson(Map<String, dynamic> json) {
@@ -70,11 +72,12 @@ class Entry {
       date: json['date'],
       chargeType: json['charge_type'],
       isRepeatable: json['is_repeatable'],
+      entryId: json['entry_id'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'account': account,
       'amount': amount,
       'due_amount': dueAmount,
@@ -83,5 +86,9 @@ class Entry {
       'charge_type': chargeType,
       'is_repeatable': isRepeatable,
     };
+    // entry_id is sent only on EDIT (web matches entries by it, Charges.js);
+    // the server generates it on create, so omit it when absent.
+    if (entryId != null) data['entry_id'] = entryId;
+    return data;
   }
 }

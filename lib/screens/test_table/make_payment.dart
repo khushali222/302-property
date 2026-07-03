@@ -1613,8 +1613,10 @@ class _MakePaymentState extends State<MakePayment> {
                                 );
                                 LeaseRepository apiService =
                                 LeaseRepository();
-                                int statusCode =
+                                final chargeResponse =
                                 await apiService.postCharge(charge);
+                                final int statusCode =
+                                    chargeResponse.statusCode;
                                 if (statusCode == 200) {
                                   setState(() {
                                     _isLoading = false;

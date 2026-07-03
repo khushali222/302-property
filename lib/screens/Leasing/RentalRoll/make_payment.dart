@@ -368,6 +368,7 @@ class _MakePaymentState extends State<MakePayment> {
             'last_name': '${tenant['tenant_lastName']}',
             'email': '${tenant['tenant_email']}',
             'overridefee': '${tenant['override_fee']}',
+            'enableoverridefee': '${tenant['enable_override_fee']}',
           });
         }
 
@@ -435,6 +436,16 @@ class _MakePaymentState extends State<MakePayment> {
       }
     }
     return null; // or you could return an empty string or any default value
+  }
+
+  bool getEnableOverrideFee(String tenantId) {
+    for (var tenant in tenants) {
+      if (tenant['tenant_id'] == tenantId) {
+        final raw = tenant['enableoverridefee'];
+        return raw == 'true' || raw == '1';
+      }
+    }
+    return false;
   }
 
   Future<void> fetchDropdownData() async {
@@ -1140,34 +1151,53 @@ class _MakePaymentState extends State<MakePayment> {
           return;
         }
 
-        if ((cardDetails[selectedcardindex!].binResult ?? '').toUpperCase() ==
-            "CREDIT") {
+        final String binResult =
+            (cardDetails[selectedcardindex!].binResult ?? '').toUpperCase();
+
+        if (binResult == "CREDIT") {
           setState(() {
-            surCharge = surchargeData['surcharge_percent'] != null
-                ? surchargeData['surcharge_percent'].toDouble()
-                : 0.0;
+            surCharge =
+                num.tryParse('${surchargeData['surcharge_percent'] ?? 0}')
+                        ?.toDouble() ??
+                    0.0;
+          });
+        } else if (binResult == "DEBIT") {
+          setState(() {
+            final String? overrideFee = getOverrideFee(selectedTenantId!);
+            final bool enableOverrideFee =
+                getEnableOverrideFee(selectedTenantId!);
+            print("overrideFee   ${overrideFee}");
+            print("enableOverrideFee   ${enableOverrideFee}");
+            if (enableOverrideFee &&
+                overrideFee != null &&
+                overrideFee != "null" &&
+                overrideFee.trim().isNotEmpty) {
+              surCharge = double.tryParse(overrideFee) ?? 0.0;
+            } else {
+              surCharge = surchargeData['surcharge_percent_debit'] != null
+                  ? num.tryParse(
+                              surchargeData['surcharge_percent_debit'].toString())
+                          ?.toDouble() ??
+                      0.0
+                  : 0.0;
+            }
           });
         } else {
           setState(() {
-            String? overrideFee = getOverrideFee(selectedTenantId!);
-            print("overrideFee   ${overrideFee}");
-            if (overrideFee == null || overrideFee == "null")
-              surCharge = surchargeData['surcharge_percent_debit'] != null
-                  ? surchargeData['surcharge_percent_debit'].toDouble()
-                  : 0.0;
-            else
-              surCharge = double.tryParse(overrideFee) ?? 0.0;
+            surCharge = 0.0;
           });
         }
       }
 
       setState(() {
-        surChargeAchper = surchargeData['surcharge_percent_ACH'] != null
-            ? surchargeData['surcharge_percent_ACH'].toDouble()
-            : 0.0;
-        surChargeAchflat = surchargeData['surcharge_flat_ACH'] != null
-            ? surchargeData['surcharge_flat_ACH'].toDouble()
-            : 0.0;
+        surChargeAchper = num.tryParse(
+                    '${surchargeData['surcharge_percent_ACH'] ?? 0}')
+                ?.toDouble() ??
+            0.0;
+        surChargeAchflat = num.tryParse(
+                    '${surchargeData['surcharge_flat_ACH'] ?? 0}')
+                ?.toDouble() ??
+            0.0;
       });
 
       print(surChargeAchper);
@@ -1892,6 +1922,9 @@ class _MakePaymentState extends State<MakePayment> {
                                       print(
                                           'Selected payment method: $_selectedPaymentMethod');
                                       surge_count();
+                                      if (_selectedPaymentMethod == "Card") {
+                                        fetchSurcharge();
+                                      }
                                     } else {
                                       print(
                                           'Payment method $cleanValue is not available');
@@ -3765,9 +3798,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     if (_selectedPaymentMethod == "Card")
                                       buildAmountContainer(
                                           'Surcharge included',
-                                          _safeParseAmountText() *
-                                              (surCharge ?? 0.0) /
-                                              100),
+                                          double.parse((_safeParseAmountText() *
+                                                  (surCharge ?? 0.0) /
+                                                  100)
+                                              .toStringAsFixed(2))),
                                     if (_selectedPaymentMethod == "ACH")
                                       buildAmountContainer('Surcharge included',
                                           surchargecount!),
@@ -3777,10 +3811,11 @@ class _MakePaymentState extends State<MakePayment> {
                                     buildAmountContainer(
                                         'Total Amount',
                                         (_selectedPaymentMethod == "Card")
-                                            ? (_safeParseAmountText() *
-                                                    (surCharge ?? 0.0) /
-                                                    100) +
-                                                _safeParseAmountText()
+                                            ? double.parse(((_safeParseAmountText() *
+                                                            (surCharge ?? 0.0) /
+                                                            100) +
+                                                        _safeParseAmountText())
+                                                    .toStringAsFixed(2))
                                             : (_selectedPaymentMethod == "ACH")
                                                 ? (finaltotal ?? 0.0)
                                                 : _safeParseAmountText()),
@@ -3906,7 +3941,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         selectedBilling.customerVaultId ?? "",
                                     billingId: selectedBilling.billingId ?? "",
                                     surcharge:
-                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100).toStringAsFixed(2)}",
                                     amount:
                                         "${_safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
@@ -4105,8 +4140,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
@@ -4155,8 +4189,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
@@ -4263,7 +4296,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             "")
                                         : "",
                                     surcharge:
-                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100).toStringAsFixed(2)}",
                                     amount:
                                         "${_safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
@@ -4477,8 +4510,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       selectedTenant?["first_name"] ?? "",
                                   lastName: selectedTenant?["last_name"] ?? "",
                                   emailName: selectedTenant?["email"] ?? "",
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenant != null
@@ -4540,8 +4572,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         // firstName: selectedTenant["first_name"]!,
                                         // lastName: selectedTenant["last_name"]!,
                                         // emailName: selectedTenant["email"]!,
-                                        surcharge:
-                                            "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        surcharge: "0.00",
                                         amount:
                                             "${_safeParseAmountText()}",
                                         tenantId: selectedTenant != null
@@ -4733,30 +4764,22 @@ class _MakePaymentState extends State<MakePayment> {
 
   surge_count() {
     final amount = _safeParseAmountText();
-    if (amount > 0) {
-      if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0) &&
-          _selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100) +
-              (surChargeAchflat ?? 0.0);
-          finaltotal = amount + (surchargecount ?? 0.0);
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
-          finaltotal = amount + (surchargecount ?? 0.0);
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0)) {
-        setState(() {
-          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100);
-          finaltotal = amount + (surchargecount ?? 0.0);
-        });
+    if (_selectedPaymentMethod == "ACH") {
+      final double achPercent =
+          num.tryParse(surChargeAchper?.toString() ?? '')?.toDouble() ?? 0.0;
+      final double achFlat =
+          num.tryParse(surChargeAchflat?.toString() ?? '')?.toDouble() ?? 0.0;
+      // Recompute from scratch each time so a prior fee can never linger when
+      // the amount is cleared or the ACH config has no fee (matches web reset).
+      double surcharge = 0.0;
+      if (amount > 0) {
+        if (achPercent > 0) surcharge += amount * achPercent / 100;
+        if (achFlat > 0) surcharge += achFlat;
       }
+      setState(() {
+        surchargecount = double.parse(surcharge.toStringAsFixed(2));
+        finaltotal = double.parse((amount + surcharge).toStringAsFixed(2));
+      });
     }
   }
 

@@ -90,6 +90,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // OLD was: lease_id missing from staff card payload — backend couldn't identify which lease
         'lease_id': leaseid,
@@ -327,6 +328,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'address1': address1,
         'processor_id': processorId,
@@ -573,6 +575,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'date': date,
         'address1': address1,

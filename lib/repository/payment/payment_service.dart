@@ -97,6 +97,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // NEW: added to match web payload — backend uses these to identify source
         'user_active_recently': true,
@@ -343,6 +344,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'user_active_recently': true,
       };
@@ -592,6 +594,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // 'notificationTime':notificationTime,
         'user_active_recently': true,

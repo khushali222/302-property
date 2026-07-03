@@ -244,6 +244,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           'last_name': '${tenant['tenant_lastName']}',
           'email': '${tenant['tenant_email']}',
           'overridefee': '${tenant['override_fee']}',
+          'enableoverridefee': '${tenant['enable_override_fee']}',
         });
       }
       setState(() {
@@ -262,6 +263,16 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       }
     }
     return null; // or you could return an empty string or any default value
+  }
+
+  bool getEnableOverrideFee(String tenantId) {
+    for (var tenant in tenants) {
+      if (tenant['tenant_id'] == tenantId) {
+        final raw = tenant['enableoverridefee'];
+        return raw == 'true' || raw == '1';
+      }
+    }
+    return false;
   }
 
   Future<void> fetchDropdownData() async {
@@ -865,7 +876,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   }
 
   Map<int, bool> selectedRows = {};
-  int? surCharge;
+  num? surCharge;
 
   dynamic? surChargeAchper;
   dynamic? surChargeAchflat;
@@ -907,18 +918,35 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           });
           return;
         }
-        if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
+        final String? binResult = cardDetails[selectedcardindex!].binResult;
+        if (binResult == "CREDIT") {
           setState(() {
-            surCharge = surchargeData['surcharge_percent'];
+            // CREDIT always uses surcharge_percent; override_fee is never consulted.
+            surCharge =
+                num.tryParse('${surchargeData['surcharge_percent']}') ?? 0.0;
           });
-        } else {
+        } else if (binResult == "DEBIT") {
           setState(() {
             String? overrideFee = getOverrideFee(selectedTenantId!);
+            bool enableOverrideFee = getEnableOverrideFee(selectedTenantId!);
             print("overrideFee   ${overrideFee}");
-            if (overrideFee == null || overrideFee == "null")
-              surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
-            else
-              surCharge = int.tryParse(overrideFee) ?? 0;
+            final num debitPercent =
+                num.tryParse('${surchargeData['surcharge_percent_debit']}') ??
+                    0.0;
+            // Apply override on DEBIT only when the flag is on AND a real value exists.
+            if (enableOverrideFee &&
+                overrideFee != null &&
+                overrideFee.isNotEmpty &&
+                overrideFee != "null") {
+              surCharge = num.tryParse(overrideFee) ?? debitPercent;
+            } else {
+              surCharge = debitPercent;
+            }
+          });
+        } else {
+          // Any card type that is neither exactly "CREDIT" nor "DEBIT" => 0% surcharge.
+          setState(() {
+            surCharge = 0.0;
           });
         }
       }
@@ -3271,15 +3299,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         amountController.text.isNotEmpty &&
                                                 (_selectedPaymentMethod ==
                                                     "Card")
-                                            ? ((double.tryParse(
-                                                        amountController.text) ?? 0.0) *
+                                            ? double.parse((((double.tryParse(
+                                                            amountController.text) ??
+                                                        0.0) *
                                                     (surCharge ?? 0.0) /
                                                     100) +
-                                                (double.tryParse(
-                                                    amountController.text) ?? 0.0)
+                                                    (double.tryParse(
+                                                        amountController.text) ??
+                                                        0.0))
+                                                .toStringAsFixed(2))
                                             : amountController.text.isNotEmpty
-                                                ? (double.tryParse(
-                                                    amountController.text) ?? 0.0)
+                                                ? double.parse((double.tryParse(
+                                                            amountController.text) ??
+                                                        0.0)
+                                                    .toStringAsFixed(2))
                                                 : 0.0),
                                   ],
                                 ),
@@ -3335,7 +3368,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         'date': reverseFormatDate(_startDate
                                             .text
                                             .trim()), // Set the date to the desired date
-                                        'balance': double.parse(charges_balances[index].toStringAsFixed(2)), // Add balance from charges_balances list
+                                        'balance': double.parse(((entry['amount'] as num?)?.toDouble() ?? 0.0).toStringAsFixed(2)), // WEB: entry balance equals the paid amount
                                       },
                                     );
                                   })
@@ -3365,6 +3398,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       entries: rows,
                                       totalAmount: (double.tryParse(amountController.text.trim()) ?? 0.0),
                                       uploadedFile: _uploadedFileNames,
+                                      checkNumber: checknumber.text.trim(),
                                     )
                                     .then((value) {
                                   Fluttertoast.showToast(
@@ -3426,10 +3460,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
-                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
+                                      "${(double.tryParse(amountController.text.trim()) ?? 0.0).toStringAsFixed(2)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3481,10 +3514,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
-                                      "${((double.tryParse(amountController.text.trim()) ?? 0.0) * (surCharge ?? 0.0) / 100) + (double.tryParse(amountController.text.trim()) ?? 0.0)}",
+                                      "${(double.tryParse(amountController.text.trim()) ?? 0.0).toStringAsFixed(2)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3599,27 +3631,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
   surge_count() {
     if (amountController.text.isNotEmpty) {
-      if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null && surChargeAchper != 0.0) &&
-          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
+      if (_selectedPaymentMethod == "ACH") {
         setState(() {
+          final double base = double.tryParse(amountController.text) ?? 0.0;
+          final num percent = num.tryParse('$surChargeAchper') ?? 0.0;
+          final num flat = num.tryParse('$surChargeAchflat') ?? 0.0;
+          double surcharge = 0.0;
+          // Percent term added only if truthy (>0).
+          if (percent > 0) surcharge += base * percent / 100;
+          // Flat term is a DOLLAR amount, added only if truthy (>0).
+          if (flat > 0) surcharge += flat.toDouble();
           surchargecount =
-              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100) +
-                  surChargeAchflat;
-          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
-          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null && surChargeAchper != 0.0)) {
-        setState(() {
-          surchargecount =
-              ((double.tryParse(amountController.text) ?? 0.0) * surChargeAchper / 100);
-          finaltotal = (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
+              double.parse(surcharge.toStringAsFixed(2));
+          finaltotal =
+              double.parse((base + surchargecount!).toStringAsFixed(2));
         });
       }
     }

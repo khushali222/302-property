@@ -265,11 +265,14 @@ class _enterChargeState extends State<enterCharge> {
         for (var i = 0; i < fetchedCharge.entry!.length; i++) {
           print(fetchedCharge.entry![i].amount);
           rows.add({
+            'entry_id': fetchedCharge.entry![i].entryId,
             'account': fetchedCharge.entry![i].account,
             'charge_type': fetchedCharge.entry![i].chargeType,
             'amount': fetchedCharge.entry![i].amount,
             'memo': Memo.text,
-            'date': _startDate.text,
+            // Preserve each entry's original date on edit (web parity).
+            'date': intl.DateFormat('yyyy-MM-dd')
+                .format(fetchedCharge.entry![i].date!),
           });
           total += fetchedCharge.entry![i].amount!;
           totalAmount = total;
@@ -689,6 +692,8 @@ class _enterChargeState extends State<enterCharge> {
                         if (MediaQuery.of(context).size.width < 500)
                           CustomTextField(
                             onTap: () async {
+                              // Disable date changes when editing (web parity).
+                              if (widget.chargeid != null) return;
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
@@ -916,6 +921,8 @@ class _enterChargeState extends State<enterCharge> {
                                       SizedBox(height: 5),
                                       CustomTextField(
                                         onTap: () async {
+                                          // Disable date changes when editing (web parity).
+                                          if (widget.chargeid != null) return;
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1667,6 +1674,20 @@ class _enterChargeState extends State<enterCharge> {
                                       .where((e) => e["charge_type"] == null));
 
                                   if (validationMessage == null) {
+                                    // Amount bounds guard (web parity): > 0.01 and <= 999999.99.
+                                    num enteredAmount =
+                                        num.tryParse(Amount.text.trim()) ?? 0;
+                                    if (enteredAmount <= 0.01 ||
+                                        enteredAmount > 999999.99) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            "Amount must be greater than 0.01 and no more than 999999.99",
+                                      );
+                                      return;
+                                    }
                                     if (widget.chargeid != null) {
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
@@ -1674,25 +1695,33 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
+                                        num amount =
+                                            num.tryParse('${row['amount'] ?? 0}') ??
+                                                0;
                                         return Entry(
                                           account: row['account'],
-                                          amount: row['amount']?.toInt() ?? 0,
-                                          dueAmount:
-                                              0, // Adjust according to your requirement
+                                          amount: amount,
+                                          dueAmount: amount,
                                           memo: row['memo'],
                                           date: reverseFormatDate(
                                               row['date'] != ""
                                                   ? row['date']
                                                   : _startDate.text),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row['charge_type'] !=
+                                                      null &&
+                                                  '${row['charge_type']}'
+                                                      .isNotEmpty)
+                                              ? row['charge_type']
+                                              : row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
+                                          entryId: row['entry_id'],
                                         );
                                       }).toList();
 
                                       print("amount ${Amount.text}");
-                                      int totalAmount =
-                                          int.tryParse(Amount.text.trim()) ?? 0;
+                                      num totalAmount =
+                                          num.tryParse(Amount.text.trim()) ?? 0;
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,
@@ -1706,16 +1735,36 @@ class _enterChargeState extends State<enterCharge> {
 
                                       LeaseRepository apiService =
                                           LeaseRepository();
-                                      int statusCode =
+                                      final response =
                                           await apiService.EditCharge(
                                               charge, widget.chargeid!);
+                                      final int statusCode =
+                                          response.statusCode;
+                                      Map<String, dynamic> respBody = {};
+                                      try {
+                                        final decoded =
+                                            jsonDecode(response.body);
+                                        if (decoded is Map<String, dynamic>) {
+                                          respBody = decoded;
+                                        }
+                                      } catch (_) {}
 
                                       if (statusCode == 200) {
                                         setState(() {
                                           _isLoading = false;
                                         });
+                                        final bool isScheduled =
+                                            respBody['scheduled'] == true;
+                                        final String? serverMessage =
+                                            respBody['message']?.toString();
                                         Fluttertoast.showToast(
-                                          msg: "Charge Edited successfully",
+                                          msg: (isScheduled ||
+                                                      (serverMessage != null &&
+                                                          serverMessage
+                                                              .isNotEmpty))
+                                              ? (serverMessage ??
+                                                  "Charge scheduled")
+                                              : "Charge Edited successfully",
                                         );
                                         Navigator.pop(context, true);
                                       } else {
@@ -1736,24 +1785,32 @@ class _enterChargeState extends State<enterCharge> {
                                           prefs.getString('adminId').toString();
 
                                       List<Entry> entryList = rows.map((row) {
+                                        num amount =
+                                            num.tryParse('${row['amount'] ?? 0}') ??
+                                                0;
                                         return Entry(
                                           account: row['account'],
-                                          amount: row['amount']?.toInt() ?? 0,
-                                          dueAmount:
-                                              0, // Adjust according to your requirement
+                                          amount: amount,
+                                          dueAmount: amount,
                                           memo: row['memo'],
                                           date: reverseFormatDate(
                                               row['date'] != ""
                                                   ? row['date']
                                                   : _startDate.text),
-                                          chargeType: row['charge_type'],
+                                          chargeType: (row['charge_type'] !=
+                                                      null &&
+                                                  '${row['charge_type']}'
+                                                      .isNotEmpty)
+                                              ? row['charge_type']
+                                              : row['charge_type'],
                                           isRepeatable:
                                               false, // Adjust according to your requirement
+                                          entryId: row['entry_id'],
                                         );
                                       }).toList();
 
-                                      int totalAmount =
-                                          int.tryParse(Amount.text) ?? 0;
+                                      num totalAmount =
+                                          num.tryParse(Amount.text.trim()) ?? 0;
                                       Charge charge = Charge(
                                         adminId: adminId,
                                         isLeaseAdded: false,
@@ -1767,15 +1824,35 @@ class _enterChargeState extends State<enterCharge> {
 
                                       LeaseRepository apiService =
                                           LeaseRepository();
-                                      int statusCode =
+                                      final response =
                                           await apiService.postCharge(charge);
+                                      final int statusCode =
+                                          response.statusCode;
+                                      Map<String, dynamic> respBody = {};
+                                      try {
+                                        final decoded =
+                                            jsonDecode(response.body);
+                                        if (decoded is Map<String, dynamic>) {
+                                          respBody = decoded;
+                                        }
+                                      } catch (_) {}
 
                                       if (statusCode == 200) {
                                         setState(() {
                                           _isLoading = false;
                                         });
+                                        final bool isScheduled =
+                                            respBody['scheduled'] == true;
+                                        final String? serverMessage =
+                                            respBody['message']?.toString();
                                         Fluttertoast.showToast(
-                                          msg: "Charge posted successfully",
+                                          msg: (isScheduled ||
+                                                      (serverMessage != null &&
+                                                          serverMessage
+                                                              .isNotEmpty))
+                                              ? (serverMessage ??
+                                                  "Charge scheduled")
+                                              : "Charge posted successfully",
                                         );
                                         Navigator.pop(context, true);
                                       } else {

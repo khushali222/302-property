@@ -788,7 +788,7 @@ class LeaseRepository {
     }
   }
 
-  Future<int> postCharge(Charge charge) async {
+  Future<http.Response> postCharge(Charge charge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -812,9 +812,9 @@ class LeaseRepository {
       print('Response body: ${response.body}');
     }
 
-    return response.statusCode;
+    return response;
   }
-  Future<int> EditCharge(Charge charge,String charge_id) async {
+  Future<http.Response> EditCharge(Charge charge,String charge_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -838,7 +838,7 @@ class LeaseRepository {
       print('Response body: ${response.body}');
     }
 
-    return response.statusCode;
+    return response;
   }
   Future<int> DeleteCharge(String charge_id,String? reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -298,6 +298,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () async {
+                        if (reason.text.trim().isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Please enter reason for deletion");
+                          return;
+                        }
                         try {
                           var data = await ScheduledChargesRepository()
                               .deleteNote(noteid: id, reason: reason.text);
@@ -537,8 +542,12 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter amount';
                     }
-                    if (double.tryParse(value) == null) {
+                    final parsedAmount = double.tryParse(value);
+                    if (parsedAmount == null) {
                       return 'Enter a valid amount';
+                    }
+                    if (parsedAmount <= 0) {
+                      return 'Amount must be greater than 0';
                     }
                     return null;
                   },
@@ -679,7 +688,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
     if (pickedDate != null) {

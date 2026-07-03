@@ -79,6 +79,8 @@ class _MakePaymentState extends State<MakePayment> {
   double? surchargecount = 0.0;
   double? finaltotal;
   String override_fee = "";
+  // Sibling of override_fee on the same tenant JSON object (token_check / tenant_due_amount).
+  bool enableOverrideFee = false;
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -116,6 +118,8 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         // print("object ${jsonData['override_fee']}");
         override_fee = jsonData['override_fee'].toString();
+        // enable_override_fee is a sibling of override_fee on the same object.
+        enableOverrideFee = jsonData['enable_override_fee'] == true;
       });
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -797,6 +801,8 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         lease_data = charges;
         override_fee = charges!["override_fee"].toString();
+        // enable_override_fee is a sibling of override_fee on the same charges object.
+        enableOverrideFee = charges["enable_override_fee"] == true;
         // ACH surcharge from tenant_due_amount API (surcharge.surcharge_percent_ACH, surcharge_flat_ACH)
         if (charges["surcharge"] != null && charges["surcharge"] is Map) {
           final sur = charges["surcharge"] as Map<String, dynamic>;
@@ -857,6 +863,15 @@ class _MakePaymentState extends State<MakePayment> {
 
         isLoadingamount = false;
       });
+
+      // Load-order guard for the override race: fetchSurcharge() can run during
+      // initState (fetchPaymentSettings -> fetchcreditcard auto-select) BEFORE
+      // this method sets enable_override_fee / override_fee, which would leave a
+      // stale default debit fee (the reported $2). Now that the override data is
+      // loaded, recompute the card surcharge if a card is already selected.
+      if (selectedcardindex != null) {
+        await fetchSurcharge();
+      }
     } catch (e) {
       print(e);
       setState(() {
@@ -1320,7 +1335,7 @@ class _MakePaymentState extends State<MakePayment> {
 
   String? selected_account = "full";
   Map<int, bool> selectedRows = {};
-  int? surCharge;
+  num? surCharge;
   bool? scheduledPayment = false;
 
   dynamic? surChargeAchper;
@@ -1350,43 +1365,49 @@ class _MakePaymentState extends State<MakePayment> {
       // Accessing the first element in the 'data' list
       var surchargeData = jsonResponse['data'][0];
       print(surchargeData);
-      //  if (_selectedPaymentMethod == "Card") {
-      if (selectedcardindex != null &&
-          selectedcardindex! < _cardOnlyList.length &&
-          _cardOnlyList[selectedcardindex!].binResult == "CREDIT") {
+      // Card type is chosen by explicit binResult, never inferred.
+      final String? cardType = (selectedcardindex != null &&
+              selectedcardindex! < _cardOnlyList.length)
+          ? _cardOnlyList[selectedcardindex!].binResult
+          : null;
+      // override_fee is valid only when present, non-"null", non-empty.
+      final bool hasOverrideFee = override_fee != "null" &&
+          override_fee.isNotEmpty &&
+          num.tryParse(override_fee) != null;
+      if (cardType == "CREDIT") {
+        // CREDIT ALWAYS uses surcharge_percent and NEVER consults override_fee.
         setState(() {
-          print("Override_fee === $override_fee");
-          if (override_fee == null ||
-              override_fee == "null" ||
-              override_fee!.isEmpty) {
-            surCharge = surchargeData['surcharge_percent'];
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * surCharge! / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
-            print(totalamount);
-          } else {
-            surCharge = num.tryParse(override_fee) ?? surchargeData['surcharge_percent'];
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * (surCharge ?? 0) / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
+          surCharge = num.tryParse(
+                  (surchargeData['surcharge_percent'] ?? 0).toString()) ??
+              0;
+          if (totalamount > 0.0) {
+            surchargeamount = totalamount * surCharge! / 100;
+            totalpayamount = totalamount + surchargeamount;
+          }
+        });
+      } else if (cardType == "DEBIT") {
+        // DEBIT: override_fee (as a PERCENTAGE) only when enabled AND present;
+        // otherwise surcharge_percent_debit.
+        setState(() {
+          final num effectivePercent =
+              (enableOverrideFee == true && hasOverrideFee)
+                  ? (num.tryParse(override_fee) ?? 0)
+                  : (num.tryParse(
+                          (surchargeData['surcharge_percent_debit'] ?? 0)
+                              .toString()) ??
+                      0);
+          surCharge = effectivePercent;
+          if (totalamount > 0.0) {
+            surchargeamount = totalamount * surCharge! / 100;
+            totalpayamount = totalamount + surchargeamount;
           }
         });
       } else {
+        // Any card type that is neither exactly "CREDIT" nor "DEBIT" => 0% surcharge.
         setState(() {
-          if (override_fee == null ||
-              override_fee == "null" ||
-              override_fee.isEmpty) {
-            surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * surCharge! / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
-            print(totalamount);
-          } else {
-            surCharge = int.tryParse(override_fee) ?? 0;
-          }
+          surCharge = 0.0;
+          surchargeamount = 0.0;
+          totalpayamount = totalamount;
         });
       }
       //  }
@@ -2033,18 +2054,21 @@ class _MakePaymentState extends State<MakePayment> {
                                                                           expMonth) <
                                                                       int.parse(
                                                                           currentMonth));
-                                                          // Only CREDIT cards are disabled when not accepted by rental owner; DEBIT cards stay selectable (only disabled when expired)
+                                                          // A CREDIT card is accepted only when creditCardAccepted; a DEBIT card only when debitCardAccepted (matches web handleSetCardDetails)
                                                           bool isCardAccepted = item
                                                                       .binResult ==
                                                                   "DEBIT"
-                                                              ? true
+                                                              ? debitCardAccepted
                                                               : (item.binResult ==
                                                                       "CREDIT" &&
                                                                   creditCardAccepted);
                                                           bool isDisabled = isExpired ||
                                                               (item.binResult ==
                                                                       "CREDIT" &&
-                                                                  !creditCardAccepted);
+                                                                  !creditCardAccepted) ||
+                                                              (item.binResult ==
+                                                                      "DEBIT" &&
+                                                                  !debitCardAccepted);
                                                           print(
                                                               'abc check ${isCardAccepted}');
                                                           return TableRow(
@@ -3064,8 +3088,8 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: first_name ?? "",
                                   lastName: last_name ?? "",
                                   emailName: email ?? "",
-                                  surcharge: "${surchargeamount}",
-                                  amount: "${totalamount}",
+                                  surcharge: surchargeamount.toStringAsFixed(2),
+                                  amount: totalamount.toStringAsFixed(2),
                                   tenantId: widget.tenantId,
                                   date: _normalizeToIsoDate(_startDate.text),
                                   address1: checkname,
@@ -3126,14 +3150,15 @@ class _MakePaymentState extends State<MakePayment> {
                                   billingId:
                                       _cardOnlyList[selectedcardindex!].billingId ??
                                           "",
-                                  surcharge: "${surchargeamount}",
-                                  amount: "${totalamount}",
+                                  surcharge: surchargeamount.toStringAsFixed(2),
+                                  amount: totalamount.toStringAsFixed(2),
                                   tenantId: widget.tenantId,
                                   date: _normalizeToIsoDate(_startDate.text),
                                   address1:
                                       _cardOnlyList[selectedcardindex!].address_1 ??
                                           "",
-                                  processorId: "",
+                                  processorId:
+                                      lease_data?['processorId']?.toString() ?? "",
                                   leaseid: selectedTenantId!,
                                   company_name: companyName,
                                   future_Date: futuredate!,

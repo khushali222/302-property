@@ -864,7 +864,12 @@ class LeaseRepository {
     }
   }
 
-  Future<int> postCharge(Charge charge) async {
+  // Returns the raw HTTP response so callers can react to server-driven states
+  // (e.g. a future-dated charge that the backend converts to a Scheduled
+  // Charge and returns as { scheduled: true, scheduled_date, message }).
+  // Callers read `response.statusCode` and decode `response.body` for the
+  // scheduled flag / server message.
+  Future<http.Response> postCharge(Charge charge) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
@@ -889,10 +894,10 @@ class LeaseRepository {
       print('Response body: ${response.body}');
     }
 
-    return response.statusCode;
+    return response;
   }
 
-  Future<int> EditCharge(Charge charge, String charge_id) async {
+  Future<http.Response> EditCharge(Charge charge, String charge_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
@@ -915,7 +920,7 @@ class LeaseRepository {
       print('Response body: ${response.body}');
     }
 
-    return response.statusCode;
+    return response;
   }
 
   Future<int> DeleteCharge(String charge_id, String? reason) async {
