@@ -99,6 +99,13 @@ class PaymentService {
       };
     //  log(paymentDetails.toString());
 
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the real charge API is NOT called (payload is in the payment map).
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — no charge sent.");
+      }
+
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -353,6 +360,13 @@ class PaymentService {
       }
       print(paymentDetails);
 
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the payload above is printed and the real charge API is NOT called.
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — full payload printed above.");
+      }
+
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -584,6 +598,12 @@ class PaymentService {
         'user_active_recently': true,
       };
       print(paymentDetails);
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the payload above is printed and the real charge API is NOT called.
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — full payload printed above.");
+      }
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -693,6 +713,7 @@ class PaymentService {
         'payment_type': paymentType,
         'entry': entries,
         'total_amount': totalAmount,
+        'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'check_number': checknumber,

@@ -2309,21 +2309,34 @@ class _MakePaymentState extends State<MakePayment> {
                                                       children: [
                                                         const SizedBox(
                                                             height: 4),
-                                                        _buildLogosBlock(
-                                                            item.ccType ?? ''),
-                                                        const SizedBox(
-                                                            height: 4),
+                                                        // _buildLogosBlock(
+                                                        //     item.ccType ?? ''),
+                                                        // const SizedBox(
+                                                        //     height: 4),
+                                                        if (_resolveCardBrandLabel(
+                                                                item.ccType,
+                                                                item.ccNumber)
+                                                            .isNotEmpty) ...[
+                                                          Text(
+                                                            _resolveCardBrandLabel(
+                                                                item.ccType,
+                                                                item.ccNumber),
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color:
+                                                                    blueColor),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 2),
+                                                        ],
                                                         Text(
                                                           '${item.binResult} CARD',
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 12,
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          21,
-                                                                          43,
-                                                                          81,
-                                                                          1)),
+                                                          style: TextStyle(
+                                                              fontSize: 11,
+                                                              color: blueColor),
                                                         ),
                                                       ],
                                                     )),
@@ -3871,8 +3884,16 @@ class _MakePaymentState extends State<MakePayment> {
                                         'date': reverseFormatDate(_startDate
                                             .text
                                             .trim()), // Set the date to the desired date
-                                        'balance': charges_balances[
-                                            index], // Add balance from charges_balances list
+                                        // WEB parity: existing charge rows send the ORIGINAL
+                                        // due (charge_amount); new user-added rows send the paid
+                                        // amount. The on-screen balance (charges_balances) is
+                                        // intentionally left unchanged — only the submitted
+                                        // balance is aligned to web.
+                                        'balance': (entry['newfield'] == true)
+                                            ? (entry['amount'] ??
+                                                charges_balances[index])
+                                            : (entry['charge_amount'] ??
+                                                charges_balances[index]),
                                       },
                                     );
                                   })
@@ -3936,7 +3957,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     tenantId: selectedTenantId!,
                                     date: reverseFormatDate(_startDate.text.trim()),
                                     address1: selectedBilling.address_1 ?? "",
-                                    processorId: "",
+                                    processorId: processor_id,
                                     leaseid: widget.leaseId,
                                     company_name: companyName,
                                     entries: rows,
@@ -4424,5 +4445,28 @@ class _MakePaymentState extends State<MakePayment> {
         );
       },
     );
+  }
+
+  // Display-only: resolves the card network brand for the Card Type column.
+  // Prefers the processor cc_type, then infers from the card number's first
+  // digit. Does not read or change binResult, so surcharge and card-acceptance
+  // logic remain unaffected.
+  String _resolveCardBrandLabel(String? ccType, String? ccNumber) {
+    final String raw = (ccType ?? '').trim().toLowerCase();
+    if (raw.contains('american express') || raw.contains('amex')) return 'Amex';
+    if (raw.contains('mastercard') || raw.contains('master card'))
+      return 'Mastercard';
+    if (raw.contains('visa')) return 'Visa';
+    if (raw.contains('discover')) return 'Discover';
+    if (raw.contains('jcb')) return 'JCB';
+    if (raw.contains('diners')) return 'Diners';
+
+    final String digits = (ccNumber ?? '').replaceAll(RegExp(r'\D'), '');
+    final String first = digits.isNotEmpty ? digits[0] : '';
+    if (first == '3') return 'Amex';
+    if (first == '4') return 'Visa';
+    if (first == '5') return 'Mastercard';
+    if (first == '6') return 'Discover';
+    return '';
   }
 }

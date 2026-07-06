@@ -74,6 +74,13 @@ class PaymentService {
       };
       print(paymentDetails);
 
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the payload above is printed and the real charge API is NOT called.
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — full payload printed above.");
+      }
+
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -315,6 +322,13 @@ class PaymentService {
       }
       print(paymentDetails);
 
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the payload above is printed and the real charge API is NOT called.
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — full payload printed above.");
+      }
+
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -507,6 +521,12 @@ class PaymentService {
         'processor_id': processorId,
       };
       print(paymentDetails);
+      // 🧪 DRY-RUN: verify the numbers without charging. When kDryRunPayments is
+      // true, the payload above is printed and the real charge API is NOT called.
+      if (kDryRunPayments) {
+        throw Exception(
+            "DRY-RUN: NOT charged. surcharge=${paymentDetails['surcharge']} amount=${paymentDetails['amount']} — full payload printed above.");
+      }
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
