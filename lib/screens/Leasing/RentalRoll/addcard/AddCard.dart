@@ -1251,15 +1251,17 @@ class _AddCardState extends State<AddCard> {
                                                               responseCode:
                                                                   cardResponse
                                                                       .responseCode,
-                                                              cardID: _cardId);
+                                                              cardID: _cardId,
+                                                              ccNumber:
+                                                                  cardNumber.text);
 
-                                                      // await addCardService
-                                                      //     .postAddCreditCard(
-                                                      //         addcard);
-                                                      // Navigator.pop(context);
-                                                      // Fluttertoast.showToast(
-                                                      //     msg:
-                                                      //         'Add Card Successfully');
+                                                      await addCardService
+                                                          .postAddCreditCard(
+                                                              addcard);
+                                                      Navigator.pop(context);
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              'Add Card Successfully');
                                                     } else {
                                                       CardResponse?
                                                           cardResponses =
@@ -1288,11 +1290,13 @@ class _AddCardState extends State<AddCard> {
                                                               responseCode:
                                                                   cardResponses
                                                                       ?.responseCode,
-                                                              cardID: _cardId);
-                                                      // await addCardService
-                                                      //     .postAddCreditCard(
-                                                      //         addcards);
-                                                      // Navigator.pop(context);
+                                                              cardID: _cardId,
+                                                              ccNumber:
+                                                                  cardNumber.text);
+                                                      await addCardService
+                                                          .postAddCreditCard(
+                                                              addcards);
+                                                      Navigator.pop(context);
                                                       Fluttertoast.showToast(
                                                           msg:
                                                               'Add Card Successfully');

@@ -135,9 +135,11 @@ class _MakePaymentState extends State<MakePayment> {
     );
   }
 
-  bool creditcard = false;
+  // WEB parity: fail-open like AddPayment.jsx — credit/debit default to
+  // accepted, ACH to not accepted, until/unless payment_settings says otherwise.
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
   Future<void> fetchPaymentSettings() async {
     // Don't fetch if no tenant is selected
     if (selectedTenantId == null || selectedTenantId!.isEmpty) {
@@ -170,9 +172,9 @@ class _MakePaymentState extends State<MakePayment> {
       print("achaccepted ${achaccepted}");
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {
-          achaccepted = jsonData['data']['achAccepted'];
-          creditcard = jsonData['data']['creditCardAccepted'];
-          debitcard = jsonData['data']['debitCardAccepted'];
+          achaccepted = jsonData['data']['achAccepted'] ?? false;
+          creditcard = jsonData['data']['creditCardAccepted'] ?? true;
+          debitcard = jsonData['data']['debitCardAccepted'] ?? true;
           print(' credit card accepted ${creditcard}');
           // Update payment methods list with availability status
           _updatePaymentMethods();
@@ -3896,17 +3898,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
                                             .text
-                                            .trim()), // Set the date to the desired date
-                                        // WEB parity: existing charge rows send the ORIGINAL
-                                        // due (charge_amount); new user-added rows send the paid
-                                        // amount. The on-screen balance (charges_balances) is
-                                        // intentionally left unchanged — only the submitted
-                                        // balance is aligned to web.
-                                        'balance': (entry['newfield'] == true)
-                                            ? (entry['amount'] ??
-                                                charges_balances[index])
-                                            : (entry['charge_amount'] ??
-                                                charges_balances[index]),
+                                            .trim()),
+                                        'balance': entry['amount'] ?? 0.0,
                                       },
                                     );
                                   })
@@ -4257,17 +4250,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
                                             .text
-                                            .trim()), // Set the date to the desired date
-                                        // WEB parity: existing charge rows send the ORIGINAL
-                                        // due (charge_amount); new user-added rows send the paid
-                                        // amount. The on-screen balance (charges_balances) is
-                                        // intentionally left unchanged — only the submitted
-                                        // balance is aligned to web.
-                                        'balance': (entry['newfield'] == true)
-                                            ? (entry['amount'] ??
-                                                charges_balances[index])
-                                            : (entry['charge_amount'] ??
-                                                charges_balances[index]),
+                                            .trim()),
+                                        'balance': entry['amount'] ?? 0.0,
                                       },
                                     );
                                   })

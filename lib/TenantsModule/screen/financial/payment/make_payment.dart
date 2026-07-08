@@ -151,8 +151,9 @@ class _MakePaymentState extends State<MakePayment> {
   String? leaseid;
 
   /// From get_tenant API: tenant-level allow_ach / allow_card. Merged with lease flags for dropdown.
-  bool? tenantAllowAch;
-  bool? tenantAllowCard;
+  /// WEB parity: default true (opt-out) like AddPaymentByTenant.jsx useState(true).
+  bool? tenantAllowAch = true;
+  bool? tenantAllowCard = true;
 
   @override
   void initState() {
@@ -507,8 +508,9 @@ class _MakePaymentState extends State<MakePayment> {
         final d = data is Map ? data['data'] : null;
         if (d is Map<String, dynamic>) {
           setState(() {
-            tenantAllowAch = d['allow_ach'] == true;
-            tenantAllowCard = d['allow_card'] == true;
+            // WEB parity: opt-out semantics (allow unless explicitly false)
+            tenantAllowAch = d['allow_ach'] != false;
+            tenantAllowCard = d['allow_card'] != false;
           });
         }
       }
@@ -536,7 +538,10 @@ class _MakePaymentState extends State<MakePayment> {
           methods.add('ACH');
       }
     }
-    return methods.isEmpty ? ['Card', 'ACH'] : methods;
+    // WEB parity: when the tenant is allowed neither method, return an empty
+    // list (block) instead of falling back to both. Allow-flags default true,
+    // so this is empty only when the tenant is explicitly disallowed both.
+    return methods;
   }
 
   /// Fetches ACH accounts from get-billing-customer-vault (POST).
@@ -1072,13 +1077,21 @@ class _MakePaymentState extends State<MakePayment> {
                               b.ccExp != null && b.ccExp!.trim().isNotEmpty)
                           .toList();
                       if (cardOnly.length == 1) {
-                        if (debitCardAccepted && creditCardAccepted) {
+                        // WEB parity: auto-select the lone card based on ITS OWN
+                        // type being accepted (web filteredData[0].allowPayment),
+                        // not on both flags being true.
+                        final String loneType =
+                            (cardOnly.first.binResult ?? '').toUpperCase();
+                        final bool loneAccepted =
+                            (loneType == 'CREDIT' && creditCardAccepted) ||
+                                (loneType == 'DEBIT' && debitCardAccepted);
+                        if (loneAccepted) {
                           selectedcardindex = 0;
                           print("Auto-selected card index 0");
                           fetchSurcharge();
                         } else {
                           print(
-                              "Card not auto-selected. debitCardAccepted: $debitCardAccepted, creditCardAccepted: $creditCardAccepted");
+                              "Card not auto-selected. type: $loneType, creditCardAccepted: $creditCardAccepted, debitCardAccepted: $debitCardAccepted");
                         }
                       } else {
                         selectedcardindex = null;
@@ -1366,9 +1379,10 @@ class _MakePaymentState extends State<MakePayment> {
       var surchargeData = jsonResponse['data'][0];
       print(surchargeData);
       // Card type is chosen by explicit binResult, never inferred.
+      // WEB parity: normalize case so a stored "Credit"/"credit" still matches.
       final String? cardType = (selectedcardindex != null &&
               selectedcardindex! < _cardOnlyList.length)
-          ? _cardOnlyList[selectedcardindex!].binResult
+          ? _cardOnlyList[selectedcardindex!].binResult?.toUpperCase()
           : null;
       // override_fee is valid only when present, non-"null", non-empty.
       final bool hasOverrideFee = override_fee != "null" &&
@@ -1484,8 +1498,9 @@ class _MakePaymentState extends State<MakePayment> {
                 print('Data keys: ${data.keys}');
 
                 setState(() {
-                  creditCardAccepted = data['creditCardAccepted'] ?? false;
-                  debitCardAccepted = data['debitCardAccepted'] ?? false;
+                  // WEB parity: fail-open — missing flag means accepted
+                  creditCardAccepted = data['creditCardAccepted'] ?? true;
+                  debitCardAccepted = data['debitCardAccepted'] ?? true;
 
                   // Print values to ensure state is being updated correctly
                   print("creditCardAccepted: $creditCardAccepted");
@@ -2024,19 +2039,20 @@ class _MakePaymentState extends State<MakePayment> {
                                                                     int.parse(
                                                                         currentMonth));
                                                         // A CREDIT card is accepted only when creditCardAccepted; a DEBIT card only when debitCardAccepted (matches web handleSetCardDetails)
-                                                        bool isCardAccepted = item
-                                                                    .binResult ==
-                                                                "DEBIT"
-                                                            ? debitCardAccepted
-                                                            : (item.binResult ==
-                                                                    "CREDIT" &&
-                                                                creditCardAccepted);
+                                                        // WEB parity: normalize case before comparing (web lowercases; Admin/Staff uppercase) so a stored "Credit"/"credit" is still recognized.
+                                                        final String cardTypeU =
+                                                            (item.binResult ?? '')
+                                                                .toUpperCase();
+                                                        bool isCardAccepted =
+                                                            cardTypeU == "DEBIT"
+                                                                ? debitCardAccepted
+                                                                : (cardTypeU ==
+                                                                        "CREDIT" &&
+                                                                    creditCardAccepted);
                                                         bool isDisabled = isExpired ||
-                                                            (item.binResult ==
-                                                                    "CREDIT" &&
+                                                            (cardTypeU == "CREDIT" &&
                                                                 !creditCardAccepted) ||
-                                                            (item.binResult ==
-                                                                    "DEBIT" &&
+                                                            (cardTypeU == "DEBIT" &&
                                                                 !debitCardAccepted);
                                                         bool isSelected =
                                                             selectedcardindex ==
@@ -2227,7 +2243,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                     if (!debitCardAccepted &&
                                                         _cardOnlyList.any(
                                                             (item) =>
-                                                                item.binResult ==
+                                                                (item.binResult ?? '')
+                                                                        .toUpperCase() ==
                                                                 "DEBIT"))
                                                       Row(
                                                         children: [
@@ -2246,7 +2263,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                     if (!creditCardAccepted &&
                                                         _cardOnlyList.any(
                                                             (item) =>
-                                                                item.binResult ==
+                                                                (item.binResult ?? '')
+                                                                        .toUpperCase() ==
                                                                 "CREDIT"))
                                                       Row(
                                                         children: [

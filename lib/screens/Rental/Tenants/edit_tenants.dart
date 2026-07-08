@@ -150,7 +150,7 @@ class _EditTenantsState extends State<EditTenants> {
   bool initialEnableOverrideFee = false;
   String initialOverrideFee = '';
   bool initialEnableACH = true;
-  bool initialEnableCard = false;
+  bool initialEnableCard = true;
 
   // Web-aligned Edit form state: dynamic emergency contacts + the
   // read-only global debit fee line.
@@ -174,7 +174,7 @@ class _EditTenantsState extends State<EditTenants> {
     email.text = widget.tenants.tenantEmail ?? "";
     alterEmail.text = widget.tenants.tenantAlternativeEmail ?? "";
     enableACH = widget.tenants.allowAch ?? true;
-    enableCard = widget.tenants.allowCard ?? false;
+    enableCard = widget.tenants.allowCard ?? true;
     // passWord.text = widget.tenants.tenantPassword ?? "";
     // _dateController.text = widget.tenants.tenantBirthDate ?? "";
     taxPayerId.text = widget.tenants.taxPayerId ?? "";
@@ -245,7 +245,8 @@ class _EditTenantsState extends State<EditTenants> {
 
   bool enableOverrideFee = false;
   bool enableACH = true;
-  bool enableCard = false;
+  // WEB parity: allow_card is opt-out (defaults true) like tenantFormConfig.js
+  bool enableCard = true;
   final TextEditingController overrideFee = TextEditingController();
   String overRideFeeError = '';
   void _validateInput() {
@@ -351,7 +352,7 @@ class _EditTenantsState extends State<EditTenants> {
             : '';
         // Parse allow_ach / allow_card (API may send bool, string "true"/"false", or camelCase)
         enableACH = _parseBoolFromApi(tenantData['allow_ach'] ?? tenantData['allowAch'], defaultValue: true);
-        enableCard = _parseBoolFromApi(tenantData['allow_card'] ?? tenantData['allowCard'], defaultValue: false);
+        enableCard = _parseBoolFromApi(tenantData['allow_card'] ?? tenantData['allowCard'], defaultValue: true);
         initialEnableOverrideFee = enableOverrideFee;
         initialOverrideFee = overrideFee.text;
         initialEnableACH = enableACH;

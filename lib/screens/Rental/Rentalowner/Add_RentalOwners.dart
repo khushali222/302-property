@@ -237,9 +237,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
   final FocusNode _nodeText4 = FocusNode();
-  bool creditcard = false;
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
   KeyboardActionsConfig _buildConfig(BuildContext context) {
     return KeyboardActionsConfig(
       keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
@@ -3784,9 +3784,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           });
                           if (result != "") {
                             print("sucess");
-                            Navigator.of(context).pop(result);
                             await updatePaymentSettings(result);
                             print('rentaloid ${result}');
+                            Navigator.of(context).pop(result);
                           } else {
                             print("Failed to add rental owner");
                           }

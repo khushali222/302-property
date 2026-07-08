@@ -520,9 +520,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
 
   //for card payment
 
-  bool creditcard = false;
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
 
   Future<void> fetchPaymentSettings() async {
     print("calling");
@@ -543,9 +543,9 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       print(creditcard);
       print(creditcard);
       setState(() {
-        achaccepted = jsonData['data']['achAccepted'];
-        creditcard = jsonData['data']['creditCardAccepted'];
-        debitcard = jsonData['data']['debitCardAccepted'];
+        achaccepted = jsonData['data']['achAccepted'] ?? false;
+        creditcard = jsonData['data']['creditCardAccepted'] ?? true;
+        debitcard = jsonData['data']['debitCardAccepted'] ?? true;
         initialdebitcard = debitcard;
         initialcreditcard = creditcard;
         initialachaccepted = achaccepted;

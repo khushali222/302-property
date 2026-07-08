@@ -20,11 +20,6 @@ String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/"
 String Api_url = "https://staging.cloudrentalmanager.com";
 //String Api_url = "https://development.cloudrentalmanager.com";
 
-// TEMP TEST TOGGLE — when true, the payment screens PRINT the payload and DO NOT
-// call the charge API (no card is charged). Flip to false to make real payments
-// work again. Used by the card/ACH sale methods in the payment repositories.
-bool kDryRunPayments = true;
-
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
 

@@ -610,10 +610,39 @@ class _MakePaymentState extends State<MakePayment> {
     return false;
   }
 
-  // Payment acceptance flags
-  bool creditcard = false;
+  // Payment acceptance flags — WEB parity: fail-open like Staffaddpayment.jsx
+  // (credit/debit default accepted, ACH not, until payment_settings loads).
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
+  bool isChecked = false;
+
+  // Mirrors Admin's resetFields(): used by "Make Another Payment" to clear the
+  // form and reload charges instead of popping the screen after a payment.
+  void resetFields() {
+    fetchChargesForSelectedTenant(selectedTenantId!);
+    setState(() {
+      amountController.clear();
+      Memo.clear();
+      checknumber.clear();
+      bankrountingnum.clear();
+      accountnum.clear();
+      achname.clear();
+      reference.clear();
+      _selectedPaymentMethod = null;
+      selectedAccount = null;
+      _selectedHoldertype = null;
+      selectedcardindex = null;
+      totalAmount = 0.0;
+      validationMessage = null;
+      _uploadedFileNames.clear();
+      _pdfFiles.clear();
+      for (var controller in controllers) {
+        controller.clear();
+      }
+      isChecked = false;
+    });
+  }
 
   Future<void> fetchPaymentSettings() async {
     if (selectedTenantId == null || selectedTenantId!.isEmpty) {
@@ -649,9 +678,9 @@ class _MakePaymentState extends State<MakePayment> {
 
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {
-          achaccepted = jsonData['data']['achAccepted'];
-          creditcard = jsonData['data']['creditCardAccepted'];
-          debitcard = jsonData['data']['debitCardAccepted'];
+          achaccepted = jsonData['data']['achAccepted'] ?? false;
+          creditcard = jsonData['data']['creditCardAccepted'] ?? true;
+          debitcard = jsonData['data']['debitCardAccepted'] ?? true;
           print(' credit card accepted ${creditcard}');
           // Update payment methods to reflect availability
           _initializePaymentMethods();
@@ -3883,17 +3912,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
                                             .text
-                                            .trim()), // Set the date to the desired date
-                                        // WEB parity: existing charge rows send the ORIGINAL
-                                        // due (charge_amount); new user-added rows send the paid
-                                        // amount. The on-screen balance (charges_balances) is
-                                        // intentionally left unchanged — only the submitted
-                                        // balance is aligned to web.
-                                        'balance': (entry['newfield'] == true)
-                                            ? (entry['amount'] ??
-                                                charges_balances[index])
-                                            : (entry['charge_amount'] ??
-                                                charges_balances[index]),
+                                            .trim()),
+                                        'balance': entry['amount'] ?? 0.0,
                                       },
                                     );
                                   })
@@ -3971,7 +3991,11 @@ class _MakePaymentState extends State<MakePayment> {
                                     setState(() {
                                       _isLoading = false;
                                     });
-                                    Navigator.pop(context, true);
+                                    if (isChecked) {
+                                      resetFields();
+                                    } else {
+                                      Navigator.pop(context, true);
+                                    }
                                   }).catchError((e) {
                                     print(e
                                         .toString()
@@ -4094,7 +4118,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Navigator.pop(context, true);
+                                  if (isChecked) {
+                                    resetFields();
+                                  } else {
+                                    Navigator.pop(context, true);
+                                  }
                                 }).catchError((e) {
                                   print(e
                                       .toString()
@@ -4178,7 +4206,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Navigator.pop(context, true);
+                                  if (isChecked) {
+                                    resetFields();
+                                  } else {
+                                    Navigator.pop(context, true);
+                                  }
                                 }).catchError((e) {
                                   setState(() {
                                     _isLoading = false;
@@ -4235,7 +4267,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  Navigator.pop(context, true);
+                                  if (isChecked) {
+                                    resetFields();
+                                  } else {
+                                    Navigator.pop(context, true);
+                                  }
                                 }).catchError((e) {
                                   print(e);
                                   Fluttertoast.showToast(msg: e);
@@ -4303,6 +4339,31 @@ class _MakePaymentState extends State<MakePayment> {
                           ))),
                 ],
               ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const SizedBox(width: 18),
+                SizedBox(
+                  width: 24.0,
+                  height: 24.0,
+                  child: Checkbox(
+                    value: isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        isChecked = value ?? false;
+                      });
+                    },
+                    activeColor: isChecked ? blueColor : Colors.black,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  "Make Another Payment",
+                  style:
+                      TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+                )
+              ],
             ),
           ],
         ),

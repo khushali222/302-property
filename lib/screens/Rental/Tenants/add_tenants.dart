@@ -63,8 +63,10 @@ class _AddTenantState extends State<AddTenant> {
   // emergency contacts, and the read-only global debit fee line.
   bool sendWelcomeEmail = true;
   final List<_EmergencyContactRow> emergencyContactsList = [];
-  // TODO(pass-2/API): replace with the owner's configured global debit fee.
-  String globalDebitCardFee = "8";
+  // Owner's configured global debit fee (surcharge_percent_debit). Null until
+  // loaded; WEB parity — the fee line + override UI stay hidden while null
+  // (TenantFormFields.jsx `globalDebitFee != null` guard).
+  String? globalDebitCardFee;
   Future<void> _selectDate(BuildContext context) async {
     DateTime? selectedDate = await showDatePicker(
       context: context,
@@ -651,6 +653,9 @@ class _AddTenantState extends State<AddTenant> {
     return _sectionCard(
       title: 'Payment Settings',
       children: [
+        // WEB parity: the fee line + override controls render only when a real
+        // global debit fee has loaded; hidden when none configured/fetch fails.
+        if (globalDebitCardFee != null) ...[
         RichText(
           text: TextSpan(
             text: 'Global debit card fee: ',
@@ -695,6 +700,7 @@ class _AddTenantState extends State<AddTenant> {
                 style: TextStyle(color: redClr, fontSize: 11),
               ),
             ),
+        ],
         ],
         const SizedBox(height: 16),
         Container(

@@ -261,9 +261,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     );
   }
 
-  bool creditcard = false;
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -3811,9 +3811,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           });
                           if (result != "") {
                             print("sucess");
-                            Navigator.of(context).pop(result);
                             await updatePaymentSettings(result);
                             print('rentaloid ${result}');
+                            Navigator.of(context).pop(result);
                           } else {
                             print("Failed to add rental owner");
                           }
@@ -3899,6 +3899,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
 
       final body = json.encode({
         "creditCardAccepted": creditcard,
+        "achAccepted": achaccepted,
         "debitCardAccepted": debitcard,
         "rentalOwnerId": rentalownerId ?? "",
       });
