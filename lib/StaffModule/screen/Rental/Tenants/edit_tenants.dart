@@ -360,7 +360,11 @@ class _EditTenantsState extends State<EditTenants> {
 
   Future<void> fetchTenantOverrideFee(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    // Staff must send their OWN id (staff_id) in the id header — web parity
+    // (CRM-4479). Sending adminId 401s "User does not exist or is not active"
+    // for staff at multi-co-admin companies, so get_tenant never hydrates the
+    // emergency contacts. The sibling edit PUT already uses staff_id.
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     // get_tenant returns allow_ach, allow_card, enable_override_fee, override_fee in data object
@@ -442,6 +446,14 @@ class _EditTenantsState extends State<EditTenants> {
             }
           }
         }
+
+        // [EC-DEBUG] Temporary diagnostic (remove after emergency-contact
+        // reload issue is resolved). Prints contact_id presence only, no PII.
+        print('[EC-DEBUG] EDIT-OPEN get_tenant'
+            ' | legacyPresent=${legacyEc is Map && ['name', 'relation', 'email', 'phoneNumber'].any((k) => (legacyEc[k] ?? '').toString().trim().isNotEmpty)}'
+            ' | array=${ecArray is List ? (ecArray as List).length : 'none'}'
+            ' | ids=${ecArray is List ? (ecArray as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}'
+            ' | loadedRows=${emergencyContactsList.length}');
 
         isInitialLoading = false; // Mark initial loading as complete
       });
@@ -582,6 +594,9 @@ class _EditTenantsState extends State<EditTenants> {
     VoidCallback? onTap,
     Widget? suffixIcon,
     List<TextInputFormatter>? inputFormatters,
+    TextEditingController? otherController,
+    TextEditingController? alterController,
+    TextEditingController? telephoneController,
   }) {
     return CustomTextField(
       hintText: hint,
@@ -595,6 +610,9 @@ class _EditTenantsState extends State<EditTenants> {
       onTap: onTap,
       suffixIcon: suffixIcon,
       inputFormatters: inputFormatters,
+      otherController: otherController,
+      alterController: alterController,
+      telephoneController: telephoneController,
       showElevation: false,
       borderColor: outlineClr,
       borderWidth: 1,
@@ -662,10 +680,22 @@ class _EditTenantsState extends State<EditTenants> {
       title: 'Personal Information',
       children: [
         _fieldLabel('First Name', required: true),
-        _input(hint: 'Enter first name', controller: firstName),
+        _input(
+            hint: 'Enter first name',
+            controller: firstName,
+            // Web parity: first name accepts letters, space, apostrophe only.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ']")),
+            ]),
         const SizedBox(height: 16),
         _fieldLabel('Last Name', required: true),
-        _input(hint: 'Enter last name', controller: lastName),
+        _input(
+            hint: 'Enter last name',
+            controller: lastName,
+            // Web parity: last name accepts letters, space, hyphen, apostrophe.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z '-]")),
+            ]),
         const SizedBox(height: 16),
         _fieldLabel('Phone Number', required: true),
         _input(
@@ -687,6 +717,8 @@ class _EditTenantsState extends State<EditTenants> {
           keyboardType: TextInputType.phone,
           optional: true,
           phone: true,
+          // Web parity: work number must differ from the primary phone.
+          otherController: phoneNumber,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(14),
@@ -709,6 +741,8 @@ class _EditTenantsState extends State<EditTenants> {
           keyboardType: TextInputType.emailAddress,
           optional: true,
           email: true,
+          // Web parity: alternative email must differ from the primary email.
+          alterController: email,
         ),
         const SizedBox(height: 16),
         _fieldLabel('Date of Birth'),
@@ -830,6 +864,11 @@ class _EditTenantsState extends State<EditTenants> {
             hint: 'Enter contact name',
             controller: row.name,
             optional: true,
+            // Web parity: emergency contact name accepts letters and spaces
+            // only (web blocks non-[a-zA-Z\s] input in TenantFormFields).
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+            ],
           ),
           const SizedBox(height: 14),
           _fieldLabel('Relationship to Tenant'),
@@ -846,6 +885,8 @@ class _EditTenantsState extends State<EditTenants> {
             keyboardType: TextInputType.emailAddress,
             optional: true,
             email: true,
+            // Web parity: emergency email must differ from the tenant's email.
+            alterController: email,
           ),
           const SizedBox(height: 14),
           _fieldLabel('Phone Number'),
@@ -855,6 +896,8 @@ class _EditTenantsState extends State<EditTenants> {
             keyboardType: TextInputType.phone,
             optional: true,
             phone: true,
+            // Web parity: emergency phone must differ from the tenant's phone.
+            telephoneController: phoneNumber,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(14),
@@ -991,12 +1034,17 @@ class _EditTenantsState extends State<EditTenants> {
       final m = <String, dynamic>{
         "name": c.name.text.trim(),
         "relation": c.relation.text.trim(),
-        "email": c.email.text.trim(),
+        "email": c.email.text.trim().toLowerCase(),
         "phoneNumber": formatPhoneNumberedit(c.phone.text.trim()),
       };
       if ((c.contactId ?? '').isNotEmpty) m["contact_id"] = c.contactId;
       return m;
     }).toList();
+
+    // [EC-DEBUG] Temporary diagnostic (remove later) — emergency payload ids.
+    print('[EC-DEBUG] EDIT-SAVE payload'
+        ' | count=${emergencyContacts.length}'
+        ' | ids=${emergencyContacts.map((c) => (c['contact_id']?.toString() ?? '').isEmpty ? 'NEW(no id)' : c['contact_id']).toList()}');
 
     // Web-aligned Edit PUT body: no tenant_id / admin_id / company_name /
     // send_welcome_email; legacy emergency_contact cleared (moved to array);
@@ -1007,8 +1055,8 @@ class _EditTenantsState extends State<EditTenants> {
       "tenant_phoneNumber": formatPhoneNumberedit(phoneNumber.text.trim()),
       "tenant_alternativeNumber":
           formatPhoneNumberedit(workNumber.text.trim()),
-      "tenant_email": email.text.trim(),
-      "tenant_alternativeEmail": alterEmail.text.trim(),
+      "tenant_email": email.text.trim().toLowerCase(),
+      "tenant_alternativeEmail": alterEmail.text.trim().toLowerCase(),
       "tenant_birthDate": _dateController.text.trim().isNotEmpty
           ? _convertToApiFormat(_dateController.text.trim())
           : "",

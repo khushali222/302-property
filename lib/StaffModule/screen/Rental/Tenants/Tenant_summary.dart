@@ -3989,7 +3989,10 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   Future<List<TenantLeaseData>> fetchLeaseData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    // Staff must send their OWN id (staff_id) in the id header — web parity
+    // (CRM-4479). adminId 401s for staff at multi-co-admin companies. Matches
+    // the phone-layout variant and the repository, which already use staff_id.
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     String url = '$Api_url/api/tenant/tenant_details/${widget.tenantId}';

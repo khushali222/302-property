@@ -21,6 +21,7 @@ import '../../../repository/Communication/Email_log_repo.dart';
 import '../../../repository/Communication/Send_email_repo.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'send_mail.dart';
+import '../E-mail Logs/email_details_screen.dart';
 
 class Send_Email_table extends StatefulWidget {
   @override
@@ -1143,125 +1144,127 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                                           ],
                                                         ),
                                                         Row(
-                                                          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
                                                           children: [
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _showDeleteAlert(
-                                                                      context,
-                                                                      Propertytype
-                                                                          .emailId!);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .red,
-                                                                        width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
+                                                            // View full email details (Subject/To/From/Status/Body)
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (_) =>
+                                                                        EmailDetailsScreen(
+                                                                      email:
+                                                                          Propertytype,
+                                                                    ),
                                                                   ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .trashCan,
-                                                                        size:
-                                                                            15,
-                                                                        color: Colors
-                                                                            .red,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Delete",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.red,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      )
-                                                                    ],
+                                                                );
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                width: 48,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child:
+                                                                    const Center(
+                                                                  child: FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .eye,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    size: 16,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
-                                                            SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Expanded(
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  _showAlert(
-                                                                      context,
-                                                                      Propertytype
-                                                                          .emailId!,
-                                                                      Propertytype);
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 40,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color:
-                                                                            blueColor,
-                                                                        width:
-                                                                            1.5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      FaIcon(
-                                                                        FontAwesomeIcons
-                                                                            .users,
-                                                                        size:
-                                                                            18,
-                                                                        color:
-                                                                            blueColor,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Text(
-                                                                        "Details",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                blueColor,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            // Recipients details
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _showAlert(
+                                                                    context,
+                                                                    Propertytype
+                                                                        .emailId!,
+                                                                    Propertytype);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                width: 48,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: blueColor
+                                                                      .withOpacity(
+                                                                          0.12),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Center(
+                                                                  child: FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .users,
+                                                                    color:
+                                                                        blueColor,
+                                                                    size: 16,
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
+                                                            const SizedBox(
+                                                                width: 8),
+                                                            // Delete
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                _showDeleteAlert(
+                                                                    context,
+                                                                    Propertytype
+                                                                        .emailId!);
+                                                              },
+                                                              child: Container(
+                                                                height: 40,
+                                                                width: 48,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child:
+                                                                    const Center(
+                                                                  child: FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    color: Colors
+                                                                        .red,
+                                                                    size: 16,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            // trailing gap so the last button isn't flush to the card edge
+                                                            const SizedBox(
+                                                                width: 12),
                                                           ],
                                                         ),
+                                                        // gap below the action buttons
+                                                        const SizedBox(
+                                                            height: 5),
                                                       ],
                                                     ),
                                                   ),

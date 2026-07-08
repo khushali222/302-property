@@ -99,11 +99,13 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print('hello$apiUrl');
-    print(response.body);
+    print('📥 [StaffProfile] GET $apiUrl');
+    print('📥 [StaffProfile] http status: ${response.statusCode}');
+    print('📥 [StaffProfile] body: ${response.body}');
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print("hello");
+      print(
+          '📥 [StaffProfile] data == null? ${response_Data["data"] == null}');
       setState(() {
         profiledata = response_Data["data"];
         _isLoading = false;
@@ -112,6 +114,8 @@ class _Profile_screenState extends State<Profile_screen> {
       backupcodeapicall();
       // return profile.fromJson(jsonDecode(response.body)["data"]);
     } else {
+      print(
+          '❌ [StaffProfile] non-200 statusCode in body: ${response_Data["statusCode"]} message: ${response_Data["message"]}');
       setState(() {
         _isLoading = false;
       });
@@ -132,7 +136,9 @@ class _Profile_screenState extends State<Profile_screen> {
         _companyNameController.text = profileData.companyName ?? '';
         _isLoading = false;
       });*/
-    } catch (e) {
+    } catch (e, st) {
+      print('❌ [StaffProfile] load failed: $e');
+      print('❌ [StaffProfile] stack: $st');
       setState(() {
         _hasError = true;
         _errorMessage = e.toString();
@@ -261,8 +267,8 @@ class _Profile_screenState extends State<Profile_screen> {
         },
         body: jsonEncode({
           "method": selected2FAMethod,
-          "email": profiledata['staffmember_email'],
-          "phone_number": profiledata['staffmember_phoneNumber'],
+          "email": _pf('staffmember_email'),
+          "phone_number": _pf('staffmember_phoneNumber'),
           "user_id": id,
           "user_type": "staff"
         }),
@@ -951,7 +957,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 child: Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text(
-                                        "${profiledata['staffmember_name']}",
+                                        _pf('staffmember_name'),
                                         style: TextStyle(
                                             fontWeight:
                                             FontWeight.normal,
@@ -961,8 +967,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 child: Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text(
-                                        profiledata[
-                                        'staffmember_designation'],
+                                        _pf('staffmember_designation'),
                                         style: TextStyle(
                                             fontWeight:
                                             FontWeight.normal,
@@ -972,8 +977,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                 child: Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text(
-                                        formatPhoneNumber(profiledata[
-                                        'staffmember_phoneNumber']),
+                                        formatPhoneNumber(
+                                            _pf('staffmember_phoneNumber')),
                                         style: TextStyle(
                                             fontWeight:
                                             FontWeight.normal,
@@ -983,8 +988,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                 child: Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text(
-                                        profiledata[
-                                        'staffmember_email'],
+                                        _pf('staffmember_email'),
                                         style: TextStyle(
                                             fontWeight:
                                             FontWeight.normal,
@@ -1152,7 +1156,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           SizedBox(width: 4),
                                           Flexible(
                                             child: Text(
-                                              "SMS (${profiledata['staffmember_phoneNumber']})",
+                                              "SMS (${_pf('staffmember_phoneNumber')})",
                                               style: TextStyle(
                                                 fontSize:
                                                 fontSizeTitle,
@@ -1185,7 +1189,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           SizedBox(width: 4),
                                           Flexible(
                                             child: Text(
-                                              "Email (${profiledata['staffmember_email']})",
+                                              "Email (${_pf('staffmember_email')})",
                                               style: TextStyle(
                                                 fontSize:
                                                 fontSizeTitle,
@@ -2001,18 +2005,14 @@ class _Profile_screenState extends State<Profile_screen> {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: [
-                        buildWidget('Name',
-                            profiledata['staffmember_name']),
+                        buildWidget('Name', _pf('staffmember_name')),
                         buildWidget(
-                            'Designation',
-                            profiledata[
-                            'staffmember_designation']),
+                            'Designation', _pf('staffmember_designation')),
                         buildWidget(
                             'Phone Number',
-                            formatPhoneNumber(profiledata[
-                            'staffmember_phoneNumber'])),
-                        buildWidget('Email',
-                            profiledata['staffmember_email']),
+                            formatPhoneNumber(
+                                _pf('staffmember_phoneNumber'))),
+                        buildWidget('Email', _pf('staffmember_email')),
                       ],
                     ),
                   ),
@@ -2152,7 +2152,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
-                                            "SMS (${profiledata['staffmember_phoneNumber']})",
+                                            "SMS (${_pf('staffmember_phoneNumber')})",
                                             style: TextStyle(
                                               fontSize:
                                               inputFontSize,
@@ -2183,7 +2183,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
-                                            "Email (${profiledata['staffmember_email']})",
+                                            "Email (${_pf('staffmember_email')})",
                                             style: TextStyle(
                                               fontSize:
                                               inputFontSize,
@@ -2885,7 +2885,15 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
-  buildWidget(String label, String value) {
+  // Web renders staff fields with optional chaining (blank when the field is
+  // absent), so a new staff member with no designation shows an empty value
+  // instead of crashing. Mirror that here: read every profile field through
+  // this helper so a missing/null key becomes "" rather than a null that
+  // blows up a non-nullable String.
+  String _pf(String key) => (profiledata[key] ?? '').toString();
+
+  buildWidget(String label, String? value) {
+    final String displayValue = value ?? '';
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2922,7 +2930,7 @@ class _Profile_screenState extends State<Profile_screen> {
                 fontWeight: FontWeight.w400, // Text weight
               ),
               //  controller: _dateController,
-              initialValue: value,
+              initialValue: displayValue,
               decoration: const InputDecoration(
                 hintStyle: TextStyle(
                     fontWeight: FontWeight.w500,

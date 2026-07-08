@@ -326,6 +326,9 @@ class _AddTenantState extends State<AddTenant> {
     VoidCallback? onTap,
     Widget? suffixIcon,
     List<TextInputFormatter>? inputFormatters,
+    TextEditingController? otherController,
+    TextEditingController? alterController,
+    TextEditingController? telephoneController,
   }) {
     return CustomTextField(
       hintText: hint,
@@ -339,6 +342,9 @@ class _AddTenantState extends State<AddTenant> {
       onTap: onTap,
       suffixIcon: suffixIcon,
       inputFormatters: inputFormatters,
+      otherController: otherController,
+      alterController: alterController,
+      telephoneController: telephoneController,
       showElevation: false,
       borderColor: outlineClr,
       borderWidth: 1,
@@ -381,10 +387,22 @@ class _AddTenantState extends State<AddTenant> {
       title: 'Personal Information',
       children: [
         _fieldLabel('First Name', required: true),
-        _input(hint: 'Enter first name', controller: firstName),
+        _input(
+            hint: 'Enter first name',
+            controller: firstName,
+            // Web parity: first name accepts letters, space, apostrophe only.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ']")),
+            ]),
         const SizedBox(height: 16),
         _fieldLabel('Last Name', required: true),
-        _input(hint: 'Enter last name', controller: lastName),
+        _input(
+            hint: 'Enter last name',
+            controller: lastName,
+            // Web parity: last name accepts letters, space, hyphen, apostrophe.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z '-]")),
+            ]),
         const SizedBox(height: 16),
         _fieldLabel('Phone Number', required: true),
         _input(
@@ -406,6 +424,8 @@ class _AddTenantState extends State<AddTenant> {
           keyboardType: TextInputType.phone,
           optional: true,
           phone: true,
+          // Web parity: work number must differ from the primary phone.
+          otherController: phoneNumber,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(14),
@@ -428,6 +448,8 @@ class _AddTenantState extends State<AddTenant> {
           keyboardType: TextInputType.emailAddress,
           optional: true,
           email: true,
+          // Web parity: alternative email must differ from the primary email.
+          alterController: email,
         ),
         const SizedBox(height: 16),
         _fieldLabel('Date of Birth', required: true),
@@ -613,6 +635,11 @@ class _AddTenantState extends State<AddTenant> {
             hint: 'Enter contact name',
             controller: row.name,
             optional: true,
+            // Web parity: emergency contact name accepts letters and spaces
+            // only (web blocks non-[a-zA-Z\s] input in TenantFormFields).
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+            ],
           ),
           const SizedBox(height: 14),
           _fieldLabel('Relationship to Tenant'),
@@ -629,6 +656,8 @@ class _AddTenantState extends State<AddTenant> {
             keyboardType: TextInputType.emailAddress,
             optional: true,
             email: true,
+            // Web parity: emergency email must differ from the tenant's email.
+            alterController: email,
           ),
           const SizedBox(height: 14),
           _fieldLabel('Phone Number'),
@@ -638,6 +667,8 @@ class _AddTenantState extends State<AddTenant> {
             keyboardType: TextInputType.phone,
             optional: true,
             phone: true,
+            // Web parity: emergency phone must differ from the tenant's phone.
+            telephoneController: phoneNumber,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(14),
@@ -690,6 +721,18 @@ class _AddTenantState extends State<AddTenant> {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               optional: true,
+              // Web parity: block non-numeric / out-of-0-100 at keystroke.
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                TextInputFormatter.withFunction((oldValue, newValue) {
+                  final t = newValue.text;
+                  if (t.isEmpty || t == '.') return newValue;
+                  if ('.'.allMatches(t).length > 1) return oldValue;
+                  final v = double.tryParse(t);
+                  if (v == null || v < 0 || v > 100) return oldValue;
+                  return newValue;
+                }),
+              ],
             ),
           ),
           if (overRideFeeError.isNotEmpty)
@@ -843,7 +886,7 @@ class _AddTenantState extends State<AddTenant> {
         .map((c) => {
               "name": c.name.text.trim(),
               "relation": c.relation.text.trim(),
-              "email": c.email.text.trim(),
+              "email": c.email.text.trim().toLowerCase(),
               "phoneNumber": formatPhoneNumberedit(c.phone.text.trim()),
             })
         .toList();
@@ -890,8 +933,8 @@ class _AddTenantState extends State<AddTenant> {
       "tenant_phoneNumber": formatPhoneNumberedit(phoneNumber.text.trim()),
       "tenant_alternativeNumber":
           formatPhoneNumberedit(workNumber.text.trim()),
-      "tenant_email": email.text.trim(),
-      "tenant_alternativeEmail": alterEmail.text.trim(),
+      "tenant_email": email.text.trim().toLowerCase(),
+      "tenant_alternativeEmail": alterEmail.text.trim().toLowerCase(),
       "tenant_birthDate": _dateController.text.trim().isNotEmpty
           ? _convertToApiFormat(_dateController.text.trim())
           : "",
@@ -906,6 +949,10 @@ class _AddTenantState extends State<AddTenant> {
       "company_name": companyName,
     };
 
+    // [EC-DEBUG] Temporary diagnostic (remove later) — emergency payload ids.
+    print('[EC-DEBUG] ADD-SAVE payload'
+        ' | count=${(body['emergency_contacts'] as List?)?.length ?? 0}'
+        ' | ids=${(body['emergency_contacts'] as List?)?.map((c) => (c is Map && (c['contact_id']?.toString() ?? '').isNotEmpty) ? c['contact_id'] : 'NEW(no id)').toList() ?? const []}');
     bool success = await TenantsRepository().addTenantPayload(body);
 
     setState(() {

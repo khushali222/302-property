@@ -227,6 +227,12 @@ class TenantsRepository {
 
       var responseData = jsonDecode(response.body);
       print(" add tenant $responseData");
+      // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
+      // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
+      final ecResp = responseData['data']?['emergency_contacts'];
+      print('[EC-DEBUG] ADD-SAVE response'
+          ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
+          ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
@@ -494,6 +500,12 @@ class TenantsRepository {
     );
     var responseData = json.decode(response.body);
     print('edit tenant ${response.body}');
+    // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
+    // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
+    final ecResp = responseData['data']?['emergency_contacts'];
+    print('[EC-DEBUG] EDIT-SAVE response'
+        ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
+        ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
     if (responseData["statusCode"] == 200) {
       return true;
     } else {

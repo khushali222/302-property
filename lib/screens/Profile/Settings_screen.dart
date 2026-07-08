@@ -1289,7 +1289,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (decoded['statusCode'] == 200 && decoded['data'] != null) {
         final d = decoded['data'] as Map<String, dynamic>;
         setState(() {
-          _cpCompanyName.text = (d['company_dba'] ?? '').toString();
+          // Match web (`company_dba || company_name`): show the DBA, falling
+          // back to the legal company name when no separate DBA is set.
+          // Without the fallback the field looked blank for companies that
+          // never entered a DBA (e.g. keybrainstech).
+          final cpDba = (d['company_dba'] ?? '').toString().trim();
+          final cpLegalName = (d['company_name'] ?? '').toString().trim();
+          _cpCompanyName.text = cpDba.isNotEmpty ? cpDba : cpLegalName;
           _cpMailingStreet.text = (d['mailing_street'] ?? '').toString();
           _cpMailingCity.text = (d['mailing_city'] ?? '').toString();
           final ms = (d['mailing_state'] ?? '').toString().trim();

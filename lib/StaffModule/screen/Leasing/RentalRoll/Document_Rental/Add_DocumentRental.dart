@@ -39,10 +39,10 @@ class _AddDocumentState extends State<AddDocument> {
   String renderId = '';
   String unitId = '';
   final List<String> items = [
-    "Insurance policy Docs",
+    "Insurance Policy Docs",
     "Lease Agreements",
-    "Lease renewal offers",
-    "Lease renewal letters",
+    "Lease Renewal Offers",
+    "Lease Renewal Letters",
     "Other"
   ];
   String? selectedValue;

@@ -76,10 +76,10 @@ class _EditDocumentState extends State<EditDocument> {
   bool _hasExistingFile = false;
 
   final List<String> items = [
-    "Insurance policy Docs",
+    "Insurance Policy Docs",
     "Lease Agreements",
-    "Lease renewal offers",
-    "Lease renewal letters",
+    "Lease Renewal Offers",
+    "Lease Renewal Letters",
     "Other"
   ];
   String? selectedValue;
