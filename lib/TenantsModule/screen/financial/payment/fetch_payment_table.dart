@@ -202,9 +202,9 @@ class Entrycharge {
       isRepeatable: json['is_repeatable'] as bool?,
       chargeType: json['charge_type'] as String?,
       id: json['_id'] as String?,
-      chargeAmount: (json['due_amount'] is int)
-          ? (json['due_amount'] as int).toDouble()
-          : json['due_amount'] as double?,
+      chargeAmount: json['due_amount'] is num
+          ? (json['due_amount'] as num).toDouble()
+          : double.tryParse('${json['due_amount'] ?? ''}'),
       chargeId: json['charge_id'] as String?,
     );
   }

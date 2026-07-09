@@ -324,7 +324,7 @@ class RenewLeases {
     isrenewed = json['is_renewed'] ?? false;
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
-    iV = json['__v'] ?? "";
+    iV = json['__v'] is int ? json['__v'] as int : int.tryParse('${json['__v'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {

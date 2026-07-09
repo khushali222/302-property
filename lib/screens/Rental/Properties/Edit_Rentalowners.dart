@@ -18,9 +18,6 @@ import '../../../model/properties.dart';
 import '../../../model/rental_properties.dart';
 import '../../../provider/add_property.dart';
 import '../../../repository/properties_summery.dart';
-import '../../../repository/rental_properties.dart';
-import '../../../widgets/drawer_tiles.dart';
-import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -185,7 +182,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
   String proidmessage = "";
   bool isChecked = false;
   bool isChecked2 = false;
-  bool isLoading = false;
+  bool isFetchingOwners = false;
+  bool isSubmitting = false;
 
   List<Owner> owners = [];
   List<Owner> filteredOwners = [];
@@ -198,29 +196,36 @@ class _EditRentalownersState extends State<EditRentalowners> {
   //List<OwnersDetails> OwnersdetailsGroups = [];
   bool hasError = false;
   Future<void> fetchOwners() async {
+    if (!mounted) return;
     setState(() {
-      isLoading = false;
+      isFetchingOwners = true;
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
-      "id": "CRM $id",
-      "authorization": "CRM $token",
-    });
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      owners = data.map((item) => Owner.fromJson(item)).toList();
-      filteredOwners = List.from(owners);
-      selected = List<bool>.filled(owners.length, false);
-    } else {
-      // Handle error
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await apiGet(
+        Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),
+        headers: {
+          "id": "CRM $id",
+          "authorization": "CRM $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        owners = data.map((item) => Owner.fromJson(item)).toList();
+        filteredOwners = List.from(owners);
+        selected = List<bool>.filled(owners.length, false);
+      }
+    } catch (_) {
+      // Keep the form usable even if the existing-owner list fails to load.
+    } finally {
+      if (mounted) {
+        setState(() {
+          isFetchingOwners = false;
+        });
+      }
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void filterOwners(String query) {
@@ -1999,7 +2004,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () async {
+                      onTap: isSubmitting
+                          ? null
+                          : () async {
+                        setState(() {
+                          isSubmitting = true;
+                        });
+                        try {
                         List<ProcessorList> selectedProcessors =
                             _processorGroups
                                 //  .where((group) => group.isChecked)
@@ -2027,18 +2038,33 @@ class _EditRentalownersState extends State<EditRentalowners> {
                           postalCode: code2.text,
                           processorList: selectedProcessors,
                         );
-                        // context
-                        //     .read<
-                        //     OwnerDetailsProvider>()
-                        //     .selectedprocessid(
-                        //     processor_id!);
+                        if (!mounted) return;
                         context
                             .read<OwnerDetailsProvider>()
                             .setOwnerDetails(Ownersdetails!);
                         setState(() {
-                          hasError = false; // Set error state if needed
+                          hasError = false;
                         });
-                        Navigator.pop(context);
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
+                        } catch (_) {
+                          Fluttertoast.showToast(
+                            msg: "Failed to update rental owner",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        } finally {
+                          if (mounted) {
+                            setState(() {
+                              isSubmitting = false;
+                            });
+                          }
+                        }
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
@@ -2057,7 +2083,7 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             ],
                           ),
                           child: Center(
-                            child: isLoading
+                            child: isSubmitting
                                 ? const SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 25.0,
@@ -2096,18 +2122,13 @@ class _EditRentalownersState extends State<EditRentalowners> {
                             ],
                           ),
                           child: Center(
-                            child: isLoading
-                                ? const SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
-                                : Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                  ),
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13),
+                            ),
                           ),
                         ),
                       ),
@@ -2177,12 +2198,14 @@ class Owner {
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) {
-    var list = json['processor_list'] as List;
-    List<Processor> processorList =
-        list.map((i) => Processor.fromJson(i)).toList();
+    final list = json['processor_list'];
+    List<Processor> processorList = [];
+    if (list is List) {
+      processorList = list.map((i) => Processor.fromJson(i)).toList();
+    }
 
     return Owner(
-      id: json['_id'],
+      id: json['_id'] ?? "",
       rentalOwnerId: json['rentalowner_id'] ?? "",
       adminId: json['admin_id'] ?? "",
       rentalOwnername: json['rentalOwner_name'] ?? "",
@@ -2206,7 +2229,7 @@ class Owner {
       postalCode: json['postal_code'] ?? "",
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
-      isDelete: json['is_delete'],
+      isDelete: json['is_delete'] ?? false,
       processorList: processorList,
     );
   }
@@ -2220,8 +2243,8 @@ class Processor {
 
   factory Processor.fromJson(Map<String, dynamic> json) {
     return Processor(
-      processorId: json['processor_id'],
-      id: json['_id'],
+      processorId: json['processor_id'] ?? "",
+      id: json['_id'] ?? "",
     );
   }
 }

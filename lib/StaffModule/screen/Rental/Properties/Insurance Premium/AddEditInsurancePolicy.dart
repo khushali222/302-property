@@ -344,11 +344,17 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
       TextEditingController controller, DateTime? initialDate,
       {Function(DateTime)? onDateSelected, bool isExpiration = false}) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final DateTime minExpiration = _effectiveDate != null
+        ? _effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
+    DateTime resolvedInitial = initialDate ?? DateTime.now();
+    if (isExpiration && resolvedInitial.isBefore(minExpiration)) {
+      resolvedInitial = minExpiration;
+    }
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: initialDate ?? DateTime.now(),
-      firstDate:
-          isExpiration ? (_effectiveDate ?? DateTime.now()) : DateTime(2000),
+      initialDate: resolvedInitial,
+      firstDate: isExpiration ? minExpiration : DateTime(2000),
       lastDate: DateTime(2100),
       initialDatePickerMode: DatePickerMode.day,
       builder: (BuildContext context, Widget? child) {
@@ -385,14 +391,13 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           }
         } else if (controller == _expirationDateController) {
           _expirationDate = picked;
-          // Validate expiration date is not before effective date (same day is allowed)
+          // Validate expiration date is after effective date
           if (_effectiveDate != null &&
-              _expirationDate!.isBefore(_effectiveDate!)) {
+              !_expirationDate!.isAfter(_effectiveDate!)) {
             // Show warning but don't clear
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:
-                    Text('Expiration date must be on or after effective date.'),
+                content: Text('Expiration Date must be after Effective Date'),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -434,6 +439,18 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
+      );
+      return;
+    }
+
+    final String? dateRangeError =
+        validateInsuranceDateRange(_effectiveDate, _expirationDate);
+    if (dateRangeError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(dateRangeError),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }

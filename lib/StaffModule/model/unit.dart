@@ -26,7 +26,9 @@ class unit_lease {
     endDate = json['end_date'];
     leaseId = json['lease_id'];
     leaseType = json['lease_type'];
-    amount = json['amount'];
+    amount = json['amount'] is int
+        ? json['amount']
+        : (json['amount'] as num?)?.toInt();
   }
 
   Map<String, dynamic> toJson() {

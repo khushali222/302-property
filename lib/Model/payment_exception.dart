@@ -32,7 +32,7 @@ class Data {
   String? paymentType;
   String? response;
   List<Entryy>? entry;
-  int? totalAmount;
+  num? totalAmount;
   String? type;
   List<Null>? paymentAttachment;
   String? createdAt;
@@ -70,7 +70,9 @@ class Data {
       entry: json['entry'] != null
           ? List<Entryy>.from(json['entry'].map((v) => Entryy.fromJson(v)))
           : null,
-      totalAmount: json['total_amount']  as int?,
+      totalAmount: json['total_amount'] is num
+          ? json['total_amount'] as num
+          : num.tryParse('${json['total_amount'] ?? ''}'),
       type: json['type'],
       paymentAttachment: json['payment_attachment'] != null
           ? List<Null>.from(json['payment_attachment'].map((v) => null)) // Assuming you meant to handle nulls differently
@@ -78,7 +80,7 @@ class Data {
       createdAt: json['createdAt']??"",
       checknumber: json['check_number']??"",
       updatedAt: json['updatedAt'] ??"",
-      isDelete: json['is_delete']??"",
+      isDelete: json['is_delete'] is bool ? json['is_delete'] as bool : null,
       rentalData: json['rental_data'] != null
           ? RentalData.fromJson(json['rental_data'])
           : null,
@@ -108,7 +110,7 @@ class Data {
 
 class Entryy {
   String? account;
-  int? amount;
+  num? amount;
   String? chargeType;
   String? date;
 
@@ -117,7 +119,9 @@ class Entryy {
   factory Entryy.fromJson(Map<String, dynamic> json) {
     return Entryy(
       account: json['account']??"",
-      amount: json['amount'] as int?,
+      amount: json['amount'] is num
+          ? json['amount'] as num
+          : num.tryParse('${json['amount'] ?? ''}'),
       chargeType: json['charge_type']??"",
       date: json['date']??"",
     );

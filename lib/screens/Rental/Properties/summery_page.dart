@@ -12659,7 +12659,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   'Tenants',
                                                   2,
                                                   (rental) =>
-                                                      rental.tenantCount!),
+                                                      rental.tenantCount ?? 0),
                                               _buildHeadermulti(
                                                   'Actions', 3, null),
                                             ],
@@ -12714,9 +12714,7 @@ class _Summery_pageState extends State<Summery_page>
                                                     _pagedDatamulti[i]
                                                         .rentalunitadress!),
                                                 _buildDataCellmulti(
-                                                    _pagedDatamulti[i]
-                                                        .tenantCount!
-                                                        .toString()),
+                                                    '${_pagedDatamulti[i].tenantCount ?? 0}'),
                                                 Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,

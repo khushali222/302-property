@@ -299,6 +299,20 @@ String reverseFormatDate(String formattedDate) {
   }
 }
 
+/// Shared insurance date-range rule (web parity): the expiration date must be
+/// strictly AFTER the effective date — equal dates are an error.
+/// Returns an error message when the range is invalid, or null when valid.
+/// Callers show the returned message themselves (toast/snackbar).
+String? validateInsuranceDateRange(DateTime? effective, DateTime? expiration) {
+  if (effective == null || expiration == null) {
+    return "Please select both Effective Date and Expiration Date";
+  }
+  if (expiration.isBefore(effective) || expiration.isAtSameMomentAs(effective)) {
+    return "Expiration Date must be after Effective Date";
+  }
+  return null;
+}
+
 Color blueColor = Color.fromRGBO(21, 43, 81, 1);
 Color blueColorDisabled = blueColor.withOpacity(0.6);
 //Color blueColor = Color.fromRGBO(21, 43, 70, .5);

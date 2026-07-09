@@ -234,7 +234,9 @@ class WorkOrderRepository {
   }
   static Future<bool> updateworkorderSummary(Map<String,dynamic> workorder,String workorderId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("tenant_id");
+    // Header `id` (used below) must be the vendor's OWN id (web parity).
+    // Was "tenant_id", which is null for a vendor → auth failed / 500.
+    String? id = prefs.getString("vendor_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     //http://localhost:4000/api/work-order/work-order/1721286680248

@@ -62,7 +62,7 @@ class Rentals {
         rentalOwnerId: json['rentalowner_id'] ?? "",
         propertyId: json['property_id'] ?? "",
         rentalAddress: json['rental_adress'] ?? "",
-        isRentOn: json['is_rent_on'] ?? "",
+        isRentOn: json['is_rent_on'] is bool ? json['is_rent_on'] as bool : null,
         rentalCity: json['rental_city'] ?? "",
         rentalState: json['rental_state'] ?? "",
         rentalCountry: json['rental_country'] ?? "",
@@ -71,7 +71,7 @@ class Rentals {
         staffMemberId: json['staffmember_id'] ?? "",
         createdAt: json['createdAt'] ?? "",
         updatedAt: json['updatedAt'] ?? "",
-        isDelete: json['is_delete'] ?? "",
+        isDelete: json['is_delete'] is bool ? json['is_delete'] as bool : null,
         rentalOwnerData:
             RentalOwnerData.fromJson(json['rental_owner_data'] ?? {}),
         propertyTypeData:
@@ -149,7 +149,7 @@ class RentalOwnerData {
       postalCode: json['postal_code'] ?? "",
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
-      isDelete: json['is_delete'] ?? "",
+      isDelete: json['is_delete'] is bool ? json['is_delete'] as bool : null,
       processorList: json['processor_list'] ?? "",
     );
   }
@@ -185,10 +185,10 @@ class PropertyTypeData {
       propertyId: json['property_id'] ?? "",
       propertyType: json['property_type'] ?? "",
       propertySubType: json['propertysub_type'] ?? "",
-      isMultiunit: json['is_multiunit'] ?? "",
+      isMultiunit: json['is_multiunit'] is bool ? json['is_multiunit'] as bool : null,
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
-      isDelete: json['is_delete'] ?? "",
+      isDelete: json['is_delete'] is bool ? json['is_delete'] as bool : null,
     );
   }
 }

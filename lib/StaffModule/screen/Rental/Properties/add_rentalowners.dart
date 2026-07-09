@@ -16,8 +16,6 @@ import '../../../../constant/constant.dart';
 import '../../../../model/rental_properties.dart';
 import '../../../../provider/add_property.dart';
 import '../../../repository/rental_properties.dart';
-import '../../../widgets/drawer_tiles.dart';
-import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -109,7 +107,8 @@ class _AddRentalownersState extends State<AddRentalowners> {
   String proidmessage = "";
   bool isChecked = false;
   bool isChecked2 = false;
-  bool isLoading = false;
+  bool isFetchingOwners = false;
+  bool isSubmitting = false;
   String? processor_id;
 
   List<Owner> owners = [];
@@ -123,30 +122,37 @@ class _AddRentalownersState extends State<AddRentalowners> {
   //List<OwnersDetails> OwnersdetailsGroups = [];
   bool hasError = false;
   Future<void> fetchOwners() async {
+    if (!mounted) return;
     setState(() {
-      isLoading = true;
+      isFetchingOwners = true;
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    String? staffid = prefs.getString("staff_id");
-    final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
-      "id": "CRM $staffid",
-      "authorization": "CRM $token",
-    });
-    // print(response.body);
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      owners = data.map((item) => Owner.fromJson(item)).toList();
-      filteredOwners = List.from(owners);
-      selected = List<bool>.filled(owners.length, false);
-    } else {
-      // Handle error
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      String? staffid = prefs.getString("staff_id");
+      final response = await apiGet(
+        Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),
+        headers: {
+          "id": "CRM $staffid",
+          "authorization": "CRM $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        owners = data.map((item) => Owner.fromJson(item)).toList();
+        filteredOwners = List.from(owners);
+        selected = List<bool>.filled(owners.length, false);
+      }
+    } catch (_) {
+      // Keep the form usable even if the existing-owner list fails to load.
+    } finally {
+      if (mounted) {
+        setState(() {
+          isFetchingOwners = false;
+        });
+      }
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void filterOwners(String query) {
@@ -2337,7 +2343,9 @@ class _AddRentalownersState extends State<AddRentalowners> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () async {
+                      onTap: isSubmitting
+                          ? null
+                          : () async {
                         if (firstname.text.trim().isEmpty) {
                           setState(() {
                             firstnameerror = true;
@@ -2460,8 +2468,14 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             !phonenumerror &&
                             !primaryemailerror &&
                             !homenumerror &&
-                            !businessnumerror) {
+                            !businessnumerror &&
+                            !alternativeerror) {
+                          setState(() {
+                            isSubmitting = true;
+                          });
+                          try {
                           print('hello');
+                          var ownerSaved = false;
                           if (widget.isEdit == true || isChecked2) {
                             /* Fluttertoast.showToast(
                             msg:
@@ -2515,9 +2529,11 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               processorList: selectedProcessors,
                             );
                             print(Ownersdetails!.toJson());
+                            if (!mounted) return;
                             context
                                 .read<OwnerDetailsProvider>()
                                 .setOwnerDetails(Ownersdetails!);
+                            ownerSaved = true;
                             // context
                             //     .read<
                             //     OwnerDetailsProvider>()
@@ -2575,37 +2591,57 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 processorList: selectedProcessors,
                               );
                               print(selectedProcessors.length);
+                              if (!mounted) return;
                               context
                                   .read<OwnerDetailsProvider>()
                                   .setOwnerDetails(Ownersdetails!);
-                              // context
-                              //     .read<OwnerDetailsProvider>()
-                              //     .selectedprocessid(processor_id!);
-                              /*Fluttertoast.showToast(
-                              msg: "Rental Owner Added Successfully",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          } else {
+                              ownerSaved = true;
+                              Fluttertoast.showToast(
+                                msg: "Rental Owner Added Successfully",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.TOP,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "Rental Owner Already Exists!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.TOP,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                            }
+                          }
+                          if (ownerSaved) {
+                            setState(() {
+                              hasError = false;
+                            });
+                            if (mounted) {
+                              Navigator.pop(context);
+                            }
+                          }
+                          } catch (_) {
                             Fluttertoast.showToast(
-                              msg: "Rental Owner Already Exists!",
+                              msg: "Failed to add rental owner",
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.TOP,
                               timeInSecForIosWeb: 1,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0,
-                            );*/
+                            );
+                          } finally {
+                            if (mounted) {
+                              setState(() {
+                                isSubmitting = false;
+                              });
                             }
                           }
-                          setState(() {
-                            hasError = false; // Set error state if needed
-                          });
-                          Navigator.pop(context);
                         }
                         print("form is invalid");
                       },
@@ -2626,7 +2662,7 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             ],
                           ),
                           child: Center(
-                            child: isLoading
+                            child: isSubmitting
                                 ? const SpinKitFadingCircle(
                                     color: Colors.white,
                                     size: 25.0,
@@ -2665,18 +2701,13 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             ],
                           ),
                           child: Center(
-                            child: isLoading
-                                ? const SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  )
-                                : Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13),
-                                  ),
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13),
+                            ),
                           ),
                         ),
                       ),
@@ -2746,12 +2777,14 @@ class Owner {
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) {
-    var list = json['processor_list'] as List;
-    List<Processor> processorList =
-        list.map((i) => Processor.fromJson(i)).toList();
+    final list = json['processor_list'];
+    List<Processor> processorList = [];
+    if (list is List) {
+      processorList = list.map((i) => Processor.fromJson(i)).toList();
+    }
 
     return Owner(
-      id: json['_id'],
+      id: json['_id'] ?? "",
       rentalOwnerId: json['rentalowner_id'] ?? "",
       adminId: json['admin_id'] ?? "",
       rentalOwnername: json['rentalOwner_name'] ?? "",
@@ -2775,7 +2808,7 @@ class Owner {
       postalCode: json['postal_code'] ?? "",
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
-      isDelete: json['is_delete'],
+      isDelete: json['is_delete'] ?? false,
       processorList: processorList,
     );
   }
@@ -2789,8 +2822,8 @@ class Processor {
 
   factory Processor.fromJson(Map<String, dynamic> json) {
     return Processor(
-      processorId: json['processor_id'],
-      id: json['_id'],
+      processorId: json['processor_id'] ?? "",
+      id: json['_id'] ?? "",
     );
   }
 }

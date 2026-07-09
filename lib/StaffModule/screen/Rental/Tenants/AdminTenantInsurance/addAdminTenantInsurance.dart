@@ -213,7 +213,15 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Reflect the actual uploaded file type in the toast (was always "PDF",
+      // so a JPEG/PNG wrongly said "PDF added successfully").
+      final String ext = pdfFile.path.split('.').last.toLowerCase();
+      final String typeLabel = ext == 'pdf'
+          ? 'PDF'
+          : (['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp'].contains(ext)
+              ? 'Image'
+              : 'File');
+      Fluttertoast.showToast(msg: '$typeLabel added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -306,10 +314,16 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
   Future<void> _selectDateexpiration(BuildContext context) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    DateTime minExpirationDate = effectiveDate != null
+        ? effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate ?? DateTime.now(),
+      initialDate:
+          (expirationDate != null && !expirationDate!.isBefore(minExpirationDate))
+              ? expirationDate!
+              : minExpirationDate,
+      firstDate: minExpirationDate,
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -350,21 +364,11 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   }
 
   bool _validateDates() {
-    // Check if both dates are selected
-    if (effectiveDate == null || expirationDate == null) {
-      Fluttertoast.showToast(
-          msg: "Please select both Effective Date and Expiration Date");
+    final error = validateInsuranceDateRange(effectiveDate, expirationDate);
+    if (error != null) {
+      Fluttertoast.showToast(msg: error);
       return false;
     }
-
-    // Check if expiration date is after effective date
-    if (expirationDate!.isBefore(effectiveDate!) ||
-        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
-      Fluttertoast.showToast(
-          msg: "Expiration Date must be after Effective Date");
-      return false;
-    }
-
     return true;
   }
 
@@ -442,9 +446,15 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               keyboardType: TextInputType.phone,
                               hintText: 'Insurance company phone number',
                               controller: phone,
+                              phone: true,
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
                               borderWidth: 1.5,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(14),
+                                PhoneNumberFormatter(),
+                              ],
                             ),
                             SizedBox(
                               height: 10,
@@ -483,6 +493,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDate(context);
                               },
@@ -518,6 +529,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDateexpiration(context);
                               },

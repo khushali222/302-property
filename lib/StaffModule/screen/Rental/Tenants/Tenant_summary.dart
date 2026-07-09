@@ -3094,27 +3094,22 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                           const Spacer(),
                                           GestureDetector(
                                             onTap: () async {
-                                              final leaseId =
-                                                  _leaseData?.first.leaseId ??
-                                                      widget.tenants?.leaseData
-                                                          ?.first.leaseId;
-                                              if (leaseId == null ||
-                                                  leaseId.isEmpty) {
-                                                if (mounted)
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              'No lease found for this tenant.')));
-                                                return;
-                                              }
+                                              // Match web/Admin: open the add
+                                              // insurance form regardless of
+                                              // lease (no "No lease found" gate).
                                               final result =
                                                   await Navigator.of(context)
                                                       .push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      LeaseAddRentersInsurance(
+                                                      AdminAddTenantInsurance(
                                                     tenantid: widget.tenantId,
-                                                    leaseId: leaseId,
+                                                    leaseId:
+                                                        _leaseIdForAddCard ??
+                                                            widget.tenantId,
+                                                    tenantName:
+                                                        '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'
+                                                            .trim(),
                                                   ),
                                                 ),
                                               );
@@ -5587,38 +5582,29 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () async {
-                                                  final leaseId = widget
-                                                              .tenants
-                                                              ?.leaseData
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? widget
-                                                          .tenants!
-                                                          .leaseData!
-                                                          .first
-                                                          .leaseId
-                                                      : null;
-                                                  if (leaseId == null ||
-                                                      leaseId.isEmpty) {
-                                                    if (mounted) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              const SnackBar(
-                                                                  content: Text(
-                                                                      'No lease found for this tenant.')));
-                                                    }
-                                                    return;
-                                                  }
+                                                  // Match web/Admin: open the
+                                                  // add insurance form
+                                                  // regardless of lease.
                                                   final result = await Navigator
                                                           .of(context)
                                                       .push(MaterialPageRoute(
                                                           builder: (context) =>
-                                                              LeaseAddRentersInsurance(
+                                                              AdminAddTenantInsurance(
                                                                 tenantid: widget
                                                                     .tenantId,
-                                                                leaseId:
-                                                                    leaseId,
+                                                                leaseId: (widget.tenants?.leaseData?.isNotEmpty ==
+                                                                            true
+                                                                        ? widget
+                                                                            .tenants!
+                                                                            .leaseData!
+                                                                            .first
+                                                                            .leaseId
+                                                                        : null) ??
+                                                                    widget
+                                                                        .tenantId,
+                                                                tenantName:
+                                                                    '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'
+                                                                        .trim(),
                                                               )));
                                                   if (result == true) {
                                                     setState(() {

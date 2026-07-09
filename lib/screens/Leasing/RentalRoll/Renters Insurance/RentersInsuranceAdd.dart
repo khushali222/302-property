@@ -118,7 +118,15 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
     var responseBody = json.decode(responseData.body);
     print(responseBody);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Reflect the actual uploaded file type in the toast (was always "PDF",
+      // so a JPEG/PNG wrongly said "PDF added successfully").
+      final String ext = pdfFile.path.split('.').last.toLowerCase();
+      final String typeLabel = ext == 'pdf'
+          ? 'PDF'
+          : (['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp'].contains(ext)
+              ? 'Image'
+              : 'File');
+      Fluttertoast.showToast(msg: '$typeLabel added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -306,10 +314,16 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
   }
 
   Future<void> _selectDateexpiration(BuildContext context) async {
+    DateTime minExpirationDate = effectiveDate != null
+        ? effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate!,
+      initialDate: (expirationDate != null &&
+              !expirationDate!.isBefore(minExpirationDate))
+          ? expirationDate!
+          : minExpirationDate,
+      firstDate: minExpirationDate,
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -524,8 +538,10 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                                 PhoneNumberFormatter(),
                               ],
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please enter phone number';
+                                final digits = (value ?? '')
+                                    .replaceAll(RegExp(r'[^\d]'), '');
+                                if (digits.length != 10) {
+                                  return 'Please enter a valid 10-digit phone number.';
                                 }
                                 return null;
                               },
@@ -567,6 +583,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDate(context);
                               },
@@ -602,6 +619,7 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDateexpiration(context);
                               },
@@ -805,6 +823,12 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                               ),
                               onPressed: () {
                                 if (_formkey.currentState!.validate()) {
+                                  final dateError = validateInsuranceDateRange(
+                                      effectiveDate, expirationDate);
+                                  if (dateError != null) {
+                                    Fluttertoast.showToast(msg: dateError);
+                                    return;
+                                  }
                                   if (selectedTenants.isEmpty) {
                                     Fluttertoast.showToast(
                                         msg:

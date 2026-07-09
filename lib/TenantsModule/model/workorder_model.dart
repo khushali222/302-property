@@ -42,7 +42,7 @@ class WorkOrder {
     workCategory = json['work_category']??"";
     priority = json['priority']??"";
     status = json['status']??"";
-    isBillable = json['is_billable']??"";
+    isBillable = json['is_billable'] is bool ? json['is_billable'] as bool : null;
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
     date = json['date']??"";

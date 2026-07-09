@@ -37,8 +37,8 @@ class Staffmembers {
     staffmemberPassword = json['staffmember_password']??"";
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
-    isDelete = json['is_delete']??"";
-    iV = json['__v']??"";
+    isDelete = json['is_delete'] is bool ? json['is_delete'] as bool : null;
+    iV = json['__v'] is int ? json['__v'] as int : int.tryParse('${json['__v'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {

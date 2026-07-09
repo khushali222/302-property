@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
@@ -18,6 +17,11 @@ class StaffBidRoomRepository {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
+      // Header `id` must be the staff member's OWN id (web parity): the server's
+      // verifyToken resolves the staff branch by this header. Sending adminId
+      // hits the admin branch and 401s at multi-co-admin companies (CRM-4479).
+      // adminId stays in the URL path below (company scope).
+      String? staffId = prefs.getString('staff_id');
 
       String? finalAdminId = adminId ?? id;
       if (finalAdminId == null) {
@@ -31,7 +35,7 @@ class StaffBidRoomRepository {
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $finalAdminId",
+          "id": "CRM $staffId",
         },
       );
 
@@ -39,13 +43,13 @@ class StaffBidRoomRepository {
         final jsonData = json.decode(response.body);
         return BidRequestResponse.fromJson(jsonData);
       } else {
+        // Throw the server's own message (e.g. "User does not exist or is not
+        // active."); the screen shows ONE toast. No toast here so a single
+        // failure can't stack multiple conflicting toasts (CRM-4163 follow-up).
         final jsonData = json.decode(response.body);
-        Fluttertoast.showToast(
-            msg: jsonData['message'] ?? 'Failed to fetch bid requests');
-        throw Exception('Failed to fetch bid requests: ${response.statusCode}');
+        throw Exception(jsonData['message'] ?? 'Failed to fetch bid requests');
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error fetching bid requests: $e');
       rethrow;
     }
   }
@@ -56,10 +60,12 @@ class StaffBidRoomRepository {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      String? id = prefs.getString('adminId');
+      // Header `id` must be the staff member's OWN id (web parity) — see note in
+      // fetchBidRequests above.
+      String? staffId = prefs.getString('staff_id');
 
-      if (id == null) {
-        throw Exception('Admin ID is required');
+      if (staffId == null) {
+        throw Exception('Staff ID is required');
       }
 
       final url = '${Api_url}/api/bid-request/bid-request/$bidRequestId';
@@ -68,7 +74,7 @@ class StaffBidRoomRepository {
         Uri.parse(url),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffId",
         },
       );
 
@@ -77,13 +83,10 @@ class StaffBidRoomRepository {
         return BidRequestDetailResponse.fromJson(jsonData);
       } else {
         final jsonData = json.decode(response.body);
-        Fluttertoast.showToast(
-            msg: jsonData['message'] ?? 'Failed to fetch bid request details');
         throw Exception(
-            'Failed to fetch bid request details: ${response.statusCode}');
+            jsonData['message'] ?? 'Failed to fetch bid request details');
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error fetching bid request details: $e');
       rethrow;
     }
   }

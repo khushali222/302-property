@@ -189,7 +189,15 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     var responseBody = json.decode(responseData.body);
     print(responseBody);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Reflect the actual uploaded file type in the toast (was always "PDF",
+      // so a JPEG/PNG wrongly said "PDF added successfully").
+      final String ext = pdfFile.path.split('.').last.toLowerCase();
+      final String typeLabel = ext == 'pdf'
+          ? 'PDF'
+          : (['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp'].contains(ext)
+              ? 'Image'
+              : 'File');
+      Fluttertoast.showToast(msg: '$typeLabel added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -676,6 +684,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                   .dateFormat
                                   .toUpperCase(),
                               controller: effective,
+                              readOnnly: true,
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
                               borderWidth: 1.5,
@@ -711,6 +720,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                                   .dateFormat
                                   .toUpperCase(),
                               controller: expiration,
+                              readOnnly: true,
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
                               borderWidth: 1.5,
@@ -905,6 +915,12 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
                               ),
                               onPressed: () {
                                 if (_formkey.currentState!.validate()) {
+                                  final dateError = validateInsuranceDateRange(
+                                      effectiveDate, expirationDate);
+                                  if (dateError != null) {
+                                    Fluttertoast.showToast(msg: dateError);
+                                    return;
+                                  }
                                   if (selectedTenants.isEmpty) {
                                     Fluttertoast.showToast(
                                         msg:

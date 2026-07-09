@@ -128,6 +128,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   }
 
   editpayment() {
+    if (widget.data == null) return;
+    try {
     Data c_data = widget.data!;
     setState(() {
       selectedTenantId = widget.tenantId;
@@ -143,6 +145,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       _selectedPaymentMethod = c_data.paymenttype;
       customerVaultId = c_data.customer_vault_id ?? "";
       billingId = c_data.billing_id ?? "";
+      if ((c_data.entry?.isNotEmpty ?? false) &&
+          (c_data.entry!.first.memo?.isNotEmpty ?? false)) {
+        Memo.text = c_data.entry!.first.memo!;
+      }
       if (_selectedPaymentMethod != "Cash")
         checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
@@ -207,6 +213,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       isLoading = false;
     });
     AddFields();
+    } catch (e) {
+      print('editpayment prefill failed: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   String processor_id = "";
@@ -218,12 +232,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   Future<void> fetchTenants() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId",
       },
     );
 
@@ -277,14 +291,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
+      String? staffId = prefs.getString("staff_id");
       print(token);
       print('lease ${widget.leaseId}');
-      String? id = prefs.getString("adminId");
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $staffId",
         },
       );
       if (response.statusCode == 200) {
@@ -313,18 +327,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           categorizedData = fetchedData;
           isLoading = false;
         });
-        if (widget.isEdit != null) editpayment();
+        if (widget.isEdit == true && widget.data != null) editpayment();
       } else {
         setState(() {
           hasError = true;
           isLoading = false;
         });
+        if (widget.isEdit == true && widget.data != null) editpayment();
       }
     } catch (e) {
       setState(() {
         hasError = true;
         isLoading = false;
       });
+      if (widget.isEdit == true && widget.data != null) editpayment();
     }
   }
 
@@ -725,7 +741,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     setState(() {
@@ -735,7 +751,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      headers: {"id": "CRM $staffId", "authorization": "CRM $token"},
     );
 
     if (response.statusCode == 200) {
@@ -780,6 +796,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     Map<String, String> requestBody = {
@@ -791,7 +808,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM $staffId",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -835,13 +852,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     //  try {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
+    String? staffId = prefs.getString('staff_id');
     String? token = prefs.getString('token');
     print(adminId);
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
       headers: {
-        "id": "CRM $adminId",
+        "id": "CRM $staffId",
         "authorization": "CRM $token",
       },
     );
