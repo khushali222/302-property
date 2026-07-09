@@ -736,9 +736,16 @@ class _EditDocumentState extends State<EditDocument> {
       );
 
       if (result != null && result.files.single.path != null) {
+        // Auto-fill the Name from the newly selected file (web parity): strip
+        // the extension. On Edit, always sync to the new file's name.
+        final pickedName = result.files.single.name;
+        final dotIndex = pickedName.lastIndexOf('.');
+        final nameWithoutExt =
+            dotIndex > 0 ? pickedName.substring(0, dotIndex) : pickedName;
         setState(() {
           _selectedFile = File(result.files.single.path!);
           _fileUploadError = null;
+          firstName.text = nameWithoutExt;
         });
       }
     } catch (e) {

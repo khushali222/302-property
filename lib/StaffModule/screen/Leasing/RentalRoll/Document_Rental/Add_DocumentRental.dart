@@ -611,9 +611,18 @@ class _AddDocumentState extends State<AddDocument> {
       );
 
       if (result != null && result.files.single.path != null) {
+        // Auto-fill the Name from the selected file (web parity): strip the
+        // extension. On Add, only fill if the user hasn't typed a name yet.
+        final pickedName = result.files.single.name;
+        final dotIndex = pickedName.lastIndexOf('.');
+        final nameWithoutExt =
+            dotIndex > 0 ? pickedName.substring(0, dotIndex) : pickedName;
         setState(() {
           _selectedFile = File(result.files.single.path!);
           _fileUploadError = null;
+          if (firstName.text.trim().isEmpty) {
+            firstName.text = nameWithoutExt;
+          }
         });
       }
     } catch (e) {

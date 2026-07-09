@@ -869,7 +869,7 @@ class _Profile_screenState extends State<Profile_screen> {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      //drawer: CustomDrawerStaff(currentpage: 'Profile',dropdown: false,),
+      drawer: CustomDrawerStaff(currentpage: 'Dashboard', dropdown: false),
       body: _connectivityResult != ConnectivityResult.none
           ? _isLoading
           ? Center(
@@ -889,122 +889,18 @@ class _Profile_screenState extends State<Profile_screen> {
               children: [
                 SizedBox(height: 30),
                 titleBar(
-                    title: 'Personal Details',
-                    width:
-                    MediaQuery.of(context).size.width * 0.90),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal:
-                      MediaQuery.of(context).size.width *
-                          0.04,
-                      vertical: 10),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Table(
-                      border: TableBorder.all(),
-                      columnWidths: const {
-                        0: FlexColumnWidth(2),
-                        1: FlexColumnWidth(2),
-                        2: FlexColumnWidth(2),
-                        3: FlexColumnWidth(3),
-                      },
-                      children: [
-                        TableRow(
-                          children: [
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Name',
-                                      style: TextStyle(
-                                          fontWeight:
-                                          FontWeight.bold,
-                                          fontSize: 20,
-                                          color: blueColor),
-                                    ))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text('Designation',
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            fontSize: 20,
-                                            color: blueColor)))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text('Phone Number',
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            fontSize: 20,
-                                            color: blueColor)))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text('Email',
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.bold,
-                                            fontSize: 20,
-                                            color: blueColor)))),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                        _pf('staffmember_name'),
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.normal,
-                                            fontSize: 20,
-                                            color: greyColor)))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                        _pf('staffmember_designation'),
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.normal,
-                                            fontSize: 20,
-                                            color: greyColor)))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                        formatPhoneNumber(
-                                            _pf('staffmember_phoneNumber')),
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.normal,
-                                            fontSize: 20,
-                                            color: greyColor)))),
-                            TableCell(
-                                child: Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(
-                                        _pf('staffmember_email'),
-                                        style: TextStyle(
-                                            fontWeight:
-                                            FontWeight.normal,
-                                            fontSize: 20,
-                                            color: greyColor)))),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  title: 'My Profile',
+                  width: MediaQuery.of(context).size.width * 0.90,
+                  radius: 12,
                 ),
+                SizedBox(height: 16),
+                _personalDetailsCard(),
                 SizedBox(height: 30),
                 // 2FA Section
                 titleBar(
                   title: 'Two-Factor Authentication (2FA)',
                   width: MediaQuery.of(context).size.width * 0.90,
+                  radius: 12,
                 ),
                 LayoutBuilder(
                   builder: (context, constraints) {
@@ -1043,13 +939,14 @@ class _Profile_screenState extends State<Profile_screen> {
                       child: Card(
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: blueColor),
+                            color: Colors.white,
+                            border: Border.all(color: Colors.grey.shade300),
                             borderRadius:
-                            BorderRadius.circular(6),
+                            BorderRadius.circular(12),
                           ),
                           padding: EdgeInsets.all(contentPadding),
                           child: Column(
@@ -1643,8 +1540,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                             style: ElevatedButton
                                                 .styleFrom(
                                               backgroundColor:
-                                              Colors.red
-                                                  .shade50,
+                                              Colors.white,
                                               foregroundColor:
                                               Colors.red
                                                   .shade700,
@@ -1654,7 +1550,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       .shade300,
                                                   width:
                                                   1.5),
-                                              elevation: 2,
+                                              elevation: 0,
                                               shadowColor:
                                               Colors.red
                                                   .shade100,
@@ -1726,18 +1622,16 @@ class _Profile_screenState extends State<Profile_screen> {
                                             style: ElevatedButton
                                                 .styleFrom(
                                               backgroundColor:
-                                              blueColor
-                                                  .withOpacity(
-                                                  0.1),
+                                              Colors.white,
                                               foregroundColor:
-                                              blueColor,
+                                              greyColor,
                                               side: BorderSide(
-                                                  color: blueColor
-                                                      .withOpacity(
-                                                      0.3),
+                                                  color: Colors
+                                                      .grey
+                                                      .shade400,
                                                   width:
                                                   1.5),
-                                              elevation: 2,
+                                              elevation: 0,
                                               shadowColor:
                                               blueColor
                                                   .withOpacity(
@@ -1814,8 +1708,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ElevatedButton
                                               .styleFrom(
                                             backgroundColor:
-                                            Colors.red
-                                                .shade50,
+                                            Colors.white,
                                             foregroundColor:
                                             Colors.red
                                                 .shade700,
@@ -1824,7 +1717,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     .red
                                                     .shade300,
                                                 width: 1.5),
-                                            elevation: 2,
+                                            elevation: 0,
                                             shadowColor:
                                             Colors.red
                                                 .shade100,
@@ -1891,17 +1784,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ElevatedButton
                                               .styleFrom(
                                             backgroundColor:
-                                            blueColor
-                                                .withOpacity(
-                                                0.1),
+                                            Colors.white,
                                             foregroundColor:
-                                            blueColor,
+                                            greyColor,
                                             side: BorderSide(
-                                                color: blueColor
-                                                    .withOpacity(
-                                                    0.3),
+                                                color: Colors
+                                                    .grey
+                                                    .shade400,
                                                 width: 1.5),
-                                            elevation: 2,
+                                            elevation: 0,
                                             shadowColor:
                                             blueColor
                                                 .withOpacity(
@@ -1984,51 +1875,24 @@ class _Profile_screenState extends State<Profile_screen> {
             children: [
               SizedBox(height: 20),
               titleBar(
-                title: 'Personal Details',
-                width: MediaQuery.of(context).size.width * 0.91,
+                title: 'My Profile',
+                width: MediaQuery.of(context).size.width - 32,
+                radius: 12,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: blueColor),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      children: [
-                        buildWidget('Name', _pf('staffmember_name')),
-                        buildWidget(
-                            'Designation', _pf('staffmember_designation')),
-                        buildWidget(
-                            'Phone Number',
-                            formatPhoneNumber(
-                                _pf('staffmember_phoneNumber'))),
-                        buildWidget('Email', _pf('staffmember_email')),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 12),
+              _personalDetailsCard(),
               const SizedBox(height: 20),
               // 2FA Section
               titleBar(
                 title: 'Two-Factor Authentication (2FA)',
-                width: MediaQuery.of(context).size.width * 0.91,
+                width: MediaQuery.of(context).size.width - 32,
+                radius: 12,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               LayoutBuilder(
                 builder: (context, constraints) {
                   double cardPadding =
-                  constraints.maxWidth < 500 ? 10 : 20;
+                  constraints.maxWidth < 500 ? 16 : 20;
                   double horizontalContentPadding =
                   constraints.maxWidth < 400 ? 8 : 16;
                   double titleFontSize =
@@ -2044,12 +1908,13 @@ class _Profile_screenState extends State<Profile_screen> {
                     child: Card(
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: blueColor),
-                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         padding: EdgeInsets.all(
                             constraints.maxWidth < 400 ? 8 : 16),
@@ -2553,8 +2418,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ElevatedButton
                                             .styleFrom(
                                           backgroundColor:
-                                          Colors.red
-                                              .shade50,
+                                          Colors.white,
                                           foregroundColor:
                                           Colors.red
                                               .shade700,
@@ -2563,7 +2427,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                   .red
                                                   .shade300,
                                               width: 1.5),
-                                          elevation: 2,
+                                          elevation: 0,
                                           shadowColor:
                                           Colors.red
                                               .shade100,
@@ -2625,17 +2489,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                         ElevatedButton
                                             .styleFrom(
                                           backgroundColor:
-                                          blueColor
-                                              .withOpacity(
-                                              0.1),
+                                          Colors.white,
                                           foregroundColor:
-                                          blueColor,
+                                          greyColor,
                                           side: BorderSide(
-                                              color: blueColor
-                                                  .withOpacity(
-                                                  0.3),
+                                              color: Colors
+                                                  .grey
+                                                  .shade400,
                                               width: 1.5),
-                                          elevation: 2,
+                                          elevation: 0,
                                           shadowColor:
                                           blueColor
                                               .withOpacity(
@@ -2709,8 +2571,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ElevatedButton
                                               .styleFrom(
                                             backgroundColor:
-                                            Colors.red
-                                                .shade50,
+                                            Colors.white,
                                             foregroundColor:
                                             Colors.red
                                                 .shade700,
@@ -2719,10 +2580,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     .red
                                                     .shade300,
                                                 width: 1.5),
-                                            elevation: 2,
+                                            elevation: 0,
                                             shadowColor:
-                                            Colors.red
-                                                .shade100,
+                                            Colors.transparent,
                                             padding: EdgeInsets
                                                 .symmetric(
                                                 horizontal:
@@ -2779,21 +2639,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                           ElevatedButton
                                               .styleFrom(
                                             backgroundColor:
-                                            blueColor
-                                                .withOpacity(
-                                                0.1),
+                                            Colors.white,
                                             foregroundColor:
-                                            blueColor,
+                                            greyColor,
                                             side: BorderSide(
-                                                color: blueColor
-                                                    .withOpacity(
-                                                    0.3),
+                                                color: Colors
+                                                    .grey
+                                                    .shade400,
                                                 width: 1.5),
-                                            elevation: 2,
+                                            elevation: 0,
                                             shadowColor:
-                                            blueColor
-                                                .withOpacity(
-                                                0.1),
+                                            Colors.transparent,
                                             padding: EdgeInsets
                                                 .symmetric(
                                                 horizontal:
@@ -2892,67 +2748,128 @@ class _Profile_screenState extends State<Profile_screen> {
   // blows up a non-nullable String.
   String _pf(String key) => (profiledata[key] ?? '').toString();
 
-  buildWidget(String label, String? value) {
-    final String displayValue = value ?? '';
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor)),
-        const SizedBox(
-          height: 5,
-        ),
-        Material(
-          //elevation: 3,
-          borderRadius: BorderRadius.circular(6.0),
-          child: Container(
-            height: 45,
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 0),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  const BoxShadow(
-                    color: Colors.black26,
-                    offset:
-                    Offset(1.0, 1.0), // Shadow offset to the bottom right
-                    blurRadius: 8.0, // How much to blur the shadow
-                    spreadRadius: 0.0, // How much the shadow should spread
-                  ),
-                ],
-                border: Border.all(width: 0, color: Colors.white),
-                borderRadius: BorderRadius.circular(6.0)),
-            child: TextFormField(
-              style: const TextStyle(
-                color: Color(0xFF8898aa), // Text color
-                fontSize: 16.0, // Text size
-                fontWeight: FontWeight.w400, // Text weight
-              ),
-              //  controller: _dateController,
-              initialValue: displayValue,
-              decoration: const InputDecoration(
-                hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                    color: Color(0xFFb0b6c3)),
-                border: InputBorder.none,
-                // labelText: 'Select Date',
-                hintText: 'dd-mm-yyyy',
-              ),
-              readOnly: true,
-              onTap: () {
-                //_selectDate(context);
-              },
+  // Show "N/A" for any empty/missing field (consistent with the Phone field),
+  // so a blank value can never fall through to a stray placeholder.
+  String _orNA(String v) => v.trim().isEmpty ? 'N/A' : v.trim();
+
+  // Initials for the avatar, derived from the staff member's name.
+  String _initials(String name) {
+    final parts =
+        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return '';
+    if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
+    return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
+        .toUpperCase();
+  }
+
+  // One icon + value row inside the profile card (phone / email).
+  Widget _profileInfoRow(IconData icon, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: greyColor),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                  fontSize: 15, color: greyColor, fontWeight: FontWeight.w400),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-      ],
+        ],
+      ),
     );
   }
+
+  // Web-aligned, VIEW-ONLY personal details card: avatar + name + designation
+  // subtitle, then phone/email rows. Replaces the old read-only text fields so
+  // an empty Designation shows "N/A" instead of a leftover date placeholder.
+  Widget _personalDetailsCard() {
+    final name = _orNA(_pf('staffmember_name'));
+    final designation = _orNA(_pf('staffmember_designation'));
+    final phone = formatPhoneNumber(_pf('staffmember_phoneNumber'));
+    final email = _orNA(_pf('staffmember_email'));
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE6E9F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Personal Details',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: blueColor,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: blueColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _initials(_pf('staffmember_name')),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      designation,
+                      style: TextStyle(fontSize: 14, color: greyColor),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Divider(height: 1, color: Colors.grey.withOpacity(0.25)),
+          ),
+          _profileInfoRow(Icons.phone_outlined, phone),
+          _profileInfoRow(Icons.email_outlined, email),
+        ],
+      ),
+    );
+  }
+
 }
 
 class InfoRow extends StatelessWidget {

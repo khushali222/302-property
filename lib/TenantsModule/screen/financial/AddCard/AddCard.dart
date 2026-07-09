@@ -245,28 +245,6 @@ class _AddCardState extends State<AddCard> {
     }
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     try {
@@ -387,15 +365,6 @@ class _AddCardState extends State<AddCard> {
         // Handle the error case
       }
     }
-  }
-
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
   }
 
   String _formatCardNumber(String cardNumber) {

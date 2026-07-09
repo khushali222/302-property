@@ -1012,28 +1012,6 @@ class _MakePaymentState extends State<MakePayment> {
     });
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1068,16 +1046,6 @@ class _MakePaymentState extends State<MakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
 
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
       // Map card types to billing records safely (avoids index mismatch and nulls).
       final Map<String, String> cardTypeByBillingId = {};
       for (final dynamic item in cardDetailsList) {
@@ -1106,15 +1074,6 @@ class _MakePaymentState extends State<MakePayment> {
 
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
-
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
-  }
 
   Map<int, bool> selectedRows = {};
   double? surCharge;
