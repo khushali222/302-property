@@ -350,7 +350,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       loading = true;
     });
     try {
-      Position userLocation = await getCurrentLocation();
+      // Time-box the location call so a hanging GPS request can't freeze the
+      // dashboard (Android can hang forever on getCurrentPosition).
+      Position userLocation =
+          await getCurrentLocation().timeout(const Duration(seconds: 15));
       final workOrders = await WorkOrderRepository().fetchWorkOrders();
       allRentalData.clear();
       final Map<String, RentalData> uniqueRentals = {};
@@ -407,7 +410,15 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
         loading = false;
       });
     } catch (e) {
-      print('Error fetching work orders or rental data: \\${e}');
+      // Same behaviour as the Staff dashboard: if location is off / denied /
+      // timed out, stop the spinner and show the dashboard anyway (the nearby
+      // section simply stays empty). Nearby logic above is unchanged.
+      print('Error fetching work orders or rental data: $e');
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 

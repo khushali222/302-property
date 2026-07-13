@@ -17,10 +17,19 @@ import '../constant/constant.dart';
 class TeamRepository {
   final String apiUrl = '${Api_url}/api/admin/team/team';
 
+  /// The `id` header must be the acting user's OWN id: `staff_id` for a Staff
+  /// user, `adminId` for an Admin. Sending `adminId` as Staff makes the server
+  /// return a generic "User does not exist or is not active" 401 instead of the
+  /// real permission message, so every call resolves the caller's own id here.
+  String? _actingId(SharedPreferences prefs) =>
+      prefs.getString('role') == 'Staffmember'
+          ? prefs.getString('staff_id')
+          : prefs.getString('adminId');
+
   /// GET the company's admins + staff in a single payload.
   Future<TeamData> fetchTeam() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = _actingId(prefs);
     String? token = prefs.getString('token');
 
     final response = await apiGet(
@@ -58,7 +67,7 @@ class TeamRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _actingId(prefs);
 
     final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/team/invite-coadmin'),
@@ -104,7 +113,7 @@ class TeamRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _actingId(prefs);
 
     final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/team/invite-staff'),
@@ -145,7 +154,7 @@ class TeamRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _actingId(prefs);
 
     final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/team/send-reset-link'),
@@ -183,7 +192,7 @@ class TeamRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _actingId(prefs);
 
     final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/team/cancel-invite'),
@@ -223,7 +232,7 @@ class TeamRepository {
     };
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = _actingId(prefs);
 
     final response = await apiPost(
       Uri.parse('${Api_url}/api/admin/team/move-role'),

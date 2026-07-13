@@ -12,12 +12,17 @@ class PermissionService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // The `id` header must be the acting user's OWN id. For a Staff user that is
+    // staff_id; for an Admin the own-id IS adminId, so Admin behaviour is unchanged.
+    final String? actingId = prefs.getString('role') == 'Staffmember'
+        ? prefs.getString('staff_id')
+        : adminId;
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/permission/permission/$adminId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $actingId",
       },
     );
 
@@ -33,6 +38,11 @@ class PermissionService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Same rule as fetchPermissions: send the acting user's OWN id (staff_id for
+    // Staff, adminId for Admin) so saving works for Staff and is unchanged for Admin.
+    final String? actingId = prefs.getString('role') == 'Staffmember'
+        ? prefs.getString('staff_id')
+        : adminId;
 
     try {
       final response = await apiPost(
@@ -40,7 +50,7 @@ class PermissionService {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $actingId",
         },
         body: json.encode(data.toJson()),
       );

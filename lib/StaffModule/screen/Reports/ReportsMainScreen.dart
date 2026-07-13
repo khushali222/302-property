@@ -26,7 +26,7 @@ import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 
-import '../../../screens/Reports/ReportScreens/Rent_collection.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Rent_collection.dart';
 import 'ReportScreens/OutstandingLeaseBalance.dart';
 import '../../../widgets/titleBar.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';

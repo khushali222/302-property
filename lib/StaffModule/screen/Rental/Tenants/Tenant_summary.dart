@@ -164,7 +164,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     try {
       final list = await _tenantService.fetchTenantsummery(widget.tenantId);
       if (mounted && list != null && list.isNotEmpty) {
-        setState(() => _tenantDetails = list.first);
+        setState(() {
+          _tenantDetails = list.first;
+          // Also refresh the passed-in tenant so every direct widget.tenants
+          // read (e.g. the header name) reflects the edit immediately.
+          widget.tenants = list.first;
+        });
       }
     } catch (_) {}
   }
@@ -1524,16 +1529,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
 
   Widget _buildTenantInfoSection() {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    final phone = formatPhoneNumber(widget.tenants?.tenantPhoneNumber ?? '');
-    final email = (widget.tenants?.tenantEmail ?? '').isEmpty
+    // Prefer freshly-fetched details so the card reflects edits immediately
+    // (matches the Payment/Emergency sections in this screen).
+    final t = _tenantDetails ?? widget.tenants;
+    final phone = formatPhoneNumber(t?.tenantPhoneNumber ?? '');
+    final email = (t?.tenantEmail ?? '').isEmpty
         ? '—'
-        : (widget.tenants?.tenantEmail ?? '');
-    final birthDate = (widget.tenants?.tenantBirthDate ?? '').isEmpty
+        : (t?.tenantEmail ?? '');
+    final birthDate = (t?.tenantBirthDate ?? '').isEmpty
         ? 'N/A'
-        : dateProvider.formatCurrentDate(widget.tenants?.tenantBirthDate ?? '');
-    final notes = (widget.tenants?.comments ?? '').isEmpty
+        : dateProvider.formatCurrentDate(t?.tenantBirthDate ?? '');
+    final notes = (t?.comments ?? '').isEmpty
         ? 'N/A'
-        : (widget.tenants?.comments ?? '');
+        : (t?.comments ?? '');
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2227,12 +2235,17 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () async {
-                                    await Navigator.of(context)
+                                    final updated = await Navigator.of(context)
                                         .push(MaterialPageRoute(
                                             builder: (context) => EditTenants(
                                                   tenantId: "",
                                                   tenants: widget.tenants!,
                                                 )));
+                                    // Reload summary after a successful edit so
+                                    // the screen shows updated details immediately.
+                                    if (updated == true && mounted) {
+                                      await _refreshTenantDetails();
+                                    }
                                   },
                                   child: Container(
                                     height: (MediaQuery.of(context).size.width <
