@@ -105,6 +105,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  // True when the last location attempt failed (off / denied) so the dashboard
+  // can show a "turn on location" prompt instead of a silently empty nearby
+  // section. Self-contained flag — no external dependency.
+  bool locationUnavailable = false;
   List<Rentals> properties = [];
   Rentals? nearstProperty;
   final List<Widget> pages = [
@@ -236,7 +240,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         jsonResponse.map((data) => Rentals.fromJson(data)).toList();
 
         try {
-          Position userLocation = await getCurrentLocation();
+          // Time-box location so a hanging GPS request can't freeze the Staff
+          // dashboard (matches the Vendor dashboard's 15s timeout).
+          Position userLocation =
+              await getCurrentLocation().timeout(const Duration(seconds: 15));
           Rentals? nearestProperty;
           double minDistance = double.infinity;
           List<Rentals> nearbyProperties = [];
@@ -282,6 +289,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           print('Error finding nearby properties: $e');
           setState(() {
             loading = false;
+            locationUnavailable = true;
           });
           return {};
         }
@@ -308,10 +316,58 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     }
   }
 
+  // Shown when location is unavailable so staff know why nearby properties
+  // aren't listed and how to fix it. Self-contained & null-safe — cannot crash.
+  Widget _buildLocationBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.location_off, color: blueColor, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Turn on location to see nearby properties.',
+              style: TextStyle(color: blueColor, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueColor,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            onPressed: () async {
+              try {
+                await Geolocator.openLocationSettings();
+              } catch (_) {}
+            },
+            child: const Text('Enable',
+                style: TextStyle(color: Colors.white, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void fetchNearbyProperties() async {
     setState(() {
       loading = true;
+      locationUnavailable = false;
     });
+    // Load counts / data / name up front (independent of location) so they
+    // appear immediately instead of waiting behind the location lookup — and
+    // so both initState and the refresh button get them via this one method.
+    fetchDatacount();
+    fetchData();
+    _loadName();
     final result = await fetchProperties();
     if (result.isNotEmpty) {
       List<Data> workOrders = await fetchWorkOrders("");
@@ -320,14 +376,17 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       if (nearstProperty != null) {
         nearestPropertyWorkOrders = workOrders
             .where((workOrder) =>
-        workOrder.rentalAddress!.rentalId ==
+        workOrder.rentalAddress != null &&
+            workOrder.rentalAddress!.rentalId ==
             nearstProperty!.rentalId! &&
             (workOrder.workOrderData?.status ?? "") != "Completed")
             .toList();
       }
 // Multiple near properties work orders
-      List<dynamic> multipleRentalIds =
-      result["nearby"].map((property) => property.rentalId!).toList();
+      List<dynamic> multipleRentalIds = result["nearby"]
+          .where((property) => property.rentalId != null)
+          .map((property) => property.rentalId!)
+          .toList();
 
       // List<Data> multiplePropertiesWorkOrders = workOrders
       //     .where((workOrder) => multipleRentalIds.contains(workOrder.rentalAddress!.rentalId))
@@ -340,13 +399,21 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         // nearestPropertyWorkOrders = nearestPropertyWorkOrders;
         loading = false;
       });
+    } else {
+      // Location off/denied or no data: clear any stale nearby results so an
+      // old list can't linger under the "turn on location" banner.
+      if (mounted) {
+        setState(() {
+          nearstProperty = null;
+          properties = [];
+          nearestPropertyWorkOrders = [];
+        });
+      }
     }
     // setState(() {
     //   properties = data;
     // });
-    fetchDatacount();
-    fetchData();
-    _loadName();
+    // (counts / data / name are now loaded at the top of this method, once.)
   }
 
   Future<void> fetchData() async {
@@ -429,11 +496,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       });
     });
     checkInternet();
-    fetchNearbyProperties();
     dashboardData = DashboardData(countList: [0, 0], amountList: [0, 0]);
-    fetchDatacount();
-    fetchData();
-    _loadName();
+    // fetchNearbyProperties() loads counts / data / name itself (once), so they
+    // are no longer called again here — they were previously firing twice.
+    fetchNearbyProperties();
   }
 
   ConnectivityResult? _connectivityResult;
@@ -1367,6 +1433,7 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (locationUnavailable) _buildLocationBanner(),
               DashboardMobileSimple(
                 propertyCount: countList[0],
                 tenantCount: countList[1],

@@ -2072,14 +2072,24 @@ class _Edit_leaseState extends State<Edit_lease>
                                               return AlertDialog(
                                                 backgroundColor: Colors.white,
                                                 contentPadding: EdgeInsets.zero,
-                                                title: Text(
-                                                  'Add Tenant or Cosigner',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: blueColor,
-                                                  ),
-                                                ),
+                                                title: Row(
+                children: [
+                  Expanded(
+                    child: Text('Add Tenant or Cosigner',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: blueColor)),
+                  ),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    splashRadius: 20,
+                    icon: Icon(Icons.close, color: blueColor),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
                                                 content: Form(
                                                   key: _addRecurringFormKey,
                                                   child: Padding(
@@ -4671,11 +4681,24 @@ class _Edit_leaseState extends State<Edit_lease>
             return AlertDialog(
               backgroundColor: Colors.white,
               contentPadding: EdgeInsets.zero,
-              title: Text('Add Tenant or Cosigner',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: blueColor)),
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Text('Add Tenant or Cosigner',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: blueColor)),
+                  ),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    splashRadius: 20,
+                    icon: Icon(Icons.close, color: blueColor),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
               content: Form(
                 key: _addRecurringFormKey,
                 child: Padding(
@@ -4832,51 +4855,6 @@ class _Edit_leaseState extends State<Edit_lease>
                   ),
                 ),
               ),
-              actions: [
-                Row(
-                  children: [
-                    Container(
-                        height: 50,
-                        width: 90,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0))),
-                            onPressed: () {
-                              if (_addRecurringFormKey.currentState!
-                                  .validate()) {
-                                print('object valid');
-                              } else {
-                                print('object invalid');
-                              }
-                            },
-                            child: const Text(
-                              'Add',
-                              style: TextStyle(color: Color(0xFFf7f8f9)),
-                            ))),
-                  ],
-                ),
-                Container(
-                    height: 50,
-                    width: 94,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFffffff),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: Color(0xFF748097)),
-                        )))
-              ],
             );
           });
         });
@@ -7685,6 +7663,33 @@ class _AddTenantState extends State<AddTenant> {
                               ),
                             ),
                           ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Container(
+                                height: 40.0,
+                                width: 90,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors.white,
+                                  border: Border.all(color: blueColor),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -8161,6 +8166,33 @@ class _AddCosignerState extends State<AddCosigner> {
                           "Add",
                           style: TextStyle(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: Container(
+                      height: 40.0,
+                      width: 90,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        color: Colors.white,
+                        border: Border.all(color: blueColor),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: blueColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 16),
                         ),

@@ -1407,12 +1407,9 @@ class _Rent_collectionState extends State<Rent_collection> {
   Widget _buildHeaders() {
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1462,7 +1459,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                         child: Text("Entity",
                             overflow: TextOverflow.ellipsis,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 14)),
+                                TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
@@ -1517,7 +1514,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                       child: Text("Total Outstanding",
                           overflow: TextOverflow.ellipsis,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                     ),
                     const SizedBox(width: 25),
                   ],
@@ -1565,12 +1562,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     bool isSmallScreen = width < 536;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1619,28 +1613,28 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       Flexible(
-                        child: const Text("Address",
+                        child: Text("Address",
                             overflow: TextOverflow.ellipsis,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 14)),
+                                TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 10, left: 2),
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1678,7 +1672,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                       child: Text("Entity",
                           overflow: TextOverflow.ellipsis,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                     ),
                   ],
                 ),
@@ -1716,25 +1710,25 @@ class _Rent_collectionState extends State<Rent_collection> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Balance",
+                      Text("Balance",
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       const SizedBox(width: 3),
                       ascending3
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 10, left: 2),
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 16,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 16,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1843,17 +1837,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                       // Always show filters
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                        child: Row(
+                          children: [
                               // Month Dropdown
-                              Container(
-                                width: 120,
+                              Expanded(
+                                flex: 3,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -1931,8 +1919,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ),
                               const SizedBox(width: 8),
                               // Year Dropdown
-                              Container(
-                                width: 84,
+                              Expanded(
+                                flex: 2,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -2102,8 +2090,6 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ),
                               ],
                             ),
-                          ),
-                        ),
                       ),
                       const SizedBox(height: 10),
                       // Content based on state
@@ -2618,10 +2604,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             _buildHeaders(),
             const SizedBox(height: 20),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
               child: Column(
                 children: [
                   ...sortedData.asMap().entries.map((entry) {
@@ -2629,12 +2611,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3011,10 +2994,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             _buildHeadersDetails(),
             const SizedBox(height: 20),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
               child: Column(
                 children: [
                   // Show empty state if no data after filtering
@@ -3053,12 +3032,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3615,10 +3595,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             if (currentPageData.isNotEmpty) const SizedBox(height: 20),
             if (currentPageData.isNotEmpty)
               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color.fromRGBO(152, 162, 179, .5)),
-                ),
                 child: Column(
                   children: [
                     ...currentPageData.asMap().entries.map((entry) {
@@ -3626,12 +3602,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                       var item = entry.value;
                       bool isRowExpanded = expandedRowIndex == rowIndex;
                       return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
-                          border: Border.all(
-                              color: const Color.fromRGBO(152, 162, 179, .5)),
+                              ? const Color(0xFFF4F8FF)
+                              : Colors.white,
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3715,7 +3692,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       flex: 2,
                                       child: Text(
                                         item.leaseData?.balance != null
-                                            ? '${item.leaseData!.balance}'
+                                            ? formatCurrency(
+                                                item.leaseData!.balance)
                                             : '-',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -3819,7 +3797,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                '\$${item.leaseData?.balance ?? '-'}',
+                                                formatCurrency(
+                                                    item.leaseData?.balance),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
@@ -3904,7 +3883,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     const SizedBox(width: 30),
                                     Expanded(
                                       child: Text(
-                                        '\$${data.deadBeatsSummary?.totalBalance ?? '-'}',
+                                        formatCurrency(
+                                            data.deadBeatsSummary?.totalBalance),
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,

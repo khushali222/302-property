@@ -93,6 +93,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   String firstname = '';
   String lastname = '';
   bool loading = false;
+  // True when the last location attempt failed (off / denied / timed out) so the
+  // dashboard can show a "turn on location" prompt instead of a silently empty
+  // nearby section. Self-contained flag — no external dependency.
+  bool locationUnavailable = false;
   Future<void> fetchDatacount() async {
     /*setState(() {
       loading = true;
@@ -398,7 +402,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       if (nearestProperty != null) {
         nearestPropertyWorkOrders = workOrders
             .where((workOrder) =>
-        workOrder.rentalData!.rentalId == nearestProperty!.rentalId! &&
+        workOrder.rentalData != null &&
+            workOrder.rentalData!.rentalId == nearestProperty!.rentalId! &&
             workOrder.status != "Completed")
             .toList();
         nearbyProperties
@@ -408,6 +413,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
           'Fetched \\${allRentalData.length} rental records from work orders.');
       setState(() {
         loading = false;
+        locationUnavailable = false;
       });
     } catch (e) {
       // Same behaviour as the Staff dashboard: if location is off / denied /
@@ -417,9 +423,51 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       if (mounted) {
         setState(() {
           loading = false;
+          locationUnavailable = true;
         });
       }
     }
+  }
+
+  // Shown when location is unavailable so the vendor knows why nearby properties
+  // aren't listed and how to fix it. Self-contained & null-safe — cannot crash.
+  Widget _buildLocationBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEAF1FB),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.location_off, color: blueColor, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Turn on location to see nearby properties.',
+              style: TextStyle(color: blueColor, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueColor,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            onPressed: () async {
+              try {
+                await Geolocator.openLocationSettings();
+              } catch (_) {}
+            },
+            child: const Text('Enable',
+                style: TextStyle(color: Colors.white, fontSize: 12)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -954,6 +1002,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
             )
                 : ListView(
               children: [
+                if (locationUnavailable) _buildLocationBanner(),
                 // Material(
                 //   elevation: 3,
                 //   child: Divider(
