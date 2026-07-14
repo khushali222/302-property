@@ -430,11 +430,18 @@ class _Applicants_tableState extends State<Applicants_table>
       child: InkWell(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => applicant_summery(
-                        applicant_id: applicant.applicantId,
-                      )));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => applicant_summery(
+                            applicant_id: applicant.applicantId,
+                          )))
+              .then((_) {
+            if (mounted) {
+              setState(() {
+                futureApplicantdata = ApplicantRepository().fetchApplicants();
+              });
+            }
+          });
         },
         child: Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 16),
@@ -761,12 +768,15 @@ class _Applicants_tableState extends State<Applicants_table>
       );
       return;
     }
+    final String email = invite['email']?.toString() ?? '';
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
-      title: "Are you sure?",
-      desc: "Once deleted, you will not be able to recover this applicant!",
+      title: "Delete invitation?",
+      desc: email.isNotEmpty
+          ? "Do you want to delete the invitation for $email? Please provide a reason below."
+          : "Do you want to delete this invitation? Please provide a reason below.",
       content: Column(
         children: [
           const SizedBox(height: 10),
@@ -781,35 +791,88 @@ class _Applicants_tableState extends State<Applicants_table>
               ),
             ),
           ),
+          const SizedBox(height: 18),
+          // Delete stays greyed-out/disabled until a reason is entered (matches web).
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: reason,
+            builder: (ctx, value, _) {
+              final bool canDelete = value.text.trim().isNotEmpty;
+              return Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: canDelete
+                          ? () async {
+                              Navigator.pop(context);
+                              await _deletePendingInvite(
+                                  inviteId, reason.text.trim(), email);
+                            }
+                          : null,
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: canDelete ? blueColor : Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(
+                            color:
+                                canDelete ? Colors.white : Colors.grey.shade600,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: blueColor, width: 1.5),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: blueColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 16),
         ],
       ),
-      style: const AlertStyle(backgroundColor: Colors.white),
-      buttons: [
-        DialogButton(
-          child: const Text("Delete",
-              style: TextStyle(color: Colors.white, fontSize: 18)),
-          onPressed: () async {
-            if (reason.text.trim().isEmpty) {
-              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              Navigator.pop(context);
-              await _deletePendingInvite(inviteId, reason.text.trim(), invite['email']?.toString() ?? '');
-            }
-          },
+      style: AlertStyle(
+        backgroundColor: Colors.white,
+        buttonAreaPadding: EdgeInsets.zero,
+        titleStyle: TextStyle(
           color: blueColor,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
         ),
-        DialogButton(
-          child: Text("Cancel",
-              style: TextStyle(
-                  color: blueColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8),
-          border: Border.all(color: blueColor, width: 1.5),
+        descStyle: TextStyle(
+          color: greyColor,
+          fontWeight: FontWeight.w400,
+          fontSize: 15,
+          height: 1.4,
         ),
-      ],
+      ),
+      buttons: const [],
     ).show();
   }
 
@@ -2229,24 +2292,38 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 .end,
                                                         children: [
                                                           GestureDetector(
-                                                            onTap: () {
-                                                              _showDeleteAlert(
-                                                                  context,
-                                                                  applicant
-                                                                      .applicantId
-                                                                      .toString());
+                                                            onTap: () async {
+                                                              bool?
+                                                                  refreshNeeded =
+                                                                  await Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => applicant_summery(
+                                                                                applicant_id: applicant.applicantId,
+                                                                              )));
+
+                                                              if (refreshNeeded ==
+                                                                  true) {
+                                                                setState(() {
+                                                                  futureApplicantdata =
+                                                                      ApplicantRepository()
+                                                                          .fetchApplicants();
+                                                                });
+                                                              }
                                                             },
                                                             child: Container(
                                                               height: 35,
                                                               width: 35,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  color: Colors
-                                                                      .red
-                                                                      .shade50),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade200,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
                                                               child: Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
@@ -2257,11 +2334,13 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 children: [
                                                                   FaIcon(
                                                                     FontAwesomeIcons
-                                                                        .trashCan,
+                                                                        .eye,
                                                                     size: 15,
                                                                     color: Colors
-                                                                        .red,
+                                                                        .black,
                                                                   ),
+                                                                  SizedBox(
+                                                                      width: 2),
                                                                 ],
                                                               ),
                                                             ),
@@ -2323,38 +2402,24 @@ class _Applicants_tableState extends State<Applicants_table>
                                                             width: 5,
                                                           ),
                                                           GestureDetector(
-                                                            onTap: () async {
-                                                              bool?
-                                                                  refreshNeeded =
-                                                                  await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => applicant_summery(
-                                                                                applicant_id: applicant.applicantId,
-                                                                              )));
-
-                                                              if (refreshNeeded ==
-                                                                  true) {
-                                                                setState(() {
-                                                                  futureApplicantdata =
-                                                                      ApplicantRepository()
-                                                                          .fetchApplicants();
-                                                                });
-                                                              }
+                                                            onTap: () {
+                                                              _showDeleteAlert(
+                                                                  context,
+                                                                  applicant
+                                                                      .applicantId
+                                                                      .toString());
                                                             },
                                                             child: Container(
                                                               height: 35,
                                                               width: 35,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade200,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                              ),
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
                                                               child: Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
@@ -2365,13 +2430,11 @@ class _Applicants_tableState extends State<Applicants_table>
                                                                 children: [
                                                                   FaIcon(
                                                                     FontAwesomeIcons
-                                                                        .eye,
+                                                                        .trashCan,
                                                                     size: 15,
                                                                     color: Colors
-                                                                        .black,
+                                                                        .red,
                                                                   ),
-                                                                  SizedBox(
-                                                                      width: 2),
                                                                 ],
                                                               ),
                                                             ),
@@ -2395,6 +2458,8 @@ class _Applicants_tableState extends State<Applicants_table>
                                   ),
                                 ),
                                 const SizedBox(height: 20),
+                                // Hide pagination when all rows fit on one page
+                                if (data.length > 10)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

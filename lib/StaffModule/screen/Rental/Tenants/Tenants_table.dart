@@ -55,17 +55,15 @@ class _Tenants_tableState extends State<Tenants_table> {
   // Filter checkbox
   bool includeFormerTenants = false;
 
-  // Method to get filtered data based on checkbox selection
+  // Show every tenant the server returns for this page (current + former),
+  // matching the web. The "Include Former" checkbox drives the server query
+  // (tenantType=current vs all) via _tenantsPageFuture — we must NOT re-filter
+  // client-side, otherwise rows get hidden and disagree with the page count.
   List<Tenant> getFilteredData(Map<String, List<Tenant>> categorizedData) {
     List<Tenant> filteredData = [];
 
-    // Always include current tenants
     filteredData.addAll(categorizedData['currentTenants'] ?? []);
-
-    // Include former tenants if checkbox is checked
-    if (includeFormerTenants) {
-      filteredData.addAll(categorizedData['formerTenants'] ?? []);
-    }
+    filteredData.addAll(categorizedData['formerTenants'] ?? []);
 
     return filteredData;
   }
@@ -506,6 +504,13 @@ class _Tenants_tableState extends State<Tenants_table> {
     );
   }
 
+  // Resend setup / password-reset email from the tenant table (web parity).
+  // The server picks the right template (setup / resend / reset) from the
+  // tenant's welcome_email_sent_at / password_set_at state.
+  Future<void> _handleResendSetupEmail(Tenant data) async {
+    await TenantsRepository().sendSetupEmail(data.tenantId ?? '');
+  }
+
   Widget _buildActionsCell(Tenant data) {
     return TableCell(
       child: Padding(
@@ -525,6 +530,16 @@ class _Tenants_tableState extends State<Tenants_table> {
                 child: const FaIcon(
                   FontAwesomeIcons.edit,
                   size: 30,
+                ),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () => _handleResendSetupEmail(data),
+                child: const FaIcon(
+                  FontAwesomeIcons.envelope,
+                  size: 27,
                 ),
               ),
               const SizedBox(
@@ -1511,6 +1526,30 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                           const SizedBox(
                                                             width: 5,
                                                           ),
+                                                          GestureDetector(
+                                                            onTap: () => _handleResendSetupEmail(tenants),
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(8),
+                                                                  color: Colors.blue.shade50),
+                                                              child: const Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons.envelope,
+                                                                    size: 15,
+                                                                    color: Colors.blue,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
                                                            GestureDetector(
                                                             onTap: () {
                                                               _showDeleteAlert(
@@ -1563,7 +1602,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
-                                if (data.isNotEmpty)
+                                if (totalPages > 1)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

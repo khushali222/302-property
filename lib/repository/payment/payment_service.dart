@@ -97,6 +97,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // NEW: added to match web payload — backend uses these to identify source
         'user_active_recently': true,
@@ -228,7 +229,7 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -343,6 +344,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'user_active_recently': true,
       };
@@ -479,7 +481,7 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -592,6 +594,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // 'notificationTime':notificationTime,
         'user_active_recently': true,

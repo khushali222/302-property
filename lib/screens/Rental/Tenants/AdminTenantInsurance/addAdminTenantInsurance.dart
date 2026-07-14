@@ -28,7 +28,10 @@ import '../../../../provider/dateProvider.dart';
 
 class AdminAddTenantInsurance extends StatefulWidget {
   final String tenantid;
-  const AdminAddTenantInsurance({required this.tenantid});
+  final String leaseId;
+  final String? tenantName;
+  const AdminAddTenantInsurance(
+      {required this.tenantid, required this.leaseId, this.tenantName});
 
   @override
   State<AdminAddTenantInsurance> createState() =>
@@ -38,6 +41,7 @@ class AdminAddTenantInsurance extends StatefulWidget {
 class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   TextEditingController provider = TextEditingController();
   TextEditingController policy = TextEditingController();
+  TextEditingController phone = TextEditingController();
   TextEditingController effective = TextEditingController();
   TextEditingController expiration = TextEditingController();
   TextEditingController liablity = TextEditingController();
@@ -47,11 +51,125 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
   List<String> _uploadedFileNames = [];
 
-  Future<void> _pickPdfFiles() async {
+  void _showUploadOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        Widget sourceTile({
+          required IconData icon,
+          required String title,
+          required String subtitle,
+          required VoidCallback onPick,
+        }) {
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              onPick();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: blueColor, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromRGBO(21, 43, 81, 1))),
+                        const SizedBox(height: 2),
+                        Text(subtitle,
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600])),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDBE0E5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Upload Insurance Document',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(21, 43, 81, 1))),
+                const SizedBox(height: 4),
+                Text('Choose where to pick your document from',
+                    style:
+                        TextStyle(fontSize: 12.5, color: Colors.grey[600])),
+                const SizedBox(height: 18),
+                sourceTile(
+                  icon: Icons.photo_library_rounded,
+                  title: 'Photo Gallery',
+                  subtitle: '.png, .jpeg',
+                  onPick: () => _pickFiles(FileType.image, null),
+                ),
+                const SizedBox(height: 12),
+                sourceTile(
+                  icon: Icons.insert_drive_file_rounded,
+                  title: 'Browse Files',
+                  subtitle: '.png, .jpeg, .pdf, .csv',
+                  onPick: () => _pickFiles(
+                      FileType.custom, ['png', 'jpeg', 'jpg', 'pdf', 'csv']),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFiles(
+      FileType type, List<String>? allowedExtensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
-      allowMultiple: true,
+      type: type,
+      allowedExtensions: allowedExtensions,
+      allowMultiple: false,
     );
 
     if (result != null) {
@@ -59,11 +177,6 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
           .where((path) => path != null)
           .map((path) => File(path!))
           .toList();
-
-      if (files.length > 10) {
-        Fluttertoast.showToast(msg: 'You can only select up to 10 files.');
-        return; // Exit the method if more than 10 files are selected
-      }
 
       setState(() {
         _pdfFiles = files;
@@ -87,12 +200,10 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -102,9 +213,16 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Reflect the actual uploaded file type in the toast (was always "PDF",
+      // so a JPEG/PNG wrongly said "PDF added successfully").
+      final String ext = pdfFile.path.split('.').last.toLowerCase();
+      final String typeLabel = ext == 'pdf'
+          ? 'PDF'
+          : (['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp'].contains(ext)
+              ? 'Image'
+              : 'File');
+      Fluttertoast.showToast(msg: '$typeLabel added successfully');
       List file = responseBody['files'];
       return file.first["filename"];
     } else {
@@ -122,10 +240,10 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
         'yyyy-MM-dd',
         'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];
@@ -197,10 +315,16 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
 
   Future<void> _selectDateexpiration(BuildContext context) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    DateTime minExpirationDate = effectiveDate != null
+        ? effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate ?? DateTime.now(),
+      initialDate: (expirationDate != null &&
+              !expirationDate!.isBefore(minExpirationDate))
+          ? expirationDate!
+          : minExpirationDate,
+      firstDate: minExpirationDate,
       // firstDate: DateTime(1900),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
@@ -241,21 +365,11 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   }
 
   bool _validateDates() {
-    // Check if both dates are selected
-    if (effectiveDate == null || expirationDate == null) {
-      Fluttertoast.showToast(
-          msg: "Please select both Effective Date and Expiration Date");
+    final error = validateInsuranceDateRange(effectiveDate, expirationDate);
+    if (error != null) {
+      Fluttertoast.showToast(msg: error);
       return false;
     }
-
-    // Check if expiration date is after effective date
-    if (expirationDate!.isBefore(effectiveDate!) ||
-        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
-      Fluttertoast.showToast(
-          msg: "Expiration Date must be after Effective Date");
-      return false;
-    }
-
     return true;
   }
 
@@ -300,7 +414,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Provider *',
+                            Text('Insurance Company *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -310,7 +424,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Provider Name',
+                              hintText: 'Enter insurance company',
                               controller: provider,
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
@@ -325,7 +439,28 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Policy Id *',
+                            Text('Insurance Company Phone Number *',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor)),
+                            SizedBox(height: 10),
+                            CustomTextField(
+                              keyboardType: TextInputType.phone,
+                              hintText: 'Insurance company phone number',
+                              controller: phone,
+                              phone: true,
+                              showElevation: false,
+                              borderColor: const Color(0xFFCED4DA),
+                              borderWidth: 1.5,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(14),
+                                PhoneNumberFormatter(),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Text('Policy ID *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -335,7 +470,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             ),
                             CustomTextField(
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Policy Id',
+                              hintText: 'Policy id',
                               controller: policy,
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
@@ -359,6 +494,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDate(context);
                               },
@@ -394,6 +530,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               height: 10,
                             ),
                             CustomTextField(
+                              readOnnly: true,
                               onTap: () {
                                 _selectDateexpiration(context);
                               },
@@ -420,7 +557,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Liability Coverage *',
+                            Text('Liability Coverage (\$0.00) *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -430,7 +567,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             ),
                             // CustomTextField(
                             //   keyboardType: TextInputType.text,
-                            //   hintText: '\$0.0',
+                            //   hintText: '\$0.00',
                             //   controller: liablity,
                             //   validator: (value) {
                             //     if (value == null || value.isEmpty) {
@@ -441,8 +578,9 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             // ),
                             CustomTextField(
                               keyboardType: TextInputType.number,
-                              hintText: '\$0.0',
+                              hintText: '\$0.00',
                               controller: liablity,
+                              suffixIcon: IconButton(icon: const Icon(Icons.check), color: blueColor, tooltip: 'Done', onPressed: () => FocusScope.of(context).unfocus()),
                               showElevation: false,
                               borderColor: const Color(0xFFCED4DA),
                               borderWidth: 1.5,
@@ -463,6 +601,38 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               },
                             ),
 
+                            SizedBox(height: 10),
+                            Text('Covered Tenants:',
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: blueColor)),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: Checkbox(
+                                    value: true,
+                                    onChanged: null,
+                                    activeColor: blueColor,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    (widget.tenantName?.isNotEmpty == true)
+                                        ? widget.tenantName!
+                                        : widget.tenantid,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black87),
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(
                               height: 10,
                             ),
@@ -474,70 +644,88 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                             SizedBox(
                               height: 10,
                             ),
-                            GestureDetector(
-                              onTap: _pickPdfFiles,
-                              child: Container(
-                                width: double.infinity,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
+                            if (_uploadedFileNames.isEmpty)
+                              GestureDetector(
+                                onTap: _showUploadOptions,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Image.asset('assets/icons/Upload.png',
+                                          height: 50, width: 50),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Upload your document here',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        'Maximum File Size is 20MB',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey),
+                                      ),
+                                      const Text(
+                                        'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              ),
+                            if (_uploadedFileNames.isNotEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
                                   children: [
-                                    const Icon(Icons.upload, size: 36, color: Color(0xFF6B7A99)),
-                                    const SizedBox(height: 8),
-                                    const Text('Click to upload document',
-                                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
-                                            color: Color(0xFF4A5568))),
+                                    const Icon(Icons.insert_drive_file,
+                                        color: Color(0xFF748097), size: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        _uploadedFileNames.first,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF748097),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _uploadedFileNames.clear();
+                                        });
+                                      },
+                                      icon: const Icon(Icons.close,
+                                          color: Color(0xFF748097), size: 20),
+                                    ),
                                   ],
                                 ),
                               ),
-                            ),
-                            SingleChildScrollView(
-                              child: Column(
-                                children: _uploadedFileNames.asMap().entries.map((entry) {
-                                  int index = entry.key;
-                                  String fileName = entry.value;
-                                  return Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.2),
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: const Color(0xFFF8F9FA),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(Icons.insert_drive_file_outlined, size: 16, color: Color(0xFF6B7A99)),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            fileName,
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xFF748097),
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _uploadedFileNames.removeAt(index);
-                                            });
-                                          },
-                                          child: const Icon(Icons.close, size: 16, color: Color(0xFF748097)),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -611,45 +799,43 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   }
 
   addinsurance() async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print('${adminId}  ${token}');
 
     Map<String, dynamic> values = {
-      "admin_id": adminId!,
-      "Provider": provider.text.trim(),
+      "lease_id": widget.leaseId,
+      "insurance_company": provider.text.trim(),
+      "insurance_company_phone_number": phone.text.trim(),
       "policy_id": policy.text.trim(),
-      "EffectiveDate": _convertToApiFormat(effective.text.trim()),
-      "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
-      "LiabilityCoverage": liablity.text.trim(),
-      "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
+      "effective_date": _convertToApiFormat(effective.text.trim()),
+      "expiration_date": _convertToApiFormat(expiration.text.trim()),
+      "liability_coverage":
+          num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
+      "insurance_policy_document":
+          _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
+      "tenants": [widget.tenantid],
     };
-    print(values);
-    print('entry');
 
     final http.Response response = await apiPost(
-      Uri.parse(
-          '$Api_url/api/tenantinsurance/tenantinsurance/${widget.tenantid}'),
+      Uri.parse('$Api_url/api/renter-insurance/add-policy'),
       headers: <String, String>{
         'authorization': 'CRM $token',
         'id': 'CRM $adminId',
-
-        //'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: values,
+      body: jsonEncode(values),
     );
 
     var responseData = json.decode(response.body);
-    print('response body ${response.body}');
-    if (responseData["statusCode"] == 200) {
+    if (responseData["savedPolicy"] == 200 ||
+        responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       Navigator.pop(context, true);
       return responseData;
     } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to Insurance');
+      Fluttertoast.showToast(msg: responseData["message"] ?? 'Failed to save');
+      throw Exception('Failed to add Insurance');
     }
   }
 }

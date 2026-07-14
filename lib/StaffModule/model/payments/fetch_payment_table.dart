@@ -164,14 +164,14 @@ class Entrycharge {
   String? entryId;
   String? memo;
   String? account;
-  int? amount;
+  num? amount;
   String? date;
   bool? isPaid;
   bool? isLateFee;
   bool? isRepeatable;
   String? chargeType;
   String? id;
-  int? chargeAmount;
+  num? chargeAmount;
   String? chargeId;
 
   Entrycharge({
@@ -195,14 +195,18 @@ class Entrycharge {
       entryId: json['entry_id'] as String?,
       memo: json['memo'] as String?,
       account: json['account'] as String?,
-      amount: json['amount'] as int?,
+      amount: json['amount'] is num
+          ? json['amount'] as num
+          : num.tryParse('${json['amount'] ?? ''}'),
       date: json['date'] as String?,
       isPaid: json['is_paid'] as bool?,
       isLateFee: json['is_lateFee'] as bool?,
       isRepeatable: json['is_repeatable'] as bool?,
       chargeType: json['charge_type'] as String?,
       id: json['_id'] as String?,
-      chargeAmount: json['charge_amount'] as int?,
+      chargeAmount: json['charge_amount'] is num
+          ? json['charge_amount'] as num
+          : num.tryParse('${json['charge_amount'] ?? ''}'),
       chargeId: json['charge_id'] as String?,
     );
   }

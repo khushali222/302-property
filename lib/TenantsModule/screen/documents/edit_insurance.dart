@@ -56,10 +56,10 @@ class _edit_insuranceState extends State<edit_insurance> {
 
       // Try to parse the date using common formats
       List<String> dateFormats = [
-        'MM/dd/yyyy',
-        'MM-dd-yyyy',
         'yyyy-MM-dd',
         'yyyy-MMM-dd', // Added for API format like "2025-Aug-22"
+        'MM/dd/yyyy',
+        'MM-dd-yyyy',
         'dd/MM/yyyy',
         'dd-MM-yyyy'
       ];
@@ -83,10 +83,135 @@ class _edit_insuranceState extends State<edit_insurance> {
     }
   }
 
-  Future<void> _pickPdfFiles() async {
+  // Gallery can't show pdf/csv, so we let the user pick the source:
+  // Photo Gallery (images) or Browse Files (png/jpeg/pdf/csv).
+  void _showUploadOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        Widget sourceTile({
+          required IconData icon,
+          required String title,
+          required String subtitle,
+          required VoidCallback onPick,
+        }) {
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              onPick();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: blueColor, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(21, 43, 81, 1),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDBE0E5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Upload Insurance Document',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(21, 43, 81, 1),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Choose where to pick your document from',
+                  style: TextStyle(fontSize: 12.5, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 18),
+                sourceTile(
+                  icon: Icons.photo_library_rounded,
+                  title: 'Photo Gallery',
+                  subtitle: '.png, .jpeg',
+                  onPick: () => _pickFiles(FileType.image, null),
+                ),
+                const SizedBox(height: 12),
+                sourceTile(
+                  icon: Icons.insert_drive_file_rounded,
+                  title: 'Browse Files',
+                  subtitle: '.png, .jpeg, .pdf, .csv',
+                  onPick: () => _pickFiles(
+                      FileType.custom, ['png', 'jpeg', 'jpg', 'pdf', 'csv']),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFiles(
+      FileType type, List<String>? allowedExtensions) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      type: type,
+      allowedExtensions: allowedExtensions,
       allowMultiple: true,
     );
 
@@ -123,12 +248,10 @@ class _edit_insuranceState extends State<edit_insurance> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -138,7 +261,6 @@ class _edit_insuranceState extends State<edit_insurance> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
@@ -210,7 +332,6 @@ class _edit_insuranceState extends State<edit_insurance> {
       effectiveDate = DateTime.parse(widget.data.effectiveDate!);
       expirationDate = DateTime.parse(widget.data.expirationDate!);
     } catch (e) {
-      print('Error parsing dates: $e');
     }
 
     // Use DateProvider to format dates for display
@@ -309,20 +430,20 @@ class _edit_insuranceState extends State<edit_insurance> {
             key.currentState!.openDrawer();
           },
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF4F6F9),
         drawer: CustomDrawer(
           currentpage: 'Documents',
         ),
         body: Form(
           key: _formkey,
           child: Container(
-            color: Colors.white,
+            color: const Color(0xFFF4F6F9),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 25,
+                    height: 12,
                   ),
                   titleBar(
                     width: MediaQuery.of(context).size.width * .91,
@@ -330,20 +451,17 @@ class _edit_insuranceState extends State<edit_insurance> {
                     // size: 18,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.04,
-                        vertical: 10),
+                    padding: const EdgeInsets.all(16.0),
                     child: Container(
                       width: double.infinity,
-                      // height: !form_valid ? 860 : 830,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
-                            color: const Color.fromRGBO(21, 43, 103, 1),
+                            color: const Color(0xFFDBE0E5),
                           )),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -351,13 +469,15 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Provider Name',
+                              hintText: 'Enter provider name',
                               controller: provider,
                               //   label: "",
                               validator: (value) {
@@ -374,13 +494,15 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.text,
-                              hintText: 'Enter Policy Id',
+                              hintText: 'Enter policy id',
                               controller: policy,
                               // inputFormatters: [
                               //   // Only allow alphanumeric characters (letters and digits)
@@ -400,11 +522,13 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               onTap: () {
                                 _selectDate(context);
                               },
@@ -433,11 +557,13 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               onTap: () {
                                 _selectDateexpiration(context);
                               },
@@ -466,7 +592,7 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
@@ -484,9 +610,12 @@ class _edit_insuranceState extends State<edit_insurance> {
                             //   },
                             // ),
                             CustomTextField(
+                              showElevation: false,
+                              borderColor: const Color(0xFFDBE0E5),
                               keyboardType: TextInputType.number,
                               hintText: '\$0.0',
                               controller: liablity,
+                              suffixIcon: IconButton(icon: const Icon(Icons.check), color: blueColor, tooltip: 'Done', onPressed: () => FocusScope.of(context).unfocus()),
                               textInputAction: TextInputAction.done,
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(
@@ -510,145 +639,192 @@ class _edit_insuranceState extends State<edit_insurance> {
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey)),
+                                    color: Color.fromRGBO(21, 43, 81, 1))),
                             const SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              height: 40,
-                              width: 125,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
+                            // Empty state: tap-to-upload card (matches the
+                            // work order / appliance upload cards).
+                            if (_uploadedFileNames.isEmpty)
+                              GestureDetector(
+                                onTap: _showUploadOptions,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/Upload.png',
+                                        height: 50,
+                                        width: 50,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Upload your document here',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        'Maximum File Size is 20MB',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                      const Text(
+                                        'Supported File Types are .png, .jpeg, .pdf, .csv',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                onPressed: _pickPdfFiles,
-                                child: const Text('Choose Files'),
                               ),
-                            ),
-                            SingleChildScrollView(
-                              child: Column(
-                                children: _uploadedFileNames.map((fileName) {
-                                  int index =
-                                  _uploadedFileNames.indexOf(fileName);
-                                  return ListTile(
-                                    title: Text(
-                                      fileName,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF748097),
+                            // Filled state: show the uploaded file with a remove (X).
+                            if (_uploadedFileNames.isNotEmpty)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.insert_drive_file,
+                                        color: Color(0xFF748097), size: 20),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        _uploadedFileNames.first,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF748097),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    trailing: IconButton(
+                                    IconButton(
                                       onPressed: () {
                                         setState(() {
-                                          _uploadedFileNames.removeAt(index);
+                                          _uploadedFileNames.clear();
                                         });
                                       },
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.remove,
-                                        color: Color(0xFF748097),
-                                      ),
+                                      icon: const Icon(Icons.close,
+                                          color: Color(0xFF748097), size: 20),
                                     ),
-                                  );
-                                }).toList(),
+                                  ],
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 30.0),
                     child: Row(
                       children: [
-                        Container(
-                          height: 50,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: blueColor,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                               ),
-                            ),
-                            // onPressed: (){
-                            //   //print("calling 111");
-                            //   if(_formkey.currentState!.validate()){
-                            //   //  print("calling 22");
-                            //     editinsurance(widget.data.tenantInsuranceId!);
-                            //   }
-                            // },
-                            onPressed: () {
-                              if (_formkey.currentState!.validate()) {
-                                if (_validateDates()) {
-                                  // Check if any field has changed
-                                  if (provider.text != initialProvider ||
-                                      policy.text != initialPolicy ||
-                                      _convertToApiFormat(
-                                              effective.text.trim()) !=
-                                          _convertToApiFormat(
-                                              initialEffective.trim()) ||
-                                      _convertToApiFormat(
-                                              expiration.text.trim()) !=
-                                          _convertToApiFormat(
-                                              initialExpiration.trim()) ||
-                                      liablity.text != initialLiability ||
-                                      !listEquals(_uploadedFileNames,
-                                          initialUploadedFileNames)) {
-                                    editinsurance(
-                                        widget.data.tenantInsuranceId!);
-                                  } else {
-                                    print("no changes made");
-                                    Navigator.of(context).pop(true);
+                              // onPressed: (){
+                              //   //print("calling 111");
+                              //   if(_formkey.currentState!.validate()){
+                              //   //  print("calling 22");
+                              //     editinsurance(widget.data.tenantInsuranceId!);
+                              //   }
+                              // },
+                              onPressed: () {
+                                if (_formkey.currentState!.validate()) {
+                                  if (_validateDates()) {
+                                    // Check if any field has changed
+                                    if (provider.text != initialProvider ||
+                                        policy.text != initialPolicy ||
+                                        _convertToApiFormat(
+                                                effective.text.trim()) !=
+                                            _convertToApiFormat(
+                                                initialEffective.trim()) ||
+                                        _convertToApiFormat(
+                                                expiration.text.trim()) !=
+                                            _convertToApiFormat(
+                                                initialExpiration.trim()) ||
+                                        liablity.text != initialLiability ||
+                                        !listEquals(_uploadedFileNames,
+                                            initialUploadedFileNames)) {
+                                      editinsurance(
+                                          widget.data.tenantInsuranceId!);
+                                    } else {
+                                      Navigator.of(context).pop(true);
+                                    }
                                   }
                                 }
-                              }
-                            },
-                            child: isLoading
-                                ? Center(
-                                    child: SpinKitFadingCircle(
-                                      color: Colors.white,
-                                      size: 55.0,
+                              },
+                              child: isLoading
+                                  ? Center(
+                                      child: SpinKitFadingCircle(
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Save',
+                                      style: TextStyle(
+                                          color: Color(0xFFf7f8f9),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15),
                                     ),
-                                  )
-                                : Text(
-                                    'Save',
-                                    style: TextStyle(color: Color(0xFFf7f8f9)),
-                                  ),
+                            ),
                           ),
                         ),
-                        SizedBox(
-                          width: 8,
+                        const SizedBox(
+                          width: 12,
                         ),
-                        Container(
+                        Expanded(
+                          child: SizedBox(
                             height: 50,
-                            width: 120,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0)),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFffffff),
+                                    backgroundColor: const Color(0xFFffffff),
+                                    elevation: 0,
+                                    side: const BorderSide(
+                                        color: Color(0xFFDBE0E5)),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(8.0))),
+                                            BorderRadius.circular(10.0))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Cancel',
-                                  style: TextStyle(color: Color(0xFF748097)),
-                                )))
+                                  style: TextStyle(
+                                      color: Color(0xFF748097),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15),
+                                )),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -670,7 +846,9 @@ class _edit_insuranceState extends State<edit_insurance> {
       "policy_id": policy.text.trim(),
       "EffectiveDate": _convertToApiFormat(effective.text.trim()),
       "ExpirationDate": _convertToApiFormat(expiration.text.trim()),
-      "LiabilityCoverage": liablity.text.trim(),
+      // Web parity: LiabilityCoverage is sent as a number (the web sends 100,
+      // not "100"). Falls back to the raw string only if parsing ever fails.
+      "LiabilityCoverage": num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
       "Policy": _uploadedFileNames.length > 0 ? _uploadedFileNames.first : "",
     };
 
@@ -680,12 +858,11 @@ class _edit_insuranceState extends State<edit_insurance> {
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM $id",
-        //'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: values,
+      body: jsonEncode(values),
     );
 
-    print(response.body);
     var responseData = json.decode(response.body);
 
     if (responseData["statusCode"] == 200) {

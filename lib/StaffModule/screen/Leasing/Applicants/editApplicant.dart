@@ -81,6 +81,7 @@ class _EditApplicantState extends State<EditApplicant> {
   final TextEditingController homeNumber = TextEditingController();
   final TextEditingController bussinessNumber = TextEditingController();
   final TextEditingController telePhoneNumber = TextEditingController();
+  final TextEditingController referenceEmail = TextEditingController();
 
   bool _isLoading = true;
   bool _Loading = false;
@@ -174,26 +175,30 @@ class _EditApplicantState extends State<EditApplicant> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF4F6F9),
       drawer:CustomDrawerStaff(currentpage: "Applicants",dropdown: true,),
       body: SingleChildScrollView(
         child: Form(
           key: _formkey,
           child: Column(
             children: [
+              const SizedBox(
+                height: 12,
+              ),
               titleBar(
                 width: MediaQuery.of(context).size.width * .91,
-                title: 'Edit Applicants',
+                title: 'Edit Applicant',
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
+                      color: Colors.white,
                       border: Border.all(
-                        color: blueColor,
+                        color: const Color(0xFFDBE0E5),
                       ),
-                      borderRadius: BorderRadius.circular(10.0)),
+                      borderRadius: BorderRadius.circular(12.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -206,11 +211,13 @@ class _EditApplicantState extends State<EditApplicant> {
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter first name';
@@ -228,11 +235,13 @@ class _EditApplicantState extends State<EditApplicant> {
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter last name';
@@ -250,11 +259,13 @@ class _EditApplicantState extends State<EditApplicant> {
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter email';
@@ -269,25 +280,27 @@ class _EditApplicantState extends State<EditApplicant> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('Mobile Number *',
+                        const Text('Cell Phone Number *',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter mobile number';
+                              return 'Please enter cell phone number';
                             }
                             return null;
                           },
                           keyboardType: TextInputType.number,
                           // keyboardType: TextInputType.numberWithOptions(
                           //     signed: true, decimal: true),
-                          hintText: 'Enter mobile number',
+                          hintText: 'Enter cell phone number',
                           controller: mobileNumber,
                           otherController: homeNumber,
                           inputFormatters: [
@@ -300,15 +313,17 @@ class _EditApplicantState extends State<EditApplicant> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('Home Number',
+                        const Text('Home Phone Number',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           // validator: (value) {
                           //   if (value == null || value.isEmpty) {
                           //     return 'Please enter home number';
@@ -318,7 +333,7 @@ class _EditApplicantState extends State<EditApplicant> {
                           // keyboardType: TextInputType.numberWithOptions(
                           //     signed: true, decimal: true),
                           keyboardType: TextInputType.number,
-                          hintText: 'Enter home number',
+                          hintText: 'Enter home phone number',
                           controller: homeNumber,
                           otherController: mobileNumber,
                           inputFormatters: [
@@ -332,15 +347,17 @@ class _EditApplicantState extends State<EditApplicant> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('Business Number',
+                        const Text('Work Phone Number',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
                           // validator: (value) {
                           //   if (value == null || value.isEmpty) {
                           //     return 'Please enter business number';
@@ -355,7 +372,7 @@ class _EditApplicantState extends State<EditApplicant> {
                             LengthLimitingTextInputFormatter(10),
                             PhoneNumberFormatter(),
                           ],
-                          hintText: 'Enter business number',
+                          hintText: 'Enter work phone number',
                           controller: bussinessNumber,
                           otherController: homeNumber,
                           businessController: mobileNumber,
@@ -365,36 +382,25 @@ class _EditApplicantState extends State<EditApplicant> {
                         const SizedBox(
                           height: 8,
                         ),
-                        const Text('Telephone Number',
+                        // Web parity: Reference Email shown instead of the
+                        // Telephone Number field (telephone is still sent
+                        // unchanged in the payload, exactly like the web).
+                        const Text('Reference Email',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey)),
+                                color: Color.fromRGBO(21, 43, 81, 1))),
                         const SizedBox(
                           height: 4,
                         ),
                         CustomTextField(
-                          // validator: (value) {
-                          //   if (value == null || value.isEmpty) {
-                          //     return 'Please enter telephone number';
-                          //   }
-                          //   return null;
-                          // },
-                          // keyboardType: TextInputType.numberWithOptions(
-                          //     signed: true, decimal: true),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(10),
-                            PhoneNumberFormatter(),
-                          ],
-                          hintText: 'Enter telephone number',
-                          controller: telePhoneNumber,
-                          otherController: bussinessNumber,
-                          businessController: homeNumber,
-                          telephoneController: mobileNumber,
+                          showElevation: false,
+                          borderColor: const Color(0xFFDBE0E5),
+                          keyboardType: TextInputType.emailAddress,
+                          hintText: 'Enter reference email',
+                          controller: referenceEmail,
                           optional: true,
-                          phone: true,
+                          email: true,
                         ),
 
                       ],
@@ -403,20 +409,21 @@ class _EditApplicantState extends State<EditApplicant> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 30.0),
                 child: Row(
                   children: [
                     Container(
                       height: 50,
-                      width: 170,
+                      width: (MediaQuery.of(context).size.width - 44) / 2,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: blueColor,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
                         onPressed: () async {
@@ -555,23 +562,30 @@ class _EditApplicantState extends State<EditApplicant> {
                               )
                             : const Text(
                                 'Update Applicant',
-                                style: TextStyle(color: Color(0xFFf7f8f9)),
+                                style: TextStyle(
+                                    color: Color(0xFFf7f8f9),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
                               ),
                       ),
                     ),
                     const SizedBox(
-                      width: 8,
+                      width: 12,
                     ),
                     Container(
                         height: 50,
-                        width: 120,
+                        width: (MediaQuery.of(context).size.width - 44) / 2,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0)),
+                            borderRadius: BorderRadius.circular(10.0)),
                         child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFffffff),
+                                elevation: 0,
+                                side: const BorderSide(
+                                    color: Color(0xFFDBE0E5)),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0))),
+                                    borderRadius:
+                                        BorderRadius.circular(10.0))),
                             onPressed: () {
                               Navigator.pop(context);
                               firstName.clear();
@@ -581,12 +595,16 @@ class _EditApplicantState extends State<EditApplicant> {
                               bussinessNumber.clear();
                               homeNumber.clear();
                               telePhoneNumber.clear();
+                              referenceEmail.clear();
                               _selectedProperty = null;
                               _selectedUnit = null;
                             },
                             child: const Text(
                               'Cancel',
-                              style: TextStyle(color: Color(0xFF748097)),
+                              style: TextStyle(
+                                  color: Color(0xFF748097),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
                             ))),
 
                   ],

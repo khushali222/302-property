@@ -721,6 +721,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                               onChanged: (value) {
                                 setState(() {
                                   searchvalue = value;
+                                  currentPage = 0; // reset to first page on search change
                                 });
                               },
                               cursorColor: blueColor,
@@ -786,6 +787,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         onChanged: (value) {
                           setState(() {
                             selectedValue = value;
+                            currentPage = 0; // reset to first page on filter change
                           });
                         },
                         buttonStyleData: ButtonStyleData(
@@ -845,30 +847,38 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height * .5,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/no_data.jpg",
-                                height: 200,
-                                width: 200,
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            _buildHeaders(),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: MediaQuery.of(context).size.height * .4,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/no_data.jpg",
+                                      height: 200,
+                                      width: 200,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "No Data Available",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "No Data Available",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 16),
-                              )
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     } else {
@@ -880,10 +890,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((property) =>
-                                property.workSubject!
+                                (property.workSubject ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) ||
-                                property.rentalData!.rentalAddress!
+                                (property.rentalData?.rentalAddress ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()))
                             .toList();
@@ -914,15 +924,40 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         }
                       }
                       if (data.length == 0) {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Center(
-                              child: Text("No Work Order Added"),
-                            ),
-                          ],
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              _buildHeaders(),
+                              const SizedBox(height: 10),
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * .4,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        "assets/images/no_data.jpg",
+                                        height: 200,
+                                        width: 200,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        "No Work Order Added",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor,
+                                            fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       }
 
@@ -1207,32 +1242,32 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                                           ),
                                                         ),
                                                       ),
-                                                      // SizedBox(width: 8),
-                                                      // InkWell(
-                                                      //   onTap: () {
-                                                      //     handleEdit(workorder);
-                                                      //   },
-                                                      //   child: Container(
-                                                      //     height: 35,
-                                                      //     width: 35,
-                                                      //     decoration: BoxDecoration(
-                                                      //       color: blueColor,
-                                                      //       borderRadius: BorderRadius.circular(8),
-                                                      //     ),
-                                                      //     child: const Row(
-                                                      //       mainAxisAlignment: MainAxisAlignment.center,
-                                                      //       crossAxisAlignment: CrossAxisAlignment.center,
-                                                      //       children: [
-                                                      //         FaIcon(
-                                                      //           FontAwesomeIcons.penToSquare,
-                                                      //           size: 15,
-                                                      //           color: Colors.white,
-                                                      //         ),
-                                                      //         SizedBox(width: 2),
-                                                      //       ],
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
+                                                      SizedBox(width: 8),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          handleEdit(workorder);
+                                                        },
+                                                        child: Container(
+                                                          height: 35,
+                                                          width: 35,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.green.shade50,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: const Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                            children: [
+                                                              FaIcon(
+                                                                FontAwesomeIcons.penToSquare,
+                                                                size: 15,
+                                                                color: Colors.green,
+                                                              ),
+                                                              SizedBox(width: 2),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                 ],
@@ -1246,8 +1281,10 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                 }).toList(),
                               ),
                             ),
-                            SizedBox(height: 20),
-                            Row(
+                            // Only show pagination when there's more than one page.
+                            if (totalPages > 1) SizedBox(height: 20),
+                            if (totalPages > 1)
+                              Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Row(

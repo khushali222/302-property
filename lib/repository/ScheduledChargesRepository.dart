@@ -76,7 +76,7 @@ class ScheduledChargesRepository {
     final body = {
       "account": account,
       "action_date": action_date,
-      "amount": double.parse(amount!),
+      "amount": double.tryParse(amount ?? "") ?? 0.0,
       "chargeType": chargeType,
       "company_name": company_name,
       "description": description,
@@ -110,6 +110,7 @@ class ScheduledChargesRepository {
 
   Future<Map<String, dynamic>> deleteNote({
     required String noteid,
+    String? reason,
   }) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -127,7 +128,7 @@ class ScheduledChargesRepository {
           "id": "CRM $id",
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode({}),
+        body: jsonEncode({"reason": reason}),
       );
 
       var responseData = json.decode(response.body);

@@ -203,7 +203,9 @@ class WorkOrderRepository {
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRMss $id",
+        // Header `id` = the vendor's OWN id (web parity); was "CRMss" (typo)
+        // which sent a malformed auth prefix.
+        "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({

@@ -491,6 +491,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                     await Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => AdminAddTenantInsurance(
                           tenantid: widget.tenantid,
+                          leaseId: widget.tenantid,
                         )));
                     if (result == true) {
                       setState(() {
@@ -785,7 +786,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                  '${Propertytype.liabilityCoverage ?? ''}',
+                                                                  '\$${Propertytype.liabilityCoverage ?? ''}',
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                       FontWeight
@@ -1038,9 +1039,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                 _pagedData[i].policyId!,
                                               ),
                                               _buildDataCell(
-                                                _pagedData[i]
-                                                    .liabilityCoverage
-                                                    .toString()!,
+                                                '\$${_pagedData[i].liabilityCoverage ?? ''}',
                                               ),
                                               _buildDataCell(
                                                 _pagedData[i].status!,

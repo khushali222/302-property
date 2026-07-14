@@ -8,6 +8,7 @@ class ScheduledCharges {
   String? leaseId;
   String? rentalId;
   String? rentalAddress;
+  String? taskType;
 
   ScheduledCharges({
     this.taskId,
@@ -19,6 +20,7 @@ class ScheduledCharges {
     this.leaseId,
     this.rentalId,
     this.rentalAddress,
+    this.taskType,
   }) : amount = amount ?? 0.0;
 
   ScheduledCharges.fromJson(Map<String, dynamic> json)
@@ -36,7 +38,8 @@ class ScheduledCharges {
             : 0.0,
         leaseId = json['lease_id'],
         rentalId = json['rental_id'],
-        rentalAddress = json['rental_address'];
+        rentalAddress = json['rental_address'],
+        taskType = json['task_type'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
@@ -49,6 +52,7 @@ class ScheduledCharges {
     data['lease_id'] = leaseId;
     data['rental_id'] = rentalId;
     data['rental_address'] = rentalAddress;
+    data['task_type'] = taskType;
     return data;
   }
 }

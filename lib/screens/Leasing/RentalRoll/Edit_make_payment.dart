@@ -136,9 +136,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     setState(() {
       selectedTenantId = widget.tenantId;
       tenantname =
-          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
+          "${(c_data.tenantData ?? {})["tenant_firstName"]} ${(c_data.tenantData ?? {})["tenant_lastName"]}";
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
-      _startDate.text = dateProvider.formatCurrentDate(formatDate(c_data.entry!.first.date!));
+      if ((c_data.entry?.isNotEmpty ?? false) &&
+          c_data.entry!.first.date != null) {
+        _startDate.text = dateProvider
+            .formatCurrentDate(formatDate(c_data.entry!.first.date!));
+      }
       amountController.text = c_data.totalAmount.toString();
       customerVaultID = c_data.customer_vault_id ?? "";
       _selectedPaymentMethod = c_data.paymenttype;
@@ -187,11 +191,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             };
           }).toList() ??
           [];
-      for (var i = 0; i < c_data.entry!.length; i++) {
+      for (var i = 0; i < (c_data.entry ?? []).length; i++) {
         if (i == 0) {
-          charges_balances[0] = c_data.entry![i].amount!.toDouble();
+          charges_balances[0] = (c_data.entry![i].amount ?? 0).toDouble();
         } else {
-          charges_balances.add(c_data.entry![i].amount!.toDouble());
+          charges_balances.add((c_data.entry![i].amount ?? 0).toDouble());
         }
       }
       print("rows length:- ${rows!.length}");
@@ -202,7 +206,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
       print(rows);
-      totalAmount = c_data.totalAmount!;
+      totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
     AddFields();
@@ -240,6 +244,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           'last_name': '${tenant['tenant_lastName']}',
           'email': '${tenant['tenant_email']}',
           'overridefee': '${tenant['override_fee']}',
+          'enableoverridefee': '${tenant['enable_override_fee']}',
         });
       }
       setState(() {
@@ -258,6 +263,16 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       }
     }
     return null; // or you could return an empty string or any default value
+  }
+
+  bool getEnableOverrideFee(String tenantId) {
+    for (var tenant in tenants) {
+      if (tenant['tenant_id'] == tenantId) {
+        final raw = tenant['enableoverridefee'];
+        return raw == 'true' || raw == '1';
+      }
+    }
+    return false;
   }
 
   Future<void> fetchDropdownData() async {
@@ -768,28 +783,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     });
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -824,20 +817,10 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
       for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        if (i < cardDetailsList.length) {
+          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        }
       }
-
-      //
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
 
       return customerData;
     } else {
@@ -849,17 +832,8 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
 
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
-  }
-
   Map<int, bool> selectedRows = {};
-  int? surCharge;
+  num? surCharge;
 
   dynamic? surChargeAchper;
   dynamic? surChargeAchflat;
@@ -884,20 +858,52 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
-      var surchargeData = jsonResponse['data'][0];
+      final dataList = jsonResponse['data'];
+      if (dataList is! List || dataList.isEmpty) {
+        setState(() {
+          surCharge = 0;
+        });
+        return;
+      }
+      var surchargeData = dataList[0];
       if (_selectedPaymentMethod == "Card") {
-        if (cardDetails[selectedcardindex!].binResult == "CREDIT") {
+        if (selectedcardindex == null ||
+            selectedcardindex! < 0 ||
+            selectedcardindex! >= cardDetails.length) {
           setState(() {
-            surCharge = surchargeData['surcharge_percent'];
+            surCharge = 0;
           });
-        } else {
+          return;
+        }
+        final String? binResult = cardDetails[selectedcardindex!].binResult;
+        if (binResult == "CREDIT") {
+          setState(() {
+            // CREDIT always uses surcharge_percent; override_fee is never consulted.
+            surCharge =
+                num.tryParse('${surchargeData['surcharge_percent']}') ?? 0.0;
+          });
+        } else if (binResult == "DEBIT") {
           setState(() {
             String? overrideFee = getOverrideFee(selectedTenantId!);
+            bool enableOverrideFee = getEnableOverrideFee(selectedTenantId!);
             print("overrideFee   ${overrideFee}");
-            if (overrideFee == null || overrideFee == "null")
-              surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
-            else
-              surCharge = int.parse(overrideFee) ?? 0;
+            final num debitPercent =
+                num.tryParse('${surchargeData['surcharge_percent_debit']}') ??
+                    0.0;
+            // Apply override on DEBIT only when the flag is on AND a real value exists.
+            if (enableOverrideFee &&
+                overrideFee != null &&
+                overrideFee.isNotEmpty &&
+                overrideFee != "null") {
+              surCharge = num.tryParse(overrideFee) ?? debitPercent;
+            } else {
+              surCharge = debitPercent;
+            }
+          });
+        } else {
+          // Any card type that is neither exactly "CREDIT" nor "DEBIT" => 0% surcharge.
+          setState(() {
+            surCharge = 0.0;
           });
         }
       }
@@ -3235,12 +3241,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 child: Column(
                                   children: [
                                     // if (_selectedPaymentMethod == "Card" || _selectedPaymentMethod == "ACH")
-                                    //   buildAmountContainer('Amount', amountController.text.isNotEmpty ? double.parse(amountController.text) : 0.0),
+                                    //   buildAmountContainer('Amount', amountController.text.isNotEmpty ? (double.tryParse(amountController.text) ?? 0.0) : 0.0),
                                     // SizedBox(
                                     //   height: 5,
                                     // ),
                                     // if (_selectedPaymentMethod == "Card")
-                                    //   buildAmountContainer('Surcharge included', amountController.text.isNotEmpty ? double.parse(amountController.text) * (surCharge ?? 0.0) / 100 : 0.0),
+                                    //   buildAmountContainer('Surcharge included', amountController.text.isNotEmpty ? (double.tryParse(amountController.text) ?? 0.0) * (surCharge ?? 0.0) / 100 : 0.0),
                                     // if (_selectedPaymentMethod == "ACH") buildAmountContainer('Surcharge included', surchargecount!),
                                     // SizedBox(
                                     //   height: 5,
@@ -3250,15 +3256,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         amountController.text.isNotEmpty &&
                                                 (_selectedPaymentMethod ==
                                                     "Card")
-                                            ? (double.parse(
-                                                        amountController.text) *
+                                            ? double.parse((((double.tryParse(
+                                                            amountController.text) ??
+                                                        0.0) *
                                                     (surCharge ?? 0.0) /
                                                     100) +
-                                                double.parse(
-                                                    amountController.text)
+                                                    (double.tryParse(
+                                                        amountController.text) ??
+                                                        0.0))
+                                                .toStringAsFixed(2))
                                             : amountController.text.isNotEmpty
-                                                ? double.parse(
-                                                    amountController.text)
+                                                ? double.parse((double.tryParse(
+                                                            amountController.text) ??
+                                                        0.0)
+                                                    .toStringAsFixed(2))
                                                 : 0.0),
                                   ],
                                 ),
@@ -3297,6 +3308,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             String? id = prefs.getString('adminId');
                             if ((_formKey.currentState?.validate() ?? false) &&
                                 validationMessage == null) {
+                              if ((double.tryParse(amountController.text) ??
+                                      0.0) <=
+                                  0) {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter a valid amount");
+                                return;
+                              }
                               rows = rows
                                   .asMap()
                                   .map((index, entry) {
@@ -3307,7 +3325,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                         'date': reverseFormatDate(_startDate
                                             .text
                                             .trim()), // Set the date to the desired date
-                                        'balance': double.parse(charges_balances[index].toStringAsFixed(2)), // Add balance from charges_balances list
+                                        'balance': double.parse(((entry['amount'] as num?)?.toDouble() ?? 0.0).toStringAsFixed(2)), // WEB: entry balance equals the paid amount
                                       },
                                     );
                                   })
@@ -3335,8 +3353,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                       customerVaultId: customerVaultID,
                                       billingId: billingID,
                                       entries: rows,
-                                      totalAmount: double.parse(amountController.text.trim()),
+                                      totalAmount: (double.tryParse(amountController.text.trim()) ?? 0.0),
                                       uploadedFile: _uploadedFileNames,
+                                      checkNumber: checknumber.text.trim(),
                                     )
                                     .then((value) {
                                   Fluttertoast.showToast(
@@ -3382,6 +3401,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
+                                if (filteredTenants.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Tenant details not found");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
                                 await PaymentService()
@@ -3390,10 +3417,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(double.tryParse(amountController.text.trim()) ?? 0.0).toStringAsFixed(2)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3402,7 +3428,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   company_name: companyName,
                                   entries: rows,
                                   future_Date: true,
-                                  paymentId: widget.data!.paymentId!,
+                                  paymentId: widget.data?.paymentId ?? "",
                                   Check_number: checknumber.text.trim(),
                                   Check: true,
                                   uploadedFile: _uploadedFileNames,
@@ -3428,19 +3454,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   return tenant['tenant_id'] ==
                                       selectedTenantId;
                                 }).toList();
+                                if (filteredTenants.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Tenant details not found");
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
                                 await PaymentService()
                                     .makePaymentfornormal(
                                   adminId: id ?? "",
-                                  paymentId: widget.data!.paymentId!,
+                                  paymentId: widget.data?.paymentId ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
-                                      "${(double.parse(amountController.text.trim()) * (surCharge ?? 0.0) / 100) + double.parse(amountController.text.trim())}",
+                                      "${(double.tryParse(amountController.text.trim()) ?? 0.0).toStringAsFixed(2)}",
                                   tenantId: selectedTenantId!,
                                   date: reverseFormatDate(_startDate.text.trim()),
                                   address1: "",
@@ -3555,27 +3588,20 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
   surge_count() {
     if (amountController.text.isNotEmpty) {
-      if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null && surChargeAchper != 0.0) &&
-          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
+      if (_selectedPaymentMethod == "ACH") {
         setState(() {
+          final double base = double.tryParse(amountController.text) ?? 0.0;
+          final num percent = num.tryParse('$surChargeAchper') ?? 0.0;
+          final num flat = num.tryParse('$surChargeAchflat') ?? 0.0;
+          double surcharge = 0.0;
+          // Percent term added only if truthy (>0).
+          if (percent > 0) surcharge += base * percent / 100;
+          // Flat term is a DOLLAR amount, added only if truthy (>0).
+          if (flat > 0) surcharge += flat.toDouble();
           surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100) +
-                  surChargeAchflat;
-          finaltotal = double.parse(amountController.text) + surchargecount!;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null && surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = double.parse(amountController.text) + surchargecount!;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null && surChargeAchper != 0.0)) {
-        setState(() {
-          surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+              double.parse(surcharge.toStringAsFixed(2));
+          finaltotal =
+              double.parse((base + surchargecount!).toStringAsFixed(2));
         });
       }
     }

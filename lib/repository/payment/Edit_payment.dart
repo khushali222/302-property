@@ -212,7 +212,7 @@ class PaymentService {
       'billing_id': billingId,
       'tenantName': tenantName,
       'entry': entries,
-      'total_amount': double.parse(totalAmount),
+      'total_amount': double.tryParse(totalAmount) ?? 0.0,
       'surcharge': surcharge,
       'uploaded_file': uploadedFile ?? [],
       'is_web': true,
@@ -360,7 +360,7 @@ class PaymentService {
       'lease_id': leaseId,
       'tenantName': tenantName,
       'entry': entries,
-      'total_amount': double.parse(totalAmount),
+      'total_amount': double.tryParse(totalAmount) ?? 0.0,
       'surcharge': surcharge,
       'uploaded_file': uploadedFile ?? [],
       'is_web': true,
@@ -584,10 +584,8 @@ class PaymentService {
       'entry': entries,
       'total_amount': totalAmount,
       'surcharge': surcharge,
-      'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'check_number': checknumber,
-      'response': responseText,
       'notificationTime': notificationTime,
       'is_web': true,
       'user_active_recently': true,
@@ -625,6 +623,7 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     required double totalAmount,
     required List<String>? uploadedFile,
+    String? checkNumber,
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -633,12 +632,14 @@ class PaymentService {
 
     final Map<String, dynamic> requestBody = {
       'payment_id': paymentId,
+      'company_name': companyName,
       'admin_id': adminId,
       'tenant_id': tenantId,
       'tenantName': tenantName,
       'lease_id': leaseId,
       'customer_vault_id': customerVaultId,
       'billing_id': billingId,
+      'check_number': checkNumber ?? "",
       'entry': entries,
       'total_amount': totalAmount,
       'uploaded_file': uploadedFile ?? [],

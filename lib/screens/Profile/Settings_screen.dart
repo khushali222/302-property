@@ -28,6 +28,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../Model/categories_model.dart';
 import '../../StaffModule/widgets/custom_drawer.dart';
 import '../../constant/constant.dart';
+import '../Team_Access/team_access_section.dart';
 import '../../model/setting.dart';
 import '../../provider/dateProvider.dart';
 import '../../widgets/CustomTableShimmer.dart';
@@ -204,6 +205,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool ispropertytype = false;
   bool _isStaffUser = false;
   bool istwilio = false;
+  bool isteamaccess = false; // Settings → Team & Access section (placeholder)
 
   // ---- Redesigned settings menu state ----
   // When true, the categorized menu (search + cards) is shown.
@@ -644,16 +646,16 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent": credit.text.trim().isNotEmpty
-            ? double.parse(credit.text.trim())
+            ? double.tryParse(credit.text.trim())
             : null,
         "surcharge_percent_debit": debit.text.trim().isNotEmpty
-            ? double.parse(debit.text.trim())
+            ? double.tryParse(debit.text.trim())
             : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
-            ? double.parse(percent.text.trim())
+            ? double.tryParse(percent.text.trim())
             : null, // Add your logic to get this value
         "surcharge_flat_ACH":
-            flat.text.trim().isNotEmpty ? double.parse(flat.text.trim()) : null,
+            flat.text.trim().isNotEmpty ? double.tryParse(flat.text.trim()) : null,
         "surcharge_account": selectedAccount != null
             ? (accounts.any((account) => account.accountId == selectedAccount)
                 ? accounts
@@ -702,15 +704,15 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "surcharge_percent": credit.text.trim().isNotEmpty
-            ? int.parse(credit.text.trim())
+            ? int.tryParse(credit.text.trim())
             : null,
         "surcharge_percent_debit":
-            debit.text.trim().isNotEmpty ? int.parse(debit.text.trim()) : null,
+            debit.text.trim().isNotEmpty ? int.tryParse(debit.text.trim()) : null,
         "surcharge_percent_ACH": percent.text.trim().isNotEmpty
-            ? int.parse(percent.text.trim())
+            ? int.tryParse(percent.text.trim())
             : null, // Add your logic to get this value
         "surcharge_flat_ACH":
-            flat.text.trim().isNotEmpty ? int.parse(flat.text.trim()) : null,
+            flat.text.trim().isNotEmpty ? int.tryParse(flat.text.trim()) : null,
         "surcharge_account": selectedAccount
         // Add your logic to get this value
       };
@@ -746,13 +748,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "duration": duration.text.trim().isNotEmpty
-            ? int.parse(duration.text.trim())
+            ? int.tryParse(duration.text.trim())
             : null,
         "grace_balance": grace_balance.text.trim().isNotEmpty
-            ? int.parse(grace_balance.text.trim())
+            ? int.tryParse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
-            ? double.parse(late_fee.text.trim())
+            ? double.tryParse(late_fee.text.trim())
             : null,
         "calculation_type": calculationType,
         "description":
@@ -800,7 +802,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   //       "admin_id": id,
   //       "remindermail":rentDueReminderEmail,
   //       "duration":
-  //       rentDueReminderEmail ? double.parse(email_duration.text) : 0,
+  //       rentDueReminderEmail ? double.tryParse(email_duration.text) : 0,
   //     };
   //
   //     bool success =
@@ -833,13 +835,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       Map<String, dynamic> data = {
         "admin_id": id,
         "duration": duration.text.trim().isNotEmpty
-            ? int.parse(duration.text.trim())
+            ? int.tryParse(duration.text.trim())
             : null,
         "grace_balance": grace_balance.text.trim().isNotEmpty
-            ? int.parse(grace_balance.text.trim())
+            ? int.tryParse(grace_balance.text.trim())
             : null,
         "late_fee": late_fee.text.trim().isNotEmpty
-            ? int.parse(late_fee.text.trim())
+            ? int.tryParse(late_fee.text.trim())
             : null,
         "calculation_type": calculationType,
         "description":
@@ -1015,7 +1017,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "admin_id": id,
         "duration": rentDueReminderEmail
             ? (durationmail.text.trim().isNotEmpty
-                ? double.parse(durationmail.text.trim())
+                ? double.tryParse(durationmail.text.trim())
                 : null)
             : 0,
         "replyToEmail": replyToEmail.text.trim(),
@@ -1097,7 +1099,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         "replyToEmail": replyToEmail.text.trim(),
         "duration": rentDueReminderEmail
             ? (durationmail.text.trim().isNotEmpty
-                ? int.parse(durationmail.text.trim())
+                ? int.tryParse(durationmail.text.trim())
                 : null)
             : 0,
         "remindermail": rentDueReminderEmail,
@@ -1287,7 +1289,13 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (decoded['statusCode'] == 200 && decoded['data'] != null) {
         final d = decoded['data'] as Map<String, dynamic>;
         setState(() {
-          _cpCompanyName.text = (d['company_dba'] ?? '').toString();
+          // Match web (`company_dba || company_name`): show the DBA, falling
+          // back to the legal company name when no separate DBA is set.
+          // Without the fallback the field looked blank for companies that
+          // never entered a DBA (e.g. keybrainstech).
+          final cpDba = (d['company_dba'] ?? '').toString().trim();
+          final cpLegalName = (d['company_name'] ?? '').toString().trim();
+          _cpCompanyName.text = cpDba.isNotEmpty ? cpDba : cpLegalName;
           _cpMailingStreet.text = (d['mailing_street'] ?? '').toString();
           _cpMailingCity.text = (d['mailing_city'] ?? '').toString();
           final ms = (d['mailing_state'] ?? '').toString().trim();
@@ -3267,6 +3275,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     if (issurge) return 'Surcharges';
     if (isvendor) return 'Vendors';
     if (istwilio) return 'Twilio';
+    if (isteamaccess) return 'Team & Access';
 
     return 'Accounts';
   }
@@ -3287,6 +3296,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       istwilio = value == 'Twilio';
       ispropertyowner = value == 'Property Owners';
       ispropertytype = value == 'Property Type';
+      isteamaccess = value == 'Team & Access';
       if (value == 'Date Format') {
         final dateProvider = Provider.of<DateProvider>(context, listen: false);
         dateformateselect = dateProvider.dateformateselect;
@@ -3347,9 +3357,19 @@ class _TabBarExampleState extends State<TabBarExample> {
         return Icons.store;
       case 'Twilio':
         return Icons.phone;
+      case 'Team & Access':
+        return Icons.manage_accounts_outlined;
       default:
         return Icons.settings;
     }
+  }
+
+  // ===================== Team & Access =====================
+  // Settings -> "Team & Access". The section UI lives in its own widget
+  // (TeamAccessSection) which fetches admins + staff via TeamRepository and
+  // renders the Admins / Staff / Permissions tabs.
+  Widget _buildTeamAccessSection() {
+    return const TeamAccessSection();
   }
 
   // ===================== Surcharge (redesigned) =====================
@@ -4499,6 +4519,10 @@ class _TabBarExampleState extends State<TabBarExample> {
           _SettingsMenuItem('Categories', 'Income & expense categories',
               Icons.category_outlined),
         ]),
+        _SettingsMenuSection('TEAM', [
+          _SettingsMenuItem('Team & Access', 'Team members, roles & permissions',
+              Icons.manage_accounts_outlined),
+        ]),
         _SettingsMenuSection('FINANCIAL', [
           _SettingsMenuItem('Surcharges', 'Recurring fees & add-ons',
               Icons.receipt_long_outlined),
@@ -5257,6 +5281,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                             ],
                           ),
+                        if (isteamaccess) _buildTeamAccessSection(),
                         if (iscompanyprofile)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

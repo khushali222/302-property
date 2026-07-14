@@ -31,19 +31,26 @@ class InsuranceRepository {
       throw Exception('Failed to load insurances');
     }
   }
-  Future<bool> deleteInsurancesProperties(String TenantInsurance_id) async {
+  Future<bool> deleteInsurancesProperties(
+      String TenantInsurance_id, String reason) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    final response = await apiDelete(Uri.parse('$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'), headers: {
-      "id":"CRM $id",
-      "authorization": "CRM $token",
-      "Content-Type": "application/json"
-    });
+    print(
+        '🗑️ DELETE insurance $TenantInsurance_id  body: ${jsonEncode({"reason": reason})}');
+    final response = await apiDelete(
+        Uri.parse(
+            '$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
+        headers: {
+          "id": "CRM $id",
+          "authorization": "CRM $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode({"reason": reason}));
 
-    print(response.body);
+    print('🗑️ Delete response (${response.statusCode}): ${response.body}');
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
       Fluttertoast.showToast(msg: responseData["message"]);

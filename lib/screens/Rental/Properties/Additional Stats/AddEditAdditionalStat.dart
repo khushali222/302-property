@@ -315,8 +315,9 @@ class _AddEditAdditionalStatState extends State<AddEditAdditionalStat> {
           'date': _selectedDate != null
               ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
               : null,
-          'stat_value': double.parse(
-              _valueController.text.replaceAll('\$', '').replaceAll(',', '')),
+          'stat_value': double.tryParse(
+                  _valueController.text.replaceAll('\$', '').replaceAll(',', '')) ??
+              0.0,
         };
 
         http.Response response;

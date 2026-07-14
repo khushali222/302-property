@@ -210,29 +210,38 @@ class EditLease {
 
 
    // print(json["moveout_tenant"] != null);
+    // API sometimes sends rental_id / unit_id as lists, and stub applicant
+    // leases omit createdAt — parse defensively so prefill never dies.
+    String stringOrFirst(dynamic value) {
+      if (value is List) {
+        return value.isNotEmpty ? value[0].toString() : "";
+      }
+      return value?.toString() ?? "";
+    }
+
     return EditLease(
-      id: json['_id'],
-      leaseId: json['lease_id']??"",
+      id: json['_id']?.toString() ?? "",
+      leaseId: json['lease_id']?.toString() ?? "",
       tenantId: json['tenant_id'] != null ? List<String>.from(json['tenant_id']):[],
-      adminId: json['admin_id']??"",
-      rentalId: json['rental_id']??"",
-      unitId: json['unit_id']??"",
-      leaseType: json['lease_type']??"",
-      startDate: json['start_date']??"",
-      endDate: json['end_date']??"",
+      adminId: json['admin_id']?.toString() ?? "",
+      rentalId: stringOrFirst(json['rental_id']),
+      unitId: stringOrFirst(json['unit_id']),
+      leaseType: json['lease_type']?.toString() ?? "",
+      startDate: json['start_date']?.toString() ?? "",
+      endDate: json['end_date']?.toString() ?? "",
       leaseAmount: json['lease_amount'] is String ? double.parse(json['lease_amount']) : (json['lease_amount'] as num?)?.toDouble() ?? 0.0,
       uploadedFile: json['uploaded_file'] != null ? List<dynamic>.from(json['uploaded_file']):[],
       entry: json['entry'] != null ? (json['entry'] as List)
           .map((entry) => Entry.fromJson(entry))
           .toList(): [],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      createdAt: json['createdAt']?.toString() ?? "",
+      updatedAt: json['updatedAt']?.toString() ?? "",
       creditCardAccepted: json['creditCardAccepted'],
       debitCardAccepted: json['debitCardAccepted'],
       achAccepted: json['achAccepted'],
       leasePaymentSettings: json['leasePaymentSettings'],
       moveoutTenant: json['moveout_tenant'] != null ?  List<dynamic>.from(json['moveout_tenant']) : [],
-      v: json['__v'],
+      v: json['__v'] is int ? json['__v'] : (int.tryParse('${json['__v']}') ?? 0),
     );
   }
 }

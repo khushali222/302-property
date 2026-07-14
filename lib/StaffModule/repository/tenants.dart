@@ -251,6 +251,93 @@ class TenantsRepository {
     }
   }
 
+  // Web-aligned Add Tenant (Staff). Takes a ready-made body mirroring the web
+  // POST /tenant/tenants payload, instead of Tenant.toJson(). The legacy
+  // addTenant(Tenant) below is left untouched for other callers.
+  Future<bool> addTenantPayload(Map<String, dynamic> body) async {
+    final url = Uri.parse('${Api_url}/api/tenant/tenants');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+
+    print(jsonEncode(body));
+    try {
+      final response = await apiPost(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode(body),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print(" add tenant $responseData");
+      // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
+      // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
+      final ecResp = responseData['data']?['emergency_contacts'];
+      print('[EC-DEBUG] ADD-SAVE response'
+          ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
+          ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (responseData['statusCode'] == 200) {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Successfully added tenant');
+          return true;
+        } else {
+          Fluttertoast.showToast(
+              msg: responseData['message'] ?? 'Failed to add tenant');
+          return false;
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to add tenant');
+        return false;
+      }
+    } catch (error) {
+      print('Exception occurred: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
+  // Web-aligned Account & Login action (Staff): send account-setup /
+  // resend / reset-password email. Server picks the template.
+  Future<bool> sendSetupEmail(String tenantId) async {
+    final url =
+        Uri.parse('${Api_url}/api/tenant/tenants/$tenantId/send-setup-email');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    try {
+      final response = await apiPost(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode({}),
+      );
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData['statusCode'] == 200) {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Email sent successfully.');
+        return true;
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Failed to send email');
+        return false;
+      }
+    } catch (error) {
+      print('sendSetupEmail error: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);
@@ -438,6 +525,41 @@ class TenantsRepository {
   //     throw Exception('Failed to update tenant');
   //   }
   // }
+  // Web-aligned Edit Tenant (Staff). Takes a ready-made body mirroring the
+  // web PUT /tenant/tenants/:id payload. The legacy editTenant(...) below is
+  // left untouched for other callers.
+  Future<bool> editTenantPayload(
+      String tenantId, Map<String, dynamic> body) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? id = prefs.getString('staff_id');
+    print('edit payload ${jsonEncode(body)}');
+    final http.Response response = await apiPut(
+      Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
+      headers: <String, String>{
+        "authorization": "CRM $token",
+        "id": "CRM $id",
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(body),
+    );
+    var responseData = json.decode(response.body);
+    print('edit tenant ${response.body}');
+    // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
+    // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
+    final ecResp = responseData['data']?['emergency_contacts'];
+    print('[EC-DEBUG] EDIT-SAVE response'
+        ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
+        ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
+    if (responseData["statusCode"] == 200) {
+      return true;
+    } else {
+      Fluttertoast.showToast(
+          msg: responseData["message"] ?? 'Failed to update tenant');
+      return false;
+    }
+  }
+
   Future<Map<String, dynamic>> editTenant({
     required String tenantId,
     required String adminId,

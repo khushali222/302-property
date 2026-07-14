@@ -170,14 +170,21 @@ class ApplicantStatus {
   String? updateAt;
   String? statusUpdatedBy;
   String? sId;
+  String? rejectionReason;
 
-  ApplicantStatus({this.status, this.updateAt, this.statusUpdatedBy, this.sId});
+  ApplicantStatus(
+      {this.status,
+      this.updateAt,
+      this.statusUpdatedBy,
+      this.sId,
+      this.rejectionReason});
 
   ApplicantStatus.fromJson(Map<String, dynamic> json) {
     status = json['status']?.toString();
     updateAt = json['updateAt']?.toString();
     statusUpdatedBy = json['statusUpdatedBy']?.toString();
     sId = json['_id']?.toString();
+    rejectionReason = json['rejection_reason']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -186,6 +193,7 @@ class ApplicantStatus {
     data['updateAt'] = this.updateAt;
     data['statusUpdatedBy'] = this.statusUpdatedBy;
     data['_id'] = this.sId;
+    data['rejection_reason'] = this.rejectionReason;
     return data;
   }
 }
@@ -265,12 +273,20 @@ class ApplicantContentDetails {
   Data? data;
   String? message;
 
+  /// Raw `data` json — the new web schema (address_history,
+  /// employment_history, vehicles, pets, ...) consumed by the
+  /// web-parity Application tab read view.
+  Map<String, dynamic>? raw;
+
   ApplicantContentDetails({this.statusCode, this.data, this.message});
 
   ApplicantContentDetails.fromJson(Map<String, dynamic> json) {
     statusCode = json['statusCode'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message']?.toString();
+    raw = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -597,17 +613,35 @@ class ApproveRejectApplicantDetail {
   });
 
   ApproveRejectApplicantDetail.fromJson(Map<String, dynamic> json) {
-    id = json['_id'];
-    leaseId = json['lease_id'];
-    applicantId = json['applicant_id'];
-    adminId = json['admin_id'];
-    rentalId = json['rental_id'];
-    unitId = json['unit_id'];
-    createdAt = json['createdAt'];
-    updatedAt = json['updatedAt'];
-    v = json['__v'];
-    rentalAddress = json['rental_adress'];
-    rentalUnit = json['rental_unit'];
+    id = json['_id']?.toString();
+    leaseId = json['lease_id']?.toString();
+    applicantId = json['applicant_id']?.toString();
+    adminId = json['admin_id']?.toString();
+    // API sometimes sends rental_id / rental_adress / rental_unit as lists
+    // (same quirk LeaseData.fromJson already handles).
+    if (json['rental_id'] is List) {
+      rentalId = (json['rental_id'] as List).isNotEmpty
+          ? json['rental_id'][0].toString()
+          : null;
+    } else {
+      rentalId = json['rental_id']?.toString();
+    }
+    unitId = json['unit_id']?.toString();
+    createdAt = json['createdAt']?.toString();
+    updatedAt = json['updatedAt']?.toString();
+    v = json['__v'] is int ? json['__v'] : int.tryParse('${json['__v']}');
+    if (json['rental_adress'] is List) {
+      rentalAddress = (json['rental_adress'] as List).join(', ');
+    } else {
+      rentalAddress = json['rental_adress']?.toString();
+    }
+    if (json['rental_unit'] is List) {
+      rentalUnit = (json['rental_unit'] as List)
+          .where((u) => u != null && u.toString().trim().isNotEmpty)
+          .join(', ');
+    } else {
+      rentalUnit = json['rental_unit']?.toString();
+    }
   }
 
   Map<String, dynamic> toJson() {

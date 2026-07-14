@@ -23,7 +23,7 @@ import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../Model/Rent_collection_model.dart';
-import '../../../../repository/Rent_colllection_repository.dart';
+import 'package:three_zero_two_property/StaffModule/repository/Rent_colllection_repository.dart';
 import '../../../repository/daily_transaction_report.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -185,9 +185,9 @@ class _Rent_collectionState extends State<Rent_collection> {
       setState(() {
         isLoading = false;
         errorMessage =
-            'Failed to load renters insurance data. Please try again later.';
+            'Failed to load rent collection data. Please try again later.';
       });
-      return DelinquentTenantsModel!;
+      rethrow;
     }
   }
 
@@ -1405,7 +1405,6 @@ class _Rent_collectionState extends State<Rent_collection> {
   bool ascending3 = false;
 
   Widget _buildHeaders() {
-    var width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
@@ -1426,9 +1425,11 @@ class _Rent_collectionState extends State<Rent_collection> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
+              margin: const EdgeInsets.only(left: 5),
               child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
+                size: 20,
               ),
             ),
             Expanded(
@@ -1454,14 +1455,15 @@ class _Rent_collectionState extends State<Rent_collection> {
                   });
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 0),
+                  padding: const EdgeInsets.only(left: 8),
                   child: Row(
                     children: [
-                      width < 400
-                          ? const Text("   Entity",
-                              style: TextStyle(color: Colors.white))
-                          : const Text("   Entity",
-                              style: TextStyle(color: Colors.white)),
+                      Flexible(
+                        child: Text("Entity",
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
+                      ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
                       // ascending1
@@ -1508,10 +1510,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text("Total Outstanding",
-                        style: TextStyle(color: Colors.white)),
+                    Flexible(
+                      child: Text("Total Outstanding",
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 14)),
+                    ),
+                    const SizedBox(width: 25),
                   ],
                 ),
               ),
@@ -1554,6 +1562,7 @@ class _Rent_collectionState extends State<Rent_collection> {
 
   Widget _buildHeadersDetails() {
     var width = MediaQuery.of(context).size.width;
+    bool isSmallScreen = width < 536;
     return Container(
       decoration: BoxDecoration(
         color: blueColor,
@@ -1574,12 +1583,16 @@ class _Rent_collectionState extends State<Rent_collection> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
+              margin: const EdgeInsets.only(left: 5),
               child: const Icon(
                 Icons.expand_less,
                 color: Colors.transparent,
+                size: 20,
               ),
             ),
+            SizedBox(width: isSmallScreen ? 2 : 3),
             Expanded(
+              flex: isSmallScreen ? 4 : 3,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -1605,11 +1618,12 @@ class _Rent_collectionState extends State<Rent_collection> {
                   padding: const EdgeInsets.only(left: 0),
                   child: Row(
                     children: [
-                      width < 400
-                          ? const Text(" Address",
-                              style: TextStyle(color: Colors.white))
-                          : const Text(" Address",
-                              style: TextStyle(color: Colors.white)),
+                      Flexible(
+                        child: const Text("Address",
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
+                      ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
@@ -1634,7 +1648,9 @@ class _Rent_collectionState extends State<Rent_collection> {
                 ),
               ),
             ),
+            SizedBox(width: isSmallScreen ? 4 : 8),
             Expanded(
+              flex: isSmallScreen ? 3 : 2,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -1656,15 +1672,21 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: const Row(
+                child: Row(
                   children: [
-                    Text("        Entity",
-                        style: TextStyle(color: Colors.white)),
+                    Flexible(
+                      child: Text("Entity",
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 14)),
+                    ),
                   ],
                 ),
               ),
             ),
+            SizedBox(width: isSmallScreen ? 4 : 8),
             Expanded(
+              flex: 2,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -1687,32 +1709,40 @@ class _Rent_collectionState extends State<Rent_collection> {
                     // Sorting logic here
                   });
                 },
-                child: Row(
-                  children: [
-                    const Text(" Balance",
-                        style: TextStyle(color: Colors.white)),
-                    const SizedBox(width: 3),
-                    ascending3
-                        ? const Padding(
-                            padding: EdgeInsets.only(top: 10, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: Colors.white,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("Balance",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 14)),
+                      const SizedBox(width: 3),
+                      ascending3
+                          ? const Padding(
+                              padding: EdgeInsets.only(top: 10, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortUp,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Padding(
+                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                              child: FaIcon(
+                                FontAwesomeIcons.sortDown,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                             ),
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
+            SizedBox(width: isSmallScreen ? 10 : 16),
           ],
         ),
       ),
@@ -1813,13 +1843,17 @@ class _Rent_collectionState extends State<Rent_collection> {
                       // Always show filters
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                               // Month Dropdown
                               Container(
-                                width: 130,
+                                width: 120,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -1859,7 +1893,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         height: 45,
                                         width: double.infinity,
                                         padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
+                                            left: 8, right: 8),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8),
@@ -1889,7 +1923,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           const MenuItemStyleData(
                                         height: 40,
                                         padding: EdgeInsets.only(
-                                            left: 14, right: 14),
+                                            left: 8, right: 8),
                                       ),
                                     ),
                                   ),
@@ -1898,7 +1932,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                               const SizedBox(width: 8),
                               // Year Dropdown
                               Container(
-                                width: 100,
+                                width: 84,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -1938,7 +1972,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         height: 45,
                                         width: double.infinity,
                                         padding: const EdgeInsets.only(
-                                            left: 14, right: 14),
+                                            left: 8, right: 8),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8),
@@ -1968,7 +2002,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           const MenuItemStyleData(
                                         height: 40,
                                         padding: EdgeInsets.only(
-                                            left: 14, right: 14),
+                                            left: 8, right: 8),
                                       ),
                                     ),
                                   ),
@@ -2066,7 +2100,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   },
                                 ),
                               ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -2081,7 +2116,31 @@ class _Rent_collectionState extends State<Rent_collection> {
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: ColabShimmerLoadingWidget(),
                             );
+                          } else if (snapshot.hasError) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * .5,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.error_outline,
+                                        size: 64, color: Colors.red),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      errorMessage ??
+                                          'Failed to load report. Please try again.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           } else if (!snapshot.hasData ||
+                              snapshot.data?.summary == null ||
                               snapshot.data!.summary!.isEmpty) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,
@@ -2377,8 +2436,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       children: [
                                         _buildTabButton("Summary", 0),
                                         _buildTabButton("Details", 1),
-                                        _buildTabButton(
-                                            "   Delinquent\n       Lease", 2),
+                                        _buildTabButton("Delinquent Lease", 2),
                                       ],
                                     ),
                                   ),
@@ -2447,7 +2505,11 @@ class _Rent_collectionState extends State<Rent_collection> {
           alignment: Alignment.center,
           child: Text(
             title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
+              fontSize: 13,
               color: isSelected ? Colors.white : Colors.black87,
               fontWeight: FontWeight.bold,
             ),
@@ -2955,94 +3017,6 @@ class _Rent_collectionState extends State<Rent_collection> {
               ),
               child: Column(
                 children: [
-                  // Data count info - Responsive
-                  if (filteredData.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          bool isSmallScreen = constraints.maxWidth < 400;
-                          if (isSmallScreen) {
-                            // Stack vertically on small screens
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Showing ${startIndex + 1}-${endIndex} of ${totalItems} records',
-                                  style: TextStyle(
-                                      color: Colors.grey[600], fontSize: 12),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Text('Items per page: ',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 12)),
-                                    DropdownButton<int>(
-                                      value: itemsPerPage,
-                                      underline: Container(),
-                                      items: itemsPerPageOptions.map((option) {
-                                        return DropdownMenuItem(
-                                          value: option,
-                                          child: Text(option.toString()),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          itemsPerPage = value!;
-                                          currentPage =
-                                              0; // Reset to first page
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          } else {
-                            // Keep horizontal layout for larger screens
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'Showing ${startIndex + 1}-${endIndex} of ${totalItems} records',
-                                    style: TextStyle(
-                                        color: Colors.grey[600], fontSize: 12),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Text('Items per page: ',
-                                        style: TextStyle(
-                                            color: Colors.grey[600],
-                                            fontSize: 12)),
-                                    DropdownButton<int>(
-                                      value: itemsPerPage,
-                                      underline: Container(),
-                                      items: itemsPerPageOptions.map((option) {
-                                        return DropdownMenuItem(
-                                          value: option,
-                                          child: Text(option.toString()),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          itemsPerPage = value!;
-                                          currentPage =
-                                              0; // Reset to first page
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
-                    ),
                   // Show empty state if no data after filtering
                   if (filteredData.isEmpty &&
                       (searchvalue.isNotEmpty ||
@@ -3186,7 +3160,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                           textAlign: TextAlign.right,
                                         ),
                                       ),
-                                      SizedBox(width: isSmallScreen ? 2 : 5),
+                                      SizedBox(width: isSmallScreen ? 10 : 16),
                                     ],
                                   );
                                 },
@@ -3196,6 +3170,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                           if (isRowExpanded)
                             Container(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // Move-in Date and Monthly Rent Row - Responsive
                                   LayoutBuilder(
@@ -3502,63 +3477,117 @@ class _Rent_collectionState extends State<Rent_collection> {
                       ),
                     );
                   }).toList(),
-                  // Pagination Controls - Responsive
-                  if (totalItems > itemsPerPage)
+                  // Pagination bar - matches app-standard table pagination
+                  if (filteredData.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
-                          bool isSmallScreen = constraints.maxWidth < 300;
-                          return Column(
+                          int totalPages = (totalItems / itemsPerPage).ceil();
+                          bool isSmallScreen = constraints.maxWidth < 400;
+                          Widget recordsInfo = Text(
+                            'Showing ${startIndex + 1}-${endIndex} of ${totalItems} records',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 12),
+                          );
+                          Widget pageControls = Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Previous button
-                                  IconButton(
-                                    onPressed: currentPage > 0
-                                        ? () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          }
-                                        : null,
-                                    icon: const Icon(Icons.chevron_left),
-                                  ),
-                                  // Page info
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: isSmallScreen ? 8 : 16,
-                                        vertical: 8),
-                                    decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      isSmallScreen
-                                          ? '${currentPage + 1}/${(totalItems / itemsPerPage).ceil()}'
-                                          : 'Page ${currentPage + 1} of ${(totalItems / itemsPerPage).ceil()}',
-                                      style: TextStyle(
+                              Container(
+                                height: 36,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: const Color(0xFFDBE0E5)),
+                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white,
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<int>(
+                                    value: itemsPerPage,
+                                    style: TextStyle(
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: isSmallScreen ? 12 : 14,
-                                      ),
-                                    ),
+                                        color: blueColor),
+                                    items: itemsPerPageOptions.map((option) {
+                                      return DropdownMenuItem(
+                                        value: option,
+                                        child: Text(option.toString()),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        itemsPerPage = value!;
+                                        currentPage =
+                                            0; // Reset to first page
+                                      });
+                                    },
                                   ),
-                                  // Next button
-                                  IconButton(
-                                    onPressed:
-                                        (currentPage + 1) * itemsPerPage <
-                                                totalItems
-                                            ? () {
-                                                setState(() {
-                                                  currentPage++;
-                                                });
-                                              }
-                                            : null,
-                                    icon: const Icon(Icons.chevron_right),
-                                  ),
-                                ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.circleChevronLeft,
+                                  color: currentPage > 0
+                                      ? blueColor
+                                      : Colors.grey,
+                                ),
+                                onPressed: currentPage > 0
+                                    ? () {
+                                        setState(() {
+                                          currentPage--;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                              Text(
+                                'Page ${currentPage + 1} of $totalPages',
+                                style: TextStyle(
+                                  color: totalPages > 1
+                                      ? Colors.black87
+                                      : Colors.grey.shade600,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              IconButton(
+                                icon: FaIcon(
+                                  FontAwesomeIcons.circleChevronRight,
+                                  color: currentPage < totalPages - 1
+                                      ? blueColor
+                                      : Colors.grey,
+                                ),
+                                onPressed: currentPage < totalPages - 1
+                                    ? () {
+                                        setState(() {
+                                          currentPage++;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                            ],
+                          );
+                          if (isSmallScreen) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                recordsInfo,
+                                const SizedBox(height: 4),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: pageControls,
+                                ),
+                              ],
+                            );
+                          }
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(child: recordsInfo),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: pageControls,
                               ),
                             ],
                           );
@@ -3657,6 +3686,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         },
                                         child: Text(
                                           '${item.rentalData?.rentalAdress ?? '-'}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             color: blueColor,
                                             fontWeight: FontWeight.bold,
@@ -3665,14 +3696,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .05),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                       flex: 2,
                                       child: Text(
                                         '${item.rentalOwnerData?.rentalOwnerCompanyName}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
@@ -3680,16 +3710,16 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .05),
+                                    const SizedBox(width: 8),
                                     Expanded(
                                       flex: 2,
                                       child: Text(
                                         item.leaseData?.balance != null
                                             ? '${item.leaseData!.balance}'
                                             : '-',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.right,
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,
@@ -3698,9 +3728,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      width: 5,
+                                      width: 16,
                                     ),
-                                    // SizedBox(width: 8),
                                   ],
                                 ),
                               ),

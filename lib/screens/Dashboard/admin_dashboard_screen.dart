@@ -217,7 +217,9 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
               child: Barchart(),
             ),
             const SizedBox(height: 24),
-            Dashboard_leaseExpiring(),
+            // Web order (dashboardConfig.js): Payments (Last 7 Days + Failed)
+            // first, then Insurance, then Leases.
+            Cronjob_payment_table(),
             SizedBox(
               height: 20,
             ),
@@ -225,7 +227,7 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
             SizedBox(
               height: 20,
             ),
-            Cronjob_payment_table(),
+            Dashboard_leaseExpiring(),
             SizedBox(
               height: 20,
             ),

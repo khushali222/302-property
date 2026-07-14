@@ -1022,8 +1022,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                           searchvalue!.toLowerCase()) ||
                           workorder.status!.toLowerCase().contains(
                               searchvalue!.toLowerCase()) ||
-                          workorder.isBillable!
-                              .toString()
+                          (workorder.isBillable?.toString() ?? '')
                               .toLowerCase()
                               .contains(
                               searchvalue!.toLowerCase()) ||

@@ -1,421 +1,254 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
-class Barchart extends StatefulWidget {
+import '../repository/workorder.dart';
+import '../screen/work_order_monthly_breakdown.dart';
+
+// Palette (matches the legend dots / web source of truth):
+//   New     = blueColor                       (#152B51 navy)
+//   Overdue = Color.fromRGBO(90, 134, 213, 1) (#5A86D5 blue)
+final Color _kNewColor = blueColor;
+const Color _kOverdueColor = Color.fromRGBO(90, 134, 213, 1);
+const Color _kChipBg = Color(0xFFEDF1F8); // light grey legend chip
+const Color _kCardFill = Color(0xFFF1F4FA); // chart card fill (stands off white page)
+const Color _kCardBorder = Color(0xFFDDE3EE); // card border + dotted gridlines
+const Color _kMutedText = Color(0xFF8A95A8); // "Last 12 Months" / labels
+
+/// Self-contained "Statistics" card for the vendor dashboard.
+/// Header (Statistics / Last 12 Months), two legend chips, a flat chart
+/// (tap a bar → popup tooltip), and a "View Monthly Breakdown" button.
+class VendorStatisticsCard extends StatefulWidget {
+  final List<MonthStat> stats;
+  final bool isLoading;
+  final bool isTablet;
+
+  const VendorStatisticsCard({
+    Key? key,
+    this.stats = const [],
+    this.isLoading = false,
+    this.isTablet = false,
+  }) : super(key: key);
+
   @override
-  State<Barchart> createState() => _BarchartState();
+  State<VendorStatisticsCard> createState() => _VendorStatisticsCardState();
 }
 
-class _BarchartState extends State<Barchart> {
-  final List<RevenueData> chartData = [
-    RevenueData('Jan', 5000),
-    RevenueData('Feb', 6000),
-    RevenueData('Mar', 7000),
-    RevenueData('Apr', 8000),
-    RevenueData('May', 9000),
-    RevenueData('Jun', 10000),
-    RevenueData('Jul', 11000),
-    RevenueData('Aug', 12000),
-    RevenueData('Sep', 13000),
-    RevenueData('Oct', 14000),
-    RevenueData('Nov', 15000),
-    RevenueData('Dec', 16000),
-  ];
-  final List<RevenueData> chartData1 = [
-    RevenueData('Jan', 5500),
-    RevenueData('Feb', 6500),
-    RevenueData('Mar', 7500),
-    RevenueData('Apr', 8500),
-    RevenueData('May', 9500),
-    RevenueData('Jun', 10500),
-    RevenueData('Jul', 11500),
-    RevenueData('Aug', 12500),
-    RevenueData('Sep', 13500),
-    RevenueData('Oct', 14500),
-    RevenueData('Nov', 15500),
-    RevenueData('Dec', 16500),
-  ];
-
-  final List<String> items = [
-    'This Year',
-    'Previous Year',
-  ];
-
-  String? selectedValue;
+class _VendorStatisticsCardState extends State<VendorStatisticsCard> {
+  late final TooltipBehavior _tooltip;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.white,
-      // color: Colors.deepPurple,
-      height: MediaQuery.of(context).size.width > 500 ? 300: 250,
-      padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Card(
-        elevation: 4,
-        // color: Colors.white.withOpacity(1),
+  void initState() {
+    super.initState();
+    // Tap a bar → popup card with the month + New / Overdue values.
+    _tooltip = TooltipBehavior(
+      enable: true,
+      shared: true,
+      activationMode: ActivationMode.singleTap,
+      color: blueColor,
+      textStyle: TextStyle(
         color: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              height: 30,
-              // width: 120,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              alignment: Alignment.topRight,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: const Row(
-                    children: [
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Expanded(
-                        child: Text(
-                          'This Year',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  items: items
-                      .map((String item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
-                      .toList(),
-                  value: selectedValue,
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedValue = value;
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 50,
-                    width: 110,
-                    padding: const EdgeInsets.only(left: 14, right: 14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.black26,
-                      ),
-                      color: Color.fromRGBO(50, 75, 119, 1),
-                    ),
-                    elevation: 2,
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: Icon(
-                      Icons.arrow_forward_ios_outlined,
-                    ),
-                    iconSize: 14,
-                    iconEnabledColor: Colors.white,
-                    iconDisabledColor: Colors.grey,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    maxHeight: 200,
-                    width: 110,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Color.fromRGBO(50, 75, 119, 1),
-                    ),
-                    offset: const Offset(0, -5),
-                    scrollbarTheme: ScrollbarThemeData(
-                      radius: const Radius.circular(40),
-                      thickness: MaterialStateProperty.all<double>(6),
-                      thumbVisibility: MaterialStateProperty.all<bool>(true),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    height: 40,
-                    padding: EdgeInsets.only(left: 14, right: 14),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 190,
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(
-                  majorGridLines: MajorGridLines(width: 0),
-                  isVisible: true, // Show X-axis labels
-                  majorTickLines: MajorTickLines(size: 0), // Hide tick lines
-                  axisLine: AxisLine(width: 0), // Hide X-axis line
-                  labelIntersectAction: AxisLabelIntersectAction.rotate45,
-                 /* title: AxisTitle(
-                      text: "Total Revenue",
-                      textStyle: TextStyle(
-                          fontFamily: "mulish",
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold)),*/
-                ),
-                primaryYAxis: NumericAxis(
-                  isVisible: false, // Hide Y-axis labels
-                  majorGridLines:
-                  MajorGridLines(width: 0), // Remove Y-axis gridlines
-                  axisLine: AxisLine(width: 0), // Hide Y-axis line
-                ),
-                plotAreaBorderWidth: 0, // Remove border around plot area
-                series: <CartesianSeries>[
-                  ColumnSeries<RevenueData, String>(
-                    dataSource: chartData,
-
-                    // xAxisName: "Total Revenue",
-                    color: Color.fromRGBO(60, 89, 142, 1),
-                    xValueMapper: (RevenueData data, _) => data.month,
-                    yValueMapper: (RevenueData data, _) => data.revenue,
-                    dataLabelSettings: DataLabelSettings(isVisible: false),
-                    spacing: 0.3,
-                  //  borderRadius: BorderRadius.circular(10),
-                    width: .7, // Rounded corners for bars
-                  ),
-                  ColumnSeries<RevenueData, String>(
-                    dataSource: chartData1,
-
-                    // xAxisName: "Total Revenue",
-                    color: Color.fromRGBO(90, 134, 213, 1),
-                    xValueMapper: (RevenueData data, _) => data.month,
-                    yValueMapper: (RevenueData data, _) => data.revenue,
-                    dataLabelSettings: DataLabelSettings(isVisible: false),
-                    spacing: 0.3,
-                   // borderRadius: BorderRadius.circular(10),
-                    width: .7, // Rounded corners for bars
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
+        fontSize: widget.isTablet ? 15 : 13,
       ),
     );
   }
-}
 
-class RevenueData {
-  final String month;
-  final double revenue;
-
-  RevenueData(this.month, this.revenue);
-}
-class BarchartTablet extends StatefulWidget {
-
-  @override
-  State<BarchartTablet> createState() => _BarchartTabletState();
-}
-
-class _BarchartTabletState extends State<BarchartTablet> {
-  final List<RevenueData> chartData = [
-    RevenueData('Jan', 5000),
-    RevenueData('Feb', 6000),
-    RevenueData('Mar', 7000),
-    RevenueData('Apr', 8000),
-    RevenueData('May', 9000),
-    RevenueData('Jun', 10000),
-    RevenueData('Jul', 11000),
-    RevenueData('Aug', 12000),
-    RevenueData('Sep', 13000),
-    RevenueData('Oct', 14000),
-    RevenueData('Nov', 15000),
-    RevenueData('Dec', 16000),
-  ];
-  final List<RevenueData> chartData1 = [
-    RevenueData('Jan', 5500),
-    RevenueData('Feb', 6500),
-    RevenueData('Mar', 7500),
-    RevenueData('Apr', 8500),
-    RevenueData('May', 9500),
-    RevenueData('Jun', 10500),
-    RevenueData('Jul', 11500),
-    RevenueData('Aug', 12500),
-    RevenueData('Sep', 13500),
-    RevenueData('Oct', 14500),
-    RevenueData('Nov', 15500),
-    RevenueData('Dec', 16500),
-  ];
-
-  final List<String> items = [
-    'This Year',
-    'Previous Year',
-  ];
-
-  String? selectedValue;
+  void _openBreakdown() {
+    if (widget.stats.isEmpty) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => WorkOrderMonthlyBreakdown(stats: widget.stats),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.white,
-      // color: Colors.deepPurple,
-      height: MediaQuery.of(context).size.width > 500 ? 380: 250,
-     // padding: EdgeInsets.symmetric(horizontal: 8),
-      child: Card(
-        elevation: 4,
-        // color: Colors.white.withOpacity(1),
-        color: Colors.white,
-        surfaceTintColor: Colors.white,
-        child: Column(
+    final double titleSize = widget.isTablet ? 22 : 18;
+    final double chipFont = widget.isTablet ? 15 : 13;
+    final double chartHeight = widget.isTablet ? 320 : 250;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header — Statistics (left) / Last 12 Months (right)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              Text(
+                "Statistics",
+                style: TextStyle(
+                  fontSize: titleSize,
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                "Last 12 Months",
+                style: TextStyle(fontSize: chipFont, color: _kMutedText),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        // Legend chips — two equal, full-width
+        Row(
           children: [
-            Container(
-              height: 50,
-              // width: 120,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              alignment: Alignment.topRight,
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton2<String>(
-                  isExpanded: true,
-                  hint: const Row(
-                    children: [
-                      SizedBox(
-                        width: 4,
-                      ),
-                      Expanded(
-                        child: Text(
-                          'This Year',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  items: items
-                      .map((String item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(
-                      item,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
-                      .toList(),
-                  value: selectedValue,
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedValue = value;
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 50,
-                    width: 150,
-                    padding: const EdgeInsets.only(left: 14, right: 14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.black26,
-                      ),
-                      color: Color.fromRGBO(50, 75, 119, 1),
-                    ),
-                    elevation: 2,
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: Icon(
-                      Icons.arrow_forward_ios_outlined,
-                    ),
-                    iconSize: 18,
-                    iconEnabledColor: Colors.white,
-                    iconDisabledColor: Colors.grey,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    maxHeight: 200,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: Color.fromRGBO(50, 75, 119, 1),
-                    ),
-                    offset: const Offset(0, -5),
-                    scrollbarTheme: ScrollbarThemeData(
-                      radius: const Radius.circular(40),
-                      thickness: MaterialStateProperty.all<double>(6),
-                      thumbVisibility: MaterialStateProperty.all<bool>(true),
-                    ),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    height: 40,
-                    padding: EdgeInsets.only(left: 14, right: 14),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 300,
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(
-                  majorGridLines: MajorGridLines(width: 0),
-                  isVisible: true, // Show X-axis labels
-                  majorTickLines: MajorTickLines(size: 0), // Hide tick lines
-                  axisLine: AxisLine(width: 0), // Hide X-axis line
-                  labelIntersectAction: AxisLabelIntersectAction.rotate45,
-                  labelStyle: TextStyle( // Set the font size here
-                    fontSize: 20, // Change this value to the desired font size
-                    //fontFamily: "mulish", // Optional: specify the font family if needed
-                    fontWeight: FontWeight.bold, // Optional: specify the font weight if needed
-                  ),
-                  /* title: AxisTitle(
-                      text: "Total Revenue",
-                      textStyle: TextStyle(
-                          fontFamily: "mulish",
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold)),*/
-                ),
-                primaryYAxis: NumericAxis(
-                  isVisible: false, // Hide Y-axis labels
-                  majorGridLines:
-                  MajorGridLines(width: 0), // Remove Y-axis gridlines
-                  axisLine: AxisLine(width: 0), // Hide Y-axis line
-                ),
-                plotAreaBorderWidth: 0, // Remove border around plot area
-                series: <CartesianSeries>[
-                  ColumnSeries<RevenueData, String>(
-                    dataSource: chartData,
-
-                    // xAxisName: "Total Revenue",
-                    color: Color.fromRGBO(60, 89, 142, 1),
-                    xValueMapper: (RevenueData data, _) => data.month,
-                    yValueMapper: (RevenueData data, _) => data.revenue,
-                    dataLabelSettings: DataLabelSettings(isVisible: false),
-                    spacing: 0.3,
-                    //  borderRadius: BorderRadius.circular(10),
-                    width: .7, // Rounded corners for bars
-                  ),
-                  ColumnSeries<RevenueData, String>(
-                    dataSource: chartData1,
-
-                    // xAxisName: "Total Revenue",
-                    color: Color.fromRGBO(90, 134, 213, 1),
-                    xValueMapper: (RevenueData data, _) => data.month,
-                    yValueMapper: (RevenueData data, _) => data.revenue,
-                    dataLabelSettings: DataLabelSettings(isVisible: false),
-                    spacing: 0.3,
-                    // borderRadius: BorderRadius.circular(10),
-                    width: .7, // Rounded corners for bars
-                  )
-                ],
-              ),
-            ),
+            Expanded(child: _legendChip("New Work Orders", _kNewColor, chipFont)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: _legendChip("Overdue Work Orders", _kOverdueColor, chipFont)),
           ],
         ),
+        const SizedBox(height: 14),
+        // Flat chart card — no elevation, rounded, light border. Tap a bar = popup.
+        Container(
+          height: chartHeight,
+          padding: const EdgeInsets.fromLTRB(8, 18, 14, 10),
+          decoration: BoxDecoration(
+            color: _kCardFill,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _kCardBorder),
+          ),
+          child: widget.isLoading
+              ? Center(
+                  child: SpinKitFadingCircle(
+                      color: blueColor, size: widget.isTablet ? 48 : 40),
+                )
+              : _buildChart(),
+        ),
+        // "View Monthly Breakdown" button → opens the full breakdown screen.
+        if (!widget.isLoading && widget.stats.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: ElevatedButton(
+                onPressed: _openBreakdown,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFEAEEFB), // light navy tint
+                  foregroundColor: blueColor,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Color(0xFFD5DDF2)),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "View Monthly Breakdown",
+                      style: TextStyle(
+                        color: blueColor, // dark blue / navy text
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.arrow_forward, color: blueColor, size: 18),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _legendChip(String label, Color color, double font) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: _kChipBg,
+        borderRadius: BorderRadius.circular(12),
       ),
+      child: Row(
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: font,
+                fontWeight: FontWeight.w600,
+                color: blueColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChart() {
+    if (widget.stats.isEmpty) {
+      return const Center(
+        child: Text(
+          "No statistics available",
+          style: TextStyle(color: _kMutedText),
+        ),
+      );
+    }
+
+    return SfCartesianChart(
+      margin: EdgeInsets.zero,
+      tooltipBehavior: _tooltip,
+      primaryXAxis: CategoryAxis(
+        majorGridLines: const MajorGridLines(width: 0),
+        majorTickLines: const MajorTickLines(size: 0),
+        axisLine: const AxisLine(width: 0),
+        labelStyle: TextStyle(
+          fontSize: widget.isTablet ? 15 : 13,
+          color: _kMutedText,
+        ),
+      ),
+      primaryYAxis: const NumericAxis(
+        minimum: 0,
+        // Faint dotted horizontal gridlines.
+        majorGridLines:
+            MajorGridLines(width: 1, color: _kCardBorder, dashArray: <double>[5, 5]),
+        axisLine: AxisLine(width: 0),
+        majorTickLines: MajorTickLines(size: 0),
+        // Hide Y labels but keep the gridlines.
+        labelStyle: TextStyle(color: Colors.transparent, fontSize: 0.1),
+      ),
+      plotAreaBorderWidth: 0,
+      series: <CartesianSeries<MonthStat, String>>[
+        ColumnSeries<MonthStat, String>(
+          name: 'New',
+          dataSource: widget.stats,
+          color: _kNewColor,
+          xValueMapper: (MonthStat d, _) => d.month,
+          yValueMapper: (MonthStat d, _) => d.received,
+          width: 0.85,
+          spacing: 0.15,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        ColumnSeries<MonthStat, String>(
+          name: 'Overdue',
+          dataSource: widget.stats,
+          color: _kOverdueColor,
+          xValueMapper: (MonthStat d, _) => d.month,
+          yValueMapper: (MonthStat d, _) => d.overdue,
+          width: 0.85,
+          spacing: 0.15,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:typed_data' show Uint8List;
 import 'package:flutter/material.dart';
 import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
@@ -14,6 +13,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart';
 
 class FileViewer extends StatefulWidget {
   final String fileName;
@@ -54,99 +54,119 @@ class FileViewer extends StatefulWidget {
           print('=== DIALOG BUILDER CALLED ===');
           return Dialog(
             backgroundColor: Colors.transparent,
-            insetPadding: const EdgeInsets.all(20),
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 48),
             child: Container(
-              width: MediaQuery.of(dialogContext).size.width * 0.9,
-              height: MediaQuery.of(dialogContext).size.height * 0.8,
+              width: MediaQuery.of(dialogContext).size.width * 0.92,
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(dialogContext).size.height * 0.72,
+                minHeight: 180,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                children: [
-                  // Header
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: blueColor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            fileName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const FaIcon(
-                            FontAwesomeIcons.xmark,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          onPressed: () => Navigator.of(dialogContext).pop(),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Content - wrapped in error boundary
-                  Expanded(
-                    child: Builder(
-                      builder: (context) {
-                        try {
-                          return FileViewer(
-                            fileName: fileName,
-                            fileUrl: fileUrl,
-                            mimeType: mimeType,
-                            showInDialog: true,
-                          );
-                        } catch (e) {
-                          print('Error in FileViewer widget: $e');
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(
-                                  FontAwesomeIcons.triangleExclamation,
-                                  size: 64,
-                                  color: Colors.red,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Error loading document',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[600],
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'File: $fileName',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                      },
-                    ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
                   ),
                 ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                          bottom: BorderSide(color: Color(0xFFEEF0F3), width: 1),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE8EEF7),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.insert_drive_file_outlined, color: Color(0xFF1A3C6E), size: 19),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              fileName,
+                              style: const TextStyle(
+                                color: Color(0xFF1A3C6E),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, color: Color(0xFF7A8BA0), size: 20),
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Content
+                    Flexible(
+                      child: Builder(
+                        builder: (context) {
+                          try {
+                            return FileViewer(
+                              fileName: fileName,
+                              fileUrl: fileUrl,
+                              mimeType: mimeType,
+                              showInDialog: true,
+                            );
+                          } catch (e) {
+                            print('Error in FileViewer widget: $e');
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const FaIcon(
+                                    FontAwesomeIcons.triangleExclamation,
+                                    size: 64,
+                                    color: Colors.red,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Error loading document',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'File: $fileName',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -208,7 +228,7 @@ class _FileViewerState extends State<FileViewer> {
       
       int cleanedCount = 0;
       for (var file in files) {
-        if (file is File && file.path.contains('_lease') || file.path.contains('_check')) {
+        if (file is File && (file.path.contains('_lease') || file.path.contains('_check'))) {
           final stat = await file.stat();
           final age = now.difference(stat.modified);
           // Delete files older than 1 hour
@@ -390,9 +410,14 @@ class _FileViewerState extends State<FileViewer> {
         if (contentType.isNotEmpty) {
           if (contentType.startsWith('image/')) {
             extension = contentType.split('/')[1].split(';')[0].trim();
-          } else if (contentType.contains('application/pdf') ||
-              contentType.contains('pdf')) {
+          } else if (contentType.contains('application/pdf')) {
             extension = 'pdf';
+          } else if (contentType.contains('text/plain')) {
+            extension = 'txt';
+          } else if (contentType.contains('application/msword')) {
+            extension = 'doc';
+          } else if (contentType.contains('officedocument.wordprocessingml')) {
+            extension = 'docx';
           }
         }
 
@@ -400,9 +425,14 @@ class _FileViewerState extends State<FileViewer> {
         if (extension.isEmpty && widget.mimeType != null) {
           if (widget.mimeType!.startsWith('image/')) {
             extension = widget.mimeType!.split('/')[1].split(';')[0].trim();
-          } else if (widget.mimeType == 'application/pdf' ||
-              widget.mimeType!.contains('pdf')) {
+          } else if (widget.mimeType!.contains('application/pdf')) {
             extension = 'pdf';
+          } else if (widget.mimeType!.contains('text/plain')) {
+            extension = 'txt';
+          } else if (widget.mimeType!.contains('application/msword')) {
+            extension = 'doc';
+          } else if (widget.mimeType!.contains('officedocument.wordprocessingml')) {
+            extension = 'docx';
           }
         }
 
@@ -561,6 +591,73 @@ class _FileViewerState extends State<FileViewer> {
     return isImage;
   }
 
+  bool _isTxtFile(String fileName) {
+    if (widget.mimeType != null && widget.mimeType!.contains('text/plain')) return true;
+    String extension = _getFileExtension(fileName);
+    if (extension.isEmpty) {
+      final mimeExt = _getMimeTypeExtension();
+      if (mimeExt != null) extension = mimeExt;
+    }
+    if (extension == 'txt') return true;
+    // Check downloaded file path extension
+    if (_downloadedFilePath != null) {
+      final dlExt = _downloadedFilePath!.split('.').last.toLowerCase();
+      if (dlExt == 'txt') return true;
+      // For doc/docx: check if file is actually plain text (renamed TXT)
+      if (dlExt == 'doc' || dlExt == 'docx') {
+        try {
+          final bytes = File(_downloadedFilePath!).readAsBytesSync();
+          // Real DOCX/DOC start with ZIP magic bytes (PK) or D0CF magic bytes
+          // Plain text files do not have these headers
+          if (bytes.length >= 4) {
+            final isPkZip = bytes[0] == 0x50 && bytes[1] == 0x4B; // PK
+            final isCfb = bytes[0] == 0xD0 && bytes[1] == 0xCF;   // Compound File Binary (old .doc)
+            if (!isPkZip && !isCfb) {
+              // Not a real DOC/DOCX binary — try to decode as UTF-8 text
+              utf8.decode(bytes); // throws if not valid UTF-8
+              return true;
+            }
+          }
+        } catch (_) {}
+      }
+    }
+    return false;
+  }
+
+  Widget _buildTxtWidget() {
+    if (_downloadedFilePath != null && File(_downloadedFilePath!).existsSync()) {
+      return FutureBuilder<String>(
+        future: File(_downloadedFilePath!).readAsString(encoding: utf8).catchError((_) =>
+            File(_downloadedFilePath!).readAsString(encoding: latin1)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: SpinKitFadingCircle(color: Colors.black, size: 45));
+          }
+          if (snapshot.hasError) {
+            return _buildErrorWidget('Failed to read file', FontAwesomeIcons.file);
+          }
+          final text = snapshot.data ?? '';
+          return Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: SelectableText(
+                text.isEmpty ? '(Empty file)' : text,
+                style: const TextStyle(
+                  fontSize: 13,
+                  height: 1.65,
+                  color: Color(0xFF1A1A2E),
+                  fontFamily: 'monospace',
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    return _buildUnsupportedFileWidget();
+  }
+
   bool _isPdfFile(String fileName) {
     // First try to get extension from filename
     String? extension = _getFileExtension(fileName);
@@ -640,18 +737,27 @@ class _FileViewerState extends State<FileViewer> {
       print('=== IMAGE WIDGET DEBUG ===');
       print('Loading image from file: $_downloadedFilePath');
 
-      return Image.file(
-        File(_downloadedFilePath!),
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          print('=== IMAGE FILE ERROR ===');
-          print('File: $_downloadedFilePath');
-          print('Error: $error');
-          return _buildErrorWidget(
-            'Failed to load image\nError: $error',
-            FontAwesomeIcons.image,
-          );
-        },
+      return InteractiveViewer(
+        minScale: 0.5,
+        maxScale: 4.0,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.file(
+              File(_downloadedFilePath!),
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                print('=== IMAGE FILE ERROR ===');
+                print('File: $_downloadedFilePath');
+                print('Error: $error');
+                return _buildErrorWidget(
+                  'Failed to load image\nError: $error',
+                  FontAwesomeIcons.image,
+                );
+              },
+            ),
+          ),
+        ),
       );
     }
 
@@ -906,69 +1012,88 @@ class _FileViewerState extends State<FileViewer> {
   }
 
   Widget _buildUnsupportedFileWidget() {
-    print('=== BUILDING UNSUPPORTED FILE WIDGET ===');
-    print('fileName: ${widget.fileName}');
-    print('showInDialog: ${widget.showInDialog}');
-    print('Will show external button: ${!widget.showInDialog}');
+    // Determine extension — check downloaded file path first (most reliable after download)
+    String ext = '';
+    if (_downloadedFilePath != null) {
+      ext = _downloadedFilePath!.split('.').last.toUpperCase();
+    }
+    if (ext.isEmpty) ext = _getFileExtension(widget.fileName).toUpperCase();
+    final displayExt = ext.isNotEmpty ? ext : 'FILE';
+
+    IconData fileIcon;
+    Color iconColor;
+    if (ext == 'DOC' || ext == 'DOCX') {
+      fileIcon = Icons.description_outlined;
+      iconColor = const Color(0xFF2B579A);
+    } else {
+      fileIcon = Icons.insert_drive_file_outlined;
+      iconColor = blueColor;
+    }
 
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          FaIcon(
-            FontAwesomeIcons.file,
-            size: 64,
-            color: Colors.grey[400],
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EEF7),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(fileIcon, size: 44, color: iconColor),
           ),
           const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'File type not supported for preview',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
+          Text(
+            displayExt,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: iconColor,
+              letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Text(
-              'File: ${widget.fileName}',
-              style: TextStyle(
+              widget.fileName,
+              style: const TextStyle(
                 fontSize: 14,
-                color: Colors.grey[500],
+                color: Color(0xFF1A3C6E),
+                fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Text(
-              'URL: ${_getFileUrl()}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[400],
-              ),
+              'This file type cannot be previewed inline.',
+              style: TextStyle(fontSize: 13, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
           ),
-          if (!widget.showInDialog) ...[
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _openFileExternally,
-              icon: const FaIcon(FontAwesomeIcons.externalLinkAlt),
-              label: const Text('Open Externally'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: blueColor,
-                foregroundColor: Colors.white,
-              ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F4FA),
+              borderRadius: BorderRadius.circular(10),
             ),
-          ],
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.download_rounded, size: 16, color: Color(0xFF1A3C6E)),
+                const SizedBox(width: 8),
+                const Text(
+                  'Use the Download button to open this file',
+                  style: TextStyle(fontSize: 13, color: Color(0xFF1A3C6E)),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -1003,19 +1128,15 @@ class _FileViewerState extends State<FileViewer> {
 
       final isImage = _isImageFile(widget.fileName);
       final isPdf = _isPdfFile(widget.fileName);
-
-      print('=== FILE TYPE DETERMINATION ===');
-      print('isImage: $isImage');
-      print('isPdf: $isPdf');
+      final isTxt = _isTxtFile(widget.fileName);
 
       if (isImage) {
-        print('Building image widget');
         return _buildImageWidget();
       } else if (isPdf) {
-        print('Building PDF widget');
         return _buildPdfWidget();
+      } else if (isTxt) {
+        return _buildTxtWidget();
       } else {
-        print('Building unsupported file widget');
         return _buildUnsupportedFileWidget();
       }
     }
@@ -1056,7 +1177,9 @@ class _FileViewerState extends State<FileViewer> {
                   ? _buildImageWidget()
                   : _isPdfFile(widget.fileName)
                       ? _buildPdfWidget()
-                      : _buildUnsupportedFileWidget(),
+                      : _isTxtFile(widget.fileName)
+                          ? _buildTxtWidget()
+                          : _buildUnsupportedFileWidget(),
     );
   }
 }

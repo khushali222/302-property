@@ -81,9 +81,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       } catch (e) {
         // If that fails, try common formats
         List<String> dateFormats = [
+          'yyyy-MM-dd',
           'MM/dd/yyyy',
           'MM-dd-yyyy',
-          'yyyy-MM-dd',
           'dd/MM/yyyy',
           'dd-MM-yyyy',
         ];

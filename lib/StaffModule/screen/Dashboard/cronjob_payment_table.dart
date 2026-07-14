@@ -15,6 +15,7 @@ import '../../../Model/tenants.dart' as tenant_model;
 import '../../../constant/constant.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/CustomTableShimmer.dart';
+import '../../../widgets/payment_action_dialogs.dart';
 import '../../repository/Payment_cronjob/Payment_cronjob_repo.dart';
 import '../../repository/Payment_cronjob/cronjob_payment_table.dart';
 import '../../repository/tenants.dart';
@@ -313,7 +314,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     VoidCallback? onCheckboxTap,
   ) {
     return _buildPaymentCard(name, address, amount, isExpanded, onExpandTap,
-        data, isSelected, onCheckboxTap);
+        data, isSelected, onCheckboxTap,
+        isFailedSection: true);
   }
 
   Widget _buildPaymentCard(
@@ -324,8 +326,9 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     VoidCallback onExpandTap,
     LeaseDatacronjob data,
     bool? isSelected,
-    VoidCallback? onCheckboxTap,
-  ) {
+    VoidCallback? onCheckboxTap, {
+    bool isFailedSection = false,
+  }) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -444,237 +447,279 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           ),
           if (isExpanded)
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 6),
                 const Divider(
-                  thickness: 2,
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Date
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Date',
+                        style: subTextStyle.copyWith(
+                            color: greyColor, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          dateProvider
+                              .formatCurrentDate('${data.date ?? "-"}'),
+                          textAlign: TextAlign.right,
+                          style: subTextStyle.copyWith(
+                              color: blueColor, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                // First row: Date & Response
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Date: ',
-                            style: subTextStyle.copyWith(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            dateProvider
-                                .formatCurrentDate('${data.date ?? "-"}'),
-                            style: subTextStyle,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                const Divider(
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Response
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Response',
+                        style: subTextStyle.copyWith(
+                            color: greyColor, fontWeight: FontWeight.w500),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Response: ',
-                            style: subTextStyle.copyWith(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          data.response ?? "-",
+                          textAlign: TextAlign.right,
+                          style: subTextStyle.copyWith(
+                            // Match web: green for SUCCESS/Approved (or ACH
+                            // settling/settled), red for FAILURE, else navy.
+                            color: (data.response == "SUCCESS" ||
+                                    data.response == "Approved" ||
+                                    (data.paymenttype == "ACH" &&
+                                        (data.state == "settling" ||
+                                            data.state == "settled")))
+                                ? const Color(0xFF12B76A)
+                                : (data.response == "FAILURE")
+                                    ? const Color(0xFFD92D20)
+                                    : blueColor,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            data.response ?? "-",
-                            style: subTextStyle,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                // Second row: Type & Description
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Type: ',
-                            style: subTextStyle.copyWith(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            data.paymenttype ?? "-",
-                            style: subTextStyle,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                const Divider(
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Type
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Type',
+                        style: subTextStyle.copyWith(
+                            color: greyColor, fontWeight: FontWeight.w500),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Description: ',
-                            style: subTextStyle.copyWith(
-                              color: blueColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                          Text(
-                            data.responseText?.isNotEmpty == true
-                                ? data.responseText!
-                                : 'N/A',
-                            style: subTextStyle,
-                            textAlign: TextAlign.right,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          data.paymenttype ?? "-",
+                          textAlign: TextAlign.right,
+                          style: subTextStyle.copyWith(
+                              color: blueColor, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                // Rental Address & Action header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (data.leaseId != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SummeryPageLease(
-                                        leaseId: data.leaseId!,
-                                        enddate:
-                                            null, // You can pass the end date if available
-                                      )));
-                        }
-                      },
-                      child: Text(
+                const Divider(
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Description
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Description',
+                        style: subTextStyle.copyWith(
+                            color: greyColor, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        data.responseText?.isNotEmpty == true
+                            ? data.responseText!
+                            : 'N/A',
+                        style: subTextStyle.copyWith(
+                            color: blueColor, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Rental Address
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         'Rental Address',
                         style: subTextStyle.copyWith(
-                          color: blueColor,
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
+                            color: greyColor, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 6),
+                      GestureDetector(
+                        onTap: () {
+                          if (data.leaseId != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SummeryPageLease(
+                                          leaseId: data.leaseId!,
+                                          enddate:
+                                              null, // You can pass the end date if available
+                                        )));
+                          }
+                        },
+                        child: Text(
+                          address,
+                          style: subTextStyle.copyWith(
+                            color: blueColor,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      'Action',
-                      style: subTextStyle.copyWith(
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                // Rental Address & Actions
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (data.leaseId != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SummeryPageLease(
-                                        leaseId: data.leaseId!,
-                                        enddate:
-                                            null, // You can pass the end date if available
-                                      )));
-                        }
-                      },
-                      child: Text(
-                        address,
+                const Divider(
+                    thickness: 1, height: 1, color: Color(0xFFEAECEF)),
+                // Action
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Action',
                         style: subTextStyle.copyWith(
-                          decoration: TextDecoration.underline,
-                          color: blueColor.withOpacity(0.8),
+                            color: greyColor, fontWeight: FontWeight.w500),
+                      ),
+                      const Spacer(),
+                      // Failed Payments section (web FailedPaymentsTable.jsx):
+                      // only Ignore + Reprocess. "Payments Last 7 Days" keeps
+                      // its own buttons (isFailedSection stays false there).
+                      if (isFailedSection) ...[
+                        GestureDetector(
+                          onTap: () {
+                            if (data.id != null) {
+                              _showAlertIgnore(context, data.id!);
+                            }
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF1F4),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 40,
+                            width: 44,
+                            child: Icon(Icons.close, color: blueColor),
+                          ),
                         ),
-                      ),
-                    ),
-                    if (data.response == "FAILURE")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              if (data.id != null) {
-                                _showAlertAcknowledgement(
-                                    context, data.id!, failureacknowledged);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              height: 30,
-                              width: 30,
-                              child: Icon(Icons.check, color: blueColor),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            if (data.id != null) {
+                              _showAlertReprocess(context, data.id!);
+                            }
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF1F4),
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            height: 40,
+                            width: 44,
+                            child: Icon(Icons.recycling_outlined,
+                                color: blueColor),
                           ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () {
-                              if (data.id != null) {
-                                _showAlertRetry(context, data.id!);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
+                        ),
+                      ] else ...[
+                        if (data.response == "FAILURE")
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (data.id != null) {
+                                    _showAlertAcknowledgement(context,
+                                        data.id!, failureacknowledged);
+                                  }
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE7F6EC),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  height: 40,
+                                  width: 44,
+                                  child: const Icon(Icons.check,
+                                      color: Color(0xFF12B76A)),
+                                ),
                               ),
-                              height: 30,
-                              width: 30,
-                              child: Icon(Icons.recycling_outlined,
-                                  color: blueColor),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () {
-                              if (data.id != null) {
-                                _showAlertSchedule(context, data.id!);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: () {
+                                  if (data.id != null) {
+                                    _showAlertRetry(context, data.id!);
+                                  }
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF1F4),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  height: 40,
+                                  width: 44,
+                                  child: Icon(Icons.recycling_outlined,
+                                      color: blueColor),
+                                ),
                               ),
-                              height: 30,
-                              width: 30,
-                              child: Icon(Icons.calendar_month_outlined,
-                                  color: blueColor),
-                            ),
+                              const SizedBox(width: 10),
+                              GestureDetector(
+                                onTap: () {
+                                  if (data.id != null) {
+                                    _showAlertSchedule(context, data.id!);
+                                  }
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF1F4),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  height: 40,
+                                  width: 44,
+                                  child: Icon(Icons.calendar_month_outlined,
+                                      color: blueColor),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    if (data.response == "SUCCESS" && data.state == "settled")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
+                        if (data.response == "SUCCESS" &&
+                            data.state == "settled")
                           GestureDetector(
                             onTap: () {
                               if (data.id != null) {
@@ -682,12 +727,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               }
                             },
                             child: Container(
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
+                                color: const Color(0xFFEFF1F4),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              height: 30,
-                              width: 30,
+                              height: 40,
+                              width: 44,
                               child: FaIcon(
                                 FontAwesomeIcons.reply,
                                 size: 15,
@@ -695,13 +741,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
-                    if (data.response == "SUCCESS" && data.state == "settling")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
+                        if (data.response == "SUCCESS" &&
+                            data.state == "settling")
                           GestureDetector(
                             onTap: () {
                               if (data.id != null) {
@@ -709,12 +750,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               }
                             },
                             child: Container(
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(8),
+                                color: const Color(0xFFEFF1F4),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              height: 30,
-                              width: 30,
+                              height: 40,
+                              width: 44,
                               child: Icon(
                                 Icons.money_off,
                                 size: 20,
@@ -723,12 +765,10 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
-                  ],
+                      ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 8),
               ],
             ),
         ],
@@ -893,6 +933,27 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
+  // Failed Payments "Ignore" — mirrors the web FailedPaymentsTable confirm:
+  // "Are you sure you want to ignore this payment failure?" Yes / No.
+  // Yes acknowledges the failure (same endpoint as the Payments-table
+  // acknowledge); kept separate so the Payments section dialog is untouched.
+  void _showAlertIgnore(BuildContext context, String id) {
+    showIgnorePaymentFailureDialog(
+      context,
+      onConfirm: () async {
+        var data = await PaymentCronjobRepository().Paymentacknowledge(
+            paymentid: id,
+            failureacknowledged: failureacknowledged,
+            context: context);
+        if (data != null)
+          setState(() {
+            futurecronjobpayment = cronjob_payment_tableService()
+                .fetchCronjob_payment(limit: itemsPerPage);
+          });
+      },
+    );
+  }
+
   void _showAlertRetry(BuildContext context, String id) {
     TextEditingController retrydate = TextEditingController();
     Alert(
@@ -957,176 +1018,60 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
     ).show();
   }
 
-  void _showAlertSchedule(BuildContext context, String id) {
-    TextEditingController retrydate = TextEditingController();
-    Alert(
-      context: context,
-      type: AlertType.warning,
-      title: null,
-      desc: null,
-      content: Column(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 15),
-          const Text(
-            "Reschedule Payment",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Please select a payment date to retry. The date must be tomorrow or later:",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 60,
-            child: CustomTextField(
-              onTap: () async {
-                DateTime now = DateTime.now();
-                DateTime tomorrow = now.add(const Duration(days: 1));
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: tomorrow,
-                  firstDate: tomorrow,
-                  lastDate: DateTime(2101),
-                  locale: const Locale('en', 'US'),
-                  builder: (BuildContext context, Widget? child) {
-                    return Theme(
-                      data: ThemeData.light().copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: blueColor,
-                          onPrimary: Colors.white,
-                          onSurface: blueColor,
-                        ),
-                        textButtonTheme: TextButtonThemeData(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: blueColor,
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
-
-                if (pickedDate != null) {
-                  setState(() {
-                    retrydate.text =
-                        pickedDate.toLocal().toString().split(' ')[0];
-                  });
-                }
-              },
-              readOnnly: true,
-              suffixIcon: IconButton(
-                onPressed: () async {
-                  DateTime now = DateTime.now();
-                  DateTime tomorrow = now.add(const Duration(days: 1));
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: tomorrow,
-                    firstDate: tomorrow,
-                    lastDate: DateTime(2101),
-                    locale: const Locale('en', 'US'),
-                    builder: (BuildContext context, Widget? child) {
-                      return Theme(
-                        data: ThemeData.light().copyWith(
-                          colorScheme: ColorScheme.light(
-                            primary: blueColor,
-                            onPrimary: Colors.white,
-                            onSurface: blueColor,
-                          ),
-                          textButtonTheme: TextButtonThemeData(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: blueColor,
-                            ),
-                          ),
-                        ),
-                        child: child!,
-                      );
-                    },
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      retrydate.text =
-                          pickedDate.toLocal().toString().split(' ')[0];
-                    });
-                  }
-                },
-                icon: const Icon(Icons.date_range_rounded),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select end date';
-                }
-                return null;
-              },
-              optional: true,
-              keyboardType: TextInputType.text,
-              hintText: 'Select a date',
-              controller: retrydate,
-            ),
-          ),
-        ],
+  // Failed Payments "Reprocess" chooser — mirrors the web FailedPaymentsTable
+  // dialog: Cancel / Schedule / Process Now. Schedule opens the date-picker
+  // reschedule flow; Process Now runs an immediate retry.
+  void _showAlertReprocess(BuildContext context, String id) {
+    showReprocessFailedPaymentDialog(
+      context,
+      onSchedule: () => _showAlertSchedule(
+        context,
+        id,
+        title: "Schedule Payment",
+        message: "Pick a future date (starting tomorrow)",
+        confirmLabel: "Schedule",
       ),
-      style: const AlertStyle(
-        backgroundColor: Colors.white,
-      ),
-      buttons: [
-        DialogButton(
-          child: const Text(
-            "Confirm",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          // onPressed: (){},
-          onPressed: () async {
-            if (retrydate.text.isEmpty) {
-              // setState(() {
-              //  _errorText == true;
-              // });
-              Fluttertoast.showToast(msg: "Please select the retry date");
-            } else {
-              Navigator.pop(context);
-              var data = await PaymentCronjobRepository().PaymentReSchedule(
-                retryDate: retrydate.text,
-                paymentid: id,
-                context: context,
-              );
-              // Add your delete logic here
-              if (data != null)
-                setState(() {
-                  futurecronjobpayment = cronjob_payment_tableService()
-                      .fetchCronjob_payment(limit: itemsPerPage);
-                });
-              // Navigator.pop(context);
-            }
-          },
-          color: blueColor,
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-      ],
-    ).show();
+      onProcessNow: () async {
+        var data = await PaymentCronjobRepository().PaymentRetry(
+          retryDate: "",
+          paymentid: id,
+          context: context,
+        );
+        if (data != null)
+          setState(() {
+            futurecronjobpayment = cronjob_payment_tableService()
+                .fetchCronjob_payment(limit: itemsPerPage);
+          });
+      },
+    );
+  }
+
+  void _showAlertSchedule(
+    BuildContext context,
+    String id, {
+    String title = "Reschedule Payment",
+    String message =
+        "Please select a payment date to retry. The date must be tomorrow or later:",
+    String confirmLabel = "Confirm",
+  }) async {
+    final picked = await showSchedulePaymentDialog(
+      context,
+      title: title,
+      message: message,
+      confirmLabel: confirmLabel,
+    );
+    if (picked != null && picked.isNotEmpty) {
+      var data = await PaymentCronjobRepository().PaymentReSchedule(
+        retryDate: picked,
+        paymentid: id,
+        context: context,
+      );
+      if (data != null)
+        setState(() {
+          futurecronjobpayment = cronjob_payment_tableService()
+              .fetchCronjob_payment(limit: itemsPerPage);
+        });
+    }
   }
 
   final cardTextStyle =
@@ -1345,7 +1290,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               paymentId: id,
               paymentType: refund?.paymentType ?? "",
               transactionId: refund?.transactionId ?? "",
-              refundAmount: double.parse(amount.text),
+              refundAmount: double.tryParse(amount.text) ?? 0.0,
               refundDate: retrydate.text,
               memo: memo.text,
               tenantFirstName: refund?.tenantData?.tenantFirstName ?? "",

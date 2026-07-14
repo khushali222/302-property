@@ -88,8 +88,8 @@ class Tenant {
     emergencyContact = json['emergency_contact'] != null ? EmergencyContact.fromJson(json['emergency_contact']) : null;
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
-    isDelete = json['is_delete']??"";
-    v = json['__v']??"";
+    isDelete = json['is_delete'] is bool ? json['is_delete'] as bool : null;
+    v = json['__v'] is int ? json['__v'] as int : int.tryParse('${json['__v'] ?? ''}');
     rentalAddress = json['rental_adress']??"";
     rentalUnit = json['rental_unit']??"";
   }

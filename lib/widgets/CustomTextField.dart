@@ -453,12 +453,16 @@ class NewCustomTextField extends StatefulWidget {
   final TextEditingController? emrgencyController;
   final TextEditingController? emailController;
   final bool? samephonenumber;
+  final bool showElevation;
+  final Color? borderColor;
 
   NewCustomTextField(
       {Key? key,
       this.onChanged,
       this.controller,
       required this.hintText,
+      this.showElevation = true,
+      this.borderColor,
       this.obscureText = false,
       this.keyboardType = TextInputType.emailAddress,
       this.readOnnly = false,
@@ -710,8 +714,8 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                     // Return an empty string or handle accordingly
                     return '';
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
+                      (double.tryParse(widget.controller!.text) ?? 0.0) >
+                          (double.tryParse(widget.max_amount!) ?? 0.0))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
@@ -771,8 +775,8 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                       return '';
                     }
                   } else if (widget.amount_check != null &&
-                      double.parse(widget.controller!.text) >
-                          double.parse(widget.max_amount!))
+                      (double.tryParse(widget.controller!.text) ?? 0.0) >
+                          (double.tryParse(widget.max_amount!) ?? 0.0))
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
@@ -783,7 +787,7 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Material(
-                  elevation: 2,
+                  elevation: widget.showElevation ? 2 : 0,
                   borderRadius: BorderRadius.circular(8.0),
                   child: Container(
                     height: 50,
@@ -795,16 +799,18 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
                       border: Border.all(
                         color: _errorMessage != null
                             ? Colors.red
-                            : Colors.transparent,
+                            : (widget.borderColor ?? Colors.transparent),
                         width: 1.0,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: const Offset(4, 4),
-                          blurRadius: 3,
-                        ),
-                      ],
+                      boxShadow: widget.showElevation
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                offset: const Offset(4, 4),
+                                blurRadius: 3,
+                              ),
+                            ]
+                          : [],
                     ),
                     child: GestureDetector(
                       onTap: () {

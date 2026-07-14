@@ -15,6 +15,9 @@ class ApplicantRepository {
     required Datum applicantData,
   }) async {
     final Map<String, dynamic> postData = applicantData.toJson();
+    // Web parity: the web sends these flags with the add payload.
+    postData['is_web'] = true;
+    postData['user_active_recently'] = true;
 
     // Log the postData for debugging
     print('Posting data: ${jsonEncode(postData)}');
@@ -84,7 +87,13 @@ class ApplicantRepository {
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(applicantData),
+      // Web parity: the web wraps the update body in {"applicant": ...}
+      // and sends these flags (the flat body was a staff-only divergence).
+      body: jsonEncode({
+        "applicant": applicantData,
+        "is_web": true,
+        "user_active_recently": true,
+      }),
     );
 
     if (response.statusCode == 200) {

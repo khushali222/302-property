@@ -182,9 +182,9 @@ class Charges {
         entry!.add(Entry.fromJson(v));
       });
     }
-    totalAmount = json['total_amount'] != null
+    totalAmount = json['total_amount'] is num
         ? (json['total_amount'] as num).toDouble()
-        : null;
+        : double.tryParse('${json['total_amount'] ?? ''}');
     isLeaseAdded = json['is_leaseAdded'];
     type = json['type'];
     if (json['uploaded_file'] != null) {
@@ -254,7 +254,9 @@ class Entry {
     entryId = json['entry_id'];
     memo = json['memo'];
     account = json['account'];
-    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
+    amount = json['amount'] is num
+        ? (json['amount'] as num).toDouble()
+        : double.tryParse('${json['amount'] ?? ''}');
     date = json['date'];
     isPaid = json['is_paid'];
     isLateFee = json['is_lateFee'];

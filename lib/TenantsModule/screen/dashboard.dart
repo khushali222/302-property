@@ -123,10 +123,11 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
               convertDateFormat(jsonData["data"]['end_date'].toString());
           countList[5] =
               convertDateFormat(jsonData["data"]['start_date'].toString());
-          countList[1] = double.parse(jsonData["data"]['balance'].toString())
-              .toStringAsFixed(2);
-          countList[1] = double.parse(countList[1]) < 0
-              ? "-\$${double.parse(countList[1]).abs()}"
+          countList[1] =
+              (double.tryParse(jsonData["data"]['balance'].toString()) ?? 0.0)
+                  .toStringAsFixed(2);
+          countList[1] = (double.tryParse(countList[1]) ?? 0.0) < 0
+              ? "-\$${(double.tryParse(countList[1]) ?? 0.0).abs()}"
               : "\$${countList[1]}";
           rentCycle = jsonData["data"]['rentCycle'] ??
               'Monthly'; // Store rent cycle from API

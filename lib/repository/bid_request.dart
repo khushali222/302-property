@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../Model/bid_request.dart';
 import '../constant/constant.dart';
 
@@ -44,14 +43,13 @@ class BidRequestRepository {
         final jsonData = json.decode(response.body);
         return BidRequestResponse.fromJson(jsonData);
       } else {
+        // Throw the server's own message; the screen shows a single toast so a
+        // single failure can't stack multiple conflicting toasts (CRM-4163).
         final jsonData = json.decode(response.body);
-        Fluttertoast.showToast(
-            msg: jsonData['message'] ?? 'Failed to fetch bid requests');
-        throw Exception('Failed to fetch bid requests: ${response.statusCode}');
+        throw Exception(jsonData['message'] ?? 'Failed to fetch bid requests');
       }
     } catch (e) {
       print('Error fetching bid requests: $e');
-      Fluttertoast.showToast(msg: 'Error fetching bid requests: $e');
       rethrow;
     }
   }
@@ -88,14 +86,11 @@ class BidRequestRepository {
         return BidRequestDetailResponse.fromJson(jsonData);
       } else {
         final jsonData = json.decode(response.body);
-        Fluttertoast.showToast(
-            msg: jsonData['message'] ?? 'Failed to fetch bid request details');
         throw Exception(
-            'Failed to fetch bid request details: ${response.statusCode}');
+            jsonData['message'] ?? 'Failed to fetch bid request details');
       }
     } catch (e) {
       print('Error fetching bid request details: $e');
-      Fluttertoast.showToast(msg: 'Error fetching bid request details: $e');
       rethrow;
     }
   }

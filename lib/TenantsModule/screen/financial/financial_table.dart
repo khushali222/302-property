@@ -250,7 +250,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 },
                 child: Row(
                   children: [
-                    Text("Balance",
+                    Text("  Balance",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,

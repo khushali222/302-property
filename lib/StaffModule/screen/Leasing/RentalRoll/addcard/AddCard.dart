@@ -227,28 +227,6 @@ class _AddCardState extends State<AddCard> {
     });
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -298,17 +276,6 @@ class _AddCardState extends State<AddCard> {
         }
       }
 
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
-
       return customerData;
     } else {
       print('Failed to post data: ${response.statusCode}');
@@ -356,15 +323,6 @@ class _AddCardState extends State<AddCard> {
         // Handle the error case
       }
     }
-  }
-
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
   }
 
   String _formatCardNumber(String cardNumber) {
@@ -2061,27 +2019,44 @@ class _AddCardState extends State<AddCard> {
   Widget _buildCreditCard(BillingData billingData, String customervaultid) {
     print("billingData.billingId: ${billingData.billingId}");
     String _formatCardNumber(String cardNumber) {
-      if (cardNumber.length != 16) {
-        return cardNumber; // If the card number length is not 16, return as-is
+      // Strip any grouping spaces so the input can be already-masked or raw.
+      final String raw = cardNumber.replaceAll(' ', '');
+      final int len = raw.length;
+
+      // Only known card lengths are masked; anything else is returned as-is.
+      if (len < 12 || len > 19) {
+        return cardNumber;
       }
 
-      String maskedNumber = '';
+      // First digit + masked middle + last 4 (real digits are preserved).
+      final StringBuffer masked = StringBuffer();
+      masked.write(raw.substring(0, 1));
+      for (int i = 1; i < len - 4; i++) {
+        masked.write('x');
+      }
+      masked.write(raw.substring(len - 4));
+      final String maskedDigits = masked.toString();
 
-      // Show the first character
-      maskedNumber += cardNumber.substring(0, 1);
-
-      // Add spaces after every 4 characters
-      for (int i = 1; i < cardNumber.length - 4; i++) {
-        if (i % 4 == 0) {
-          maskedNumber += ' ';
+      // AMEX (15 digits) groups 4-6-5; everything else groups by 4.
+      final List<int> groups = [];
+      if (len == 15) {
+        groups.addAll([4, 6, 5]);
+      } else {
+        int remaining = len;
+        while (remaining > 0) {
+          groups.add(remaining >= 4 ? 4 : remaining);
+          remaining -= 4;
         }
-        maskedNumber += 'x'; // Mask middle digits with 'x'
       }
 
-      // Show the last 4 characters
-      maskedNumber += ' ' + cardNumber.substring(cardNumber.length - 4);
-
-      return maskedNumber;
+      final StringBuffer out = StringBuffer();
+      int idx = 0;
+      for (int g = 0; g < groups.length; g++) {
+        if (g > 0) out.write(' ');
+        out.write(maskedDigits.substring(idx, idx + groups[g]));
+        idx += groups[g];
+      }
+      return out.toString();
     }
 
     String formatExpiryDate(String expiryDate) {
@@ -2130,7 +2105,7 @@ class _AddCardState extends State<AddCard> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: _buildLogosBlock(
-                    '${(billingData.binResult ?? billingData.ccType ?? 'CARD').toUpperCase()} CARD',
+                    _cardTypeLabel(billingData),
                     billingData.ccType ?? ''),
               ),
               Padding(
@@ -2162,6 +2137,40 @@ class _AddCardState extends State<AddCard> {
       ),
     );
   }
+}
+
+// Resolves the card brand for display: prefer the processor's cc_type when it
+// is a real brand, otherwise infer from the first digit of the (masked) number.
+String _resolveCardBrand(String? ccType, String? ccNumber) {
+  final String raw = (ccType ?? '').trim().toLowerCase();
+  if (raw.contains('american express') || raw.contains('amex')) return 'AMEX';
+  if (raw.contains('mastercard') || raw.contains('master card'))
+    return 'MASTERCARD';
+  if (raw.contains('visa')) return 'VISA';
+  if (raw.contains('discover')) return 'DISCOVER';
+  if (raw.contains('jcb')) return 'JCB';
+  if (raw.contains('diners')) return 'DINERS';
+
+  final String digits = (ccNumber ?? '').replaceAll(RegExp(r'\D'), '');
+  final String first = digits.isNotEmpty ? digits[0] : '';
+  if (first == '3') return 'AMEX';
+  if (first == '4') return 'VISA';
+  if (first == '5') return 'MASTERCARD';
+  if (first == '6') return 'DISCOVER';
+  return '';
+}
+
+// Builds the tile label combining brand and funding type, e.g. "VISA · DEBIT".
+// binResult (CREDIT/DEBIT) is only read here — never modified — so surcharge
+// and card-acceptance logic that depend on it are unaffected.
+String _cardTypeLabel(BillingData billingData) {
+  final String brand =
+      _resolveCardBrand(billingData.ccType, billingData.ccNumber);
+  final String type = (billingData.binResult ?? '').trim().toUpperCase();
+  if (brand.isNotEmpty && type.isNotEmpty) return '$brand · $type';
+  if (brand.isNotEmpty) return '$brand CARD';
+  if (type.isNotEmpty) return '$type CARD';
+  return 'CARD';
 }
 
 Row _buildLogosBlock(String cardType, String ccType) {
@@ -2445,8 +2454,8 @@ class CustomTextFieldState extends State<CustomTextField> {
                 return '';
               }
             } else if (widget.amount_check != null &&
-                double.parse(widget.controller!.text.trim()) >
-                    double.parse(widget.max_amount!))
+                (double.tryParse(widget.controller!.text.trim()) ?? 0.0) >
+                    (double.tryParse(widget.max_amount!) ?? 0.0))
               setState(() {
                 _errorMessage = '${widget.error_mess}';
               });

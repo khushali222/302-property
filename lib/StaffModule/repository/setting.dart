@@ -19,9 +19,19 @@ class SurchargeRepository {
   Future<Setting1> fetchSurchargeData(String adminId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    // Web parity (CRM-4479): the id header must carry the logged-in user's OWN
+    // id. Staff must use staff_id — sending adminId 401s for staff at multi-
+    // admin companies, which made this surcharge fetch fail and hid the
+    // "Global debit card fee" line + override on Staff Add Tenant.
+    String? staffId = prefs.getString('staff_id');
+    String? id = (staffId != null && staffId.isNotEmpty)
+        ? staffId
+        : prefs.getString('adminId');
     final response = await apiGet(
-        Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
+        // Web parity: use the same endpoint web uses (newest config, filtered by
+        // is_delete) instead of getadmin (unsorted, includes deleted rows) so the
+        // fee shown matches web/Admin — see Server .../surcharge/:admin_id.
+        Uri.parse('$baseUrl/api/surcharge/surcharge/$adminId'),
         headers: {
           "authorization": "CRM $token",
           "id":"CRM $id",
@@ -31,9 +41,13 @@ class SurchargeRepository {
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
-      // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
-      final apiResponse = Setting1.fromJson(jsonDecode(response.body)["data"][0]);
-      return apiResponse;
+      // Guard against an empty list so a "no surcharge configured" response
+      // hides the fee line cleanly (web parity) instead of crashing on [0].
+      final list = response_Data["data"];
+      if (list is List && list.isNotEmpty) {
+        return Setting1.fromJson(list[0]);
+      }
+      throw Exception('No surcharge configured');
     } else {
       throw Exception('Failed to load surcharge data');
     }

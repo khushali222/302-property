@@ -119,13 +119,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Header `id` = the logged-in user's OWN id (web parity): Staff → staff_id,
+    // Admin → adminId. adminId stays in the URL path (company scope).
+    String? headerId =
+        widget.useStaffLayout ? prefs.getString("staff_id") : id;
 
     try {
       final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rentals/$id'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $headerId",
         },
       );
 
@@ -244,13 +248,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Header `id` = the logged-in user's OWN id (web parity): Staff → staff_id,
+    // Admin → adminId.
+    String? headerId =
+        widget.useStaffLayout ? prefs.getString("staff_id") : id;
 
     try {
       final response = await apiGet(
         Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $headerId",
         },
       );
 
@@ -283,13 +291,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Header `id` = the logged-in user's OWN id (web parity): Staff → staff_id,
+    // Admin → adminId. adminId stays in the URL path (company scope).
+    String? headerId =
+        widget.useStaffLayout ? prefs.getString("staff_id") : id;
 
     try {
       final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/vendors/$id'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM $headerId",
         },
       );
 
@@ -517,6 +529,10 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    // Header `id` = the logged-in user's OWN id (web parity): Staff → staff_id,
+    // Admin → adminId. The body's admin_id stays adminId (company scope).
+    String? headerId =
+        widget.useStaffLayout ? prefs.getString("staff_id") : id;
 
     try {
       // Upload any remaining images (e.g. if an upload failed on pick)
@@ -552,7 +568,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           Uri.parse('${Api_url}/api/bid-request/bid-request/$bidRequestId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $headerId",
             "Content-Type": "application/json",
           },
           body: json.encode(body),
@@ -576,7 +592,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           Uri.parse('${Api_url}/api/bid-request/bid-request'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM $headerId",
             "Content-Type": "application/json",
           },
           body: json.encode(body),

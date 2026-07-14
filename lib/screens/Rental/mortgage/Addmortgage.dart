@@ -3152,7 +3152,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
     setState(() {
       _payoffs.add({
-        'amount': double.parse(_newPayoffAmountController.text.trim()),
+        'amount': (double.tryParse(_newPayoffAmountController.text.trim()) ?? 0.0),
         'date': _newPayoffDate!,
       });
       _newPayoffAmountController.clear();
@@ -3194,7 +3194,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     }
     setState(() {
       _payoffs[index] = {
-        'amount': double.parse(_editingPayoffAmountController.text.trim()),
+        'amount': (double.tryParse(_editingPayoffAmountController.text.trim()) ?? 0.0),
         'date': _editingPayoffDate!,
         '_id': _payoffs[index]['_id'],
       };

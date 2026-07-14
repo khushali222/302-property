@@ -271,11 +271,17 @@ class _enterChargeState extends State<enterCharge> {
               .key;
           print(fetchedCharge.entry![i].amount);
           rows.add({
+            'entry_id': fetchedCharge.entry![i].entryId,
             'account': fetchedCharge.entry![i].account,
             // 'charge_type': fetchedCharge.entry![i].chargeType,
             'amount': fetchedCharge.entry![i].amount,
             'memo': Memo.text,
-            'date': _startDate.text,
+            // Preserve each entry's own original date so an edit never mutates
+            // it (web keeps item.date per entry).
+            'date': fetchedCharge.entry![i].date != null
+                ? intl.DateFormat('yyyy-MM-dd')
+                    .format(fetchedCharge.entry![i].date!)
+                : _startDate.text,
             'charge_type': chargeType, // Set matched charge type
             'sub_charge_type':
                 fetchedCharge.entry![i].chargeType, // Set original charge type
@@ -433,6 +439,44 @@ class _enterChargeState extends State<enterCharge> {
         validationMessage = null;
       });
     }
+  }
+
+  // Web parity: MAX_CHARGE_AMOUNT = 999999.99, and each amount must be
+  // between $0.01 and that max (server rejects amt <= 0 || amt > max).
+  static const num _minChargeAmount = 0.01;
+  static const num _maxChargeAmount = 999999.99;
+
+  // Returns an error message if any row amount (or the total) is out of the
+  // web-allowed bounds, otherwise null. Matches AddCharge.jsx validation.
+  String? _validateChargeBounds(List<num> amounts, num total) {
+    for (final amt in amounts) {
+      if (amt < _minChargeAmount || amt > _maxChargeAmount) {
+        return 'Each charge amount must be between \$0.01 and \$999,999.99.';
+      }
+    }
+    if (total < _minChargeAmount || total > _maxChargeAmount) {
+      return 'Amount must be between \$0.01 and \$999,999.99.';
+    }
+    return null;
+  }
+
+  // Derives the charge_type for an entry. Prefer the row's real charge type
+  // (the account category resolved from the accounts API); fall back to the
+  // legacy account-name / "One Time Charge" derivation so nothing regresses.
+  String _resolveChargeType(Map<String, dynamic> row) {
+    final rowType = row['charge_type'];
+    if (rowType != null && '$rowType'.isNotEmpty) {
+      return '$rowType';
+    }
+    final account = row['account'];
+    if (account == "" ||
+        account == "Rent Income" ||
+        account == "Security Deposit" ||
+        account == "Late Fee Income" ||
+        account == "Pre-payments") {
+      return account;
+    }
+    return "One Time Charge";
   }
 
   List<File> _pdfFiles = [];
@@ -713,6 +757,9 @@ class _enterChargeState extends State<enterCharge> {
                         if (MediaQuery.of(context).size.width < 500)
                           CustomTextField(
                             onTap: () async {
+                              // Web parity: date is locked while editing an
+                              // existing charge (each entry keeps its date).
+                              if (widget.chargeid != null) return;
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
@@ -940,6 +987,10 @@ class _enterChargeState extends State<enterCharge> {
                                       SizedBox(height: 5),
                                       CustomTextField(
                                         onTap: () async {
+                                          // Web parity: date is locked while
+                                          // editing an existing charge (each
+                                          // entry keeps its original date).
+                                          if (widget.chargeid != null) return;
                                           DateTime? pickedDate =
                                               await showDatePicker(
                                             context: context,
@@ -1773,43 +1824,61 @@ class _enterChargeState extends State<enterCharge> {
                                                 .getString('adminId')
                                                 .toString();
 
-                                            List<Entry> entryList =
-                                                rows.map((row) {
+                                            // Decimal-preserving amounts (web
+                                            // sends Number(item.amount), not int).
+                                            final List<num> rowAmounts = rows
+                                                .map((row) =>
+                                                    num.tryParse(
+                                                        '${row['amount'] ?? 0}') ??
+                                                    0)
+                                                .toList();
+                                            num totalAmount = num.tryParse(
+                                                    Amount.text.trim()) ??
+                                                0;
+
+                                            // Web parity: enforce per-row and
+                                            // total amount bounds before submit.
+                                            final String? boundsError =
+                                                _validateChargeBounds(
+                                                    rowAmounts, totalAmount);
+                                            if (boundsError != null) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                  msg: boundsError);
+                                              return;
+                                            }
+
+                                            List<Entry> entryList = [];
+                                            for (int i = 0;
+                                                i < rows.length;
+                                                i++) {
+                                              final row = rows[i];
+                                              // Preserve each entry's original
+                                              // date on edit (never mutate it).
                                               String formattedDate =
-                                              row['date'] != ""
-                                                          ? row['date']
-                                                          : _startDate.text;
-                                              return Entry(
+                                                  row['date'] != null &&
+                                                          row['date'] != ""
+                                                      ? row['date']
+                                                      : _startDate.text;
+                                              final num amount = rowAmounts[i];
+                                              entryList.add(Entry(
                                                 account: row['account'],
-                                                amount:
-                                                    row['amount']?.toInt() ?? 0,
-                                                dueAmount:
-                                                    0, // Adjust according to your requirement
+                                                amount: amount,
+                                                // Web sends due_amount = amount.
+                                                dueAmount: amount,
                                                 memo: row['memo'],
                                                 date: formattedDate,
-                                                chargeType: (row["account"] ==
-                                                            "" ||
-                                                        row["account"] ==
-                                                            "Rent Income" ||
-                                                        row["account"] ==
-                                                            "Security Deposit" ||
-                                                        row["account"] ==
-                                                            "Late Fee Income" ||
-                                                        row["account"] ==
-                                                            "Pre-payments")
-                                                    ? row["account"]
-                                                    : "One Time Charge",
-                                                //   chargeType: row['charge_type'],
-                                                isRepeatable:
-                                                    false, // Adjust according to your requirement
-                                              );
-                                            }).toList();
+                                                chargeType:
+                                                    _resolveChargeType(row),
+                                                isRepeatable: false,
+                                                entryId: row['entry_id'],
+                                              ));
+                                            }
 
                                             print(
                                                 "amount ${Amount.text.trim()}");
-                                            int totalAmount = int.tryParse(
-                                                    Amount.text.trim()) ??
-                                                0;
                                             Charge charge = Charge(
                                               adminId: adminId,
                                               isLeaseAdded: false,
@@ -1823,25 +1892,55 @@ class _enterChargeState extends State<enterCharge> {
 
                                             LeaseRepository apiService =
                                                 LeaseRepository();
-                                            int statusCode =
+                                            final response =
                                                 await apiService.EditCharge(
                                                     charge, widget.chargeid!);
+                                            final int statusCode =
+                                                response.statusCode;
+                                            Map<String, dynamic> respBody = {};
+                                            try {
+                                              final decoded =
+                                                  jsonDecode(response.body);
+                                              if (decoded
+                                                  is Map<String, dynamic>) {
+                                                respBody = decoded;
+                                              }
+                                            } catch (_) {}
 
                                             if (statusCode == 200) {
                                               setState(() {
                                                 _isLoading = false;
                                               });
+                                              // Show the server's real message
+                                              // when present (e.g. scheduled),
+                                              // else the default success toast.
+                                              final bool isScheduled =
+                                                  respBody['scheduled'] == true;
+                                              final String? serverMessage =
+                                                  respBody['message']
+                                                      ?.toString();
                                               Fluttertoast.showToast(
-                                                msg:
-                                                    "Charge Edited successfully",
+                                                msg: (isScheduled ||
+                                                        (serverMessage != null &&
+                                                            serverMessage
+                                                                .isNotEmpty))
+                                                    ? (serverMessage ??
+                                                        "Charge scheduled")
+                                                    : "Charge Edited successfully",
                                               );
                                               Navigator.pop(context, true);
                                             } else {
                                               setState(() {
                                                 _isLoading = false;
                                               });
+                                              final String? serverMessage =
+                                                  respBody['message']
+                                                      ?.toString();
                                               Fluttertoast.showToast(
-                                                msg: "Failed to post charge",
+                                                msg: (serverMessage != null &&
+                                                        serverMessage.isNotEmpty)
+                                                    ? serverMessage
+                                                    : "Failed to post charge",
                                               );
                                               setState(() {
                                                 _isLoading = false;
@@ -1855,50 +1954,67 @@ class _enterChargeState extends State<enterCharge> {
                                                 .getString('adminId')
                                                 .toString();
 
-                                            List<Entry> entryList =
-                                                rows.map((row) {
+                                            // Decimal-preserving amounts (web
+                                            // sends Number(item.amount), not int).
+                                            final List<num> rowAmounts = rows
+                                                .map((row) =>
+                                                    num.tryParse(
+                                                        '${row['amount'] ?? 0}') ??
+                                                    0)
+                                                .toList();
+                                            num totalAmount = num.tryParse(
+                                                    Amount.text.trim()) ??
+                                                0;
+
+                                            // Web parity: enforce per-row and
+                                            // total amount bounds before submit.
+                                            final String? boundsError =
+                                                _validateChargeBounds(
+                                                    rowAmounts, totalAmount);
+                                            if (boundsError != null) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                              Fluttertoast.showToast(
+                                                  msg: boundsError);
+                                              return;
+                                            }
+
+                                            List<Entry> entryList = [];
+                                            for (int i = 0;
+                                                i < rows.length;
+                                                i++) {
+                                              final row = rows[i];
                                               print(
                                                   " accocunt ${row["account"]}");
                                               String formattedDate =
-
-                                                      row['date'] != ""
-                                                          ? row['date']
-                                                          : _startDate.text;
-                                              return Entry(
+                                                  row['date'] != null &&
+                                                          row['date'] != ""
+                                                      ? row['date']
+                                                      : _startDate.text;
+                                              final num amount = rowAmounts[i];
+                                              entryList.add(Entry(
                                                 account: row['account'],
-                                                amount:
-                                                    row['amount']?.toInt() ?? 0,
-                                                dueAmount:
-                                                    0, // Adjust according to your requirement
+                                                amount: amount,
+                                                // Web sends due_amount = amount.
+                                                dueAmount: amount,
                                                 memo: row['memo'],
                                                 date: formattedDate,
-                                                chargeType: (row["account"] ==
-                                                            "" ||
-                                                        row["account"] ==
-                                                            "Rent Income" ||
-                                                        row["account"] ==
-                                                            "Security Deposit" ||
-                                                        row["account"] ==
-                                                            "Late Fee Income" ||
-                                                        row["account"] ==
-                                                            "Pre-payments")
-                                                    ? row["account"]
-                                                    : "One Time Charge",
-                                                //  chargeType: row['charge_type'],
-                                                isRepeatable:
-                                                    false, // Adjust according to your requirement
-                                              );
-                                            }).toList();
-
-                                            int totalAmount = int.tryParse(
-                                                    Amount.text.trim()) ??
-                                                0;
+                                                chargeType:
+                                                    _resolveChargeType(row),
+                                                isRepeatable: false,
+                                                entryId: row['entry_id'],
+                                              ));
+                                            }
 
                                             Charge charge = Charge(
                                               adminId: adminId,
                                               isLeaseAdded: false,
                                               leaseId: widget.leaseId,
-                                              tenantId: "",
+                                              // Send the selected lease tenant
+                                              // when available (web sends the
+                                              // chosen tenant_id).
+                                              tenantId: selectedTenantId ?? "",
                                               totalAmount: totalAmount,
                                               uploadedFile: _uploadedFileNames,
                                               entry: entryList,
@@ -1912,16 +2028,42 @@ class _enterChargeState extends State<enterCharge> {
 
                                             LeaseRepository apiService =
                                                 LeaseRepository();
-                                            int statusCode = await apiService
+                                            final response = await apiService
                                                 .postCharge(charge);
+                                            final int statusCode =
+                                                response.statusCode;
+                                            Map<String, dynamic> respBody = {};
+                                            try {
+                                              final decoded =
+                                                  jsonDecode(response.body);
+                                              if (decoded
+                                                  is Map<String, dynamic>) {
+                                                respBody = decoded;
+                                              }
+                                            } catch (_) {}
 
                                             if (statusCode == 200) {
                                               setState(() {
                                                 _isLoading = false;
                                               });
+                                              // A future-dated charge is not
+                                              // posted; the server returns a
+                                              // scheduled message. Show the
+                                              // server's real message when
+                                              // present, else the default toast.
+                                              final bool isScheduled =
+                                                  respBody['scheduled'] == true;
+                                              final String? serverMessage =
+                                                  respBody['message']
+                                                      ?.toString();
                                               Fluttertoast.showToast(
-                                                msg:
-                                                    "Charge posted successfully",
+                                                msg: (isScheduled ||
+                                                        (serverMessage != null &&
+                                                            serverMessage
+                                                                .isNotEmpty))
+                                                    ? (serverMessage ??
+                                                        "Charge scheduled")
+                                                    : "Charge posted successfully",
                                               );
                                               if (isChecked == true) {
                                                 resetFields();
@@ -1932,8 +2074,14 @@ class _enterChargeState extends State<enterCharge> {
                                               setState(() {
                                                 _isLoading = false;
                                               });
+                                              final String? serverMessage =
+                                                  respBody['message']
+                                                      ?.toString();
                                               Fluttertoast.showToast(
-                                                msg: "Failed to post charge",
+                                                msg: (serverMessage != null &&
+                                                        serverMessage.isNotEmpty)
+                                                    ? serverMessage
+                                                    : "Failed to post charge",
                                               );
                                               setState(() {
                                                 _isLoading = false;

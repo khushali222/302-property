@@ -26,6 +26,8 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/All_categories_model.dart';
 import '../../../repository/fetch_allcategories.dart';
+import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 class Edit_Workorder extends StatefulWidget {
   EditData? property;
@@ -103,7 +105,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
-      entryAllowedString = fetchedDetails.entryAllowed! ? 'true' : 'false';
+      entryAllowedString = fetchedDetails.entryAllowed! ? 'Yes' : 'No';
     }
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -429,8 +431,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   allcategories_model? _selectedDropdownCategory;
   String? _selectedEntry;
   final List<String> _entry = [
-    'true',
-    'false',
+    'Yes',
+    'No',
   ];
   String? _selectedStatus;
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed', 'Closed'];
@@ -540,22 +542,25 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
               },
             ),
           ),
-          const Text(
+          Text(
             "Quantity",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
           ),
           const SizedBox(height: 5),
           CustomTextField(
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             hintText: 'Quantity',
             controller: partsAndLabor[index]['qtyController'],
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             "Account",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
           ),
           const SizedBox(height: 5),
           DropdownButtonHideUnderline(
@@ -583,10 +588,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                 // width: 300,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
                   color: Colors.white,
+                  border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                 ),
-                elevation: 2,
+                elevation: 0,
               ),
               iconStyleData: const IconStyleData(
                 icon: Icon(
@@ -614,37 +620,46 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             "Description",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
           ),
           const SizedBox(height: 5),
           CustomTextField(
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             hintText: 'Description',
             controller: partsAndLabor[index]['descriptionController'],
             keyboardType: TextInputType.text,
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             "Price",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
           ),
           const SizedBox(height: 5),
           CustomTextField(
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             hintText: 'Price',
             controller: partsAndLabor[index]['priceController'],
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             "Total",
             style: TextStyle(
-                fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
           ),
           const SizedBox(height: 5),
           CustomTextField(
+            showElevation: false,
+            borderColor: const Color(0xFFCED4DA),
+            borderWidth: 1.5,
             hintText: 'Total',
             controller: partsAndLabor[index]['totalController'],
             keyboardType: TextInputType.number,
@@ -693,7 +708,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
     if (selectedDate != null) {
       setState(() {
-        _dateController.text = DateFormat('dd-MM-yyyy').format(selectedDate);
+        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
     }
   }
@@ -777,6 +792,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
   @override
   Widget build(BuildContext context) {
+    final dateProvider = Provider.of<DateProvider>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -821,22 +837,25 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color(0xFFDBE0E5),
                                   )),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Subject *',
+                                    Text('Subject *',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
+                                            color: blueColor)),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     CustomTextField(
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                       readOnnly: true,
                                       keyboardType: TextInputType.text,
                                       hintText: 'Add subject',
@@ -972,12 +991,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Property *',
+                                              Text('Property *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               DropdownButtonHideUnderline(
                                                 child: DropdownButtonFormField2<
                                                     String>(
@@ -1050,12 +1069,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         left: 14,
                                                         right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -1116,12 +1134,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               units.isNotEmpty
-                                                  ? const Text('Unit',
+                                                  ? Text('Unit',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey))
+                                                      color: blueColor))
                                                   : Container(),
                                               const SizedBox(height: 0),
                                               units.isNotEmpty
@@ -1209,15 +1227,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         .only(
                                                         left: 14,
                                                         right: 14),
-                                                    decoration:
-                                                    BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius
-                                                          .circular(
-                                                          6),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -1291,12 +1306,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Category',
+                                              Text('Category',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -1343,12 +1358,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         left: 14,
                                                         right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -1403,12 +1417,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Entery allowed ',
+                                              Text('Entry Allowed',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -1444,12 +1458,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         left: 14,
                                                         right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -1501,12 +1514,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Assigned To *',
+                                              Text('Assigned To *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               const SizedBox(
                                                 height: 2,
                                               ),
@@ -1608,16 +1621,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                             left: 14,
                                                             right:
                                                             14),
-                                                        decoration:
-                                                        BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              6),
-                                                          color: Colors
-                                                              .white,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(8),
+                                                          color: Colors.white,
+                                                          border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                         ),
-                                                        elevation: 2,
+                                                        elevation: 0,
                                                       ),
                                                       iconStyleData:
                                                       const IconStyleData(
@@ -1685,15 +1694,18 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         ),
                                       ],
                                     ),
-                                    const Text('Welcome To Be Performed',
+                                    Text('Work To Be Performed',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
+                                            color: blueColor)),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     CustomTextField(
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                       readOnnly: true,
                                       keyboardType: TextInputType.emailAddress,
                                       hintText: 'Enter here',
@@ -1715,7 +1727,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color: const Color.fromRGBO(21, 43, 103, 1),
+                                    color: const Color(0xFFDBE0E5),
                                   )),
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -1849,6 +1861,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               padding:
                                               const EdgeInsets.all(8.0),
                                               child: CustomTextField(
+                                                showElevation: false,
+                                                borderColor: const Color(0xFFCED4DA),
+                                                borderWidth: 1.5,
                                                 hintText: 'Quantity',
                                                 controller: partsAndLabor[index]
                                                 ['qtyController'],
@@ -1892,12 +1907,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         left: 14,
                                                         right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -1944,6 +1958,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               padding:
                                               const EdgeInsets.all(8.0),
                                               child: CustomTextField(
+                                                showElevation: false,
+                                                borderColor: const Color(0xFFCED4DA),
+                                                borderWidth: 1.5,
                                                 hintText: 'Description',
                                                 controller: partsAndLabor[index]
                                                 ['descriptionController'],
@@ -1955,6 +1972,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               padding:
                                               const EdgeInsets.all(8.0),
                                               child: CustomTextField(
+                                                showElevation: false,
+                                                borderColor: const Color(0xFFCED4DA),
+                                                borderWidth: 1.5,
                                                 hintText: 'Price',
                                                 controller: partsAndLabor[index]
                                                 ['priceController'],
@@ -1966,6 +1986,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               padding:
                                               const EdgeInsets.all(8.0),
                                               child: CustomTextField(
+                                                showElevation: false,
+                                                borderColor: const Color(0xFFCED4DA),
+                                                borderWidth: 1.5,
                                                 hintText: 'Total',
                                                 controller: partsAndLabor[index]
                                                 ['totalController'],
@@ -2092,15 +2115,18 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     const SizedBox(
                                       height: 10,
                                     ),
-                                    const Text('Vendors Note *',
+                                    Text('Vendors Note *',
                                         style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.grey)),
+                                            color: blueColor)),
                                     const SizedBox(
                                       height: 10,
                                     ),
                                     CustomTextField(
+                                      showElevation: false,
+                                      borderColor: const Color(0xFFCED4DA),
+                                      borderWidth: 1.5,
                                       keyboardType: TextInputType.text,
                                       hintText: 'Enter here',
                                       controller: vendornote,
@@ -2159,7 +2185,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               style: TextStyle(
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.grey)),
+                                                  color: blueColor)),
                                           SizedBox(height: 2),
                                           DropdownButtonHideUnderline(
                                             child: DropdownButtonFormField2<String>(
@@ -2208,10 +2234,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 width: 160,
                                                 padding: const EdgeInsets.only(left: 14, right: 14),
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(6),
+                                                  borderRadius: BorderRadius.circular(8),
                                                   color: Colors.white,
+                                                  border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                 ),
-                                                elevation: 2,
+                                                elevation: 0,
                                               ),
                                               iconStyleData: const IconStyleData(
                                                 icon: Icon(Icons.arrow_drop_down),
@@ -2250,11 +2277,14 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                 SizedBox(
                                   height: 15,
                                 ),*/
-                                    const Row(
+                                    Row(
                                       children: [
                                         Text(
                                           "Priority",
-                                          style: TextStyle(color: Colors.grey),
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor),
                                         ),
                                       ],
                                     ),
@@ -2320,12 +2350,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Status *',
+                                              Text('Status *',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -2359,12 +2389,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                         left: 14,
                                                         right: 14),
                                                     decoration: BoxDecoration(
-                                                      borderRadius:
-                                                      BorderRadius.circular(
-                                                          6),
+                                                      borderRadius: BorderRadius.circular(8),
                                                       color: Colors.white,
+                                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                                     ),
-                                                    elevation: 2,
+                                                    elevation: 0,
                                                   ),
                                                   iconStyleData:
                                                   const IconStyleData(
@@ -2420,12 +2449,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              const Text('Due Date',
+                                              Text('Due Date',
                                                   style: TextStyle(
                                                       fontSize: 13,
                                                       fontWeight:
                                                       FontWeight.bold,
-                                                      color: Colors.grey)),
+                                                      color: blueColor)),
                                               const SizedBox(
                                                 height: 10,
                                               ),
@@ -2454,38 +2483,30 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                     borderRadius:
                                                     BorderRadius.circular(
                                                         6.0)),
-                                                child: TextFormField(
-                                                  style: const TextStyle(
-                                                    color: Color(
-                                                        0xFF8898aa), // Text color
-                                                    fontSize: 16.0, // Text size
-                                                    fontWeight: FontWeight
-                                                        .w400, // Text weight
-                                                  ),
-                                                  controller: _dateController,
-                                                  decoration: InputDecoration(
-                                                    hintStyle: const TextStyle(
-                                                        fontWeight:
-                                                        FontWeight.w500,
-                                                        fontSize: 13,
-                                                        color:
-                                                        Color(0xFFb0b6c3)),
-                                                    border: InputBorder.none,
-                                                    // labelText: 'Select Date',
-                                                    hintText: 'yyyy-mm-dd',
-                                                    suffixIcon: IconButton(
-                                                      icon: const Icon(
-                                                          Icons.calendar_today),
-                                                      onPressed: () {
-                                                        _selectDate(context);
-                                                      },
+                                                child: InkWell(
+                                              onTap: () {
+                                                _selectDate(context);
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      _dateController.text.trim().isEmpty
+                                                          ? 'dd-mm-yyyy'
+                                                          : dateProvider.formatCurrentDate(_dateController.text.trim()),
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: _dateController.text.trim().isEmpty
+                                                            ? const Color(0xFFb0b6c3)
+                                                            : blueColor,
+                                                      ),
                                                     ),
                                                   ),
-                                                  readOnly: true,
-                                                  onTap: () {
-                                                    _selectDate(context);
-                                                  },
-                                                ),
+                                                  Icon(Icons.calendar_today,
+                                                      size: 20, color: blueColor),
+                                                ],
+                                              ),
+                                            ),
                                               ),
                                             ],
                                           ),
@@ -2592,29 +2613,32 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                       title: 'Edit Work Order',
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Container(
                         width: double.infinity,
                         // height: !form_valid ? 860 : 830,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 103, 1),
+                              color: const Color(0xFFDBE0E5),
                             )),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Subject *',
+                              Text('Subject *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
+                                showElevation: false,
+                                borderColor: const Color(0xFFCED4DA),
+                                borderWidth: 1.5,
                                 readOnnly: true,
                                 keyboardType: TextInputType.text,
                                 hintText: 'Add subject',
@@ -2633,7 +2657,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               SizedBox(
                                 height: 10,
                               ),*/
@@ -2780,11 +2804,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Property *',
+                              Text('Property *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 2,
                               ),
@@ -2863,11 +2887,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         padding: const EdgeInsets.only(
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(8),
                                           color: Colors.white,
+                                          border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(
@@ -2913,11 +2937,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     ),
                                   ),
                                   units.isNotEmpty
-                                      ? const Text('Unit',
+                                      ? Text('Unit',
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.grey))
+                                          color: blueColor))
                                       : Container(),
                                   const SizedBox(height: 0),
                                   units.isNotEmpty
@@ -2996,12 +3020,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             left: 14,
                                             right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(
-                                              6),
+                                          borderRadius: BorderRadius.circular(8),
                                           color: Colors.white,
+                                          border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData:
                                       const IconStyleData(
@@ -3048,11 +3071,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Category',
+                              Text('Category',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -3088,10 +3111,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     padding: const EdgeInsets.only(
                                         left: 1, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(8),
                                       color: Colors.white,
+                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                     ),
-                                    elevation: 2,
+                                    elevation: 0,
                                   ),
                                   iconStyleData: const IconStyleData(
                                     icon: Icon(
@@ -3135,7 +3159,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               SizedBox(
                                 height: 2,
                               ),
@@ -3204,11 +3228,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         padding: const EdgeInsets.only(
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(8),
                                           color: Colors.white,
+                                          border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(
@@ -3251,11 +3275,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               SizedBox(
                                 height: 10,
                               ),*/
-                              const Text('Entery allowed ',
+                              Text('Entry Allowed',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -3287,10 +3311,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                     padding: const EdgeInsets.only(
                                         left: 1, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(8),
                                       color: Colors.white,
+                                      border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                     ),
-                                    elevation: 2,
+                                    elevation: 0,
                                   ),
                                   iconStyleData: const IconStyleData(
                                     icon: Icon(
@@ -3322,11 +3347,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Assigned To *',
+                              Text('Assigned To *',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 2,
                               ),
@@ -3403,11 +3428,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         padding: const EdgeInsets.only(
                                             left: 14, right: 14),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(8),
                                           color: Colors.white,
+                                          border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                         ),
-                                        elevation: 2,
+                                        elevation: 0,
                                       ),
                                       iconStyleData: const IconStyleData(
                                         icon: Icon(
@@ -3457,15 +3482,18 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Welcome To Be Performed',
+                              Text('Work To Be Performed',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
+                                showElevation: false,
+                                borderColor: const Color(0xFFCED4DA),
+                                borderWidth: 1.5,
                                 readOnnly: true,
                                 optional: true,
                                 keyboardType: TextInputType.emailAddress,
@@ -3481,14 +3509,14 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Container(
                         width: double.infinity,
                         // height: !form_valid ? 860 : 830,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                              color: const Color.fromRGBO(21, 43, 103, 1),
+                              color: const Color(0xFFDBE0E5),
                             )),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -3535,15 +3563,18 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text('Vendors Note ',
+                              Text('Vendors Note ',
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey)),
+                                      color: blueColor)),
                               const SizedBox(
                                 height: 10,
                               ),
                               CustomTextField(
+                                showElevation: false,
+                                borderColor: const Color(0xFFCED4DA),
+                                borderWidth: 1.5,
                                 keyboardType: TextInputType.text,
                                 hintText: 'Enter here',
                                 controller: vendornote,
@@ -3603,7 +3634,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
+                                                color: blueColor)),
                                         SizedBox(height: 2),
                                         DropdownButtonHideUnderline(
                                           child: DropdownButtonFormField2<String>(
@@ -3652,10 +3683,11 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               width: 160,
                                               padding: const EdgeInsets.only(left: 14, right: 14),
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(6),
+                                                borderRadius: BorderRadius.circular(8),
                                                 color: Colors.white,
+                                                border: Border.all(color: const Color(0xFFCED4DA), width: 1.5),
                                               ),
-                                              elevation: 2,
+                                              elevation: 0,
                                             ),
                                             iconStyleData: const IconStyleData(
                                               icon: Icon(Icons.arrow_drop_down),
@@ -3694,11 +3726,14 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               SizedBox(
                                 height: 15,
                               ),*/
-                              const Row(
+                              Row(
                                 children: [
                                   Text(
                                     "Priority",
-                                    style: TextStyle(color: Colors.grey),
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor),
                                   ),
                                 ],
                               ),
@@ -3804,160 +3839,108 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      const Text('Status *',
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey)),
-                                      const SizedBox(
-                                        height: 10,
+                                  Text('Status *',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor)),
+                                  const SizedBox(height: 10),
+                                  DropdownButtonHideUnderline(
+                                    child: DropdownButton2<String>(
+                                      isExpanded: true,
+                                      hint: const Text('New'),
+                                      value: _selectedStatus,
+                                      items: _status.map((method) {
+                                        return DropdownMenuItem<String>(
+                                          value: method,
+                                          child: Text(method),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _selectedStatus = newValue;
+                                        });
+                                        print(
+                                            'Selected category: $_selectedStatus');
+                                      },
+                                      buttonStyleData: ButtonStyleData(
+                                        height: 48,
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.only(
+                                            left: 14, right: 14),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFFCED4DA),
+                                              width: 1.5),
+                                        ),
+                                        elevation: 0,
                                       ),
-                                      DropdownButtonHideUnderline(
-                                        child: DropdownButton2<String>(
-                                          isExpanded: true,
-                                          hint: const Text('New'),
-                                          value: _selectedStatus,
-                                          items: _status.map((method) {
-                                            return DropdownMenuItem<String>(
-                                              value: method,
-                                              child: Text(method),
-                                            );
-                                          }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              _selectedStatus = newValue;
-                                            });
-                                            print(
-                                                'Selected category: $_selectedStatus');
-                                          },
-                                          buttonStyleData: ButtonStyleData(
-                                            height: 45,
-                                            width: 150,
-                                            padding: const EdgeInsets.only(
-                                                left: 14, right: 14),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            elevation: 2,
-                                          ),
-                                          iconStyleData: const IconStyleData(
-                                            icon: Icon(
-                                              Icons.arrow_drop_down,
-                                            ),
-                                            iconSize: 24,
-                                            iconEnabledColor: Color(0xFFb0b6c3),
-                                            iconDisabledColor: Colors.grey,
-                                          ),
-                                          dropdownStyleData: DropdownStyleData(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                              BorderRadius.circular(6),
-                                              color: Colors.white,
-                                            ),
-                                            scrollbarTheme: ScrollbarThemeData(
-                                              radius: const Radius.circular(6),
-                                              thickness:
+                                      iconStyleData: const IconStyleData(
+                                        icon: Icon(Icons.arrow_drop_down),
+                                        iconSize: 24,
+                                        iconEnabledColor: Color(0xFFb0b6c3),
+                                        iconDisabledColor: Colors.grey,
+                                      ),
+                                      dropdownStyleData: DropdownStyleData(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.white,
+                                        ),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          radius: const Radius.circular(6),
+                                          thickness:
                                               MaterialStateProperty.all(6),
-                                              thumbVisibility:
-                                              MaterialStateProperty.all(
-                                                  true),
-                                            ),
-                                          ),
-                                          menuItemStyleData:
-                                          const MenuItemStyleData(
-                                            height: 40,
-                                            padding: EdgeInsets.only(
-                                                left: 14, right: 14),
-                                          ),
+                                          thumbVisibility:
+                                              MaterialStateProperty.all(true),
                                         ),
                                       ),
-                                    ],
+                                      menuItemStyleData: const MenuItemStyleData(
+                                        height: 40,
+                                        padding:
+                                            EdgeInsets.only(left: 14, right: 14),
+                                      ),
+                                    ),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  const SizedBox(height: 16),
+                                  Text('Due Date',
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: blueColor)),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    height: 48,
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF1F3F6),
+                                        border: Border.all(
+                                            width: 1.5,
+                                            color: const Color(0xFFCED4DA)),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    child: Row(
                                       children: [
-                                        const Text('Due Date',
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey)),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Material(
-                                          elevation: 3,
-                                          borderRadius:
-                                          BorderRadius.circular(6.0),
-                                          child: Container(
-                                            height: 45,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0, vertical: 0),
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                /* boxShadow: [
-                                                  const BoxShadow(
-                                                    color: Colors.black26,
-                                                    offset: Offset(1.0,
-                                                        1.0), // Shadow offset to the bottom right
-                                                    blurRadius:
-                                                    8.0, // How much to blur the shadow
-                                                    spreadRadius:
-                                                    0.0, // How much the shadow should spread
-                                                  ),
-                                                ],*/
-                                                border: Border.all(
-                                                    width: 0,
-                                                    color: Colors.white),
-                                                borderRadius:
-                                                BorderRadius.circular(6.0)),
-                                            child: TextFormField(
-                                              style: const TextStyle(
-                                                color: Color(
-                                                    0xFF8898aa), // Text color
-                                                fontSize: 16.0, // Text size
-                                                fontWeight: FontWeight
-                                                    .w400, // Text weight
-                                              ),
-                                              controller: _dateController,
-                                              decoration: InputDecoration(
-                                                hintStyle: const TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13,
-                                                    color: Color(0xFFb0b6c3)),
-                                                border: InputBorder.none,
-                                                // labelText: 'Select Date',
-                                                hintText: 'dd-mm-yyyy',
-                                                suffixIcon: IconButton(
-                                                  icon: const Icon(
-                                                      Icons.calendar_today),
-                                                  onPressed: () {
-                                                    _selectDate(context);
-                                                  },
-                                                ),
-                                              ),
-                                              readOnly: true,
-                                              onTap: () {
-                                                _selectDate(context);
-                                              },
+                                        Expanded(
+                                          child: Text(
+                                            _dateController.text.trim().isEmpty
+                                                ? 'dd-mm-yyyy'
+                                                : dateProvider.formatCurrentDate(
+                                                    _dateController.text.trim()),
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xFF8898aa),
                                             ),
                                           ),
                                         ),
+                                        const Icon(Icons.calendar_today,
+                                            size: 20, color: Color(0xFF8898aa)),
                                       ],
                                     ),
                                   ),
@@ -3975,55 +3958,60 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         children: [
-                          Container(
-                            height: 50,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                          Expanded(
+                            child: SizedBox(
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: blueColor,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
                                 ),
-                              ),
-                              onPressed: _submitForm,
-                              child: isloading
-                                  ? const Center(
-                                child: SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 55.0,
-                                ),
-                              )
-                                  : const Text(
-                                'Edit Work Order',
-                                style:
-                                TextStyle(color: Color(0xFFf7f8f9)),
+                                onPressed: _submitForm,
+                                child: isloading
+                                    ? const Center(
+                                        child: SpinKitFadingCircle(
+                                          color: Colors.white,
+                                          size: 24.0,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Edit Work Order',
+                                        style: TextStyle(
+                                            color: Color(0xFFf7f8f9),
+                                            fontWeight: FontWeight.bold),
+                                      ),
                               ),
                             ),
                           ),
                           const SizedBox(
-                            width: 8,
+                            width: 12,
                           ),
-                          Container(
+                          Expanded(
+                            child: SizedBox(
                               height: 50,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0)),
                               child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFffffff),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(8.0))),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Cancel',
-                                    style: TextStyle(color: Color(0xFF748097)),
-                                  )))
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFffffff),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(color: blueColor),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: blueColor,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -4118,7 +4106,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         isBillable: isChecked,
         workChargeTo: isChecked == 'Tenants',
         date: _dateController.text.trim(),
-        entry: _selectedEntry == 'yes',
+        entry: _selectedEntry == 'Yes',
         parts: parts,
         notificationTime:
         DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),

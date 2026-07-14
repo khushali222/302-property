@@ -458,13 +458,25 @@ class DateProvider with ChangeNotifier {
     // Proceed with token validation
     try {
       final prefs = await SharedPreferences.getInstance();
-      final adminId = prefs.getString("adminId");
+      // Send the logged-in user's OWN id (same as the web client) so the
+      // server resolves the correct user branch; adminId is only correct
+      // for admins and 401s for staff at multi-co-admin companies.
+      final role = prefs.getString("role");
+      String? headerId;
+      if (role == "Staffmember") {
+        headerId = prefs.getString("staff_id");
+      } else if (role == "Tenant") {
+        headerId = prefs.getString("tenant_id");
+      } else if (role == "Vendor") {
+        headerId = prefs.getString("vendor_id");
+      }
+      headerId ??= prefs.getString("adminId");
 
       final response = await apiPost(
         Uri.parse('${Api_url}/api/auth'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $headerId",
           "Content-Type": "application/json"
         },
         body: json.encode({"token": token}),

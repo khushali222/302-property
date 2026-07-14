@@ -90,6 +90,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         // OLD was: lease_id missing from staff card payload — backend couldn't identify which lease
         'lease_id': leaseid,
@@ -229,7 +230,7 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -327,6 +328,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'address1': address1,
         'processor_id': processorId,
@@ -350,6 +352,7 @@ class PaymentService {
         paymentDetails['account_holder_type'] = account_holder_type;
       }
       print(paymentDetails);
+
 
       final response = await apiPost(
         Uri.parse(baseUrl),
@@ -470,7 +473,7 @@ class PaymentService {
         'payment_type': paymentType,
 
         'entry': entries,
-        'total_amount': double.parse(totalAmount),
+        'total_amount': double.tryParse(totalAmount) ?? 0.0,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
@@ -573,6 +576,7 @@ class PaymentService {
           'balance': e['balance'],
           'memo': e['memo'],
           'date': e['date'],
+          'charge_type': e['charge_type'],
         }).toList(),
         'date': date,
         'address1': address1,
@@ -690,6 +694,7 @@ class PaymentService {
         'payment_type': paymentType,
         'entry': entries,
         'total_amount': totalAmount,
+        'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'check_number': checknumber,

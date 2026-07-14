@@ -1435,29 +1435,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     }
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-info.p.rapidapi.com/bin.php/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'X-RapidAPI-Key': '46e85a3cb0msh33efbb0c9360ff4p106ebcjsncf1a23d6dda1',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    print(response.body);
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['type']}');
-      return jsonResponse['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1607,12 +1584,4 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     }
   }
 
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
-  }
 }

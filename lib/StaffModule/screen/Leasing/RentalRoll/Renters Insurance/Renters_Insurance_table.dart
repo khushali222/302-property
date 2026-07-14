@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Ins
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
@@ -289,6 +290,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
               ),
             ),
             Expanded(
+              flex: 4,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -329,7 +331,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 ),
               ),
             ),
+            SizedBox(width: 10),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -352,7 +356,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 },
                 child: Row(
                   children: [
-                    Text("     Expiration\n        Date",
+                    Text("Effective\nDate",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -362,7 +366,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 ),
               ),
             ),
+            SizedBox(width: 25),
             Expanded(
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -385,7 +391,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 },
                 child: Row(
                   children: [
-                    Text("      Effective\n         Date",
+                    Text("Expiration\nDate",
                         style: TextStyle(
                             color: blueColor,
                             fontWeight: FontWeight.bold,
@@ -717,25 +723,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                     Expanded(
                                                       flex: 3,
                                                       child: Text(
-                                                        item.expirationDate
-                                                                    ?.isNotEmpty ==
-                                                                true
-                                                            ? dateProvider
-                                                                .formatCurrentDate(
-                                                                    '${item?.expirationDate?.split('T').first}')
-                                                            : 'N/A',
-                                                        style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 25),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Text(
                                                         item.effectiveDate
                                                                     ?.isNotEmpty ==
                                                                 true
@@ -747,7 +734,26 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                           color: blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 14,
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 25),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Text(
+                                                        item.expirationDate
+                                                                    ?.isNotEmpty ==
+                                                                true
+                                                            ? dateProvider
+                                                                .formatCurrentDate(
+                                                                    '${item?.expirationDate?.split('T').first}')
+                                                            : 'N/A',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 13,
                                                         ),
                                                       ),
                                                     ),
@@ -933,6 +939,64 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                               width: 5,
                                                             ),
                                                             GestureDetector(
+                                                              onTap: () {
+                                                                final hasDoc = (item.insurancePolicyDocument ??
+                                                                            '')
+                                                                        .isNotEmpty;
+                                                                if (hasDoc) {
+                                                                  viewInsuranceDocument(
+                                                                      context,
+                                                                      item.insurancePolicyDocument);
+                                                                } else {
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                    const SnackBar(
+                                                                      content: Text(
+                                                                          'No document attached'),
+                                                                      behavior:
+                                                                          SnackBarBehavior
+                                                                              .floating,
+                                                                    ),
+                                                                  );
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: (item.insurancePolicyDocument ??
+                                                                              '')
+                                                                          .isNotEmpty
+                                                                      ? const Color(
+                                                                          0xFFE8F0FA)
+                                                                      : Colors.grey
+                                                                          .shade100,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child: Center(
+                                                                  child: FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .fileLines,
+                                                                    size: 15,
+                                                                    color: (item.insurancePolicyDocument ??
+                                                                                '')
+                                                                            .isNotEmpty
+                                                                        ? blueColor
+                                                                        : Colors.grey
+                                                                            .shade400,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
                                                               onTap: () async {
                                                                 var check = await Navigator.push(
                                                                     context,
@@ -1042,7 +1106,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -1547,7 +1612,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

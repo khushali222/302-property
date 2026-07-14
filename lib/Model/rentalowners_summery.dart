@@ -109,7 +109,7 @@ class RentalOwnerSummey {
           .toList(),
       createdAt: json['createdAt']??"",
       updatedAt: json['updatedAt']??"",
-      isDelete: json['is_delete']??"",
+      isDelete: json['is_delete'] is bool ? json['is_delete'] as bool : null,
       v: json['__v'],
     );
   }

@@ -11,6 +11,7 @@ import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Home_System_Report.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/InsurancePremiumReport.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/LoanSummaryReport.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Rental/mortgage/mortgageTable.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/OpenWorkOrders.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/PortfolioOverviewReport.dart';
@@ -25,7 +26,7 @@ import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 
-import '../../../screens/Reports/ReportScreens/Rent_collection.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Reports/ReportScreens/Rent_collection.dart';
 import 'ReportScreens/OutstandingLeaseBalance.dart';
 import '../../../widgets/titleBar.dart';
 import 'ReportScreens/Recurring_Payments_Configuration_table.dart';
@@ -816,11 +817,17 @@ class ReportScreen extends StatelessWidget {
                   'subtitle': 'KPI overview of your property portfolio',
                   "navigate": PortfolioOverviewReport(),
                 },
-                // {
-                //   'title': 'Loan Summary Report',
-                //   'subtitle': 'Summary of all loans with balance and properties',
-                //   "navigate": Loansummaryreport()
-                // },
+                {
+                  'title': 'Loan Summary Report',
+                  'subtitle': 'Summary of all loans with balance and properties',
+                  "navigate": Loansummaryreport()
+                },
+                {
+                  'title': 'Mortgages',
+                  'subtitle':
+                      'Mortgages by property — balances, payoff history, and details',
+                  "navigate": MortgageTable()
+                },
               ],
               "Track payments, transactions, and owner accounts.",
               context),

@@ -1944,6 +1944,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     }).toList(),
                                   ),
                                 ),
+                                if (totalPages > 1) ...[
                                 const SizedBox(height: 20),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -2059,6 +2060,7 @@ class _Lease_tableState extends State<Lease_table> {
                                     ),
                                   ],
                                 ),
+                                ],
                               ],
                             ),
                           );

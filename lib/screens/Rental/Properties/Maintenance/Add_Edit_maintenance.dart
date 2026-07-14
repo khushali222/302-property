@@ -151,7 +151,7 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
     setState(() => _isLoading = true);
     try {
       final headers = await _headers();
-      final amount = double.parse(_amountController.text.trim());
+      final amount = double.tryParse(_amountController.text.trim()) ?? 0.0;
       final body = json.encode({
         'year': _selectedYear,
         'amount': amount,

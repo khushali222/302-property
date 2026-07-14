@@ -8,6 +8,43 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Summary/applicant_summery2.dart';
 
 class ApplicantSummeryRepository {
+  /// Web-parity save: posts the new-schema application payload (flat object
+  /// + arrays) straight to /applicant/application/{id}, exactly like web.
+  Future<bool> saveApplicationRaw(
+      Map<String, dynamic> payload, String applicantId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    print('===== APPLICATION SAVE REQUEST BODY (POST /applicant/application/$applicantId) =====');
+    print(jsonEncode(payload));
+    try {
+      final response = await apiPost(
+        Uri.parse('$Api_url/api/applicant/application/$applicantId'),
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode(payload),
+      );
+      print('===== APPLICATION SAVE RESPONSE =====');
+      print(response.body);
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData['statusCode'] == 200) {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ?? 'Application saved successfully');
+        return true;
+      }
+      Fluttertoast.showToast(
+          msg: responseData['message'] ?? 'Failed to save application');
+      return false;
+    } catch (error) {
+      print('saveApplicationRaw exception: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
   Future<bool> addApplicantSummaryForm(Data data, String applicantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");

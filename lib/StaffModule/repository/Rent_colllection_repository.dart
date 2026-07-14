@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,19 +9,38 @@ import '../../constant/constant.dart';
 class RentColllectionReport {
   final String baseUrl = '$Api_url/api/rental_owner/rent-collection-report';
 
+  /// Staff must send their OWN id in the `id` header (staff_id / userId).
+  /// Admin sends adminId. Sending adminId as Staff 401s (CRM-4479).
+  String? _actingId(SharedPreferences prefs) {
+    final role = prefs.getString('role');
+    if (role == 'Staffmember') {
+      final staffId = prefs.getString('staff_id');
+      if (staffId != null && staffId.isNotEmpty) return staffId;
+      final userId = prefs.getString('userId');
+      if (userId != null && userId.isNotEmpty) return userId;
+    }
+    return prefs.getString('adminId');
+  }
+
   Future<Rentcollection_model> FetchRentColllection(
       String adminId, String selectedmonth, String selectedyear,
       {String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    String? staffid = prefs.getString("staff_id");
-    final String endpoint = '/$adminId';
+    final String? authId = _actingId(prefs);
+    final String effectiveAdminId =
+        adminId.isNotEmpty ? adminId : (prefs.getString('adminId') ?? '');
+
+    // URL path = company scope (adminId). Header `id` = logged-in user's own id.
+    final String endpoint = '/$effectiveAdminId';
     String url = '$baseUrl$endpoint?month=$selectedmonth&year=$selectedyear';
 
     if (chargetype != null) {
       url = '$url&selectedChargeType=$chargetype';
     }
+
+    print('[RentCollection][StaffRepo] role=${prefs.getString('role')} '
+        'authIdLen=${authId?.length ?? 0} pathAdminIdLen=${effectiveAdminId.length}');
     print(url);
 
     try {
@@ -31,7 +49,7 @@ class RentColllectionReport {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $staffid",
+          "id": "CRM $authId",
         },
       );
       print("report rent collection ${response.body}");
@@ -41,7 +59,6 @@ class RentColllectionReport {
         print("=== STAFF MODULE - FULL API JSON RESPONSE ===");
         print(parsedJson);
 
-        // Debug: Print summary data order from JSON
         if (parsedJson['summary'] != null) {
           print("=== STAFF MODULE - SUMMARY ORDER FROM JSON ===");
           List summaryList = parsedJson['summary'];
@@ -53,13 +70,12 @@ class RentColllectionReport {
 
         return Rentcollection_model.fromJson(parsedJson);
       } else {
-        // Handle error response
-        print('Failed to load report. Status code: ${response.statusCode}');
-        throw Exception('Failed to load renters insurance');
+        print(
+            '[RentCollection][StaffRepo] failed status=${response.statusCode} body=${response.body}');
+        throw Exception('Failed to load rent collection report');
       }
     } catch (error) {
-      // Handle error during fetch
-      print('Error fetching rent collection reportsd: $error');
+      print('[RentCollection][StaffRepo] error: $error');
       throw Exception('Failed to load rent collection');
     }
   }

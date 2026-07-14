@@ -343,8 +343,8 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
               ),
         drawer: widget.isStaffModule
             ? staff_drawer.CustomDrawerStaff(
-                currentpage: "Mortgage", dropdown: true)
-            : CustomDrawer(currentpage: "Mortgage", dropdown: true),
+                currentpage: "Reports", dropdown: true)
+            : CustomDrawer(currentpage: "Reports", dropdown: true),
         body: SingleChildScrollView(
           child: Padding(padding: const EdgeInsets.all(16), 
           child: Column(

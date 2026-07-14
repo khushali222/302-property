@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -77,10 +76,10 @@ class _EditDocumentState extends State<EditDocument> {
   bool _hasExistingFile = false;
 
   final List<String> items = [
-    "Insurance policy Docs",
-    "Lease agreements",
-    "Lease renewal offers",
-    "Lease renewal letters",
+    "Insurance Policy Docs",
+    "Lease Agreements",
+    "Lease Renewal Offers",
+    "Lease Renewal Letters",
     "Other"
   ];
   String? selectedValue;
@@ -128,9 +127,7 @@ class _EditDocumentState extends State<EditDocument> {
           key: _formkey,
           child: Column(
             children: [
-              SizedBox(
-                height: 25,
-              ),
+              const SizedBox(height: 25),
               titleBar(
                 width: MediaQuery.of(context).size.width * .91,
                 title: 'Edit Document',
@@ -140,26 +137,22 @@ class _EditDocumentState extends State<EditDocument> {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                      border: Border.all(
-                        color: blueColor,
-                      ),
-                      borderRadius: BorderRadius.circular(10.0)),
+                    color: const Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(12.0),
+                    border: Border.all(color: const Color(0xFFCED4DA), width: 1.2),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(
-                          height: 8,
-                        ),
+                        const SizedBox(height: 8),
                         Text('Name *',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: blueColor)),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const SizedBox(height: 8),
                         CustomTextField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -168,188 +161,143 @@ class _EditDocumentState extends State<EditDocument> {
                             return null;
                           },
                           showElevation: false,
-                          borderColor: Color( 0xFFCED4DA),
+                          borderColor: const Color(0xFFCED4DA),
                           keyboardType: TextInputType.text,
                           hintText: 'Enter document name',
                           controller: firstName,
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 16),
                         Text('Document Type *',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: blueColor)),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            FormField<String>(
-                              validator: (value) {
-                                if (selectedValue == null) {
-                                  return 'Please select an option';
-                                }
-                                return null;
-                              },
-                              builder: (FormFieldState<String> state) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DropdownButtonHideUnderline(
-                                      child: DropdownButton2<String>(
-                                        isExpanded: true,
-                                        hint: const Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                'Select Document Type',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        items: items.map((String item) {
-                                          return DropdownMenuItem<String>(
-                                            value: item,
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList(),
-                                        value: selectedValue,
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            selectedValue = value;
-                                            state.didChange(value);
-                                          });
-                                        },
-                                        buttonStyleData: ButtonStyleData(
-                                          height: 50,
-                                          width: 230,
-                                          padding: const EdgeInsets.only(
-                                              left: 14, right: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                              color: Color( 0xFFCED4DA),
-                                            ),
-                                            color: Colors.white,
+                        const SizedBox(height: 8),
+                        FormField<String>(
+                          validator: (value) {
+                            if (selectedValue == null) {
+                              return 'Please select an option';
+                            }
+                            return null;
+                          },
+                          builder: (FormFieldState<String> state) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DropdownButtonHideUnderline(
+                                  child: DropdownButton2<String>(
+                                    isExpanded: true,
+                                    hint: const Text(
+                                      'Select Document Type',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFFADB5BD),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    items: items.map((String item) {
+                                      return DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
                                           ),
-                                         // elevation: 3,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        dropdownStyleData: DropdownStyleData(
-                                          maxHeight: 200,
-                                          width: 200,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(14),
-                                          ),
-                                          offset: const Offset(-20, 0),
-                                          scrollbarTheme: ScrollbarThemeData(
-                                            radius: const Radius.circular(40),
-                                            thickness:
-                                                MaterialStateProperty.all(6),
-                                            thumbVisibility:
-                                                MaterialStateProperty.all(true),
-                                          ),
+                                      );
+                                    }).toList(),
+                                    value: selectedValue,
+                                    onChanged: (String? value) {
+                                      setState(() {
+                                        selectedValue = value;
+                                        state.didChange(value);
+                                      });
+                                    },
+                                    buttonStyleData: ButtonStyleData(
+                                      height: 50,
+                                      padding: const EdgeInsets.only(
+                                          left: 14, right: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: const Color(0xFFCED4DA),
                                         ),
-                                        menuItemStyleData:
-                                            const MenuItemStyleData(
-                                          height: 40,
-                                          padding: EdgeInsets.only(
-                                              left: 14, right: 14),
-                                        ),
+                                        color: Colors.white,
                                       ),
                                     ),
-                                    if (state.hasError)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 14, top: 8),
-                                        child: Text(
-                                          state.errorText!,
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 12,
-                                          ),
-                                        ),
+                                    dropdownStyleData: DropdownStyleData(
+                                      maxHeight: 250,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.white,
                                       ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ],
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        radius: const Radius.circular(40),
+                                        thickness: MaterialStateProperty.all(6),
+                                        thumbVisibility:
+                                            MaterialStateProperty.all(true),
+                                      ),
+                                    ),
+                                    menuItemStyleData: const MenuItemStyleData(
+                                      height: 40,
+                                      padding:
+                                          EdgeInsets.only(left: 14, right: 14),
+                                    ),
+                                  ),
+                                ),
+                                if (state.hasError)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 14, top: 6),
+                                    child: Text(
+                                      state.errorText!,
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
+                        const SizedBox(height: 16),
                         Text('Associate with Tenant (Optional)',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: blueColor)),
-                        const SizedBox(
-                          height: 5,
-                        ),
+                        const SizedBox(height: 8),
                         DropdownButtonHideUnderline(
                           child: DropdownButton2<String>(
                             isExpanded: true,
-                            hint: const Row(
-                              children: [
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'Select Tenant (optional)',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
+                            hint: const Text(
+                              'Select Tenant (optional)',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Color(0xFFADB5BD),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             items: [
-                              // Add "No tenant association" option
                               const DropdownMenuItem<String>(
                                 value: null,
                                 child: Text(
                                   'No tenant association',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: Colors.black87,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              // Add unique tenant options
                               ...uniqueTenants.map((tenant) {
                                 String displayName =
                                     '${tenant['tenant_firstName'] ?? ''} ${tenant['tenant_lastName'] ?? ''}'
                                         .trim();
-                                final tenantId =
-                                    tenant['tenant_id']?.toString();
+                                final tenantId = tenant['tenant_id']?.toString();
                                 return DropdownMenuItem<String>(
                                   value: tenantId,
                                   child: Text(
@@ -358,8 +306,7 @@ class _EditDocumentState extends State<EditDocument> {
                                         : displayName,
                                     style: const TextStyle(
                                       fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: Colors.black87,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -377,30 +324,26 @@ class _EditDocumentState extends State<EditDocument> {
                             },
                             buttonStyleData: ButtonStyleData(
                               height: 50,
-                              width: 230,
                               padding:
                                   const EdgeInsets.only(left: 14, right: 14),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Color( 0xFFCED4DA),
+                                  color: const Color(0xFFCED4DA),
                                 ),
                                 color: Colors.white,
                               ),
-                             // elevation: 3,
                             ),
                             dropdownStyleData: DropdownStyleData(
-                              maxHeight: 200,
-                              width: 200,
+                              maxHeight: 250,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
                               ),
-                              offset: const Offset(-20, 0),
                               scrollbarTheme: ScrollbarThemeData(
                                 radius: const Radius.circular(40),
                                 thickness: MaterialStateProperty.all(6),
-                                thumbVisibility:
-                                    MaterialStateProperty.all(true),
+                                thumbVisibility: MaterialStateProperty.all(true),
                               ),
                             ),
                             menuItemStyleData: const MenuItemStyleData(
@@ -409,36 +352,25 @@ class _EditDocumentState extends State<EditDocument> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Text(
-                            'Upload file (Optional - leave empty to keep existing)',
+                        const SizedBox(height: 16),
+                        Text('Upload File (Optional - leave empty to keep existing)',
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: blueColor)),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        if (_selectedFile == null)
+                        const SizedBox(height: 8),
+                        if (_selectedFile == null && !_hasExistingFile)
                           GestureDetector(
-                            onTap: () {
-                              _pickFile().then((_) {
-                                setState(() {
-                                  _fileUploadError = null;
-                                  _hasExistingFile = false;
-                                });
-                              });
-                            },
+                            onTap: () => _showUploadOptions(),
                             child: Container(
                               width: double.infinity,
-                              padding: EdgeInsets.all(16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 28, horizontal: 16),
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    style: BorderStyle.solid),
-                                borderRadius: BorderRadius.circular(8),
+                                    color: const Color(0xFFCED4DA), width: 1.2),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
                                 children: [
@@ -447,22 +379,23 @@ class _EditDocumentState extends State<EditDocument> {
                                     height: 50,
                                     width: 50,
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 10),
                                   Text(
                                     'Click to upload new document',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey[700],
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor,
                                     ),
                                   ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    'Supported File Types: PDF, JPG, PNG, GIF, BMP, TIFF, WEBP',
+                                  const SizedBox(height: 6),
+                                  const Text(
+                                    'Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
+                                        fontSize: 12,
+                                        color: Color(0xFF9AA0A6)),
                                   ),
                                 ],
                               ),
@@ -470,7 +403,7 @@ class _EditDocumentState extends State<EditDocument> {
                           ),
                         if (_fileUploadError != null)
                           Padding(
-                            padding: const EdgeInsets.only(left: 14, top: 8),
+                            padding: const EdgeInsets.only(left: 4, top: 6),
                             child: Text(
                               _fileUploadError!,
                               style: const TextStyle(
@@ -481,48 +414,77 @@ class _EditDocumentState extends State<EditDocument> {
                           ),
                         if (_hasExistingFile && _selectedFile == null)
                           Padding(
-                            padding: const EdgeInsets.only(top: 12),
+                            padding: const EdgeInsets.only(top: 10),
                             child: Container(
                               width: double.infinity,
-                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
                               decoration: BoxDecoration(
-                                //color: Color(0xFFE3F2FD), // Light blue background
-                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: Colors.grey.shade300, // Blue border
-                                  width: 1.5,
+                                  color: const Color(0xFFCED4DA),
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.insert_drive_file,
-                                    color: blueColor,
-                                    size: 20,
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE8EEF7),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      Icons.insert_drive_file_outlined,
+                                      color: blueColor,
+                                      size: 22,
+                                    ),
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Current file:',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey[700],
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        SizedBox(height: 2),
-                                        Text(
-                                          widget.documentData['document_name'] ?? 'N/A',
-                                          style: TextStyle(
+                                          widget.documentData['document_name'] ??
+                                              'N/A',
+                                          style: const TextStyle(
                                             fontSize: 14,
-                                            color: blueColor,
+                                            color: Colors.black87,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          'Current file',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[500],
+                                          ),
+                                        ),
                                       ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _hasExistingFile = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey[200],
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 16,
+                                        color: Colors.black54,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -530,139 +492,122 @@ class _EditDocumentState extends State<EditDocument> {
                             ),
                           ),
                         if (_selectedFile != null) ...[
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
                             decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.grey.shade300,
-                                  style: BorderStyle.solid),
-                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                              border:
+                                  Border.all(color: const Color(0xFFCED4DA)),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                SizedBox(height: 15),
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 8),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(6),
-                                    border:
-                                        Border.all(color: Colors.grey[300]!),
+                                Icon(Icons.insert_drive_file,
+                                    color: blueColor, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _selectedFile!.path.split('/').last,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          _selectedFile!.path.split('/').last,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black87,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedFile = null;
-                                            _fileUploadError = null;
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          size: 18,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedFile = null;
+                                      _fileUploadError = null;
+                                    });
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: Colors.red,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ],
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                 child: Row(
                   children: [
-                    Container(
-                        height: 45,
-                        width: 170,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: blueColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0))),
-                            onPressed: isLoading
-                                ? null
-                                : () async {
-                                    // Validate form fields
-                                    bool isFormValid =
-                                        _formkey.currentState?.validate() ??
-                                            false;
-
-                                    // Only proceed if validation passes
-                                    if (isFormValid) {
-                                      print('valid');
-                                      updateDocument();
-                                    } else {
-                                      print('invalid');
-                                    }
-                                  },
-                            child: isLoading
-                                ? SpinKitFadingCircle(
-                                    color: Colors.white,
-                                    size: 20,
-                                  )
-                                : const Text(
-                                    'Update',
-                                    style: TextStyle(
-                                        color: Color(
-                                          0xFFf7f8f9,
-                                        ),
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ))),
-                    const SizedBox(
-                      width: 8,
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: blueColor),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                                color: blueColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ),
+                      ),
                     ),
-                    Container(
-                        height: 45,
-                        width: 120,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFffffff),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0))),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold),
-                            )))
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  bool isFormValid =
+                                      _formkey.currentState?.validate() ??
+                                          false;
+                                  if (isFormValid) {
+                                    updateDocument();
+                                  }
+                                },
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Update Document',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            SizedBox(height: 25),
             ],
           ),
         ),
@@ -670,27 +615,137 @@ class _EditDocumentState extends State<EditDocument> {
     );
   }
 
-  Future<void> _pickFile() async {
+  void _showUploadOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        Widget sourceTile({
+          required IconData icon,
+          required String title,
+          required String subtitle,
+          required VoidCallback onPick,
+        }) {
+          return InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.pop(sheetContext);
+              onPick();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: const Color(0xFFDBE0E5)),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF4F8FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, color: blueColor, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color.fromRGBO(21, 43, 81, 1))),
+                        const SizedBox(height: 2),
+                        Text(subtitle,
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey[600])),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDBE0E5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Upload Document',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(21, 43, 81, 1))),
+                const SizedBox(height: 4),
+                Text('Choose where to pick your document from',
+                    style: TextStyle(fontSize: 12.5, color: Colors.grey[600])),
+                const SizedBox(height: 18),
+                sourceTile(
+                  icon: Icons.photo_library_rounded,
+                  title: 'Photo Gallery',
+                  subtitle: '.jpg, .png',
+                  onPick: () => _pickFiles(FileType.image, null),
+                ),
+                const SizedBox(height: 12),
+                sourceTile(
+                  icon: Icons.insert_drive_file_rounded,
+                  title: 'Browse Files',
+                  subtitle: '.pdf, .doc, .docx, .txt',
+                  onPick: () => _pickFiles(
+                      FileType.custom, ['pdf', 'doc', 'docx', 'txt']),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFiles(FileType type, List<String>? allowedExtensions) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: [
-          'pdf',
-          'jpg',
-          'jpeg',
-          'png',
-          'gif',
-          'bmp',
-          'tiff',
-          'webp'
-        ],
+        type: type,
+        allowedExtensions: allowedExtensions,
         allowMultiple: false,
       );
 
       if (result != null && result.files.single.path != null) {
-        File file = File(result.files.single.path!);
+        // Auto-fill the Name from the newly selected file (web parity): strip
+        // the extension. On Edit, always sync to the new file's name.
+        final pickedName = result.files.single.name;
+        final dotIndex = pickedName.lastIndexOf('.');
+        final nameWithoutExt =
+            dotIndex > 0 ? pickedName.substring(0, dotIndex) : pickedName;
         setState(() {
-          _selectedFile = file;
+          _selectedFile = File(result.files.single.path!);
+          _fileUploadError = null;
+          firstName.text = nameWithoutExt;
         });
       }
     } catch (e) {
@@ -707,20 +762,17 @@ class _EditDocumentState extends State<EditDocument> {
     switch (extension) {
       case 'pdf':
         return 'application/pdf';
+      case 'doc':
+        return 'application/msword';
+      case 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      case 'txt':
+        return 'text/plain';
       case 'jpg':
       case 'jpeg':
         return 'image/jpeg';
       case 'png':
         return 'image/png';
-      case 'gif':
-        return 'image/gif';
-      case 'bmp':
-        return 'image/bmp';
-      case 'tiff':
-      case 'tif':
-        return 'image/tiff';
-      case 'webp':
-        return 'image/webp';
       default:
         return 'application/octet-stream';
     }
@@ -729,13 +781,12 @@ class _EditDocumentState extends State<EditDocument> {
   bool _isValidFileType(String fileName) {
     final supportedExtensions = [
       '.pdf',
+      '.doc',
+      '.docx',
+      '.txt',
       '.jpg',
       '.jpeg',
       '.png',
-      '.gif',
-      '.bmp',
-      '.tiff',
-      '.webp'
     ];
     final extension =
         fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
@@ -818,7 +869,7 @@ class _EditDocumentState extends State<EditDocument> {
         if (!_isValidFileType(_selectedFile!.path)) {
           setState(() {
             _fileUploadError =
-                'Unsupported file type. Please select PDF, JPG, PNG, GIF, BMP, TIFF, or WEBP files.';
+                'Unsupported file type. Please select PDF, DOC, DOCX, TXT, JPG, or PNG files.';
             isLoading = false;
           });
           return;

@@ -135,9 +135,11 @@ class _MakePaymentState extends State<MakePayment> {
     );
   }
 
-  bool creditcard = false;
+  // WEB parity: fail-open like AddPayment.jsx — credit/debit default to
+  // accepted, ACH to not accepted, until/unless payment_settings says otherwise.
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
   Future<void> fetchPaymentSettings() async {
     // Don't fetch if no tenant is selected
     if (selectedTenantId == null || selectedTenantId!.isEmpty) {
@@ -170,9 +172,9 @@ class _MakePaymentState extends State<MakePayment> {
       print("achaccepted ${achaccepted}");
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {
-          achaccepted = jsonData['data']['achAccepted'];
-          creditcard = jsonData['data']['creditCardAccepted'];
-          debitcard = jsonData['data']['debitCardAccepted'];
+          achaccepted = jsonData['data']['achAccepted'] ?? false;
+          creditcard = jsonData['data']['creditCardAccepted'] ?? true;
+          debitcard = jsonData['data']['debitCardAccepted'] ?? true;
           print(' credit card accepted ${creditcard}');
           // Update payment methods list with availability status
           _updatePaymentMethods();
@@ -196,8 +198,10 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       selectedTenantId = widget.tenantId;
       tenantname =
-          "${c_data.tenantData["tenant_firstName"]} ${c_data.tenantData["tenant_lastName"]}";
-      _startDate.text = c_data.entry!.first.date!;
+          "${(c_data.tenantData ?? {})["tenant_firstName"]} ${(c_data.tenantData ?? {})["tenant_lastName"]}";
+      _startDate.text = (c_data.entry?.isNotEmpty ?? false)
+          ? (c_data.entry!.first.date ?? "")
+          : "";
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
 
@@ -215,11 +219,11 @@ class _MakePaymentState extends State<MakePayment> {
             };
           }).toList() ??
           [];
-      for (var i = 0; i < c_data.entry!.length; i++) {
+      for (var i = 0; i < (c_data.entry ?? []).length; i++) {
         if (i == 0) {
-          charges_balances[0] = c_data.entry![i].amount!.ceil().toDouble();
+          charges_balances[0] = (c_data.entry![i].amount ?? 0).ceil().toDouble();
         } else {
-          charges_balances.add(c_data.entry![i].amount!.ceil().toDouble());
+          charges_balances.add((c_data.entry![i].amount ?? 0).ceil().toDouble());
         }
       }
       print("rows length:- ${rows!.length}");
@@ -230,7 +234,7 @@ class _MakePaymentState extends State<MakePayment> {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
       print(rows);
-      totalAmount = c_data.totalAmount!;
+      totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
     AddFields();
@@ -366,6 +370,7 @@ class _MakePaymentState extends State<MakePayment> {
             'last_name': '${tenant['tenant_lastName']}',
             'email': '${tenant['tenant_email']}',
             'overridefee': '${tenant['override_fee']}',
+            'enableoverridefee': '${tenant['enable_override_fee']}',
           });
         }
 
@@ -433,6 +438,16 @@ class _MakePaymentState extends State<MakePayment> {
       }
     }
     return null; // or you could return an empty string or any default value
+  }
+
+  bool getEnableOverrideFee(String tenantId) {
+    for (var tenant in tenants) {
+      if (tenant['tenant_id'] == tenantId) {
+        final raw = tenant['enableoverridefee'];
+        return raw == 'true' || raw == '1';
+      }
+    }
+    return false;
   }
 
   Future<void> fetchDropdownData() async {
@@ -997,28 +1012,6 @@ class _MakePaymentState extends State<MakePayment> {
     });
   }
 
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
-    }
-  }
-
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1053,16 +1046,6 @@ class _MakePaymentState extends State<MakePayment> {
         print('CC Bin: ${billing.ccBin}');
       });
 
-      // List<String> binResults = await performBinChecks(customerData);
-      //
-      // for (int i = 0; i < customerData.billing.length; i++) {
-      //   customerData.billing[i].binResult = binResults[i];
-      // }
-      //
-      // print('Number of BIN check results: ${binResults.length}');
-      // binResults.forEach((result) {
-      //   print('BIN Check Result: $result');
-      // });
       // Map card types to billing records safely (avoids index mismatch and nulls).
       final Map<String, String> cardTypeByBillingId = {};
       for (final dynamic item in cardDetailsList) {
@@ -1091,15 +1074,6 @@ class _MakePaymentState extends State<MakePayment> {
 
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
-
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
-  }
 
   Map<int, bool> selectedRows = {};
   double? surCharge;
@@ -1138,34 +1112,53 @@ class _MakePaymentState extends State<MakePayment> {
           return;
         }
 
-        if ((cardDetails[selectedcardindex!].binResult ?? '').toUpperCase() ==
-            "CREDIT") {
+        final String binResult =
+            (cardDetails[selectedcardindex!].binResult ?? '').toUpperCase();
+
+        if (binResult == "CREDIT") {
           setState(() {
-            surCharge = surchargeData['surcharge_percent'] != null
-                ? surchargeData['surcharge_percent'].toDouble()
-                : 0.0;
+            surCharge =
+                num.tryParse('${surchargeData['surcharge_percent'] ?? 0}')
+                        ?.toDouble() ??
+                    0.0;
+          });
+        } else if (binResult == "DEBIT") {
+          setState(() {
+            final String? overrideFee = getOverrideFee(selectedTenantId!);
+            final bool enableOverrideFee =
+                getEnableOverrideFee(selectedTenantId!);
+            print("overrideFee   ${overrideFee}");
+            print("enableOverrideFee   ${enableOverrideFee}");
+            if (enableOverrideFee &&
+                overrideFee != null &&
+                overrideFee != "null" &&
+                overrideFee.trim().isNotEmpty) {
+              surCharge = double.tryParse(overrideFee) ?? 0.0;
+            } else {
+              surCharge = surchargeData['surcharge_percent_debit'] != null
+                  ? num.tryParse(
+                              surchargeData['surcharge_percent_debit'].toString())
+                          ?.toDouble() ??
+                      0.0
+                  : 0.0;
+            }
           });
         } else {
           setState(() {
-            String? overrideFee = getOverrideFee(selectedTenantId!);
-            print("overrideFee   ${overrideFee}");
-            if (overrideFee == null || overrideFee == "null")
-              surCharge = surchargeData['surcharge_percent_debit'] != null
-                  ? surchargeData['surcharge_percent_debit'].toDouble()
-                  : 0.0;
-            else
-              surCharge = double.tryParse(overrideFee) ?? 0.0;
+            surCharge = 0.0;
           });
         }
       }
 
       setState(() {
-        surChargeAchper = surchargeData['surcharge_percent_ACH'] != null
-            ? surchargeData['surcharge_percent_ACH'].toDouble()
-            : 0.0;
-        surChargeAchflat = surchargeData['surcharge_flat_ACH'] != null
-            ? surchargeData['surcharge_flat_ACH'].toDouble()
-            : 0.0;
+        surChargeAchper = num.tryParse(
+                    '${surchargeData['surcharge_percent_ACH'] ?? 0}')
+                ?.toDouble() ??
+            0.0;
+        surChargeAchflat = num.tryParse(
+                    '${surchargeData['surcharge_flat_ACH'] ?? 0}')
+                ?.toDouble() ??
+            0.0;
       });
 
       print(surChargeAchper);
@@ -1890,6 +1883,9 @@ class _MakePaymentState extends State<MakePayment> {
                                       print(
                                           'Selected payment method: $_selectedPaymentMethod');
                                       surge_count();
+                                      if (_selectedPaymentMethod == "Card") {
+                                        fetchSurcharge();
+                                      }
                                     } else {
                                       print(
                                           'Payment method $cleanValue is not available');
@@ -2301,22 +2297,37 @@ class _MakePaymentState extends State<MakePayment> {
                                                             children: [
                                                               const SizedBox(
                                                                   height: 4),
-                                                              _buildLogosBlock(
-                                                                  item.ccType ??
-                                                                      ''),
-                                                              const SizedBox(
-                                                                  height: 4),
+                                                              // _buildLogosBlock(
+                                                              //     item.ccType ??
+                                                              //         ''),
+                                                              // const SizedBox(
+                                                              //     height: 4),
+                                                              if (_resolveCardBrandLabel(
+                                                                      item.ccType,
+                                                                      item.ccNumber)
+                                                                  .isNotEmpty) ...[
+                                                                Text(
+                                                                  _resolveCardBrandLabel(
+                                                                      item.ccType,
+                                                                      item.ccNumber),
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color:
+                                                                          blueColor),
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 2),
+                                                              ],
                                                               Text(
                                                                 '${item.binResult} CARD',
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: Color
-                                                                        .fromRGBO(
-                                                                            21,
-                                                                            43,
-                                                                            81,
-                                                                            1)),
+                                                                style: TextStyle(
+                                                                    fontSize: 11,
+                                                                    color:
+                                                                        blueColor),
                                                               ),
                                                             ],
                                                           ),
@@ -3763,9 +3774,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     if (_selectedPaymentMethod == "Card")
                                       buildAmountContainer(
                                           'Surcharge included',
-                                          _safeParseAmountText() *
-                                              (surCharge ?? 0.0) /
-                                              100),
+                                          double.parse((_safeParseAmountText() *
+                                                  (surCharge ?? 0.0) /
+                                                  100)
+                                              .toStringAsFixed(2))),
                                     if (_selectedPaymentMethod == "ACH")
                                       buildAmountContainer('Surcharge included',
                                           surchargecount!),
@@ -3775,10 +3787,11 @@ class _MakePaymentState extends State<MakePayment> {
                                     buildAmountContainer(
                                         'Total Amount',
                                         (_selectedPaymentMethod == "Card")
-                                            ? (_safeParseAmountText() *
-                                                    (surCharge ?? 0.0) /
-                                                    100) +
-                                                _safeParseAmountText()
+                                            ? double.parse(((_safeParseAmountText() *
+                                                            (surCharge ?? 0.0) /
+                                                            100) +
+                                                        _safeParseAmountText())
+                                                    .toStringAsFixed(2))
                                             : (_selectedPaymentMethod == "ACH")
                                                 ? (finaltotal ?? 0.0)
                                                 : _safeParseAmountText()),
@@ -3824,6 +3837,13 @@ class _MakePaymentState extends State<MakePayment> {
                             // }
                             if ((_formKey.currentState?.validate() ?? false) &&
                                 validationMessage == null) if (isChecked) {
+                              if ((double.tryParse(amountController.text) ??
+                                      0.0) <=
+                                  0) {
+                                Fluttertoast.showToast(
+                                    msg: "Please enter a valid amount");
+                                return;
+                              }
                               setState(() {
                                 _isLoading = true; // Show loading indicator
                               });
@@ -3837,9 +3857,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
                                             .text
-                                            .trim()), // Set the date to the desired date
-                                        'balance': charges_balances[
-                                            index], // Add balance from charges_balances list
+                                            .trim()),
+                                        'balance': entry['amount'] ?? 0.0,
                                       },
                                     );
                                   })
@@ -3897,7 +3916,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         selectedBilling.customerVaultId ?? "",
                                     billingId: selectedBilling.billingId ?? "",
                                     surcharge:
-                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100).toStringAsFixed(2)}",
                                     amount:
                                         "${_safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
@@ -4096,8 +4115,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
@@ -4146,8 +4164,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
                                   emailName: selectedTenant["email"]!,
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenantId!,
@@ -4192,9 +4209,8 @@ class _MakePaymentState extends State<MakePayment> {
                                         ...entry,
                                         'date': reverseFormatDate(_startDate
                                             .text
-                                            .trim()), // Set the date to the desired date
-                                        'balance': charges_balances[
-                                            index], // Add balance from charges_balances list
+                                            .trim()),
+                                        'balance': entry['amount'] ?? 0.0,
                                       },
                                     );
                                   })
@@ -4254,7 +4270,7 @@ class _MakePaymentState extends State<MakePayment> {
                                             "")
                                         : "",
                                     surcharge:
-                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100).toStringAsFixed(2)}",
                                     amount:
                                         "${_safeParseAmountText()}",
                                     tenantId: selectedTenantId!,
@@ -4468,8 +4484,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       selectedTenant?["first_name"] ?? "",
                                   lastName: selectedTenant?["last_name"] ?? "",
                                   emailName: selectedTenant?["email"] ?? "",
-                                  surcharge:
-                                      "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                  surcharge: "0.00",
                                   amount:
                                       "${_safeParseAmountText()}",
                                   tenantId: selectedTenant != null
@@ -4531,8 +4546,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         // firstName: selectedTenant["first_name"]!,
                                         // lastName: selectedTenant["last_name"]!,
                                         // emailName: selectedTenant["email"]!,
-                                        surcharge:
-                                            "${(_safeParseAmountText() * (surCharge ?? 0.0) / 100)}",
+                                        surcharge: "0.00",
                                         amount:
                                             "${_safeParseAmountText()}",
                                         tenantId: selectedTenant != null
@@ -4724,30 +4738,22 @@ class _MakePaymentState extends State<MakePayment> {
 
   surge_count() {
     final amount = _safeParseAmountText();
-    if (amount > 0) {
-      if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0) &&
-          _selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100) +
-              (surChargeAchflat ?? 0.0);
-          finaltotal = amount + (surchargecount ?? 0.0);
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchflat != null || surChargeAchflat != 0.0)) {
-        setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = amount + (surchargecount ?? 0.0);
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
-        });
-      } else if (_selectedPaymentMethod == "ACH" &&
-          (surChargeAchper != null || surChargeAchper != 0.0)) {
-        setState(() {
-          surchargecount = (amount * (surChargeAchper ?? 0.0) / 100);
-          finaltotal = amount + (surchargecount ?? 0.0);
-        });
+    if (_selectedPaymentMethod == "ACH") {
+      final double achPercent =
+          num.tryParse(surChargeAchper?.toString() ?? '')?.toDouble() ?? 0.0;
+      final double achFlat =
+          num.tryParse(surChargeAchflat?.toString() ?? '')?.toDouble() ?? 0.0;
+      // Recompute from scratch each time so a prior fee can never linger when
+      // the amount is cleared or the ACH config has no fee (matches web reset).
+      double surcharge = 0.0;
+      if (amount > 0) {
+        if (achPercent > 0) surcharge += amount * achPercent / 100;
+        if (achFlat > 0) surcharge += achFlat;
       }
+      setState(() {
+        surchargecount = double.parse(surcharge.toStringAsFixed(2));
+        finaltotal = double.parse((amount + surcharge).toStringAsFixed(2));
+      });
     }
   }
 
@@ -4805,5 +4811,28 @@ class _MakePaymentState extends State<MakePayment> {
         );
       },
     );
+  }
+
+  // Display-only: resolves the card network brand for the Card Type column.
+  // Prefers the processor cc_type, then infers from the card number's first
+  // digit. Does not read or change binResult, so surcharge and card-acceptance
+  // logic remain unaffected.
+  String _resolveCardBrandLabel(String? ccType, String? ccNumber) {
+    final String raw = (ccType ?? '').trim().toLowerCase();
+    if (raw.contains('american express') || raw.contains('amex')) return 'Amex';
+    if (raw.contains('mastercard') || raw.contains('master card'))
+      return 'Mastercard';
+    if (raw.contains('visa')) return 'Visa';
+    if (raw.contains('discover')) return 'Discover';
+    if (raw.contains('jcb')) return 'JCB';
+    if (raw.contains('diners')) return 'Diners';
+
+    final String digits = (ccNumber ?? '').replaceAll(RegExp(r'\D'), '');
+    final String first = digits.isNotEmpty ? digits[0] : '';
+    if (first == '3') return 'Amex';
+    if (first == '4') return 'Visa';
+    if (first == '5') return 'Mastercard';
+    if (first == '6') return 'Discover';
+    return '';
   }
 }

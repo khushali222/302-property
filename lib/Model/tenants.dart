@@ -58,6 +58,9 @@ class Tenant {
   double? overRideFee;
   bool? allowAch;
   bool? allowCard;
+  String? welcomeEmailSentAt;
+  String? passwordSetAt;
+  bool? hasPassword;
 
   Tenant({
     this.id,
@@ -135,6 +138,11 @@ class Tenant {
     enableoverrideFee = json['enable_override_fee'];
     allowAch = json['allow_ach'];
     allowCard = json['allow_card'];
+    welcomeEmailSentAt = json['welcome_email_sent_at']?.toString();
+    passwordSetAt = json['password_set_at']?.toString();
+    hasPassword = json['has_password'] == true ||
+        (json['tenant_password'] != null &&
+            json['tenant_password'].toString().isNotEmpty);
     if (json['leaseData'] != null) {
       // Fixed the field name
       leaseData = <TenantLeaseData>[];

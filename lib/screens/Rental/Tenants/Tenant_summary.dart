@@ -138,7 +138,12 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     try {
       final list = await _tenantService.fetchTenantsummery(widget.tenantId);
       if (mounted && list != null && list.isNotEmpty) {
-        setState(() => _tenantDetails = list.first);
+        setState(() {
+          _tenantDetails = list.first;
+          // Also refresh the passed-in tenant so every direct widget.tenants
+          // read (e.g. the header name) reflects the edit immediately.
+          widget.tenants = list.first;
+        });
       }
     } catch (_) {}
   }
@@ -1118,12 +1123,17 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                     widget.tenantId) ??
                                             [];
                                     if (tenantData.isNotEmpty && mounted) {
-                                      await Navigator.of(context)
+                                      final updated = await Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (context) => EditTenants(
                                                     tenantId: widget.tenantId,
                                                     tenants: tenantData.first,
                                                   )));
+                                      // Reload summary after a successful edit so
+                                      // the screen shows updated details immediately.
+                                      if (updated == true && mounted) {
+                                        await _refreshTenantDetails();
+                                      }
                                     }
                                   },
                                   child: Container(
@@ -1544,161 +1554,28 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                 //   ),
                                 // ),
 
-                                _buildTenantInfoSection(),
-                                const SizedBox(
-                                  height: 10,
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      _buildTenantInfoSection(),
+                                      _sectionDivider(),
+                                      _buildPaymentSection(),
+                                      _sectionDivider(),
+                                      _buildEmergencyContactSection(),
+                                      _sectionDivider(),
+                                      _buildAccountLoginSection(),
+                                    ],
+                                  ),
                                 ),
-
-                                Builder(builder: (context) {
-                                  final t = _tenantDetails ?? widget.tenants;
-                                  // Default both on when API omits allow_ach / allow_card (null).
-                                  final allowAch = t?.allowAch != false;
-                                  final allowCard = t?.allowCard != false;
-                                  final canEdit = t != null;
-                                  return Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade300),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 2),
-                                            Text(
-                                              "Payments Details",
-                                              style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 17,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            const SizedBox(width: 2),
-                                            Text(
-                                              "Allowed Payment Methods",
-                                              style: TextStyle(
-                                                color: Colors.grey.shade700,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10,
-                                                    child: Checkbox(
-                                                      value: allowAch,
-                                                      onChanged: canEdit
-                                                          ? (v) =>
-                                                              _onPaymentAllowAchChanged(
-                                                                  v == true)
-                                                          : null,
-                                                      activeColor: blueColor,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    "ACH",
-                                                    style: TextStyle(
-                                                      color: allowAch
-                                                          ? blueColor
-                                                          : Colors
-                                                              .grey.shade600,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 10,
-                                                    child: Checkbox(
-                                                      value: allowCard,
-                                                      onChanged: canEdit
-                                                          ? (v) =>
-                                                              _onPaymentAllowCardChanged(
-                                                                  v == true)
-                                                          : null,
-                                                      activeColor: blueColor,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    "Card",
-                                                    style: TextStyle(
-                                                      color: allowCard
-                                                          ? blueColor
-                                                          : Colors
-                                                              .grey.shade600,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Row(
-                                          children: [
-                                            Material(
-                                              color: Colors.transparent,
-                                              child: InkWell(
-                                                onTap:
-                                                    _openManagePaymentMethods,
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                    color: blueColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
-                                                  ),
-                                                  child: const Text(
-                                                    "Manage Payment Methods",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const SizedBox(height: 16),
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
@@ -2131,6 +2008,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                   builder: (context) =>
                                                       AdminAddTenantInsurance(
                                                     tenantid: widget.tenantId,
+                                                    leaseId: _leaseIdForAddCard ?? widget.tenantId,
+                                                    tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                   ),
                                                 ),
                                               );
@@ -2443,7 +2322,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                               style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                             ),
                                                                                             TextSpan(
-                                                                                              text: '${Propertytype.liabilityCoverage ?? ''}',
+                                                                                              text: '\$${Propertytype.liabilityCoverage ?? ''}',
                                                                                               style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                             ),
                                                                                           ],
@@ -2527,6 +2406,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                     MaterialPageRoute(
                                                                                         builder: (context) => editAdminInsurance(
                                                                                           data: Propertytype,
+                                                                                          tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                                                         )));
                                                                                 if (check == true) {
                                                                                   setState(() {
@@ -2575,7 +2455,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                     tenantInsuranceId: Propertytype.sId,
                                                                                                     policy: Propertytype.insurancePolicyDocument,
                                                                                                     status: Propertytype.policyStatus?.toLowerCase() ?? 'expired',
+                                                                                                    phoneNumber: Propertytype.insuranceCompanyPhoneNumber,
+                                                                                                    rentersInsuranceId: Propertytype.rentersInsuranceId,
+                                                                                                    leaseId: Propertytype.leaseId,
                                                                                                   ),
+                                                                                                  tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                                                                 )));
                                                                                     if (check == true) {
                                                                                       setState(() {
@@ -2898,7 +2782,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             _pagedData[i].policyId!,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].liabilityCoverage.toString()!,
+                                                                            '\$${_pagedData[i].liabilityCoverage ?? ''}',
                                                                           ),
                                                                           _buildDataCell(
                                                                             _pagedData[i].active == true
@@ -2936,9 +2820,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                     ],
                                   ),
                                 ),
-
-                                const SizedBox(height: 10),
-                                _buildEmergencyContactSection(),
 
                                 SizedBox(height: 10),
                                 Padding(
@@ -3191,13 +3072,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
 
   Widget _buildEmergencyContactSection() {
     final list = _combinedEmergencyContacts;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -3213,18 +3088,20 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                   ),
                 ),
               ),
-              Material(
-                color: blueColor,
-                borderRadius: BorderRadius.circular(8),
-                child: InkWell(
-                  onTap: () => _showEmergencyContactDialog(context, null),
-                  borderRadius: BorderRadius.circular(8),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Icon(Icons.add, color: Colors.white, size: 22),
-                  ),
-                ),
-              ),
+              // Add button removed — emergency contacts are managed from the
+              // Edit Tenant form; the details screen is read-only.
+              // Material(
+              //   color: blueColor,
+              //   borderRadius: BorderRadius.circular(8),
+              //   child: InkWell(
+              //     onTap: () => _showEmergencyContactDialog(context, null),
+              //     borderRadius: BorderRadius.circular(8),
+              //     child: const Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              //       child: Icon(Icons.add, color: Colors.white, size: 22),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 10),
@@ -3289,8 +3166,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
             ...list.asMap().entries.map(
                 (entry) => _buildEmergencyContactRow(entry.key, entry.value)),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildEmergencyContactRow(int index, MergedEmergencyContact c) {
@@ -3430,6 +3306,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                       const SizedBox(height: 10),
                     ],
                   ),
+                  // Edit/Delete removed — emergency contacts are managed from
+                  // the Edit Tenant form; the details screen is read-only.
+                  /*
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -3485,6 +3364,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                       ),
                     ],
                   ),
+                  */
                   const SizedBox(height: 10),
                 ],
               ),
@@ -3494,177 +3374,243 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     );
   }
 
-  Widget _buildTenantInfoSection() {
-    final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    final phone = formatPhoneNumber(widget.tenants?.tenantPhoneNumber ?? '');
-    final email = (widget.tenants?.tenantEmail ?? '').isEmpty
-        ? '—'
-        : (widget.tenants?.tenantEmail ?? '');
-    final birthDate = (widget.tenants?.tenantBirthDate ?? '').isEmpty
-        ? 'N/A'
-        : dateProvider.formatCurrentDate(widget.tenants?.tenantBirthDate ?? '');
-    final notes = (widget.tenants?.comments ?? '').isEmpty
-        ? 'N/A'
-        : (widget.tenants?.comments ?? '');
-    final isExpanded = expandedTenantInfo;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
+  bool _sendingSetupEmail = false;
+
+  Future<void> _sendSetupEmail() async {
+    setState(() => _sendingSetupEmail = true);
+    await repo.sendSetupEmail(widget.tenantId);
+    if (mounted) setState(() => _sendingSetupEmail = false);
+  }
+
+  // Web-aligned "Account & Login" section: state-aware setup/resend/reset.
+  Widget _buildAccountLoginSection() {
+    final t = widget.tenants;
+    final hasPassword =
+        ((t?.passwordSetAt ?? '').isNotEmpty) || (t?.hasPassword == true);
+    final invited = (t?.welcomeEmailSentAt ?? '').isNotEmpty;
+    final String title = hasPassword ? 'Reset Password' : 'Welcome Email';
+    final String desc = hasPassword
+        ? 'This tenant already has a password on file. Send them a reset link if they cannot log in.'
+        : invited
+            ? 'A setup email was already sent. Resend it if the tenant did not receive the link.'
+            : 'Send the tenant a one-time link (valid 4 hours) to set up their account and password.';
+    final String buttonText = hasPassword
+        ? 'Send password reset instructions'
+        : invited
+            ? 'Resend setup email'
+            : 'Send account setup email';
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            const SizedBox(width: 2),
-            Expanded(
-                child: Text("Tenant Information",
+          Text('Account & Login',
+              style: TextStyle(
+                  color: blueColor, fontWeight: FontWeight.bold, fontSize: 17)),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title,
                     style: TextStyle(
                         color: blueColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 17)))
-          ]),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-                color: const Color(0xFFF4F8FF),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFDBE0E5))),
-            child: ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Row(
-                children: [
-                  SizedBox(width: MediaQuery.of(context).size.width * .02),
-                  Expanded(
-                      flex: 2,
-                      child: Text("      Phone",
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold))),
-                  SizedBox(width: MediaQuery.of(context).size.width * .07),
-                  Expanded(
-                      flex: 2,
-                      child: Text("Email",
-                          style: TextStyle(
-                              color: blueColor,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold))),
-                  const SizedBox(width: 20),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: const Color(0xFFDBE0E5)),
-                borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      InkWell(
-                        onTap: () => setState(
-                            () => expandedTenantInfo = !expandedTenantInfo),
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 5),
-                          padding: !isExpanded
-                              ? const EdgeInsets.only(bottom: 10)
-                              : const EdgeInsets.only(top: 10),
-                          child: FaIcon(
-                              isExpanded
-                                  ? FontAwesomeIcons.sortUp
-                                  : FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: InkWell(
-                            onTap: () => setState(
-                                () => expandedTenantInfo = !expandedTenantInfo),
-                            child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: Text(phone.isEmpty ? '—' : phone,
-                                    style: TextStyle(
-                                        color: blueColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 13)))),
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * .02),
-                      Expanded(
-                          flex: 2,
-                          child: Text(email,
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12))),
-                      const SizedBox(width: 10),
-                    ],
+                        fontSize: 16)),
+                const SizedBox(height: 8),
+                Text(desc,
+                    style: const TextStyle(
+                        color: Color(0xFF8A94A6), fontSize: 14, height: 1.4)),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _sendingSetupEmail ? null : _sendSetupEmail,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: _sendingSetupEmail
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: SpinKitFadingCircle(
+                                color: Colors.white, size: 20))
+                        : Text(buttonText,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
                   ),
                 ),
-                if (isExpanded)
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * .02),
-                          Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: 'Birth Date : ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 13)),
-                            TextSpan(
-                                text: birthDate,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.grey,
-                                    fontSize: 13))
-                          ]))
-                        ]),
-                        const SizedBox(height: 10),
-                        Row(children: [
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * .02),
-                          Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: 'Notes : ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: blueColor,
-                                    fontSize: 13)),
-                            TextSpan(
-                                text: notes,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.grey,
-                                    fontSize: 13))
-                          ]))
-                        ]),
-                      ],
-                    ),
-                  ),
               ],
             ),
           ),
         ],
-      ),
+      );
+  }
+
+  Widget _buildTenantInfoSection() {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    // Prefer freshly-fetched details so the card reflects edits immediately
+    // (matches the Payment/Emergency sections in this screen).
+    final t = _tenantDetails ?? widget.tenants;
+    final phone = formatPhoneNumber(t?.tenantPhoneNumber ?? '');
+    final email = (t?.tenantEmail ?? '').isEmpty
+        ? '—'
+        : (t?.tenantEmail ?? '');
+    final birthDate = (t?.tenantBirthDate ?? '').isEmpty
+        ? 'N/A'
+        : dateProvider.formatCurrentDate(t?.tenantBirthDate ?? '');
+    final notes = (t?.comments ?? '').isEmpty
+        ? 'N/A'
+        : (t?.comments ?? '');
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.person_outline, color: blueColor, size: 22),
+              const SizedBox(width: 8),
+              Text("Tenant Information",
+                  style: TextStyle(
+                      color: blueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17)),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                  child: _tenantInfoField(
+                      "Phone", phone.isEmpty ? '—' : phone)),
+              const SizedBox(width: 16),
+              Expanded(child: _tenantInfoField("Birth Date", birthDate)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _tenantInfoField("Email", email),
+          const SizedBox(height: 16),
+          _tenantInfoField("Notes", notes),
+        ],
+      );
+  }
+
+  // Label (grey) above value (navy) — matches the web Tenant Information card.
+  Widget _sectionDivider() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
     );
   }
 
+  // Payment Options content (no card wrapper — sits inside the combined card).
+  Widget _buildPaymentSection() {
+    final t = _tenantDetails ?? widget.tenants;
+    final allowAch = t?.allowAch != false;
+    final allowCard = t?.allowCard != false;
+    final canEdit = t != null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Payment Options",
+            style: TextStyle(
+                color: blueColor, fontWeight: FontWeight.bold, fontSize: 17)),
+        const SizedBox(height: 12),
+        Text("Allowed Payment Methods",
+            style: TextStyle(
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 14)),
+        const SizedBox(height: 8),
+        Row(children: [
+          SizedBox(
+            width: 24,
+            child: Checkbox(
+              value: allowAch,
+              onChanged:
+                  canEdit ? (v) => _onPaymentAllowAchChanged(v == true) : null,
+              activeColor: blueColor,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text("ACH",
+              style: TextStyle(
+                  color: allowAch ? blueColor : Colors.grey.shade600,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14)),
+        ]),
+        const SizedBox(height: 4),
+        Row(children: [
+          SizedBox(
+            width: 24,
+            child: Checkbox(
+              value: allowCard,
+              onChanged:
+                  canEdit ? (v) => _onPaymentAllowCardChanged(v == true) : null,
+              activeColor: blueColor,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text("Credit Card",
+              style: TextStyle(
+                  color: allowCard ? blueColor : Colors.grey.shade600,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14)),
+        ]),
+        const SizedBox(height: 14),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _openManagePaymentMethods,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueColor,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text("Manage Payment Methods",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _tenantInfoField(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(
+                color: Color(0xFF8A94A6),
+                fontSize: 13,
+                fontWeight: FontWeight.w500)),
+        const SizedBox(height: 4),
+        Text(value,
+            style: TextStyle(
+                color: blueColor, fontSize: 15, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  // Kept for future reference — emergency edit/delete now lives in the Edit
+  // Tenant form; the details screen is read-only.
+  // ignore: unused_element
   void _confirmDeleteEmergencyContact(MergedEmergencyContact c) {
     if (c.contactId == 'primary') {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -3711,6 +3657,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     ).show();
   }
 
+  // Kept for future reference — add/edit dialog now lives in the Edit Tenant
+  // form; the details screen is read-only.
+  // ignore: unused_element
   void _showEmergencyContactDialog(
       BuildContext context, MergedEmergencyContact? editContact) {
     final isEdit = editContact != null;
@@ -5594,8 +5543,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                 .push(MaterialPageRoute(
                                                     builder: (context) =>
                                                         AdminAddTenantInsurance(
-                                                          tenantid:
-                                                              widget.tenantId,
+                                                          tenantid: widget.tenantId,
+                                                          leaseId: (widget.tenants != null ? _tabletLeaseIdForAddCard(widget.tenants!) : null) ?? widget.tenantId,
+                                                          tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                         )));
                                             if (result == true) {
                                               setState(() {
@@ -6254,7 +6204,8 @@ String formatCurrency(dynamic amount) {
   if (amount == null) return '\$0.00';
   try {
     // Handle both String and numeric types
-    double value = amount is String ? double.parse(amount) : amount.toDouble();
+    double value =
+        amount is String ? (double.tryParse(amount) ?? 0.0) : amount.toDouble();
     // Format with currency symbol and 2 decimal places
     final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
     return formatter.format(value);

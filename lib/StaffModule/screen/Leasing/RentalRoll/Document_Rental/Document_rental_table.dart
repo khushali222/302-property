@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
@@ -149,14 +150,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         return;
       }
 
-      // Show loading toast
-      if (mounted) {
-        Fluttertoast.showToast(
-          msg: "Downloading document...",
-          backgroundColor: Colors.blue,
-        );
-      }
-
       // Download the file with authentication headers
       final response = await apiGet(
         Uri.parse('$Api_url/api/lease-document/download-document/$documentId'),
@@ -172,6 +165,22 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       );
 
       if (response.statusCode == 200) {
+        // Check if response is actually a JSON error (server returning 200 with error body)
+        final bodyBytes = response.bodyBytes;
+        if (bodyBytes.length < 500) {
+          try {
+            final bodyStr = utf8.decode(bodyBytes);
+            if (bodyStr.trim().startsWith('{') || bodyStr.trim().startsWith('[')) {
+              final jsonData = jsonDecode(bodyStr);
+              final msg = jsonData['message'] ?? jsonData['error'] ?? 'File not found or corrupted';
+              if (mounted) {
+                Fluttertoast.showToast(msg: msg.toString(), backgroundColor: Colors.red);
+              }
+              return;
+            }
+          } catch (_) {}
+        }
+
         // Determine file extension from mime type or Content-Type header
         String extension = 'pdf'; // default
 
@@ -186,19 +195,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
           extension = 'jpg';
         } else if (mimeType.contains('image/png')) {
           extension = 'png';
-        } else if (mimeType.contains('image/gif')) {
-          extension = 'gif';
-        } else if (mimeType.contains('image/bmp')) {
-          extension = 'bmp';
-        } else if (mimeType.contains('image/tiff') ||
-            mimeType.contains('image/tif')) {
-          extension = 'tiff';
-        } else if (mimeType.contains('image/webp')) {
-          extension = 'webp';
         } else if (mimeType.contains('application/pdf')) {
           extension = 'pdf';
+        } else if (mimeType.contains('application/msword')) {
+          extension = 'doc';
+        } else if (mimeType.contains('officedocument.wordprocessingml')) {
+          extension = 'docx';
+        } else if (mimeType.contains('text/plain')) {
+          extension = 'txt';
         } else if (mimeType.contains('image/')) {
-          // Generic image type - extract from mime type
           extension = mimeType.split('/')[1].split(';')[0].trim();
         }
 
@@ -209,18 +214,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         // Check if filename already has extension
         if (cleanFileName.contains('.')) {
           String existingExt = cleanFileName.split('.').last.toLowerCase();
-          // If existing extension is valid, keep it; otherwise replace with detected extension
-          List<String> validExtensions = [
-            'pdf',
-            'jpg',
-            'jpeg',
-            'png',
-            'gif',
-            'bmp',
-            'tiff',
-            'tif',
-            'webp'
-          ];
+          const validExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'txt'];
           if (!validExtensions.contains(existingExt)) {
             cleanFileName = '${cleanFileName.split('.').first}.$extension';
           }
@@ -273,38 +267,14 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
 
         // Save file
         final file = File('${directory.path}/$finalFileName');
-        await file.writeAsBytes(response.bodyBytes);
+        await file.writeAsBytes(bodyBytes);
 
-        // Show success message and share file
+        // Open file via share sheet (works for all types on iOS/Android)
         if (mounted) {
-          String saveLocation = Platform.isAndroid 
-              ? "saved in app storage"
-              : "ready to share";
-          
-          Fluttertoast.showToast(
-            msg: "Document $saveLocation",
-            backgroundColor: Colors.green,
-          );
-
-          // Share the file (works on both iOS and Android)
-          // This allows user to save to Downloads or share via other apps
           try {
-            await Share.shareXFiles(
-              [XFile(file.path)],
-              text: 'Document: $fileName',
-              subject: fileName,
-            );
+            await Share.shareXFiles([XFile(file.path)], subject: fileName);
           } catch (shareError) {
             print('Share error: $shareError');
-            // If share fails, file is still saved - show message
-            if (mounted) {
-              Fluttertoast.showToast(
-                msg: Platform.isAndroid 
-                    ? "File saved. Use file manager to access: ${directory.path}"
-                    : "File saved successfully",
-                backgroundColor: Colors.blue,
-              );
-            }
           }
         }
       } else {
@@ -527,11 +497,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       constraints: BoxConstraints(minHeight: 28),
+      decoration: BoxDecoration(
+        color: Color(0xFFE2E3E5),
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Center(
         child: Text(
           'Not Sent',
           style: TextStyle(
-            color: Colors.grey[600],
+            color: Color(0xFF6C757D),
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
@@ -1020,60 +994,25 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () {
-                                                      if (item["document_id"] !=
-                                                              null &&
-                                                          item["document_id"]
-                                                              .toString()
-                                                              .isNotEmpty) {
-                                                        // Use document_id to construct lease document preview URL
-                                                        final documentId =
-                                                            item["document_id"]
-                                                                .toString();
-                                                        final documentName = item[
-                                                                "file_name"] ??
-                                                            item[
-                                                                "document_name"] ??
-                                                            "Document";
-                                                        // Use mime_type first (actual MIME type), fallback to document_type
+                                                      final docId = item["document_id"]?.toString() ?? '';
+                                                      if (docId.isNotEmpty) {
+                                                        final documentName = item["file_name"] ?? item["document_name"] ?? "Document";
                                                         String? mimeType;
-                                                        if (item["mime_type"] !=
-                                                                null &&
-                                                            item["mime_type"]
-                                                                .toString()
-                                                                .isNotEmpty) {
-                                                          mimeType =
-                                                              item["mime_type"]
-                                                                  .toString();
-                                                        } else if (item[
-                                                                "document_type"] !=
-                                                            null) {
-                                                          final docType = item[
-                                                                  "document_type"]
-                                                              .toString();
-                                                          // Only use document_type if it looks like a MIME type (contains '/')
-                                                          if (docType
-                                                              .contains('/')) {
-                                                            mimeType = docType;
-                                                          }
+                                                        if (item["mime_type"] != null && item["mime_type"].toString().isNotEmpty) {
+                                                          mimeType = item["mime_type"].toString();
+                                                        } else if (item["document_type"] != null && item["document_type"].toString().contains('/')) {
+                                                          mimeType = item["document_type"].toString();
                                                         }
-                                                        final previewUrl =
-                                                            '$Api_url/api/lease-document/preview-document/$documentId';
-
-                                                        print(
-                                                            "Opening document preview: $previewUrl");
-                                                        FileViewer
-                                                            .showReceiptDialog(
+                                                        FileViewer.showReceiptDialog(
                                                           context,
                                                           documentName,
-                                                          fileUrl: previewUrl,
+                                                          fileUrl: '$Api_url/api/lease-document/preview-document/$docId',
                                                           mimeType: mimeType,
                                                         );
                                                       } else {
                                                         Fluttertoast.showToast(
-                                                          msg:
-                                                              "Document not available",
-                                                          backgroundColor:
-                                                              Colors.red,
+                                                          msg: "Document not available",
+                                                          backgroundColor: Colors.red,
                                                         );
                                                       }
                                                     },
@@ -1081,23 +1020,15 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                       height: 35,
                                                       width: 35,
                                                       decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .grey.shade200,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
+                                                        color: Colors.grey.shade200,
+                                                        borderRadius: BorderRadius.circular(8),
                                                       ),
                                                       child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
                                                           FaIcon(
-                                                            FontAwesomeIcons
-                                                                .eye,
+                                                            FontAwesomeIcons.eye,
                                                             size: 15,
                                                             color: Colors.black,
                                                           ),
@@ -1161,89 +1092,38 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                                                     ),
                                                   ),
                                                   SizedBox(width: 10),
-                                                  // GestureDetector(
-                                                  //   onTap: () {
-                                                  //     downloadDocument(
-                                                  //         item["document_id"],
-                                                  //         item["file_name"] ??
-                                                  //             item[
-                                                  //                 "document_name"] ??
-                                                  //             "document",
-                                                  //         item["mime_type"] ??
-                                                  //             item[
-                                                  //                 "document_type"] ??
-                                                  //             "application/octet-stream");
-                                                  //   },
-                                                  //   child: Container(
-                                                  //     height: 35,
-                                                  //     width: 35,
-                                                  //     decoration: BoxDecoration(
-                                                  //         borderRadius:
-                                                  //             BorderRadius
-                                                  //                 .circular(8),
-                                                  //         color: Colors
-                                                  //             .blue.shade50),
-                                                  //     child:  Row(
-                                                  //       mainAxisAlignment:
-                                                  //           MainAxisAlignment
-                                                  //               .center,
-                                                  //       crossAxisAlignment:
-                                                  //           CrossAxisAlignment
-                                                  //               .center,
-                                                  //       children: [
-                                                  //         FaIcon(
-                                                  //           FontAwesomeIcons
-                                                  //               .download,
-                                                  //           size: 15,
-                                                  //           color: blueColor,
-                                                  //         ),
-                                                  //       ],
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  // SizedBox(width: 15),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      // print("calling");
-                                                      // print( "${image_url}${item["document_name"]}");
-                                                      // const PDF().fromUrl(
-                                                      //  "${image_url}${item["document_name"]}",
-                                                      //   placeholder: (double progress) => Center(child: Text('$progress %')),
-                                                      //   errorWidget: (dynamic error) => Center(child: Text(error.toString())),
-                                                      // );
-                                                      _showDeleteAlert(context,
-                                                          item["document_id"]);
-                                                      // showPdfDialog(context, pdfUrl);
+                                                      downloadDocument(
+                                                          item["document_id"],
+                                                          item["file_name"] ??
+                                                              item["document_name"] ??
+                                                              "document",
+                                                          item["mime_type"] ??
+                                                              item["document_type"] ??
+                                                              "application/octet-stream");
                                                     },
                                                     child: Container(
                                                       height: 35,
                                                       width: 35,
                                                       decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          color: Colors
-                                                              .red.shade50),
-                                                      child: const Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
+                                                          borderRadius: BorderRadius.circular(8),
+                                                          color: Colors.blue.shade50),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
                                                         children: [
                                                           FaIcon(
-                                                            FontAwesomeIcons
-                                                                .trashCan,
+                                                            FontAwesomeIcons.download,
                                                             size: 15,
-                                                            color: Colors.red,
+                                                            color: blueColor,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
                                                   SizedBox(width: 15),
-                                               
+
                                                 ],
                                               ),
                                               SizedBox(
@@ -1260,7 +1140,8 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
                           }).toList(),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      if (totalPages > 1) const SizedBox(height: 20),
+                      if (totalPages > 1)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -1369,7 +1250,30 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         // Check if 'data' exists and is a list
         if (parsedJson['documents'] != null &&
             parsedJson['documents'] is List) {
-          return List<Map<String, dynamic>>.from(parsedJson['documents']);
+          final allDocs = List<Map<String, dynamic>>.from(parsedJson['documents']);
+          // Match web Lease tab: leaseDocuments + leaseRegularDocuments
+          return allDocs.where((doc) {
+            final fileType = doc['file_type']?.toString() ?? '';
+            final docType = doc['document_type']?.toString() ?? '';
+            final isFromLease = doc['is_from_lease'];
+            final isElectronicSigning = doc['is_electronic_signing'];
+            final hasSignatureRequest = doc['signature_request_id'] != null;
+            final docName = (doc['document_name'] ?? doc['file_name'] ?? '').toString().toLowerCase();
+
+            // Exclude internal tracking docs and auto-compiled complete lease docs
+            if (docType == 'PROGRESSIVE_SIGNED' || docType == 'PROGRESSIVE_COMBINED') return false;
+            if (docType == 'COMBINED_LEASE_DOCUMENT' && isElectronicSigning != true) return false;
+            if (docName.startsWith('complete_lease')) return false;
+
+            // leaseDocuments: file_type is Lease Document / Combined, or e-signing
+            if (fileType == 'Lease Document' || fileType == 'Combined Lease Document') return true;
+            if (isElectronicSigning == true || hasSignatureRequest) return true;
+
+            // leaseRegularDocuments: uploaded directly to lease
+            if (isFromLease == true || isFromLease == 'true') return true;
+
+            return false;
+          }).toList();
         } else {
           return []; // Return an empty list instead of null
         }

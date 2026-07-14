@@ -16,7 +16,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 
 import '../../../Model/Scheduled_Payment_model.dart';
 import '../../../Model/schduled_charge.dart';
@@ -155,99 +155,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
             ),
             Expanded(
               flex: 4,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    // Reset other sorting states first
-                    sorting1 = false;
-                    sorting3 = false;
-                    ascending1 = false;
-                    ascending3 = false;
-
-                    if (sorting2 == true) {
-                      // Already sorting by account, toggle direction
-                      ascending2 = !ascending2;
-                    } else {
-                      // Start sorting by account in descending order
-                      sorting2 = true;
-                      ascending2 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("     Account",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 16,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 16,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    // Reset other sorting states first
-                    sorting1 = false;
-                    sorting2 = false;
-                    ascending1 = false;
-                    ascending2 = false;
-
-                    if (sorting3 == true) {
-                      // Already sorting by amount, toggle direction
-                      ascending3 = !ascending3;
-                    } else {
-                      // Start sorting by amount in descending order
-                      sorting3 = true;
-                      ascending3 = false;
-                    }
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("  Amount",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
-                    SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 16,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 16,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
+              child: Text("Property",
+                  style:
+                      TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -285,75 +195,174 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
 
   void _showAlert(BuildContext context, String id, ScheduledCharges payment) {
     TextEditingController reason = TextEditingController();
-    Alert(
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final String dateText = payment.actionDate?.isNotEmpty == true
+        ? dateProvider.formatCurrentDate('${payment.actionDate}')
+        : 'N/A';
+    showDialog(
       context: context,
-      type: AlertType.warning,
-      title: "Are you sure?",
-      content: Column(
-        children: <Widget>[
-          if (widget.leaseID == null)
-            Text(
-              "You want to delete this scheduled charge for ${payment.rentalAddress} in the amount of \$${payment.amount} on ${payment.actionDate}?",
-              textAlign: TextAlign.justify,
-              style: TextStyle(fontSize: 16),
-            ),
-          if (widget.leaseID != null)
-            Text(
-              "You want to delete this scheduled charge for the amount of \$${payment.amount} on ${payment.actionDate}?",
-              textAlign: TextAlign.justify,
-              style: TextStyle(fontSize: 16),
-            ),
-          SizedBox(height: 10),
-          SizedBox(
-            height: 45,
-            child: TextField(
-              controller: reason,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter reason for deletion',
-                contentPadding: EdgeInsets.only(top: 8, left: 15),
-              ),
-            ),
-          ),
-        ],
-      ),
-      style: AlertStyle(
+      builder: (context) => Dialog(
         backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close, color: Color(0xFF8A95A8)),
+                ),
+              ),
+              Container(
+                height: 90,
+                width: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE0A33E), width: 3),
+                ),
+                child: const Icon(Icons.priority_high,
+                    color: Color(0xFFE0A33E), size: 44),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Are you sure?",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor),
+              ),
+              const SizedBox(height: 14),
+              Text.rich(
+                TextSpan(
+                  style: TextStyle(fontSize: 16, color: grey, height: 1.4),
+                  children: widget.leaseID == null
+                      ? [
+                          const TextSpan(
+                              text:
+                                  "You want to delete this scheduled charge for "),
+                          TextSpan(
+                              text: payment.rentalAddress ?? '',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                          const TextSpan(text: " in the amount of "),
+                          TextSpan(
+                              text: '\$${payment.amount.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                          TextSpan(text: " on $dateText?"),
+                        ]
+                      : [
+                          const TextSpan(
+                              text:
+                                  "You want to delete this scheduled charge for the amount of "),
+                          TextSpan(
+                              text: '\$${payment.amount.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: blueColor)),
+                          TextSpan(text: " on $dateText?"),
+                        ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 18),
+              TextField(
+                controller: reason,
+                decoration: InputDecoration(
+                  hintText: 'Enter reason for deletion',
+                  hintStyle: const TextStyle(color: Color(0xFF8A95A8)),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: blueColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (reason.text.trim().isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Please enter reason for deletion");
+                          return;
+                        }
+                        try {
+                          var data = await ScheduledChargesRepository()
+                              .deleteNote(noteid: id, reason: reason.text);
+                          if (data != null) {
+                            setState(() {
+                              futurescheduledpayment =
+                                  ScheduledChargesRepository()
+                                      .fetchScheduledCharges(
+                                          leaseid: widget.leaseID);
+                            });
+                          }
+                        } catch (_) {}
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: blueColor, width: 1.5),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            "Delete",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () async {
-            var data =
-                await ScheduledChargesRepository().deleteNote(noteid: id);
-            if (data != null)
-              setState(() {
-                futurescheduledpayment = ScheduledChargesRepository()
-                    .fetchScheduledCharges(leaseid: widget.leaseID);
-              });
-            Navigator.pop(context);
-          },
-          color: blueColor,
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-      ],
-    ).show();
+    );
   }
 
   List<Map<String, dynamic>> accountOptions = [];
@@ -385,7 +394,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         setState(() {
           accountOptions.add({
             "account": account,
-            "value": chargeType,
+            "charge_type": chargeType,
           });
         });
       }
@@ -402,219 +411,191 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
   }
 
   EditCharge() {
-    print(accountOptions);
+    OutlineInputBorder _border(Color c) => OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: c),
+        );
+    InputDecoration _fieldDecoration(
+            {String? hint, Widget? suffixIcon, String? prefixText}) =>
+        InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Color(0xFFb0b6c3), fontSize: 14),
+          prefixText: prefixText,
+          prefixStyle: TextStyle(
+              color: blueColor, fontSize: 15, fontWeight: FontWeight.w500),
+          suffixIcon: suffixIcon,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          border: _border(const Color(0xFFDBE0E5)),
+          enabledBorder: _border(const Color(0xFFDBE0E5)),
+          focusedBorder: _border(blueColor),
+          errorBorder: _border(Colors.red),
+          focusedErrorBorder: _border(Colors.red),
+        );
+    Widget _label(String text) => Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                    text: text,
+                    style: TextStyle(
+                        color: blueColor, fontWeight: FontWeight.bold)),
+                const TextSpan(
+                    text: ' *',
+                    style: TextStyle(
+                        color: Colors.red, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        );
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        contentPadding:
+            const EdgeInsets.fromLTRB(20, 16, 20, 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Edit Scheduled Charge',
             style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Date",
-                    style: TextStyle(
-                        color: blueColor, fontWeight: FontWeight.bold),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Form(
+            key: _editChargeFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _label("Date"),
+                TextFormField(
+                  controller: dateController,
+                  readOnly: true,
+                  onTap: _pickDate,
+                  cursorColor: blueColor,
+                  decoration: _fieldDecoration(
+                    hint: 'YYYY-MM-DD',
+                    suffixIcon: const Icon(Icons.calendar_today_outlined,
+                        color: Color(0xFF8A95A8), size: 20),
                   ),
-                  CustomTextField(
-                    onTap: _pickDate,
-                    readOnnly: true,
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.date_range_rounded),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select start date';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.text,
-                    hintText: 'YYYY-MM-DD',
-                    controller: dateController,
-                  ),
-                ],
-              ),
-              // Date Picker
-
-              SizedBox(height: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Account",
-                    style: TextStyle(
-                        color: blueColor, fontWeight: FontWeight.bold),
-                  ),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButtonFormField2<String>(
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                      isExpanded: true,
-                      hint: const Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Select Account',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFFb0b6c3),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      items: accountOptions.map((account) {
-                        return DropdownMenuItem<String>(
-                          value: account["account"],
-                          child: Text(account["account"]),
-                        );
-                      }).toList(),
-                      value: selectedAccount != null &&
-                              accountOptions.any((account) =>
-                                  account["account"] == selectedAccount)
-                          ? selectedAccount
-                          : null,
-                      onChanged: (value) {
-                        setState(() {
-                          // Find the selected account in the accountOptions list
-                          var selectedOption = accountOptions.firstWhere(
-                            (account) => account["account"] == value,
-                            // orElse: () => null,
-                          );
-
-                          if (selectedOption != null) {
-                            // Extract the charge type from the selected account
-                            String chargeType = selectedOption["charge_type"] ??
-                                "One Time Charge";
-
-                            print("Selected Account: $value");
-                            print("Charge Type: $chargeType");
-                            selectedChargeType = chargeType;
-                            selectedAccount = value;
-                          }
-                        });
-                      },
-                      buttonStyleData: ButtonStyleData(
-                        height: 45,
-                        width: 160,
-                        padding: const EdgeInsets.only(left: 14, right: 14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Colors.white,
-                        ),
-                        elevation: 2,
-                      ),
-                      iconStyleData: const IconStyleData(
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                        ),
-                        iconSize: 24,
-                        iconEnabledColor: Color(0xFFb0b6c3),
-                        iconDisabledColor: Colors.grey,
-                      ),
-                      dropdownStyleData: DropdownStyleData(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Colors.white,
-                        ),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(6),
-                          thickness: MaterialStateProperty.all(6),
-                          thumbVisibility: MaterialStateProperty.all(true),
-                        ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        height: 40,
-                        padding: EdgeInsets.only(left: 14, right: 14),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              // Account Dropdown
-
-              SizedBox(height: 10),
-
-              // Amount Input
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Amount",
-                    style: TextStyle(
-                        color: blueColor, fontWeight: FontWeight.bold),
-                  ),
-                  CustomTextField(
-                    // onTap: _pickDate,
-                    readOnnly: false,
-
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select start date';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.text,
-                    hintText: '',
-                    controller: amountController,
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-
-              // Memo Input
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Memo",
-                    style: TextStyle(
-                        color: blueColor, fontWeight: FontWeight.bold),
-                  ),
-                  CustomTextField(
-                    //  onTap: _pickDate,
-                    readOnnly: false,
-
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select start date';
-                      }
-                      return null;
-                    },
-                    keyboardType: TextInputType.text,
-                    hintText: '',
-                    controller: memoController,
-                  ),
-                ],
-              ),
-            ],
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select date'
+                      : null,
+                ),
+                const SizedBox(height: 14),
+                _label("Account"),
+                DropdownButtonFormField<String>(
+                  isExpanded: true,
+                  decoration: _fieldDecoration(),
+                  icon: const Icon(Icons.keyboard_arrow_down,
+                      color: Color(0xFF8A95A8)),
+                  dropdownColor: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  style: TextStyle(color: blueColor, fontSize: 16),
+                  hint: const Text('Select Account',
+                      style:
+                          TextStyle(fontSize: 14, color: Color(0xFFb0b6c3))),
+                  items: accountOptions
+                      .map((account) => '${account["account"]}')
+                      .toSet()
+                      .map((acc) => DropdownMenuItem<String>(
+                            value: acc,
+                            child: Text(acc),
+                          ))
+                      .toList(),
+                  value: selectedAccount != null &&
+                          accountOptions.any((account) =>
+                              account["account"] == selectedAccount)
+                      ? selectedAccount
+                      : null,
+                  validator: (value) => (value == null || value.isEmpty)
+                      ? 'Please select account'
+                      : null,
+                  onChanged: (value) {
+                    setState(() {
+                      var selectedOption = accountOptions.firstWhere(
+                        (account) => account["account"] == value,
+                        orElse: () => {},
+                      );
+                      String chargeType =
+                          selectedOption["charge_type"] ?? "One Time Charge";
+                      selectedChargeType = chargeType;
+                      selectedAccount = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 14),
+                _label("Amount"),
+                TextFormField(
+                  controller: amountController,
+                  cursorColor: blueColor,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}')),
+                  ],
+                  decoration: _fieldDecoration(hint: '0.00', prefixText: '\$ '),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter amount';
+                    }
+                    final parsedAmount = double.tryParse(value);
+                    if (parsedAmount == null) {
+                      return 'Enter a valid amount';
+                    }
+                    if (parsedAmount <= 0) {
+                      return 'Amount must be greater than 0';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                _label("Memo"),
+                TextFormField(
+                  controller: memoController,
+                  cursorColor: blueColor,
+                  maxLines: 3,
+                  decoration: _fieldDecoration(hint: 'Enter memo'),
+                  validator: (value) => (value == null || value.trim().isEmpty)
+                      ? 'Please enter memo'
+                      : null,
+                ),
+              ],
+            ),
+          ),
           ),
         ),
+        actionsPadding: const EdgeInsets.only(right: 16, bottom: 12, left: 16),
         actions: [
           TextButton(
-            child: Text('Cancel'),
+            child: Text('Cancel',
+                style:
+                    TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
-            child: Text('Save'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: blueColor,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+            ),
+            child: const Text('Save',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () async {
+              if (!(_editChargeFormKey.currentState?.validate() ?? false)) {
+                return;
+              }
               var response = await ScheduledChargesRepository().submitCharge(
                   amount: amountController.text,
                   account: selectedAccount,
                   chargeType: selectedChargeType,
-                  action_date: dateController.text,
+                  action_date: _apiActionDate,
                   description: memoController.text,
                   charge_id: charge_id);
               if (response != null) {
@@ -624,6 +605,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                       .fetchScheduledCharges(leaseid: widget.leaseID);
                 });
                 Navigator.of(context).pop();
+              } else {
+                Fluttertoast.showToast(msg: "Failed to update charge");
               }
             },
           ),
@@ -632,22 +615,95 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     );
   }
 
+  void _showCannotEditRentCharge() {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: 90,
+                width: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border:
+                      Border.all(color: const Color(0xFFE0A33E), width: 3),
+                ),
+                child: const Icon(Icons.priority_high,
+                    color: Color(0xFFE0A33E), size: 44),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Cannot Edit Rent Charge",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                "This rent charge is automatically generated as part of "
+                "the lease schedule and cannot be manually edited.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: grey, height: 1.4),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 52,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: blueColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _pickDate() async {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    final DateTime today = DateTime.now();
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: today,
+      firstDate: DateTime(today.year, today.month, today.day),
       lastDate: DateTime(2100),
     );
     if (pickedDate != null) {
       setState(() {
         selectedDate = pickedDate;
-        dateController.text = DateFormat("yyyy-MM-dd").format(selectedDate!);
+        _apiActionDate = DateFormat("yyyy-MM-dd").format(selectedDate!);
+        dateController.text = dateProvider.formatCurrentDate(_apiActionDate!);
       });
     }
   }
 
   DateTime? selectedDate;
+  final GlobalKey<FormState> _editChargeFormKey = GlobalKey<FormState>();
+  String? _apiActionDate;
   String? selectedAccount;
   String? charge_id;
   TextEditingController amountController = TextEditingController();
@@ -972,97 +1028,82 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   ),
                   // Header Section with Title
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          left:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                          right:
-                              MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                      child: titleBar(
-                        width: double.infinity,
-                        title: 'Scheduled Charges',
-                      ),
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width > 500 ? 28 : 16,
+                        vertical: 8.0),
+                    child: titleBar(
+                      width: double.infinity,
+                      title: 'Scheduled Charges',
                     ),
                   ),
                   SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width > 500 ? 25 : 16,
-                        right:
-                            MediaQuery.of(context).size.width > 500 ? 26 : 16),
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width > 500 ? 28 : 16),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Material(
-                          elevation: 2,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
+                        Expanded(
+                          child: Material(
+                            elevation: 0,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
                                 border: Border.all(color: Color(0xFF8A95A8))),
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: TextField(
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 15
-                                                : 14),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     cvverror = false;
-                                    //   });
-                                    // },
-                                    // controller: cvv,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        searchvalue = value;
-                                        if (currentPage != 0) currentPage = 0;
-                                      });
-                                    },
-                                    cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.search,
+                                      color: Color(0xFF8A95A8), size: 20),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: TextField(
+                                      style: TextStyle(
                                           fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width <
                                                   500
-                                              ? 14
-                                              : 18,
-                                          // fontWeight: FontWeight.bold,
+                                              ? 15
+                                              : 14),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          searchvalue = value;
+                                          if (currentPage != 0) currentPage = 0;
+                                        });
+                                      },
+                                      cursorColor: blueColor,
+                                      decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        isCollapsed: true,
+                                        hintText: "Search here...",
+                                        hintStyle: TextStyle(
+                                          fontSize: 15,
                                           color: Color(0xFF8A95A8),
                                         ),
-                                        contentPadding: EdgeInsets.only(
-                                            left: 5, bottom: 12, top: 5)),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 10),
                         Container(
                           height: 45,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                               foregroundColor: Colors.white,
+                              elevation: 0,
                             ),
                             onPressed: () {},
                             child: PopupMenuButton(
@@ -1112,8 +1153,11 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                   //   SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 12 : 28),
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width < 500 ? 16 : 28,
+                        vertical:
+                            MediaQuery.of(context).size.width < 500 ? 12 : 28),
                     child: FutureBuilder<List<ScheduledCharges>>(
                       future: futurescheduledpayment,
                       builder: (context, snapshot) {
@@ -1398,13 +1442,13 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                     context)
                                                                 .size
                                                                 .width *
-                                                            .06),
+                                                            .03),
                                                     Expanded(
-                                                      flex: 3,
+                                                      flex: 4,
                                                       child: Text(
                                                         _displayOrNA(
                                                             Propertytype
-                                                                .account),
+                                                                .rentalAddress),
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -1418,32 +1462,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                     context)
                                                                 .size
                                                                 .width *
-                                                            .06),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10.0),
-                                                        child: Text(
-                                                          // '${widget.data.createdAt}',
-                                                          '${Propertytype.amount != null ? '\$${Propertytype.amount.toStringAsFixed(2)}' : 'N/A'}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .01),
+                                                            .02),
                                                   ],
                                                 ),
                                               ),
@@ -1474,35 +1493,81 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                         child: Text.rich(
                                                           TextSpan(
                                                             children: [
-                                                              if (widget
-                                                                      .leaseID ==
-                                                                  null)
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Memo : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                              if (widget
-                                                                      .leaseID !=
-                                                                  null)
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Description : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
                                                               TextSpan(
-                                                                // text: formatDate(
-                                                                //     '${Propertytype.updatedAt}'),
+                                                                text:
+                                                                    'Account : ',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                              TextSpan(
+                                                                text: _displayOrNA(
+                                                                    Propertytype
+                                                                        .account),
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color: grey),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 18.0),
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Amount : ',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                              TextSpan(
+                                                                text:
+                                                                    '\$${Propertytype.amount.toStringAsFixed(2)}',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color: grey),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 18.0),
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Memo : ',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                              TextSpan(
                                                                 text: _displayOrNA(
                                                                     Propertytype
                                                                         .description),
@@ -1510,90 +1575,12 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w700,
-                                                                    color:
-                                                                        grey), // Light and grey
+                                                                    color: grey),
                                                               ),
                                                             ],
                                                           ),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      if (widget.leaseID ==
-                                                          null)
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 18.0),
-                                                          child: Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Property : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                                TextSpan(
-                                                                  // text: formatDate(
-                                                                  //     '${Propertytype.updatedAt}'),
-                                                                  text: Propertytype
-                                                                          .rentalAddress ??
-                                                                      "-",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                          grey), // Light and grey
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      if (widget.leaseID !=
-                                                          null)
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 18.0),
-                                                          child: Text.rich(
-                                                            TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text:
-                                                                      'Charge Type : ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          blueColor), // Bold and black
-                                                                ),
-                                                                TextSpan(
-                                                                  // text: formatDate(
-                                                                  //     '${Propertytype.updatedAt}'),
-                                                                  text: Propertytype
-                                                                          .chargeType ??
-                                                                      "-",
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w700,
-                                                                      color:
-                                                                          grey), // Light and grey
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
                                                       SizedBox(
                                                         height: 15,
                                                       ),
@@ -1606,16 +1593,30 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                             GestureDetector(
                                                                                                                             onTap:
                                                               () async {
+                                                            if (Propertytype
+                                                                    .taskType ==
+                                                                "RENT_CHARGE") {
+                                                              _showCannotEditRentCharge();
+                                                              return;
+                                                            }
                                                             setState(() {
-                                                              dateController
-                                                                      .text =
+                                                              _apiActionDate =
                                                                   Propertytype
-                                                                      .actionDate!;
+                                                                      .actionDate;
+                                                              dateController.text = (Propertytype
+                                                                          .actionDate
+                                                                          ?.isNotEmpty ==
+                                                                      true)
+                                                                  ? dateProvider
+                                                                      .formatCurrentDate(
+                                                                          '${Propertytype.actionDate}')
+                                                                  : '';
                                                               amountController
                                                                       .text =
                                                                   Propertytype
-                                                                      .amount!
-                                                                      .toString();
+                                                                      .amount
+                                                                      .toStringAsFixed(
+                                                                          2);
                                                               memoController
                                                                       .text =
                                                                   Propertytype.description ??
@@ -1628,6 +1629,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                   ? Propertytype
                                                                       .account
                                                                   : null;
+                                                              selectedChargeType =
+                                                                  Propertytype
+                                                                      .chargeType;
                                                               if (selectedAccount !=
                                                                       null &&
                                                                   !accountOptions.any((account) =>
@@ -1637,8 +1641,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                                     .add({
                                                                   "account":
                                                                       selectedAccount,
-                                                                  "value":
-                                                                      selectedAccount,
+                                                                  "charge_type":
+                                                                      Propertytype
+                                                                          .chargeType,
                                                                 });
                                                               }
                                                               charge_id =
@@ -1733,7 +1738,8 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                       }).toList(),
                                     ),
                                   ),
-                                  SizedBox(height: 20),
+                                  if (totalPages > 1) SizedBox(height: 20),
+                                  if (totalPages > 1)
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [

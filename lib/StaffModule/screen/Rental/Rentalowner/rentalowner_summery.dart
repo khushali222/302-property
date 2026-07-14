@@ -94,9 +94,9 @@ class _RentalownersSummeryForMobileState
   }
   //for card payment
 
-  bool creditcard = false;
+  bool creditcard = true;
   bool achaccepted = false;
-  bool debitcard = false;
+  bool debitcard = true;
 
   Future<void> fetchPaymentSettings() async {
     print("calling");
@@ -118,9 +118,9 @@ class _RentalownersSummeryForMobileState
       print(creditcard);
       print(creditcard);
       setState(() {
-        creditcard = jsonData['data']['creditCardAccepted'];
-        achaccepted = jsonData['data']['achAccepted'];
-        debitcard = jsonData['data']['debitCardAccepted'];
+        creditcard = jsonData['data']['creditCardAccepted'] ?? true;
+        achaccepted = jsonData['data']['achAccepted'] ?? false;
+        debitcard = jsonData['data']['debitCardAccepted'] ?? true;
       });
     } else {
       throw Exception('Failed to load data');

@@ -55,7 +55,23 @@
       "Bash(echo \"error count: $\\(dart analyze lib/screens/Maintenance/Workorder/Edit_workorders.dart 2>&1)",
       "Bash(flutter devices *)",
       "Bash(flutter emulators *)",
-      "PowerShell(Get-Process git -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-Process git -ErrorAction SilentlyContinue)",
+      "Bash(git log *)",
+      "Bash(dart --version)",
+      "Bash(ls -la build/app/outputs/bundle/release/)",
+      "Bash(ls -la build/app/outputs/flutter-apk/)",
+      "Bash(unzip -l build/app/outputs/bundle/release/app-release.aab)",
+      "Bash(grep -i \"\\\\.so$\")",
+      "Read(//c/Users/Khushali/AppData/Local/Android/Sdk/ndk/**)",
+      "Read(//c/Users/Khushali/AppData/Local/Android/Sdk/**)",
+      "Bash(rm -rf /tmp/aab_so)",
+      "Bash(mkdir -p /tmp/aab_so)",
+      "Bash(unzip -o -j build/app/outputs/bundle/release/app-release.aab \"base/lib/arm64-v8a/*.so\" -d /tmp/aab_so)",
+      "Bash(grep -niA3 \"flutter_cached_pdfview:\\\\|flutter_pdfview:\\\\|printing:\\\\|pdf_render\\\\|pdfx\" pubspec.lock)",
+      "Bash(bash -n docs/check_16kb_alignment.sh)",
+      "Bash(ANDROID_SDK_ROOT=\"C:/Users/Khushali/AppData/Local/Android/Sdk\" bash docs/check_16kb_alignment.sh)",
+      "Bash(ANDROID_HOME=\"C:/Users/Khushali/AppData/Local/Android/Sdk\" bash docs/check_16kb_alignment.sh build/app/outputs/bundle/release/app-release.aab)",
+      "Bash(bash docs/check_16kb_alignment.sh)"
     ]
   }
 }

@@ -64,9 +64,14 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   void sortData(List<Scheduled_Payment> data) {
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
-      data.sort((a, b) => ascending1
-          ? a.rentalAddress!.compareTo(b.rentalAddress!)
-          : b.rentalAddress!.compareTo(a.rentalAddress!));
+      data.sort((a, b) {
+        final dateA = a.date ?? '';
+        final dateB = b.date ?? '';
+        if (dateA.isEmpty && dateB.isEmpty) return 0;
+        if (dateA.isEmpty) return 1;
+        if (dateB.isEmpty) return -1;
+        return ascending1 ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
+      });
     } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
           ? (a.tenant?.tenantName ?? '').compareTo(b.tenant?.tenantName ?? '')
@@ -103,7 +108,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
               ),
             ),
             Expanded(
-              flex: 4,
+              flex: 3,
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -127,13 +132,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 },
                 child: Row(
                   children: [
-                    width < 400
-                        ? Text("Property ",
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold))
-                        : Text("Property",
-                            style: TextStyle(
-                                color: blueColor, fontWeight: FontWeight.bold)),
+                    Text("Date",
+                        style: TextStyle(
+                            color: blueColor, fontWeight: FontWeight.bold)),
                     const SizedBox(width: 3),
                     ascending1
                         ? Padding(
@@ -158,104 +159,9 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
             ),
             Expanded(
               flex: 4,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting2) {
-                      sorting1 = false;
-                      sorting2 = sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = !sorting2;
-                      sorting3 = false;
-                      ascending2 = sorting2 ? !ascending2 : true;
-                      ascending1 = false;
-                      ascending3 = false;
-                    }
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("    Tenant",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    ascending2
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    if (sorting3) {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    } else {
-                      sorting1 = false;
-                      sorting2 = false;
-                      sorting3 = !sorting3;
-                      ascending3 = sorting3 ? !ascending3 : true;
-                      ascending2 = false;
-                      ascending1 = false;
-                    }
-
-                    // Sorting logic here
-                  });
-                },
-                child: Row(
-                  children: [
-                    Text("Amount",
-                        style: TextStyle(
-                            color: blueColor, fontWeight: FontWeight.bold)),
-                    const SizedBox(width: 5),
-                    ascending3
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortUp,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 7, left: 2),
-                            child: FaIcon(
-                              FontAwesomeIcons.sortDown,
-                              size: 20,
-                              color: blueColor,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
+              child: Text("Property",
+                  style:
+                      TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -290,68 +196,155 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
 
   void _showAlert(BuildContext context, String id, Scheduled_Payment payment) {
     TextEditingController reason = TextEditingController();
-    Alert(
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    showDialog(
       context: context,
-      type: AlertType.warning,
-      title: "Are you sure?",
-      content: Column(
-        children: <Widget>[
-          Text(
-            "You want to delete this scheduled payment for ${payment.tenant!.tenantName} at ${payment.rentalAddress} in the amount of ${formatCurrency(payment.totalAmount)} on ${payment.date}?",
-            textAlign: TextAlign.justify,
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 45,
-            child: TextField(
-              controller: reason,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter reason for deletion',
-                contentPadding: EdgeInsets.only(top: 8, left: 15),
-              ),
-            ),
-          ),
-        ],
-      ),
-      style: const AlertStyle(
+      builder: (context) => Dialog(
         backgroundColor: Colors.white,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Icon(Icons.close, color: Color(0xFF8A95A8)),
+                ),
+              ),
+              Container(
+                height: 90,
+                width: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border:
+                      Border.all(color: const Color(0xFFE0A33E), width: 3),
+                ),
+                child: const Icon(Icons.priority_high,
+                    color: Color(0xFFE0A33E), size: 44),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Are you sure?",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor),
+              ),
+              const SizedBox(height: 14),
+              Text.rich(
+                TextSpan(
+                  style: TextStyle(fontSize: 16, color: grey, height: 1.4),
+                  children: [
+                    const TextSpan(
+                        text:
+                            "You want to delete this scheduled payment for "),
+                    TextSpan(
+                        text: payment.tenant?.tenantName ?? 'N/A',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: blueColor)),
+                    TextSpan(
+                        text: " at ${payment.rentalAddress ?? ''} in the "
+                            "amount of "),
+                    TextSpan(
+                        text: formatCurrency(payment.totalAmount),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: blueColor)),
+                    TextSpan(
+                        text: " on "
+                            "${payment.date?.isNotEmpty == true ? dateProvider.formatCurrentDate('${payment.date}') : 'N/A'}?"),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 18),
+              TextField(
+                controller: reason,
+                decoration: InputDecoration(
+                  hintText: 'Enter reason for deletion',
+                  hintStyle: const TextStyle(color: Color(0xFF8A95A8)),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFDBE0E5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: blueColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        var data = await Scheduled_Payment_repo()
+                            .DeleteScheduled_Payment(
+                                pro_id: id, reason: reason.text);
+                        if (data != null)
+                          setState(() {
+                            futurescheduledpayment =
+                                Scheduled_Payment_repo()
+                                    .fetchScheduled_Payment();
+                          });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          "Delete",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: blueColor, width: 1.5),
+                        ),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: blueColor,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
-      buttons: [
-        DialogButton(
-          child: const Text(
-            "Delete",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () async {
-            var data = await Scheduled_Payment_repo()
-                .DeleteScheduled_Payment(pro_id: id, reason: reason.text);
-            if (data != null)
-              setState(() {
-                futurescheduledpayment =
-                    Scheduled_Payment_repo().fetchScheduled_Payment();
-              });
-            Navigator.pop(context);
-          },
-          color: blueColor,
-        ),
-        DialogButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-                color: blueColor, fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () => Navigator.pop(context),
-          color: Colors.white,
-          radius: BorderRadius.circular(8), // Rounded corners
-          border: Border.all(
-            color: blueColor, // Blue border
-            width: 1.5,
-          ),
-        ),
-      ],
-    ).show();
+    );
   }
 
   Future<void> _exportPDF(List<Scheduled_Payment> data) async {
@@ -672,34 +665,33 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                   const SizedBox(height: 10),
                   //search
                   Padding(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width > 500 ? 25 : 14,
-                        right:
-                            MediaQuery.of(context).size.width > 500 ? 26 : 20),
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width > 500 ? 28 : 16),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Material(
-                          elevation: 2,
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            // height: 40,
-                            height: MediaQuery.of(context).size.width < 500
-                                ? 45
-                                : 50,
-                            width: MediaQuery.of(context).size.width < 500
-                                ? MediaQuery.of(context).size.width * .52
-                                : MediaQuery.of(context).size.width * .49,
-                            decoration: BoxDecoration(
+                        Expanded(
+                          child: Material(
+                            elevation: 0,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              height: MediaQuery.of(context).size.width < 500
+                                  ? 45
+                                  : 50,
+                              decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 // border: Border.all(color: Colors.grey),
                                 border:
                                     Border.all(color: const Color(0xFF8A95A8))),
-                            child: Stack(
+                            child: Row(
                               children: [
-                                Positioned.fill(
+                                const Icon(Icons.search,
+                                    color: Color(0xFF8A95A8), size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
                                   child: TextField(
                                     style: TextStyle(
                                         fontSize:
@@ -707,12 +699,6 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                     500
                                                 ? 15
                                                 : 14),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     cvverror = false;
-                                    //   });
-                                    // },
-                                    // controller: cvv,
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
@@ -720,33 +706,30 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                       });
                                     },
                                     cursorColor: blueColor,
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: "Search here...",
-                                        hintStyle: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 18,
-                                          // fontWeight: FontWeight.bold,
-                                          color: const Color(0xFF8A95A8),
-                                        ),
-                                        contentPadding: const EdgeInsets.only(
-                                            left: 5, bottom: 12, top: 5)),
+                                    decoration: const InputDecoration(
+                                      border: InputBorder.none,
+                                      isCollapsed: true,
+                                      hintText: "Search here...",
+                                      hintStyle: TextStyle(
+                                        fontSize: 15,
+                                        color: Color(0xFF8A95A8),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
+                          ),
                         ),
+                        const SizedBox(width: 10),
                         SizedBox(
                           height: 45,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: blueColor,
                               foregroundColor: Colors.white,
+                              elevation: 0,
                             ),
                             onPressed: () async {
                               final data = await futurescheduledpayment;
@@ -795,8 +778,11 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                   //   const SizedBox(height: 25),
                   // if (MediaQuery.of(context).size.width < 500)
                   Padding(
-                    padding: EdgeInsets.all(
-                        MediaQuery.of(context).size.width < 500 ? 11 : 28),
+                    padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width < 500 ? 16 : 28,
+                        vertical:
+                            MediaQuery.of(context).size.width < 500 ? 11 : 28),
                     child: FutureBuilder<List<Scheduled_Payment>>(
                       future: futurescheduledpayment,
                       builder: (context, snapshot) {
@@ -843,14 +829,10 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                           } else if (searchvalue.isNotEmpty) {
                             data = snapshot.data!
                                 .where((applicant) =>
-                                    applicant.rentalAddress!
+                                    (applicant.rentalAddress ?? '')
                                         .toLowerCase()
                                         .contains(searchvalue.toLowerCase()) ||
-                                    applicant.rentalAddress!
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    applicant.tenant!.tenantName
+                                    (applicant.tenant?.tenantName ?? '')
                                         .toString()
                                         .toLowerCase()
                                         .contains(searchvalue.toLowerCase()) ||
@@ -1015,7 +997,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                       ),
                                                     ),
                                                     Expanded(
-                                                      flex: 4,
+                                                      flex: 3,
                                                       child: InkWell(
                                                         onTap: () {
                                                           setState(() {
@@ -1030,7 +1012,13 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           });
                                                         },
                                                         child: Text(
-                                                          '${Propertytype.rentalAddress}',
+                                                          Propertytype.date
+                                                                      ?.isNotEmpty ==
+                                                                  true
+                                                              ? dateProvider
+                                                                  .formatCurrentDate(
+                                                                      '${Propertytype.date}')
+                                                              : 'N/A',
                                                           style: TextStyle(
                                                             color: blueColor,
                                                             fontWeight:
@@ -1049,37 +1037,12 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                     Expanded(
                                                       flex: 4,
                                                       child: Text(
-                                                        '${Propertytype.tenant!.tenantName}',
+                                                        '${Propertytype.rentalAddress}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 13,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .03),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 10.0),
-                                                        child: Text(
-                                                          // '${widget.data.createdAt}',
-                                                          '${formatCurrency(Propertytype.totalAmount)}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -1121,31 +1084,62 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                           TextSpan(
                                                             children: [
                                                               TextSpan(
-                                                                text: 'Date : ',
+                                                                text:
+                                                                    'Tenant : ',
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
                                                                     color:
-                                                                        blueColor), // Bold and black
+                                                                        blueColor),
                                                               ),
                                                               TextSpan(
-                                                                // text: formatDate(
-                                                                //     '${Propertytype.updatedAt}'),
                                                                 text: Propertytype
-                                                                            .date
-                                                                            ?.isNotEmpty ==
-                                                                        true
-                                                                    ? dateProvider
-                                                                        .formatCurrentDate(
-                                                                            '${Propertytype.date}')
-                                                                    : 'N/A',
+                                                                        .tenant
+                                                                        ?.tenantName ??
+                                                                    'N/A',
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w700,
                                                                     color:
-                                                                        grey), // Light and grey
+                                                                        grey),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                left: 18.0),
+                                                        child: Text.rich(
+                                                          TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Amount : ',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        blueColor),
+                                                              ),
+                                                              TextSpan(
+                                                                text: formatCurrency(
+                                                                    Propertytype
+                                                                        .totalAmount),
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color:
+                                                                        grey),
                                                               ),
                                                             ],
                                                           ),
@@ -1155,126 +1149,99 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                                         height: 15,
                                                       ),
                                                       Row(
-                                                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
                                                         children: [
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            SummeryPageLease(
-                                                                              leaseId: Propertytype.leaseId!,
-                                                                              enddate: Propertytype.date,
-                                                                              isredirectpayment: true,
-                                                                            )));
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border.all(
-                                                                      color:
-                                                                          blueColor,
-                                                                      width:
-                                                                          1.5),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          SummeryPageLease(
+                                                                            leaseId: Propertytype.leaseId!,
+                                                                            enddate: Propertytype.date,
+                                                                            isredirectpayment: true,
+                                                                          )));
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
                                                                               8),
-                                                                ), // color:Colors.grey[100],
-                                                                child: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Image.asset(
-                                                                      'assets/icons/view.png',
-                                                                      color:
-                                                                          blueColor,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "View",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              blueColor,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  color: const Color(
+                                                                      0xFFEFF1F5)),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .eye,
+                                                                    size: 16,
+                                                                    color:
+                                                                        blueColor,
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
                                                           const SizedBox(
                                                             width: 5,
                                                           ),
-                                                          Expanded(
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () async {
-                                                                _showAlert(
-                                                                    context,
-                                                                    Propertytype
-                                                                        .sId!,
-                                                                    Propertytype);
-                                                              },
-                                                              child: Container(
-                                                                height: 40,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border.all(
-                                                                      color: Colors
-                                                                          .red,
-                                                                      width:
-                                                                          1.5),
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              _showAlert(
+                                                                  context,
+                                                                  Propertytype
+                                                                      .sId!,
+                                                                  Propertytype);
+                                                            },
+                                                            child: Container(
+                                                              height: 35,
+                                                              width: 35,
+                                                              decoration: BoxDecoration(
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
                                                                               8),
-                                                                ), // color:Colors.grey[100],
-                                                                child:
-                                                                    const Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    FaIcon(
-                                                                      FontAwesomeIcons
-                                                                          .trashCan,
-                                                                      size: 15,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Text(
-                                                                      "Delete",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .red,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade50),
+                                                              child: const Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  FaIcon(
+                                                                    FontAwesomeIcons
+                                                                        .trashCan,
+                                                                    size: 15,
+                                                                    color: Colors
+                                                                        .red,
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
                                                         ],
                                                       ),
+                                                      const SizedBox(
+                                                          height: 12),
                                                     ],
                                                   ),
                                                 ),
@@ -1286,7 +1253,8 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                                     }).toList(),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                if (totalPages > 1) const SizedBox(height: 20),
+                                if (totalPages > 1)
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

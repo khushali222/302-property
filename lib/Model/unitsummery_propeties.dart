@@ -39,7 +39,7 @@ class unit_properties {
     rentalId = json['rental_id']??"";
     rentalunitadress = json['rental_unit_adress']??"";
     rentalsqft = json['rental_sqft']??"";
-    tenantCount = json['tenantCount']??"";
+    tenantCount = json['tenantCount'] is int ? json['tenantCount'] as int : int.tryParse('${json['tenantCount'] ?? ''}');
     rentalbath = json['rental_bath']??"";
     rentalImages = (json['rental_images'] as List<dynamic>?)
         ?.map((e) => e as String)
@@ -47,8 +47,8 @@ class unit_properties {
     rentalbed = json['rental_bed']??"";
     createdAt = json['createdAt']??"";
     updatedAt = json['updatedAt']??"";
-    isDelete = json['is_delete']??"";
-    iV = json['__v']??"";
+    isDelete = json['is_delete'] is bool ? json['is_delete'] as bool : null;
+    iV = json['__v'] is int ? json['__v'] as int : int.tryParse('${json['__v'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {

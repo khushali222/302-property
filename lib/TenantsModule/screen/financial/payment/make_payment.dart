@@ -79,6 +79,8 @@ class _MakePaymentState extends State<MakePayment> {
   double? surchargecount = 0.0;
   double? finaltotal;
   String override_fee = "";
+  // Sibling of override_fee on the same tenant JSON object (token_check / tenant_due_amount).
+  bool enableOverrideFee = false;
   Future<void> fetchSurchargeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -116,6 +118,8 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         // print("object ${jsonData['override_fee']}");
         override_fee = jsonData['override_fee'].toString();
+        // enable_override_fee is a sibling of override_fee on the same object.
+        enableOverrideFee = jsonData['enable_override_fee'] == true;
       });
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -147,8 +151,9 @@ class _MakePaymentState extends State<MakePayment> {
   String? leaseid;
 
   /// From get_tenant API: tenant-level allow_ach / allow_card. Merged with lease flags for dropdown.
-  bool? tenantAllowAch;
-  bool? tenantAllowCard;
+  /// WEB parity: default true (opt-out) like AddPaymentByTenant.jsx useState(true).
+  bool? tenantAllowAch = true;
+  bool? tenantAllowCard = true;
 
   @override
   void initState() {
@@ -503,8 +508,9 @@ class _MakePaymentState extends State<MakePayment> {
         final d = data is Map ? data['data'] : null;
         if (d is Map<String, dynamic>) {
           setState(() {
-            tenantAllowAch = d['allow_ach'] == true;
-            tenantAllowCard = d['allow_card'] == true;
+            // WEB parity: opt-out semantics (allow unless explicitly false)
+            tenantAllowAch = d['allow_ach'] != false;
+            tenantAllowCard = d['allow_card'] != false;
           });
         }
       }
@@ -532,7 +538,10 @@ class _MakePaymentState extends State<MakePayment> {
           methods.add('ACH');
       }
     }
-    return methods.isEmpty ? ['Card', 'ACH'] : methods;
+    // WEB parity: when the tenant is allowed neither method, return an empty
+    // list (block) instead of falling back to both. Allow-flags default true,
+    // so this is empty only when the tenant is explicitly disallowed both.
+    return methods;
   }
 
   /// Fetches ACH accounts from get-billing-customer-vault (POST).
@@ -797,6 +806,8 @@ class _MakePaymentState extends State<MakePayment> {
       setState(() {
         lease_data = charges;
         override_fee = charges!["override_fee"].toString();
+        // enable_override_fee is a sibling of override_fee on the same charges object.
+        enableOverrideFee = charges["enable_override_fee"] == true;
         // ACH surcharge from tenant_due_amount API (surcharge.surcharge_percent_ACH, surcharge_flat_ACH)
         if (charges["surcharge"] != null && charges["surcharge"] is Map) {
           final sur = charges["surcharge"] as Map<String, dynamic>;
@@ -806,13 +817,16 @@ class _MakePaymentState extends State<MakePayment> {
 
         if (selected_account == "full") {
           totalamount = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           totalpayamount = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           totalrent = double.parse(
-              double.parse(lease_data!["total_due_amount"].toString())
+              (double.tryParse(lease_data!["total_due_amount"].toString()) ??
+                      0.0)
                   .toStringAsFixed(2));
           if (_selectedPaymentMethod == 'ACH') {
             final achPct = surChargeAchper != null
@@ -854,6 +868,15 @@ class _MakePaymentState extends State<MakePayment> {
 
         isLoadingamount = false;
       });
+
+      // Load-order guard for the override race: fetchSurcharge() can run during
+      // initState (fetchPaymentSettings -> fetchcreditcard auto-select) BEFORE
+      // this method sets enable_override_fee / override_fee, which would leave a
+      // stale default debit fee (the reported $2). Now that the override data is
+      // loaded, recompute the card surcharge if a card is already selected.
+      if (selectedcardindex != null) {
+        await fetchSurcharge();
+      }
     } catch (e) {
       print(e);
       setState(() {
@@ -1054,13 +1077,21 @@ class _MakePaymentState extends State<MakePayment> {
                               b.ccExp != null && b.ccExp!.trim().isNotEmpty)
                           .toList();
                       if (cardOnly.length == 1) {
-                        if (debitCardAccepted && creditCardAccepted) {
+                        // WEB parity: auto-select the lone card based on ITS OWN
+                        // type being accepted (web filteredData[0].allowPayment),
+                        // not on both flags being true.
+                        final String loneType =
+                            (cardOnly.first.binResult ?? '').toUpperCase();
+                        final bool loneAccepted =
+                            (loneType == 'CREDIT' && creditCardAccepted) ||
+                                (loneType == 'DEBIT' && debitCardAccepted);
+                        if (loneAccepted) {
                           selectedcardindex = 0;
                           print("Auto-selected card index 0");
                           fetchSurcharge();
                         } else {
                           print(
-                              "Card not auto-selected. debitCardAccepted: $debitCardAccepted, creditCardAccepted: $creditCardAccepted");
+                              "Card not auto-selected. type: $loneType, creditCardAccepted: $creditCardAccepted, debitCardAccepted: $debitCardAccepted");
                         }
                       } else {
                         selectedcardindex = null;
@@ -1112,28 +1143,6 @@ class _MakePaymentState extends State<MakePayment> {
       });
       print("cardDetails final count: ${cardDetails.length}");
       print("========== fetchcreditcard END ==========");
-    }
-  }
-
-  Future<String> binCheck(String ccBin) async {
-    final String apiUrl = 'https://bin-ip-checker.p.rapidapi.com/?bin=$ccBin';
-
-    final response = await apiPost(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '1bd772d3c3msh11c1022dee1c2aep1557bajsn0ac41ea04ef7',
-        'X-RapidAPI-Host': 'bin-ip-checker.p.rapidapi.com',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      print('BIN check successful: ${jsonResponse['BIN']['type']}');
-      return jsonResponse['BIN']['type'];
-    } else {
-      print('Failed to check BIN: ${response.statusCode}');
-      return '';
     }
   }
 
@@ -1306,18 +1315,9 @@ class _MakePaymentState extends State<MakePayment> {
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
 
-  Future<List<String>> performBinChecks(CustomerData customerData) async {
-    List<String> binResults = [];
-    for (BillingData billing in customerData.billing) {
-      String binResult = await binCheck(billing.ccBin ?? '');
-      binResults.add(binResult);
-    }
-    return binResults;
-  }
-
   String? selected_account = "full";
   Map<int, bool> selectedRows = {};
-  int? surCharge;
+  num? surCharge;
   bool? scheduledPayment = false;
 
   dynamic? surChargeAchper;
@@ -1347,43 +1347,49 @@ class _MakePaymentState extends State<MakePayment> {
       // Accessing the first element in the 'data' list
       var surchargeData = jsonResponse['data'][0];
       print(surchargeData);
-      //  if (_selectedPaymentMethod == "Card") {
-      if (selectedcardindex != null &&
-          selectedcardindex! < _cardOnlyList.length &&
-          _cardOnlyList[selectedcardindex!].binResult == "CREDIT") {
+      // Card type is chosen by explicit binResult, never inferred.
+      // WEB parity: normalize case so a stored "Credit"/"credit" still matches.
+      final String? cardType = (selectedcardindex != null &&
+              selectedcardindex! < _cardOnlyList.length)
+          ? _cardOnlyList[selectedcardindex!].binResult?.toUpperCase()
+          : null;
+      // override_fee is valid only when present, non-"null", non-empty.
+      final bool hasOverrideFee = override_fee != "null" &&
+          override_fee.isNotEmpty &&
+          num.tryParse(override_fee) != null;
+      if (cardType == "CREDIT") {
+        // CREDIT ALWAYS uses surcharge_percent and NEVER consults override_fee.
         setState(() {
-          print("Override_fee === $override_fee");
-          if (override_fee == null ||
-              override_fee == "null" ||
-              override_fee!.isEmpty) {
-            surCharge = surchargeData['surcharge_percent'];
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * surCharge! / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
-            print(totalamount);
-          } else {
-            surCharge = num.tryParse(override_fee) ?? surchargeData['surcharge_percent'];
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * (surCharge ?? 0) / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
+          surCharge = num.tryParse(
+                  (surchargeData['surcharge_percent'] ?? 0).toString()) ??
+              0;
+          if (totalamount > 0.0) {
+            surchargeamount = totalamount * surCharge! / 100;
+            totalpayamount = totalamount + surchargeamount;
+          }
+        });
+      } else if (cardType == "DEBIT") {
+        // DEBIT: override_fee (as a PERCENTAGE) only when enabled AND present;
+        // otherwise surcharge_percent_debit.
+        setState(() {
+          final num effectivePercent = (enableOverrideFee == true &&
+                  hasOverrideFee)
+              ? (num.tryParse(override_fee) ?? 0)
+              : (num.tryParse((surchargeData['surcharge_percent_debit'] ?? 0)
+                      .toString()) ??
+                  0);
+          surCharge = effectivePercent;
+          if (totalamount > 0.0) {
+            surchargeamount = totalamount * surCharge! / 100;
+            totalpayamount = totalamount + surchargeamount;
           }
         });
       } else {
+        // Any card type that is neither exactly "CREDIT" nor "DEBIT" => 0% surcharge.
         setState(() {
-          if (override_fee == null ||
-              override_fee == "null" ||
-              override_fee.isEmpty) {
-            surCharge = surchargeData['surcharge_percent_debit'] ?? 0;
-            if (totalamount > 0.0) {
-              surchargeamount = totalamount * surCharge! / 100;
-              totalpayamount = totalamount + surchargeamount;
-            }
-            print(totalamount);
-          } else {
-            surCharge = int.parse(override_fee) ?? 0;
-          }
+          surCharge = 0.0;
+          surchargeamount = 0.0;
+          totalpayamount = totalamount;
         });
       }
       //  }
@@ -1461,8 +1467,9 @@ class _MakePaymentState extends State<MakePayment> {
                 print('Data keys: ${data.keys}');
 
                 setState(() {
-                  creditCardAccepted = data['creditCardAccepted'] ?? false;
-                  debitCardAccepted = data['debitCardAccepted'] ?? false;
+                  // WEB parity: fail-open — missing flag means accepted
+                  creditCardAccepted = data['creditCardAccepted'] ?? true;
+                  debitCardAccepted = data['debitCardAccepted'] ?? true;
 
                   // Print values to ensure state is being updated correctly
                   print("creditCardAccepted: $creditCardAccepted");
@@ -1678,7 +1685,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       buttonStyleData: ButtonStyleData(
                                         height: 50,
                                         // width: 250,
-                                     // padding: EdgeInsets.only(left: 14, right: 14),
+                                        // padding: EdgeInsets.only(left: 14, right: 14),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8),
@@ -1803,9 +1810,9 @@ class _MakePaymentState extends State<MakePayment> {
                             }
                             return null;
                           },
-                        borderColor: Colors.grey.shade300,
-                        borderWidth: 1,
-                        showElevation: false,
+                          borderColor: Colors.grey.shade300,
+                          borderWidth: 1,
+                          showElevation: false,
                           // label: "Select the date",
                           // borderColor: Colors.grey.shade300,
                           keyboardType: TextInputType.text,
@@ -1876,16 +1883,15 @@ class _MakePaymentState extends State<MakePayment> {
                             },
                             buttonStyleData: ButtonStyleData(
                               height: 50,
-                             // width: 250,
+                              // width: 250,
                               // padding:
                               //     const EdgeInsets.only(left: 10, right: 14),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
-                           
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                          width: 1,
-                        ),
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 1,
+                                ),
                                 color: Colors.white,
                               ),
                               elevation: 0,
@@ -1924,7 +1930,7 @@ class _MakePaymentState extends State<MakePayment> {
                           cardDetails == null
                               ? Container()
                               : Padding(
-                                  padding: EdgeInsets.only(left: 0, right: 10),
+                                  padding: EdgeInsets.zero,
                                   child: isloading
                                       ? Container(
                                           height: MediaQuery.of(context)
@@ -1964,135 +1970,154 @@ class _MakePaymentState extends State<MakePayment> {
                                                 )
                                               : Column(
                                                   children: [
-                                                    Table(
-                                                      columnWidths: {
-                                                        0: FlexColumnWidth(
-                                                            .5), // Date
-                                                        1: FlexColumnWidth(
-                                                            1.3), // Address
-                                                        2: FlexColumnWidth(
-                                                            1), // Work
-                                                        3: FlexColumnWidth(
-                                                            .5), // Performed
-                                                        // Performed
-                                                      },
-                                                      defaultVerticalAlignment:
-                                                          TableCellVerticalAlignment
-                                                              .middle,
-                                                      children: [
-                                                        ..._cardOnlyList
-                                                            .asMap()
-                                                            .entries
-                                                            .map((entry) {
-                                                          int index = entry.key;
-                                                          BillingData item =
-                                                              entry.value;
-                                                          String month = item
-                                                              .ccExp!
-                                                              .substring(0, 2);
-                                                          String year = item
-                                                              .ccExp!
-                                                              .substring(2, 4);
-                                                          String currentMonth =
-                                                              DateTime.now()
-                                                                  .month
-                                                                  .toString()
-                                                                  .padLeft(
-                                                                      2, '0');
-                                                          String currentYear =
-                                                              DateTime.now()
-                                                                  .year
-                                                                  .toString()
-                                                                  .substring(2);
-                                                          String
-                                                              currentMonthYear =
-                                                              currentMonth +
-                                                                  currentYear;
-                                                          String expMonthYear =
-                                                              item.ccExp!;
-                                                          String expMonth =
-                                                              expMonthYear
-                                                                  .substring(
-                                                                      0, 2);
-                                                          String expYear =
-                                                              expMonthYear
-                                                                  .substring(
-                                                                      2, 4);
-                                                          bool isExpired = int
-                                                                      .parse(
-                                                                          expYear) <
-                                                                  int.parse(
-                                                                      currentYear) ||
-                                                              (int.parse(expYear) ==
-                                                                      int.parse(
-                                                                          currentYear) &&
-                                                                  int.parse(
-                                                                          expMonth) <
-                                                                      int.parse(
-                                                                          currentMonth));
-                                                          // Only CREDIT cards are disabled when not accepted by rental owner; DEBIT cards stay selectable (only disabled when expired)
-                                                          bool isCardAccepted = item
-                                                                      .binResult ==
-                                                                  "DEBIT"
-                                                              ? true
-                                                              : (item.binResult ==
-                                                                      "CREDIT" &&
-                                                                  creditCardAccepted);
-                                                          bool isDisabled = isExpired ||
-                                                              (item.binResult ==
-                                                                      "CREDIT" &&
-                                                                  !creditCardAccepted);
-                                                          print(
-                                                              'abc check ${isCardAccepted}');
-                                                          return TableRow(
-                                                            decoration: BoxDecoration(
+                                                    Column(
+                                                      children: _cardOnlyList
+                                                          .asMap()
+                                                          .entries
+                                                          .map((entry) {
+                                                        int index = entry.key;
+                                                        BillingData item =
+                                                            entry.value;
+                                                        String currentMonth =
+                                                            DateTime.now()
+                                                                .month
+                                                                .toString()
+                                                                .padLeft(
+                                                                    2, '0');
+                                                        String currentYear =
+                                                            DateTime.now()
+                                                                .year
+                                                                .toString()
+                                                                .substring(2);
+                                                        String expMonth = item
+                                                            .ccExp!
+                                                            .substring(0, 2);
+                                                        String expYear = item
+                                                            .ccExp!
+                                                            .substring(2, 4);
+                                                        bool isExpired = int
+                                                                    .parse(
+                                                                        expYear) <
+                                                                int.parse(
+                                                                    currentYear) ||
+                                                            (int.parse(expYear) ==
+                                                                    int.parse(
+                                                                        currentYear) &&
+                                                                int.parse(
+                                                                        expMonth) <
+                                                                    int.parse(
+                                                                        currentMonth));
+                                                        // A CREDIT card is accepted only when creditCardAccepted; a DEBIT card only when debitCardAccepted (matches web handleSetCardDetails)
+                                                        // WEB parity: normalize case before comparing (web lowercases; Admin/Staff uppercase) so a stored "Credit"/"credit" is still recognized.
+                                                        final String cardTypeU =
+                                                            (item.binResult ?? '')
+                                                                .toUpperCase();
+                                                        bool isCardAccepted =
+                                                            cardTypeU == "DEBIT"
+                                                                ? debitCardAccepted
+                                                                : (cardTypeU ==
+                                                                        "CREDIT" &&
+                                                                    creditCardAccepted);
+                                                        bool isDisabled = isExpired ||
+                                                            (cardTypeU == "CREDIT" &&
+                                                                !creditCardAccepted) ||
+                                                            (cardTypeU == "DEBIT" &&
+                                                                !debitCardAccepted);
+                                                        bool isSelected =
+                                                            selectedcardindex ==
+                                                                index;
+                                                        final String brand =
+                                                            _resolveCardBrandLabel(
+                                                                item.ccType,
+                                                                item.ccNumber);
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  bottom: 12),
+                                                          child: InkWell(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                            onTap: (isDisabled ||
+                                                                    !isCardAccepted)
+                                                                ? null
+                                                                : () async {
+                                                                    setState(
+                                                                        () {
+                                                                      selectedcardindex =
+                                                                          index;
+                                                                    });
+                                                                    await fetchSurcharge();
+                                                                  },
+                                                            child: Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          14,
+                                                                      vertical:
+                                                                          14),
+                                                              decoration:
+                                                                  BoxDecoration(
                                                                 color: isDisabled
-                                                                    ? Colors
-                                                                        .redAccent
-                                                                        .shade100
-                                                                    : Color
-                                                                        .fromRGBO(
-                                                                            240,
-                                                                            243,
-                                                                            248,
-                                                                            1),
+                                                                    ? Colors.redAccent.shade100
+                                                                    : isSelected
+                                                                        ? const Color.fromRGBO(240, 243, 248, 1)
+                                                                        : Colors.white,
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            5)),
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Column(
-                                                                  children: [
-                                                                    isDisabled
-                                                                        ? IconButton(
-                                                                            icon:
-                                                                                Icon(Icons.close),
-                                                                            onPressed:
-                                                                                () {},
-                                                                          )
-                                                                        : Checkbox(
+                                                                            12),
+                                                                border:
+                                                                    Border.all(
+                                                                  color: isSelected
+                                                                      ? blueColor
+                                                                      : Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                  width:
+                                                                      isSelected
+                                                                          ? 1.5
+                                                                          : 1,
+                                                                ),
+                                                              ),
+                                                              child: Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  isDisabled
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color: Colors
+                                                                              .red,
+                                                                          size:
+                                                                              22)
+                                                                      : SizedBox(
+                                                                          width:
+                                                                              24,
+                                                                          height:
+                                                                              24,
+                                                                          child:
+                                                                              Checkbox(
                                                                             activeColor:
                                                                                 blueColor,
                                                                             checkColor:
                                                                                 Colors.white,
-
                                                                             shape:
                                                                                 RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(2),
+                                                                              borderRadius: BorderRadius.circular(4),
                                                                             ),
-
                                                                             side:
                                                                                 BorderSide(
                                                                               color: isCardAccepted ? blueColor : Colors.grey,
                                                                               width: 1.5,
                                                                             ),
                                                                             value:
-                                                                                selectedcardindex == index,
+                                                                                isSelected,
                                                                             onChanged: isCardAccepted
                                                                                 ? (bool? value) async {
                                                                                     setState(() {
@@ -2100,87 +2125,86 @@ class _MakePaymentState extends State<MakePayment> {
                                                                                     });
                                                                                     await fetchSurcharge();
                                                                                   }
-                                                                                : null, // Disable the checkbox if card is not accepted
+                                                                                : null,
                                                                           ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    "Card Number",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
+                                                                        ),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          14),
+                                                                  Expanded(
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        const Text(
+                                                                          "CARD NUMBER",
+                                                                          style: TextStyle(
+                                                                              fontSize: 11,
+                                                                              letterSpacing: .5,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              color: Colors.grey),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
+                                                                        Text(
+                                                                          item.ccNumber!,
+                                                                          maxLines:
+                                                                              1,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                          style: TextStyle(
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
-                                                                  Text(
-                                                                    item.ccNumber!,
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            14),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          10),
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .end,
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                      if (brand
+                                                                          .isNotEmpty)
+                                                                        Text(
+                                                                          brand,
+                                                                          style: TextStyle(
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: blueColor),
+                                                                        ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              2),
+                                                                      Text(
+                                                                        '${item.binResult}',
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                            color:
+                                                                                Colors.grey),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    "Card Type",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                  ),
-                                                                  Text(
-                                                                    '${item.binResult}',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            14),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                children: [
-                                                                  _buildLogosBlocktablet(
-                                                                      item.ccType!),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          );
-                                                        }).expand((row) {
-                                                          // Add space between rows
-                                                          return [
-                                                            row,
-                                                            TableRow(
-                                                              children: [
-                                                                SizedBox(
-                                                                    height:
-                                                                        8), // Add spacing between rows
-                                                                SizedBox(
-                                                                    height: 8),
-                                                                SizedBox(
-                                                                    height: 8),
-                                                                SizedBox(
-                                                                    height: 8),
-                                                              ],
                                                             ),
-                                                          ];
-                                                        }).toList(),
-                                                      ],
+                                                          ),
+                                                        );
+                                                      }).toList(),
                                                     ),
                                                     SizedBox(
                                                       height: 5,
@@ -2188,7 +2212,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                     if (!debitCardAccepted &&
                                                         _cardOnlyList.any(
                                                             (item) =>
-                                                                item.binResult ==
+                                                                (item.binResult ?? '')
+                                                                        .toUpperCase() ==
                                                                 "DEBIT"))
                                                       Row(
                                                         children: [
@@ -2207,7 +2232,8 @@ class _MakePaymentState extends State<MakePayment> {
                                                     if (!creditCardAccepted &&
                                                         _cardOnlyList.any(
                                                             (item) =>
-                                                                item.binResult ==
+                                                                (item.binResult ?? '')
+                                                                        .toUpperCase() ==
                                                                 "CREDIT"))
                                                       Row(
                                                         children: [
@@ -2585,7 +2611,6 @@ class _MakePaymentState extends State<MakePayment> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -2597,7 +2622,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '\$${lease_data != null ? double.parse(lease_data!["total_due_amount"].toString()).toStringAsFixed(2) : "0.00"}',
+                            '\$${lease_data != null ? (double.tryParse(lease_data!["total_due_amount"].toString()) ?? 0.0).toStringAsFixed(2) : "0.00"}',
                             style: TextStyle(
                                 color: Color.fromRGBO(73, 81, 96, 1),
                                 fontSize: 15),
@@ -2632,9 +2657,9 @@ class _MakePaymentState extends State<MakePayment> {
                         ],
                       ),
                       SizedBox(height: 12),
-                            Divider(
+                      Divider(
                           height: 1, thickness: 1, color: Colors.grey.shade300),
-                          SizedBox(height: 12),
+                      SizedBox(height: 12),
                       Row(
                         children: [
                           Text(
@@ -2656,9 +2681,10 @@ class _MakePaymentState extends State<MakePayment> {
                             selected_account = "full";
                             partialamount = false;
                             if (lease_data != null) {
-                              totalamount = double.parse(double.parse(
-                                      lease_data!["total_due_amount"]
-                                          .toString())
+                              totalamount = double.parse((double.tryParse(
+                                          lease_data!["total_due_amount"]
+                                              .toString()) ??
+                                      0.0)
                                   .toStringAsFixed(2));
                               if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
@@ -2692,7 +2718,8 @@ class _MakePaymentState extends State<MakePayment> {
                           setState(() {
                             selected_account = "partial";
                             if (amountController.text.isNotEmpty) {
-                              totalamount = double.parse(amountController.text);
+                              totalamount =
+                                  double.tryParse(amountController.text) ?? 0.0;
                               if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
                                     ? (double.tryParse(
@@ -2747,9 +2774,10 @@ class _MakePaymentState extends State<MakePayment> {
                             hintText: 'Enter Amount',
                             controller: amountController
                               ..text = lease_data != null &&
-                                      double.parse(
-                                              lease_data!["total_due_amount"]
-                                                  .toString()) >
+                                      (double.tryParse(lease_data![
+                                                      "total_due_amount"]
+                                                  .toString()) ??
+                                              0.0) >
                                           0
                                   ? amountController.text
                                   : '0',
@@ -2758,11 +2786,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 if (value.isNotEmpty && lease_data != null) {
                                   double inputAmount =
                                       double.tryParse(value) ?? 0.0;
-                                  if (inputAmount >
-                                      lease_data!["total_due_amount"]) {
-                                    inputAmount =
-                                        double.parse(amountController.text);
-                                  }
+                                  // WEB parity: web's handlePartialAmountChange only sanitizes
+                                  // the input and does NOT cap it at total_due_amount, so a
+                                  // tenant may overpay (prepay). Mobile no longer caps it.
                                   totalamount = inputAmount;
                                   totalpayamount = inputAmount;
                                   if (_selectedPaymentMethod == 'ACH') {
@@ -2905,76 +2931,78 @@ class _MakePaymentState extends State<MakePayment> {
                 if (totalpayamount > 0.0 && selectedTenantId != null)
                   Row(
                     children: [
-                      Expanded(child: GestureDetector(
-                        onTap: () {
-                          // Prepare payment entries
-                          List<Map<String, dynamic>> manualEntries = [
-                            {
-                              "account": selected_account == "rent"
-                                  ? "Rent Income"
-                                  : "Payment",
-                              "amount": totalamount,
-                              "memo": selected_account == "rent"
-                                  ? "Rent Income"
-                                  : "Payment",
-                              "date": _normalizeToIsoDate(_startDate.text),
-                              "charge_type":
-                                  selected_account == "rent" ? "Rent" : "Payment",
-                            }
-                          ];
-                      
-                          // Navigate to CheckoutScreen for Google/Apple Pay
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CheckoutScreen(
-                                amount: totalpayamount,
-                                tenantId: widget.tenantId,
-                                leaseId: selectedTenantId ?? "",
-                                paymentAmountType: selected_account ?? "full",
-                                entries: manualEntries,
-                                surchargeamount: surchargeamount,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            // Prepare payment entries
+                            List<Map<String, dynamic>> manualEntries = [
+                              {
+                                "account": selected_account == "rent"
+                                    ? "Rent Income"
+                                    : "Payment",
+                                "amount": totalamount,
+                                "memo": selected_account == "rent"
+                                    ? "Rent Income"
+                                    : "Payment",
+                                "date": _normalizeToIsoDate(_startDate.text),
+                                "charge_type": selected_account == "rent"
+                                    ? "Rent"
+                                    : "Payment",
+                              }
+                            ];
+
+                            // Navigate to CheckoutScreen for Google/Apple Pay
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CheckoutScreen(
+                                  amount: totalpayamount,
+                                  tenantId: widget.tenantId,
+                                  leaseId: selectedTenantId ?? "",
+                                  paymentAmountType: selected_account ?? "full",
+                                  entries: manualEntries,
+                                  surchargeamount: surchargeamount,
+                                ),
                               ),
+                            ).then((result) {
+                              if (result == true) {
+                                // Payment successful, refresh or navigate back
+                                Navigator.pop(context, true);
+                              }
+                            });
+                          },
+                          child: Container(
+                            height: 50,
+                            // width: 250,
+                            margin: EdgeInsets.only(left: 0, bottom: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.black,
                             ),
-                          ).then((result) {
-                            if (result == true) {
-                              // Payment successful, refresh or navigate back
-                              Navigator.pop(context, true);
-                            }
-                          });
-                        },
-                        child: Container(
-                          height: 50,
-                          // width: 250,
-                          margin: EdgeInsets.only(left: 0, bottom: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colors.black,
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.account_balance_wallet,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  "Pay with Google/Apple Pay",
-                                  style: TextStyle(
-                                    fontSize: 16,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.account_balance_wallet,
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                                    size: 20,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Pay with Google/Apple Pay",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                     ],
                   ),
                 SizedBox(
@@ -2992,11 +3020,12 @@ class _MakePaymentState extends State<MakePayment> {
                                 iserror = false;
                                 IsLoading = true;
                               });
-                      
+
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               String? id = prefs.getString('adminId');
-                              String? first_name = prefs.getString("first_name");
+                              String? first_name =
+                                  prefs.getString("first_name");
                               String? last_name = prefs.getString("last_name");
                               String? email = prefs.getString("email");
                               List<Map<String, dynamic>> filteredTenants =
@@ -3019,8 +3048,9 @@ class _MakePaymentState extends State<MakePayment> {
                                       ? "Rent Income"
                                       : "Payment",
                                   "date": _normalizeToIsoDate(_startDate.text),
-                                  "charge_type":
-                                      selected_account == "rent" ? "Rent" : "Payment",
+                                  "charge_type": selected_account == "rent"
+                                      ? "Rent"
+                                      : "Payment",
                                 }
                               ];
                               print('abc entries ${manualEntries}');
@@ -3030,12 +3060,13 @@ class _MakePaymentState extends State<MakePayment> {
                                   selectedAchIndex != null &&
                                   selectedAchIndex! < achAccounts.length) {
                                 final ach = achAccounts[selectedAchIndex!];
-                                final String checkname =
-                                    ach['account_name']?.toString() ??
-                                        ach['account_holder_name']?.toString() ??
-                                        '';
+                                final String checkname = ach['account_name']
+                                        ?.toString() ??
+                                    ach['account_holder_name']?.toString() ??
+                                    '';
                                 final String accountType =
-                                    ach['account_type']?.toString() ?? 'Checking';
+                                    ach['account_type']?.toString() ??
+                                        'Checking';
                                 final String holderType =
                                     ach['account_holder_type']?.toString() ??
                                         'Personal';
@@ -3048,15 +3079,16 @@ class _MakePaymentState extends State<MakePayment> {
                                 final String? customerVaultId =
                                     customervaultid?.toString();
                                 final String processorId =
-                                    lease_data?['processorId']?.toString() ?? '';
+                                    lease_data?['processorId']?.toString() ??
+                                        '';
                                 await PaymentService()
                                     .makePaymentforach(
                                   adminId: id ?? "",
-                                  firstName: first_name!,
-                                  lastName: last_name!,
-                                  emailName: email!,
-                                  surcharge: "${surchargeamount}",
-                                  amount: "${totalamount}",
+                                  firstName: first_name ?? "",
+                                  lastName: last_name ?? "",
+                                  emailName: email ?? "",
+                                  surcharge: surchargeamount.toStringAsFixed(2),
+                                  amount: totalamount.toStringAsFixed(2),
                                   tenantId: widget.tenantId,
                                   date: _normalizeToIsoDate(_startDate.text),
                                   address1: checkname,
@@ -3086,18 +3118,21 @@ class _MakePaymentState extends State<MakePayment> {
                                     title: "Payment Failed!",
                                     desc:
                                         "${e.toString().split('Exception:').length > 1 ? e.toString().split('Exception:')[1].toString().trimLeft() : e.toString()}",
-                                    style: AlertStyle(backgroundColor: Colors.white),
+                                    style: AlertStyle(
+                                        backgroundColor: Colors.white),
                                     buttons: [
                                       DialogButton(
                                         child: Text("Ok",
                                             style: TextStyle(
-                                                color: Colors.white, fontSize: 18)),
+                                                color: Colors.white,
+                                                fontSize: 18)),
                                         onPressed: () => Navigator.pop(context),
                                         color: blueColor,
                                       ),
                                     ],
                                   ).show();
-                                  Fluttertoast.showToast(msg: "Payment failed $e");
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
                                 });
                                 return;
                               }
@@ -3111,20 +3146,23 @@ class _MakePaymentState extends State<MakePayment> {
                                   firstName: first_name ?? "",
                                   lastName: last_name ?? "",
                                   emailName: email ?? "",
-                                  customerVaultId: _cardOnlyList[selectedcardindex!]
-                                          .customerVaultId ??
-                                      "",
-                                  billingId:
-                                      _cardOnlyList[selectedcardindex!].billingId ??
+                                  customerVaultId:
+                                      _cardOnlyList[selectedcardindex!]
+                                              .customerVaultId ??
                                           "",
-                                  surcharge: "${surchargeamount}",
-                                  amount: "${totalamount}",
+                                  billingId: _cardOnlyList[selectedcardindex!]
+                                          .billingId ??
+                                      "",
+                                  surcharge: surchargeamount.toStringAsFixed(2),
+                                  amount: totalamount.toStringAsFixed(2),
                                   tenantId: widget.tenantId,
                                   date: _normalizeToIsoDate(_startDate.text),
-                                  address1:
-                                      _cardOnlyList[selectedcardindex!].address_1 ??
+                                  address1: _cardOnlyList[selectedcardindex!]
+                                          .address_1 ??
+                                      "",
+                                  processorId:
+                                      lease_data?['processorId']?.toString() ??
                                           "",
-                                  processorId: "",
                                   leaseid: selectedTenantId!,
                                   company_name: companyName,
                                   future_Date: futuredate!,
@@ -3140,31 +3178,40 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     IsLoading = false;
                                   });
-                                  final msg = e.toString().contains('Exception:')
-                                      ? e.toString().split('Exception:')[1].trimLeft()
-                                      : e.toString();
+                                  final msg =
+                                      e.toString().contains('Exception:')
+                                          ? e
+                                              .toString()
+                                              .split('Exception:')[1]
+                                              .trimLeft()
+                                          : e.toString();
                                   Alert(
                                     context: context,
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
                                     desc: msg,
-                                    style: AlertStyle(backgroundColor: Colors.white),
+                                    style: AlertStyle(
+                                        backgroundColor: Colors.white),
                                     buttons: [
                                       DialogButton(
                                         child: Text("Ok",
                                             style: TextStyle(
-                                                color: Colors.white, fontSize: 18)),
+                                                color: Colors.white,
+                                                fontSize: 18)),
                                         onPressed: () => Navigator.pop(context),
                                         color: blueColor,
                                       ),
                                     ],
                                   ).show();
-                                  Fluttertoast.showToast(msg: "Payment failed $e");
+                                  Fluttertoast.showToast(
+                                      msg: "Payment failed $e");
                                 });
                               } catch (e) {
                                 setState(() => IsLoading = false);
-                                print("[CARD PAYMENT] Sync error before API call: $e");
-                                Fluttertoast.showToast(msg: "Payment error: $e");
+                                print(
+                                    "[CARD PAYMENT] Sync error before API call: $e");
+                                Fluttertoast.showToast(
+                                    msg: "Payment error: $e");
                               }
                             } else {
                               setState(() {
@@ -3200,7 +3247,10 @@ class _MakePaymentState extends State<MakePayment> {
                               : Center(
                                   child: Text(
                                   "Make Payment ",
-                                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 )),
                         ),
                       ),
@@ -3365,24 +3415,29 @@ class _MakePaymentState extends State<MakePayment> {
           _selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100) +
-                  surChargeAchflat;
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          surchargecount = ((double.tryParse(amountController.text) ?? 0.0) *
+                  surChargeAchper /
+                  100) +
+              surChargeAchflat;
+          finaltotal =
+              (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchflat != null || surChargeAchflat != 0.0)) {
         setState(() {
-          surchargecount = double.parse(surChargeAchflat.toString());
-          finaltotal = double.parse(amountController.text) + surchargecount!;
-          // surchargecount = double.parse(amountController.text) * surChargeAchper /100;
+          surchargecount = double.tryParse(surChargeAchflat.toString()) ?? 0.0;
+          finaltotal =
+              (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
+          // surchargecount = (double.tryParse(amountController.text) ?? 0.0) * surChargeAchper /100;
         });
       } else if (_selectedPaymentMethod == "ACH" &&
           (surChargeAchper != null || surChargeAchper != 0.0)) {
         setState(() {
-          surchargecount =
-              (double.parse(amountController.text) * surChargeAchper / 100);
-          finaltotal = double.parse(amountController.text) + surchargecount!;
+          surchargecount = ((double.tryParse(amountController.text) ?? 0.0) *
+              surChargeAchper /
+              100);
+          finaltotal =
+              (double.tryParse(amountController.text) ?? 0.0) + surchargecount!;
         });
       }
     } catch (e) {
@@ -3423,6 +3478,29 @@ class _MakePaymentState extends State<MakePayment> {
         ),
       ],
     );
+  }
+
+  // Display-only: resolves the card network brand for the card list.
+  // Prefers the processor cc_type, then infers from the card number's first
+  // digit. Does not read or change binResult, so surcharge and card-acceptance
+  // logic remain unaffected.
+  String _resolveCardBrandLabel(String? ccType, String? ccNumber) {
+    final String raw = (ccType ?? '').trim().toLowerCase();
+    if (raw.contains('american express') || raw.contains('amex')) return 'Amex';
+    if (raw.contains('mastercard') || raw.contains('master card'))
+      return 'Mastercard';
+    if (raw.contains('visa')) return 'Visa';
+    if (raw.contains('discover')) return 'Discover';
+    if (raw.contains('jcb')) return 'JCB';
+    if (raw.contains('diners')) return 'Diners';
+
+    final String digits = (ccNumber ?? '').replaceAll(RegExp(r'\D'), '');
+    final String first = digits.isNotEmpty ? digits[0] : '';
+    if (first == '3') return 'Amex';
+    if (first == '4') return 'Visa';
+    if (first == '5') return 'Mastercard';
+    if (first == '6') return 'Discover';
+    return '';
   }
 
   Widget _buildLogosBlock(String ccType) {

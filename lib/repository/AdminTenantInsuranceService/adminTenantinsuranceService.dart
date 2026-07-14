@@ -28,7 +28,6 @@ class AdminTenantInsuranceRepository {
 
       if (jsonData['statusCode'] == 200) {
         final tenantData = jsonData['data'];
-        print('tenant insurance ${response.body}');
 
         if (tenantData.isNotEmpty) {
           final tenantInsurance = tenantData[0]['tenantInsurance'] as List;
@@ -40,7 +39,6 @@ class AdminTenantInsuranceRepository {
       }
       return tenantInsuranceList;
     } else {
-      print('ok');
       throw Exception('Failed to load tenant insurance data');
     }
   }
@@ -61,7 +59,6 @@ class AdminTenantInsuranceRepository {
       },
     );
 
-    print(response.body);
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
       Fluttertoast.showToast(msg: responseData["message"]);

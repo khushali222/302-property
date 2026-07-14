@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../../widgets/custom_textfield.dart';
@@ -24,6 +25,25 @@ class ContactUsScreen extends StatefulWidget {
 
 class _ContactUsScreenState extends State<ContactUsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  // This screen is shared by all roles. Only Admin may show the Admin
+  // appbar/drawer — other roles (Vendor/Tenant/Staff) get a plain scoped
+  // AppBar so Admin-level menus/navigation never leak (CRM: vendor avatar
+  // menu leak after Contact Us).
+  String? _role;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRole();
+  }
+
+  Future<void> _loadRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() => _role = prefs.getString('role'));
+    }
+  }
 
   // Form controllers
   final TextEditingController _nameController = TextEditingController();
@@ -380,13 +400,32 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAdmin = _role == 'Admin';
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
-        currentpage: "Contact Support",
-        dropdown: false,
-      ),
-      appBar: widget_302.App_Bar(context: context),
+      // Admin keeps the full Admin appbar + drawer (unchanged behaviour).
+      // Vendor/Tenant/Staff get a plain back-arrow AppBar with no drawer and
+      // no avatar menu, so Admin navigation cannot leak into their session.
+      drawer: isAdmin
+          ? CustomDrawer(
+              currentpage: "Contact Support",
+              dropdown: false,
+            )
+          : null,
+      appBar: isAdmin
+          ? widget_302.App_Bar(context: context)
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 1,
+              iconTheme: IconThemeData(color: blueColor),
+              title: Text(
+                'Contact Us',
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Form(

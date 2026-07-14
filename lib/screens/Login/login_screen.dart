@@ -4652,14 +4652,13 @@ class _Login_ScreenState extends State<Login_Screen> {
     if (savedRememberMe == true &&
         savedEmail != null &&
         savedPassword != null) {
-      print('✅ Auto-filling credentials and checking credentials');
+      print('✅ Auto-filling credentials (Remember Me)');
       setState(() {
         rememberMe = true;
         isChecked = true;
         email.text = savedEmail;
         password.text = savedPassword;
-        // Auto-check credentials with email and password
-        checkCredentials();
+        // Fields are pre-filled only; user must tap Login to authenticate.
       });
     } else {
       print('❌ No saved credentials found or Remember Me not enabled');
@@ -5938,14 +5937,17 @@ class _Login_ScreenState extends State<Login_Screen> {
       Uri.parse('${Api_url}/api/auth'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        // Must be the staff member's OWN id (same as web) so the server
+        // resolves the staff branch — sending adminId hits the admin branch
+        // and 401s at companies with multiple co-admins.
+        "id": "CRM $userId",
         "Content-Type": "application/json"
       },
       body: json.encode({"token": token}),
     );
     print(response.body);
     final jsonData = json.decode(response.body);
-    if (jsonData['id'] != "") {
+    if (jsonData["staffmember_id"] != null) {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -5974,6 +5976,9 @@ class _Login_ScreenState extends State<Login_Screen> {
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
       print('Failed to check token');
+      Fluttertoast.showToast(
+          msg: _formatErrorMessage(
+              jsonData["message"] ?? "Login failed. Please try again."));
     }
   }
 
@@ -5987,14 +5992,16 @@ class _Login_ScreenState extends State<Login_Screen> {
       Uri.parse('${Api_url}/api/auth'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        // Tenant's OWN id (same as web) — adminId here resolves the wrong
+        // user branch on the server.
+        "id": "CRM $userId",
         "Content-Type": "application/json"
       },
       body: json.encode({"token": token}),
     );
     print(response.body);
     final jsonData = json.decode(response.body);
-    if (jsonData['id'] != "") {
+    if (jsonData["tenant_id"] != null) {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -6019,6 +6026,9 @@ class _Login_ScreenState extends State<Login_Screen> {
           MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
       print('Failed to check token');
+      Fluttertoast.showToast(
+          msg: _formatErrorMessage(
+              jsonData["message"] ?? "Login failed. Please try again."));
     }
   }
 
@@ -6032,14 +6042,16 @@ class _Login_ScreenState extends State<Login_Screen> {
       Uri.parse('${Api_url}/api/auth'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        // Vendor's OWN id (same as web) — adminId here resolves the wrong
+        // user branch on the server.
+        "id": "CRM $userId",
         "Content-Type": "application/json"
       },
       body: json.encode({"token": token}),
     );
     print("vendor token ${response.body}");
     final jsonData = json.decode(response.body);
-    if (jsonData['id'] != "") {
+    if (jsonData["vendor_id"] != null) {
       print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -6074,6 +6086,9 @@ class _Login_ScreenState extends State<Login_Screen> {
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
       print('Failed to check token');
+      Fluttertoast.showToast(
+          msg: _formatErrorMessage(
+              jsonData["message"] ?? "Login failed. Please try again."));
     }
   }
 

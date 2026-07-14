@@ -2,13 +2,13 @@ class Setting1 {
   String id;
   String adminId;
   String surchargeId;
-  int surchargePercent;
+  double surchargePercent;
   String createdAt;
   String updatedAt;
   bool isDelete;
   int v;
-  int surchargePercentDebit;
-  int surchargePercentACH;
+  double surchargePercentDebit;
+  double surchargePercentACH;
   double surchargeFlatACH;
 
   Setting1({
@@ -30,13 +30,13 @@ class Setting1 {
       id: json['_id'],
       adminId: json['admin_id'],
       surchargeId: json['surcharge_id'],
-      surchargePercent: json['surcharge_percent'] ?? 0.0,
+      surchargePercent: (json['surcharge_percent'] ?? 0).toDouble(),
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
       v: json['__v'],
-      surchargePercentDebit: json['surcharge_percent_debit'] ?? 0.0,
-      surchargePercentACH: json['surcharge_percent_ACH'] ?? 0.0,
+      surchargePercentDebit: (json['surcharge_percent_debit'] ?? 0).toDouble(),
+      surchargePercentACH: (json['surcharge_percent_ACH'] ?? 0).toDouble(),
       surchargeFlatACH: json['surcharge_flat_ACH'] != null
           ? json['surcharge_flat_ACH'].toDouble()
           : 0.0,

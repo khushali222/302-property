@@ -12,6 +12,8 @@ class CustomDateField extends StatefulWidget {
   final IconData? prefixIcon;
   final bool readOnly;
   final void Function(dynamic)? onChanged;
+  final Color? borderColor;
+  final double borderRadius;
 
   CustomDateField({
     Key? key,
@@ -22,6 +24,8 @@ class CustomDateField extends StatefulWidget {
     this.onDateSelected,
     this.prefixIcon,
     this.onChanged,
+    this.borderColor,
+    this.borderRadius = 5,
   }) : super(key: key);
 
   @override
@@ -105,8 +109,8 @@ class CustomDateFieldState extends State<CustomDateField> {
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.5),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                border: Border.all(color: widget.borderColor ?? Colors.grey),
               ),
                 child: TextFormField(
                   readOnly: widget.readOnly,

@@ -82,9 +82,9 @@ class _FlChartAppState extends State<FlChartApp> {
           for (int i = 0; i < data.length; i++) {
             spots.add(FlSpot(i.toDouble(), data[i]["occupiedPercentage"].toDouble()));
             monthMap[i] = data[i]["month"];
-            if(maxoccupancy < double.parse(data[i]["occupiedPercentage"].toString()))
+            if(maxoccupancy < (double.tryParse(data[i]["occupiedPercentage"].toString()) ?? 0.0))
             {
-              maxoccupancy = double.parse(data[i]["occupiedPercentage"].toString());
+              maxoccupancy = (double.tryParse(data[i]["occupiedPercentage"].toString()) ?? 0.0);
             }
 
             if(i == data.length - 1){

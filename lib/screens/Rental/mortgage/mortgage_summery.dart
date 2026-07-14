@@ -7,7 +7,6 @@ import 'package:three_zero_two_property/enums/history_type.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/custom_history_table.dart';
-import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'dart:convert';
@@ -23,6 +22,7 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 
 import '../../../provider/dateProvider.dart';
+import 'Addmortgage.dart';
 
 class MortgageSummary extends StatefulWidget {
   final Map<String, dynamic>? mortgageData;
@@ -129,7 +129,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     if (status == null) return Colors.grey;
     switch (status.toLowerCase()) {
       case 'active':
-        return Colors.green;
+        return const Color(0xFF1F9D55);
       case 'paid off':
         return Colors.blue;
       case 'defaulted':
@@ -147,6 +147,200 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final remainingBalance = mortgageData!['remaining_balance'] ?? 0;
     if (loanAmount == 0) return 0.0;
     return ((loanAmount - remainingBalance) / loanAmount) * 100;
+  }
+
+  // ── Helpers for web-aligned summary fields ──────────────────
+  double _toDouble(dynamic v) => v == null
+      ? 0
+      : (v is String ? (double.tryParse(v) ?? 0) : (v as num).toDouble());
+
+  double _propertyValueOf(Map<String, dynamic> p) =>
+      _toDouble(p['property_value'] ??
+          p['estimated_property_value'] ??
+          p['market_value'] ??
+          p['current_value'] ??
+          p['appraised_value'] ??
+          p['propertyValue'] ??
+          p['value']);
+
+  double _getTotalPropertyValue() {
+    final props = mortgageData!['properties'] as List<dynamic>? ?? [];
+    double sum = 0;
+    for (final p in props) {
+      if (p is Map) sum += _propertyValueOf(Map<String, dynamic>.from(p));
+    }
+    return sum;
+  }
+
+  // Loan To Value = remaining balance ÷ total property value (web parity)
+  String _getLtvDisplay() {
+    final total = _getTotalPropertyValue();
+    if (total <= 0) return 'N/A';
+    final ltv = _toDouble(mortgageData!['remaining_balance']) / total * 100;
+    return '${ltv.toStringAsFixed(1)}%';
+  }
+
+  String _formatMortgageType(dynamic t) {
+    final s = (t ?? '').toString().toLowerCase().trim();
+    if (s == 'fixed_rate') return 'Fixed Rate';
+    if (s == 'floating_rate') return 'Floating Rate';
+    if (s.isEmpty || s == 'n/a') return 'N/A';
+    return s
+        .split('_')
+        .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+        .join(' ');
+  }
+
+  // "Paid: $X" / "Total: $Y" — grey label, bold value (web style)
+  Widget _paidTotalText(String label, String value) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: label,
+              style: const TextStyle(fontSize: 14, color: Colors.grey)),
+          TextSpan(
+              text: value,
+              style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF152B51),
+                  fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  void _editMortgage() {
+    final data = mortgageData ?? widget.mortgageData!;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddMortgageScreen(
+          mortgageId: data['_id'],
+          mortgageData: data,
+          drawerCurrentPage: 'Reports',
+        ),
+      ),
+    ).then((_) => _loadMortgageData());
+  }
+
+  // Web-style header: Back / Edit + borrower avatar, name, mortgage # pill
+  Widget _buildHeader() {
+    final first =
+        (mortgageData!['borrower_first_name'] ?? '').toString().trim();
+    final last = (mortgageData!['borrower_last_name'] ?? '').toString().trim();
+    final name = '$first $last'.trim();
+    final initials =
+        ((first.isNotEmpty ? first[0] : '') + (last.isNotEmpty ? last[0] : ''))
+            .toUpperCase();
+    final mortgageNo = (mortgageData!['mortgage_no'] ?? '').toString();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: () => Navigator.maybePop(context),
+                icon: const Icon(Icons.arrow_back_ios_new,
+                    size: 14, color: Color(0xFF152B51)),
+                label: const Text('Back',
+                    style: TextStyle(
+                        color: Color(0xFF152B51), fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.grey.shade300),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                onPressed: _editMortgage,
+                icon: const Icon(Icons.edit, size: 14, color: Colors.white),
+                label: const Text('Edit',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF152B51),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF152B51),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  initials.isEmpty ? 'M' : initials,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name.isEmpty ? 'Borrower' : name,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF152B51)),
+                    ),
+                    if (mortgageNo.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      // Shift left by the pill's padding so the pill text
+                      // starts at the same x as the name above it.
+                      Transform.translate(
+                        offset: const Offset(-12, 0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEEF2FF),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Mortgage #$mortgageNo',
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF152B51)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -187,7 +381,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
     return Scaffold(
       appBar: widget_302.App_Bar(context: context),
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: const Color(0xFFF4F6F9),
       drawer: CustomDrawer(
         currentpage: "Mortgage Summary",
         dropdown: true,
@@ -198,76 +392,80 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildHeader(),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width > 500 ? 12 : 0,
-                    right: MediaQuery.of(context).size.width > 500 ? 12 : 0),
-                child: titleBar(
-                  width: double.infinity,
-                  title: 'Mortgage Summary',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Header
 
-                  // Status and Progress Section
+                  // Status banner + remaining balance (web style)
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      color: _getStatusColor(status).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _getStatusColor(status)),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        // Solid status header strip
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: _getStatusColor(status),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
                           ),
-                          child: FaIcon(
-                            FontAwesomeIcons.check,
-                            color: Colors.white,
-                            size: 20,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.check,
+                                  color: Colors.white, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                status.toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Updated ${_formatDate(mortgageData!['updatedAt'])}',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
+                        // White balance body
+                        Padding(
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                status.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: _getStatusColor(status),
-                                ),
+                              const Text(
+                                'Remaining Balance',
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Last updated: ${_formatDate(mortgageData!['updatedAt'])}',
+                                _formatCurrency(
+                                    mortgageData!['remaining_balance']),
                                 style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${_formatCurrency(mortgageData!['remaining_balance'])} Remaining Balance',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF1E3A8A),
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF152B51),
                                 ),
                               ),
                             ],
@@ -286,73 +484,62 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.grey.shade200),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Payment Progress',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E3A8A),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
                         Row(
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${paymentProgress.toStringAsFixed(0)}% COMPLETE',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF1E3A8A),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  LinearProgressIndicator(
-                                    value: paymentProgress / 100,
-                                    backgroundColor: Colors.grey.shade200,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      _getStatusColor(status),
-                                    ),
-                                    minHeight: 8,
-                                  ),
-                                ],
+                            const Text(
+                              'Payment Progress',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF152B51),
+                              ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(status),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${paymentProgress.toStringAsFixed(0)}% Complete',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 16),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: paymentProgress / 100,
+                            backgroundColor: Colors.grey.shade200,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              _getStatusColor(status),
+                            ),
+                            minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Paid: ${_formatCurrency((mortgageData!['loan_amount'] ?? 0) - (mortgageData!['remaining_balance'] ?? 0))}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              'Total: ${_formatCurrency(mortgageData!['loan_amount'])}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            _paidTotalText(
+                                'Paid: ',
+                                _formatCurrency((mortgageData!['loan_amount'] ??
+                                        0) -
+                                    (mortgageData!['remaining_balance'] ?? 0))),
+                            _paidTotalText('Total: ',
+                                _formatCurrency(mortgageData!['loan_amount'])),
                           ],
                         ),
                       ],
@@ -367,7 +554,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E3A8A),
+                      color: Color(0xFF152B51),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -378,14 +565,16 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                         title: 'Original Loan',
                         value: _formatCurrency(mortgageData!['loan_amount']),
                         icon: FontAwesomeIcons.dollarSign,
-                        color: Colors.blue,
+                        iconBg: const Color(0xFFE7F0FF),
+                        iconFg: const Color(0xFF2C72E0),
                       ),
                       const SizedBox(height: 12),
                       _buildSummaryCard(
                         title: 'Interest Rate',
                         value: '${mortgageData!['interest_rate'] ?? 0}%',
                         icon: FontAwesomeIcons.percent,
-                        color: Colors.green,
+                        iconBg: const Color(0xFFE7F7EE),
+                        iconFg: const Color(0xFF1F9D55),
                       ),
                       const SizedBox(height: 12),
                       _buildSummaryCard(
@@ -393,7 +582,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                         value:
                             _formatCurrency(mortgageData!['monthly_payment']),
                         icon: FontAwesomeIcons.calendar,
-                        color: Colors.orange,
+                        iconBg: const Color(0xFFFFF1E0),
+                        iconFg: const Color(0xFFE08512),
                       ),
                       const SizedBox(height: 12),
                       _buildSummaryCard(
@@ -404,33 +594,40 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                               100),
                         ),
                         icon: FontAwesomeIcons.chartLine,
-                        color: Colors.purple,
+                        iconBg: const Color(0xFFF1E8FB),
+                        iconFg: const Color(0xFF8B3FBF),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSummaryCard(
+                        title: 'Loan To Value',
+                        value: _getLtvDisplay(),
+                        icon: Icons.balance,
+                        iconBg: const Color(0xFFE3F4F4),
+                        iconFg: const Color(0xFF1C8C8C),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
 
-                  // Dates Information
+                  // Mortgage type + key dates (web parity)
                   _buildInfoCard(
-                    title: 'Important Dates',
+                    title: '',
                     children: [
+                      _buildInfoRow('Mortgage Type',
+                          _formatMortgageType(mortgageData!['mortgage_type'])),
                       _buildDateRow(
-                          'Start Date',
+                          'Inception Date',
                           dateProvider.formatCurrentDate(
                               '${_formatDate(mortgageData!['start_date'])}')),
                       _buildDateRow(
-                          'End Date',
+                          'Maturity Date',
                           dateProvider.formatCurrentDate(
                               '${_formatDate(mortgageData!['end_date'])}')),
                       _buildDateRow(
                           'Last Payment',
                           dateProvider.formatCurrentDate(
                               '${_formatDate(mortgageData!['last_payment_date'])}')),
-                      _buildDateRow(
-                          'Next Payment',
-                          dateProvider.formatCurrentDate(
-                              '${_formatDate(mortgageData!['next_payment_date'])}')),
                     ],
                   ),
 
@@ -440,14 +637,18 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   _buildInfoCard(
                     title: 'Bank Information',
                     children: [
-                      _buildInfoRow(
-                          'Bank Name', mortgageData!['bank_name'] ?? 'N/A'),
-                      _buildInfoRow(
-                          'Contact', mortgageData!['bank_contact_no'] ?? 'N/A'),
-                      _buildInfoRow(
-                          'Email', mortgageData!['bank_email'] ?? 'N/A'),
-                      _buildInfoRow(
-                          'Address', mortgageData!['bank_address'] ?? 'N/A'),
+                      _iconHeading(Icons.account_balance,
+                          (mortgageData!['bank_name'] ?? '').toString()),
+                      const SizedBox(height: 10),
+                      const Divider(height: 1),
+                      const SizedBox(height: 8),
+                      _iconLine(Icons.location_on_outlined,
+                          (mortgageData!['bank_address'] ?? '').toString()),
+                      _iconLine(Icons.phone_outlined,
+                          (mortgageData!['bank_contact_no'] ?? '').toString()),
+                      _iconLine(Icons.email_outlined,
+                          (mortgageData!['bank_email'] ?? '').toString()),
+                      ..._buildRelationshipManagerRows(),
                     ],
                   ),
 
@@ -457,24 +658,31 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   _buildInfoCard(
                     title: 'Borrower Information',
                     children: [
-                      _buildInfoRow(
-                          'Name',
+                      _iconHeading(
+                          Icons.person_outline,
                           '${mortgageData!['borrower_first_name'] ?? ''} ${mortgageData!['borrower_last_name'] ?? ''}'
                               .trim()),
-                      _buildInfoRow(
-                          'Phone', mortgageData!['borrower_phone'] ?? 'N/A'),
-                      _buildInfoRow(
-                          'Email', mortgageData!['borrower_email'] ?? 'N/A'),
-                      _buildInfoRow('Address',
-                          mortgageData!['borrower_address'] ?? 'N/A'),
+                      const SizedBox(height: 10),
+                      const Divider(height: 1),
+                      const SizedBox(height: 8),
+                      _iconLine(Icons.phone_outlined,
+                          (mortgageData!['borrower_phone'] ?? '').toString()),
+                      _iconLine(Icons.email_outlined,
+                          (mortgageData!['borrower_email'] ?? '').toString()),
+                      _iconLine(Icons.location_on_outlined,
+                          (mortgageData!['borrower_address'] ?? '').toString()),
                     ],
                   ),
 
                   const SizedBox(height: 20),
-                  const SizedBox(height: 20),
 
                   // Properties Section
                   _buildPropertiesSection(),
+
+                  const SizedBox(height: 20),
+
+                  // Payment Information Section
+                  _buildPaymentInfoSection(),
 
                   const SizedBox(height: 20),
 
@@ -483,25 +691,9 @@ class _MortgageSummaryState extends State<MortgageSummary> {
 
                   const SizedBox(height: 20),
 
-                  // // Payoff History Section
+                  // Payoff History Section
                   _buildPayoffHistorySection(),
 
-                  const SizedBox(height: 20),
-
-                  // Payment Information Section
-                  _buildPaymentInfoSection(),
-
-                  // Property Information
-                  // _buildInfoCard(
-                  //   title: 'Property Information',
-                  //   children: [
-                  //     _buildInfoRow('Properties',
-                  //         '${(mortgageData!['properties'] as List).length} Property${(mortgageData!['properties'] as List).length > 1 ? 's' : ''}'),
-                  //     _buildInfoRow(
-                  //         'Mortgage #', mortgageData!['mortgage_no'] ?? 'N/A'),
-                  //     _buildInfoRow('Status', status.toUpperCase()),
-                  //   ],
-                  // ),
                   const SizedBox(height: 20),
                   // Mortgage Lifecycle section
                   _buildLifecycleSection(),
@@ -664,7 +856,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFDBE0E5)),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Row(
               children: [
                 const SizedBox(width: 28),
@@ -683,6 +875,17 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   flex: 3,
                   child: Text(
                     'Event Type',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: blueColor,
+                        fontSize: 14),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    'Details',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: blueColor,
@@ -870,6 +1073,20 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                               color: blueColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 13)),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  // Details
+                  Expanded(
+                    flex: 4,
+                    child: GestureDetector(
+                      onTap: () => setState(() =>
+                          _lifecycleExpandedIndex = isExpanded ? null : index),
+                      child: Text(details.isEmpty ? '—' : details,
+                          style: const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12)),
                     ),
                   ),
                 ],
@@ -1478,7 +1695,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     required String title,
     required String value,
     required IconData icon,
-    required Color color,
+    required Color iconBg,
+    required Color iconFg,
     String? subtitle,
   }) {
     return Container(
@@ -1486,15 +1704,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFE4E8EF)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1502,12 +1712,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 20),
+                child: Icon(icon, color: iconFg, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1518,7 +1728,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                       title,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: Color(0xFF6B7A90),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1527,7 +1737,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: color,
+                        color: iconFg,
                       ),
                     ),
                     if (subtitle != null)
@@ -1535,7 +1745,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                         subtitle,
                         style: const TextStyle(
                           fontSize: 10,
-                          color: Colors.grey,
+                          color: Color(0xFF6B7A90),
                         ),
                       ),
                   ],
@@ -1558,27 +1768,21 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E3A8A),
+          if (title.isNotEmpty) ...[
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF152B51),
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+          ],
           ...children,
         ],
       ),
@@ -1602,8 +1806,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             value,
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1E3A8A),
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF152B51),
             ),
           ),
         ],
@@ -1630,14 +1834,101 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               textAlign: TextAlign.right,
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1E3A8A),
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF152B51),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  // ─────────────────── Icon-based info rows (web style) ───────────────────
+
+  // Heading with an icon tile + bold title (bank / borrower name)
+  Widget _iconHeading(IconData icon, String title) {
+    return Row(
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEF2FF),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 20, color: const Color(0xFF152B51)),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title.isEmpty ? 'N/A' : title,
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF152B51)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Icon + value line (address / phone / email …)
+  Widget _iconLine(IconData icon, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: Colors.grey.shade500),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value.isEmpty ? 'N/A' : value,
+              style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF152B51),
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────── Relationship Manager ───────────────────
+
+  List<Widget> _buildRelationshipManagerRows() {
+    final fn = (mortgageData!['relationship_manager_first_name'] ?? '')
+        .toString()
+        .trim();
+    final ln = (mortgageData!['relationship_manager_last_name'] ?? '')
+        .toString()
+        .trim();
+    final phone =
+        (mortgageData!['relationship_manager_phone'] ?? '').toString().trim();
+    final email =
+        (mortgageData!['relationship_manager_email'] ?? '').toString().trim();
+    final name = '$fn $ln'.trim();
+    if (name.isEmpty && phone.isEmpty && email.isEmpty) return [];
+    return [
+      const SizedBox(height: 12),
+      const Divider(height: 1),
+      const SizedBox(height: 12),
+      const Text(
+        'Relationship Manager',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF152B51),
+        ),
+      ),
+      const SizedBox(height: 8),
+      if (name.isNotEmpty) _iconLine(Icons.person_outline, name),
+      if (phone.isNotEmpty) _iconLine(Icons.phone_outlined, phone),
+      if (email.isNotEmpty) _iconLine(Icons.email_outlined, email),
+    ];
   }
 
   // ─────────────────── Documents ───────────────────
@@ -1651,14 +1942,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1671,7 +1954,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E3A8A),
+                  color: Color(0xFF152B51),
                 ),
               ),
               GestureDetector(
@@ -1794,7 +2077,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E3A8A),
+                    color: Color(0xFF152B51),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1896,8 +2179,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                         return const SizedBox(
                           height: 260,
                           child: Center(
-                            child:
-                                SpinKitFadingCircle(color: Colors.white, size: 44),
+                            child: SpinKitFadingCircle(
+                                color: Colors.white, size: 44),
                           ),
                         );
                       }
@@ -1945,7 +2228,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                       color: Colors.black87,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, color: Colors.white, size: 20),
+                    child:
+                        const Icon(Icons.close, color: Colors.white, size: 20),
                   ),
                 ),
               ),
@@ -2040,8 +2324,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
         actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         content: Column(
@@ -2063,7 +2346,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E3A8A),
+                color: Color(0xFF152B51),
               ),
             ),
             const SizedBox(height: 10),
@@ -2452,11 +2735,14 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       print('── Mortgage upload DIAG (admin) ──');
       print('URL: ${Api_url}/api/mortgage/$mortgageId/documents');
       print('formFields: is_web=true, user_active_recently=true');
-      print('auth: token=${token == null ? "MISSING" : "ok"} id=${id == null ? "MISSING" : "ok"}');
-      print('multipart: field name "files" | ${request.files.length} file part(s)');
+      print(
+          'auth: token=${token == null ? "MISSING" : "ok"} id=${id == null ? "MISSING" : "ok"}');
+      print(
+          'multipart: field name "files" | ${request.files.length} file part(s)');
       for (var i = 0; i < files.length; i++) {
         final f = files[i];
-        print('  file[$i]: ${f.name} | ${f.size} bytes | ${f.path != null ? "path" : "bytes"}');
+        print(
+            '  file[$i]: ${f.name} | ${f.size} bytes | ${f.path != null ? "path" : "bytes"}');
       }
 
       final streamedResponse = await apiSend(request);
@@ -2464,7 +2750,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       sw.stop();
 
       print('⏱️ Round-trip: ${sw.elapsedMilliseconds} ms');
-      print('HTTP ${response.statusCode} | content-type: ${response.headers['content-type']}');
+      print(
+          'HTTP ${response.statusCode} | content-type: ${response.headers['content-type']}');
       print('Body length: ${response.body.length}');
       print('Response Body: ${response.body}');
 
@@ -2477,7 +2764,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             content: const Text('Documents uploaded successfully'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             duration: const Duration(seconds: 3),
           ));
         }
@@ -2490,9 +2778,9 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             content: Text(msg),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            duration: Duration(
-                seconds: response.statusCode == 504 ? 10 : 5),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            duration: Duration(seconds: response.statusCode == 504 ? 10 : 5),
           ));
         }
       }
@@ -2505,7 +2793,8 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           content: const Text('Something went wrong. Please try again.'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           duration: const Duration(seconds: 5),
         ));
       }
@@ -2575,19 +2864,12 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     final properties = mortgageData!['properties'] as List<dynamic>? ?? [];
 
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFFE4E8EF)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2597,117 +2879,337 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1E3A8A),
+              color: Color(0xFF152B51),
             ),
           ),
           const SizedBox(height: 12),
-          ...properties
-              .map((property) => _buildPropertyCard(property))
-              .toList(),
+          if (properties.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text(
+                  'No properties available',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ),
+            )
+          else
+            ...properties.map((property) => _buildPropertyCard(property)),
         ],
       ),
     );
   }
 
   Widget _buildPropertyCard(Map<String, dynamic> property) {
-    final owner = property['owner'] as Map<String, dynamic>? ?? {};
+    final address = (property['address'] ?? 'N/A').toString();
+    final cityLine =
+        '${property['city'] ?? ''}, ${property['state'] ?? ''} ${property['zipcode'] ?? ''}'
+            .trim();
+    final propValue = _propertyValueOf(property);
+    final total = _getTotalPropertyValue();
+    final hasPurchase = property['purchase_price'] != null;
+    final purchasePrice = _toDouble(property['purchase_price']);
+    final subdivision = (property['subdivision'] ?? '').toString().trim();
+    final parcel = (property['parcel_number'] ?? property['parcel'] ?? '')
+        .toString()
+        .trim();
+
+    // Per-year expenses (shown only when the API provides them)
+    final expenses = (property['expenses'] is List)
+        ? property['expenses'] as List
+        : const [];
+
+    final gross = _toDouble(property['gross_rental_income'] ??
+        property['annual_rent_income'] ??
+        property['annual_gross_rent'] ??
+        property['gross_rent'] ??
+        property['rental_income'] ??
+        property['annual_income']);
+
+    // NOI uses the latest year's expenses when an expense list is present
+    double taxes = _toDouble(property['taxes'] ?? property['annual_taxes']);
+    double insurance =
+        _toDouble(property['insurance'] ?? property['annual_insurance']);
+    double maintenance =
+        _toDouble(property['maintenance'] ?? property['annual_maintenance']);
+    if (expenses.isNotEmpty) {
+      final years = expenses.whereType<Map>().toList()
+        ..sort((a, b) => _toDouble(b['year']).compareTo(_toDouble(a['year'])));
+      final latest = years.first;
+      taxes = _toDouble(latest['taxes']);
+      insurance = _toDouble(latest['insurance']);
+      maintenance = _toDouble(latest['maintenance']);
+    }
+
+    final noi = gross - taxes - insurance - maintenance;
+    final share = total > 0 ? propValue / total : 0.0;
+    final monthly = _toDouble(mortgageData!['monthly_payment']);
+    final annualDebtService = share * monthly * 12;
+    final dscr = annualDebtService > 0 ? noi / annualDebtService : 0.0;
+    final pct = NumberFormat('#,##0.00');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE4E8EF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header strip: home icon + address
+          Container(
+            color: const Color(0xFFEEF2F8),
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.home_outlined,
+                      color: Color(0xFF152B51), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(address,
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF152B51))),
+                      if (cityLine.replaceAll(',', '').trim().isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(cityLine,
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey)),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Body
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _propRow('Property Value', _formatCurrency(propValue)),
+                const Divider(height: 20),
+                _propRow('Purchase Price',
+                    hasPurchase ? _formatCurrency(purchasePrice) : 'N/A'),
+                if (subdivision.isNotEmpty) ...[
+                  const Divider(height: 20),
+                  _propRow('Subdivision', subdivision),
+                ],
+                const Divider(height: 20),
+                _propRow('Parcel #', parcel.isEmpty ? 'N/A' : parcel),
+                if (expenses.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  _sectionLabel('EXPENSES'),
+                  const SizedBox(height: 8),
+                  ...expenses.whereType<Map>().map(_expenseYearTile),
+                ],
+                const SizedBox(height: 16),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEF2F8),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.trending_up,
+                          size: 16, color: Color(0xFF152B51)),
+                      SizedBox(width: 6),
+                      Text('Financials',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF152B51),
+                              fontSize: 13)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                _sectionLabel('NOI · NET OPERATING INCOME'),
+                const SizedBox(height: 8),
+                _noiLine(
+                    'Gross rental income (annual)', _formatCurrency(gross)),
+                _noiLine('Taxes', '− ${_formatCurrency(taxes)}'),
+                _noiLine('Insurance', '− ${_formatCurrency(insurance)}'),
+                _noiLine('Maintenance', '− ${_formatCurrency(maintenance)}'),
+                const SizedBox(height: 10),
+                _resultBox('Net Operating Income', _formatCurrency(noi)),
+                const SizedBox(height: 16),
+                _sectionLabel('ANNUAL DEBT SERVICE'),
+                const SizedBox(height: 6),
+                _debtText(
+                    'Property share = ${_formatCurrency(propValue)} ÷ ${_formatCurrency(total)} = ${pct.format(share * 100)}%'),
+                const SizedBox(height: 4),
+                _debtText(
+                    'Allocated = ${pct.format(share * 100)}% × (${_formatCurrency(monthly)} × 12) = ${_formatCurrency(annualDebtService)}'),
+                const SizedBox(height: 16),
+                _sectionLabel('DSCR · DEBT SERVICE COVERAGE RATIO'),
+                const SizedBox(height: 6),
+                _debtText('DSCR = NOI ÷ Annual debt service'),
+                const SizedBox(height: 10),
+                _resultBox('DSCR', dscr.toStringAsFixed(2)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _propRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 14, color: Color(0xFF6B7A90))),
+        const SizedBox(width: 12),
+        Flexible(
+          child: Text(value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF152B51))),
+        ),
+      ],
+    );
+  }
+
+  Widget _resultBox(String label, String value) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEF2F8),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF152B51))),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF152B51))),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionLabel(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+            color: Color(0xFF6B7A90)));
+  }
+
+  Widget _noiLine(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(label,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF6B7A90))),
+          ),
+          const SizedBox(width: 12),
+          Text(value,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF152B51))),
+        ],
+      ),
+    );
+  }
+
+  Widget _debtText(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 13, color: Color(0xFF6B7A90), height: 1.4));
+  }
+
+  Widget _expenseYearTile(Map e) {
+    final year = (e['year'] ?? e['financial_year'] ?? '').toString();
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          if (year.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: const Color(0xFF152B51),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(year,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+            ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 16,
+            runSpacing: 4,
             children: [
-              Expanded(
-                child: Text(
-                  property['address'] ?? 'N/A',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A8A),
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  property['rental_id'] ?? '',
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
+              _expenseChip('Taxes', _formatCurrency(_toDouble(e['taxes']))),
+              _expenseChip(
+                  'Insurance', _formatCurrency(_toDouble(e['insurance']))),
+              _expenseChip(
+                  'Maint.', _formatCurrency(_toDouble(e['maintenance']))),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            '${property['city'] ?? ''}, ${property['state'] ?? ''} ${property['zipcode'] ?? ''}',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (owner.isNotEmpty) ...[
-            const Divider(height: 1),
-            const SizedBox(height: 8),
-            Text(
-              owner['name'] ?? 'N/A',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF1E3A8A),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const FaIcon(
-                  FontAwesomeIcons.phone,
-                  size: 12,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  owner['phone'] ?? 'N/A',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const FaIcon(
-                  FontAwesomeIcons.envelope,
-                  size: 12,
-                  color: Colors.grey,
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    owner['email'] ?? 'N/A',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
+    );
+  }
+
+  Widget _expenseChip(String label, String value) {
+    return RichText(
+      text: TextSpan(children: [
+        TextSpan(
+            text: '$label ',
+            style: const TextStyle(fontSize: 13, color: Color(0xFF6B7A90))),
+        TextSpan(
+            text: value,
+            style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF152B51))),
+      ]),
     );
   }
 
@@ -2721,14 +3223,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2738,7 +3232,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1E3A8A),
+              color: Color(0xFF152B51),
             ),
           ),
           const SizedBox(height: 12),
@@ -2817,7 +3311,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E3A8A),
+            color: Color(0xFF152B51),
           ),
         ),
       ],
@@ -2867,14 +3361,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2887,7 +3373,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E3A8A),
+                  color: Color(0xFF152B51),
                 ),
               ),
             ],
@@ -2912,43 +3398,41 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                 // Table Header
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    border: Border.all(color: Colors.grey.shade300, width: 1),
+                    color: const Color(0xFFF4F8FF),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
                   ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            'Payoff Amount',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E3A8A),
-                            ),
+                        flex: 3,
+                        child: Text(
+                          'Payoff Amount',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
                           ),
                         ),
                       ),
-                      Container(
-                        width: 1,
-                        color: Colors.grey.shade300,
-                      ),
+                      const SizedBox(width: 10),
                       Expanded(
                         flex: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text(
-                            '  Payoff Date',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E3A8A),
-                            ),
+                        child: Text(
+                          'Payoff Date',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: blueColor,
                           ),
                         ),
                       ),
+                      const SizedBox(width: 36),
                     ],
                   ),
                 ),
@@ -3005,11 +3489,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             color: Colors.white,
                             border: Border(
                               left: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                               right: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                               bottom: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                             ),
                           ),
                           child: Row(
@@ -3062,11 +3546,11 @@ class _MortgageSummaryState extends State<MortgageSummary> {
                             color: Colors.grey.shade50,
                             border: Border(
                               left: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                               right: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                               bottom: BorderSide(
-                                  color: Colors.grey.shade300, width: 1),
+                                  color: const Color(0xFFDBE0E5), width: 1),
                             ),
                           ),
                           child: Row(

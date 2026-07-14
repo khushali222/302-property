@@ -61,6 +61,7 @@ class PaymentService {
         'lease_id': leaseid,
         'tenantName': '$firstName $lastName',
         'source': 'tenant',
+        'paymentAmountType': paymentAmountType,
         'entry': entries.map((e) => {
           'entry_id': e['entry_id'],
           'account': e['account'],
@@ -73,6 +74,7 @@ class PaymentService {
         'scheduledPayment': scheduledPayment,
       };
       print(paymentDetails);
+
 
       final response = await apiPost(
         Uri.parse(baseUrl),
@@ -182,7 +184,7 @@ class PaymentService {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
     print(totalAmount);
-    print((double.parse(totalAmount) - double.parse(surcharge)).toString());
+    print(((double.tryParse(totalAmount) ?? 0.0) - (double.tryParse(surcharge) ?? 0.0)).toString());
     log(jsonEncode(<String, dynamic>{
       'company_name': companyName,
       'admin_id': adminId,
@@ -193,8 +195,8 @@ class PaymentService {
       'customer_vault_id': customerVaultId,
       'billing_id': billingId,
       'notificationTime': notificationTime,
-      'total_amount': double.parse(totalAmount),
-      'surcharge': double.parse(surcharge),
+      'total_amount': (double.tryParse(totalAmount) ?? 0.0),
+      'surcharge': (double.tryParse(surcharge) ?? 0.0),
       'is_leaseAdded': isLeaseAdded,
       'uploaded_file': uploadedFile,
       'transaction_id': transactionId,
@@ -221,8 +223,8 @@ class PaymentService {
         'customer_vault_id': customerVaultId,
         'billing_id': billingId,
         'notificationTime': notificationTime,
-        'total_amount': double.parse(totalAmount),
-        'surcharge': double.parse(surcharge),
+        'total_amount': (double.tryParse(totalAmount) ?? 0.0),
+        'surcharge': (double.tryParse(surcharge) ?? 0.0),
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,
         'transaction_id': transactionId,
@@ -292,6 +294,7 @@ class PaymentService {
         'processor_id': processorId,
         'tenantName': '$firstName $lastName',
         'source': 'tenant',
+        'paymentAmountType': paymentAmountType ?? "full",
         'entry': entries.map((e) => {
           'entry_id': e['entry_id'],
           'account': e['account'],
@@ -314,6 +317,7 @@ class PaymentService {
         paymentDetails['account_holder_type'] = account_holder_type;
       }
       print(paymentDetails);
+
 
       final response = await apiPost(
         Uri.parse(baseUrl),

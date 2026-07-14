@@ -23,6 +23,65 @@ String Api_url = "https://staging.cloudrentalmanager.com";
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
 
+// ===================== Safe JSON coercion helpers =====================
+// The backend is loosely typed — the same field can arrive as a String on one
+// environment and a number/bool on another (e.g. a phone number as "(555)…" on
+// staging but 5551234567 on production). A direct cast like
+// `String? x = json['x']` then throws a TypeError and the whole parse — and
+// often the screen — dies. Use these in EVERY `fromJson` instead of casting:
+//
+//   name   = asStr(json['name']);      // any value -> String ("" if null)
+//   active = asBool(json['active']);   // bool / 1-0 / "true" -> bool
+//   count  = asInt(json['count']);     // num / "12" -> int
+//   items  = asObjectList(json['items']).map(Item.fromJson).toList();
+
+/// Any value → String. Returns [fallback] (default "") for null.
+String asStr(dynamic value, [String fallback = '']) =>
+    value == null ? fallback : value.toString();
+
+/// Any value → bool. Accepts real bools, 1/0 numbers, "true"/"1"/"yes" strings.
+bool asBool(dynamic value, [bool fallback = false]) {
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  if (value is String) {
+    final v = value.trim().toLowerCase();
+    return v == 'true' || v == '1' || v == 'yes';
+  }
+  return fallback;
+}
+
+/// Any value → int. Handles num and numeric strings; [fallback] (default 0)
+/// otherwise. Doubles are truncated.
+int asInt(dynamic value, [int fallback = 0]) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value.trim()) ?? fallback;
+  return fallback;
+}
+
+/// Any value → double. Handles num and numeric strings; [fallback] (default 0)
+/// otherwise.
+double asDouble(dynamic value, [double fallback = 0]) {
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value.trim()) ?? fallback;
+  return fallback;
+}
+
+/// A loose value → Map<String, dynamic> (empty map if it isn't a map).
+Map<String, dynamic> asObject(dynamic value) =>
+    value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+
+/// A loose value → list of JSON objects. Tolerates null / non-list inputs and
+/// skips non-object entries, so a malformed array can't crash a parse.
+List<Map<String, dynamic>> asObjectList(dynamic value) {
+  if (value is! List) return const [];
+  return value
+      .whereType<Map>()
+      .map((e) => Map<String, dynamic>.from(e))
+      .toList();
+}
+// ======================================================================
+
 // formatDate(String dateTime) {
 //   //print(dateTime);
 //   List<String> dateFormats = [
@@ -240,6 +299,20 @@ String reverseFormatDate(String formattedDate) {
   }
 }
 
+/// Shared insurance date-range rule (web parity): the expiration date must be
+/// strictly AFTER the effective date — equal dates are an error.
+/// Returns an error message when the range is invalid, or null when valid.
+/// Callers show the returned message themselves (toast/snackbar).
+String? validateInsuranceDateRange(DateTime? effective, DateTime? expiration) {
+  if (effective == null || expiration == null) {
+    return "Please select both Effective Date and Expiration Date";
+  }
+  if (expiration.isBefore(effective) || expiration.isAtSameMomentAs(effective)) {
+    return "Expiration Date must be after Effective Date";
+  }
+  return null;
+}
+
 Color blueColor = Color.fromRGBO(21, 43, 81, 1);
 Color blueColorDisabled = blueColor.withOpacity(0.6);
 //Color blueColor = Color.fromRGBO(21, 43, 70, .5);
@@ -260,7 +333,7 @@ const Color checkOffClr  = Color(0xFFB6BFCD); // unchecked checkbox border
 const Color mutedClr     = Color(0xFF6B7A90); // secondary text / labels
 const Color subjectClr   = Color(0xFF5A86B8); // subject / unit accent
 const Color greenClr     = Color(0xFF1F9D55); // success / New / Completed
-const Color greenBg      = Color(0xFFDCFCE7); // green pill bg
+const Color greenBg      = Color(0xFFDCFCE7); // green pill bgR
 const Color orangeClr    = Color(0xFFD97706); // in-progress / charge
 const Color orangeBg     = Color(0xFFFEF3C7); // orange pill bg
 const Color statusBlue   = Color(0xFF2868A0); // New status / view icon
