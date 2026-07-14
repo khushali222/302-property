@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -101,14 +102,11 @@ class Dashboard_staff extends StatefulWidget {
   State<Dashboard_staff> createState() => _Dashboard_staffState();
 }
 
-class _Dashboard_staffState extends State<Dashboard_staff> {
+class _Dashboard_staffState extends State<Dashboard_staff>
+    with WidgetsBindingObserver {
   String firstname = '';
   String lastname = '';
   bool loading = false;
-  // True when the last location attempt failed (off / denied) so the dashboard
-  // can show a "turn on location" prompt instead of a silently empty nearby
-  // section. Self-contained flag — no external dependency.
-  bool locationUnavailable = false;
   List<Rentals> properties = [];
   Rentals? nearstProperty;
   final List<Widget> pages = [
@@ -215,10 +213,20 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   double currentMonthRentPaid = 0.0;
   double lastMonthRentPaid = 0.0;
   double totalRentPastDue = 0.0;
-  Future<Map<String, dynamic>> fetchProperties() async {
-    setState(() {
-      loading = true;
-    });
+  // True when the last load couldn't get a location (off/denied/timeout), so the
+  // app-resume handler knows it's worth silently re-fetching the nearby section.
+  bool _locationWasUnavailable = false;
+
+  // Watches the device location toggle so nearby can load the instant location is
+  // switched on — even without leaving the app. Cancelled in dispose.
+  StreamSubscription<ServiceStatus>? _serviceStatusSub;
+
+  Future<Map<String, dynamic>> fetchProperties({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        loading = true;
+      });
+    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -244,6 +252,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
           // dashboard (matches the Vendor dashboard's 15s timeout).
           Position userLocation =
               await getCurrentLocation().timeout(const Duration(seconds: 15));
+          _locationWasUnavailable = false;
+          print('[LOCATION][Staff] location available → loading nearby properties');
           Rentals? nearestProperty;
           double minDistance = double.infinity;
           List<Rentals> nearbyProperties = [];
@@ -286,10 +296,10 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             "nearby": nearbyProperties,
           };
         } catch (e) {
-          print('Error finding nearby properties: $e');
+          _locationWasUnavailable = true;
+          print('[LOCATION][Staff] location unavailable (off/denied/timeout) → nearby skipped: $e');
           setState(() {
             loading = false;
-            locationUnavailable = true;
           });
           return {};
         }
@@ -316,59 +326,24 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     }
   }
 
-  // Shown when location is unavailable so staff know why nearby properties
-  // aren't listed and how to fix it. Self-contained & null-safe — cannot crash.
-  Widget _buildLocationBanner() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAF1FB),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.blue.shade100),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.location_off, color: blueColor, size: 22),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Turn on location to see nearby properties.',
-              style: TextStyle(color: blueColor, fontSize: 13),
-            ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: blueColor,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
-            onPressed: () async {
-              try {
-                await Geolocator.openLocationSettings();
-              } catch (_) {}
-            },
-            child: const Text('Enable',
-                style: TextStyle(color: Colors.white, fontSize: 12)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void fetchNearbyProperties() async {
-    setState(() {
-      loading = true;
-      locationUnavailable = false;
-    });
+  void fetchNearbyProperties({bool silent = false, bool nearbyOnly = false}) async {
+    if (!silent) {
+      setState(() {
+        loading = true;
+      });
+    }
     // Load counts / data / name up front (independent of location) so they
     // appear immediately instead of waiting behind the location lookup — and
     // so both initState and the refresh button get them via this one method.
-    fetchDatacount();
-    fetchData();
-    _loadName();
-    final result = await fetchProperties();
+    // nearbyOnly (app-resume / location-toggle refresh) skips these 3
+    // location-independent calls, so a brief app-switch doesn't re-hit them —
+    // only the location-dependent nearby lookup below is redone.
+    if (!nearbyOnly) {
+      fetchDatacount();
+      fetchData();
+      _loadName();
+    }
+    final result = await fetchProperties(silent: silent);
     if (result.isNotEmpty) {
       List<Data> workOrders = await fetchWorkOrders("");
       print(result);
@@ -489,6 +464,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _listenForLocationServiceOn();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -500,6 +477,51 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     // fetchNearbyProperties() loads counts / data / name itself (once), so they
     // are no longer called again here — they were previously firing twice.
     fetchNearbyProperties();
+  }
+
+  // Instant nearby-load when the device location service is switched ON while the
+  // app is open (stronger than resume-only). Fully guarded so it can neither crash
+  // nor disturb other logic: wrapped in try/catch, stream errors swallowed, gated
+  // on the same _locationWasUnavailable flag, and it only calls the existing silent
+  // fetch (no new fetch / nearby logic).
+  void _listenForLocationServiceOn() {
+    try {
+      _serviceStatusSub = Geolocator.getServiceStatusStream().listen(
+        (ServiceStatus status) {
+          print('[LOCATION][Staff] service status changed → $status');
+          if (status == ServiceStatus.enabled &&
+              _locationWasUnavailable &&
+              mounted) {
+            print('[LOCATION][Staff] location re-enabled while app open → refreshing nearby');
+            fetchNearbyProperties(silent: true, nearbyOnly: true);
+          }
+        },
+        onError: (_) {},
+        cancelOnError: false,
+      );
+    } catch (_) {
+      // Platform can't stream service status → skip; resume-refresh still covers it.
+    }
+  }
+
+  @override
+  void dispose() {
+    _serviceStatusSub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // User returned to the foreground (e.g. after enabling location in
+    // Settings). Silently re-fetch the nearby section only if location was
+    // unavailable last time — no full-screen spinner, no re-login, and no
+    // needless API call when nearby already loaded.
+    if (state == AppLifecycleState.resumed && _locationWasUnavailable) {
+      print('[LOCATION][Staff] app resumed & location was unavailable → refreshing nearby');
+      fetchNearbyProperties(silent: true, nearbyOnly: true);
+    }
   }
 
   ConnectivityResult? _connectivityResult;
@@ -1433,7 +1455,6 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (locationUnavailable) _buildLocationBanner(),
               DashboardMobileSimple(
                 propertyCount: countList[0],
                 tenantCount: countList[1],

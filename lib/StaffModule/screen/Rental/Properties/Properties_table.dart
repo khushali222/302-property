@@ -2136,6 +2136,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                 ),
                                                               ),
+                                                              if (permissions?.propertyDelete == true) ...[
                                                               const SizedBox(
                                                                 width: 5,
                                                               ),
@@ -2180,6 +2181,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                                   ),
                                                                 ),
                                                               ),
+                                                              ],
                                                               const SizedBox(
                                                                 width: 12,
                                                               ),
