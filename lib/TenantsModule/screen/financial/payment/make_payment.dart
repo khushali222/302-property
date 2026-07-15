@@ -929,8 +929,16 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       //print(value);
       if (value == "") {
+        // Field cleared: this charge now applies 0, so restore its balance to the
+        // full charge amount and recompute the total from all rows (empty == 0),
+        // matching the web. Without this the total keeps the previous keystroke.
+        rows[index]['amount'] = 0.0;
         charges_balances[index] = rows[index]["charge_amount"];
-        // totalAmount > rows[index]["charge_amount"] ? totalAmount - rows[index]["charge_amount"]: totalAmount;
+        totalAmount = 0.0;
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i]["amount"] != 0.0)
+            totalAmount = totalAmount + rows[i]["amount"];
+        }
       } else {
         if (rows[index]["newfield"] == true) {
           double amount = double.tryParse(value) ?? 0.0;

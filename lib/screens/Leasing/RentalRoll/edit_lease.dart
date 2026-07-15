@@ -36,6 +36,7 @@ import '../../../provider/lease_provider.dart';
 import '../../../repository/tenants.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../provider/dateProvider.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/add_tenant_cosigner_screen.dart';
 
 class Edit_lease extends StatefulWidget {
   Lease1? lease;
@@ -1031,6 +1032,13 @@ class _Edit_leaseState extends State<Edit_lease>
 
       return MapEntry(index, {
         'tenantId': tenant.tenantId ?? "",
+        'ecArray': (tenant.emergencyContacts != null && tenant.emergencyContacts!.isNotEmpty)
+            ? jsonEncode(tenant.emergencyContacts!.map((e) => {'name': e.name ?? '', 'relation': e.relation ?? '', 'email': e.email ?? '', 'phoneNumber': e.phoneNumber ?? ''}).toList())
+            : '',
+        'enableOverrideFee': tenant.enableoverrideFee != null ? tenant.enableoverrideFee.toString() : '',
+        'overrideFee': tenant.overRideFee != null ? tenant.overRideFee.toString() : '',
+        'allowAch': tenant.allowAch != null ? tenant.allowAch.toString() : '',
+        'allowCard': tenant.allowCard != null ? tenant.allowCard.toString() : '',
         'applicantId': tenant.applicantId ?? "",
         'tenant_residentStatus': tenant.tenant_residentStatus.toString(),
         'firstName': tenant.tenantFirstName ?? "",
@@ -2049,231 +2057,14 @@ class _Edit_leaseState extends State<Edit_lease>
                               FormField<String>(
                                 builder: (FormFieldState<String> state) {
                                   return InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return StatefulBuilder(
-                                            builder: (context, setState) {
-                                              var cosignerProvider = Provider
-                                                  .of<SelectedCosignersProvider>(
-                                                      context);
-                                              Cosigner? existingCosigner;
-                                              int? existingIndex;
-
-                                              if (cosignerProvider
-                                                  .cosigners.isNotEmpty) {
-                                                existingCosigner = cosignerProvider
-                                                    .cosigners
-                                                    .first; // Get the first cosigner
-                                                existingIndex =
-                                                    0; // Assuming you want to edit the first cosigner
-                                              }
-                                              return AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Row(
-                children: [
-                  Expanded(
-                    child: Text('Add Tenant or Cosigner',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: blueColor)),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    splashRadius: 20,
-                    icon: Icon(Icons.close, color: blueColor),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-                                                content: Form(
-                                                  key: _addRecurringFormKey,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      width: double.infinity,
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          isTenantSelected =
-                                                                              true;
-                                                                        });
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          border: isTenantSelected
-                                                                              ? null
-                                                                              : Border.all(
-                                                                                  color: blueColor,
-                                                                                  width: 1,
-                                                                                ),
-                                                                          gradient: isTenantSelected
-                                                                              ? LinearGradient(
-                                                                                  colors: [
-                                                                                    blueColor,
-                                                                                    blueColor,
-                                                                                  ],
-                                                                                )
-                                                                              : null,
-                                                                          borderRadius:
-                                                                              const BorderRadius.only(
-                                                                            topLeft:
-                                                                                Radius.circular(4),
-                                                                            bottomLeft:
-                                                                                Radius.circular(4),
-                                                                          ),
-                                                                        ),
-                                                                        alignment:
-                                                                            Alignment.center,
-                                                                        padding: isTenantSelected
-                                                                            ? const EdgeInsets.symmetric(vertical: 13)
-                                                                            : const EdgeInsets.symmetric(vertical: 12),
-                                                                        child: isTenantSelected
-                                                                            ? Text(
-                                                                                "Tenant",
-                                                                                style: TextStyle(
-                                                                                  color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                ),
-                                                                              )
-                                                                            : ShaderMask(
-                                                                                shaderCallback: (bounds) {
-                                                                                  return LinearGradient(
-                                                                                    colors: [
-                                                                                      blueColor,
-                                                                                      blueColor,
-                                                                                    ],
-                                                                                  ).createShader(bounds);
-                                                                                },
-                                                                                child: Text(
-                                                                                  "Tenant",
-                                                                                  style: TextStyle(
-                                                                                    color: isTenantSelected ? Colors.transparent : Colors.white,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child:
-                                                                        GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          isTenantSelected =
-                                                                              false;
-                                                                        });
-                                                                      },
-                                                                      child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          border: isTenantSelected == false
-                                                                              ? null
-                                                                              : Border.all(
-                                                                                  color: blueColor,
-                                                                                  width: 1,
-                                                                                ),
-                                                                          gradient: isTenantSelected == false
-                                                                              ? LinearGradient(
-                                                                                  colors: [
-                                                                                    blueColor,
-                                                                                    blueColor,
-                                                                                  ],
-                                                                                )
-                                                                              : null,
-                                                                          borderRadius:
-                                                                              const BorderRadius.only(
-                                                                            topRight:
-                                                                                Radius.circular(4),
-                                                                            bottomRight:
-                                                                                Radius.circular(4),
-                                                                          ),
-                                                                        ),
-                                                                        alignment:
-                                                                            Alignment.center,
-                                                                        padding: isTenantSelected
-                                                                            ? const EdgeInsets.symmetric(vertical: 12)
-                                                                            : const EdgeInsets.symmetric(vertical: 13),
-                                                                        child: !isTenantSelected
-                                                                            ? Text(
-                                                                                "Cosigner",
-                                                                                style: TextStyle(
-                                                                                  color: isTenantSelected ? Colors.transparent : Colors.white,
-                                                                                  fontWeight: FontWeight.bold,
-                                                                                ),
-                                                                              )
-                                                                            : ShaderMask(
-                                                                                shaderCallback: (bounds) {
-                                                                                  return LinearGradient(
-                                                                                    colors: [
-                                                                                      blueColor,
-                                                                                      blueColor,
-                                                                                    ],
-                                                                                  ).createShader(bounds);
-                                                                                },
-                                                                                child: Text(
-                                                                                  "Cosigner",
-                                                                                  style: TextStyle(
-                                                                                    color: !isTenantSelected ? Colors.transparent : Colors.white,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              isTenantSelected
-                                                                  ? const AddTenant()
-                                                                  : AddCosigner(
-                                                                      cosigner:
-                                                                          existingCosigner,
-                                                                      index:
-                                                                          existingIndex,
-                                                                    ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
+                                    onTap: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const AddTenantCosignerScreen(),
+                                        ),
                                       );
+                                      if (mounted) setState(() {});
                                     },
                                     child: const Text(
                                       '+ Add Tenant or Cosigner',
@@ -4256,6 +4047,15 @@ class _Edit_leaseState extends State<Edit_lease>
 
                                           print("Applicant ids $applicantids");
                                           return TenantData(
+                                          emergencyContactsList: (tenantMap['ecArray'] ?? '').isEmpty
+                                              ? null
+                                              : (jsonDecode(tenantMap['ecArray']!) as List)
+                                                  .map((e) => EmergencyContacts(name: e['name'], relation: e['relation'], email: e['email'], phoneNumber: e['phoneNumber']))
+                                                  .toList(),
+                                          enableOverrideFee: (tenantMap['enableOverrideFee'] ?? '').isEmpty ? null : tenantMap['enableOverrideFee'] == 'true',
+                                          overrideFee: (tenantMap['overrideFee'] ?? '').isEmpty ? null : tenantMap['overrideFee'],
+                                          allowAch: (tenantMap['allowAch'] ?? '').isEmpty ? null : tenantMap['allowAch'] == 'true',
+                                          allowCard: (tenantMap['allowCard'] ?? '').isEmpty ? null : tenantMap['allowCard'] == 'true',
                                               adminId: adminId,
                                               comments:
                                                   tenantMap['comments'] ?? '',
@@ -4328,6 +4128,7 @@ class _Edit_leaseState extends State<Edit_lease>
                                             isLeaseAdded: true,
                                           ),
                                           cosignerData: CosignerData(
+                                              cosignerAlternativeNumber: firstCosigner?['workNumber'] ?? '',
                                               cosignerId:
                                                   firstCosigner?['c_id'],
                                               cosignerFirstName:
@@ -4467,6 +4268,15 @@ class _Edit_leaseState extends State<Edit_lease>
                                         print(tenantMap['firstName']);
                                         print(tenantMap['firstName']);
                                         return TenantData(
+                                          emergencyContactsList: (tenantMap['ecArray'] ?? '').isEmpty
+                                              ? null
+                                              : (jsonDecode(tenantMap['ecArray']!) as List)
+                                                  .map((e) => EmergencyContacts(name: e['name'], relation: e['relation'], email: e['email'], phoneNumber: e['phoneNumber']))
+                                                  .toList(),
+                                          enableOverrideFee: (tenantMap['enableOverrideFee'] ?? '').isEmpty ? null : tenantMap['enableOverrideFee'] == 'true',
+                                          overrideFee: (tenantMap['overrideFee'] ?? '').isEmpty ? null : tenantMap['overrideFee'],
+                                          allowAch: (tenantMap['allowAch'] ?? '').isEmpty ? null : tenantMap['allowAch'] == 'true',
+                                          allowCard: (tenantMap['allowCard'] ?? '').isEmpty ? null : tenantMap['allowCard'] == 'true',
                                           adminId: adminId,
                                           comments: tenantMap['comments'] ?? '',
                                           emergencyContact: EmergencyContacts(
@@ -4674,190 +4484,18 @@ class _Edit_leaseState extends State<Edit_lease>
   }
 
   tenent_popup(dynamic person, int index) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              contentPadding: EdgeInsets.zero,
-              title: Row(
-                children: [
-                  Expanded(
-                    child: Text('Add Tenant or Cosigner',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: blueColor)),
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    splashRadius: 20,
-                    icon: Icon(Icons.close, color: blueColor),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              content: Form(
-                key: _addRecurringFormKey,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    color: Colors.white,
-                    width: double.infinity,
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isTenantSelected = true;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: isTenantSelected
-                                            ? null
-                                            : Border.all(
-                                                color: blueColor, width: 1),
-                                        gradient: isTenantSelected
-                                            ? LinearGradient(
-                                                colors: [
-                                                  blueColor,
-                                                  blueColor,
-                                                ],
-                                              )
-                                            : null,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(4),
-                                          bottomLeft: Radius.circular(4),
-                                        ),
-                                      ),
-                                      alignment: Alignment.center,
-                                      padding: isTenantSelected
-                                          ? const EdgeInsets.symmetric(
-                                              vertical: 13)
-                                          : const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                      child: isTenantSelected
-                                          ? Text(
-                                              "Tenant",
-                                              style: TextStyle(
-                                                color: !isTenantSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : ShaderMask(
-                                              shaderCallback: (bounds) {
-                                                return LinearGradient(
-                                                  colors: [
-                                                    blueColor,
-                                                  ],
-                                                ).createShader(bounds);
-                                              },
-                                              child: Text(
-                                                "Tenant",
-                                                style: TextStyle(
-                                                  color: isTenantSelected
-                                                      ? Colors.transparent
-                                                      : Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isTenantSelected = false;
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: isTenantSelected == false
-                                            ? null
-                                            : Border.all(
-                                                color: blueColor, width: 1),
-                                        gradient: isTenantSelected == false
-                                            ? LinearGradient(
-                                                colors: [
-                                                  blueColor,
-                                                  blueColor,
-                                                ],
-                                              )
-                                            : null,
-                                        borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(4),
-                                          bottomRight: Radius.circular(4),
-                                        ),
-                                      ),
-                                      alignment: Alignment.center,
-                                      padding: isTenantSelected
-                                          ? const EdgeInsets.symmetric(
-                                              vertical: 12)
-                                          : const EdgeInsets.symmetric(
-                                              vertical: 13),
-                                      child: !isTenantSelected
-                                          ? Text(
-                                              "Cosigner",
-                                              style: TextStyle(
-                                                color: isTenantSelected
-                                                    ? Colors.transparent
-                                                    : Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            )
-                                          : ShaderMask(
-                                              shaderCallback: (bounds) {
-                                                return LinearGradient(
-                                                  colors: [
-                                                    blueColor,
-                                                  ],
-                                                ).createShader(bounds);
-                                              },
-                                              child: Text(
-                                                "Cosigner",
-                                                style: TextStyle(
-                                                  color: !isTenantSelected
-                                                      ? Colors.transparent
-                                                      : Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            isTenantSelected
-                                ? const AddTenant()
-                                : AddCosigner(
-                                    cosigner: person,
-                                    index: index,
-                                  ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          });
-        });
+    return Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AddTenantCosignerScreen(
+          startOnCosigner: true,
+          cosigner: person,
+          cosignerIndex: index,
+        ),
+      ),
+    ).then((_) {
+      if (mounted) setState(() {});
+    });
   }
 }
 

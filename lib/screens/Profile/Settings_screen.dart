@@ -3851,7 +3851,10 @@ class _TabBarExampleState extends State<TabBarExample> {
         const SizedBox(height: 20),
         _lateFeeLabel("Description"),
         const SizedBox(height: 8),
-        _lateFeeField(controller: description, numeric: false),
+        _lateFeeField(
+            controller: description,
+            numeric: false,
+            hint: 'Enter a description for late fees'),
         const SizedBox(height: 28),
         Row(
           children: [
@@ -3925,7 +3928,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: MediaQuery.of(context).padding.bottom + 24),
       ],
     );
   }
@@ -5279,6 +5282,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   ),
                                 ],
                               ),
+                              SizedBox(
+                                  height:
+                                      MediaQuery.of(context).padding.bottom +
+                                          24),
                             ],
                           ),
                         if (isteamaccess) _buildTeamAccessSection(),

@@ -61,6 +61,9 @@ class Tenant {
   String? welcomeEmailSentAt;
   String? passwordSetAt;
   bool? hasPassword;
+  // Welcome-email flow (replaces the password field) — captured from
+  // AddTenantCosignerScreen; matches the web lease dialog.
+  bool? sendWelcomeEmail;
 
   Tenant({
     this.id,
@@ -94,6 +97,7 @@ class Tenant {
     this.overRideFee,
     this.allowAch,
     this.allowCard,
+    this.sendWelcomeEmail,
   }); // Added leaseData
 
   Tenant.fromJson(Map<String, dynamic> json) {

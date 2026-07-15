@@ -799,6 +799,35 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
+                                                const Text('CVV *',
+                                                    style: TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey)),
+                                                CustomTextField(
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  hintText: 'CVV',
+                                                  allerror: true,
+                                                  controller: cvv,
+                                                  optional: false,
+                                                  label: "Enter CVV",
+                                                  cvv: true,
+                                                  formatter: [CVVFormatter()],
+                                                  onErrorcvv: (String? error) {
+                                                    setState(() {
+                                                      _cvvError = error;
+                                                    });
+                                                  },
+                                                ),
+                                                if (_cvvError != null)
+                                                  Text(
+                                                    _cvvError!,
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 12),
+                                                  ),
                                                 const SizedBox(
                                                   height: 8,
                                                 ),

@@ -970,50 +970,29 @@ class _MakePaymentState extends State<MakePayment> {
   void updateAmount(int index, String value) {
     //print("object calling");
     setState(() {
-      //print(value);
+      // charge_amount/amount come from the model as num? — a whole-dollar charge
+      // (e.g. 1200) decodes as int, and an untouched Edit row can be null. Coerce
+      // every read to double: assigning an int/null into charges_balances
+      // (List<double>) or adding it to totalAmount (double) would throw and crash
+      // the screen while the user types. (Web behaviour otherwise preserved.)
+      final double charge =
+          (rows[index]["charge_amount"] as num?)?.toDouble() ?? 0.0;
       if (value == "") {
-        charges_balances[index] = rows[index]["charge_amount"];
-        // totalAmount > rows[index]["charge_amount"] ? totalAmount - rows[index]["charge_amount"]: totalAmount;
+        // Field cleared: this charge applies 0, so restore its full balance.
+        rows[index]['amount'] = 0.0;
+        charges_balances[index] = charge;
       } else {
-        if (rows[index]["newfield"] == true) {
-          double amount = double.tryParse(value) ?? 0.0;
-          double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
-          rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() + amount).toDouble();
-          totalAmount += amount;
-
-          totalAmount = 0.0;
-
-          for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
-          }
-        } else {
-          double amount = double.tryParse(value) ?? 0.0;
-          double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
-          rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() - amount).toDouble();
-          totalAmount += amount;
-
-          totalAmount = 0.0;
-
-          for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
-          }
-        }
-
-        // print(totalAmount);
-        // totalAmount = rows.fold(0.0, (sum, row) => sum + (row['amount'] ?? 0.0));
+        final double amount = double.tryParse(value) ?? 0.0;
+        rows[index]['amount'] = amount;
+        // New rows add to the balance; existing rows reduce it.
+        charges_balances[index] =
+            rows[index]["newfield"] == true ? charge + amount : charge - amount;
       }
-
-      //print(totalAmount);
+      // Recompute the total applied across all rows (empty/untouched counts as 0).
+      totalAmount = 0.0;
+      for (var i = 0; i < rows.length; i++) {
+        totalAmount += (rows[i]["amount"] as num?)?.toDouble() ?? 0.0;
+      }
     });
     //counttotal();
     validateAmounts();

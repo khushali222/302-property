@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -745,7 +746,7 @@ class _enterChargeState extends State<enterCharge> {
                         //         ),
 
                         if (MediaQuery.of(context).size.width < 500)
-                          const Text('Date',
+                          const Text('Date *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -979,7 +980,7 @@ class _enterChargeState extends State<enterCharge> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Date',
+                                      Text('Date *',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
@@ -1066,7 +1067,7 @@ class _enterChargeState extends State<enterCharge> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text('Amount',
+                        const Text('Amount *',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -1075,9 +1076,16 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9.]')),
+                          ],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Please enter amount';
+                            }
+                            if (double.tryParse(value.trim()) == null) {
+                              return 'Please enter a valid amount';
                             }
                             return null;
                           },
@@ -1099,14 +1107,11 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter memo';
-                            }
-                            return null;
-                          },
+                          optional: true,
+                          validator: (value) => null,
                           keyboardType: TextInputType.text,
-                          hintText: 'Enter Memo',
+                          hintText:
+                              'If left blank, it will include all account names',
                           controller: Memo,
                         ),
                       ],
@@ -1508,6 +1513,7 @@ class _enterChargeState extends State<enterCharge> {
                                                   ),
                                                   dropdownStyleData:
                                                       DropdownStyleData(
+                                                    maxHeight: 350,
                                                     width: 250,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -1577,6 +1583,10 @@ class _enterChargeState extends State<enterCharge> {
                                               focusNode: focusNodes[index],
                                               keyboardType:
                                                   TextInputType.number,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(RegExp(r'[0-9.]')),
+                                              ],
                                               onChanged: (value) =>
                                                   updateAmount(index, value),
                                               decoration: const InputDecoration(
@@ -1868,7 +1878,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 amount: amount,
                                                 // Web sends due_amount = amount.
                                                 dueAmount: amount,
-                                                memo: row['memo'],
+                                                memo: (row['memo']
+                                                            ?.toString()
+                                                            .trim()
+                                                            .isEmpty ??
+                                                        true)
+                                                    ? row['account']
+                                                    : row['memo'],
                                                 date: formattedDate,
                                                 chargeType:
                                                     _resolveChargeType(row),
@@ -1998,7 +2014,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 amount: amount,
                                                 // Web sends due_amount = amount.
                                                 dueAmount: amount,
-                                                memo: row['memo'],
+                                                memo: (row['memo']
+                                                            ?.toString()
+                                                            .trim()
+                                                            .isEmpty ??
+                                                        true)
+                                                    ? row['account']
+                                                    : row['memo'],
                                                 date: formattedDate,
                                                 chargeType:
                                                     _resolveChargeType(row),

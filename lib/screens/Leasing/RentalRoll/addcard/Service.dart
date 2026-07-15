@@ -33,13 +33,19 @@ class AddCardService {
 
     final body = jsonEncode(card.toJson());
 
+    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
+    // PAN is MASKED (last 4 only); token/CVV are never logged.
+    final ccRaw = card.ccnumber?.replaceAll(' ', '') ?? '';
+    final cc4 = ccRaw.length >= 4 ? ccRaw.substring(ccRaw.length - 4) : ccRaw;
+    print('‹ADDCARD-DEBUG› REQ create-customer-vault  ccexp="${card.ccexp}"  cc=****$cc4  ccLen=${ccRaw.length}');
+
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/create-customer-vault'),
         headers: headers,
         body: body,
       );
-        print(response.body);
+      print('‹ADDCARD-DEBUG› RES create-customer-vault  status=${response.statusCode}  body=${response.body}');
               if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
@@ -67,9 +73,13 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-    print(headers);
-
     final body = jsonEncode(card.toJson());
+
+    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
+    // PAN is MASKED (last 4 only); token/CVV are never logged.
+    final ccRaw = card.ccnumber?.replaceAll(' ', '') ?? '';
+    final cc4 = ccRaw.length >= 4 ? ccRaw.substring(ccRaw.length - 4) : ccRaw;
+    print('‹ADDCARD-DEBUG› REQ create-customer-billing  ccexp="${card.ccexp}"  cc=****$cc4  ccLen=${ccRaw.length}');
 
     try {
       final response = await apiPost(
@@ -78,8 +88,7 @@ class AddCardService {
         body: body,
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('‹ADDCARD-DEBUG› RES create-customer-billing  status=${response.statusCode}  body=${response.body}');
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body)['data'];
@@ -108,8 +117,10 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-    print(addCard.toJson());
     final body = jsonEncode(addCard.toJson());
+
+    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
+    print('‹ADDCARD-DEBUG› REQ addCreditCard (save to DB)  vaultId=${addCard.customerVaultId}  responseCode=${addCard.responseCode}  billingId=${addCard.billingId}');
 
     try {
       final response = await apiPost(
@@ -118,8 +129,7 @@ class AddCardService {
         body: body,
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('‹ADDCARD-DEBUG› RES addCreditCard  status=${response.statusCode}  body=${response.body}');
 
       if (response.statusCode == 200) {
         // Handle success scenario here
