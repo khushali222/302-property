@@ -191,6 +191,39 @@ class _Lease_tableState extends State<Lease_table> {
     return const MapEntry('end_date', 'descending');
   }
 
+  // Web parity (RentRoll.js filterRentRollsBySearch): the Active/Expired/Future
+  // date filter is applied client-side on top of the fetched leases. This is
+  // what keeps "Expired - Renewed" leases (end_date < today) out of the Active
+  // list. Applied on BOTH the local and server-paginated paths so they match web.
+  // For 'All' it is a no-op; for Expired/Future the server already matches, so
+  // only the Active case actually changes anything.
+  List<Lease1> _applyStatusDateFilter(List<Lease1> list) {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    if (selectedStatus == 'Active') {
+      return list.where((lease) {
+        if (lease.startDate == null) return false;
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return lease.startDate!.compareTo(today) <= 0;
+        }
+        return lease.startDate!.compareTo(today) <= 0 &&
+            lease.endDate!.compareTo(today) >= 0;
+      }).toList();
+    } else if (selectedStatus == 'Expired') {
+      return list.where((lease) {
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return false;
+        }
+        return lease.endDate!.compareTo(today) < 0;
+      }).toList();
+    } else if (selectedStatus == 'Future') {
+      return list.where((lease) {
+        if (lease.startDate == null) return false;
+        return lease.startDate!.compareTo(today) > 0;
+      }).toList();
+    }
+    return list;
+  }
+
   List<Lease1> _applyLocalLeaseFilters(List<Lease1> data) {
     var list = List<Lease1>.from(data);
     if (searchValue.isNotEmpty && searchValue != 'All') {
@@ -219,31 +252,7 @@ class _Lease_tableState extends State<Lease_table> {
                 : false);
       }).toList();
     }
-    if (selectedStatus == 'Active') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.startDate == null) return false;
-        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
-          return lease.startDate!.compareTo(today) <= 0;
-        }
-        return lease.startDate!.compareTo(today) <= 0 &&
-            lease.endDate!.compareTo(today) >= 0;
-      }).toList();
-    } else if (selectedStatus == 'Expired') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
-          return false;
-        }
-        return lease.endDate!.compareTo(today) < 0;
-      }).toList();
-    } else if (selectedStatus == 'Future') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.startDate == null) return false;
-        return lease.startDate!.compareTo(today) > 0;
-      }).toList();
-    }
+    list = _applyStatusDateFilter(list);
     if (selectedRentalOwners.isNotEmpty) {
       list = list
           .where((lease) => selectedRentalOwners.contains(lease.rentalOwnerName))
@@ -283,7 +292,12 @@ class _Lease_tableState extends State<Lease_table> {
         sortOrder: sort.value,
       );
     }
-    return result;
+    // Match web: enforce the status date filter on the server page too, so
+    // "Expired - Renewed" leases don't leak into the Active list.
+    return LeasesPageResult(
+      items: _applyStatusDateFilter(result.items),
+      pagination: result.pagination,
+    );
   }
 
   void _scheduleLeaseLoad() {

@@ -89,6 +89,7 @@ class _AddCardState extends State<AddCard> {
   bool isLoading = false;
   String? selectedTenantId;
   int? customervaultid;
+  String? _adminId; // company admin_id captured from the lease_tenant response
   List<BillingData> cardDetails = [];
 
   @override
@@ -101,7 +102,7 @@ class _AddCardState extends State<AddCard> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print("token $token");
+    // print("token $token"); // removed: do not log auth token
     print("Admin $id");
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
@@ -137,6 +138,7 @@ class _AddCardState extends State<AddCard> {
       setState(() {
         tenants = fetchedTenants;
         address.text = '${rentalAddress['rental_adress']}';
+        _adminId = data['data']['admin_id']?.toString();
       });
     } else {
       throw Exception('Failed to load tenants');
@@ -187,44 +189,58 @@ class _AddCardState extends State<AddCard> {
       cardDetails = []; // Clear previous card details
     });
 
-    final response = await apiGet(
-      Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
-    );
+    try {
+      final response = await apiGet(
+        Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
+        headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      );
 
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      customervaultid = jsonResponse['customer_vault_id'];
-      final rawDetail = jsonResponse['card_detail'];
-      final List<dynamic> cardDetailsList =
-          rawDetail is List ? List<dynamic>.from(rawDetail) : <dynamic>[];
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        customervaultid = jsonResponse['customer_vault_id'];
+        final rawDetail = jsonResponse['card_detail'];
+        final List<dynamic> cardDetailsList =
+            rawDetail is List ? List<dynamic>.from(rawDetail) : <dynamic>[];
 
-      CustomerData? customerData = await postBillingCustomerVault(
-          customervaultid.toString(), cardDetailsList);
+        CustomerData? customerData = await postBillingCustomerVault(
+            customervaultid.toString(), cardDetailsList);
 
-      if (customerData != null) {
-        final cardsOnly = customerData.billing.where((b) {
-          final cn = b.ccNumber?.trim() ?? '';
-          return cn.isNotEmpty;
-        }).toList();
+        // customerData == null means an empty vault (no cards yet) -> show the
+        // "no card" state instead of leaving the spinner running.
+        final cardsOnly = customerData == null
+            ? <BillingData>[]
+            : customerData.billing.where((b) {
+                final cn = b.ccNumber?.trim() ?? '';
+                return cn.isNotEmpty;
+              }).toList();
         setState(() {
           cardDetails = cardsOnly;
           messageCardAvailable =
               cardsOnly.isEmpty ? 'No card found for this tenant' : '';
         });
+      } else if (response.statusCode == 404) {
+        print('customer_vault_id not found');
+        setState(() {
+          messageCardAvailable = 'No card found for this tenant';
+        });
+      } else {
+        setState(() {
+          messageCardAvailable = 'Failed to load cards';
+        });
       }
-    } else if (response.statusCode == 404) {
-      print('customer_vault_id not found');
+    } catch (e) {
+      print('fetchcreditcard error: $e');
       setState(() {
-        messageCardAvailable = 'No card found for this tenant';
+        messageCardAvailable = 'Failed to load cards';
       });
-    } else {
-      throw Exception('Failed to load credit card data');
+    } finally {
+      // Always stop the spinner, even if parsing/network throws.
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<CustomerData?> postBillingCustomerVault(
@@ -251,7 +267,12 @@ class _AddCardState extends State<AddCard> {
     print(response.body);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      var customerJson = jsonResponse['data']['customer'];
+      final customerJson = jsonResponse['data']?['customer'];
+      if (customerJson is! Map<String, dynamic>) {
+        // Empty vault / no customer record yet -> treat as no cards
+        // instead of crashing on CustomerData.fromJson(null).
+        return null;
+      }
       CustomerData customerData = CustomerData.fromJson(customerJson);
 
       final Map<String, String> cardTypeByBillingId = {};
@@ -1038,18 +1059,34 @@ class _AddCardState extends State<AddCard> {
                                                     SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
-                                                    String? id = prefs
-                                                        .getString("adminId");
+                                                    String? id = _adminId ??
+                                                        prefs.getString(
+                                                            "adminId");
                                                     String? token = prefs
                                                         .getString('token');
+
+                                                    if (id == null ||
+                                                        id.isEmpty) {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              'Unable to determine account. Please reopen and retry.');
+                                                      return;
+                                                    }
 
                                                     String randomNumber =
                                                         generateRandomNumber(
                                                             10);
 
-                                                    String? comapanyName =
-                                                        await fetchCompanyName(
-                                                            id!);
+                                                    String? comapanyName;
+                                                    try {
+                                                      comapanyName =
+                                                          await fetchCompanyName(
+                                                              id);
+                                                    } catch (e) {
+                                                      print(
+                                                          'fetchCompanyName failed: $e');
+                                                      comapanyName = '';
+                                                    }
 
                                                     CardModel
                                                         cardwithOutVaultId =
@@ -1187,7 +1224,11 @@ class _AddCardState extends State<AddCard> {
                                                     }
 
                                                     //charges
-                                                  } else {}
+                                                  } else {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            'Please fill all required fields');
+                                                  }
                                                 },
                                                 child: const Text(
                                                   'Add Card',
@@ -1800,8 +1841,8 @@ class _AddCardState extends State<AddCard> {
                                                     false) {
                                                   if (_cardNumberError !=
                                                           null ||
-                                                      _errorMessage!
-                                                          .isNotEmpty ||
+                                                      (_errorMessage?.isNotEmpty ??
+                                                          false) ||
                                                       _cvvError != null) {
                                                     Fluttertoast.showToast(
                                                         msg:
@@ -1810,18 +1851,34 @@ class _AddCardState extends State<AddCard> {
                                                     SharedPreferences prefs =
                                                         await SharedPreferences
                                                             .getInstance();
-                                                    String? id = prefs
-                                                        .getString("adminId");
+                                                    String? id = _adminId ??
+                                                        prefs.getString(
+                                                            "adminId");
                                                     String? token = prefs
                                                         .getString('token');
+
+                                                    if (id == null ||
+                                                        id.isEmpty) {
+                                                      Fluttertoast.showToast(
+                                                          msg:
+                                                              'Unable to determine account. Please reopen and retry.');
+                                                      return;
+                                                    }
 
                                                     String randomNumber =
                                                         generateRandomNumber(
                                                             10);
 
-                                                    String? comapanyName =
-                                                        await fetchCompanyName(
-                                                            id!);
+                                                    String? comapanyName;
+                                                    try {
+                                                      comapanyName =
+                                                          await fetchCompanyName(
+                                                              id);
+                                                    } catch (e) {
+                                                      print(
+                                                          'fetchCompanyName failed: $e');
+                                                      comapanyName = '';
+                                                    }
 
                                                     CardModel
                                                         cardwithOutVaultId =

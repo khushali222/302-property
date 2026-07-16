@@ -330,8 +330,6 @@ class _enterChargeState extends State<enterCharge> {
       String? sid = prefs.getString("staff_id");
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
-      // ‹ENTERCHARGE-DEBUG› temporary — diagnosing empty Account dropdown in Staff. Remove after.
-      print('‹ENTERCHARGE-DEBUG› accounts fetch  adminId="$adminId"  staff_id="$sid"  url=$Api_url/api/accounts/accounts/$adminId');
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
@@ -339,7 +337,6 @@ class _enterChargeState extends State<enterCharge> {
           "id": "CRM $sid",
         },
       );
-      print('‹ENTERCHARGE-DEBUG› accounts RES  status=${response.statusCode}  body=${response.body}');
 
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body)['data'];
@@ -366,20 +363,17 @@ class _enterChargeState extends State<enterCharge> {
           fetchedData[chargeType]!.add(account);
         }
 
-        print('‹ENTERCHARGE-DEBUG› categories loaded=${fetchedData.length}  totalAccounts=${fetchedData.values.fold(0, (s, l) => s + l.length)}');
         setState(() {
           categorizedData = fetchedData;
           isLoading = false;
         });
       } else {
-        print('‹ENTERCHARGE-DEBUG› accounts fetch FAILED -> dropdown will be EMPTY (status ${response.statusCode})');
         setState(() {
           hasError = true;
           isLoading = false;
         });
       }
     } catch (e) {
-      print('‹ENTERCHARGE-DEBUG› accounts parse EXCEPTION -> empty dropdown: $e');
       setState(() {
         hasError = true;
         isLoading = false;
@@ -1338,6 +1332,40 @@ class _enterChargeState extends State<enterCharge> {
                                       ),
                                   ];
 
+                                  // Ensure the currently-selected account has a matching
+                                  // dropdown item so DropdownButton2's value maps to exactly
+                                  // one item. On edit, a charge's stored charge_type can
+                                  // differ from the account's category in the accounts list
+                                  // (e.g. legacy data), which otherwise crashes with the
+                                  // "exactly one item" assertion.
+                                  final String? currentValue = row['account'] !=
+                                          null
+                                      ? (liabilityAccounts.contains(row['account'])
+                                          ? "${row['account']}_Liability Account"
+                                          : (row['charge_type'] == "Surcharge" &&
+                                                  surchargetype != null
+                                              ? "${row['account']}_$surchargetype"
+                                              : "${row['account']}_${row['charge_type']}"))
+                                      : null;
+                                  if (currentValue != null &&
+                                      !dropdownItems
+                                          .any((i) => i.value == currentValue)) {
+                                    dropdownItems.add(DropdownMenuItem<String>(
+                                      value: currentValue,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 0.0),
+                                        child: Text(
+                                          row['account'] ?? '',
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                                  }
+
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -1358,16 +1386,7 @@ class _enterChargeState extends State<enterCharge> {
                                         // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
                                         //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                         //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
-                                        value: row['account'] != null
-                                            ? (liabilityAccounts
-                                                    .contains(row['account'])
-                                                ? "${row['account']}_Liability Account"
-                                                : (row['charge_type'] ==
-                                                            "Surcharge" &&
-                                                        surchargetype != null
-                                                    ? "${row['account']}_$surchargetype"
-                                                    : "${row['account']}_${row['charge_type']}"))
-                                            : null,
+                                        value: currentValue,
                                         items: dropdownItems,
                                         onChanged: (value) {
                                           dynamic? chargeType;
@@ -1498,7 +1517,10 @@ class _enterChargeState extends State<enterCharge> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('\$${totalAmount.toStringAsFixed(2)}'),
+                          child: Text(
+                              // NumberFormat never falls back to scientific notation
+                              // (toStringAsFixed does for values >= 1e21).
+                              '\$${intl.NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                         ),
                         const SizedBox.shrink(),
                       ]),

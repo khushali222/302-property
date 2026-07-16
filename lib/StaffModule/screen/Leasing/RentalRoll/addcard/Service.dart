@@ -32,7 +32,7 @@ class AddCardService {
         body: body,
       );
         print(response.body);
-              if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
         String responseCode = jsonResponse['response_code'];
@@ -74,7 +74,7 @@ class AddCardService {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
         String responseCode = jsonResponse['response_code'];
@@ -115,7 +115,7 @@ class AddCardService {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle success scenario here
         print('Add credit card submitted successfully');
       } else {

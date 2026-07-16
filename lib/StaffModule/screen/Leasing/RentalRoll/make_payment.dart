@@ -369,7 +369,7 @@ class _MakePaymentState extends State<MakePayment> {
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
 
-    print(token);
+    // print(token); // removed: do not log auth token
     print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await apiGet(
@@ -3558,7 +3558,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${totalAmount.toStringAsFixed(2)}'),
+                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3568,7 +3568,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                                               ),*/
                               ]),
                             ],
@@ -3587,7 +3587,7 @@ class _MakePaymentState extends State<MakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                             ),
                           ],
                         ),

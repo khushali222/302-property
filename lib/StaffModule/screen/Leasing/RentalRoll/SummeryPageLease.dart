@@ -422,6 +422,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   const SizedBox(
                                     width: 25,
                                   ),
+                                // Lease title above Summary — hidden for now, kept for future
+                                /*
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width > 500
                                       ? 200
@@ -430,9 +432,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
                                       '${snapshot.data?.data?.rentalAddress}',
-                                      maxLines: 5, // Set maximum number of lines
-                                      overflow: TextOverflow
-                                          .ellipsis, // Handle overflow with ellipsis
+                                      maxLines: 5,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           fontSize:
                                               MediaQuery.of(context).size.width <
@@ -444,6 +445,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
+                                */
                                 // Text('${snapshot.data!.data!.rentalAddress}',
                               //     style: TextStyle(
                               //         color: blueColor,
@@ -459,6 +461,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Row(
                               children: [
+                                // Status above Summary — hidden for now, kept for future
+                                /*
                                 Text(
                                   '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
@@ -472,6 +476,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             : 16,
                                   ),
                                 ),
+                                */
                                 const Spacer(),
                                 GestureDetector(
                                   onTap: () async {
@@ -1066,7 +1071,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             children: [
                               const SizedBox(width: 8),
                               Text(
-                                "Tenant Details",
+                                "Property Details",
                                 style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -1134,6 +1139,47 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       ],
                                     ),
                                   ],
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                /// Lease status + Active date range (web parity)
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        determineStatus(
+                                            snapshot.data!.data!.startDate,
+                                            snapshot.data!.data!.endDate),
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: _getStatusColor(
+                                              determineStatus(
+                                                  snapshot.data!.data!.startDate,
+                                                  snapshot.data!.data!.endDate)),
+                                        ),
+                                      ),
+                                      if (snapshot.data!.data!.startDate !=
+                                              null &&
+                                          snapshot.data!.data!.endDate !=
+                                              null) ...[
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${dateProvider.formatCurrentDate(snapshot.data!.data!.startDate!)} – ${dateProvider.formatCurrentDate(snapshot.data!.data!.endDate!)}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
 
                                 const SizedBox(height: 20),

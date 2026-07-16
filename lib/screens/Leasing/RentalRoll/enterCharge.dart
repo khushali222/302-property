@@ -1428,6 +1428,42 @@ class _enterChargeState extends State<enterCharge> {
                                                 ),
                                             ];
 
+                                            // Ensure the currently-selected account has a
+                                            // matching dropdown item so DropdownButton2's
+                                            // value maps to exactly one item. On edit, a
+                                            // charge's stored charge_type can differ from the
+                                            // account's category in the accounts list (e.g.
+                                            // legacy data), which otherwise crashes with the
+                                            // "exactly one item" assertion.
+                                            final String? currentValue = row[
+                                                        'account'] !=
+                                                    null
+                                                ? (row['charge_type'] ==
+                                                            "Surcharge" &&
+                                                        surchargetype != null
+                                                    ? "${row['account']}_$surchargetype"
+                                                    : "${row['account']}_${row['charge_type']}")
+                                                : null;
+                                            if (currentValue != null &&
+                                                !dropdownItems.any((i) =>
+                                                    i.value == currentValue)) {
+                                              dropdownItems
+                                                  .add(DropdownMenuItem<String>(
+                                                value: currentValue,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 0.0),
+                                                  child: Text(
+                                                    row['account'] ?? '',
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ));
+                                            }
+
                                             return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -1448,14 +1484,7 @@ class _enterChargeState extends State<enterCharge> {
                                                   // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
                                                   //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                                   //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
-                                                  value: row['account'] != null
-                                                      ? ((row['charge_type'] ==
-                                                                  "Surcharge" &&
-                                                              surchargetype !=
-                                                                  null
-                                                          ? "${row['account']}_$surchargetype"
-                                                          : "${row['account']}_${row['charge_type']}"))
-                                                      : null,
+                                                  value: currentValue,
                                                   items: dropdownItems,
                                                   onChanged: (value) {
                                                     dynamic? chargeType;
@@ -1622,7 +1651,9 @@ class _enterChargeState extends State<enterCharge> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        '\$${totalAmount.toStringAsFixed(2)}'),
+                                        // NumberFormat never falls back to scientific
+                                        // notation (toStringAsFixed does for >= 1e21).
+                                        '\$${intl.NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                   ),
                                   const SizedBox.shrink(),
                                 ]),

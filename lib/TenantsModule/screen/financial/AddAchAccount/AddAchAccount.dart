@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -270,12 +271,22 @@ class _AddAchAccountState extends State<AddAchAccount> {
           if (kDebugMode) debugPrint('[ACH] billing item: check_name=$checkName check_account=$checkAccount');
           if ((checkAccount != null && checkAccount.isNotEmpty) ||
               (checkName != null && checkName.isNotEmpty)) {
+            // Capture billing_id so a specific ACH entry can be deleted
+            // (NMI returns it under @attributes.id, or a flat billing_id).
+            String? billingId;
+            final attrs = item['@attributes'];
+            if (attrs is Map && attrs['id'] != null) {
+              billingId = attrs['id'].toString();
+            } else if (item['billing_id'] != null) {
+              billingId = item['billing_id'].toString();
+            }
             list.add({
               'account_name': checkName ?? '',
               'account_number': checkAccount ?? '',
               'account_type': _extractString(item['account_type']) ?? '',
               'account_holder_type':
                   _extractString(item['account_holder_type']) ?? '',
+              'billing_id': billingId,
             });
           }
         }
@@ -293,6 +304,139 @@ class _AddAchAccountState extends State<AddAchAccount> {
     } catch (e) {
       if (kDebugMode) debugPrint('[ACH] ERROR in _loadExistingAchAccounts: $e');
       if (mounted) setState(() => _loadingExisting = false);
+    }
+  }
+
+  // Swipe-to-delete confirmation popup (mirrors the web "Are you sure?" card dialog).
+  Future<void> _confirmDeleteAch(Map<String, dynamic> acc) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.orange, width: 3),
+              ),
+              child: const Icon(Icons.priority_high,
+                  color: Colors.orange, size: 40),
+            ),
+            const SizedBox(height: 20),
+            const Text('Are you sure?',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text(
+              'Once deleted, you will not be able to recover this ACH account!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: Color(0xFFD0D5DD)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Delete',
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xFFFDECEC),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Cancel',
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+    if (confirmed == true) {
+      await _deleteAchAccount(acc);
+    }
+  }
+
+  // Deletes one ACH account. Uses the exact same two calls as the card delete
+  // (billing-level only — never delete-customer-vault — so saved cards stay).
+  Future<void> _deleteAchAccount(Map<String, dynamic> acc) async {
+    final billingId = acc['billing_id']?.toString();
+    final vaultId = _resolvedVaultId;
+    if (billingId == null ||
+        billingId.isEmpty ||
+        vaultId == null ||
+        vaultId.isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'Unable to delete this ACH account (missing reference).');
+      return;
+    }
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? headerId = _headerIdForRequest(prefs);
+      String? adminId = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      if (headerId == null || token == null) {
+        Fluttertoast.showToast(msg: 'Session expired. Please log in again.');
+        return;
+      }
+      final headers = {
+        'Content-Type': 'application/json',
+        'authorization': 'CRM $token',
+        'id': 'CRM $headerId',
+      };
+      // 1) Remove from the NMI customer vault (billing-level).
+      final nmiRes = await apiPost(
+        Uri.parse('$Api_url/api/nmipayment/delete-customer-billing'),
+        headers: headers,
+        body: json.encode({
+          'admin_id': adminId ?? '',
+          'customer_vault_id': vaultId,
+          'billing_id': billingId,
+        }),
+      );
+      // 2) Remove the DB record.
+      final dbRes = await apiDelete(
+        Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
+        headers: headers,
+        body: json.encode({'tenant_id': widget.tenantId}),
+      );
+      if (nmiRes.statusCode == 200 && dbRes.statusCode == 200) {
+        Fluttertoast.showToast(msg: 'ACH account deleted successfully');
+        if (_resolvedVaultId != null && _resolvedVaultId!.isNotEmpty) {
+          await _loadExistingAchAccounts();
+        } else {
+          await _fetchVaultIdThenLoadAccounts();
+        }
+      } else {
+        Fluttertoast.showToast(msg: 'Failed to delete ACH account');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[ACH] delete error: $e');
+      Fluttertoast.showToast(msg: 'Failed to delete ACH account');
     }
   }
 
@@ -581,6 +725,34 @@ class _AddAchAccountState extends State<AddAchAccount> {
                   ),
                 ),
                 SizedBox(height: 8),
+                // Hint shown only when there is at least one saved ACH account.
+                if (!_loadingExisting && _existingAchAccounts.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: blueColor.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: blueColor.withOpacity(0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.swipe_left, size: 16, color: blueColor),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Note: Swipe left on an account to delete',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: blueColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 _loadingExisting
                     ? Center(
                         child: Padding(
@@ -612,6 +784,21 @@ class _AddAchAccountState extends State<AddAchAccount> {
                               return Padding(
                                 padding:
                                     const EdgeInsets.only(bottom: 8, top: 8),
+                                child: Slidable(
+                                endActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  extentRatio: 0.25,
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (_) => _confirmDeleteAch(acc),
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ],
+                                ),
                                 child: Container(
                                   padding: const EdgeInsets.all(14),
                                   decoration: BoxDecoration(
@@ -691,7 +878,8 @@ class _AddAchAccountState extends State<AddAchAccount> {
                                     ],
                                   ),
                                 ),
-                              );
+                              ),
+                            );
                             }).toList(),
                           ),
               ],

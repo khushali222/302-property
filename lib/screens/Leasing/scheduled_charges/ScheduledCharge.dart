@@ -937,22 +937,16 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     final String fileName = 'ScheduledCharges_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // App sandbox dir is writable on BOTH Android & iOS. The old hardcoded
+    // /storage/emulated/0/Pictures path is blocked by Android scoped storage
+    // (Android 10+), which silently broke Excel/CSV export. The Share sheet
+    // below still lets the user save/download the file.
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist (for Android)
-    if (!await directory.exists() && !Platform.isIOS) {
-      await directory.create(recursive: true);
-    }
-
-    // Write CSV file to the path
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
-    // Share the file
     await Share.shareXFiles([XFile(path)]);
   }
 
@@ -966,6 +960,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     for (int i = 0; i < headers.length; i++) {
       sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
     }
+    // Right-align the "Amount" header to match its right-aligned values.
+    sheet.getRangeByIndex(1, headers.length).cellStyle.hAlign =
+        syncXlsx.HAlignType.right;
 
     // Add data rows
     for (int row = 0; row < data.length; row++) {
@@ -976,9 +973,10 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
       sheet.getRangeByIndex(row + 2, 2).setText(charge.rentalAddress ?? '');
       sheet.getRangeByIndex(row + 2, 3).setText(_displayOrNA(charge.description));
       sheet.getRangeByIndex(row + 2, 4).setText(_displayOrNA(charge.account));
-      sheet
-          .getRangeByIndex(row + 2, 5)
-          .setText(charge.amount != null ? charge.amount.toString() : '');
+      // Amount as a real number with currency format -> right-aligned in Excel.
+      final amountCell = sheet.getRangeByIndex(row + 2, 5);
+      amountCell.setNumber(charge.amount);
+      amountCell.numberFormat = r'$#,##0.00';
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -990,22 +988,16 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     final String fileName = 'ScheduledCharges_$formattedDate.xlsx';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // App sandbox dir is writable on BOTH Android & iOS. The old hardcoded
+    // /storage/emulated/0/Pictures path is blocked by Android scoped storage
+    // (Android 10+), which silently broke Excel/CSV export. The Share sheet
+    // below still lets the user save/download the file.
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
-    // Create directory if it doesn't exist (for Android)
-    if (!await directory.exists() && !Platform.isIOS) {
-      await directory.create(recursive: true);
-    }
-
-    // Write Excel file to the path
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
-
-    // Share the file
     await Share.shareXFiles([XFile(path)]);
   }
 

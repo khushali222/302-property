@@ -292,7 +292,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       String? staffId = prefs.getString("staff_id");
-      print(token);
+      // print(token); // removed: do not log auth token
       print('lease ${widget.leaseId}');
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -3219,7 +3219,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${totalAmount.toStringAsFixed(2)}'),
+                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3229,7 +3229,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                                               ),*/
                               ]),
                             ],
@@ -3248,7 +3248,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                             ),
                           ],
                         ),

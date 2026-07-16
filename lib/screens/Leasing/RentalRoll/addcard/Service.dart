@@ -33,20 +33,13 @@ class AddCardService {
 
     final body = jsonEncode(card.toJson());
 
-    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
-    // PAN is MASKED (last 4 only); token/CVV are never logged.
-    final ccRaw = card.ccnumber?.replaceAll(' ', '') ?? '';
-    final cc4 = ccRaw.length >= 4 ? ccRaw.substring(ccRaw.length - 4) : ccRaw;
-    print('‹ADDCARD-DEBUG› REQ create-customer-vault  ccexp="${card.ccexp}"  cc=****$cc4  ccLen=${ccRaw.length}');
-
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/create-customer-vault'),
         headers: headers,
         body: body,
       );
-      print('‹ADDCARD-DEBUG› RES create-customer-vault  status=${response.statusCode}  body=${response.body}');
-              if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
         String responseCode = jsonResponse['response_code'];
@@ -75,12 +68,6 @@ class AddCardService {
     };
     final body = jsonEncode(card.toJson());
 
-    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
-    // PAN is MASKED (last 4 only); token/CVV are never logged.
-    final ccRaw = card.ccnumber?.replaceAll(' ', '') ?? '';
-    final cc4 = ccRaw.length >= 4 ? ccRaw.substring(ccRaw.length - 4) : ccRaw;
-    print('‹ADDCARD-DEBUG› REQ create-customer-billing  ccexp="${card.ccexp}"  cc=****$cc4  ccLen=${ccRaw.length}');
-
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/nmipayment/create-customer-billing'),
@@ -88,9 +75,7 @@ class AddCardService {
         body: body,
       );
 
-      print('‹ADDCARD-DEBUG› RES create-customer-billing  status=${response.statusCode}  body=${response.body}');
-
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
         String responseCode = jsonResponse['response_code'];
@@ -119,9 +104,6 @@ class AddCardService {
     };
     final body = jsonEncode(addCard.toJson());
 
-    // ‹ADDCARD-DEBUG› temporary diagnostic — remove after we capture the cause.
-    print('‹ADDCARD-DEBUG› REQ addCreditCard (save to DB)  vaultId=${addCard.customerVaultId}  responseCode=${addCard.responseCode}  billingId=${addCard.billingId}');
-
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/creditcard/addCreditCard'),
@@ -129,9 +111,7 @@ class AddCardService {
         body: body,
       );
 
-      print('‹ADDCARD-DEBUG› RES addCreditCard  status=${response.statusCode}  body=${response.body}');
-
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle success scenario here
         print('Add credit card submitted successfully');
       } else {

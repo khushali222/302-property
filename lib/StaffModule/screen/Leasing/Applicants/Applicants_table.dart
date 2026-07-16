@@ -687,11 +687,10 @@ class _Applicants_tableState extends State<Applicants_table>
               (jsonData['statusCode'] == 200 ||
                   jsonData['statusCode'] == 201));
       if (ok) {
-        final msg = jsonData is Map && jsonData['message'] != null
-            ? jsonData['message'].toString()
-            : 'Invitation sent successfully.';
+        // Resend flow: use a distinct message so it isn't confused with a
+        // brand-new invite ("1 invitation sent successfully" from the server).
         Fluttertoast.showToast(
-          msg: msg,
+          msg: 'Invitation resent successfully.',
           backgroundColor: Colors.green,
           textColor: Colors.white,
           toastLength: Toast.LENGTH_LONG,

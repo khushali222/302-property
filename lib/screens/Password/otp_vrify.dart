@@ -79,7 +79,15 @@ class _otp_verifyState extends State<otp_verify> {
 
     final response = await apiPost(
       Uri.parse('$Api_url/api/admin/sendOTP'),
-      body: {'email': email},
+      // Resend must send the same identifying fields as the initial send
+      // (forgotpassword.dart) — the server looks up the user by role + user_id
+      // (+ admin_id); email alone returns "Email not found".
+      body: {
+        'email': email,
+        'admin_id': widget.admin_id,
+        'role': widget.role,
+        'user_id': widget.userId,
+      },
     );
 
     setState(() {
