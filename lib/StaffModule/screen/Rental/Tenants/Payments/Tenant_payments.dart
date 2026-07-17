@@ -381,7 +381,7 @@ class _FinancialTableState extends State<FinancialTable> {
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json',
         },
         body: jsonEncode({'refundDetails': commonData}),

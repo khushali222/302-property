@@ -1065,6 +1065,10 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Grey only when the report genuinely has no leases (raw), NOT when the
+    // text search narrows the view to empty.
+    final bool hasExportData = (_reportData?.leasesEnding.isNotEmpty ?? false) ||
+        (_reportData?.mtmLeases.isNotEmpty ?? false);
     return Scaffold(
       appBar: widget_302.widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1336,6 +1340,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                             ),
                             SizedBox(width: 12),
                             PopupMenuButton<String>(
+                              enabled: hasExportData,
                               offset: Offset(0, 50),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1344,7 +1349,9 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 32, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: blueColor,
+                                  color: hasExportData
+                                      ? blueColor
+                                      : Colors.grey.shade400,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(

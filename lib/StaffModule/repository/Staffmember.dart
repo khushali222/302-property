@@ -30,12 +30,12 @@ class StaffMemberRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
-    String?  adminid = prefs.getString('adminId');
+    String?  adminid = prefs.getString('staff_id');
     final http.Response response = await apiPost(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $adminid",
+        "id":"CRM $adminid", // staff's own id (web parity)
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -91,12 +91,12 @@ class StaffMemberRepository {
     print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  id = prefs.getString('adminId');
+    String?  id = prefs.getString('staff_id');
     final http.Response response = await apiPut(
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}", // staff's own id (web parity)
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -118,12 +118,12 @@ class StaffMemberRepository {
    // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String?  adminid = prefs.getString('adminId');
+    String?  adminid = prefs.getString('staff_id');
     final http.Response response = await apiDelete(
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $adminid",
+        "id":"CRM $adminid", // staff's own id (web parity)
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );

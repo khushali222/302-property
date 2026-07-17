@@ -588,7 +588,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       });
 
       if (response.statusCode == 200) {
@@ -1189,7 +1189,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     final response = await http
         .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     final jsonData = json.decode(response.body);
     print(jsonData);

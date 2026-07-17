@@ -155,7 +155,7 @@ class ApplicantSummeryRepository {
 
   //   final response = await apiGet(url, headers: {
   //     "authorization": "CRM $token",
-  //     "id": "CRM $id",
+  //     "id": "CRM ${prefs.getString('staff_id') ?? id}",
   //   });
 
   //   if (response.statusCode == 200) {
@@ -183,7 +183,7 @@ class ApplicantSummeryRepository {
     try {
       final response = await apiGet(url, headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (response.statusCode == 200) {
@@ -227,7 +227,7 @@ class ApplicantSummeryRepository {
       Uri.parse(
           '$Api_url/api/applicant/applicant/note_attachment/$applicantId'),
       headers: {
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -255,7 +255,7 @@ class ApplicantSummeryRepository {
         Uri.parse(
             '$Api_url/api/applicant/applicant/note_attachment/$applicantId/$note__id'),
         headers: {
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "authorization": "CRM $token",
           'Content-Type': 'application/json; charset=UTF-8',
         });

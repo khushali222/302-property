@@ -14,13 +14,14 @@ class DelinquentTenantsSerivce {
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     try {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // staff's own id (web parity)
       });
 
       if (response.statusCode == 200) {

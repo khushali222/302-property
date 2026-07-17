@@ -283,6 +283,9 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
   }
 
   Widget _buildFilterRow() {
+    // Grey only when there is genuinely no data (raw list), NOT when the
+    // lender filter narrows the view to empty.
+    final bool hasExportData = _allItems.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -336,6 +339,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           const SizedBox(width: 10),
           // ── Export button ───────────────────────────────────────────
           PopupMenuButton<String>(
+            enabled: hasExportData,
             offset: const Offset(0, 46),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8)),
@@ -343,7 +347,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
               height: 46,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: blueColor,
+                color: hasExportData ? blueColor : Colors.grey.shade400,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

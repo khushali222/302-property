@@ -160,7 +160,8 @@ class _Applicants_tableState extends State<Applicants_table>
   }
 
   final List<String> items = ['Approved', "Rejected", 'Undecided', "All"];
-  String? selectedValue = "Undecided";
+  // Default to "All" to match web (Applicants.js searchQuery2 defaults to "All").
+  String? selectedValue = "All";
   String searchvalue = "";
 
   // Date filter options ('All' shows all dates; 'All Time' kept for backwards compatibility)
@@ -611,10 +612,14 @@ class _Applicants_tableState extends State<Applicants_table>
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
+      // Staff's OWN id must go in the `id` header (same as the main Applicants
+      // list, which sends staff_id). Sending adminId here gets rejected for
+      // staff, so the list came back empty and the count showed 0.
+      String? staffId = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await apiGet(
           Uri.parse('${Api_url}/api/applicant/pending-invites/$id'),
-          headers: {"authorization": "CRM $token", "id": "CRM $id"});
+          headers: {"authorization": "CRM $token", "id": "CRM $staffId"});
       final jsonData = json.decode(response.body);
       if ((jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) &&
           jsonData["data"] != null) {
@@ -636,10 +641,14 @@ class _Applicants_tableState extends State<Applicants_table>
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
+      // Staff's OWN id must go in the `id` header (same as the main Applicants
+      // list, which sends staff_id). Sending adminId here gets rejected for
+      // staff, so the list came back empty.
+      String? staffId = prefs.getString("staff_id");
       String? token = prefs.getString('token');
       final response = await apiGet(
           Uri.parse('${Api_url}/api/applicant/deleted-invites/$id'),
-          headers: {"authorization": "CRM $token", "id": "CRM $id"});
+          headers: {"authorization": "CRM $token", "id": "CRM $staffId"});
       final jsonData = json.decode(response.body);
       if ((jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) &&
           jsonData["data"] != null) {
@@ -670,7 +679,7 @@ class _Applicants_tableState extends State<Applicants_table>
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM ${prefs.getString("staff_id") ?? adminId}',
         },
         body: jsonEncode({
           'emails': [trimmed],
@@ -1791,44 +1800,71 @@ class _Applicants_tableState extends State<Applicants_table>
                         } else {
                           var data = snapshot.data!;
 
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (selectedValue == "All") {
-                            data = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            data = snapshot.data!
-                                .where((applicant) =>
-                                    (applicant.applicantFirstName?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantLastName?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantPhoneNumber
-                                                ?.toLowerCase() ??
-                                            '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantEmail?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.rentalData?.rentalAdress
-                                                ?.toLowerCase() ??
-                                            '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantStatus.isNotEmpty &&
-                                        applicant.applicantStatus.last.status
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains(searchvalue.toLowerCase())))
-                                .toList();
-                          } else {
-                            data = snapshot.data!.where((applicant) {
-                              // If "Undecided" is selected, include applicants with no status
-                              if (selectedValue == "Undecided") {
-                                return applicant.applicantStatus == null ||
-                                    applicant.applicantStatus.isEmpty;
-                              }
+                          // Web-aligned filtering (Applicants.js): search,
+                          // status and date all narrow the list cumulatively.
 
-                              return applicant.applicantStatus.isNotEmpty &&
-                                  applicant.applicantStatus.last.status ==
-                                      selectedValue;
+                          // 1) Search — same fields the web matches (full name,
+                          //    first/last, latest status, email, phone,
+                          //    created/updated, single + multiple addresses).
+                          if (searchvalue.isNotEmpty) {
+                            final q = searchvalue.toLowerCase();
+                            data = data.where((applicant) {
+                              final first =
+                                  applicant.applicantFirstName?.toLowerCase() ??
+                                      '';
+                              final last =
+                                  applicant.applicantLastName?.toLowerCase() ??
+                                      '';
+                              final fullName = '$first $last'.trim();
+                              final latestStatus =
+                                  applicant.applicantStatus.isNotEmpty
+                                      ? applicant.applicantStatus.last.status
+                                          .toString()
+                                          .toLowerCase()
+                                      : 'undecided';
+                              final addresses = [
+                                applicant.rentalData?.rentalAdress,
+                                ...?applicant.propertyaddress
+                                    ?.map((p) => p.address),
+                              ].whereType<String>().join(' ').toLowerCase();
+                              return fullName.contains(q) ||
+                                  first.contains(q) ||
+                                  last.contains(q) ||
+                                  latestStatus.contains(q) ||
+                                  (applicant.applicantEmail?.toLowerCase() ?? '')
+                                      .contains(q) ||
+                                  (applicant.applicantPhoneNumber
+                                              ?.toString()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  (applicant.createdAt
+                                              ?.toIso8601String()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  (applicant.updatedAt
+                                              ?.toIso8601String()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  addresses.contains(q);
+                            }).toList();
+                          }
+
+                          // 2) Status — web treats a missing status array as
+                          //    "Undecided", so that option covers both
+                          //    explicit-Undecided and not-yet-set applicants.
+                          if (selectedValue != null && selectedValue != "All") {
+                            final target = selectedValue!.toLowerCase();
+                            data = data.where((applicant) {
+                              final latestStatus =
+                                  applicant.applicantStatus.isNotEmpty
+                                      ? applicant.applicantStatus.last.status
+                                          .toString()
+                                          .toLowerCase()
+                                      : 'undecided';
+                              return latestStatus == target;
                             }).toList();
                           }
 

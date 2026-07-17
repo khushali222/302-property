@@ -8,13 +8,13 @@ import 'package:three_zero_two_property/constant/constant.dart';
 class purchaseFormService {
   Future<int?> postPurchaseForm(purchaseFormModel purchaseForm) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final headers = {
       'Content-Type': 'application/json',
       'authorization': 'CRM $token',
-      'id': 'CRM $id',
+      'id': 'CRM $id', // staff's own id (web parity)
     };
 
     final body = jsonEncode(purchaseForm.toJson());

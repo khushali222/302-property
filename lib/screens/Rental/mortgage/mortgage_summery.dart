@@ -68,7 +68,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         },
       ).timeout(const Duration(seconds: 30));
 
@@ -1569,7 +1569,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             headers: {
               'Content-Type': 'application/json',
               'authorization': 'CRM $token',
-              'id': 'CRM $id',
+              'id': 'CRM ${prefs.getString("staff_id") ?? id}',
             },
             body: json.encode({'payoffs': existing}),
           )
@@ -1636,7 +1636,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
             headers: {
               'Content-Type': 'application/json',
               'authorization': 'CRM $token',
-              'id': 'CRM $id',
+              'id': 'CRM ${prefs.getString("staff_id") ?? id}',
             },
             body: json.encode({'remaining_balance': newBalance}),
           )
@@ -2246,7 +2246,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
     String? id = prefs.getString('adminId');
     return apiGet(Uri.parse(url), headers: {
       'authorization': 'CRM $token',
-      'id': 'CRM $id',
+      'id': 'CRM ${prefs.getString("staff_id") ?? id}',
     }).timeout(const Duration(seconds: 30));
   }
 
@@ -2290,7 +2290,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         savePath,
         options: dio_pkg.Options(headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         }),
       );
 
@@ -2413,7 +2413,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         },
       ).timeout(const Duration(seconds: 30));
 
@@ -2709,7 +2709,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       );
       request.headers.addAll({
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       });
       // Match web exactly: is_web=true, user_active_recently=true
       request.fields['is_web'] = 'true';

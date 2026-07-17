@@ -32,7 +32,7 @@ class LeaseMoveoutRepository {
       Uri.parse('${Api_url}/api/moveout/lease_moveout/$leaseId'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -69,7 +69,7 @@ class LeaseMoveoutRepository {
       Uri.parse('${Api_url}/api/moveout/lease_movein/$leaseId'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),

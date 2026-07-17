@@ -521,7 +521,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
               headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'CRM $token',
-                'id': 'CRM $id',
+                'id': 'CRM ${prefs.getString("staff_id") ?? id}',
               },
               body: json.encode(requestData),
             )
@@ -557,7 +557,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
               headers: {
                 'Content-Type': 'application/json',
                 'authorization': 'CRM $token',
-                'id': 'CRM $id',
+                'id': 'CRM ${prefs.getString("staff_id") ?? id}',
               },
               body: json.encode(requestData),
             )

@@ -4974,7 +4974,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -5980,7 +5980,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -6064,7 +6064,7 @@ class _AddTenantState extends State<AddTenant> {
 //     final tenantResponse = await http
 //         .get(Uri.parse('${Api_url}/api/tenant/tenants/$adminid'), headers: {
 //       "authorization": "CRM $token",
-//       "id": "CRM $id",
+//       "id": "CRM ${prefs.getString('staff_id') ?? id}",
 //     });
 //
 //     if (tenantResponse.statusCode == 200) {
@@ -6083,7 +6083,7 @@ class _AddTenantState extends State<AddTenant> {
 //     final applicantResponse = await http
 //         .get(Uri.parse('${Api_url}/api/applicant/applicant/$adminid'), headers: {
 //       "authorization": "CRM $token",
-//       "id": "CRM $id",
+//       "id": "CRM ${prefs.getString('staff_id') ?? id}",
 //     });
 //
 //     if (applicantResponse.statusCode == 200) {
@@ -6239,7 +6239,7 @@ class _AddTenantState extends State<AddTenant> {
       final tenantResponse = await http
           .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (tenantResponse.statusCode == 200) {
@@ -6263,7 +6263,7 @@ class _AddTenantState extends State<AddTenant> {
       // final applicantResponse = await http
       //     .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
       //   "authorization": "CRM $token",
-      //   "id": "CRM $id",
+      //   "id": "CRM ${prefs.getString('staff_id') ?? id}",
       // });
       //
       // if (applicantResponse.statusCode == 200) {

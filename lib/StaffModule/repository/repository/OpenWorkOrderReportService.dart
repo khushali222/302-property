@@ -12,6 +12,7 @@ class OpenWorkOrderService {
   Future<List<WorkOrderReportData>> fetchOpenWorkOrders() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     String url = '$baseUrl/$adminId';
@@ -19,7 +20,7 @@ class OpenWorkOrderService {
     try {
       final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // staff's own id (web parity)
       });
 
       if (response.statusCode == 200) {

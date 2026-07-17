@@ -843,7 +843,9 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
               // Export Button
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: propertyData.isEmpty
+                      ? null
+                      : () {
                     if (filteredData.isNotEmpty) {
                       showModalBottomSheet(
                         context: context,
@@ -903,6 +905,7 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blueColor,
+                    disabledBackgroundColor: Colors.grey.shade400,
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                     shape: RoundedRectangleBorder(

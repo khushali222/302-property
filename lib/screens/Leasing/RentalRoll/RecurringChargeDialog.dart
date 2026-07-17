@@ -19,12 +19,14 @@ void showRecurringChargeDialog({
   required BuildContext context,
   required String leaseId,
   VoidCallback? onSuccess,
+  bool isStaff = false,
 }) {
   showDialog(
     context: context,
     barrierDismissible: false,
     builder: (ctx) => _RecurringChargeDialogContent(
       leaseId: leaseId,
+      isStaff: isStaff,
       onSuccess: () {
         Navigator.of(ctx).pop();
         onSuccess?.call();
@@ -38,11 +40,13 @@ class _RecurringChargeDialogContent extends StatefulWidget {
   final String leaseId;
   final VoidCallback onSuccess;
   final VoidCallback onCancel;
+  final bool isStaff;
 
   const _RecurringChargeDialogContent({
     required this.leaseId,
     required this.onSuccess,
     required this.onCancel,
+    this.isStaff = false,
   });
 
   @override
@@ -81,12 +85,16 @@ class _RecurringChargeDialogContentState
     String? token = prefs.getString('token');
     String? adminId = prefs.getString('adminId');
     if (adminId == null || token == null) return;
+    // Staff must send its OWN id in the `id` header (web parity); the company
+    // adminId stays in the URL for scoping.
+    final String headerId =
+        widget.isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
     try {
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM $headerId',
         },
       );
       if (response.statusCode == 200) {
@@ -168,6 +176,9 @@ class _RecurringChargeDialogContentState
       Fluttertoast.showToast(msg: 'Session expired');
       return;
     }
+    // Staff must send its OWN id in the `id` header (web parity).
+    final String headerId =
+        widget.isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
     final memo =
         _memoController.text.trim().isEmpty ? 'Recurring Charge' : _memoController.text.trim();
     final body = {
@@ -184,7 +195,7 @@ class _RecurringChargeDialogContentState
         Uri.parse('$Api_url/api/leases/${widget.leaseId}/add-recurring-charge'),
         headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM $headerId',
           'Content-Type': 'application/json',
         },
         body: jsonEncode(body),
@@ -247,6 +258,7 @@ class _RecurringChargeDialogContentState
               const SizedBox(height: 6),
               DropdownButtonHideUnderline(
                 child: DropdownButton2<String>(
+                  isExpanded: true,
                   value: _selectedFrequency,
                   hint: const Text('Select'),
                   items: _frequencyOptions
@@ -298,6 +310,7 @@ class _RecurringChargeDialogContentState
               const SizedBox(height: 6),
               DropdownButtonHideUnderline(
                 child: DropdownButton2<Setting4>(
+                  isExpanded: true,
                   value: _selectedAccount,
                   hint: const Text('Select'),
                   items: _loadingAccounts

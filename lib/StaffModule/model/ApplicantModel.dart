@@ -52,7 +52,8 @@ class Datum {
       this.unitData,
       this.applicantEmailsendDate,
       this.applicant,
-      this.lease});
+      this.lease,
+      this.propertyaddress});
 
   final String? id;
   final String? applicantId;
@@ -79,6 +80,7 @@ class Datum {
   final DateTime? applicantEmailsendDate;
   ApplicantDetails? applicant;
   LeaseApplicant? lease;
+  List<PropertyAddress>? propertyaddress;
 
   factory Datum.fromJson(Map<String, dynamic> json) {
     return Datum(
@@ -120,6 +122,10 @@ class Datum {
           json["unitData"] == null ? null : UnitData.fromJson(json["unitData"]),
       applicantEmailsendDate:
           DateTime.tryParse(json["applicant_emailsend_date"] ?? ""),
+      propertyaddress: json["propertyAddresses"] == null
+          ? []
+          : List<PropertyAddress>.from(json["propertyAddresses"]!
+              .map((x) => PropertyAddress.fromJson(x))),
     );
   }
 
@@ -151,6 +157,8 @@ class Datum {
         "applicant_emailsend_date": applicantEmailsendDate?.toIso8601String(),
         'applicant': applicant?.toJson(),
         'lease': lease?.toJson(),
+        'propertyAddresses':
+            propertyaddress?.map((x) => x.toJson()).toList(),
       };
   Map<String, dynamic> toUpdateJson() {
     final Map<String, dynamic> data = {};
@@ -444,4 +452,23 @@ class UnitData {
         "rental_bath": rentalBath,
         "rental_bed": rentalBed,
       };
+}
+
+class PropertyAddress {
+  String? rentalId;
+  String? address;
+
+  PropertyAddress({this.rentalId, this.address});
+
+  PropertyAddress.fromJson(Map<String, dynamic> json) {
+    rentalId = json['rental_id'];
+    address = json['address'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['rental_id'] = this.rentalId;
+    data['address'] = this.address;
+    return data;
+  }
 }

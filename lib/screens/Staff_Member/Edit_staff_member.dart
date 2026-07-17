@@ -94,7 +94,7 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await apiGet(Uri.parse('$Api_url/api/staffmember/staff/member/${widget.staff?.staffmemberId}'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
     );
     print('reponse ${response.body}');
     if (response.statusCode == 200) {

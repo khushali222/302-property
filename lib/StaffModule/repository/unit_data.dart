@@ -60,7 +60,7 @@ class UnitData {
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
     final response = await apiGet(Uri.parse('${baseUrl}appliance/appliance_details/$applienceid'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body)["data"];

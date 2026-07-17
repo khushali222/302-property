@@ -336,7 +336,9 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                                     padding: const EdgeInsets.symmetric(horizontal: 8),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      color: blueColor,
+                                      color: (_reportData.isEmpty || _selectedReport == null)
+                                          ? Colors.grey.shade400
+                                          : blueColor,
                                     ),
                                   ),
                                   dropdownStyleData: DropdownStyleData(

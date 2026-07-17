@@ -357,7 +357,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(roundedEntered - roundedTotal).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((roundedEntered - roundedTotal).abs())}";
       });
     } else {
       setState(() {

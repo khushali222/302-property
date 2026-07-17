@@ -11,6 +11,7 @@ class CompletedWorkOrderService {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     try {
@@ -18,7 +19,7 @@ class CompletedWorkOrderService {
           Uri.parse('$Api_url/api/work-order/complete-work-orders/$adminId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $staffId", // staff's own id (web parity)
           });
 
       if (response.statusCode == 200) {

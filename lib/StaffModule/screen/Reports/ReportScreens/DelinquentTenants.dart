@@ -460,7 +460,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       });
 
       if (response.statusCode == 200) {

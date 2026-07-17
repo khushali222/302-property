@@ -184,7 +184,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
       Uri.parse("${Api_url}/api/templates/get/${widget.templetid}"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -258,7 +258,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
   //     headers: {
   //       "Content-Type": "application/json",
   //       "authorization": "CRM $token",
-  //       "id": "CRM $adminId",
+  //       "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
   //     },
   //     body: json.encode(updatedTemplate),
   //   );

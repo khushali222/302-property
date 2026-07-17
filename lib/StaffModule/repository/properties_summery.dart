@@ -445,7 +445,7 @@ class Properies_summery_Repo{
       Uri.parse('$Api_url/api/rentals/rental/$rentalId/property_values'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({
@@ -485,7 +485,7 @@ class Properies_summery_Repo{
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({
@@ -522,7 +522,7 @@ class Properies_summery_Repo{
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     if (response.statusCode == 200) {
@@ -549,7 +549,7 @@ class Properies_summery_Repo{
       Uri.parse('${Api_url}/api/leases/leases/$adminid/$unitId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(" get summery lease details ${response.body}");
@@ -574,7 +574,7 @@ class Properies_summery_Repo{
       Uri.parse('${Api_url}/api/leases/revenue/$adminid/$unitId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(" get summery lease details ${response.body}");
@@ -600,7 +600,7 @@ class Properies_summery_Repo{
       Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       },
     );
     // Check the response status

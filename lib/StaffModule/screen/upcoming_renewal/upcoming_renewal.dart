@@ -1543,7 +1543,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         Uri.parse('$Api_url/api/leases/update_not_renewing/$leaseid'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json',
         },
       );
@@ -1575,7 +1575,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         Uri.parse('$Api_url/api/leases/undo_renewing/$leaseid'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json',
         },
       );

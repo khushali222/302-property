@@ -63,10 +63,16 @@ class LoanSummaryItem {
 }
 
 class LoanSummaryReportService {
-  Future<List<LoanSummaryItem>?> fetchLoanSummary(String adminId) async {
+  Future<List<LoanSummaryItem>?> fetchLoanSummary(String adminId,
+      {bool isStaff = false}) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
-    final id = prefs.getString('adminId') ?? '';
+    // Web parity: the `id` header must carry the caller's OWN id. Staff must
+    // send its staff_id (sending adminId 401s for staff at multi-admin
+    // companies); Admin keeps adminId. URL still scopes by adminId.
+    final id = isStaff
+        ? (prefs.getString('staff_id') ?? prefs.getString('adminId') ?? '')
+        : (prefs.getString('adminId') ?? '');
 
     final uri =
         Uri.parse('$Api_url/api/portfolio/loan-summary-report/$adminId');

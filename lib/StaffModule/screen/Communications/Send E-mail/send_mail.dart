@@ -95,7 +95,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/tenant/lease-tenant/$adminId"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -138,7 +138,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/templates/get/$adminId/$_selectedEvent"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -310,7 +310,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/templates/get/"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -384,7 +384,7 @@ class _send_emailState extends State<send_email> {
   //     headers: {
   //       "Content-Type": "application/json",
   //       "authorization": "CRM $token",
-  //       "id": "CRM $adminId",
+  //       "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
   //     },
   //     body: json.encode(updatedTemplate),
   //   );
@@ -1621,7 +1621,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("$Api_url/api/email-logs"),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminid}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),

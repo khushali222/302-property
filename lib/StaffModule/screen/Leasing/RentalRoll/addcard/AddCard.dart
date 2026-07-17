@@ -156,7 +156,7 @@ class _AddCardState extends State<AddCard> {
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -192,7 +192,7 @@ class _AddCardState extends State<AddCard> {
     try {
       final response = await apiGet(
         Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-        headers: {"id": "CRM $id", "authorization": "CRM $token"},
+        headers: {"id": "CRM ${prefs.getString('staff_id') ?? id}", "authorization": "CRM $token"},
       );
 
       if (response.statusCode == 200) {

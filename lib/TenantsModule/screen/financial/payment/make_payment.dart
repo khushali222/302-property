@@ -63,6 +63,9 @@ class _MakePaymentState extends State<MakePayment> {
   late Future<Map<String, List<String>>> futureDropdownData;
   List<Map<String, dynamic>> charges = [];
   String? validationMessage;
+  // Live "Amount cannot exceed $999,999.99" inline error (QA ticket parity with
+  // Enter/Edit Charge); 999999.99 is the max of the DECIMAL(8,2) amount column.
+  String? _amountLimitError;
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
@@ -364,7 +367,7 @@ class _MakePaymentState extends State<MakePayment> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -2791,6 +2794,12 @@ class _MakePaymentState extends State<MakePayment> {
                                   : '0',
                             onChanged: (value) {
                               setState(() {
+                                final limitVal = double.tryParse(
+                                    value.trim().replaceAll(',', ''));
+                                _amountLimitError = (limitVal != null &&
+                                        limitVal > 999999.99)
+                                    ? 'Amount cannot exceed \$999,999.99'
+                                    : null;
                                 if (value.isNotEmpty && lease_data != null) {
                                   double inputAmount =
                                       double.tryParse(value) ?? 0.0;
@@ -2831,6 +2840,16 @@ class _MakePaymentState extends State<MakePayment> {
                             },
                           ),
                         ),
+                        if (_amountLimitError != null)
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              _amountLimitError!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                       ],
                       SizedBox(height: 8),
                       _buildPaymentAmountRadio(
@@ -3021,7 +3040,8 @@ class _MakePaymentState extends State<MakePayment> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          if ((_formKey.currentState?.validate() ?? false)) {
+                          if ((_formKey.currentState?.validate() ?? false) &&
+                              (!partialamount || _amountLimitError == null)) {
                             if (totalpayamount > 0.0) {
                               print("valid");
                               setState(() {

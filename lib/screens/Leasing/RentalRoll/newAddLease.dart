@@ -263,7 +263,7 @@ class _addLease3State extends State<addLease3>
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('${Api_url}/api/rentals/rentals/$id');
 
@@ -328,7 +328,7 @@ class _addLease3State extends State<addLease3>
           Uri.parse('$Api_url/api/unit/rental_unit_dropdown/$rentalId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
       print('$Api_url/api/unit/rental_unit_dropdown/$rentalId');
 
@@ -388,7 +388,7 @@ class _addLease3State extends State<addLease3>
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -4823,7 +4823,7 @@ class _addLease3State extends State<addLease3>
         url,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: jsonEncode(checkdata),
@@ -5009,7 +5009,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -5698,7 +5698,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -5807,7 +5807,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -6663,7 +6663,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -6860,7 +6860,7 @@ class _AddTenantState extends State<AddTenant> {
       final tenantResponse = await http
           .get(Uri.parse('${Api_url}/api/tenant/tenants/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (tenantResponse.statusCode == 200) {
@@ -7020,7 +7020,7 @@ class _AddTenantState extends State<AddTenant> {
       final response = await http
           .get(Uri.parse('${Api_url}/api/applicant/applicant/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (response.statusCode == 200) {

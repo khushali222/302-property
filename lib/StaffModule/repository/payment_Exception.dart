@@ -26,7 +26,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 //       final response = await apiGet(Uri.parse(url), headers: {
 //         'Content-Type': 'application/json',
 //         "authorization": "CRM $token",
-//         "id": "CRM $id",
+//         "id": "CRM ${prefs.getString('staff_id') ?? id}",
 //       },);
 //       print('payment report ${response.body}');
 //       if (response.statusCode == 200) {
@@ -76,7 +76,7 @@ class PaymentExceptionReportsServices {
       final response = await apiGet(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       // Print the response body

@@ -427,7 +427,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         },
       ).timeout(const Duration(seconds: 15));
       if (response.statusCode != 200) return false;
@@ -490,7 +490,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           // Add your authentication headers here if needed
           // 'Authorization': 'Bearer $token',
         },
@@ -612,7 +612,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       //   headers: {
       //     'Content-Type': 'application/json',
       //     'authorization': 'CRM $token',
-      //     'id': 'CRM $id',
+      //     'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       //   },
       // ).timeout(const Duration(seconds: 30));
 

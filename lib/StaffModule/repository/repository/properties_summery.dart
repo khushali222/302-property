@@ -46,7 +46,7 @@ class Properies_summery_Repo {
       Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 
@@ -90,7 +90,7 @@ class Properies_summery_Repo {
       Uri.parse('${Api_url}/api/unit/unit'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -116,7 +116,7 @@ class Properies_summery_Repo {
       Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     // print(jsonEncode('data'));
@@ -156,7 +156,7 @@ class Properies_summery_Repo {
       headers: <String, String>{
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );
@@ -196,7 +196,7 @@ class Properies_summery_Repo {
       headers: <String, String>{
         "authorization": "CRM $token",
         'Content-Type': 'application/json; charset=UTF-8',
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );
@@ -246,7 +246,7 @@ class Properies_summery_Repo {
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );
@@ -275,7 +275,7 @@ class Properies_summery_Repo {
       Uri.parse('${Api_url}/api/appliance/appliance/$appliance_id'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -300,7 +300,7 @@ class Properies_summery_Repo {
       Uri.parse('${Api_url}/api/unit/unit/$unitId'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -343,7 +343,7 @@ class Properies_summery_Repo {
         Uri.parse('${Api_url}/api/rentals/rental_summary/$rentalId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json"
         });
     log(response.body);
@@ -372,7 +372,7 @@ class Properies_summery_Repo {
       Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       },
     );
     // Check the response status

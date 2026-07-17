@@ -480,7 +480,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     print("Admin $id");
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      headers: {"id": "CRM ${prefs.getString('staff_id') ?? id}", "authorization": "CRM $token"},
     );
 
     if (response.statusCode == 200) {
@@ -998,7 +998,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
   //         '$Api_url/api/renter-insurance/add-policy'),
   //     headers: <String, String>{
   //       'authorization': 'CRM $token',
-  //       'id': 'CRM $adminId',
+  //       'id': 'CRM ${prefs.getString("staff_id") ?? adminId}',
   //
   //       //'Content-Type': 'application/json; charset=UTF-8',
   //     },

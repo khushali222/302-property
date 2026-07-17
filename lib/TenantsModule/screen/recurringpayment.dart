@@ -66,7 +66,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       Uri.parse('${Api_url}/api/accounts/accounts/$id'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("tenant_id") ?? id}',
       },
     );
 
@@ -107,7 +107,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       Uri.parse('${Api_url}/api/recurring-cards/get-cards'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("tenant_id") ?? id}',
       },
       body: {
         "lease_id": leaseid,
@@ -1288,7 +1288,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/creditcard/getCreditCards/$tenantId'),
-      headers: {"id": "CRM $id", "authorization": "CRM $token"},
+      headers: {"id": "CRM ${prefs.getString('tenant_id') ?? id}", "authorization": "CRM $token"},
     );
 
     if (response.statusCode == 200) {
@@ -1346,7 +1346,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('tenant_id') ?? adminId}",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -1388,7 +1388,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         url,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('tenant_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: jsonEncode(lease),
@@ -1430,7 +1430,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         url,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('tenant_id') ?? id}",
           'Content-Type': 'application/json'
         },
       );

@@ -3893,7 +3893,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
       final url = '${Api_url}/api/payment/rental_owner/setting';
       final headers = {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       };
 

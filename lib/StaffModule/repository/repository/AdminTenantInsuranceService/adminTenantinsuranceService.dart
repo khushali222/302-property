@@ -10,12 +10,12 @@ class AdminTenantInsuranceRepository {
   Future<List<AdminTenantInsuranceModel>> fetchTenantInsurance(
       String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
+    String? adminId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final headers = {
       'authorization': 'CRM $token',
-      'id': 'CRM $adminId',
+      'id': 'CRM $adminId', // staff's own id (web parity)
     };
     final response = await apiGet(
         Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
@@ -47,7 +47,7 @@ class AdminTenantInsuranceRepository {
 
   Future<bool> deleteInsurancesProperties(String TenantInsurance_id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
+    String? adminId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await apiDelete(
@@ -55,7 +55,7 @@ class AdminTenantInsuranceRepository {
           '$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
       headers: <String, String>{
         'authorization': 'CRM $token',
-        'id': 'CRM $adminId',
+        'id': 'CRM $adminId', // staff's own id (web parity)
 
         //'Content-Type': 'application/json; charset=UTF-8',
       },

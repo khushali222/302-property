@@ -13,6 +13,7 @@ class PastPlansHistoryService {
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     try {
@@ -20,7 +21,7 @@ class PastPlansHistoryService {
           Uri.parse('$Api_url/api/purchase/past_plans/$adminId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $staffId", // staff's own id (web parity)
           });
 
       if (response.statusCode == 200) {

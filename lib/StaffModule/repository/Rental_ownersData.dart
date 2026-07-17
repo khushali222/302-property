@@ -48,7 +48,7 @@ class RentalOwnerService {
     final url = Uri.parse('${Api_url}/api/rental_owner/rental_owner');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id'); // staff's own id (web parity)
 
     print(url);
     print(rentalOwner.processorList!.length);

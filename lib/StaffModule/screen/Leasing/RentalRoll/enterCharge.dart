@@ -383,6 +383,9 @@ class _enterChargeState extends State<enterCharge> {
 
   List<Map<String, dynamic>> rows = [];
   double totalAmount = 0.0;
+  // Live "Amount cannot exceed $999,999.99" inline error (web parity); the
+  // submit-time bounds toast stays as a backstop.
+  String? _amountLimitError;
   void addRow() {
     setState(() {
       rows.add({
@@ -419,7 +422,7 @@ class _enterChargeState extends State<enterCharge> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${intl.NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -1027,8 +1030,25 @@ class _enterChargeState extends State<enterCharge> {
                           keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: Amount,
-                          onChanged: (value) => validateAmounts(),
+                          onChanged: (value) {
+                            validateAmounts();
+                            final v = double.tryParse(value.trim());
+                            setState(() {
+                              _amountLimitError = (v != null && v > 999999.99)
+                                  ? 'Amount cannot exceed \$999,999.99'
+                                  : null;
+                            });
+                          },
                         ),
+                        if (_amountLimitError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              _amountLimitError!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                         const SizedBox(height: 8),
                         const SizedBox(
                           height: 8,
@@ -1723,10 +1743,6 @@ class _enterChargeState extends State<enterCharge> {
                                       setState(() {
                                         _isLoading = false;
                                       });
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            "Amount must be greater than 0.01 and no more than 999999.99",
-                                      );
                                       return;
                                     }
                                     if (widget.chargeid != null) {

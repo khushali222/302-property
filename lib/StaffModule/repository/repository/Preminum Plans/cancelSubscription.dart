@@ -7,7 +7,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 class SubscriptionService {
   Future<int> cancelSubscription(String subscriptionId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
+    String? adminId = prefs.getString("staff_id"); // staff's own id (web parity)
     String? token = prefs.getString('token');
     String? superadmin_id = prefs.getString('superadminId');
 
@@ -34,6 +34,7 @@ class SubscriptionService {
   Future<int> cancelFromDataBaseSubscription(String purchaseId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     try {
@@ -42,7 +43,7 @@ class SubscriptionService {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $staffId", // staff's own id (web parity)
         },
         body: json.encode({
           // 'admin_id': a,

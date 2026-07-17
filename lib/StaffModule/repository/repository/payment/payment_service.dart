@@ -55,7 +55,7 @@ class PaymentService {
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
         },
@@ -141,7 +141,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
       },
@@ -228,7 +228,7 @@ class PaymentService {
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
         },
@@ -308,7 +308,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
       },
@@ -394,7 +394,7 @@ class PaymentService {
         Uri.parse(baseUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
         },
@@ -473,7 +473,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
       },

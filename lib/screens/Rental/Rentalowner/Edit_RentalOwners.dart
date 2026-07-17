@@ -534,7 +534,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
           '${Api_url}/api/payment/rental_owner/setting/${widget.rentalOwner.rentalownerId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     final jsonData = json.decode(response.body);
@@ -567,7 +567,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
     final url = '${Api_url}/api/payment/rental_owner/setting';
     final headers = {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
       'Content-Type': 'application/json; charset=UTF-8',
     };
     final body = json.encode({

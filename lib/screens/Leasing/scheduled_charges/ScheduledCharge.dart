@@ -1089,54 +1089,66 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Container(
-                          height: 45,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                            ),
-                            onPressed: () {},
-                            child: PopupMenuButton(
-                              onSelected: (value) async {
-                                print(value);
-                                if (value == 'Export PDF') {
-                                  print(value);
-                                  final data = await futurescheduledpayment;
-                                  _exportPDF(data);
-                                }
-                                if (value == 'Export Excel') {
-                                  final data = await futurescheduledpayment;
-                                  _exportExcel(data);
-                                }
-                                if (value == 'Export CSV') {
-                                  final data = await futurescheduledpayment;
-                                  _exportCSV(data);
-                                }
-                              },
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  value: 'Export PDF',
-                                  child: Text('Export PDF'),
+                        // Export disabled/greyed when there is no data to
+                        // export (QA CRM: no Export on empty list).
+                        FutureBuilder<List<ScheduledCharges>>(
+                          future: futurescheduledpayment,
+                          builder: (context, exportSnap) {
+                            final bool hasExportData = exportSnap.connectionState != ConnectionState.done ||
+                                (exportSnap.hasData && exportSnap.data!.isNotEmpty);
+                            return Container(
+                              height: 45,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: hasExportData
+                                      ? blueColor
+                                      : Colors.grey.shade400,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
                                 ),
-                                PopupMenuItem(
-                                  value: 'Export Excel',
-                                  child: Text('Export Excel'),
+                                onPressed: () {},
+                                child: PopupMenuButton(
+                                  enabled: hasExportData,
+                                  onSelected: (value) async {
+                                    print(value);
+                                    if (value == 'Export PDF') {
+                                      print(value);
+                                      final data = await futurescheduledpayment;
+                                      _exportPDF(data);
+                                    }
+                                    if (value == 'Export Excel') {
+                                      final data = await futurescheduledpayment;
+                                      _exportExcel(data);
+                                    }
+                                    if (value == 'Export CSV') {
+                                      final data = await futurescheduledpayment;
+                                      _exportCSV(data);
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 'Export PDF',
+                                      child: Text('Export PDF'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'Export Excel',
+                                      child: Text('Export Excel'),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'Export CSV',
+                                      child: Text('Export CSV'),
+                                    ),
+                                  ],
+                                  child: Row(
+                                    children: [
+                                      Text('Export'),
+                                      Icon(Icons.arrow_drop_down),
+                                    ],
+                                  ),
                                 ),
-                                PopupMenuItem(
-                                  value: 'Export CSV',
-                                  child: Text('Export CSV'),
-                                ),
-                              ],
-                              child: Row(
-                                children: [
-                                  Text('Export'),
-                                  Icon(Icons.arrow_drop_down),
-                                ],
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ],
                     ),

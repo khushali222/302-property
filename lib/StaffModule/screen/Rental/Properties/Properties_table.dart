@@ -2434,7 +2434,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         Uri.parse('${Api_url}/api/rentals/rental/$rentalId/availability'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json",
         },
         body: jsonEncode({

@@ -534,7 +534,7 @@ class LeaseRepository {
   //   String?  id = prefs.getString('adminId');
   //   String? token = prefs.getString('token');
   //   final response =
-  //       await apiGet(Uri.parse('${Api_url}/api/tenant/rental_tenant/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+  //       await apiGet(Uri.parse('${Api_url}/api/tenant/rental_tenant/${prefs.getString('staff_id') ?? id}'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
   //   if (response.statusCode == 200) {
   //     List jsonResponse = json.decode(response.body)['data'];
   //     return jsonResponse.map((data) => LeaseData.fromJson(data)).toList();
@@ -553,7 +553,7 @@ class LeaseRepository {
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 
@@ -574,7 +574,7 @@ class LeaseRepository {
   //
   //     headers: {
   //       "authorization" : "CRM $token",
-  //       "id":"CRM $id",
+  //       "id":"CRM ${prefs.getString('staff_id') ?? id}",
   //       'Content-Type': 'application/json',
   //     },
   //     body: json.encode(lease.toJson()),
@@ -611,7 +611,7 @@ class LeaseRepository {
         Uri.parse('$Api_url/api/leases/leases/${lease.leaseData.leaseId}'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(lease),
@@ -654,7 +654,7 @@ class LeaseRepository {
     String? id = prefs.getString("staff_id");
     final response = await apiGet(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
-        "id":"CRM $id",},); // Update with your actual API URL
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",},); // Update with your actual API URL
     print('lease fetch edit ${response.body}');
     print(leaseId);
     print(leaseId);
@@ -686,7 +686,7 @@ class LeaseRepository {
         Uri.parse(url),
         headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
           'Content-Type': 'application/json'
         },
         body: json.encode(body),
@@ -714,7 +714,7 @@ class LeaseRepository {
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     log(response.body);
@@ -736,7 +736,7 @@ class LeaseRepository {
   //     Uri.parse('$Api_url/api/payment/charges_payments/$leaseId'),
   //     headers: {
   //       "authorization": "CRM $token",
-  //       "id": "CRM $id",
+  //       "id": "CRM ${prefs.getString('staff_id') ?? id}",
   //     },
   //   );
   //   print('$Api_url/api/payment/charges_payments/$leaseId');
@@ -766,7 +766,7 @@ class LeaseRepository {
       print('entry');
       final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (response.statusCode == 200) {

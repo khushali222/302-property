@@ -218,93 +218,115 @@ class _SummaryContentState extends State<SummaryContent> {
     }
   }
 
-  List<Widget> buildRowsNote(
-      List<ApplicantNotesAndFile> statuses, int itemCount) {
-    List<Widget> rows = [];
-    for (int i = 0; i < itemCount && i < statuses.length; i++) {
-      final status = statuses[i];
+  Widget _notesHeadTxt(String t) => Padding(
+        padding: const EdgeInsets.all(10),
+        child: Text(
+          t,
+          style: TextStyle(
+              fontSize: 13, fontWeight: FontWeight.bold, color: blueColor),
+        ),
+      );
+
+  // Saved notes rendered as a Note | File | Clear table (matches web).
+  Widget _buildNotesTable() {
+    final int count = _showAllNotes
+        ? notesAndFiles.length
+        : (notesAndFiles.length > 10 ? 10 : notesAndFiles.length);
+
+    final List<TableRow> rows = [
+      TableRow(
+        decoration: const BoxDecoration(color: Color(0xFFEDF1F7)),
+        children: [
+          _notesHeadTxt('Note'),
+          _notesHeadTxt('File'),
+          _notesHeadTxt('Clear'),
+        ],
+      ),
+    ];
+    for (int i = 0; i < count && i < notesAndFiles.length; i++) {
+      final status = notesAndFiles[i];
       final bool hasFile = status.applicantFile != null &&
           status.applicantFile!.trim().isNotEmpty &&
           status.applicantFile!.trim().toLowerCase() != 'null';
-      final bool hasNote = status.applicantNotes != null &&
-          status.applicantNotes!.trim().isNotEmpty;
-      rows.add(
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF7F8FA),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFFE4E7EC)),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.insert_drive_file_outlined,
-                  color: blueColor, size: 26),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (hasFile)
-                      InkWell(
-                        onTap: () => _openFile(status.applicantFile!),
-                        child: Text(
-                          status.applicantFile!,
-                          style: TextStyle(
-                            color: blueColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                          softWrap: true,
-                        ),
-                      ),
-                    if (hasNote)
-                      Padding(
-                        padding: EdgeInsets.only(top: hasFile ? 6 : 0),
-                        child: Text(
-                          'Note: ${status.applicantNotes!.trim()}',
-                          style: TextStyle(
-                            color: grey,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          softWrap: true,
-                        ),
-                      ),
-                    if (!hasFile && !hasNote)
-                      Text('N/A',
-                          style: TextStyle(
-                              color: grey,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              InkWell(
-                onTap: () {
-                  _confirmDeleteNote(
-                      i, widget.summery.applicantId!, status.sId!);
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFDECEC),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.close, color: Colors.red, size: 20),
-                ),
-              ),
-            ],
+      rows.add(TableRow(children: [
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            (status.applicantNotes ?? '').trim().isEmpty
+                ? '—'
+                : status.applicantNotes!.trim(),
+            style: TextStyle(fontSize: 13, color: blueColor),
           ),
         ),
-      );
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: hasFile
+              ? InkWell(
+                  onTap: () => _openFile(status.applicantFile!),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.insert_drive_file_outlined,
+                          size: 16, color: blueColor),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          status.applicantFile!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: blueColor,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Text('—', style: TextStyle(fontSize: 13, color: grey)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(6),
+          child: Center(
+            child: InkWell(
+              onTap: () => _confirmDeleteNote(
+                  i, widget.summery.applicantId!, status.sId!),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFDECEC),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.delete_outline,
+                    color: Colors.red, size: 20),
+              ),
+            ),
+          ),
+        ),
+      ]));
     }
-    return rows;
+
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFFE4E7EC)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(1.4),
+          1: FlexColumnWidth(4),
+          2: FlexColumnWidth(1.1),
+        },
+        border: const TableBorder(
+          horizontalInside: BorderSide(color: Color(0xFFE4E7EC)),
+        ),
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: rows,
+      ),
+    );
   }
 
   bool isNotePost = false;
@@ -803,7 +825,7 @@ class _SummaryContentState extends State<SummaryContent> {
                           child: Text(
                             _notesExpanded
                                 ? 'Hide'
-                                : 'Attach Notes / File',
+                                : '+ Attach Note/File',
                             style: TextStyle(
                               color: blueColor,
                               fontWeight: FontWeight.w600,
@@ -817,10 +839,10 @@ class _SummaryContentState extends State<SummaryContent> {
                       duration: const Duration(milliseconds: 220),
                       curve: Curves.easeInOut,
                       alignment: Alignment.topCenter,
-                      child: _notesExpanded
-                          ? Column(
+                      child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                if (_notesExpanded) ...[
                                 const SizedBox(height: 14),
                                 Form(
                                   key: formKey,
@@ -940,12 +962,47 @@ class _SummaryContentState extends State<SummaryContent> {
                                       if (_uploadedFileName != null)
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(top: 8),
-                                          child: Text(
-                                            _uploadedFileName!,
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontSize: 13),
+                                              const EdgeInsets.only(top: 10),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: 54,
+                                                height: 54,
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: _kBorder),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Image.network(
+                                                  '$image_url${_uploadedFileName!}',
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder:
+                                                      (_, __, ___) => Icon(
+                                                    Icons
+                                                        .insert_drive_file_outlined,
+                                                    color: blueColor,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  _uploadedFileName!,
+                                                  style: TextStyle(
+                                                      color: blueColor,
+                                                      fontSize: 13),
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap: () => setState(() =>
+                                                    _uploadedFileName = null),
+                                                child: const Icon(Icons.close,
+                                                    size: 18,
+                                                    color: Colors.red),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       const SizedBox(height: 16),
@@ -1015,10 +1072,19 @@ class _SummaryContentState extends State<SummaryContent> {
                                                       });
                                                     }
                                                   }
+                                                } else {
+                                                  if (mounted) {
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            'Failed to save note');
+                                                    setState(() {
+                                                      isNotePost = false;
+                                                    });
+                                                  }
                                                 }
                                               } else {
                                                 setState(() {
-                                                  isNotePost = true;
+                                                  isNotePost = false;
                                                 });
                                               }
                                             },
@@ -1046,6 +1112,8 @@ class _SummaryContentState extends State<SummaryContent> {
                                             onPressed: () {
                                               setState(() {
                                                 noteController.clear();
+                                                _uploadedFileName = null;
+                                                _notesExpanded = false;
                                               });
                                             },
                                             style: OutlinedButton.styleFrom(
@@ -1058,7 +1126,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                               elevation: 0,
                                             ),
                                             child: Text(
-                                              'Clear',
+                                              'Cancel',
                                               style: TextStyle(
                                                   color: blueColor,
                                                   fontWeight: FontWeight.w600,
@@ -1071,27 +1139,10 @@ class _SummaryContentState extends State<SummaryContent> {
                                     ],
                                   ),
                                 ),
+                                ],
                                 if (notesAndFiles.isNotEmpty) ...[
-                                  const Divider(height: 28),
-                                  Text(
-                                    'Saved notes & files',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                      color: blueColor,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: buildRowsNote(
-                                      notesAndFiles,
-                                      _showAllNotes
-                                          ? notesAndFiles.length
-                                          : 10,
-                                    ),
-                                  ),
+                                  const SizedBox(height: 14),
+                                  _buildNotesTable(),
                                   if (notesAndFiles.length > 10)
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8),
@@ -1115,8 +1166,7 @@ class _SummaryContentState extends State<SummaryContent> {
                                     ),
                                 ],
                               ],
-                            )
-                          : const SizedBox.shrink(),
+                            ),
                     ),
                   ],
                 ),

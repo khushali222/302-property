@@ -9,12 +9,13 @@ class GetCardDetailService {
   Future<Map<String, dynamic>> fetchSubscriptionData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final response = await apiGet(
       Uri.parse('$Api_url/api/nmi-keys/nmi-keys/$adminId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // staff's own id (web parity)
       },
     );
 
@@ -28,7 +29,7 @@ class GetCardDetailService {
 
   Future<List<CardData>?> fetchCardDetail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
+    String? adminId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final url = Uri.parse('$Api_url/api/plans/plans');
@@ -36,7 +37,7 @@ class GetCardDetailService {
       url,
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}", // staff's own id (web parity)
       },
     );
 

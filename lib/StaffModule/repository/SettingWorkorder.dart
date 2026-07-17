@@ -11,7 +11,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 Future<Data> fetchWorkOrderSetting() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
-  String? id = prefs.getString("adminId");
+  String? id = prefs.getString("staff_id"); // staff's own id (web parity)
   String? aminid = prefs.getString("staff_id");
   String url = '${Api_url}/api/work-order/work-defaults/${aminid}';
 

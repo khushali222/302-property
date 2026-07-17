@@ -12,13 +12,14 @@ class GetAddressAdminPdfService {
   Future<profile> fetchAdminAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await apiGet(
       Uri.parse('$apiUrl$id'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffId", // staff's own id (web parity)
       },
     );
 

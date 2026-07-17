@@ -21,7 +21,7 @@ class RentalOwnerService {
     String?  id = prefs.getString('adminId');
     String? token = prefs.getString('token');
     final response = await apiGet(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     print('$Api_url/api/rentals/rental-owners/$adminId');
     print(adminId);
     print(response.body);
@@ -70,7 +70,7 @@ class RentalOwnerService {
         url,
         headers: {
           "authorization" : "CRM $token",
-          "id":"CRM $id",
+          "id":"CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'},
         body: jsonEncode(rentalOwner.toJson()),
       );
@@ -205,7 +205,7 @@ class RentalOwnerService {
        Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -232,7 +232,7 @@ class RentalOwnerService {
       Uri.parse('$Api_url/api/rentals/rental-owners/$rentalownerId'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -258,7 +258,7 @@ class RentalOwnerService {
     print(rentalOwnerId);
     final response = await apiGet(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
 
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
     );
    // print(adminId);
     //print(response.body);

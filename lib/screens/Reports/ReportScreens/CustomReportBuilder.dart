@@ -370,7 +370,10 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                          color: blueColor,
+                                          color: (_reportData.isNotEmpty &&
+                                                  _selectedReport != null)
+                                              ? blueColor
+                                              : Colors.grey.shade400,
                                         ),
                                       ),
                                       dropdownStyleData: DropdownStyleData(

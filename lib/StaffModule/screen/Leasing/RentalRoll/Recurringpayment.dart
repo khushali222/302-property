@@ -1371,7 +1371,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
 
   Future<void> fetchcreditcard(String tenantId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    // Staff's OWN id in the `id` header (adminId is rejected for staff).
+    String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     final slotIndex = customervaultid.length;
     customervaultid.add(0); // keep tenant index alignment even on errors
@@ -1430,6 +1431,9 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       String customerVaultId, List<dynamic> cardDetailsList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    // The `id` header must be the staff's OWN id; the company adminId still
+    // goes in the request body's admin_id below.
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     Map<String, String> requestBody = {
@@ -1441,7 +1445,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
         'Content-Type': 'application/json',
-        "id": "CRM $adminId",
+        "id": "CRM $staffId",
         "authorization": "CRM $token",
       },
       body: json.encode(requestBody),
@@ -1490,7 +1494,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    // Staff's OWN id in the `id` header (adminId is rejected for staff).
+    String? id = prefs.getString('staff_id');
     try {
       final response = await apiPost(
         url,
@@ -1532,7 +1537,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    String? id = prefs.getString('adminId');
+    // Staff's OWN id in the `id` header (adminId is rejected for staff).
+    String? id = prefs.getString('staff_id');
     try {
       final response = await apiPut(
         url,

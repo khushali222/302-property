@@ -23,7 +23,7 @@ class TenantsRepository {
       Uri.parse('${Api_url}/api/tenant/tenants/$id'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(response.body);
@@ -46,7 +46,7 @@ class TenantsRepository {
       Uri.parse('${Api_url}/api/tenant/tenants/$tenantId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(response.body);
@@ -73,7 +73,7 @@ class TenantsRepository {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
         body: jsonEncode(tenant.toJson()),
       );
@@ -298,7 +298,7 @@ class TenantsRepository {
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -333,7 +333,7 @@ class TenantsRepository {
         uri,
         headers: <String, String>{
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
@@ -363,7 +363,7 @@ class TenantsRepository {
       Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 
@@ -388,7 +388,7 @@ class TenantsRepository {
         Uri.parse(apiUrl),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 

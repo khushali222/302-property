@@ -989,7 +989,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         Uri.parse('$Api_url/api/charge-setting/$adminid'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -1061,7 +1061,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       headers: {
         "authorization": "CRM $token",
         'Content-Type': 'application/json',
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );
@@ -8298,7 +8298,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       url,
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({
@@ -8352,7 +8352,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       url,
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({

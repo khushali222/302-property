@@ -192,7 +192,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
           await apiPost(Uri.parse('$Api_url/api/leases/renew_lease'),
               headers: {
                 "authorization": "CRM $token",
-                "id": "CRM $id",
+                "id": "CRM ${prefs.getString('staff_id') ?? id}",
                 'Content-Type': 'application/json',
               },
               body: json.encode(renewlease));
@@ -430,7 +430,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 

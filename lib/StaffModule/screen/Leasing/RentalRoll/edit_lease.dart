@@ -398,7 +398,7 @@ class _Edit_leaseState extends State<Edit_lease>
     final response = await http
         .get(Uri.parse('$Api_url/api/accounts/accounts/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     print(response.body);
     if (response.statusCode == 200) {
@@ -6282,7 +6282,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         Uri.parse('$Api_url/api/accounts/accounts'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json'
         },
         body: json.encode(formData),
@@ -6365,7 +6365,7 @@ class _AddTenantState extends State<AddTenant> {
       final tenantResponse = await http
           .get(Uri.parse('${Api_url}/api/tenant/tenants/$adminid'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       // if (tenantResponse.statusCode == 200) {

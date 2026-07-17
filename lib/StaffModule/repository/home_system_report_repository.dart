@@ -17,7 +17,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 //     print(url);
 //
 //     try {
-//       final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+//       final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
 //       print("check the home applience data ${response.body}");
 //       print(["data"].first.length);
 //       if (response.statusCode == 200) {
@@ -57,7 +57,7 @@ class Home_system_reportService {
         url,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
       print("check the home applience data ${response.body}");

@@ -5300,7 +5300,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
       Uri.parse('${Api_url}/api/rentals/rentals'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
