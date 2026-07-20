@@ -2576,6 +2576,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       applianceid: _tableData.first.applianceId,
                                                                                       adminId: id,
                                                                                       unitId: widget.unit?.unitId,
+                                                                                      rentalId: widget.unit?.rentalId ?? widget.properties?.rentalId ?? "",
                                                                                       appliancename: _name.text,
                                                                                       appliancedescription: _description.text,
                                                                                       installeddate: reverseFormatDate(_installedDate.text),

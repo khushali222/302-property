@@ -302,6 +302,18 @@ class _Lease_tableState extends State<Lease_table> {
     );
   }
 
+  // Web parity (RentRoll.js filterRentRollsBySearch): exports must include the
+  // FULL filtered lease set across all pages, not just the current server page.
+  // Mirrors the client-pagination branch of _loadLeasesPage(): fetch every
+  // lease, then apply the same search/status/rental-owner filters and sort as
+  // the on-screen list.
+  Future<List<Lease1>> _fetchAllLeasesForExport() async {
+    var list = await LeaseRepository().fetchLease('');
+    list = _applyLocalLeaseFilters(list);
+    sortData(list);
+    return list;
+  }
+
   void _scheduleLeaseLoad() {
     setState(() {
       futureLease = _loadLeasesPage();
@@ -799,7 +811,6 @@ class _Lease_tableState extends State<Lease_table> {
   final GlobalKey _rentalOwnerDropdownKey = GlobalKey();
   final ValueNotifier<List<String>> _selectedRentalOwnersNotifier =
       ValueNotifier<List<String>>([]);
-  List<Lease1>? _leasesForExport;
 
   void _showAlertforLimit(BuildContext context) {
     Alert(
@@ -1148,26 +1159,51 @@ class _Lease_tableState extends State<Lease_table> {
                                     child: PopupMenuButton<String>(
                                       enabled: hasExportData,
                                       onSelected: (value) async {
-                                        if (_leasesForExport == null ||
-                                            _leasesForExport!.isEmpty) {
+                                        final dateProvider =
+                                            Provider.of<DateProvider>(context,
+                                                listen: false);
+                                        final navigator = Navigator.of(context,
+                                            rootNavigator: true);
+                                        // Web parity: export the FULL filtered
+                                        // lease set across all pages, not just
+                                        // the current server page.
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                        List<Lease1> exportData;
+                                        try {
+                                          exportData =
+                                              await _fetchAllLeasesForExport();
+                                        } catch (e) {
+                                          navigator.pop();
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                'Failed to load data for export',
+                                            toastLength: Toast.LENGTH_SHORT,
+                                          );
+                                          return;
+                                        }
+                                        navigator.pop();
+                                        if (exportData.isEmpty) {
                                           Fluttertoast.showToast(
                                             msg: 'No data to export',
                                             toastLength: Toast.LENGTH_SHORT,
                                           );
                                           return;
                                         }
-                                        final dateProvider =
-                                            Provider.of<DateProvider>(context,
-                                                listen: false);
                                         if (value == 'pdf') {
                                           await _generatePdf(
-                                              _leasesForExport!, dateProvider);
+                                              exportData, dateProvider);
                                         } else if (value == 'excel') {
                                           await _generateExcel(
-                                              _leasesForExport!, dateProvider);
+                                              exportData, dateProvider);
                                         } else if (value == 'csv') {
                                           await _generateCsv(
-                                              _leasesForExport!, dateProvider);
+                                              exportData, dateProvider);
                                         }
                                       },
                                       itemBuilder: (BuildContext context) =>
@@ -1330,14 +1366,6 @@ class _Lease_tableState extends State<Lease_table> {
                                 .toList();
                             canChangePageSize = data.isNotEmpty;
                           }
-
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (mounted) {
-                              setState(() {
-                                _leasesForExport = List.from(data);
-                              });
-                            }
-                          });
 
                           return SingleChildScrollView(
                             child: Column(

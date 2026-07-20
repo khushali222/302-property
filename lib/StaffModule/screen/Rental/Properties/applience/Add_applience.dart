@@ -1125,6 +1125,9 @@ class _AddApplienceState extends State<AddApplience> {
                                         .addappliances(
                                         adminId: id,
                                         unitId: widget.unit?.unitId ?? "",
+                                        rentalId: widget.unit?.rentalId ??
+                                            widget.properties?.rentalId ??
+                                            "",
                                         appliancename: _name.text,
                                         appliancedescription: _description.text,
                                         installeddate: _convertToApiFormat(
@@ -1158,6 +1161,9 @@ class _AddApplienceState extends State<AddApplience> {
                                         .Editappliances(
                                         adminId: id,
                                         unitId: widget.unit?.unitId ?? "",
+                                        rentalId: widget.unit?.rentalId ??
+                                            widget.properties?.rentalId ??
+                                            "",
                                         applianceid:
                                             widget.appliance?.applianceId ?? "",
                                         appliancename: _name.text,

@@ -904,7 +904,7 @@ class _AddTenantCosignerScreenState extends State<AddTenantCosignerScreen> {
         _checkRow(
           value: _enableOverrideFee,
           onChanged: (v) => setState(() => _enableOverrideFee = v ?? false),
-          label: Text("Replace this tenant's debit card fee",
+          label: Text('Enable Debit Card Fee Override',
               style: TextStyle(fontSize: 15, color: navyClr)),
         ),
         if (_enableOverrideFee) ...[
@@ -964,7 +964,7 @@ class _AddTenantCosignerScreenState extends State<AddTenantCosignerScreen> {
             _checkRow(
               value: _enableCard,
               onChanged: (v) => setState(() => _enableCard = v ?? false),
-              label: Text('Credit Card',
+              label: Text('Card',
                   style: TextStyle(fontSize: 15, color: navyClr)),
             ),
           ],

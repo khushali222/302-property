@@ -1030,6 +1030,9 @@ class _Edit_applienceState extends State<Edit_applience> {
                                   applianceid: widget.appliance?.applianceId,
                                   adminId: id,
                                   unitId: widget.unit?.unitId,
+                                  rentalId: widget.unit?.rentalId ??
+                                      widget.properties?.rentalId ??
+                                      "",
                                   appliancename: _name.text,
                                   appliancedescription: _description.text,
                                   installeddate: _installedDate.text,

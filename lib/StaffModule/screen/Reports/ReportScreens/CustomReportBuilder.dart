@@ -71,7 +71,8 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       _loading = true;
       _errorMessage = null;
     });
-    final result = await _service.fetchSavedReports(adminId: _adminId!);
+    final result =
+        await _service.fetchSavedReports(adminId: _adminId!, isStaff: true);
     setState(() {
       _loading = false;
       _savedReports = result.data;
@@ -103,6 +104,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
     final getResult = await _service.fetchSavedReportById(
       adminId: _adminId!,
       reportId: reportId,
+      isStaff: true,
     );
     if (getResult.data == null) {
       setState(() {
@@ -119,6 +121,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       adminId: _adminId!,
       reportId: reportFromGet.reportId,
       reportConfig: reportFromGet,
+      isStaff: true,
     );
     setState(() {
       _reportDataLoading = false;
@@ -211,6 +214,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
             final res = await _service.deleteReport(
               adminId: _adminId!,
               reportId: report.reportId,
+              isStaff: true,
             );
             if (!mounted) return;
             if (res.statusCode == 200) {

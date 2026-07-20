@@ -7,7 +7,8 @@ import 'package:three_zero_two_property/Model/SavedReportModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 class CustomReportService {
-  Future<SavedReportModel> fetchSavedReports({required String adminId}) async {
+  Future<SavedReportModel> fetchSavedReports(
+      {required String adminId, bool isStaff = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
@@ -16,9 +17,11 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
+      final headerId =
+          isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
       final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $headerId",
         "Content-Type": "application/json",
       });
       print('fetch saved reports:${response.body}');
@@ -54,6 +57,7 @@ class CustomReportService {
   Future<SavedReportSingleModel> fetchSavedReportById({
     required String adminId,
     required String reportId,
+    bool isStaff = false,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -63,9 +67,11 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
+      final headerId =
+          isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
       final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $headerId",
         "Content-Type": "application/json",
       });
       // --- GET /api/reports/saved/:reportId - full response log (compare with web) ---
@@ -115,6 +121,7 @@ class CustomReportService {
     required String adminId,
     required String reportId,
     SavedReport? reportConfig,
+    bool isStaff = false,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -148,11 +155,13 @@ class CustomReportService {
       print('[CustomReport POST] dynamicFieldConfigs: ${bodyMap['dynamicFieldConfigs']}');
       print('[CustomReport POST] full body: $body');
 
+      final headerId =
+          isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
       final response = await apiPost(
         uri,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $headerId",
           "Content-Type": "application/json",
         },
         body: body,
@@ -270,6 +279,7 @@ class CustomReportService {
   Future<SaveReportResponse> deleteReport({
     required String adminId,
     required String reportId,
+    bool isStaff = false,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -279,11 +289,13 @@ class CustomReportService {
         queryParameters: {'admin_id': adminId},
       );
 
+      final headerId =
+          isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
       final response = await apiDelete(
         uri,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM $headerId",
           "Content-Type": "application/json",
         },
       );

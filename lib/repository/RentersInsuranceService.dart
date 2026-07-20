@@ -6,17 +6,20 @@ import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
 class RentersInsuranceService {
-  Future<List<RentersInsuranceData>> fetchRentersInsurance() async {
+  Future<List<RentersInsuranceData>> fetchRentersInsurance(
+      {bool isStaff = false}) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+    final headerId =
+        isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
     try {
       final response = await apiGet(
           Uri.parse('$Api_url/api/renter-insurance/report/$adminId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $adminId",
+            "id": "CRM $headerId",
           });
 
       if (response.statusCode == 200) {

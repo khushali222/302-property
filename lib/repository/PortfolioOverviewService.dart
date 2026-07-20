@@ -31,17 +31,20 @@ class PortfolioOverviewData {
 }
 
 class PortfolioOverviewService {
-  Future<PortfolioOverviewData?> fetchPortfolioOverview(String adminId) async {
+  Future<PortfolioOverviewData?> fetchPortfolioOverview(String adminId,
+      {bool isStaff = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
     final uri = Uri.parse('$Api_url/api/portfolio/overview/$adminId');
 
+    final headerId = isStaff ? (prefs.getString('staff_id') ?? id) : id;
+
     final response = await apiGet(uri, headers: {
       'Content-Type': 'application/json',
       'authorization': 'CRM $token',
-      'id': 'CRM $id',
+      'id': 'CRM $headerId',
     });
 
     if (response.statusCode == 200) {

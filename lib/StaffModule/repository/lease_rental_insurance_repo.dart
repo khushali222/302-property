@@ -50,7 +50,7 @@ class RentersInsuranceService {
   }
 
   Future<List<lease_renter_insurance>> fetchRentersInsurance(
-      String leaseid) async {
+      String leaseid, {bool includeDeleted = false}) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -58,7 +58,10 @@ class RentersInsuranceService {
     String? token = prefs.getString('token');
     try {
       final response = await apiGet(
-          Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'),
+          // Web parity: ?include_deleted=1 asks the server to also return
+          // soft-deleted policies ("Show Deleted Policies" toggle).
+          Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'
+              '${includeDeleted ? '?include_deleted=1' : ''}'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",

@@ -45,6 +45,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  // Web parity: "Show Deleted Policies" toggle (RenterInsurance tab). When on,
+  // the list is re-fetched with ?include_deleted=1 so soft-deleted policies show.
+  bool _showDeleted = false;
   @override
   void initState() {
     super.initState();
@@ -70,7 +73,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
     RentersInsuranceService service = RentersInsuranceService();
     try {
       List<lease_renter_insurance> data =
-          await service.fetchRentersInsurance(widget.leaseId);
+          await service.fetchRentersInsurance(widget.leaseId,
+                                      includeDeleted: _showDeleted);
       setState(() {
         rentersInsuranceModel = data;
         isLoading = false;
@@ -413,7 +417,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                 .deleteInsurance(renters_insurance_id: id);
             setState(() {
               _futureRentersInsurance = RentersInsuranceService()
-                  .fetchRentersInsurance(widget.leaseId);
+                  .fetchRentersInsurance(widget.leaseId,
+                                      includeDeleted: _showDeleted);
             });
             Navigator.pop(context);
           },
@@ -471,7 +476,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                             setState(() {
                               _futureRentersInsurance =
                                   RentersInsuranceService()
-                                      .fetchRentersInsurance(widget.leaseId);
+                                      .fetchRentersInsurance(widget.leaseId,
+                                      includeDeleted: _showDeleted);
                               //  futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
                             });
                           }
@@ -508,6 +514,25 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                     ],
                   ),
 
+                  // Web parity: "Show Deleted Policies" toggle above the table.
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _showDeleted,
+                        activeColor: blueColor,
+                        onChanged: (v) {
+                          setState(() {
+                            _showDeleted = v ?? false;
+                            isLoading = true;
+                            _futureRentersInsurance =
+                                fetchRentersInsuranceData();
+                          });
+                        },
+                      ),
+                      const Text('Show Deleted Policies',
+                          style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
                   const SizedBox(height: 8),
                   if (MediaQuery.of(context).size.width < 500)
                     const SizedBox(height: 10),
@@ -979,6 +1004,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                             SizedBox(
                                                               width: 5,
                                                             ),
+                                                            // Web parity: hide Edit on soft-deleted rows.
+                                                            if (!(item.isDelete ?? false))
                                                             GestureDetector(
                                                               onTap: () async {
                                                                 var check = await Navigator.push(
@@ -994,7 +1021,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                   setState(() {
                                                                     _futureRentersInsurance =
                                                                         RentersInsuranceService()
-                                                                            .fetchRentersInsurance(widget.leaseId);
+                                                                            .fetchRentersInsurance(widget.leaseId,
+                                      includeDeleted: _showDeleted);
                                                                   });
                                                                 }
                                                               },
@@ -1032,6 +1060,8 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                             SizedBox(
                                                               width: 5,
                                                             ),
+                                                            // Web parity: hide Delete on soft-deleted rows.
+                                                            if (!(item.isDelete ?? false))
                                                             GestureDetector(
                                                               onTap: () {
                                                                 _showDeleteAlert(

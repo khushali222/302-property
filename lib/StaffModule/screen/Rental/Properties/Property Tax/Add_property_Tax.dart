@@ -846,18 +846,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                         ? 'Update tax record details'
                         : 'Add new tax record for this property'),
                     const SizedBox(height: 16),
-                    // _buildDropdownField(
-                    //   controller: _taxYearController,
-                    //   label: 'Tax Year *',
-                    //   hint: 'Select tax year',
-                    //   validator: (value) =>
-                    //       _validateRequired(value, 'Tax year'),
-                    //   items: _yearOptions,
-                    // ),
-                    _buildTextField(
+                    // Web parity: Tax Year is a dropdown of valid years (no free
+                    // text), so an oversized/garbled value can't be entered.
+                    _buildDropdownField(
                       controller: _taxYearController,
                       label: 'Tax Year *',
                       hint: 'Select tax year',
+                      items: _yearOptions,
                       validator: (value) =>
                           _validateRequired(value, 'Tax year'),
                     ),
@@ -1403,11 +1398,10 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               ),
               dropdownStyleData: DropdownStyleData(
                 maxHeight: 250,
-                width: 200,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                offset: const Offset(-20, 0),
+                offset: const Offset(0, 0),
                 scrollbarTheme: ScrollbarThemeData(
                   radius: const Radius.circular(40),
                   thickness: MaterialStateProperty.all(6),

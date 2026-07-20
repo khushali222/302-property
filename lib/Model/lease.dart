@@ -450,7 +450,7 @@ class TenantData {
       tenant_residentStatus: json['tenant_residentStatus'] ?? '',
       tenantPhoneNumber: json['tenant_phoneNumber'],
       updatedAt: json['updatedAt'],
-      rentShare: json['percentage'] ?? "",
+      rentShare: json['percentage']?.toString() ?? "",
       v: json['__v'],
       id: json['_id'],
     );
@@ -474,7 +474,12 @@ class TenantData {
       'tenant_id': tenantId,
       'tenant_lastName': tenantLastName,
       'tenant_phoneNumber': tenantPhoneNumber,
-      'percentage': rentShare,
+      // Web parity (CRM-4132): send `percentage` as a NUMBER (e.g. 100 / 0),
+      // matching web's numeric payload. Falls back to the raw value only if it
+      // is non-numeric/empty, so nothing breaks for unexpected inputs.
+      'percentage': rentShare == null
+          ? null
+          : (num.tryParse(rentShare!.trim()) ?? rentShare),
       // Web welcome-email flow: no tenant_password / taxPayer_id sent. A new
       // tenant (empty id) gets a welcome email; an existing one (has id) does not.
       'send_welcome_email': sendWelcomeEmail ?? ((tenantId ?? '').isEmpty),

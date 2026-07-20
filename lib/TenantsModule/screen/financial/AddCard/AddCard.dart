@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
@@ -193,6 +194,8 @@ class _AddCardState extends State<AddCard> {
       );
 
       if (response.statusCode == 200) {
+        if (kDebugMode) print(
+            '🟧 [TENANT ADD-CARD] READ getCreditCards RESPONSE: ${response.body}');
         var jsonResponse = json.decode(response.body);
         customervaultid = jsonResponse['customer_vault_id'];
         List<dynamic> cardDetailsList = jsonResponse['card_detail'] ?? [];
@@ -210,6 +213,8 @@ class _AddCardState extends State<AddCard> {
             customervaultid.toString(), cardDetailsList);
 
         if (customerData != null) {
+          if (kDebugMode) print(
+              '🟧 [TENANT ADD-CARD] READ → cards to display: ${customerData.billing.length}');
           setState(() {
             customervaultid = jsonResponse['customer_vault_id'];
             cardDetails = customerData.billing;

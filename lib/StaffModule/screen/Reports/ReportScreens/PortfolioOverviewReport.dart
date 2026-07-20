@@ -36,8 +36,8 @@ class _PortfolioOverviewReportState extends State<PortfolioOverviewReport> {
       final prefs = await SharedPreferences.getInstance();
       final adminId = prefs.getString('adminId') ?? '';
 
-      final data =
-          await PortfolioOverviewService().fetchPortfolioOverview(adminId);
+      final data = await PortfolioOverviewService()
+          .fetchPortfolioOverview(adminId, isStaff: true);
 
       setState(() {
         _data = data;

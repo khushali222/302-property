@@ -73,7 +73,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   Future<List<RentersInsuranceData>> fetchRentersInsuranceData() async {
     RentersInsuranceService service = RentersInsuranceService();
     try {
-      List<RentersInsuranceData> data = await service.fetchRentersInsurance();
+      List<RentersInsuranceData> data =
+          await service.fetchRentersInsurance(isStaff: true);
       setState(() {
         rentersInsuranceModel = data;
         isLoading = false;

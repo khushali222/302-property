@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ class AddCardService {
     };
 
     final body = jsonEncode(card.toJson());
+    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 1) create-customer-vault REQUEST: $body');
 
     try {
       final response = await apiPost(
@@ -39,6 +41,8 @@ class AddCardService {
         headers: headers,
         body: body,
       );
+      if (kDebugMode) print(
+          '🟪 [ADMIN ADD-CARD] 1) create-customer-vault RESPONSE ${response.statusCode}: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
@@ -67,6 +71,7 @@ class AddCardService {
       'id': 'CRM $id',
     };
     final body = jsonEncode(card.toJson());
+    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 1b) create-customer-billing REQUEST: $body');
 
     try {
       final response = await apiPost(
@@ -75,6 +80,8 @@ class AddCardService {
         body: body,
       );
 
+      if (kDebugMode) print(
+          '🟪 [ADMIN ADD-CARD] 1b) create-customer-billing RESPONSE ${response.statusCode}: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
@@ -103,6 +110,7 @@ class AddCardService {
       'id': 'CRM $id',
     };
     final body = jsonEncode(addCard.toJson());
+    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 2) addCreditCard REQUEST: $body');
 
     try {
       final response = await apiPost(
@@ -111,12 +119,16 @@ class AddCardService {
         body: body,
       );
 
+      if (kDebugMode) print(
+          '🟪 [ADMIN ADD-CARD] 2) addCreditCard RESPONSE ${response.statusCode}: ${response.body}');
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle success scenario here
-        print('Add credit card submitted successfully');
+        if (kDebugMode) print(
+            '✅ [ADMIN ADD-CARD] SUCCESS — card saved (status ${response.statusCode})');
       } else {
         // Handle error scenario here
-        print('Failed to submit add credit card: ${response.statusCode}');
+        if (kDebugMode) print('❌ [ADMIN ADD-CARD] FAILED addCreditCard: ${response.statusCode}');
       }
     } catch (e) {
       // Handle exception scenario here

@@ -138,6 +138,7 @@ class Properies_summery_Repo {
   Future<Map<String, dynamic>> addappliances({
     String? adminId,
     String? unitId,
+    String? rentalId,
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
@@ -165,6 +166,7 @@ class Properies_summery_Repo {
     var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
+      'rental_id': rentalId,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
@@ -209,6 +211,7 @@ class Properies_summery_Repo {
   Future<Map<String, dynamic>> Editappliances({
     String? adminId,
     String? unitId,
+    String? rentalId,
     String? applianceid,
     String? appliancename,
     String? appliancedescription,
@@ -237,6 +240,7 @@ class Properies_summery_Repo {
     var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
+      'rental_id': rentalId,
       'appliance_id': applianceid,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
