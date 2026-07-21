@@ -6876,7 +6876,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 height: 10,
                               ),
                               Text(
-                                'Entery Allowed ',
+                                'Entry Allowed ',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor,

@@ -67,6 +67,23 @@ double asDouble(dynamic value, [double fallback = 0]) {
   return fallback;
 }
 
+/// Nullable, type-preserving numeric parse for model `fromJson`.
+/// Keeps null as null (does NOT coerce to 0), keeps int as int and double as
+/// double (so payload round-trips are unchanged), and parses a numeric String
+/// to num. Use for `num?` fields so a decimal/int/string from the API can't
+/// throw "type 'X' is not a subtype of type 'int?'".
+num? asNumN(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value;
+  if (value is String) return num.tryParse(value.trim());
+  return null;
+}
+
+/// Nullable variants for `double?` / `int?` fields: null stays null, any present
+/// value (int, double, or numeric String) is coerced safely to the field type.
+double? asDoubleN(dynamic value) => value == null ? null : asDouble(value);
+int? asIntN(dynamic value) => value == null ? null : asInt(value);
+
 /// A loose value → Map<String, dynamic> (empty map if it isn't a map).
 Map<String, dynamic> asObject(dynamic value) =>
     value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};

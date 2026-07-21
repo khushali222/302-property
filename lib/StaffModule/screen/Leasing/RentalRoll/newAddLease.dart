@@ -585,6 +585,11 @@ class _addLease3State extends State<addLease3>
   bool _leasePaymentSettings = false; // Enable payment settings
   bool _creditCardAccepted = false; // Credit card checkbox
   bool _debitCardAccepted = false; // Debit card checkbox
+  // Payment Settings section (web parity) — lease-level, applied to all tenants
+  bool _enableDebitCardFeeOverride = false; // Enable Debit Card Fee Override
+  final TextEditingController _overrideFeeController = TextEditingController();
+  bool _allowAch = true; // Allowed Payment Methods: ACH
+  bool _allowCard = true; // Allowed Payment Methods: Card
   Widget _buildDataCell(String text) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
@@ -953,7 +958,6 @@ class _addLease3State extends State<addLease3>
               initialData: initialData,
               onSave: (data) {
                 setState(() {
-                  data['rent_cycle'] = Rent; // Add Rent value to the data map
                   if (index != null) {
                     // Update existing item
                     formDataRecurringList[index] = data;
@@ -978,7 +982,6 @@ class _addLease3State extends State<addLease3>
 
     if (result != null) {
       setState(() {
-        result['rent_cycle'] = Rent; // Add Rent value to the result map
         if (index != null) {
           formDataRecurringList[index] = result;
           Fluttertoast.showToast(msg: 'Recurring Charge Updated Sucessfully');
@@ -1269,7 +1272,11 @@ class _addLease3State extends State<addLease3>
                                                   ),
                                                 );
                                               }).toList(),
-                                              value: _selectedProperty,
+                                              value: properties.any((p) =>
+                                                      p['rental_id'] ==
+                                                      _selectedProperty)
+                                                  ? _selectedProperty
+                                                  : null,
                                               onChanged: (value) {
                                                 setState(() {
                                                   _selectedProperty = value;
@@ -3734,13 +3741,162 @@ class _addLease3State extends State<addLease3>
                       const SizedBox(
                         height: 10,
                       ),
+                      // Payment Settings (web parity) — lease-level, applied to all tenants
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border:
+                                Border.all(color: const Color(0xFFE4E8EF)),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x0A101828),
+                                blurRadius: 14,
+                                offset: Offset(0, 6),
+                              ),
+                            ]),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10),
+                              Text('Payment Settings',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: blueColor)),
+                              const SizedBox(height: 14),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      activeColor: blueColor,
+                                      value: _enableDebitCardFeeOverride,
+                                      onChanged: (v) => setState(() =>
+                                          _enableDebitCardFeeOverride =
+                                              v ?? false),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text('Enable Debit Card Fee Override',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: blueColor)),
+                                ],
+                              ),
+                              if (_enableDebitCardFeeOverride) ...[
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: 170,
+                                  child: TextFormField(
+                                    controller: _overrideFeeController,
+                                    keyboardType: const TextInputType
+                                        .numberWithOptions(decimal: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9.]')),
+                                    ],
+                                    decoration: InputDecoration(
+                                      hintText: 'Add fee here',
+                                      suffixText: '%',
+                                      isDense: true,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 12),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFCED4DA)),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFCED4DA)),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 16),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8F9FB),
+                                  border: Border.all(
+                                      color: const Color(0xFFE4E8EF)),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Allowed Payment Methods',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: blueColor)),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Checkbox(
+                                            activeColor: blueColor,
+                                            value: _allowAch,
+                                            onChanged: (v) => setState(() =>
+                                                _allowAch = v ?? false),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text('ACH',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: blueColor)),
+                                        const SizedBox(width: 24),
+                                        SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Checkbox(
+                                            activeColor: blueColor,
+                                            value: _allowCard,
+                                            onChanged: (v) => setState(() =>
+                                                _allowCard = v ?? false),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text('Card',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: blueColor)),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 16, bottom: 16),
                         child: Row(
                           children: [
-                            Container(
+                            Expanded(
+                              child: Container(
                                 height: 50,
-                                width: 150,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
@@ -3897,10 +4053,10 @@ class _addLease3State extends State<addLease3>
                                               : (jsonDecode(tenantMap['ecArray']!) as List)
                                                   .map((e) => EmergencyContacts(name: e['name'], relation: e['relation'], email: e['email'], phoneNumber: e['phoneNumber']))
                                                   .toList(),
-                                          enableOverrideFee: (tenantMap['enableOverrideFee'] ?? '').isEmpty ? null : tenantMap['enableOverrideFee'] == 'true',
-                                          overrideFee: (tenantMap['overrideFee'] ?? '').isEmpty ? null : tenantMap['overrideFee'],
-                                          allowAch: (tenantMap['allowAch'] ?? '').isEmpty ? null : tenantMap['allowAch'] == 'true',
-                                          allowCard: (tenantMap['allowCard'] ?? '').isEmpty ? null : tenantMap['allowCard'] == 'true',
+                                          enableOverrideFee: _enableDebitCardFeeOverride,
+                                          overrideFee: _enableDebitCardFeeOverride ? _overrideFeeController.text.trim() : null,
+                                          allowAch: _allowAch,
+                                          allowCard: _allowCard,
                                             adminId: adminId,
                                             comments:
                                                 tenantMap['comments'] ?? '',
@@ -4173,10 +4329,10 @@ class _addLease3State extends State<addLease3>
                                               : (jsonDecode(tenantMap['ecArray']!) as List)
                                                   .map((e) => EmergencyContacts(name: e['name'], relation: e['relation'], email: e['email'], phoneNumber: e['phoneNumber']))
                                                   .toList(),
-                                          enableOverrideFee: (tenantMap['enableOverrideFee'] ?? '').isEmpty ? null : tenantMap['enableOverrideFee'] == 'true',
-                                          overrideFee: (tenantMap['overrideFee'] ?? '').isEmpty ? null : tenantMap['overrideFee'],
-                                          allowAch: (tenantMap['allowAch'] ?? '').isEmpty ? null : tenantMap['allowAch'] == 'true',
-                                          allowCard: (tenantMap['allowCard'] ?? '').isEmpty ? null : tenantMap['allowCard'] == 'true',
+                                          enableOverrideFee: _enableDebitCardFeeOverride,
+                                          overrideFee: _enableDebitCardFeeOverride ? _overrideFeeController.text.trim() : null,
+                                          allowAch: _allowAch,
+                                          allowCard: _allowCard,
                                           adminId: tenantMap['adminId'] ?? '',
                                           comments: tenantMap['comments'] ?? '',
                                           createdAt:
@@ -4249,13 +4405,13 @@ class _addLease3State extends State<addLease3>
                                                   color: Color(0xFFf7f8f9),
                                                   fontSize: 16),
                                             )),
-                                )),
+                                ))),
                             const SizedBox(
                               width: 10,
                             ),
-                            Container(
+                            Expanded(
+                              child: Container(
                                 height: 50,
-                                width: 120,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: ElevatedButton(
@@ -4272,7 +4428,7 @@ class _addLease3State extends State<addLease3>
                                       'Cancel',
                                       style:
                                           TextStyle(color: Color(0xFF748097)),
-                                    )))
+                                    ))))
                           ],
                         ),
                       ),
@@ -4416,6 +4572,28 @@ class _addLease3State extends State<addLease3>
   }
 }
 
+// Charge-popup date fields are shown in the user's DateProvider format, but the
+// API always receives yyyy-MM-dd (same as the web). Convert display -> API here.
+String _chargeDateToApi(BuildContext context, String display) {
+  final String s = display.trim();
+  if (s.isEmpty) return "";
+  final dp = Provider.of<DateProvider>(context, listen: false);
+  for (final String f in <String>[
+    'yyyy-MM-dd',
+    dp.dateFormat,
+    'MM/dd/yyyy',
+    'M/d/yyyy',
+    'yyyy-MMM-dd',
+    'dd-MM-yyyy',
+    'MM-dd-yyyy',
+  ]) {
+    try {
+      return DateFormat('yyyy-MM-dd').format(DateFormat(f).parseStrict(s));
+    } catch (_) {}
+  }
+  return s;
+}
+
 class OneTimeChargePopUp extends StatefulWidget {
   final Function(Map<String, String>) onSave;
   final Map<String, String>? initialData;
@@ -4427,161 +4605,12 @@ class OneTimeChargePopUp extends StatefulWidget {
 }
 
 class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
-  final _formKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
-  String? _selectedAccountType;
-  String? _selectedFundType;
-  final TextEditingController _accountNameController = TextEditingController();
-  String? _selectedProperty;
-
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _memoController = TextEditingController();
-
-  final TextEditingController _notesController = TextEditingController();
-  bool _isInvalid = true;
-  List<String> items = []; // Example items
-
-  List<String> accountTypeItems = [
-    'Income',
-    'Non Operating Income ',
-    'Liability Account',
-  ]; // Example items
-  List<String> fundTypeItems = [
-    'Reverse',
-    'Operating',
-  ]; // Example items
-
-  bool _isLoading = true;
-  List<String> accounts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['property'] ?? '';
-      _amountController.text = widget.initialData!['amount'] ?? '';
-      _memoController.text = widget.initialData!['memo'] ?? '';
-    }
-    fetchData();
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _memoController.dispose();
-    super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminid = prefs.getString("adminId");
-    String? id = prefs.getString("staff_id");
-    String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $id",
-    });
-    print(response.body);
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        items = (data['data'] as List)
-            .where((item) => item['charge_type'] == "One Time Charge")
-            .map((item) => item['account'] as String)
-            .toList();
-        _isLoading = false;
-        print(items.length);
-      });
-    } else {
-      // Handle error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch data')),
-      );
-    }
-  }
-
-  bool _showAccountError = false;
-  TextEditingController startDateController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Material(
-          child: Container(
-            color: Colors.white,
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
-              maxWidth: MediaQuery.of(context).size.width * 0.9,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 2),
-                  Text(
-                    'Add One Time Fee',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: blueColor,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    'Account *',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: blueColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: const Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Select',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xFFb0b6c3),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          items: [
-                            ...items
-                                .map((String item) => DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(
-                                        item,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xFF152B51),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                            DropdownMenuItem<String>(
-                              value: 'button_item',
-                              onTap: () {
+  void _openAddAccountDialog(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return Dialog(
+                                      return StatefulBuilder(builder: (context, setState) { return Dialog(
                                         backgroundColor: Colors.white,
                                         surfaceTintColor: Colors.white,
                                         shape: RoundedRectangleBorder(
@@ -4842,10 +4871,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                                                         () {
                                                                       setState(
                                                                           () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                        _selectedProperty =
-                                                                            null;
+                                                                        _selectedProperty = null;
                                                                       });
                                                                       Navigator.pop(
                                                                           context);
@@ -4865,10 +4891,165 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                             ),
                                           ),
                                         ),
-                                      );
+                                      ); });
                                     },
                                   );
-                                },
+                                
+    });
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
+  String? _selectedAccountType;
+  String? _selectedFundType;
+  final TextEditingController _accountNameController = TextEditingController();
+  String? _selectedProperty;
+
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _memoController = TextEditingController();
+
+  final TextEditingController _notesController = TextEditingController();
+  bool _isInvalid = true;
+  List<String> items = []; // Example items
+
+  List<String> accountTypeItems = [
+    'Income',
+    'Non Operating Income ',
+    'Liability Account',
+  ]; // Example items
+  List<String> fundTypeItems = [
+    'Reverse',
+    'Operating',
+  ]; // Example items
+
+  bool _isLoading = true;
+  List<String> accounts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialData != null) {
+      _selectedProperty = widget.initialData!['account'] ?? '';
+      _amountController.text = widget.initialData!['amount'] ?? '';
+      _memoController.text = widget.initialData!['memo'] ?? '';
+      startDateController.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(widget.initialData!['date'] ?? '');
+    }
+    fetchData();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _memoController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        items = (data['data'] as List)
+            .map((item) => item['account'] as String)
+            .toList();
+        _isLoading = false;
+        print(items.length);
+      });
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch data')),
+      );
+    }
+  }
+
+  bool _showAccountError = false;
+  TextEditingController startDateController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          child: Container(
+            color: Colors.white,
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.8,
+              maxWidth: MediaQuery.of(context).size.width * 0.9,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 2),
+                  Text(
+                    'Add One Time Fee',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Text(
+                    'Account *',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: blueColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: const Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xFFb0b6c3),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          items: [
+                            ...items
+                                .map((String item) => DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(
+                                        item,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFF152B51),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )),
+                            DropdownMenuItem<String>(
+                              value: 'button_item',
+                              
                                 child: const Row(
                                   children: [
                                     Text(
@@ -4882,8 +5063,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                                 ),
                             ),
                           ],
-                          value: _selectedProperty,
+                          value: items.contains(_selectedProperty) ? _selectedProperty : null,
                           onChanged: (value) {
+                            if (value == 'button_item') { _openAddAccountDialog(context); return; }
                             setState(() {
                               _selectedProperty = value;
                               _showAccountError =
@@ -5024,7 +5206,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                           String formattedStartDate =
                               "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                           setState(() {
-                            startDateController.text = formattedStartDate;
+                            startDateController.text =
+                                Provider.of<DateProvider>(context, listen: false)
+                                    .formatCurrentDate(formattedStartDate);
                           });
                         }
                       },
@@ -5061,7 +5245,9 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
                             String formattedStartDate =
                                 "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                             setState(() {
-                              startDateController.text = formattedStartDate;
+                              startDateController.text =
+                                Provider.of<DateProvider>(context, listen: false)
+                                    .formatCurrentDate(formattedStartDate);
                             });
                           }
                         },
@@ -5141,6 +5327,7 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
         'charge_type': 'One Time Charge',
+        'date': _chargeDateToApi(context, startDateController.text),
       };
       widget.onSave(formData);
       setState(() {
@@ -5179,8 +5366,17 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       );
 
       if (response.statusCode == 200) {
-        widget.onSave(formData);
-        Navigator.of(context).pop();
+        final newAccountName = _accountNameController.text.trim();
+        setState(() {
+          items.insert(items.length, newAccountName);
+          _selectedProperty = newAccountName;
+          _showAccountError = false;
+        });
+        _accountNameController.clear();
+        _selectedAccountType = null;
+        _selectedFundType = null;
+        _notesController.clear();
+        if (mounted) { WidgetsBinding.instance.addPostFrameCallback((_) { if (Navigator.of(context).canPop()) Navigator.of(context).pop(); }); }
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
@@ -5209,221 +5405,8 @@ class RecurringChargePopUp extends StatefulWidget {
 }
 
 class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
-  final _formKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
-  String? _selectedAccountType;
-  String? _selectedFundType;
-  final TextEditingController _accountNameController = TextEditingController();
-  String? _selectedProperty;
-
-  final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _memoController = TextEditingController();
-
-  final TextEditingController _notesController = TextEditingController();
-  bool _isInvalid = true;
-  List<String> items = []; // Example items
-
-  List<String> accountTypeItems = [
-    'Income',
-    'Non Operating Income ',
-    'Liability Account',
-  ]; // Example items
-  List<String> fundTypeItems = [
-    'Reverse',
-    'Operating',
-  ]; // Example items
-
-  bool _isLoading = true;
-  List<String> accounts = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   if (widget.initialData != null) {
-  //     _selectedProperty = widget.initialData!['property'] ?? '';
-  //     _amountController.text = widget.initialData!['amount'] ?? '';
-  //     _memoController.text = widget.initialData!['memo'] ?? '';
-  //   }
-  //   fetchData();
-  // }
-
-  // @override
-  // void dispose() {
-  //   _amountController.dispose();
-  //   _memoController.dispose();
-  //   super.dispose();
-  // }
-
-  // Future<void> fetchData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String adminId = prefs.getString('adminId').toString();
-  //   final response =
-  //       await apiGet(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
-  //   print(response.body);
-  //   if (response.statusCode == 200) {
-  //     final data = json.decode(response.body);
-  //     setState(() {
-  //       items = (data['data'] as List)
-  //           .where((item) => item['charge_type'] == "One Time Charge")
-  //           .map((item) => item['account'] as String)
-  //           .toList();
-  //       _isLoading = false;
-  //       print(items.length);
-  //     });
-  //   } else {
-  //     // Handle error
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Failed to fetch data')),
-  //     );
-  //   }
-  // }
-
-// updated
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initialData != null) {
-      _selectedProperty = widget.initialData!['account'] ?? '';
-      _amountController.text = widget.initialData!['amount'] ?? '';
-      _memoController.text = widget.initialData!['memo'] ?? '';
-      String dateString = widget.initialData!['date'] ?? "";
-      if (dateString.isNotEmpty) {
-        DateTime date = DateTime.parse(dateString);
-        selectedDay = date.day.toString(); // Extracts only the day
-      } else {
-        selectedDay = ""; // Handle empty case
-      }
-    }
-    fetchData();
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _memoController.dispose();
-    super.dispose();
-  }
-
-  Future<void> fetchData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    String? adminid = prefs.getString("adminId");
-    String? id = prefs.getString("staff_id");
-    String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
-      "authorization": "CRM $token",
-      "id": "CRM $id",
-    });
-    print(response.body);
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        items = (data['data'] as List)
-            .where((item) => item['charge_type'] == "Recurring Charge")
-            .map((item) => item['account'] as String)
-            .toList();
-        _isLoading = false;
-        print(items.length);
-      });
-    } else {
-      // Handle error
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch data')),
-      );
-    }
-  }
-
-  String? selectedDay;
-  TextEditingController startDateController = TextEditingController();
-  bool _showAccountError = false;
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Material(
-          child: Container(
-            color: Colors.white,
-            // height: _isInvalid ? 460 : 475,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 2),
-                Text(
-                  'Add Recurring Fee',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: blueColor,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Account *',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: blueColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                FormField<String>(
-                  validator: (value) {
-                    if (_selectedProperty == null ||
-                        _selectedProperty!.isEmpty) {
-                      setState(() {
-                        _showAccountError = true;
-                      });
-                      return 'Please select an account';
-                    }
-                    setState(() {
-                      _showAccountError = false;
-                    });
-                    return null;
-                  },
-                  builder: (FormFieldState<String> state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: const Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    'Select',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFb0b6c3),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            items: [
-                              ...items.map(
-                                  (String item) => DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFF152B51),
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      )),
-                              //updated
-                              DropdownMenuItem<String>(
-                                value: 'button_item',
-                                onTap: () {
+  void _openAddAccountDialog(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -5715,9 +5698,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                                                             () {
                                                                           setState(
                                                                               () {
-                                                                            Navigator.pop(context);
-                                                                            _selectedProperty =
-                                                                                null;
+                                                                            _selectedProperty = null;
                                                                           });
                                                                           Navigator.pop(
                                                                               context);
@@ -5740,7 +5721,222 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                         });
                                       },
                                     );
-                                  },
+                                  
+    });
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _subFormKey = GlobalKey<FormState>();
+  String? _selectedAccountType;
+  String? _selectedFundType;
+  final TextEditingController _accountNameController = TextEditingController();
+  String? _selectedProperty;
+
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _memoController = TextEditingController();
+
+  final TextEditingController _notesController = TextEditingController();
+  bool _isInvalid = true;
+  List<String> items = []; // Example items
+
+  List<String> accountTypeItems = [
+    'Income',
+    'Non Operating Income ',
+    'Liability Account',
+  ]; // Example items
+  List<String> fundTypeItems = [
+    'Reverse',
+    'Operating',
+  ]; // Example items
+
+  bool _isLoading = true;
+  List<String> accounts = [];
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   if (widget.initialData != null) {
+  //     _selectedProperty = widget.initialData!['property'] ?? '';
+  //     _amountController.text = widget.initialData!['amount'] ?? '';
+  //     _memoController.text = widget.initialData!['memo'] ?? '';
+  //   }
+  //   fetchData();
+  // }
+
+  // @override
+  // void dispose() {
+  //   _amountController.dispose();
+  //   _memoController.dispose();
+  //   super.dispose();
+  // }
+
+  // Future<void> fetchData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String adminId = prefs.getString('adminId').toString();
+  //   final response =
+  //       await apiGet(Uri.parse('$Api_url/api/accounts/accounts/$adminId'));
+  //   print(response.body);
+  //   if (response.statusCode == 200) {
+  //     final data = json.decode(response.body);
+  //     setState(() {
+  //       items = (data['data'] as List)
+  //           .where((item) => item['charge_type'] == "One Time Charge")
+  //           .map((item) => item['account'] as String)
+  //           .toList();
+  //       _isLoading = false;
+  //       print(items.length);
+  //     });
+  //   } else {
+  //     // Handle error
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Failed to fetch data')),
+  //     );
+  //   }
+  // }
+
+// updated
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialData != null) {
+      _selectedProperty = widget.initialData!['account'] ?? '';
+      _amountController.text = widget.initialData!['amount'] ?? '';
+      _memoController.text = widget.initialData!['memo'] ?? '';
+      startDateController.text = Provider.of<DateProvider>(context, listen: false)
+          .formatCurrentDate(widget.initialData!['charge_start'] ??
+              widget.initialData!['date'] ??
+              "");
+      selectedDay = widget.initialData!['rent_cycle'] ?? "";
+    }
+    fetchData();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _memoController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? adminid = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    final response = await http
+        .get(Uri.parse('$Api_url/api/accounts/accounts/$adminid'), headers: {
+      "authorization": "CRM $token",
+      "id": "CRM $id",
+    });
+    print(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        items = (data['data'] as List)
+            .map((item) => item['account'] as String)
+            .toList();
+        _isLoading = false;
+        print(items.length);
+      });
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch data')),
+      );
+    }
+  }
+
+  String? selectedDay;
+  TextEditingController startDateController = TextEditingController();
+  bool _showAccountError = false;
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          child: Container(
+            color: Colors.white,
+            // height: _isInvalid ? 460 : 475,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 2),
+                Text(
+                  'Add Recurring Fee',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Account *',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FormField<String>(
+                  validator: (value) {
+                    if (_selectedProperty == null ||
+                        _selectedProperty!.isEmpty) {
+                      setState(() {
+                        _showAccountError = true;
+                      });
+                      return 'Please select an account';
+                    }
+                    setState(() {
+                      _showAccountError = false;
+                    });
+                    return null;
+                  },
+                  builder: (FormFieldState<String> state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            hint: const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Select',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFFb0b6c3),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            items: [
+                              ...items.map(
+                                  (String item) => DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFF152B51),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                              //updated
+                              DropdownMenuItem<String>(
+                                value: 'button_item',
+                                
                                   child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -5757,8 +5953,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                                   ),
                               ),
                             ],
-                            value: _selectedProperty,
+                            value: items.contains(_selectedProperty) ? _selectedProperty : null,
                             onChanged: (value) {
+                            if (value == 'button_item') { _openAddAccountDialog(context); return; }
                               setState(() {
                                 _selectedProperty = value;
                                 state.didChange(value);
@@ -5889,7 +6086,7 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                           child: DropdownButton2<String>(
                             hint: const Text('select'),
                             isExpanded: true,
-                            value: selectedDay,
+                            value: (selectedDay == 'Weekly' || selectedDay == 'Monthly') ? selectedDay : null,
                             items: [
                               const DropdownMenuItem<String>(
                                 value: 'Weekly',
@@ -6004,7 +6201,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                             "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                         print(formattedStartDate);
                         setState(() {
-                          startDateController.text = formattedStartDate;
+                          startDateController.text =
+                              Provider.of<DateProvider>(context, listen: false)
+                                  .formatCurrentDate(formattedStartDate);
                         });
                       }
                     },
@@ -6052,7 +6251,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
                               "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
                           print(formattedStartDate);
                           setState(() {
-                            startDateController.text = formattedStartDate;
+                            startDateController.text =
+                                Provider.of<DateProvider>(context, listen: false)
+                                    .formatCurrentDate(formattedStartDate);
                           });
                         }
                       },
@@ -6128,36 +6329,19 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       setState(() {
         _isInvalid = true;
       });
-      DateTime now = DateTime.now();
-      int selectedYear = now.year;
-      int selectedMonth = now.month;
-
-      // Construct the date using the selected day, current year, and month
-      int selectedDayInt = int.parse(selectedDay!);
-      DateTime currentDate =
-          DateTime(selectedYear, selectedMonth, selectedDayInt);
-
-      // Add one month
-      DateTime nextMonthDate = DateTime(
-        currentDate.year,
-        currentDate.month + 1,
-        currentDate.day,
-      );
-
-      // Format date to always have two-digit months and days
-      String formattedDate = "${nextMonthDate.year}-"
-          "${nextMonthDate.month.toString().padLeft(2, '0')}-"
-          "${nextMonthDate.day.toString().padLeft(2, '0')}";
-      String? id = widget.initialData!['entry_id'] != ""
-          ? widget.initialData!['entry_id']
-          : "";
+      // Recurrence type (Weekly/Monthly) lives in selectedDay — do NOT parse it
+      // as an int. The charge start date comes from the date picker.
+      String? id =
+          widget.initialData != null ? widget.initialData!['entry_id'] : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
-        'entry_id': id!,
+        'entry_id': id ?? "",
+        'rent_cycle': selectedDay ?? "",
         'charge_type': 'Recurring Charge',
-        'date': formattedDate,
+        'date': _chargeDateToApi(context, startDateController.text),
+        'charge_start': _chargeDateToApi(context, startDateController.text),
       };
       widget.onSave(formData);
       setState(() {
@@ -6195,8 +6379,17 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         body: json.encode(formData),
       );
       if (response.statusCode == 200) {
-        widget.onSave(formData);
-        Navigator.of(context).pop(true);
+        final newAccountName = _accountNameController.text.trim();
+        setState(() {
+          items.insert(items.length, newAccountName);
+          _selectedProperty = newAccountName;
+          _showAccountError = false;
+        });
+        _accountNameController.clear();
+        _selectedAccountType = null;
+        _selectedFundType = null;
+        _notesController.clear();
+        if (mounted) { WidgetsBinding.instance.addPostFrameCallback((_) { if (Navigator.of(context).canPop()) Navigator.of(context).pop(); }); }
         print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
@@ -7512,7 +7705,7 @@ class _AddCosignerState extends State<AddCosigner> {
                 ]),
             child: const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Contact information cosinger',
+              child: Text('Contact information cosigner',
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -8008,6 +8201,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
     return FormField<String>(
       initialValue: widget.selectedValue,
       validator: widget.validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       builder: (FormFieldState<String> state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -8053,7 +8247,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
                       widget.onChanged(value);
                       state.didChange(value);
                     });
-                    state.reset();
                   },
                   buttonStyleData: ButtonStyleData(
                     height: widget.useBorderStyle

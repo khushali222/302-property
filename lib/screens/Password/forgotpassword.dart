@@ -207,7 +207,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 Expanded(
                   child: Text(
-                    "Enter your email address below, and we'll send you the OTP For reset your password.",
+                    "Enter your email address below, and we'll send you the OTP to reset your password.",
                     style: TextStyle(
                         color: Colors.black38,
                         fontSize: MediaQuery.of(context).size.width * 0.034),

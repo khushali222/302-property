@@ -95,7 +95,8 @@ class _Edit_applienceState extends State<Edit_applience> {
     print('Appliance data: ${widget.appliance?.toJson()}');
 
     // Load the existing image if available
-    if (widget.appliance?.applianceImage != null) {
+    if (widget.appliance?.applianceImage != null &&
+        widget.appliance!.applianceImage!.isNotEmpty) {
       setState(() {
         _imageUrl = widget.appliance?.applianceImage;
       });
@@ -167,6 +168,13 @@ class _Edit_applienceState extends State<Edit_applience> {
           }
         }
 
+        // Web parity: derive Type (system_type) from the resolved category.
+        final catName = _selectedDropdownCategory?.name ?? '';
+        _selectedSystemType = _majorSystemCategories
+                .any((m) => m.toLowerCase() == catName.toLowerCase())
+            ? 'Major System'
+            : 'Appliance';
+
         print(
             'Final selected category: ${_selectedDropdownCategory?.name ?? "none"}');
         _isLoadingCategories = false;
@@ -194,7 +202,13 @@ class _Edit_applienceState extends State<Edit_applience> {
       _lastMaintenanceDate.text = widget.appliance?.lastMaintenanceDate ?? '';
       _maintenanceNotes.text = widget.appliance?.maintenanceNotes ?? '';
 
-      _selectedBrand = widget.appliance?.brand;
+      final existingBrand = widget.appliance?.brand ?? '';
+      if (existingBrand.isNotEmpty && !brandList.contains(existingBrand)) {
+        _selectedBrand = 'Other';
+        _customBrand.text = existingBrand;
+      } else {
+        _selectedBrand = existingBrand.isNotEmpty ? existingBrand : null;
+      }
       _selectedStatus = widget.appliance?.status;
 
       if (widget.appliance?.filters != null &&
@@ -245,6 +259,31 @@ class _Edit_applienceState extends State<Edit_applience> {
 
   String? _selectedBrand;
   String? _selectedStatus;
+  String? _selectedSystemType;
+  final List<String> systemTypeList = ['Major System', 'Appliance'];
+  final List<String> _majorSystemCategories = [
+    'Roof',
+    'Electrical',
+    'Plumbing',
+    'Exterior',
+    'Water Heater',
+    'HVAC',
+  ];
+  final TextEditingController _customBrand = TextEditingController();
+
+  // Web parity: Category options are filtered by the selected Type (system_type).
+  List<allcategories_model> get _filteredCategories {
+    if (_selectedSystemType == null || _selectedSystemType!.isEmpty) {
+      return _dropdownCategories;
+    }
+    final isMajor = _selectedSystemType == 'Major System';
+    return _dropdownCategories.where((cat) {
+      final inMajor = _majorSystemCategories
+          .any((m) => m.toLowerCase() == (cat.name ?? '').toLowerCase());
+      return isMajor ? inMajor : !inMajor;
+    }).toList();
+  }
+
   // Add these to your state class
   List<Map<String, TextEditingController>> filterControllers = [];
   bool showFilters = false;
@@ -275,6 +314,7 @@ class _Edit_applienceState extends State<Edit_applience> {
   bool isloading = false;
   String? _uploadedFileName;
   String? _imageUrl;
+  bool _imageRemoved = false;
 
   String? _cleanBase64String(String? base64String) {
     if (base64String == null) return null;
@@ -315,6 +355,7 @@ class _Edit_applienceState extends State<Edit_applience> {
     if (image != null) {
       setState(() {
         _image = File(image.path);
+        _imageRemoved = false;
       });
       _uploadImage(File(image.path));
     }
@@ -328,7 +369,7 @@ class _Edit_applienceState extends State<Edit_applience> {
       );
     }
 
-    if (_imageUrl != null) {
+    if (_imageUrl != null && _imageUrl!.isNotEmpty && _imageUrl!.contains(',')) {
       try {
         return Image.memory(
           base64Decode(_imageUrl!.split(',')[1]),
@@ -448,6 +489,64 @@ class _Edit_applienceState extends State<Edit_applience> {
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
+                      'Type *',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text('Select Type'),
+                        value: _selectedSystemType,
+                        items: systemTypeList.map((t) {
+                          return DropdownMenuItem<String>(
+                            value: t,
+                            child: Text(t),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedSystemType = newValue;
+                            _selectedDropdownCategory = null;
+                            showFiltersSection = false;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          iconEnabledColor: Color(0xFFb0b6c3),
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
                       'Category',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -462,8 +561,11 @@ class _Edit_applienceState extends State<Edit_applience> {
                         hint: Text(_isLoadingCategories
                             ? 'Loading categories...'
                             : 'Select Category'),
-                        value: _selectedDropdownCategory,
-                        items: _dropdownCategories.map((cat) {
+                        value: _filteredCategories
+                                .contains(_selectedDropdownCategory)
+                            ? _selectedDropdownCategory
+                            : null,
+                        items: _filteredCategories.map((cat) {
                           return DropdownMenuItem<allcategories_model>(
                             value: cat,
                             child: Text(cat.name ?? ''),
@@ -527,20 +629,6 @@ class _Edit_applienceState extends State<Edit_applience> {
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      'Type',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  CustomTextFormField(
-                    labelText: '',
-                    hintText: 'Enter type',
-                    controller: _type,
-                    keyboardType: TextInputType.name,
-                  ),
-                  const SizedBox(height: 8),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
                       'Brand',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -563,6 +651,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                         onChanged: (String? newValue) {
                           setState(() {
                             _selectedBrand = newValue;
+                            if (newValue != 'Other') _customBrand.clear();
                           });
                         },
                         buttonStyleData: ButtonStyleData(
@@ -599,6 +688,22 @@ class _Edit_applienceState extends State<Edit_applience> {
                       ),
                     ),
                   ),
+                  if (_selectedBrand == 'Other') ...[
+                    const SizedBox(height: 8),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Text(
+                        'Custom Brand Name *',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    CustomTextFormField(
+                      labelText: '',
+                      hintText: 'Enter custom brand name',
+                      controller: _customBrand,
+                      keyboardType: TextInputType.text,
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -851,7 +956,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Column(
                       children: [
-                        if (_imageUrl == null)
+                        if (_imageUrl == null || _imageUrl!.isEmpty)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
@@ -902,7 +1007,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                               ),
                             ),
                           ),
-                        if (_imageUrl != null)
+                        if (_imageUrl != null && _imageUrl!.isNotEmpty)
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(10),
@@ -944,6 +1049,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                                           setState(() {
                                             _image = null;
                                             _imageUrl = null;
+                                            _imageRemoved = true;
                                           });
                                         },
                                         child: Container(
@@ -994,9 +1100,12 @@ class _Edit_applienceState extends State<Edit_applience> {
                             if (_name.text.isEmpty ||
                                 _description.text.isEmpty ||
                                 _installedDate.text.isEmpty ||
+                                _selectedSystemType == null ||
                                 _selectedDropdownCategory == null ||
                                 _selectedStatus == null ||
-                                _selectedBrand == null) {
+                                _selectedBrand == null ||
+                                (_selectedBrand == 'Other' &&
+                                    _customBrand.text.trim().isEmpty)) {
                               setState(() => iserror = true);
                             } else {
                               setState(() {
@@ -1034,6 +1143,8 @@ class _Edit_applienceState extends State<Edit_applience> {
 
                                 await Properies_summery_Repo().Editappliances(
                                   applianceid: widget.appliance?.applianceId,
+                                  removeApplianceImages:
+                                      _imageRemoved ? 'true' : 'false',
                                   adminId: id,
                                   unitId: widget.unit?.unitId,
                                   rentalId: widget.unit?.rentalId ??
@@ -1043,7 +1154,10 @@ class _Edit_applienceState extends State<Edit_applience> {
                                   appliancedescription: _description.text,
                                   installeddate: _installedDate.text,
                                   type: _type.text,
-                                  brand: _selectedBrand,
+                                  systemType: _selectedSystemType ?? "",
+                                  brand: _selectedBrand == 'Other'
+                                      ? _customBrand.text
+                                      : _selectedBrand,
                                   model: _model.text,
                                   serialNumber: _serialNumber.text,
                                   warrantyExpiry:
@@ -1075,10 +1189,11 @@ class _Edit_applienceState extends State<Edit_applience> {
                                   setState(() {
                                     isLoading = false;
                                   });
+                                  final cleanMsg = e
+                                      .toString()
+                                      .replaceFirst('Exception: ', '');
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'Failed to update appliance: ${e.toString()}')),
+                                    SnackBar(content: Text(cleanMsg)),
                                   );
                                 }
                               }

@@ -699,7 +699,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
-                width: 160,
+                width: double.infinity,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
@@ -2470,7 +2470,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Entery Allowed ',
+                          const Text('Entry Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -5160,7 +5160,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Entery Allowed ',
+                                      const Text('Entry Allowed ',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,

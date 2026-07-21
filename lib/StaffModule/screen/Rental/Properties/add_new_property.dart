@@ -2626,7 +2626,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    "This information will be used to help prepare owner drawns and 1099s",
+                                    "This information will be used to help prepare owner draws and 1099s",
                                     style: TextStyle(
                                         color: const Color(0xFF8A95A8),
                                         //  fontWeight: FontWeight.bold,

@@ -433,6 +433,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     return null;
   }
 
+
   /// Returns true if another mortgage already uses this loan number (excluding current when editing).
   Future<bool> _isDuplicateMortgageNo(String mortgageNo) async {
     if (mortgageNo.isEmpty) return false;
@@ -1710,8 +1711,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _interestRateController,
                       label: 'Interest Rate',
                       hint: 'Enter Interest Rate %',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateInterestRate,
                     ),
                     const SizedBox(height: 16),
@@ -1719,8 +1728,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _loanAmountController,
                       label: 'Loan Amount',
                       hint: 'Enter Loan Amount',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
 
@@ -1729,8 +1746,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _remainingBalanceController,
                       label: 'Current Balance',
                       hint: '\$ Enter current balance',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1738,7 +1763,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _principalController,
                       label: 'Monthly Principal',
                       hint: 'Enter monthly principal',
+                      // Web parity: digits + a single decimal point only.
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1746,7 +1779,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _interestController,
                       label: 'Monthly Interest',
                       hint: 'Enter monthly interest',
+                      // Web parity: digits + a single decimal point only.
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1866,9 +1907,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         controller: _spreadOnFloatingRateController,
                         label: 'Spread on Floating Rate (%)',
                         hint: 'Enter spread on floating rate',
-                        keyboardType: TextInputType.number,
+                        // Web parity: decimal % — digits + a single decimal point.
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          TextInputFormatter.withFunction((oldValue, newValue) =>
+                              RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                  ? newValue
+                                  : oldValue),
                         ],
                         validator: _validateInterestRate,
                       ),
@@ -1882,9 +1929,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         controller: _spreadController,
                         label: 'Spread (%)',
                         hint: 'Enter spread',
-                        keyboardType: TextInputType.number,
+                        // Web parity: decimal % — digits + a single decimal point.
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          TextInputFormatter.withFunction((oldValue, newValue) =>
+                              RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                  ? newValue
+                                  : oldValue),
                         ],
                         validator: _validateInterestRate,
                       ),
