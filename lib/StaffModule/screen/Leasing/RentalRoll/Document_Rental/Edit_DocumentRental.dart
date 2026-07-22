@@ -14,7 +14,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/custom_textfield.dart';
-import '../../../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 
 class EditDocument extends StatefulWidget {
   String leaseId;
@@ -118,7 +118,7 @@ class _EditDocumentState extends State<EditDocument> {
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
-      drawer: CustomDrawer(
+      drawer: CustomDrawerStaff(
         currentpage: "Leases",
         dropdown: true,
       ),

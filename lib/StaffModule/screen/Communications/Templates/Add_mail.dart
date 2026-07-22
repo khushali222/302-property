@@ -51,6 +51,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
 
   bool isLoading = false;
   String? _selectedEvent;
+  String _selectedType = "E-mail";
   List<String> events = [
     'Reset password',
     'Invitation',
@@ -194,11 +195,15 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         setState(() {
           templates = [data["template"]]; // Store in list
           //events = [data["template"]["name"] as String]; // Extract name
-          _selectedEvent = data["template"]["mail_type"]; // Select default
-          name.text = data["template"]["name"]; // Get HTML content
+          final loadedEvent = data["template"]["mail_type"]; // Select default
+          _selectedEvent = events.contains(loadedEvent) ? loadedEvent : null;
+          _selectedType = data["template"]["type"] == "Print"
+              ? "Print"
+              : "E-mail"; // Template type (E-mail/Print)
+          name.text = data["template"]["name"] ?? ""; // Get HTML content
 
-          htmlBody = data["template"]["body"]; // Get HTML content
-          subject.text = data["template"]["subject"]; // Get HTML content
+          htmlBody = data["template"]["body"] ?? ""; // Get HTML content
+          subject.text = data["template"]["subject"] ?? ""; // Get HTML content
           // _htmlEditorController
           //     .setText(replaceDollarWithAt(replaceSpanTags(htmlBody))); // Set editor content
 
@@ -462,6 +467,67 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                   ),
                   Row(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text('Template Type *',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: blueColor)),
+                      ),
+                    ],
+                  ),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      style: const TextStyle(fontSize: 15, color: Colors.black),
+                      isExpanded: true,
+                      hint: const Text('Select Template Type'),
+                      value: _selectedType,
+                      items: ["E-mail", "Print"].map((method) {
+                        return DropdownMenuItem<String>(
+                          value: method,
+                          child: Text(method),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedType = newValue ?? "E-mail";
+                          if (_selectedType == "Print") {
+                            eventError = false;
+                            subjectError = false;
+                          }
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 46,
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                        ),
+                        elevation: 2,
+                      ),
+                      iconStyleData: const IconStyleData(
+                        icon: Icon(Icons.arrow_drop_down),
+                        iconSize: 24,
+                        iconEnabledColor: Color(0xFFb0b6c3),
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 50,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
                       Expanded(
                         flex: 3,
                         child: Container(
@@ -577,20 +643,22 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 1,
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Text(
-                                  "Event Type *",
+                      if (_selectedType == "E-mail")
+                        const SizedBox(
+                          width: 1,
+                        ),
+                      if (_selectedType == "E-mail")
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    "Event Type *",
                                   style: TextStyle(
                                       color: blueColor,
                                       fontWeight: FontWeight.bold),
@@ -708,6 +776,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                       ),
                     ],
                   ),
+                  if (_selectedType == "E-mail") ...[
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -801,6 +870,7 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           ],
                         )
                       : Container(),
+                  ],
                   const SizedBox(height: 10),
                   Row(
                     children: [
@@ -1179,23 +1249,30 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                           }
 
                           // Validate designation
-                          if (subject.text.trim().isEmpty) {
-                            setState(() {
-                              subjectError = true;
-                              submessage = "required";
-                            });
+                          if (_selectedType == "E-mail") {
+                            if (subject.text.trim().isEmpty) {
+                              setState(() {
+                                subjectError = true;
+                                submessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                subjectError = false;
+                              });
+                            }
+                            if (_selectedEvent == null) {
+                              setState(() {
+                                eventError = true;
+                                eventmessage = "required";
+                              });
+                            } else {
+                              setState(() {
+                                eventError = false;
+                              });
+                            }
                           } else {
                             setState(() {
                               subjectError = false;
-                            });
-                          }
-                          if (_selectedEvent == null) {
-                            setState(() {
-                              eventError = true;
-                              eventmessage = "required";
-                            });
-                          } else {
-                            setState(() {
                               eventError = false;
                             });
                           }
@@ -1237,8 +1314,9 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     name: name.text.trim(),
                                     subject: subject.text.trim(),
                                     body: replaceFontTags(updatedHtmlBody),
-                                    type: "E-mail",
-                                    mail_type: _selectedEvent,
+                                    type: _selectedType,
+                                    mail_type:
+                                        _selectedType == "E-mail" ? _selectedEvent : "",
                                   );
                                 } else {
                                   // Adding new template
@@ -1247,8 +1325,9 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                     name: name.text.trim(),
                                     subject: subject.text.trim(),
                                     body: replaceFontTags(updatedHtmlBody),
-                                    type: "E-mail",
-                                    mail_type: _selectedEvent,
+                                    type: _selectedType,
+                                    mail_type:
+                                        _selectedType == "E-mail" ? _selectedEvent : "",
                                   );
                                 }
                                 setState(() {

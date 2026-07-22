@@ -280,6 +280,108 @@ class AddCardService {
       print('Exception during POST request: $e');
     }
   }
+
+  /// PCI tokenization — fetch the Collect.js public key for [adminId].
+  Future<String?> getTokenizationKeyByAdmin(String adminId) async {
+    try {
+      final response = await apiGet(
+        Uri.parse('$Api_url/api/tenant/nmi_public_key_by_admin/$adminId'),
+      );
+      if (response.statusCode == 200) {
+        final key = jsonDecode(response.body)['publicKey'];
+        if (key is String && key.isNotEmpty) return key;
+      }
+    } catch (e) {
+      if (kDebugMode) print('getTokenizationKeyByAdmin error: $e');
+    }
+    return null;
+  }
+
+  /// PCI tokenization — save a card using the Collect.js payment_token.
+  /// Raw PAN is never sent; only the token + non-sensitive metadata.
+  Future<TokenizedSaveResult> saveTokenizedCard({
+    required String paymentToken,
+    String? ccBin,
+    String? ccExp,
+    required String firstName,
+    String? lastName,
+    required String email,
+    required String phone,
+    String? address1,
+    String? city,
+    String? state,
+    String? zip,
+    String? country,
+    String? company,
+    required String adminId,
+    required String tenantId,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? headerId = prefs.getString('tenant_id'); // tenant sends its OWN id
+    String? token = prefs.getString('token');
+    final headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'CRM $token',
+      'id': 'CRM $headerId',
+    };
+    final body = jsonEncode({
+      'payment_token': paymentToken,
+      'cc_bin': ccBin,
+      'cc_exp': ccExp, // web parity (AddCardForm.jsx); server ignores it, token carries expiry
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'phone': phone,
+      'address1': address1,
+      'city': city,
+      'state': state,
+      'zip': zip,
+      'country': country,
+      'company': company,
+      'admin_id': adminId,
+      'tenant_id': tenantId,
+    });
+    try {
+      final response = await apiPost(
+        Uri.parse('$Api_url/api/nmipayment/tenant/add-tenant-payment'),
+        headers: headers,
+        body: body,
+      );
+      if (kDebugMode) {
+        print('🟧 [TENANT ADD-CARD] add-tenant-payment RESPONSE '
+            '${response.statusCode}');
+      }
+      Map<String, dynamic>? json;
+      try {
+        json = jsonDecode(response.body) as Map<String, dynamic>;
+      } catch (_) {}
+      if (response.statusCode == 200) {
+        return TokenizedSaveResult(
+            success: true, message: json?['data']?.toString());
+      }
+      // Failure (403/500): message lives at data.error (data may also be a
+      // plain string on some branches).
+      final data = json?['data'];
+      return TokenizedSaveResult(
+        success: false,
+        message: ((data is Map ? data['error'] : null) ??
+                json?['error'] ??
+                (data is String ? data : null) ??
+                'Failed to add card.')
+            .toString(),
+      );
+    } catch (e) {
+      if (kDebugMode) print('saveTokenizedCard error: $e');
+      return TokenizedSaveResult(
+          success: false, message: 'Network error. Please try again.');
+    }
+  }
+}
+
+class TokenizedSaveResult {
+  final bool success;
+  final String? message;
+  TokenizedSaveResult({required this.success, this.message});
 }
 
 class CardResponse {

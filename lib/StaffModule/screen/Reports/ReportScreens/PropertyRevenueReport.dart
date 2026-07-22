@@ -21,7 +21,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -2075,9 +2075,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'PropertyRevenueReport_$formattedDate.xlsx';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 
@@ -2145,9 +2143,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'PropertyRevenueReport_$formattedDate.csv';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 

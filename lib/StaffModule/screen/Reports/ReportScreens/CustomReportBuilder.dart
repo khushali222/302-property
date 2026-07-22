@@ -18,7 +18,7 @@ import 'package:three_zero_two_property/Model/SavedReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/repository/CustomReportService.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CreateCustomReportScreen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/screens/Reports/ReportScreens/CustomReportConstants.dart';
@@ -1025,9 +1025,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       workbook.dispose();
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.xlsx';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);
@@ -1067,9 +1065,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       }
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.csv';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);

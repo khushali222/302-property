@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/LoanSummaryReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';

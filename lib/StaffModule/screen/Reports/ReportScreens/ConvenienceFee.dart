@@ -26,7 +26,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 
 import 'package:three_zero_two_property/repository/payment_Exception.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -821,9 +821,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Convenience_fee_override_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -914,9 +912,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
     final String fileName = 'Convenience_fee_override_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

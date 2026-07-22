@@ -829,7 +829,7 @@ class _Profile_screenState extends State<Profile_screen> {
       // Get the Downloads directory
       Directory directory;
       if (Platform.isAndroid) {
-        directory = Directory('/storage/emulated/0/Download');
+        directory = await getApplicationDocumentsDirectory();
         if (!await directory.exists()) {
           await directory.create(recursive: true);
         }

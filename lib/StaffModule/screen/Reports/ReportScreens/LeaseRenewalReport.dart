@@ -16,7 +16,7 @@ import 'package:three_zero_two_property/Model/lease_renewal_report.dart'
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease_renewal_report_repo.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart' as widget_302_Staff;
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';

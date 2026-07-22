@@ -984,9 +984,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentalOwnerReport_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1120,9 +1118,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String fileName = 'RentalOwnerReport_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1215,9 +1211,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
     final String fileName = 'DelinquentTenantsReport_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

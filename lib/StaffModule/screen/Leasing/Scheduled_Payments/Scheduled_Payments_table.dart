@@ -588,9 +588,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'ScheduledPayments_$formattedDate.xlsx';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
@@ -617,9 +615,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'ScheduledPayments_$formattedDate.csv';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);

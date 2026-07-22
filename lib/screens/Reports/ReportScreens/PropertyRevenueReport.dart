@@ -2080,9 +2080,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'PropertyRevenueReport_$formattedDate.xlsx';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 
@@ -2150,9 +2148,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'PropertyRevenueReport_$formattedDate.csv';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 

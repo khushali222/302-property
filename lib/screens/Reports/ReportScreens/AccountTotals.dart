@@ -832,9 +832,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Account_totals_report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -913,9 +911,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final String fileName = 'Account_totals_report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

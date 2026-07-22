@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Rental/mortgage/mortgage_summery.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../../provider/dateProvider.dart';
@@ -945,7 +945,7 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
   Widget build(BuildContext context) {
     if (widget.showAppBar) {
       return Scaffold(
-        appBar: widget_302.App_Bar(context: context),
+        appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
         drawer: widget.showDrawer
             ? CustomDrawer(

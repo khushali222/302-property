@@ -833,9 +833,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'Insurance_Premium_Report_$formattedDate.xlsx';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 
@@ -899,9 +897,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'Insurance_Premium_Report_$formattedDate.csv';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 

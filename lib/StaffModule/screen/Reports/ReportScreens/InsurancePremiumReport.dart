@@ -15,7 +15,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/InsurancePremiumReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/StaffModule/repository/InsurancePremiumReportService.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
@@ -837,9 +837,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'Insurance_Premium_Report_$formattedDate.xlsx';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 
@@ -903,9 +901,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'Insurance_Premium_Report_$formattedDate.csv';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 

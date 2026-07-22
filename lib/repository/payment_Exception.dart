@@ -57,7 +57,10 @@ import '../constant/constant.dart';
 class PaymentExceptionReportsServices {
   final String baseUrl = '$Api_url/api/payment/exception-payments';
 
-  Future<List<Data>> fetchPaymentExceptionReports() async {
+  Future<List<Data>> fetchPaymentExceptionReports({
+    required String startDate,
+    required String endDate,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -67,7 +70,9 @@ class PaymentExceptionReportsServices {
     print('Admin ID: $id');
     print('Token: $token');
 
-    String url = '$baseUrl/$id';
+    // Server (CRM-3761) requires startDate & endDate (YYYY-MM-DD) and filters
+    // the exception payments by date server-side.
+    String url = '$baseUrl/$id?startDate=$startDate&endDate=$endDate';
     print('Full URL: $url');
 
     try {

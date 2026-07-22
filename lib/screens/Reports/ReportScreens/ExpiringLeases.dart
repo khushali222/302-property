@@ -476,9 +476,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.xlsx';
 
     // Get the directory to save the file.
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -543,9 +541,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.csv';
 
     // Get the directory to save the file.
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

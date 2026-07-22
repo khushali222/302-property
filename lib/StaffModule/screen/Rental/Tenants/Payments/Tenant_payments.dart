@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
@@ -11,7 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/propertytype.dart';
@@ -1151,7 +1152,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.xlsx';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -1217,7 +1218,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.csv';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);

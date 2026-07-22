@@ -19,7 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../Model/Rent_collection_model.dart';
@@ -27,7 +27,7 @@ import 'package:three_zero_two_property/StaffModule/repository/Rent_colllection_
 import '../../../repository/daily_transaction_report.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:pdf/pdf.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
@@ -1004,9 +1004,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_collection_report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1067,9 +1067,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_collection_report_$formattedDate.csv';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1816,7 +1816,7 @@ class _Rent_collectionState extends State<Rent_collection> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       drawer: CustomDrawerStaff(
         currentpage: "Report",
         dropdown: false,

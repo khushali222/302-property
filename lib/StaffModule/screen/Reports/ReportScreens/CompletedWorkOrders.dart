@@ -849,9 +849,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'CompletedWorkOrderReport_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -894,9 +892,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'CompletedWorkOrderReport_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

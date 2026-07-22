@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
@@ -1520,7 +1521,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.xlsx';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -1588,7 +1589,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.csv';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);

@@ -1143,9 +1143,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       workbook.dispose();
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.xlsx';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);
@@ -1185,9 +1183,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       }
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.csv';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);

@@ -3009,9 +3009,7 @@ class _Lease_tableState extends State<Lease_table> {
 
       // Save to a user-visible location (Download on Android, Documents on iOS)
       // and share it, so the file actually lands — matches the Scheduled export.
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);
       }
@@ -3065,9 +3063,7 @@ class _Lease_tableState extends State<Lease_table> {
 
       // Save to a user-visible location (Download on Android, Documents on iOS)
       // and share it, so the file actually lands — matches the Scheduled export.
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);
       }

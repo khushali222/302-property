@@ -1106,9 +1106,7 @@ class _Recurring_Payments_Configuration_ReportState
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Recurring_Payment_Report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
@@ -1235,9 +1233,7 @@ class _Recurring_Payments_Configuration_ReportState
     final String fileName = 'Recurring_Payment_Report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

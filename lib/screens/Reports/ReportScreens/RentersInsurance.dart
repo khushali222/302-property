@@ -865,9 +865,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'RentersInsuranceReport_$formattedDate.xlsx';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -940,9 +938,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     final String fileName = 'RentersInsuranceReport_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
