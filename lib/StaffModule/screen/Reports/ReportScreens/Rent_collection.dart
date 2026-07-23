@@ -12,6 +12,7 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
@@ -507,10 +508,16 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
       );
     }
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'RentCollection_Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'RentCollection_Report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   List<List<dynamic>> _generateSummaryTableData(

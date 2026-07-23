@@ -10,6 +10,7 @@ import 'package:three_zero_two_property/repository/OutstandingLeaseBalanceServic
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'dart:convert';
@@ -1926,13 +1927,22 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
-                    pw.Text(
-                      profileData?.companyName?.isNotEmpty == true
-                          ? profileData!.companyName!
-                          : 'N/A',
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
+                    // Company/contact block: omit empty fields (web parity) —
+                    // never render "N/A". See buildPdfCompanyLines.
+                    ...buildPdfCompanyLines(
+                      companyName: profileData?.companyName,
+                      companyAddress: profileData?.companyAddress,
+                      companyCity: profileData?.companyCity,
+                      companyState: profileData?.companyState,
+                      companyCountry: profileData?.companyCountry,
+                      companyPostalCode: profileData?.companyPostalCode,
+                    ).map(
+                      (line) => pw.Text(
+                        line,
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
                       ),
                     ),
                     pw.Text(
@@ -2211,10 +2221,17 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(),
+          filename: 'Outstanding_lease_balance_report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Outstanding_lease_balance_report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       print('Error generating PDF: $e');
       Fluttertoast.showToast(

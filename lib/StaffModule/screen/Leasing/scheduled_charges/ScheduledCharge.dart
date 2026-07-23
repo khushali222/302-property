@@ -903,9 +903,14 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         },
       ),
     );
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'ScheduledCharge.pdf');
+    } else {
+      await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> _exportCSV(List<ScheduledCharges> data) async {

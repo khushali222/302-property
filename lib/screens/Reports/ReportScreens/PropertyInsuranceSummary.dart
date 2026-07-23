@@ -714,9 +714,15 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Property-Insurance-Summary-Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Property-Insurance-Summary-Report',
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       setState(() {
         isDataLoading = false;

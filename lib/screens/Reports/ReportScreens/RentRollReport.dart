@@ -1364,9 +1364,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     if (Platform.isIOS) {
       // Use sharePdf for iOS to ensure proper A4 format recognition
       await Printing.sharePdf(
-          bytes: await pdf.save(), filename: 'RentRollReport.pdf');
+          bytes: await pdf.save(), filename: 'RentRoll_Report.pdf');
     } else {
       await Printing.layoutPdf(
+          name: 'RentRoll_Report',
           onLayout: (PdfPageFormat format) async => pdf.save());
     }
   }

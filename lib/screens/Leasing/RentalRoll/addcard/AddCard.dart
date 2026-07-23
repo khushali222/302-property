@@ -12,18 +12,14 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/edit_lease.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/collectjs_card_field.dart';
-import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 
-import '../../../../widgets/html_editor.dart';
 import 'CardModel.dart';
 import 'Service.dart';
 import '../../../../widgets/custom_drawer.dart';
@@ -111,10 +107,33 @@ class _AddCardState extends State<AddCard> {
   String? _publicKey;
   bool _cardReady = false;
   bool _submitting = false;
+  // Strict gate: track each Collect.js card field's validity so the Add Card
+  // button stays disabled until the card itself is validly entered.
+  final Map<String, bool> _cardValidity = {};
+  bool get _cardValid =>
+      (_cardValidity['ccnumber'] ?? false) &&
+      (_cardValidity['ccexp'] ?? false) &&
+      (_cardValidity['cvv'] ?? false);
   String? _adminId; // company admin_id captured from the lease_tenant response
+  // Web parity (AddCardForm.jsx): submit stays disabled until the required
+  // native fields are filled (Collect.js card fields validate on submit).
+  bool get _requiredFieldsFilled =>
+      firstName.text.trim().isNotEmpty &&
+      lastName.text.trim().isNotEmpty &&
+      email.text.trim().isNotEmpty &&
+      phoneNumber.text.trim().isNotEmpty;
+
+  void _onRequiredChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
+    firstName.addListener(_onRequiredChanged);
+    lastName.addListener(_onRequiredChanged);
+    email.addListener(_onRequiredChanged);
+    phoneNumber.addListener(_onRequiredChanged);
     fetchTenants();
   }
 
@@ -851,7 +870,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('First Name',
+                                                const Text('First Name *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -870,7 +889,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Last Name',
+                                                const Text('Last Name *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -889,7 +908,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Email',
+                                                const Text('Email *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -909,7 +928,7 @@ class _AddCardState extends State<AddCard> {
                                                 const SizedBox(
                                                   height: 8,
                                                 ),
-                                                const Text('Phone Number',
+                                                const Text('Phone Number *',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -1059,6 +1078,7 @@ class _AddCardState extends State<AddCard> {
                                                   },
                                                   onValidation:
                                                       (field, valid, message) {
+                            setState(() => _cardValidity[field] = valid);
                                                     if (!valid && _submitting) {
                                                       setState(() =>
                                                           _submitting = false);
@@ -1172,7 +1192,8 @@ class _AddCardState extends State<AddCard> {
                                                                 BorderRadius
                                                                     .circular(
                                                                         8.0))),
-                                                onPressed: _submitting
+                                                onPressed: (!_requiredFieldsFilled || !_cardValid ||
+                                                        _submitting)
                                                     ? null
                                                     : () {
                                                         // PCI: tokenize in the WebView; the save runs in CollectJsCardField.onToken -> _saveTokenizedCard.
@@ -1490,7 +1511,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        const Text('First Name',
+                                        const Text('First Name *',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1507,7 +1528,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Last Name',
+                                        const Text('Last Name *',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1524,7 +1545,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Email',
+                                        const Text('Email *',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1542,7 +1563,7 @@ class _AddCardState extends State<AddCard> {
                                         const SizedBox(
                                           height: 8,
                                         ),
-                                        const Text('Phone Number',
+                                        const Text('Phone Number *',
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.bold,
@@ -1673,6 +1694,7 @@ class _AddCardState extends State<AddCard> {
                                             Fluttertoast.showToast(msg: msg);
                                           },
                                           onValidation: (field, valid, message) {
+                            setState(() => _cardValidity[field] = valid);
                                             // If the user tapped Add Card but a field is invalid, Collect.js fires
                                             // validation instead of returning a token — release the button + tell them.
                                             if (!valid && _submitting) {
@@ -1795,7 +1817,7 @@ class _AddCardState extends State<AddCard> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               8.0))),
-                                              onPressed: _submitting
+                                              onPressed: (!_requiredFieldsFilled || !_cardValid || _submitting)
                                                   ? null
                                                   : () {
                                                       // PCI: tokenize in the WebView; the save runs in CollectJsCardField.onToken -> _saveTokenizedCard.

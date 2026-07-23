@@ -1076,10 +1076,15 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Tenant_payments.pdf');
+    } else {
+      await Printing.layoutPdf(
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateWorkOrderExcel(List<Data> ledgerdata) async {

@@ -1297,9 +1297,15 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Live_Property_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Live_Property_Report',
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       setState(() {
         isDataLoading = false;

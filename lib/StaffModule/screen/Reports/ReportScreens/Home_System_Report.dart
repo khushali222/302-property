@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -1240,6 +1241,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             bytes: bytes, filename: 'Home_System_Report.pdf');
       } else {
         await Printing.layoutPdf(
+            name: 'Home_System_Report',
             onLayout: (PdfPageFormat format) async => pdf.save());
       }
     } catch (e) {

@@ -1250,6 +1250,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             bytes: bytes, filename: 'Home_System_Report.pdf');
       } else {
         await Printing.layoutPdf(
+            name: 'Home_System_Report',
             onLayout: (PdfPageFormat format) async => pdf.save());
       }
     } catch (e) {

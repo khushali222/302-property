@@ -25,6 +25,7 @@ import 'package:three_zero_two_property/Model/payment_exception.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
@@ -216,7 +217,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         // Text('Rows per page: '),
         // SizedBox(width: 10),
         Material(
-          elevation: 2,
+          elevation: 0,
           color: Colors.white,
           child: Container(
             height: 55,
@@ -640,7 +641,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text} to ${toDate.text}',
+                    'Date: ${fromDate.text} to ${toDate.text}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -651,40 +652,22 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -731,10 +714,16 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Payment_exception_report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Payment_exception_report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateAccountTotalReportExcel(
@@ -1289,9 +1278,11 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           .take(itemsPerPage)
                           .toList();
 
-                      // Calculate grand total from filtered data
+                      // Grand total of the CURRENT PAGE only, matching web
+                      // (Report.js sums `tableData`, which is the paginated
+                      // page slice — not the full result set).
                       double grandTotal = 0.0;
-                      for (var item in data) {
+                      for (var item in currentPageData) {
                         grandTotal += (item.totalAmount ?? 0.0);
                       }
 
@@ -1738,7 +1729,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                     children: [
                                       const SizedBox(width: 10),
                                       Material(
-                                        elevation: 3,
+                                        elevation: 0,
                                         child: Container(
                                           height: 40,
                                           padding: const EdgeInsets.symmetric(
@@ -2393,7 +2384,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                 children: [
                                   const SizedBox(width: 10),
                                   Material(
-                                    elevation: 3,
+                                    elevation: 0,
                                     child: Container(
                                       height: 40,
                                       padding: const EdgeInsets.symmetric(
@@ -3115,7 +3106,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   child: Row(
                     children: [
                       Material(
-                        elevation: 3,
+                        elevation: 0,
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10),

@@ -267,9 +267,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                   children: [
                     if (profileData != null) ...[
                       pw.Text(
-                        profileData.companyName?.isNotEmpty == true
-                            ? profileData.companyName!
-                            : 'N/A',
+                        profileData.companyName ?? '',
                         style: pw.TextStyle(
                           fontSize: 10,
                           fontWeight: pw.FontWeight.bold,
@@ -401,10 +399,16 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'LeaseRenewalReport.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'LeaseRenewalReport',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {

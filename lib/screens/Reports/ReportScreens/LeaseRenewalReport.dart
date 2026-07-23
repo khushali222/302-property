@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as widget_302;
 import 'package:three_zero_two_property/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 
 class LeaseRenewalReportScreen extends StatefulWidget {
   @override
@@ -265,22 +266,24 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
-                    if (profileData != null) ...[
-                      pw.Text(
-                        profileData.companyName?.isNotEmpty == true
-                            ? profileData.companyName!
-                            : 'N/A',
+                    // Company/contact block: omit empty fields (web parity) —
+                    // never render "N/A". See buildPdfCompanyLines.
+                    ...buildPdfCompanyLines(
+                      companyName: profileData?.companyName,
+                      companyAddress: profileData?.companyAddress,
+                      companyCity: profileData?.companyCity,
+                      companyState: profileData?.companyState,
+                      companyCountry: profileData?.companyCountry,
+                      companyPostalCode: profileData?.companyPostalCode,
+                    ).map(
+                      (line) => pw.Text(
+                        line,
                         style: pw.TextStyle(
                           fontSize: 10,
                           fontWeight: pw.FontWeight.bold,
                         ),
                       ),
-                      if (profileData.companyAddress?.isNotEmpty == true)
-                        pw.Text(
-                          profileData.companyAddress!,
-                          style: pw.TextStyle(fontSize: 10),
-                        ),
-                    ],
+                    ),
                   ],
                 ),
               ],
@@ -401,10 +404,17 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(),
+          filename: 'Lease_Renewal_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Lease_Renewal_Report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {

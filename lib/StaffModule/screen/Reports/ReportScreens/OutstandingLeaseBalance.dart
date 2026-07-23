@@ -1656,9 +1656,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
                     pw.Text(
-                      profileData?.companyName?.isNotEmpty == true
-                          ? profileData!.companyName!
-                          : 'N/A',
+                      profileData?.companyName ?? '',
                       style: pw.TextStyle(
                         fontSize: 10,
                         fontWeight: pw.FontWeight.bold,
@@ -1931,10 +1929,16 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Outstanding_lease_balance_report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Outstanding_lease_balance_report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       print('Error generating PDF: $e');
       Fluttertoast.showToast(

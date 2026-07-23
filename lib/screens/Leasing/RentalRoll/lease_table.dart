@@ -2940,9 +2940,14 @@ class _Lease_tableState extends State<Lease_table> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'lease_table.pdf');
+    } else {
       await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
       // Fluttertoast.showToast(msg: 'PDF exported successfully');
       print('PDF exported successfully');
     } catch (e) {

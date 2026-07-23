@@ -1052,15 +1052,25 @@ class _edit_vendorState extends State<edit_vendor> {
       initialEmail = vendor.vendorEmail;
       initialPassword = vendor.vendorPassword;
 
-      firstName.text = vendor.vendorName!;
-      phoneNumber.text = formatPhoneNumberedit(vendor.vendorPhoneNumber!);
-      email.text = vendor.vendorEmail!;
-      passWord.text = vendor.vendorPassword!;
+      // Null-safe assignment: a vendor with no password (setup-email flow)
+      // previously threw here on `!`, aborting before Trade Type was set and
+      // showing "Failed to fetch vendor data". Match web (null-safe pre-fill).
+      firstName.text = vendor.vendorName ?? '';
+      phoneNumber.text = (vendor.vendorPhoneNumber ?? '').isNotEmpty
+          ? formatPhoneNumberedit(vendor.vendorPhoneNumber!)
+          : '';
+      email.text = vendor.vendorEmail ?? '';
+      passWord.text = vendor.vendorPassword ?? '';
       conpassWord.text =
-          vendor.vendorPassword!; // Pre-fill confirm password field
+          vendor.vendorPassword ?? ''; // Pre-fill confirm password field
       initialTradeType = vendor.trade;
-      if (vendor.trade != null) {
-        selectedTradeType = vendor.trade!.toLowerCase();
+      // Only pre-select when the saved value maps to a dropdown option,
+      // otherwise DropdownButton asserts ("exactly one item with value").
+      if (vendor.trade != null && vendor.trade!.trim().isNotEmpty) {
+        final String t = vendor.trade!.toLowerCase().trim();
+        if (_tradeTypes.any((type) => type.toLowerCase() == t)) {
+          selectedTradeType = t;
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1085,6 +1095,7 @@ class _edit_vendorState extends State<edit_vendor> {
   final TextEditingController conpassWord = TextEditingController();
   bool isLoading = false;
   bool formValid = false;
+  bool tradeError = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -1292,11 +1303,18 @@ class _edit_vendorState extends State<edit_vendor> {
                                     onChanged: (value) {
                                       setState(() {
                                         selectedTradeType = value;
+                                        tradeError = false;
                                       });
                                     },
                                   ),
                                 ),
                               ),
+                              if (tradeError)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 6.0, left: 4.0),
+                                  child: Text('Please select trade type.',
+                                      style: TextStyle(color: Colors.red, fontSize: 12)),
+                                ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -1405,6 +1423,9 @@ class _edit_vendorState extends State<edit_vendor> {
                                           if (firstName.text.isEmpty) setState(() { isFormValid = false; });
                                           if (phoneNumber.text.isEmpty) setState(() { isFormValid = false; });
                                           if (email.text.isEmpty) setState(() { isFormValid = false; });
+                                          final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
+                                          setState(() { tradeError = tradeMissing; });
+                                          if (tradeMissing) isFormValid = false;
 
                                           bool hasChanges = firstName.text != initialVendorName ||
                                               phoneNumber.text != initialPhoneNumber ||
@@ -1416,24 +1437,32 @@ class _edit_vendorState extends State<edit_vendor> {
                                           if (!isFormValid) return;
 
                                           setState(() { isLoading = true; });
-                                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                                          String adminId = prefs.getString("adminId")!;
+                                          try {
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            String adminId = prefs.getString("adminId")!;
 
-                                          final vendor = Vendor(
-                                            adminId: adminId,
-                                            vendorName: firstName.text,
-                                            vendorPhoneNumber: phoneNumber.text,
-                                            vendorEmail: email.text,
-                                            vendorPassword: passWord.text,
-                                            trade: selectedTradeType,
-                                          );
-                                          final success = await vendorRepository.update_vendor(vendor, widget.vender_id!);
-                                          setState(() { isLoading = false; });
-                                          if (success) {
-                                            Fluttertoast.showToast(msg: "Vendor Edited successfully");
-                                            Navigator.of(context).pop(true);
-                                          } else {
-                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                            final vendor = Vendor(
+                                              adminId: adminId,
+                                              vendorName: firstName.text,
+                                              vendorPhoneNumber: phoneNumber.text,
+                                              vendorEmail: email.text,
+                                              vendorPassword: passWord.text,
+                                              trade: selectedTradeType,
+                                            );
+                                            final success = await vendorRepository.update_vendor(vendor, widget.vender_id!);
+                                            if (!mounted) return;
+                                            if (success) {
+                                              Fluttertoast.showToast(msg: "Vendor Edited successfully");
+                                              Navigator.of(context).pop(true);
+                                            } else {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                            }
+                                          } catch (e) {
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                            }
+                                          } finally {
+                                            if (mounted) setState(() { isLoading = false; });
                                           }
                                         },
                                         child: isLoading
@@ -1476,9 +1505,12 @@ class _edit_vendorState extends State<edit_vendor> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    titleBar(
-                      width: MediaQuery.of(context).size.width * .94,
-                      title: 'Edit Vendor',
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+                      child: titleBar(
+                        width: MediaQuery.of(context).size.width - 24,
+                        title: 'Edit Vendor',
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(12.0),
@@ -1584,11 +1616,18 @@ class _edit_vendorState extends State<edit_vendor> {
                                   onChanged: (value) {
                                     setState(() {
                                       selectedTradeType = value;
+                                      tradeError = false;
                                     });
                                   },
                                 ),
                               ),
                             ),
+                            if (tradeError)
+                              const Padding(
+                                padding: EdgeInsets.only(top: 6.0, left: 4.0),
+                                child: Text('Please select trade type.',
+                                    style: TextStyle(color: Colors.red, fontSize: 12)),
+                              ),
                             const SizedBox(height: 10),
                             Text('Password *',
                                 style: TextStyle(
@@ -1671,22 +1710,25 @@ class _edit_vendorState extends State<edit_vendor> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        if (_formkey.currentState!.validate()) {
-                                          bool isFormValid = true;
-                                          if (firstName.text.trim().isEmpty) setState(() { isFormValid = false; });
-                                          if (phoneNumber.text.trim().isEmpty) setState(() { isFormValid = false; });
-                                          if (email.text.trim().isEmpty) setState(() { isFormValid = false; });
+                                        // Validate the form fields AND the trade
+                                        // dropdown together, so the trade error
+                                        // shows even when a Form field (e.g. an
+                                        // empty password) is also invalid.
+                                        final bool isValid = _formkey.currentState!.validate();
+                                        final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
+                                        setState(() { tradeError = tradeMissing; });
+                                        if (!isValid || tradeMissing) return;
 
-                                          bool hasChanges = firstName.text != initialVendorName ||
-                                              phoneNumber.text != initialPhoneNumber ||
-                                              email.text != initialEmail ||
-                                              passWord.text != initialPassword ||
-                                              selectedTradeType != initialTradeType;
+                                        bool hasChanges = firstName.text != initialVendorName ||
+                                            phoneNumber.text != initialPhoneNumber ||
+                                            email.text != initialEmail ||
+                                            passWord.text != initialPassword ||
+                                            selectedTradeType != initialTradeType;
 
-                                          if (!hasChanges) { Navigator.of(context).pop(false); return; }
-                                          if (!isFormValid) return;
+                                        if (!hasChanges) { Navigator.of(context).pop(false); return; }
 
-                                          setState(() { isLoading = true; });
+                                        setState(() { isLoading = true; });
+                                        try {
                                           SharedPreferences prefs = await SharedPreferences.getInstance();
                                           String adminId = prefs.getString("adminId")!;
 
@@ -1700,13 +1742,19 @@ class _edit_vendorState extends State<edit_vendor> {
                                           );
                                           final success = await vendorRepository
                                               .update_vendor(vendor, widget.vender_id!);
-                                          setState(() { isLoading = false; });
+                                          if (!mounted) return;
                                           if (success) {
                                             Fluttertoast.showToast(msg: "Vendor Edited successfully");
                                             Navigator.of(context).pop(true);
                                           } else {
-                                            print("Failed to edit vendor");
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
                                           }
+                                        } catch (e) {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                          }
+                                        } finally {
+                                          if (mounted) setState(() { isLoading = false; });
                                         }
                                       },
                                       child: isLoading

@@ -23,6 +23,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -951,7 +952,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     } catch (e) {
       // Handle error
       print("Error fetching profile data: $e");
-      return;
+      // Continue and still generate the PDF (header falls back to N/A)
     }
     setState(() {
       istenantDataLoading = true;
@@ -960,6 +961,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     setState(() {
       istenantDataLoading = false;
     });
+    try {
     final pdf = pw.Document();
     final image = pw.MemoryImage(
       (await rootBundle.load('assets/images/applogo.png')).buffer.asUint8List(),
@@ -969,6 +971,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.landscape,
         margin: const pw.EdgeInsets.all(30),
+        // Year-to-date (and other large ranges) exceed the default 20-page
+        // limit and throw TooManyPagesException — PDF never opens.
+        maxPages: 1000,
         footer: (pw.Context context) {
           return pw.Container(
             alignment: pw.Alignment.centerRight,
@@ -996,7 +1001,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text} to ${toDate.text}',
+                    'Date: ${fromDate.text} to ${toDate.text}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -1007,40 +1012,22 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -1102,21 +1089,35 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       ),
     );
 
-    await Printing.layoutPdf(
-      format: PdfPageFormat.a4.landscape,
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
+    // iOS: share sheet (layoutPdf often won't present on iOS); Android: layout/print.
+    // Matches the working Rent Roll PDF pattern.
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Daily_transaction_report.pdf');
+    } else {
+      await Printing.layoutPdf(
+        name: 'Daily_transaction_report',
+        format: PdfPageFormat.a4.landscape,
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+      );
+    }
+    } catch (e, st) {
+      print('PDF export error: $e\n$st');
+      Fluttertoast.showToast(msg: 'Could not generate PDF: $e');
+      if (mounted) setState(() => istenantDataLoading = false);
+    }
   }
 
   List<List<dynamic>> _generateTableData(
       List<DailyTransactionReport> rentalOwnerReports) {
     final List<List<dynamic>> tableData = [];
     double total = 0.0;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
 
     for (var owner in rentalOwnerReports) {
       // Main row for the rental owner name
       tableData.add([
-        pw.Text(owner.date!,
+        pw.Text(dateProvider.formatCurrentDate(owner.date ?? ''),
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         '',
         '',
@@ -1132,7 +1133,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         tableData.add([
           pw.Padding(
               child: pw.Text(
-                '${property.rentalData!.rentalAddress! ?? 'N/A'}',
+                '${property.rentalData?.rentalAddress ?? 'N/A'}',
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
@@ -1140,7 +1141,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
               ),
               padding: pw.EdgeInsets.only(left: 15)), // Property Name
           pw.Text(
-            '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
+            '${property.tenantData?.tenantFirstName ?? 'N/A'} ${property.tenantData?.tenantLastName ?? 'N/A'}',
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
@@ -1148,9 +1149,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
           ), // Property Name
           // Tenant Name
           pw.Text(
-            DateFormat("yyyy-MM-dd")
-                .format(DateTime.parse(property.updatedAt!))
-                .toString(),
+            dateProvider.formatCurrentDate(owner.date ?? ''),
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
@@ -1337,10 +1336,11 @@ class _DailyTransactionsState extends State<DailyTransactions> {
 
     int rowIndex = 2;
     double grandTotal = 0.0;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
 
     for (var owner in rentalOwnerReports) {
       final rentalOwnerCell = sheet.getRangeByIndex(rowIndex, 1);
-      rentalOwnerCell.setText(owner.date ?? '');
+      rentalOwnerCell.setText(dateProvider.formatCurrentDate(owner.date ?? ''));
       rentalOwnerCell.cellStyle.bold = true;
       sheet.getRangeByName('A$rowIndex:I$rowIndex').merge();
       rowIndex++;
@@ -1348,12 +1348,12 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       for (var property in owner.charges!) {
         sheet
             .getRangeByIndex(rowIndex, 1)
-            .setText(property.rentalData!.rentalAddress ?? 'N/A');
+            .setText(property.rentalData?.rentalAddress ?? 'N/A');
         sheet.getRangeByIndex(rowIndex, 2).setText(
             '${property.tenantData?.tenantFirstName ?? 'N/A'} ${property.tenantData?.tenantLastName ?? 'N/A'}');
         sheet
             .getRangeByIndex(rowIndex, 3)
-            .setText(property.updatedAt.toString());
+            .setText(dateProvider.formatCurrentDate(owner.date ?? ''));
         sheet
             .getRangeByIndex(rowIndex, 4)
             .setText(property.paymentType ?? 'N/A');
@@ -1422,9 +1422,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
     Share.shareXFiles([XFile(path)]);
-    Fluttertoast.showToast(
-      msg: 'Excel file saved to $path',
-    );
   }
 
   Future<void> generateRentalOwnerReportCsv(
@@ -1449,23 +1446,24 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     csvBuffer.writeln(headers.join(','));
 
     double grandTotal = 0.0;
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
 
     // Iterate through each rental owner report
     for (var owner in rentalOwnerReports) {
       // Add rental owner name as a row
-      csvBuffer.writeln('${owner.date ?? ''}');
+      csvBuffer.writeln('${dateProvider.formatCurrentDate(owner.date ?? '')}');
 
       // Iterate through each property for the current rental owner
       for (var property in owner.charges!) {
         // Replace commas in the rental address with spaces
         final String sanitizedAddress =
-            (property.rentalData!.rentalAddress ?? 'N/A').replaceAll(',', ' ');
+            (property.rentalData?.rentalAddress ?? 'N/A').replaceAll(',', ' ');
 
         // Add property and tenant details
         csvBuffer.writeln([
           sanitizedAddress,
-          '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
-          property.updatedAt.toString(),
+          '${property.tenantData?.tenantFirstName ?? 'N/A'} ${property.tenantData?.tenantLastName ?? 'N/A'}',
+          dateProvider.formatCurrentDate(owner.date ?? ''),
           property.paymentType ?? 'N/A',
           property.transactionId ?? 'N/A',
           property.paymentId ?? 'N/A',
@@ -1558,9 +1556,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     await file.writeAsBytes(bytes, flush: true);
     Share.shareXFiles([XFile(path)]);
     // Show success toast message
-    Fluttertoast.showToast(
-      msg: 'CSV file saved to $path',
-    );
   }
 
   // Future<void> generateDelinquentTenantsCsv(
@@ -1654,7 +1649,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   //   Share.shareXFiles([XFile(path)]);
   //   // Show success toast message
   //   Fluttertoast.showToast(
-  //     msg: 'CSV file saved to $path',
+  //     msg: 'CSV file exported successfully',
   //   );
   // }
 

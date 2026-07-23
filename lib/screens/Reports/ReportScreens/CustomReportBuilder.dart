@@ -990,9 +990,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       final columns = _selectedReport!.selectedColumns;
       final headers =
           columns.map((k) => customReportColumnLabels[k] ?? k).toList();
-      final companyName = profileData.companyName?.isNotEmpty == true
-          ? profileData.companyName!
-          : 'N/A';
+      final companyName = profileData.companyName ?? '';
       final addressParts = [
         profileData.companyAddress,
         profileData.companyCity,
@@ -1093,10 +1091,16 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
           ],
         ),
       );
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'custom-report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'custom-report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       Fluttertoast.showToast(
         msg: 'Error generating PDF',

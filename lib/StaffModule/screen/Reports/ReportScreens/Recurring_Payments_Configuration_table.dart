@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
@@ -763,7 +764,7 @@ class _Recurring_Payments_Configuration_ReportState
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
+                    'Date: ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -774,40 +775,22 @@ class _Recurring_Payments_Configuration_ReportState
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -857,10 +840,16 @@ class _Recurring_Payments_Configuration_ReportState
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Recurring_Payments_Configuration_table.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Recurring_payments_configuration',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   List<List<dynamic>> _generateTableData(

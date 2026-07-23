@@ -20,6 +20,7 @@ import 'package:three_zero_two_property/StaffModule/repository/InsurancePremiumR
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 
 class InsurancePremiumReport extends StatefulWidget {
   const InsurancePremiumReport({super.key});
@@ -685,22 +686,22 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -748,10 +749,16 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Insurance_Premium_Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Insurance_Premium_Report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> _generateExcel() async {

@@ -1753,9 +1753,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
                       mainAxisSize: pw.MainAxisSize.min,
                       children: [
                         pw.Text(
-                          profileData?.companyName?.isNotEmpty == true
-                              ? profileData!.companyName!
-                              : 'N/A',
+                          profileData?.companyName ?? '',
                           style: pw.TextStyle(
                             fontSize: 10,
                             color: PdfColors.black,
@@ -1994,10 +1992,16 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Property_Revenue_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Property_Revenue_Report',
         format: PdfPageFormat.a4,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       print('Error generating PDF: $e');
       Fluttertoast.showToast(

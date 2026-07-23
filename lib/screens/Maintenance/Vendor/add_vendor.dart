@@ -42,6 +42,7 @@ class _Add_vendorState extends State<Add_vendor> {
   final TextEditingController conpassWord = TextEditingController();
   bool isLoading = false;
   bool formValid = false;
+  bool tradeError = false;
   String? selectedTradeType;
   final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   final VendorRepository vendorRepository =
@@ -243,11 +244,18 @@ class _Add_vendorState extends State<Add_vendor> {
                                     onChanged: (value) {
                                       setState(() {
                                         selectedTradeType = value;
+                                        tradeError = false;
                                       });
                                     },
                                   ),
                                 ),
                               ),
+                              if (tradeError)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 6.0, left: 4.0),
+                                  child: Text('Please select trade type.',
+                                      style: TextStyle(color: Colors.red, fontSize: 12)),
+                                ),
                               const SizedBox(
                                 height: 10,
                               ),
@@ -354,7 +362,9 @@ class _Add_vendorState extends State<Add_vendor> {
                                         ),
                                         onPressed: () async {
                                           setState(() { formValid = true; });
-                                          if (_formkey.currentState!.validate()) {
+                                          final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
+                                          setState(() { tradeError = tradeMissing; });
+                                          if (_formkey.currentState!.validate() && !tradeMissing) {
                                             setState(() { formValid = false; });
                                             await addTenant();
                                           }
@@ -610,11 +620,18 @@ class _Add_vendorState extends State<Add_vendor> {
                                   onChanged: (value) {
                                     setState(() {
                                       selectedTradeType = value;
+                                      tradeError = false;
                                     });
                                   },
                                 ),
                               ),
                             ),
+                            if (tradeError)
+                              const Padding(
+                                padding: EdgeInsets.only(top: 6.0, left: 4.0),
+                                child: Text('Please select trade type.',
+                                    style: TextStyle(color: Colors.red, fontSize: 12)),
+                              ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -795,7 +812,9 @@ class _Add_vendorState extends State<Add_vendor> {
                                       ),
                                       onPressed: () async {
                                         setState(() { formValid = true; });
-                                        if (_formkey.currentState!.validate()) {
+                                        final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
+                                        setState(() { tradeError = tradeMissing; });
+                                        if (_formkey.currentState!.validate() && !tradeMissing) {
                                           setState(() { formValid = false; });
                                           await addTenant();
                                         }
@@ -843,35 +862,41 @@ class _Add_vendorState extends State<Add_vendor> {
       isLoading = true;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String adminId = prefs.getString("adminId")!;
+    // Wrapped so the spinner always resets. A failed request previously threw
+    // and left isLoading=true forever (infinite spinner) with no feedback.
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String adminId = prefs.getString("adminId")!;
 
-    final vendor = Vendor(
-      adminId: adminId,
-      vendorName: firstName.text.trim(),
-      vendorPhoneNumber: phoneNumber.text.trim(),
-      vendorEmail: email.text.trim(),
-      vendorPassword: passWord.text.trim(),
-      trade: selectedTradeType,
-    );
+      final vendor = Vendor(
+        adminId: adminId,
+        vendorName: firstName.text.trim(),
+        vendorPhoneNumber: phoneNumber.text.trim(),
+        vendorEmail: email.text.trim(),
+        vendorPassword: passWord.text.trim(),
+        trade: selectedTradeType,
+      );
 
-    final success = await vendorRepository.addVendor(vendor);
-    if (success) {
-      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Vendor added successfully')));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to add vendor')));
-    }
-    setState(() {
-      isLoading = false;
-    });
-
-    if (success) {
-      print('Form is valid');
-      Fluttertoast.showToast(msg: "Vendor added successfully");
-      Navigator.of(context).pop(true);
-    } else {
-      print('Form is invalid');
+      final success = await vendorRepository.addVendor(vendor);
+      if (!mounted) return;
+      if (success) {
+        Fluttertoast.showToast(msg: "Vendor added successfully");
+        Navigator.of(context).pop(true);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add vendor')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add vendor')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 }

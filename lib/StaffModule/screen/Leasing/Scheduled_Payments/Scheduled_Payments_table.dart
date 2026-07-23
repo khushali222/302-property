@@ -557,9 +557,14 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
         },
       ),
     );
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Scheduled_Payments_table.pdf');
+    } else {
+      await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> _exportExcel(List<Scheduled_Payment> data) async {

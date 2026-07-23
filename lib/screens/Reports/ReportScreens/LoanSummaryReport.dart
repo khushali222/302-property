@@ -184,9 +184,16 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           ),
         ],
       ));
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(),
+          filename: 'Loan_Summary_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+          name: 'Loan_Summary_Report',
           format: PdfPageFormat.a4.landscape,
           onLayout: (_) async => pdf.save());
+    }
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error generating PDF: $e');

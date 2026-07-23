@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -643,40 +644,22 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text(
-                  profileData?.companyName?.isNotEmpty == true
-                      ? profileData!.companyName!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyAddress?.isNotEmpty == true
-                      ? profileData!.companyAddress!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                  '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                  '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyPostalCode?.isNotEmpty == true
-                      ? profileData!.companyPostalCode!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
+                // Company/contact block: omit empty fields (web parity) —
+                // never render "N/A". See buildPdfCompanyLines.
+                ...buildPdfCompanyLines(
+                  companyName: profileData?.companyName,
+                  companyAddress: profileData?.companyAddress,
+                  companyCity: profileData?.companyCity,
+                  companyState: profileData?.companyState,
+                  companyCountry: profileData?.companyCountry,
+                  companyPostalCode: profileData?.companyPostalCode,
+                ).map(
+                  (line) => pw.Text(
+                    line,
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -753,9 +736,15 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Open-work-orders.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Open-work-orders',
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateWorkOrderExcel(

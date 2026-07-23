@@ -21,6 +21,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 
 import '../../../../Model/Rent_collection_model.dart';
 import '../../../../repository/Rent_colllection_repository.dart';
@@ -264,34 +265,24 @@ class _Rent_collectionState extends State<Rent_collection> {
                 pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
-                    if (profileData?.companyName?.isNotEmpty == true)
-                      pw.Text(
-                        profileData!.companyName!,
+                    // Company/contact block: omit empty fields (web parity) —
+                    // never render "N/A". See buildPdfCompanyLines.
+                    ...buildPdfCompanyLines(
+                      companyName: profileData?.companyName,
+                      companyAddress: profileData?.companyAddress,
+                      companyCity: profileData?.companyCity,
+                      companyState: profileData?.companyState,
+                      companyCountry: profileData?.companyCountry,
+                      companyPostalCode: profileData?.companyPostalCode,
+                    ).map(
+                      (line) => pw.Text(
+                        line,
                         style: pw.TextStyle(
-                            fontSize: 10, fontWeight: pw.FontWeight.bold),
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
                       ),
-                    if (profileData?.companyAddress?.isNotEmpty == true)
-                      pw.Text(
-                        profileData!.companyAddress!,
-                        style: pw.TextStyle(
-                            fontSize: 10, fontWeight: pw.FontWeight.bold),
-                      ),
-                    if (profileData?.companyCity?.isNotEmpty == true ||
-                        profileData?.companyState?.isNotEmpty == true ||
-                        profileData?.companyCountry?.isNotEmpty == true)
-                      pw.Text(
-                        '${profileData?.companyCity ?? ''}${profileData?.companyCity?.isNotEmpty == true ? ', ' : ''}'
-                        '${profileData?.companyState ?? ''}${profileData?.companyState?.isNotEmpty == true ? ', ' : ''}'
-                        '${profileData?.companyCountry ?? ''}',
-                        style: pw.TextStyle(
-                            fontSize: 10, fontWeight: pw.FontWeight.bold),
-                      ),
-                    if (profileData?.companyPostalCode?.isNotEmpty == true)
-                      pw.Text(
-                        profileData!.companyPostalCode!,
-                        style: pw.TextStyle(
-                            fontSize: 10, fontWeight: pw.FontWeight.bold),
-                      ),
+                    ),
                   ],
                 ),
               ],
@@ -507,10 +498,16 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
       );
     }
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'RentCollection_Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'RentCollection_Report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   List<List<dynamic>> _generateSummaryTableData(
