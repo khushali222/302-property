@@ -1796,6 +1796,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: credit,
                                                 cursorColor: blueColor,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters: [
+                                                  PercentRangeFormatter()
+                                                ],
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
@@ -1874,6 +1880,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: debit,
                                                 cursorColor: blueColor,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters: [
+                                                  PercentRangeFormatter()
+                                                ],
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
@@ -1967,6 +1979,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: credit,
                                                   cursorColor: blueColor,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters: [
+                                                    PercentRangeFormatter()
+                                                  ],
                                                   decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
@@ -2049,6 +2067,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: debit,
                                                   cursorColor: blueColor,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters: [
+                                                    PercentRangeFormatter()
+                                                  ],
                                                   decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
@@ -2217,6 +2241,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           },
                                           controller: percent,
                                           cursorColor: blueColor,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(decimal: true),
+                                          inputFormatters: [
+                                            PercentRangeFormatter()
+                                          ],
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
@@ -2535,6 +2564,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             Positioned.fill(
                                               child: TextFormField(
                                                 controller: late_fee,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters:
+                                                    calculationType == "percent"
+                                                        ? [PercentRangeFormatter()]
+                                                        : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     //  passworderror = false;
@@ -2904,6 +2940,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               Positioned.fill(
                                                 child: TextFormField(
                                                   controller: late_fee,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters:
+                                                      calculationType == "percent"
+                                                          ? [PercentRangeFormatter()]
+                                                          : null,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       //  passworderror = false;

@@ -14,7 +14,6 @@ import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../repository/appliance_details_service.dart';
-import '../../../../repository/fetch_allcategories.dart';
 import '../summery_page.dart';
 import 'AddMaintenanceHistoryDialog.dart';
 import 'AddNoteDialog.dart';
@@ -56,35 +55,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     });
   }
 
-  bool _isLoadingCategories = false;
-
   @override
   void initState() {
     super.initState();
-    _loadDropdownCategories();
     _loadApplianceData();
-  }
-
-  List<allcategories_model> _dropdownCategories = [];
-  allcategories_model? _selectedDropdownCategory;
-  Future<void> _loadDropdownCategories() async {
-    setState(() {
-      _isLoadingCategories = true;
-    });
-    try {
-      final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
-      setState(() {
-        _dropdownCategories = cats;
-        _isLoadingCategories = false;
-      });
-    } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
-          e.toString());
-      setState(() {
-        _isLoadingCategories = false;
-      });
-    }
   }
 
   Future<void> _loadApplianceData() async {
@@ -100,9 +74,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
         setState(() {
           _liveAppliance = appliance;
-          _selectedDropdownCategory = _dropdownCategories.firstWhere(
-            (cat) => cat.categoryId == appliance?.categoryId,
-          );
           _isLoading = false;
         });
       } catch (e) {
@@ -110,14 +81,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = false;
         });
-
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading appliance data: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
       }
     } else {
       setState(() {
@@ -350,7 +313,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                   'Name',
                                   appliance.applianceName ?? '',
                                   'Category',
-                                  _selectedDropdownCategory?.name ?? ''),
+                                  _liveAppliance?.categoryName ??
+                                      widget.appliance.categoryName ??
+                                      '-'),
                               _buildDetailRowPair('Type', appliance.type ?? '',
                                   'Status', appliance.status ?? '',
                                   valueColor2:

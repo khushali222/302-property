@@ -617,6 +617,29 @@ class CVVFormatter extends TextInputFormatter {
   }
 }
 
+/// Restricts input to a 0–100 percentage. Web parity for the Debit Card Fee
+/// Override field: mirrors the web onChange gate — accepts only an empty value,
+/// or digits with a single optional decimal point whose numeric value is
+/// between 0 and 100 (inclusive). Any keystroke that would fall outside that
+/// range (or isn't numeric) is rejected, so out-of-range values can't be typed.
+class PercentRangeFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+    // Allow clearing the field.
+    if (text.isEmpty) return newValue;
+    // Only digits with at most one decimal point (web regex: /^\d*\.?\d*$/).
+    if (!RegExp(r'^\d*\.?\d*$').hasMatch(text)) return oldValue;
+    // Reject values that don't parse (e.g. a lone ".") — matches web parseFloat.
+    final parsed = double.tryParse(text);
+    if (parsed == null) return oldValue;
+    // Range 0–100 inclusive (web: parseFloat(value) >= 0 && <= 100).
+    if (parsed < 0 || parsed > 100) return oldValue;
+    return newValue;
+  }
+}
+
 String? ValidateExpirationDate(String expirationDate) {
   // Check if the date is in the correct MM/YYYY format
   //require formate first is 0-9 and second 0-2

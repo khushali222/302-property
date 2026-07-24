@@ -11,8 +11,11 @@ class ApplianceDetailsService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
+      String? staffId = prefs.getString('staff_id');
+      final String? idHeader =
+          (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
 
-      if (token == null || adminId == null) {
+      if (token == null || idHeader == null) {
         throw Exception('Authentication credentials not found');
       }
 
@@ -23,7 +26,7 @@ class ApplianceDetailsService {
         Uri.parse('$Api_url/api/appliance/appliance_details/$applianceId'),
         headers: {
           'authorization': 'CRM $token',
-          'id': 'CRM $adminId',
+          'id': 'CRM $idHeader',
         },
       );
 
@@ -57,8 +60,11 @@ class ApplianceDetailsService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminId = prefs.getString('adminId');
+    String? staffId = prefs.getString('staff_id');
+    final String? idHeader =
+        (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
 
-    if (token == null || adminId == null) {
+    if (token == null || idHeader == null) {
       throw Exception('Authentication credentials not found');
     }
 
@@ -66,7 +72,7 @@ class ApplianceDetailsService {
       Uri.parse('$Api_url/api/appliance/delete_note/$noteId/$applianceId'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $adminId', 
+        'id': 'CRM $idHeader',
       },
     );
 

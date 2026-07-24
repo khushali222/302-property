@@ -3389,7 +3389,11 @@ class _TabBarExampleState extends State<TabBarExample> {
         cursorColor: blueColor,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+          // Web parity: percentage surcharge is capped 0–100 at the keystroke
+          // level; the flat ($) field keeps plain numeric entry.
+          showPercent
+              ? PercentRangeFormatter()
+              : FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
         ],
         onChanged: (value) {
           setState(() {});
@@ -3493,8 +3497,12 @@ class _TabBarExampleState extends State<TabBarExample> {
             : TextInputType.text,
         inputFormatters: numeric
             ? [
-                FilteringTextInputFormatter.allow(
-                    RegExp(decimal ? r'[0-9.]' : r'[0-9]')),
+                // Web parity: a percent-mode late fee is capped 0–100; a fixed
+                // ($) amount keeps plain numeric entry.
+                percent
+                    ? PercentRangeFormatter()
+                    : FilteringTextInputFormatter.allow(
+                        RegExp(decimal ? r'[0-9.]' : r'[0-9]')),
               ]
             : null,
         onChanged: (value) {

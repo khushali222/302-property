@@ -3774,8 +3774,9 @@ class _Edit_leaseState extends State<Edit_lease>
                                     keyboardType: const TextInputType
                                         .numberWithOptions(decimal: true),
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'[0-9.]')),
+                                      // Web parity: restrict to 0–100% at the
+                                      // keystroke level (matches web onChange).
+                                      PercentRangeFormatter(),
                                     ],
                                     decoration: InputDecoration(
                                       hintText: 'Add fee here',

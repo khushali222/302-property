@@ -1061,7 +1061,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                   children: [
                                     Expanded(
                                       child: Material(
-                                        elevation: 3,
+                                        elevation: 0,
                                         borderRadius: BorderRadius.circular(8),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
@@ -1099,6 +1099,23 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor,
+                                        elevation: 0,
+                                        minimumSize: Size(
+                                            0,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 48
+                                                : 50),
+                                        maximumSize: Size(
+                                            double.infinity,
+                                            MediaQuery.of(context).size.width <
+                                                    500
+                                                ? 48
+                                                : 50),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
                                       ),
                                       onPressed: () {},
                                       child: PopupMenuButton<String>(

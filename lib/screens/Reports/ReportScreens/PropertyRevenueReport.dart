@@ -91,28 +91,66 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   }
 
   void _calculatePreviousPeriod() {
-    if (_currentStartDate.isNotEmpty && _currentEndDate.isNotEmpty) {
-      try {
-        final currentStart = DateTime.parse(_currentStartDate);
-        final currentEnd = DateTime.parse(_currentEndDate);
+    if (_currentStartDate.isEmpty || _currentEndDate.isEmpty) return;
+    try {
+      final DateTime cs = DateTime.parse(_currentStartDate);
+      final DateTime ce = DateTime.parse(_currentEndDate);
+      late DateTime ps;
+      late DateTime pe;
 
-        // Calculate same period last year
-        final previousStart = DateTime(
-          currentStart.year - 1,
-          currentStart.month,
-          currentStart.day,
-        );
-        final previousEnd = DateTime(
-          currentEnd.year - 1,
-          currentEnd.month,
-          currentEnd.day,
-        );
-
-        _previousStartDate = DateFormat('yyyy-MM-dd').format(previousStart);
-        _previousEndDate = DateFormat('yyyy-MM-dd').format(previousEnd);
-      } catch (e) {
-        print('Error calculating previous period: $e');
+      // Match web (PropertyRevenueReport.js): the Previous Period depends on
+      // the selected range — prior-period for rolling ranges, and
+      // year-over-year only for the calendar-to-date ranges.
+      switch (dateRange) {
+        // Calendar-to-date -> same period LAST YEAR (year-over-year).
+        case 'This Month':
+          ps = DateTime(cs.year - 1, cs.month, 1);
+          pe = DateTime(cs.year - 1, cs.month + 1, 0);
+          break;
+        case 'This Quarter':
+          ps = DateTime(cs.year - 1, cs.month, 1);
+          pe = DateTime(cs.year - 1, cs.month + 3, 0);
+          break;
+        case 'Year to Date (YTD)':
+          ps = DateTime(cs.year - 1, 1, 1);
+          pe = DateTime(ce.year - 1, ce.month, ce.day);
+          break;
+        // Calendar "last X" -> the period immediately before it.
+        case 'Last Month':
+          ps = DateTime(cs.year, cs.month - 1, 1);
+          pe = DateTime(cs.year, cs.month, 0);
+          break;
+        case 'Last Quarter':
+          ps = DateTime(cs.year, cs.month - 3, 1);
+          pe = DateTime(cs.year, cs.month, 0);
+          break;
+        case 'Last Year':
+          ps = DateTime(cs.year - 1, 1, 1);
+          pe = DateTime(cs.year - 1, 12, 31);
+          break;
+        // Weeks -> the immediately preceding full week.
+        case 'This Week':
+        case 'Last Week':
+          pe = cs.subtract(const Duration(days: 1));
+          ps = cs.subtract(const Duration(days: 7));
+          break;
+        // Rolling day ranges (and any custom/other) -> the immediately
+        // preceding window of the same length.
+        case 'Today':
+        case 'Yesterday':
+        case 'Last 7 Days':
+        case 'Last 14 Days':
+        case 'Last 30 Days':
+        default:
+          final int lengthDays = ce.difference(cs).inDays;
+          pe = cs.subtract(const Duration(days: 1));
+          ps = pe.subtract(Duration(days: lengthDays));
       }
+
+      _previousStartDate = DateFormat('yyyy-MM-dd').format(ps);
+      _previousEndDate = DateFormat('yyyy-MM-dd').format(pe);
+    } catch (e) {
+      print('Error calculating previous period: $e');
     }
   }
 

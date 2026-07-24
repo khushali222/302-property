@@ -37,7 +37,7 @@ class OutstandingLeaseBalance extends StatefulWidget {
 class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   late Future<OutstandingLeaseBalanceModel> _futureOutstandingLeaseBalance;
   OutstandingLeaseBalanceModel? outstandingLeaseBalanceModel;
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
   int? expandedRowIndex;
   ConnectivityResult? _connectivityResult;
@@ -67,7 +67,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       });
     });
     checkInternet();
-    _futureOutstandingLeaseBalance = fetchOutstandingLeaseBalanceData();
+    // Web parity: do not auto-load the report on open. The rental-owner scope
+    // is not ready on the first frame, so an initial fetch would omit the owner
+    // filter and return unscoped data. Load the owners now (all selected) and
+    // wait for the user to tap Run to fetch the correctly scoped report.
+    _futureOutstandingLeaseBalance =
+        Future.value(OutstandingLeaseBalanceModel(success: true));
     _fetchRentalOwners();
   }
 
@@ -382,9 +387,23 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
           return _buildErrorWidget();
         }
 
-        if (outstandingLeaseBalanceModel?.data == null ||
+        if (outstandingLeaseBalanceModel == null ||
+            outstandingLeaseBalanceModel!.data == null ||
             outstandingLeaseBalanceModel!.data!.isEmpty) {
-          return _buildNoDataWidget();
+          // Before Run (or a run that returned nothing): show the report chrome
+          // — a $0.00 total plus a "no data" message. Run populates it.
+          return Column(
+            children: [
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: _buildSummaryCards(),
+              ),
+              SizedBox(height: 40),
+              _buildNoDataWidget(),
+              SizedBox(height: 20),
+            ],
+          );
         }
 
         return _buildDataTable();
@@ -980,9 +999,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   }
 
   Widget _buildSummaryCards() {
-    if (outstandingLeaseBalanceModel?.totals == null) return SizedBox.shrink();
-
-    final totals = outstandingLeaseBalanceModel!.totals!;
+    // Show $0.00 before Run (no totals yet) instead of hiding the card.
+    final balance =
+        outstandingLeaseBalanceModel?.totals?.outstandingBalance ?? 0;
 
     return Container(
       padding: EdgeInsets.all(8),
@@ -1010,7 +1029,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '\$${NumberFormat('#,##0.00').format(totals.outstandingBalance ?? 0)}',
+                    '\$${NumberFormat('#,##0.00').format(balance)}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

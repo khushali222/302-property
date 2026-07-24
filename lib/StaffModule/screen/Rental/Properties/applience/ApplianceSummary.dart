@@ -80,14 +80,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = false;
         });
-
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading appliance data: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
       }
     } else {
       setState(() {
@@ -320,7 +312,9 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                   'Name',
                                   appliance.applianceName ?? '',
                                   'Category',
-                                  appliance.categoryName ?? ''),
+                                  _liveAppliance?.categoryName ??
+                                      widget.appliance.categoryName ??
+                                      '-'),
                               _buildDetailRowPair('Type', appliance.type ?? '',
                                   'Status', appliance.status ?? '',
                                   valueColor2:
