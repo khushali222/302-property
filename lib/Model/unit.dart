@@ -79,6 +79,10 @@ class unit_appliance {
   String? applianceName;
   String? applianceDescription;
   String? type;
+  /// Infrastructure "Type" as shown in the Add/Edit form: 'Major System' or
+  /// 'Appliance'. The legacy free-text [type] field is no longer written by the
+  /// form, so this is the field that actually carries the value.
+  String? systemType;
   String? brand;
   String? model;
   String? serialNumber;
@@ -105,6 +109,7 @@ class unit_appliance {
     this.applianceName,
     this.applianceDescription,
     this.type,
+    this.systemType,
     this.brand,
     this.model,
     this.serialNumber,
@@ -132,6 +137,7 @@ class unit_appliance {
     applianceName = json['appliance_name'];
     applianceDescription = json['appliance_description'];
     type = json['type'];
+    systemType = json['system_type'];
     brand = json['brand'];
     model = json['model'];
     serialNumber = json['serial_number'];
@@ -160,6 +166,7 @@ class unit_appliance {
     data['appliance_name'] = this.applianceName;
     data['appliance_description'] = this.applianceDescription;
     data['type'] = this.type;
+    data['system_type'] = this.systemType;
     data['brand'] = this.brand;
     data['model'] = this.model;
     data['serial_number'] = this.serialNumber;

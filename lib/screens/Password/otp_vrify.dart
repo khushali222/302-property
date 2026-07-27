@@ -213,6 +213,10 @@ class _otp_verifyState extends State<otp_verify> {
               ),
               GestureDetector(
                 onTap: () {
+                  // A second tap while the first verify is in flight would hit
+                  // a server that already consumed the OTP, so the retry fails
+                  // over a successful verification.
+                  if (loading) return;
                   // Guard the partial code: the screen has no field validators,
                   // so validate() alone would let an incomplete OTP be posted.
                   if (otpCode.length < 6) {
