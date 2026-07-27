@@ -12,6 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
 import '../../../widgets/appbar.dart';
+import '../../../widgets/clearable_date_picker.dart';
+import '../../../widgets/clearable_date_suffix.dart';
 import '../../../widgets/custom_drawer.dart';
 
 // Custom Phone Number Formatter
@@ -229,9 +231,23 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     return hint;
   }
 
+  /// Blank an OPTIONAL date field (text + its backing DateTime).
+  void _clearDateField(TextEditingController controller) {
+    setState(() {
+      controller.text = '';
+      if (controller == _lastPaymentDateController) {
+        _lastPaymentDate = null;
+      } else if (controller == _nextPaymentDateController) {
+        _nextPaymentDate = null;
+      } else if (controller == _fixedInterestExpirationDateController) {
+        _fixedInterestExpirationDate = null;
+      }
+    });
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate,
-      {DateTime? firstDate, DateTime? lastDate}) async {
+      {DateTime? firstDate, DateTime? lastDate, bool allowClear = false}) async {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -263,30 +279,48 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       }
     }
 
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: actualInitialDate,
-      firstDate: actualFirstDate,
-      lastDate: actualLastDate,
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
+    DateTime? pickedResult;
+    if (allowClear) {
+      // Optional field → picker offers a Clear action (web parity).
+      final ClearableDatePickerResult? result = await showClearableDatePicker(
+        context: context,
+        initialDate: actualInitialDate,
+        firstDate: actualFirstDate,
+        lastDate: actualLastDate,
+      );
+      if (result == null) return; // cancelled → keep the old value
+      if (result.cleared) {
+        _clearDateField(controller);
+        return;
+      }
+      pickedResult = result.date!;
+    } else {
+      pickedResult = await showDatePicker(
+        context: context,
+        initialDate: actualInitialDate,
+        firstDate: actualFirstDate,
+        lastDate: actualLastDate,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: blueColor, // header background color
+                onPrimary: Colors.white, // header text color
+                // onSurface: Colors.blue, // body text color
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: blueColor, // button text color
+                ),
               ),
             ),
-          ),
-          child: child!,
-        );
-      },
-    );
+            child: child!,
+          );
+        },
+      );
+    }
+    final DateTime? picked = pickedResult;
     if (picked != null) {
       setState(() {
         // Get dateProvider to format the date according to user's preference
@@ -1897,8 +1931,11 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                 _fixedInterestExpirationDate,
                                 firstDate: minDate,
                                 lastDate: maxDate,
+                                allowClear: true,
                               );
                             },
+                            onClear: () => _clearDateField(
+                                _fixedInterestExpirationDateController),
                           );
                         },
                       ),
@@ -1969,8 +2006,12 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             // Allow today and past dates, but not future dates
                             _selectDate(context, _lastPaymentDateController,
                                 _lastPaymentDate,
-                                firstDate: DateTime(2000), lastDate: today);
+                                firstDate: DateTime(2000),
+                                lastDate: today,
+                                allowClear: true);
                           },
+                          onClear: () =>
+                              _clearDateField(_lastPaymentDateController),
                         );
                       },
                     ),
@@ -1991,8 +2032,12 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             // Don't let select past dates, allow today and future dates
                             _selectDate(context, _nextPaymentDateController,
                                 _nextPaymentDate,
-                                firstDate: today, lastDate: DateTime(2100));
+                                firstDate: today,
+                                lastDate: DateTime(2100),
+                                allowClear: true);
                           },
+                          onClear: () =>
+                              _clearDateField(_nextPaymentDateController),
                         );
                       },
                     ),
@@ -2226,7 +2271,70 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     required String hint,
     required VoidCallback onTap,
     String? Function(String?)? validator,
+
+    /// Non-null only for OPTIONAL date fields: shows an "X" beside the
+    /// calendar icon so a picked date can be removed (web parity).
+    VoidCallback? onClear,
   }) {
+    final InputDecoration decoration = InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(
+        color: Colors.grey[400],
+        fontSize: 14,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey[300]!),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: blueColor, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      suffixIcon: onClear == null
+          ? Icon(
+              Icons.calendar_today,
+              color: blueColor,
+            )
+          : ClearableDateSuffix(
+              controller: controller,
+              onPick: onTap,
+              onClear: onClear,
+              icon: Icons.calendar_today,
+              iconColor: blueColor,
+            ),
+    );
+
+    if (onClear != null) {
+      // AbsorbPointer would swallow taps on the "X"; use a read-only field
+      // with onTap instead so both suffix buttons stay tappable.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            readOnly: true,
+            onTap: onTap,
+            decoration: decoration,
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2245,31 +2353,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
             child: TextFormField(
               controller: controller,
               validator: validator,
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 14,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: blueColor, width: 2),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                suffixIcon: Icon(
-                  Icons.calendar_today,
-                  color: blueColor,
-                ),
-              ),
+              decoration: decoration,
             ),
           ),
         ),

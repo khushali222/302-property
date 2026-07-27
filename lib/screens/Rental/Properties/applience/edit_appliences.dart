@@ -10,6 +10,8 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../../Model/All_categories_model.dart';
 import '../../../../constant/constant.dart';
 import '../../../../widgets/appbar.dart';
+import '../../../../widgets/clearable_date_picker.dart';
+import '../../../../widgets/clearable_date_suffix.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../summery_page.dart';
 import '../../../../Model/All_categories_model.dart';
@@ -1240,8 +1242,11 @@ class _Edit_applienceState extends State<Edit_applience> {
 
   Widget dateField(String label, TextEditingController controller,
       BuildContext context, StateSetter setState) {
-    return GestureDetector(
-      onTap: () {
+    // Installed Date is required to save; the other two are optional.
+    final bool isRequired = label == 'Installed Date';
+
+    void openPicker() {
+      if (isRequired) {
         showDatePicker(
           context: context,
           initialDate: DateTime.now(),
@@ -1265,13 +1270,49 @@ class _Edit_applienceState extends State<Edit_applience> {
             });
           }
         });
-      },
+        return;
+      }
+
+      // Optional field: the picker offers a "Clear" action (web parity).
+      showClearableDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+        helpText: 'Select $label',
+      ).then((result) {
+        if (result == null) return; // cancelled — keep the current value
+        setState(() {
+          if (result.cleared) {
+            controller.clear();
+          } else {
+            controller.text = formatDate(result.date!.toString());
+          }
+        });
+      });
+    }
+
+    return GestureDetector(
+      onTap: isRequired ? openPicker : null,
       child: AbsorbPointer(
+        absorbing: isRequired,
         child: CustomTextFormField(
           labelText: label,
           hintText: 'Select $label',
           controller: controller,
           keyboardType: TextInputType.datetime,
+          readOnly: !isRequired,
+          onTap: isRequired ? null : openPicker,
+          suffixIcon: isRequired
+              ? null
+              : ClearableDateSuffix(
+                  controller: controller,
+                  onPick: openPicker,
+                  onClear: () => setState(() => controller.clear()),
+                  icon: Icons.calendar_today,
+                  iconColor: Colors.grey,
+                  iconSize: 20,
+                ),
         ),
       ),
     );
@@ -1285,6 +1326,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final bool obscureText;
   final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -1294,6 +1337,8 @@ class CustomTextFormField extends StatefulWidget {
     required this.controller,
     this.obscureText = false,
     this.suffixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -1347,6 +1392,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
+          readOnly: widget.readOnly,
+          onTap: widget.onTap,
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
             // labelText: widget.labelText,

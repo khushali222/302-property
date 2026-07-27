@@ -19,6 +19,8 @@ import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
     as widget_302_staff;
 import '../../widgets/custom_drawer.dart';
+import '../../widgets/clearable_date_picker.dart';
+import '../../widgets/clearable_date_suffix.dart';
 import '../../repository/fetch_allcategories.dart';
 import '../../Model/All_categories_model.dart';
 import 'package:three_zero_two_property/Model/bid_request.dart';
@@ -358,37 +360,34 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
 
   Future<void> _selectDueDate() async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    final DateTime? picked = await showDatePicker(
+    final result = await showClearableDatePicker(
       context: context,
       initialDate: _selectedDueDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor,
-              onPrimary: Colors.white,
-              onSurface: blueColor,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      helpText: 'Due Date',
     );
 
-    if (picked != null) {
-      setState(() {
-        _selectedDueDate = picked;
-        _dueDateController.text = DateFormat(dateProvider.dateFormat).format(picked);
-      });
+    // Cancelled - keep the existing value.
+    if (result == null) return;
+
+    if (result.cleared) {
+      _clearDueDate();
+      return;
     }
+
+    final DateTime picked = result.date!;
+    setState(() {
+      _selectedDueDate = picked;
+      _dueDateController.text = DateFormat(dateProvider.dateFormat).format(picked);
+    });
+  }
+
+  void _clearDueDate() {
+    setState(() {
+      _selectedDueDate = null;
+      _dueDateController.clear();
+    });
   }
 
   Future<void> _pickImages() async {
@@ -1085,12 +1084,13 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
               filled: true,
               fillColor: Colors.white,
               isDense: true,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.calendar_today,
-                  color: Colors.grey[600],
-                ),
-                onPressed: _selectDueDate,
+              suffixIcon: ClearableDateSuffix(
+                controller: _dueDateController,
+                onPick: _selectDueDate,
+                onClear: _clearDueDate,
+                icon: Icons.calendar_today,
+                iconColor: Colors.grey[600],
+                iconSize: 20,
               ),
             ),
           ),

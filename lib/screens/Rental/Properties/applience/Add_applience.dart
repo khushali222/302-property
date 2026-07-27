@@ -13,6 +13,8 @@ import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
 import 'package:provider/provider.dart';
 import '../../../../widgets/appbar.dart';
+import '../../../../widgets/clearable_date_picker.dart';
+import '../../../../widgets/clearable_date_suffix.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
@@ -1403,81 +1405,122 @@ class _AddApplienceState extends State<AddApplience> {
       errorText = _lastMaintenanceDateError;
     }
 
+    // Installed Date is required to save; the other two are optional.
+    final bool isRequired = label == 'Installed Date';
+
+    void applyPickedDate(DateTime date) {
+      setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        validateDates(); // Validate dates after selection
+      });
+    }
+
+    void openPicker() {
+      // If installed date is empty and trying to set warranty or maintenance date
+      if (_installedDate.text.isEmpty &&
+          (label == 'Warranty Expiry' || label == 'Last Maintenance Date')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select Installed Date first'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      DateTime? initialDate;
+      DateTime? firstDate;
+
+      // Set minimum date based on installed date for warranty and maintenance
+      if (label == 'Installed Date') {
+        // For installed date, allow any date from 2000 to 2100
+        firstDate = DateTime(2000);
+        initialDate = DateTime.now();
+      } else if (_installedDate.text.isNotEmpty &&
+          (label == 'Warranty Expiry' || label == 'Last Maintenance Date')) {
+        firstDate = DateTime.parse(_convertToApiFormat(_installedDate.text));
+        initialDate = firstDate;
+      } else {
+        firstDate = DateTime(2000);
+        initialDate = DateTime.now();
+      }
+
+      if (isRequired) {
+        showDatePicker(
+          context: context,
+          initialDate: initialDate,
+          firstDate: firstDate,
+          lastDate: DateTime(2100),
+          builder: (context, child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: blueColor,
+                  onSurface: Colors.black,
+                ),
+              ),
+              child: child!,
+            );
+          },
+        ).then((date) {
+          if (date != null) applyPickedDate(date);
+        });
+        return;
+      }
+
+      // Optional field: the picker offers a "Clear" action (web parity).
+      showClearableDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: DateTime(2100),
+        helpText: 'Select $label',
+      ).then((result) {
+        if (result == null) return; // cancelled — keep the current value
+        if (result.cleared) {
+          setState(() {
+            controller.clear();
+            validateDates();
+          });
+          return;
+        }
+        applyPickedDate(result.date!);
+      });
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: () {
-            // If installed date is empty and trying to set warranty or maintenance date
-            if (_installedDate.text.isEmpty &&
-                (label == 'Warranty Expiry' ||
-                    label == 'Last Maintenance Date')) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Please select Installed Date first'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-
-            DateTime? initialDate;
-            DateTime? firstDate;
-
-            // Set minimum date based on installed date for warranty and maintenance
-            if (label == 'Installed Date') {
-              // For installed date, allow any date from 2000 to 2100
-              firstDate = DateTime(2000);
-              initialDate = DateTime.now();
-            } else if (_installedDate.text.isNotEmpty &&
-                (label == 'Warranty Expiry' ||
-                    label == 'Last Maintenance Date')) {
-              firstDate =
-                  DateTime.parse(_convertToApiFormat(_installedDate.text));
-              initialDate = firstDate;
-            } else {
-              firstDate = DateTime(2000);
-              initialDate = DateTime.now();
-            }
-
-            showDatePicker(
-              context: context,
-              initialDate: initialDate,
-              firstDate: firstDate,
-              lastDate: DateTime(2100),
-              builder: (context, child) {
-                return Theme(
-                  data: ThemeData.light().copyWith(
-                    colorScheme: ColorScheme.light(
-                      primary: blueColor,
-                      onSurface: Colors.black,
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
-            ).then((date) {
-              if (date != null) {
-                setState(() {
-                  // Get dateProvider to format the date according to user's preference
-                  final dateProvider =
-                      Provider.of<DateProvider>(context, listen: false);
-                  // Display format: Use provider's format for user display
-                  String apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
-                  controller.text =
-                      dateProvider.formatCurrentDate(apiFormatDate);
-                  validateDates(); // Validate dates after selection
-                });
-              }
-            });
-          },
+          onTap: isRequired ? openPicker : null,
           child: AbsorbPointer(
+            absorbing: isRequired,
             child: CustomTextFormField(
               labelText: label,
               hintText: 'Select $label',
               controller: controller,
               keyboardType: TextInputType.datetime,
-              suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
+              readOnly: !isRequired,
+              onTap: isRequired ? null : openPicker,
+              suffixIcon: isRequired
+                  ? const Icon(Icons.calendar_today, color: Colors.grey)
+                  : ClearableDateSuffix(
+                      controller: controller,
+                      onPick: openPicker,
+                      onClear: () {
+                        setState(() {
+                          controller.clear();
+                          validateDates();
+                        });
+                      },
+                      icon: Icons.calendar_today,
+                      iconColor: Colors.grey,
+                      iconSize: 20,
+                    ),
             ),
           ),
         ),
@@ -1504,6 +1547,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final bool obscureText;
   final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -1513,6 +1558,8 @@ class CustomTextFormField extends StatefulWidget {
     required this.controller,
     this.obscureText = false,
     this.suffixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -1566,6 +1613,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
+          readOnly: widget.readOnly,
+          onTap: widget.onTap,
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
             // labelText: widget.labelText,

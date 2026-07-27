@@ -18,7 +18,10 @@ import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
+import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
@@ -45,6 +48,12 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+
+  // Web parity: "Show Deleted Policies" checkbox state, persisted like the
+  // web app's localStorage key "rentersInsurance:list:showDeleted".
+  static const String _showDeletedPrefKey = 'rentersInsurance:list:showDeleted';
+  bool _showDeleted = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +64,27 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       });
     });
     checkInternet();
-    _futureRentersInsurance = fetchRentersInsuranceData();
+    _futureRentersInsurance = _loadShowDeletedPrefAndFetch();
+  }
+
+  // Read the persisted "Show Deleted Policies" preference first so the
+  // initial fetch already includes deleted policies when it was left ON.
+  Future<List<RentersInsuranceData>> _loadShowDeletedPrefAndFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    _showDeleted = prefs.getBool(_showDeletedPrefKey) ?? false;
+    return fetchRentersInsuranceData();
+  }
+
+  Future<void> _onShowDeletedChanged(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showDeletedPrefKey, value);
+    if (!mounted) return;
+    setState(() {
+      _showDeleted = value;
+      isLoading = true;
+      currentPage = 0;
+      _futureRentersInsurance = fetchRentersInsuranceData();
+    });
   }
 
   void checkInternet() async {
@@ -69,7 +98,8 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   Future<List<RentersInsuranceData>> fetchRentersInsuranceData() async {
     RentersInsuranceService service = RentersInsuranceService();
     try {
-      List<RentersInsuranceData> data = await service.fetchRentersInsurance();
+      List<RentersInsuranceData> data =
+          await service.fetchRentersInsurance(includeDeleted: _showDeleted);
       setState(() {
         rentersInsuranceModel = data;
         isLoading = false;
@@ -964,6 +994,47 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                   ReportHeader(
                     title: "Renter's Insurance",
                   ),
+                  // Web parity: "Show Deleted Policies" checkbox above the
+                  // list; toggling refetches with ?include_deleted=1 and the
+                  // choice persists across screen opens.
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: 8,
+                        left: MediaQuery.of(context).size.width > 500 ? 26 : 16,
+                        right:
+                            MediaQuery.of(context).size.width > 500 ? 26 : 16),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: _showDeleted,
+                            activeColor: blueColor,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            onChanged: (value) {
+                              if (value != null) {
+                                _onShowDeletedChanged(value);
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () => _onShowDeletedChanged(!_showDeleted),
+                          child: Text(
+                            'Show Deleted Policies',
+                            style: TextStyle(
+                              color: blueColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   // if (MediaQuery.of(context).size.width > 500)
                   //   const SizedBox(height: 16),
                   // if (MediaQuery.of(context).size.width < 500)
@@ -1183,6 +1254,15 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                       var item = entry.value;
                                       bool isRowExpanded =
                                           expandedRowIndex == rowIndex;
+                                      // Web parity: soft-deleted policies are
+                                      // faded + struck through.
+                                      final bool isDeleted =
+                                          item.rentersInsurance?.isDelete ==
+                                              true;
+                                      final TextDecoration? rowDecoration =
+                                          isDeleted
+                                              ? TextDecoration.lineThrough
+                                              : null;
 
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
@@ -1272,8 +1352,12 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                       '${item.tenantName ?? '-'}',
                                                                   style:
                                                                       TextStyle(
-                                                                    color:
-                                                                        blueColor,
+                                                                    color: isDeleted
+                                                                        ? Colors
+                                                                            .grey
+                                                                        : blueColor,
+                                                                    decoration:
+                                                                        rowDecoration,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -1289,8 +1373,13 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                                         "\n${item.unitDetails ?? '-'}",
                                                                     style:
                                                                         TextStyle(
-                                                                      color: Colors
-                                                                          .lightBlue, // Light blue color for tenant names
+                                                                      color: isDeleted
+                                                                          ? Colors
+                                                                              .grey
+                                                                          : Colors
+                                                                              .lightBlue, // Light blue color for tenant names
+                                                                      decoration:
+                                                                          rowDecoration,
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
@@ -1309,7 +1398,11 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                       child: Text(
                                                         '${item.rentersInsurance!.insuranceCompany ?? '-'}',
                                                         style: TextStyle(
-                                                          color: blueColor,
+                                                          color: isDeleted
+                                                              ? Colors.grey
+                                                              : blueColor,
+                                                          decoration:
+                                                              rowDecoration,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 14,
@@ -1321,7 +1414,11 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                       child: Text(
                                                         '  ${item.rentersInsurance!.policyId ?? '-'}',
                                                         style: TextStyle(
-                                                          color: blueColor,
+                                                          color: isDeleted
+                                                              ? Colors.grey
+                                                              : blueColor,
+                                                          decoration:
+                                                              rowDecoration,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 14,
@@ -1453,6 +1550,118 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                                           ),
                                                         ),*/
                                                           ],
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        // Expanded-row actions —
+                                                        // View Policy + View
+                                                        // Documents (same button
+                                                        // style as the Renters
+                                                        // Insurance table).
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 8,
+                                                                  bottom: 6),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => ViewRentersDetails(
+                                                                                tenantid: item.tenantId ?? '',
+                                                                                leaseId: item.leaseId ?? '',
+                                                                                renters_insurance_id: item.rentersInsurance?.rentersInsuranceId ?? '',
+                                                                                includeDeleted: item.rentersInsurance?.isDelete == true,
+                                                                              )));
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade200,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  child:
+                                                                      const Center(
+                                                                    child:
+                                                                        FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .eye,
+                                                                      size: 15,
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 5),
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  final hasDoc = (item.rentersInsurance?.insurancePolicyDocument ??
+                                                                          '')
+                                                                      .isNotEmpty;
+                                                                  if (hasDoc) {
+                                                                    viewInsuranceDocument(
+                                                                        context,
+                                                                        item.rentersInsurance
+                                                                            ?.insurancePolicyDocument);
+                                                                  } else {
+                                                                    ScaffoldMessenger.of(
+                                                                            context)
+                                                                        .showSnackBar(
+                                                                      const SnackBar(
+                                                                        content:
+                                                                            Text('No document attached'),
+                                                                        behavior:
+                                                                            SnackBarBehavior.floating,
+                                                                      ),
+                                                                    );
+                                                                  }
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: (item.rentersInsurance?.insurancePolicyDocument ?? '')
+                                                                            .isNotEmpty
+                                                                        ? const Color(0xFFE8F0FA)
+                                                                        : Colors.grey.shade100,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child:
+                                                                        FaIcon(
+                                                                      FontAwesomeIcons
+                                                                          .fileLines,
+                                                                      size: 15,
+                                                                      color: (item.rentersInsurance?.insurancePolicyDocument ?? '')
+                                                                              .isNotEmpty
+                                                                          ? blueColor
+                                                                          : Colors.grey.shade400,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                         // Row(
                                                         //   mainAxisAlignment:

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../constant/constant.dart';
 import '../provider/dateProvider.dart';
+import 'clearable_date_picker.dart';
 
 class CustomDateField extends StatefulWidget {
   final String hintText;
@@ -15,6 +16,11 @@ class CustomDateField extends StatefulWidget {
   final Color? borderColor;
   final double borderRadius;
 
+  /// Opt-in for OPTIONAL date fields: uses the picker dialog with a "Clear"
+  /// action and shows an "X" suffix while the field has a value. Leave false
+  /// for required fields (default keeps the old behavior unchanged).
+  final bool clearable;
+
   CustomDateField({
     Key? key,
     this.controller,
@@ -26,6 +32,7 @@ class CustomDateField extends StatefulWidget {
     this.onChanged,
     this.borderColor,
     this.borderRadius = 5,
+    this.clearable = false,
   }) : super(key: key);
 
   @override
@@ -36,8 +43,49 @@ class CustomDateFieldState extends State<CustomDateField> {
   String? _errorMessage;
   DateTime? _selectedDate;
 
+  void _clear(FormFieldState<String> state) {
+    setState(() {
+      _selectedDate = null;
+      widget.controller?.clear();
+      _errorMessage = null;
+    });
+    if (widget.onDateSelected != null) widget.onDateSelected!(null);
+    if (widget.onChanged != null) widget.onChanged!(null);
+    state.didChange('');
+  }
+
   Future<void> _pickDate(
       BuildContext context, FormFieldState<String> state) async {
+    if (widget.clearable) {
+      final ClearableDatePickerResult? result = await showClearableDatePicker(
+        context: context,
+        initialDate: _selectedDate ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101),
+      );
+      if (result == null) return; // cancelled — keep the current value
+      if (result.cleared) {
+        _clear(state);
+        return;
+      }
+      setState(() {
+        _selectedDate = result.date;
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        widget.controller?.text =
+            dateProvider.formatCurrentDate(_selectedDate!.toString());
+        _errorMessage = widget.validator != null
+            ? widget.validator!(widget.controller?.text)
+            : null;
+      });
+      if (widget.onDateSelected != null) {
+        widget.onDateSelected!(_selectedDate);
+      }
+      if (widget.onChanged != null) {
+        widget.onChanged!(_selectedDate);
+      }
+      state.didChange(widget.controller?.text);
+      return;
+    }
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
@@ -123,11 +171,17 @@ class CustomDateFieldState extends State<CustomDateField> {
                   decoration: InputDecoration(
                     // contentPadding: EdgeInsets.all(8.0),
                     // contentPadding: EdgeInsets.symmetric(),
-                    suffixIconConstraints: BoxConstraints(
-                        maxWidth: 20,
-                        maxHeight: 20,
-                        minHeight: 20,
-                        minWidth: 20),
+                    suffixIconConstraints: widget.clearable
+                        ? BoxConstraints(
+                            maxWidth: 56,
+                            maxHeight: 20,
+                            minHeight: 20,
+                            minWidth: 20)
+                        : BoxConstraints(
+                            maxWidth: 20,
+                            maxHeight: 20,
+                            minHeight: 20,
+                            minWidth: 20),
                     prefixIcon: widget.prefixIcon != null
                         ? Icon(widget.prefixIcon)
                         : null,
@@ -135,12 +189,35 @@ class CustomDateFieldState extends State<CustomDateField> {
                         TextStyle(fontSize: 13, color: Color(0xFFb0b6c3)),
                     border: InputBorder.none,
                     hintText: widget.hintText,
-                    suffixIcon: IconButton(
-                      padding: EdgeInsets.symmetric(vertical: 1),
-                      iconSize: 20,
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () => _pickDate(context, state),
-                    ),
+                    suffixIcon: widget.clearable
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if ((widget.controller?.text ?? '').isNotEmpty)
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  iconSize: 18,
+                                  tooltip: 'Clear date',
+                                  icon: Icon(Icons.close,
+                                      color: Colors.grey),
+                                  onPressed: () => _clear(state),
+                                ),
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                iconSize: 20,
+                                icon: Icon(Icons.calendar_today),
+                                onPressed: () => _pickDate(context, state),
+                              ),
+                            ],
+                          )
+                        : IconButton(
+                            padding: EdgeInsets.symmetric(vertical: 1),
+                            iconSize: 20,
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () => _pickDate(context, state),
+                          ),
                   ),
                 ),
               ),

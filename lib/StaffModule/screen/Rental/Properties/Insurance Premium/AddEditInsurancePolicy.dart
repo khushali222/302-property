@@ -10,6 +10,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../../../../constant/constant.dart';
 import '../../../../../provider/dateProvider.dart';
 import '../../../../widgets/appbar.dart';
+import '../../../../../widgets/clearable_date_picker.dart';
+import '../../../../../widgets/clearable_date_suffix.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../../../../../Model/PropertyInsuranceModel.dart';
 
@@ -340,9 +342,26 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
     });
   }
 
+  /// Blanks an OPTIONAL date field (and its backing DateTime).
+  void _clearDateField(TextEditingController controller) {
+    setState(() {
+      controller.clear();
+      if (controller == _effectiveDateController) {
+        _effectiveDate = null;
+      } else if (controller == _expirationDateController) {
+        _expirationDate = null;
+      } else if (controller == _cancellationNoticeDateController) {
+        _cancellationNoticeDate = null;
+      }
+    });
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate,
-      {Function(DateTime)? onDateSelected, bool isExpiration = false}) async {
+      {Function(DateTime)? onDateSelected,
+      bool isExpiration = false,
+      bool allowClear = false,
+      VoidCallback? onCleared}) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final DateTime minExpiration = _effectiveDate != null
         ? _effectiveDate!.add(const Duration(days: 1))
@@ -351,38 +370,59 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
     if (isExpiration && resolvedInitial.isBefore(minExpiration)) {
       resolvedInitial = minExpiration;
     }
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: resolvedInitial,
-      firstDate: isExpiration ? minExpiration : DateTime(2000),
-      lastDate: DateTime(2100),
-      initialDatePickerMode: DatePickerMode.day,
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor,
-              onPrimary: Colors.white,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: blueColor,
+    final DateTime firstDate = isExpiration ? minExpiration : DateTime(2000);
+
+    DateTime? picked;
+    if (allowClear) {
+      // Optional field: offer a "Clear" action inside the picker (web parity).
+      final ClearableDatePickerResult? result = await showClearableDatePicker(
+        context: context,
+        initialDate: resolvedInitial,
+        firstDate: firstDate,
+        lastDate: DateTime(2100),
+      );
+      if (result == null) return; // cancelled — keep the current value
+      if (result.cleared) {
+        _clearDateField(controller);
+        onCleared?.call();
+        return;
+      }
+      picked = result.date!;
+    } else {
+      picked = await showDatePicker(
+        context: context,
+        initialDate: resolvedInitial,
+        firstDate: firstDate,
+        lastDate: DateTime(2100),
+        initialDatePickerMode: DatePickerMode.day,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: blueColor,
+                onPrimary: Colors.white,
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor: blueColor,
+                ),
               ),
             ),
-          ),
-          child: child!,
-        );
-      },
-    );
+            child: child!,
+          );
+        },
+      );
+    }
 
     if (picked != null) {
+      final DateTime pickedDate = picked;
       setState(() {
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(pickedDate);
         controller.text = dateProvider.formatCurrentDate(apiFormatDate);
 
         // Update the DateTime objects
         if (controller == _effectiveDateController) {
-          _effectiveDate = picked;
+          _effectiveDate = pickedDate;
           // If effective date is after expiration date, clear expiration date
           if (_expirationDate != null &&
               _effectiveDate!.isAfter(_expirationDate!)) {
@@ -390,7 +430,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             _expirationDateController.text = '';
           }
         } else if (controller == _expirationDateController) {
-          _expirationDate = picked;
+          _expirationDate = pickedDate;
           // Validate expiration date is after effective date
           if (_effectiveDate != null &&
               !_expirationDate!.isAfter(_effectiveDate!)) {
@@ -403,11 +443,11 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             );
           }
         } else if (controller == _cancellationNoticeDateController) {
-          _cancellationNoticeDate = picked;
+          _cancellationNoticeDate = pickedDate;
         }
 
         if (onDateSelected != null) {
-          onDateSelected(picked);
+          onDateSelected(pickedDate);
         }
       });
     }
@@ -852,32 +892,41 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             return null;
           },
           builder: (FormFieldState<String> state) {
+            void openPicker() {
+              _selectDate(
+                context,
+                controller,
+                selectedDate,
+                isExpiration: label.contains('Expiration'),
+                // Only OPTIONAL date fields may be cleared.
+                allowClear: !required,
+                onCleared: () {
+                  state.didChange('');
+                  state.validate();
+                },
+                onDateSelected: (date) {
+                  setState(() {
+                    if (label.contains('Effective')) {
+                      _effectiveDate = date;
+                    } else if (label.contains('Expiration')) {
+                      _expirationDate = date;
+                    } else if (label.contains('Cancellation')) {
+                      _cancellationNoticeDate = date;
+                    }
+                  });
+                  state.didChange(controller.text);
+                  state.validate();
+                },
+              );
+            }
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    _selectDate(
-                      context,
-                      controller,
-                      selectedDate,
-                      isExpiration: label.contains('Expiration'),
-                      onDateSelected: (date) {
-                        setState(() {
-                          if (label.contains('Effective')) {
-                            _effectiveDate = date;
-                          } else if (label.contains('Expiration')) {
-                            _expirationDate = date;
-                          } else if (label.contains('Cancellation')) {
-                            _cancellationNoticeDate = date;
-                          }
-                        });
-                        state.didChange(controller.text);
-                        state.validate();
-                      },
-                    );
-                  },
+                  onTap: required ? openPicker : null,
                   child: AbsorbPointer(
+                    absorbing: required,
                     child: Builder(
                       builder: (context) {
                         final dateProvider =
@@ -894,6 +943,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
                         return TextFormField(
                           controller: controller,
+                          readOnly: true,
+                          onTap: required ? null : openPicker,
                           onChanged: (value) {
                             state.didChange(value);
                             if (_hasValidated) {
@@ -906,10 +957,23 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
                               color: Colors.grey[400],
                               fontSize: 14,
                             ),
-                            suffixIcon: Icon(
-                              Icons.calendar_today,
-                              color: blueColor,
-                            ),
+                            suffixIcon: required
+                                ? Icon(
+                                    Icons.calendar_today,
+                                    color: blueColor,
+                                  )
+                                : ClearableDateSuffix(
+                                    controller: controller,
+                                    onPick: openPicker,
+                                    onClear: () {
+                                      _clearDateField(controller);
+                                      state.didChange('');
+                                      state.validate();
+                                    },
+                                    icon: Icons.calendar_today,
+                                    iconColor: blueColor,
+                                    iconSize: 20,
+                                  ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(color: Colors.grey[300]!),

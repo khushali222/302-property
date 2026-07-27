@@ -32,6 +32,8 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import '../../Rental/Tenants/add_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/clearable_date_picker.dart';
+import '../../../widgets/clearable_date_suffix.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/dateProvider.dart';
 
@@ -905,38 +907,28 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
+    // Due Date is optional here (no validator, empty submits as ""), so the
+    // picker offers Clear the way the web date input does.
+    final result = await showClearableDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(), // Due date cannot be earlier than today
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: blueColor, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      helpText: 'Select due date',
     );
 
-    if (selectedDate != null) {
-      setState(() {
-        _dateController.text = DateFormat(
-                Provider.of<DateProvider>(context, listen: false).dateFormat)
-            .format(selectedDate);
-      });
+    if (result == null) return; // cancelled: keep the old value
+    if (result.cleared) {
+      setState(() => _dateController.clear());
+      return;
     }
+
+    final DateTime selectedDate = result.date!;
+    setState(() {
+      _dateController.text = DateFormat(
+              Provider.of<DateProvider>(context, listen: false).dateFormat)
+          .format(selectedDate);
+    });
   }
   //for tenants
 
@@ -3408,11 +3400,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 // labelText: 'Select Date',
                                 hintText: Provider.of<DateProvider>(context)
                                     .dateFormat,
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () {
-                                    _selectDate(context);
-                                  },
+                                suffixIcon: ClearableDateSuffix(
+                                  controller: _dateController,
+                                  onPick: () => _selectDate(context),
+                                  icon: Icons.calendar_today,
                                 ),
                               ),
                               readOnly: true,
@@ -4341,38 +4332,28 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
+    // Due Date is optional here (no validator, empty submits as ""), so the
+    // picker offers Clear the way the web date input does.
+    final result = await showClearableDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(), // Due date cannot be earlier than today
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: blueColor, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      helpText: 'Select due date',
     );
 
-    if (selectedDate != null) {
-      setState(() {
-        _dateController.text = DateFormat(
-                Provider.of<DateProvider>(context, listen: false).dateFormat)
-            .format(selectedDate);
-      });
+    if (result == null) return; // cancelled: keep the old value
+    if (result.cleared) {
+      setState(() => _dateController.clear());
+      return;
     }
+
+    final DateTime selectedDate = result.date!;
+    setState(() {
+      _dateController.text = DateFormat(
+              Provider.of<DateProvider>(context, listen: false).dateFormat)
+          .format(selectedDate);
+    });
   }
 
   //for tenants
@@ -7069,12 +7050,13 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                       Provider.of<DateProvider>(
                                                               context)
                                                           .dateFormat,
-                                                  suffixIcon: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.calendar_today),
-                                                    onPressed: () {
-                                                      _selectDate(context);
-                                                    },
+                                                  suffixIcon:
+                                                      ClearableDateSuffix(
+                                                    controller:
+                                                        _dateController,
+                                                    onPick: () =>
+                                                        _selectDate(context),
+                                                    icon: Icons.calendar_today,
                                                   ),
                                                 ),
                                                 readOnly: true,

@@ -24,6 +24,8 @@ import 'package:three_zero_two_property/repository/lease.dart';
 import 'package:three_zero_two_property/repository/properties.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_picker.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_suffix.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../Model/ApplicantModel.dart';
@@ -103,9 +105,14 @@ class _Edit_leaseState extends State<Edit_lease>
           dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
       endDateController.text =
           dateProvider.formatCurrentDate(fetchedDetails.lease.endDate);
-      rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
-          .difference(DateTime.parse(fetchedDetails.lease.startDate))
-          .inDays);
+      // Leases may be saved without an end date (optional on web), so only
+      // derive the rent-cycle options when both dates are present.
+      if (fetchedDetails.lease.endDate.isNotEmpty &&
+          fetchedDetails.lease.startDate.isNotEmpty) {
+        rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
+            .difference(DateTime.parse(fetchedDetails.lease.startDate))
+            .inDays);
+      }
       _selectedRent = fetchedDetails.rentCharges!.first.rentCycle ?? "";
       rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
 
@@ -667,28 +674,22 @@ class _Edit_leaseState extends State<Edit_lease>
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final ClearableDatePickerResult? result = await showClearableDatePicker(
       context: context,
       initialDate: _endDate ?? DateTime.now(),
       firstDate: _startDate ?? DateTime.now(),
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: blueColor, // Header background color
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // Selection color
-              onPrimary: Colors.white, // Text color
-              surface: Colors.white, // Calendar background color
-              onSurface: Colors.black, // Calendar text color
-            ),
-            dialogBackgroundColor: Colors.white, // Background color
-          ),
-          child: child!,
-        );
-      },
     );
-    if (picked != null && picked != _endDate) {
+    if (result == null) return; // cancelled — keep the current value
+    if (result.cleared) {
+      setState(() {
+        endDateController.clear();
+        _endDate = null;
+      });
+      return;
+    }
+    final DateTime picked = result.date!;
+    if (picked != _endDate) {
       setState(() {
         _endDate = picked;
         // Get dateProvider to format the date according to user's preference
@@ -1827,123 +1828,94 @@ class _Edit_leaseState extends State<Edit_lease>
                                 showElevation: false,
                                 borderColor: const Color(0xFFCED4DA),
                                   onTap: () async {
-                                    DateTime? pickedDate = await showDatePicker(
+                                    final ClearableDatePickerResult? result =
+                                        await showClearableDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2101),
-                                      locale: const Locale('en', 'US'),
-                                      builder: (BuildContext context,
-                                          Widget? child) {
-                                        return Theme(
-                                          data: ThemeData.light().copyWith(
-                                            colorScheme: ColorScheme.light(
-                                              primary:
-                                                  blueColor, // header background color
-                                              onPrimary: Colors
-                                                  .white, // header text color
-                                              onSurface:
-                                                  blueColor, // body text color
-                                            ),
-                                            textButtonTheme:
-                                                TextButtonThemeData(
-                                              style: TextButton.styleFrom(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor:
-                                                    blueColor, // button text color
-                                              ),
-                                            ),
-                                          ),
-                                          child: child!,
-                                        );
-                                      },
                                     );
-
-                                    if (pickedDate != null) {
-                                      // String formattedDate =
-                                      //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                      String formattedDate =
-                                          "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    if (result == null) return;
+                                    if (result.cleared) {
                                       setState(() {
-                                        endDateController.text = formattedDate;
-                                        if (_startDate != null) {
-                                          rentCycleItemsDynamic(pickedDate
-                                              .difference(_startDate!)
-                                              .inDays);
-                                        } else {
-                                          _startDate = DateTime.parse(
-                                              reverseFormatDate(
-                                                  startDateController.text));
-                                          rentCycleItemsDynamic(pickedDate
-                                              .difference(_startDate!)
-                                              .inDays);
-                                        }
+                                        endDateController.clear();
+                                        _endDate = null;
                                       });
+                                      return;
                                     }
+                                    final DateTime pickedDate = result.date!;
+                                    // String formattedDate =
+                                    //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                    String formattedDate =
+                                        "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                    setState(() {
+                                      endDateController.text = formattedDate;
+                                      if (_startDate != null) {
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
+                                      } else {
+                                        _startDate = DateTime.parse(
+                                            reverseFormatDate(
+                                                startDateController.text));
+                                        rentCycleItemsDynamic(pickedDate
+                                            .difference(_startDate!)
+                                            .inDays);
+                                      }
+                                    });
                                   },
                                   readOnnly: true,
-                                  suffixIcon: IconButton(
-                                      onPressed: () async {
-                                        DateTime? pickedDate =
-                                            await showDatePicker(
+                                  suffixIcon: ClearableDateSuffix(
+                                      controller: endDateController,
+                                      icon: Icons.date_range_rounded,
+                                      iconSize: 24,
+                                      onClear: () {
+                                        setState(() {
+                                          endDateController.clear();
+                                          _endDate = null;
+                                        });
+                                      },
+                                      onPick: () async {
+                                        final ClearableDatePickerResult?
+                                            result =
+                                            await showClearableDatePicker(
                                           context: context,
                                           initialDate: DateTime.now(),
                                           firstDate: DateTime(2000),
                                           lastDate: DateTime(2101),
-                                          locale: const Locale('en', 'US'),
-                                          builder: (BuildContext context,
-                                              Widget? child) {
-                                            return Theme(
-                                              data: ThemeData.light().copyWith(
-                                                colorScheme: ColorScheme.light(
-                                                  primary:
-                                                      blueColor, // header background color
-                                                  onPrimary: Colors
-                                                      .white, // header text color
-                                                  onSurface:
-                                                      blueColor, // body text color
-                                                ),
-                                                textButtonTheme:
-                                                    TextButtonThemeData(
-                                                  style: TextButton.styleFrom(
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    backgroundColor:
-                                                        blueColor, // button text color
-                                                  ),
-                                                ),
-                                              ),
-                                              child: child!,
-                                            );
-                                          },
                                         );
-
-                                        if (pickedDate != null) {
-                                          // String formattedDate =
-                                          //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                                          String formattedDate =
-                                              "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                        if (result == null) return;
+                                        if (result.cleared) {
                                           setState(() {
-                                            endDateController.text =
-                                                formattedDate;
-                                            if (_startDate != null) {
-                                              rentCycleItemsDynamic(pickedDate
-                                                  .difference(_startDate!)
-                                                  .inDays);
-                                            } else {
-                                              _startDate = DateTime.parse(
-                                                  reverseFormatDate(
-                                                      startDateController
-                                                          .text));
-                                              rentCycleItemsDynamic(pickedDate
-                                                  .difference(_startDate!)
-                                                  .inDays);
-                                            }
+                                            endDateController.clear();
+                                            _endDate = null;
                                           });
+                                          return;
                                         }
-                                      },
-                                      icon:
-                                          const Icon(Icons.date_range_rounded)),
+                                        final DateTime pickedDate =
+                                            result.date!;
+                                        // String formattedDate =
+                                        //     "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+                                        String formattedDate =
+                                            "${pickedDate.day.toString().padLeft(2, '0')}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.year}";
+                                        setState(() {
+                                          endDateController.text =
+                                              formattedDate;
+                                          if (_startDate != null) {
+                                            rentCycleItemsDynamic(pickedDate
+                                                .difference(_startDate!)
+                                                .inDays);
+                                          } else {
+                                            _startDate = DateTime.parse(
+                                                reverseFormatDate(
+                                                    startDateController
+                                                        .text));
+                                            rentCycleItemsDynamic(pickedDate
+                                                .difference(_startDate!)
+                                                .inDays);
+                                          }
+                                        });
+                                      }),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please select end date';
@@ -2030,12 +2002,20 @@ class _Edit_leaseState extends State<Edit_lease>
                                               },
                                               readOnnly: true,
                                               optional: true,
-                                              suffixIcon: IconButton(
-                                                onPressed: () {
+                                              suffixIcon: ClearableDateSuffix(
+                                                controller: endDateController,
+                                                icon:
+                                                    Icons.date_range_rounded,
+                                                iconSize: 24,
+                                                onPick: () {
                                                   _selectEndDate(context);
                                                 },
-                                                icon: const Icon(
-                                                    Icons.date_range_rounded),
+                                                onClear: () {
+                                                  setState(() {
+                                                    endDateController.clear();
+                                                    _endDate = null;
+                                                  });
+                                                },
                                               ),
                                               validator: (value) {
                                                 if (value == null ||

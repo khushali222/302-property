@@ -22,6 +22,8 @@ import '../../../constant/constant.dart';
 import '../../widgets/appbar.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../../widgets/titleBar.dart';
+import '../../../widgets/clearable_date_picker.dart';
+import '../../../widgets/clearable_date_suffix.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/All_categories_model.dart';
@@ -680,37 +682,31 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    DateTime? selectedDate = await showDatePicker(
+    final result = await showClearableDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
       helpText: "Due Date",
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              onSurface: blueColor, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
-    if (selectedDate != null) {
-      setState(() {
-        _dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
-      });
+    // Cancelled - keep the existing value.
+    if (result == null) return;
+
+    if (result.cleared) {
+      _clearDate();
+      return;
     }
+
+    setState(() {
+      _dateController.text = DateFormat('yyyy-MM-dd').format(result.date!);
+    });
+  }
+
+  void _clearDate() {
+    setState(() {
+      _dateController.clear();
+    });
   }
 
   //for tenants
@@ -2502,8 +2498,15 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       ),
                                                     ),
                                                   ),
-                                                  Icon(Icons.calendar_today,
-                                                      size: 20, color: blueColor),
+                                                  ClearableDateSuffix(
+                                                    controller: _dateController,
+                                                    onPick: () =>
+                                                        _selectDate(context),
+                                                    onClear: _clearDate,
+                                                    icon: Icons.calendar_today,
+                                                    iconColor: blueColor,
+                                                    iconSize: 20,
+                                                  ),
                                                 ],
                                               ),
                                             ),

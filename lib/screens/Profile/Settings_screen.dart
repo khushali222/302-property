@@ -624,6 +624,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   // Check if Mail Service fields have been modified
 
   bool _hasSurchargeChanges() {
+    // Settings are view-only for staff — keep the action disabled.
+    if (!_canEditSettings) return false;
     return credit.text.trim() != _originalCredit ||
         debit.text.trim() != _originalDebit ||
         percent.text.trim() != _originalPercent ||
@@ -633,6 +635,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateSurcharge() async {
+    // Settings are view-only for staff — never send a surcharge change.
+    if (!_canEditSettings) return;
     // Check if there are any changes before proceeding
     if (!_hasSurchargeChanges()) {
       return; // No changes made, don't proceed with update
@@ -695,6 +699,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> AddSurgedata() async {
+    // Settings are view-only for staff — never send a surcharge.
+    if (!_canEditSettings) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -735,6 +741,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> updateLatefee() async {
+    // Settings are view-only for staff — never send a late-fee change.
+    if (!_canEditSettings) return;
     // Check if there are any changes before proceeding
     if (!_hasLateFeeChanges()) {
       return; // No changes made, don't proceed with update
@@ -822,6 +830,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   //   }
   // }
   Future<void> AddLatefeedata() async {
+    // Settings are view-only for staff — never send a late-fee rule.
+    if (!_canEditSettings) return;
     // Check if there are any changes before proceeding
     if (!_hasLateFeeChanges()) {
       return; // No changes made, don't proceed with add
@@ -874,6 +884,8 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   // Whether the Late Fee Save button should be enabled.
   bool _canSaveLateFee() {
+    // Settings are view-only for staff — keep the action disabled.
+    if (!_canEditSettings) return false;
     if (selectedPropertyOwnerId.isNotEmpty) {
       // Property Owner override: enable when any field has a value.
       return duration.text.trim().isNotEmpty ||
@@ -887,6 +899,8 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   // Save late fee rules for a specific Property Owner (override).
   Future<void> saveLateFeeOverride() async {
+    // Settings are view-only for staff — never send a late-fee override.
+    if (!_canEditSettings) return;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
     try {
@@ -3229,6 +3243,55 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController _customDateController = TextEditingController();
   bool _isStaff = false;
   bool _isInitialized = false;
+
+  /// Whether the signed-in user may CHANGE settings (Surcharge / Late Fee).
+  ///
+  /// Per the Staff Permissions table (Settings > Team & Access) Settings is
+  /// "View only" for staff: the permission schema exposes `setting_view` with
+  /// no add/edit/delete counterpart, so a staff member may read these values
+  /// but only an Admin may change them (the server applies the same rule to
+  /// team management: "Only an Admin can manage team members."). Admins are
+  /// unaffected.
+  ///
+  /// If the backend ever adds a `setting_edit` permission, wire it in here —
+  /// this is the single choke point used by the fields, the action buttons and
+  /// the save methods.
+  ///
+  /// Fails CLOSED: the role is resolved asynchronously by [_checkUserType], so
+  /// until `_isInitialized` flips we treat the section as read-only. Otherwise a
+  /// staff member would see editable fields for the first frame (`_isStaff`
+  /// defaults to false). Admins simply become editable once the role is known.
+  bool get _canEditSettings => _isInitialized && !_isStaff;
+
+  /// Inline notice shown in place of the editing controls when a staff member
+  /// views a read-only settings section.
+  Widget _viewOnlyNotice() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F4F9),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline, size: 18, color: Color(0xFF8A95A8)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'View only — only an Admin can change these settings.',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width < 500 ? 13 : 15,
+                color: const Color(0xFF6B7A90),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   _checkUserType() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? staffid = prefs.getString("staff_id");
@@ -3386,6 +3449,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
       child: TextField(
         controller: controller,
+        readOnly: !_canEditSettings,
         cursorColor: blueColor,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: [
@@ -3490,6 +3554,7 @@ class _TabBarExampleState extends State<TabBarExample> {
       ),
       child: TextField(
         controller: controller,
+        readOnly: !_canEditSettings,
         cursorColor: blueColor,
         textAlign: dollar ? TextAlign.right : TextAlign.left,
         keyboardType: numeric
@@ -3611,13 +3676,19 @@ class _TabBarExampleState extends State<TabBarExample> {
         ),
         const SizedBox(height: 6),
         Text(
-          "You can set the default late fee charge from here.",
+          _canEditSettings
+              ? "You can set the default late fee charge from here."
+              : "Default late fee charge set by your Admin.",
           style: TextStyle(
             fontSize: isNarrow ? 14 : 18,
             color: const Color(0xFF8A95A8),
             fontWeight: FontWeight.w500,
           ),
         ),
+        if (!_canEditSettings) ...[
+          const SizedBox(height: 12),
+          _viewOnlyNotice(),
+        ],
         const SizedBox(height: 22),
         Row(
           children: [
@@ -3720,7 +3791,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                   );
                 }),
               ],
-              onChanged: (String? newValue) {
+              // Settings are view-only for staff — null disables the dropdown.
+              onChanged: !_canEditSettings
+                  ? null
+                  : (String? newValue) {
                 setState(() {
                   selectedPropertyOwnerId = newValue ?? '';
                 });
@@ -3839,7 +3913,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                   ),
                 );
               }).toList(),
-              onChanged: (String? newValue) {
+              // Settings are view-only for staff — null disables the dropdown.
+              onChanged: !_canEditSettings ? null : (String? newValue) {
                 setState(() {
                   selectedAccountName = newValue ?? '';
                   if (newValue == "Late Fee Income") {
@@ -4928,7 +5003,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ),
                               const SizedBox(height: 6),
                               Text(
-                                "You can set the default surcharge percentage from here.",
+                                _canEditSettings
+                                    ? "You can set the default surcharge percentage from here."
+                                    : "Default surcharge percentages set by your Admin.",
                                 style: TextStyle(
                                   fontSize:
                                       MediaQuery.of(context).size.width < 500
@@ -4938,6 +5015,10 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              if (!_canEditSettings) ...[
+                                const SizedBox(height: 12),
+                                _viewOnlyNotice(),
+                              ],
                               const SizedBox(height: 22),
                               Text(
                                 "Account to receive surcharges",
@@ -5019,7 +5100,8 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         ),
                                       );
                                     }).toList(),
-                                    onChanged: (String? newValue) {
+                                    // Settings are view-only for staff — null disables the dropdown.
+                                    onChanged: !_canEditSettings ? null : (String? newValue) {
                                       setState(() {
                                         selectedAccount = newValue;
                                         _accountError = null;

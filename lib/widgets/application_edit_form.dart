@@ -6,6 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 
+import 'clearable_date_picker.dart';
+import 'clearable_date_suffix.dart';
+
 /// Web-parity "Enter Applicant Details" form (Application tab edit/add).
 ///
 /// Mirrors staging.cloudrentalmanager.com ApplicationTab: Personal
@@ -687,7 +690,62 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
         formatters: [FilteringTextInputFormatter.digitsOnly]);
   }
 
-  Widget _date(String label, TextEditingController c, {bool required = false}) {
+  /// [clearable] opts a date field out of the "Clear" affordance without
+  /// changing its validation — used for fields the web schema hard-requires
+  /// (e.g. move_in_date) that this form does not locally mark `required`.
+  Widget _date(String label, TextEditingController c,
+      {bool required = false, bool clearable = true}) {
+    final bool offerClear = clearable && !required;
+
+    DateTime initialFor(TextEditingController ctl) {
+      if (ctl.text.trim().isNotEmpty) {
+        try {
+          return DateFormat(_df).parseStrict(ctl.text.trim());
+        } catch (_) {}
+      }
+      return DateTime.now();
+    }
+
+    Future<void> pick() async {
+      final DateTime initial = initialFor(c);
+      if (!offerClear) {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: initial,
+          firstDate: DateTime(1900),
+          lastDate: DateTime(2100),
+          // Match the app's standard date picker theme (navy).
+          builder: (context, child) => Theme(
+            data: ThemeData.light().copyWith(
+              primaryColor: blueColor,
+              colorScheme: ColorScheme.light(primary: blueColor),
+              buttonTheme: const ButtonThemeData(
+                textTheme: ButtonTextTheme.primary,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+        if (picked != null) {
+          setState(() => c.text = DateFormat(_df).format(picked));
+        }
+        return;
+      }
+      // Optional date -> offer Clear, matching the browser-native date input
+      // on web (QA: mobile had no way to unset a picked date).
+      final res = await showClearableDatePicker(
+        context: context,
+        initialDate: initial,
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100),
+        helpText: label,
+      );
+      if (res == null) return; // cancelled -> keep the old value
+      setState(() {
+        c.text = res.cleared ? '' : DateFormat(_df).format(res.date!);
+      });
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
@@ -699,40 +757,20 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
             readOnly: true,
             style: const TextStyle(fontSize: 14, color: Color(0xFF3A3A3A)),
             decoration: _dec(_df.toUpperCase()).copyWith(
-              suffixIcon: const Icon(Icons.calendar_today_outlined,
-                  size: 18, color: Color(0xFF8A95A8)),
+              suffixIcon: offerClear
+                  ? ClearableDateSuffix(
+                      controller: c,
+                      onPick: pick,
+                      onClear: () => setState(c.clear),
+                      iconColor: const Color(0xFF8A95A8),
+                    )
+                  : const Icon(Icons.calendar_today_outlined,
+                      size: 18, color: Color(0xFF8A95A8)),
             ),
             validator: required
                 ? (v) => _reqV(v, 'Please pick ${label.toLowerCase()}')
                 : null,
-            onTap: () async {
-              DateTime initial = DateTime.now();
-              if (c.text.trim().isNotEmpty) {
-                try {
-                  initial = DateFormat(_df).parseStrict(c.text.trim());
-                } catch (_) {}
-              }
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: initial,
-                firstDate: DateTime(1900),
-                lastDate: DateTime(2100),
-                // Match the app's standard date picker theme (navy).
-                builder: (context, child) => Theme(
-                  data: ThemeData.light().copyWith(
-                    primaryColor: blueColor,
-                    colorScheme: ColorScheme.light(primary: blueColor),
-                    buttonTheme: const ButtonThemeData(
-                      textTheme: ButtonTextTheme.primary,
-                    ),
-                  ),
-                  child: child!,
-                ),
-              );
-              if (picked != null) {
-                setState(() => c.text = DateFormat(_df).format(picked));
-              }
-            },
+            onTap: pick,
           ),
         ],
       ),
@@ -1343,7 +1381,9 @@ class _ApplicationEditFormState extends State<ApplicationEditForm> {
                           fontSize: 16,
                           fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
-                  _date('Move In Date', _moveIn),
+                  // Web hard-requires move_in_date (ApplicantForm yup schema),
+                  // so no Clear affordance here.
+                  _date('Move In Date', _moveIn, clearable: false),
                   _sectionDivider(),
                   _residentsSection(),
                   _sectionDivider(),

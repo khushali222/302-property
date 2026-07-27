@@ -41,10 +41,13 @@ class ViewRentersDetails extends StatefulWidget {
   final String tenantid;
   final String leaseId;
   final String renters_insurance_id;
+  // Web parity: deleted policies need ?include_deleted=1 on the detail fetch.
+  final bool includeDeleted;
   const ViewRentersDetails(
       {required this.tenantid,
       required this.leaseId,
-      required this.renters_insurance_id});
+      required this.renters_insurance_id,
+      this.includeDeleted = false});
 
   @override
   State<ViewRentersDetails> createState() => _ViewRentersDetailsState();
@@ -62,8 +65,9 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
   void initState() {
     super.initState();
 
-    _futureRentersDetails = RentersInsuranceService()
-        .fetchRentersDetails(widget.renters_insurance_id);
+    _futureRentersDetails = RentersInsuranceService().fetchRentersDetails(
+        widget.renters_insurance_id,
+        includeDeleted: widget.includeDeleted);
   }
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();

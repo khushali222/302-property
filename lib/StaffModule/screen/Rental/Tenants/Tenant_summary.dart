@@ -1685,23 +1685,57 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     if (mounted) setState(() => _sendingSetupEmail = false);
   }
 
+  /// Formats an API timestamp the way web's `toLocaleString()` renders it
+  /// (e.g. "7/15/2026, 6:22:35 PM"), converted to the device's local zone.
+  String _formatAccountTimestamp(String raw) {
+    try {
+      return DateFormat('M/d/yyyy, h:mm:ss a')
+          .format(DateTime.parse(raw).toLocal());
+    } catch (_) {
+      return raw;
+    }
+  }
+
   // Web-aligned "Account & Login" section: state-aware setup/resend/reset.
   Widget _buildAccountLoginSection() {
-    final t = widget.tenants;
-    final hasPassword =
-        ((t?.passwordSetAt ?? '').isNotEmpty) || (t?.hasPassword == true);
-    final invited = (t?.welcomeEmailSentAt ?? '').isNotEmpty;
-    final String title = hasPassword ? 'Reset Password' : 'Welcome Email';
-    final String desc = hasPassword
-        ? 'This tenant already has a password on file. Send them a reset link if they cannot log in.'
-        : invited
-            ? 'A setup email was already sent. Resend it if the tenant did not receive the link.'
-            : 'Send the tenant a one-time link (valid 4 hours) to set up their account and password.';
-    final String buttonText = hasPassword
-        ? 'Send password reset instructions'
-        : invited
-            ? 'Resend setup email'
-            : 'Send account setup email';
+    // Read the DETAIL response first and only fall back to the list model:
+    // has_password / password_set_at / welcome_email_sent_at come from
+    // GET tenant_details (has_password is derived server-side there) and are
+    // NOT in the tenants/v2 list payload. Reading widget.tenants alone made
+    // every tenant look "never emailed", so the button showed "Send account
+    // setup email" instead of "Resend setup email".
+    final t = _tenantDetails ?? widget.tenants;
+    final String passwordSetAt = (t?.passwordSetAt ?? '').trim();
+    final bool hasPasswordFlag = t?.hasPassword == true;
+    final String welcomeSentAt = (t?.welcomeEmailSentAt ?? '').trim();
+
+    // Same 4-state priority as web's TenantDetailPage:
+    //   1. password_set_at       -> reset (shows when it was set)
+    //   2. has_password          -> reset (legacy rows with no timestamps)
+    //   3. welcome_email_sent_at -> resend (emailed, setup not completed)
+    //   4. none of the above     -> welcome (never emailed)
+    final String buttonText;
+    final String desc;
+    if (passwordSetAt.isNotEmpty) {
+      buttonText = 'Send password reset instructions';
+      desc =
+          'Password last set on ${_formatAccountTimestamp(passwordSetAt)}. Send the tenant a reset link if they cannot log in.';
+    } else if (hasPasswordFlag) {
+      buttonText = 'Send password reset instructions';
+      desc =
+          'This tenant already has a password on file. Send them a reset link if they cannot log in.';
+    } else if (welcomeSentAt.isNotEmpty) {
+      buttonText = 'Resend setup email';
+      desc =
+          'Setup email sent on ${_formatAccountTimestamp(welcomeSentAt)}. Tenant has not completed setup yet \u2014 send a fresh link.';
+    } else {
+      buttonText = 'Send account setup email';
+      desc =
+          'This tenant has never been emailed a setup link. Click to send the welcome email.';
+    }
+    // Web titles the card "Welcome Email" only in the never-emailed state.
+    final String title =
+        buttonText == 'Send account setup email' ? 'Welcome Email' : 'Reset Password';
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -20,7 +20,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/RentersInsuranceAdd.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
@@ -922,6 +922,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                               tenantid: widget.tenantId,
                                                                               leaseId: widget.leaseId,
                                                                               renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                              includeDeleted: item.isDelete == true,
                                                                             )));
                                                               },
                                                               child: Container(

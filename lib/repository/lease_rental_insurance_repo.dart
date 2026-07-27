@@ -131,12 +131,17 @@ class RentersInsuranceService {
     }
   }
 
-  Future<RentersEdit> fetchRentersDetails(String renters_insurance_id) async {
+  Future<RentersEdit> fetchRentersDetails(String renters_insurance_id,
+      {bool includeDeleted = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
+    // Web parity: deleted policies are only returned by the detail endpoint
+    // when ?include_deleted=1 is passed (the report/list adds it for deleted rows).
+    final query = includeDeleted ? '?include_deleted=1' : '';
     final response = await apiGet(
-      Uri.parse('${Api_url}/api/renter-insurance/policy/$renters_insurance_id'),
+      Uri.parse(
+          '${Api_url}/api/renter-insurance/policy/$renters_insurance_id$query'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",

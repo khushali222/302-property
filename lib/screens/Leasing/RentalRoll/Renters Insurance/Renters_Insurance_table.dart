@@ -905,6 +905,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                               tenantid: widget.tenantId,
                                                                               leaseId: widget.leaseId,
                                                                               renters_insurance_id: item.rentersInsuranceId ?? "",
+                                                                              includeDeleted: item.isDelete == true,
                                                                             )));
                                                               },
                                                               child: Container(
