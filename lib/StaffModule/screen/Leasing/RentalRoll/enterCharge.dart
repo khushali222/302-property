@@ -1735,13 +1735,21 @@ class _enterChargeState extends State<enterCharge> {
                                       .where((e) => e["charge_type"] == null));
 
                                   if (validationMessage == null) {
-                                    // Amount bounds guard (web parity): > 0.01 and <= 999999.99.
+                                    // Amount bounds guard (web parity): at
+                                    // least $0.01 and at most $999,999.99.
+                                    // Note $0.01 itself is valid, so the lower
+                                    // bound is "<", not "<=".
                                     num enteredAmount =
                                         num.tryParse(Amount.text.trim()) ?? 0;
-                                    if (enteredAmount <= 0.01 ||
+                                    if (enteredAmount < 0.01 ||
                                         enteredAmount > 999999.99) {
+                                      // Web parity: explain WHY the submit was
+                                      // blocked instead of failing silently.
                                       setState(() {
                                         _isLoading = false;
+                                        validationMessage = enteredAmount < 0.01
+                                            ? 'Amount must be greater than zero.'
+                                            : 'Amount must be between \$0.01 and \$999,999.99.';
                                       });
                                       return;
                                     }

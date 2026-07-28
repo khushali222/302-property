@@ -453,12 +453,20 @@ class _enterChargeState extends State<enterCharge> {
   // Returns an error message if any row amount (or the total) is out of the
   // web-allowed bounds, otherwise null. Matches AddCharge.jsx validation.
   String? _validateChargeBounds(List<num> amounts, num total) {
+    // Web wording (AddCharge.jsx / RentRollDetail.js yup schema) for the
+    // zero/negative case, so mobile explains the block the same way web does.
     for (final amt in amounts) {
-      if (amt < _minChargeAmount || amt > _maxChargeAmount) {
+      if (amt < _minChargeAmount) {
+        return 'Amount must be greater than zero.';
+      }
+      if (amt > _maxChargeAmount) {
         return 'Each charge amount must be between \$0.01 and \$999,999.99.';
       }
     }
-    if (total < _minChargeAmount || total > _maxChargeAmount) {
+    if (total < _minChargeAmount) {
+      return 'Amount must be greater than zero.';
+    }
+    if (total > _maxChargeAmount) {
       return 'Amount must be between \$0.01 and \$999,999.99.';
     }
     return null;
@@ -1903,8 +1911,12 @@ class _enterChargeState extends State<enterCharge> {
                                                 _validateChargeBounds(
                                                     rowAmounts, totalAmount);
                                             if (boundsError != null) {
+                                              // Web parity: show WHY the submit
+                                              // was blocked instead of failing
+                                              // silently.
                                               setState(() {
                                                 _isLoading = false;
+                                                validationMessage = boundsError;
                                               });
                                               return;
                                             }
@@ -2037,8 +2049,12 @@ class _enterChargeState extends State<enterCharge> {
                                                 _validateChargeBounds(
                                                     rowAmounts, totalAmount);
                                             if (boundsError != null) {
+                                              // Web parity: show WHY the submit
+                                              // was blocked instead of failing
+                                              // silently.
                                               setState(() {
                                                 _isLoading = false;
+                                                validationMessage = boundsError;
                                               });
                                               return;
                                             }

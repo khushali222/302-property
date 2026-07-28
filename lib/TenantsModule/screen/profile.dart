@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -36,6 +37,10 @@ class Profile_screen extends StatefulWidget {
 class _Profile_screenState extends State<Profile_screen> {
   Timer? _timer;
   ValueNotifier<int> seconds = ValueNotifier(600);
+
+  // True only once the countdown actually ran out. Web disables the code field
+  // and the submit button in that state rather than posting a dead code.
+  bool is2FACodeExpired = false;
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
   bool _hasError = false;
@@ -53,6 +58,21 @@ class _Profile_screenState extends State<Profile_screen> {
   bool backupCode = false;
   List<Map<String, dynamic>> codes = [];
   String selected2FAMethod = '';
+
+  // Web parity (TwoFactorAuthComponent.js): the SMS radio is disabled when the
+  // tenant has no phone number and the Email radio when there is no e-mail,
+  // and the Enable button is additionally blocked when the *selected* method
+  // has no destination. profiledata values can be null OR an empty string.
+  String get _phone2FA =>
+      (profiledata['tenant_phoneNumber'] ?? '').toString().trim();
+  String get _email2FA =>
+      (profiledata['tenant_email'] ?? '').toString().trim();
+  bool get _canUseSms2FA => _phone2FA.isNotEmpty;
+  bool get _canUseEmail2FA => _email2FA.isNotEmpty;
+  bool get _can2FAEnable =>
+      selected2FAMethod.isNotEmpty &&
+      !(selected2FAMethod == 'sms' && !_canUseSms2FA) &&
+      !(selected2FAMethod == 'email' && !_canUseEmail2FA);
   TextEditingController verificationCodeController = TextEditingController();
   bool isVerifyingCode = false;
   bool showVerificationInput = false;
@@ -85,6 +105,10 @@ class _Profile_screenState extends State<Profile_screen> {
     // Cancel any existing timer first
     _timer?.cancel();
 
+    // A fresh code is being issued, so drop any expired state. Callers run
+    // setState right after this, which repaints the field and button.
+    is2FACodeExpired = false;
+
     // 10 minutes timer for 2FA verification code
     seconds.value = 600;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -92,6 +116,16 @@ class _Profile_screenState extends State<Profile_screen> {
         seconds.value--;
       } else {
         _timer?.cancel();
+        // The dead code is cleared and cannot be submitted until a new one is
+        // requested. Both fields are cleared because one timer serves the
+        // enable and disable flows, which are never on screen together.
+        verificationCodeController.clear();
+        disableVerificationController.clear();
+        if (mounted) {
+          setState(() {
+            is2FACodeExpired = true;
+          });
+        }
         Fluttertoast.showToast(
           msg: 'Verification code expired',
           backgroundColor: Colors.red,
@@ -100,9 +134,12 @@ class _Profile_screenState extends State<Profile_screen> {
     });
   }
 
+  /// Stops the countdown without marking the code expired — used once a code
+  /// has been accepted or the flow is cancelled.
   void stopTimer() {
     _timer?.cancel();
     seconds.value = 0;
+    is2FACodeExpired = false;
   }
 
   String getTimerString() {
@@ -110,6 +147,87 @@ class _Profile_screenState extends State<Profile_screen> {
       return '0m 0s';
     }
     return '${seconds.value ~/ 60}m ${seconds.value % 60}s';
+  }
+
+  /// Countdown + Resend row for a 2FA code field.
+  ///
+  /// Web renders these two inside the field as a suffix; mobile keeps them on
+  /// their own row to match the login screen and the other profile screens.
+  Widget _build2FACodeTimerRow({required VoidCallback onResend}) {
+    return ValueListenableBuilder<int>(
+      valueListenable: seconds,
+      builder: (context, value, child) {
+        // Locked for the first 60s of the 10 minute window, and while a
+        // request is already in flight — same gating as web and login.
+        final bool canResend = value <= 540 && !isVerifyingCode;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (value > 0)
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Code will expire in ",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextSpan(
+                      text: getTimerString(),
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (is2FACodeExpired)
+              const Text(
+                "Code expired",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            else
+              const SizedBox.shrink(),
+            GestureDetector(
+              onTap: canResend ? onResend : null,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.refresh,
+                        color: canResend ? blueColor : Colors.grey.shade600,
+                        size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Resend Code",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: canResend ? blueColor : Colors.grey.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void checkInternet() async {
@@ -449,7 +567,9 @@ class _Profile_screenState extends State<Profile_screen> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData["statusCode"] == 200) {
-          _timer?.cancel();
+          // The disable code carries the same 10 minute server-side expiry as
+          // the enable code, so run the countdown instead of cancelling it.
+          startTimer();
           setState(() {
             showDisableVerification = true;
             isVerifyingCode = false;
@@ -512,7 +632,9 @@ class _Profile_screenState extends State<Profile_screen> {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         if (jsonData["statusCode"] == 200) {
-          _timer?.cancel();
+          // 2FA is off now: stop the countdown and drop any expired state, so
+          // no "expired" toast fires minutes later.
+          stopTimer();
           setState(() {
             enble2FA = false;
             showDisableVerification = false;
@@ -697,12 +819,27 @@ class _Profile_screenState extends State<Profile_screen> {
                           color: Colors.amber.shade700, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          'These backup codes can be used to access your account if you lose access to your 2FA device. Each code can only be used once. Store them in a safe place and don\'t share them with anyone.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.amber.shade800,
-                            fontWeight: FontWeight.w500,
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Important: ',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.amber.shade900,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    'These backup codes can be used to access your account if you lose access to your 2FA device. Each code can only be used once. Store them in a safe place and don\'t share them with anyone.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.amber.shade800,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -711,17 +848,21 @@ class _Profile_screenState extends State<Profile_screen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Download button
+                // Remaining count + Download, the way web shows them. The list
+                // endpoint filters used codes out, so codes.length IS the
+                // number still valid.
                 Row(
                   children: [
-                    // Text(
-                    //   'Your Backup Codes (${codes.length} remaining)',
-                    //   style: const TextStyle(
-                    //     fontSize: 16,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
-                    const Spacer(),
+                    Expanded(
+                      child: Text(
+                        'Your Backup Codes (${codes.length} remaining)',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
                     ElevatedButton.icon(
                       onPressed: _downloadBackupCodes,
                       icon: const Icon(Icons.download, size: 16),
@@ -795,6 +936,41 @@ class _Profile_screenState extends State<Profile_screen> {
                     }).toList(),
                   ),
                 ),
+
+                const SizedBox(height: 16),
+
+                // Note box — web shows this under the list.
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD1ECF1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFBEE5EB)),
+                  ),
+                  child: Text.rich(
+                    TextSpan(
+                      children: const [
+                        TextSpan(
+                          text: 'Note: ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF0C5460),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              'When you generate new backup codes, all previous codes will be invalidated. Make sure to save these new codes in a secure location.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF0C5460),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -819,12 +995,14 @@ class _Profile_screenState extends State<Profile_screen> {
 
   // Copy to clipboard function
   void _copyToClipboard(String text) {
-    // You'll need to add the clipboard package to pubspec.yaml
-    // For now, we'll just show a snackbar
+    // Clipboard ships with Flutter via services.dart (now imported) —
+    // the old comment claiming a package was needed was wrong, so the copy
+    // icon only ever showed a snackbar. The code is no longer echoed either.
+    Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Copied: $text'),
-        duration: const Duration(seconds: 2),
+      const SnackBar(
+        content: Text('Code copied to clipboard!'),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -854,7 +1032,8 @@ class _Profile_screenState extends State<Profile_screen> {
 
       // Create file in the Downloads folder
       final file = File(
-          '${directory.path}/backup_codes_${DateTime.now().millisecondsSinceEpoch}.txt');
+          // Web names the download backup-codes-YYYY-MM-DD.txt.
+          '${directory.path}/backup-codes-${DateTime.now().toIso8601String().split('T').first}.txt');
       await file.writeAsString(content);
 
       // Show success toast
@@ -1664,24 +1843,46 @@ class _Profile_screenState extends State<Profile_screen> {
                                                   ),
                                                 ),
                                                 CustomSwitch(
-                                                  initialValue: enble2FA,
+                                                  // Follows web's
+                                                  // twoFactorToggle: on when
+                                                  // 2FA is enabled OR while
+                                                  // setting it up.
+                                                  initialValue: enble2FA ||
+                                                      show2FASetup,
                                                   onChanged: (value) {
-                                                    setState(() {
-                                                      if (value) {
+                                                    if (isVerifyingCode) return;
+                                                    if (value) {
+                                                      if (enble2FA) return;
+                                                      setState(() {
                                                         show2FASetup = true;
                                                         showVerificationInput =
                                                             false;
                                                         selected2FAMethod = '';
-                                                      } else {
-                                                        enble2FA = false;
+                                                      });
+                                                    } else if (enble2FA) {
+                                                      // Web keeps 2FA enabled
+                                                      // and only asks for a
+                                                      // code; the flag flips
+                                                      // after it is verified.
+                                                      if (showDisableVerification) {
+                                                        return;
+                                                      }
+                                                      _sendDisable2FACode();
+                                                    } else {
+                                                      stopTimer();
+                                                      setState(() {
                                                         show2FASetup = false;
                                                         showVerificationInput =
                                                             false;
+                                                        showDisableVerification =
+                                                            false;
                                                         selected2FAMethod = '';
-                                                        sms2FA = false;
-                                                        email2FA = false;
-                                                      }
-                                                    });
+                                                        verificationCodeController
+                                                            .clear();
+                                                        disableVerificationController
+                                                            .clear();
+                                                      });
+                                                    }
                                                   },
                                                 ),
                                               ],
@@ -1702,8 +1903,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                               ),
 
                                             // 2FA Setup Flow
+                                            // Web renders the chooser only in
+                                            // its `!twoFactorEnabled` arm, so
+                                            // it can never sit beside the
+                                            // disable-code form.
                                             if (show2FASetup &&
-                                                !showVerificationInput)
+                                                !showVerificationInput &&
+                                                !enble2FA &&
+                                                !showDisableVerification)
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -1729,29 +1936,49 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           value: 'sms',
                                                           groupValue:
                                                               selected2FAMethod,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              selected2FAMethod =
-                                                                  value!;
-                                                            });
-                                                          },
+                                                          onChanged: _canUseSms2FA
+                                                              ? (value) {
+                                                                  setState(() {
+                                                                    selected2FAMethod =
+                                                                        value!;
+                                                                  });
+                                                                }
+                                                              : null,
                                                           activeColor:
                                                               blueColor,
                                                         ),
                                                         const SizedBox(
                                                             width: 8),
                                                         Expanded(
-                                                          child: Text(
-                                                            "SMS (${profiledata['tenant_phoneNumber']})",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .black87,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .visible,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const Text(
+                                                                "SMS",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                _canUseSms2FA
+                                                                    ? _phone2FA
+                                                                    : "Phone number required",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black54,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .visible,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ],
@@ -1763,29 +1990,49 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           value: 'email',
                                                           groupValue:
                                                               selected2FAMethod,
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              selected2FAMethod =
-                                                                  value!;
-                                                            });
-                                                          },
+                                                          onChanged: _canUseEmail2FA
+                                                              ? (value) {
+                                                                  setState(() {
+                                                                    selected2FAMethod =
+                                                                        value!;
+                                                                  });
+                                                                }
+                                                              : null,
                                                           activeColor:
                                                               blueColor,
                                                         ),
                                                         const SizedBox(
                                                             width: 8),
                                                         Expanded(
-                                                          child: Text(
-                                                            "Email (${profiledata['tenant_email']})",
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16,
-                                                              color: Colors
-                                                                  .black87,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .visible,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const Text(
+                                                                "Email",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                _canUseEmail2FA
+                                                                    ? _email2FA
+                                                                    : "Email required",
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 16,
+                                                                  color: Colors
+                                                                      .black54,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .visible,
+                                                              ),
+                                                            ],
                                                           ),
                                                         ),
                                                       ],
@@ -1795,16 +2042,28 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       width: double.infinity,
                                                       height: 48,
                                                       child: ElevatedButton(
-                                                        onPressed: selected2FAMethod
-                                                                .isNotEmpty
-                                                            ? () =>
-                                                                _initiate2FASetup()
+                                                        onPressed: _can2FAEnable
+                                                            ? () {
+                                                                // isVerifyingCode
+                                                                // is set
+                                                                // synchronously
+                                                                // by
+                                                                // _initiate2FASetup,
+                                                                // so a second
+                                                                // fast tap
+                                                                // cannot send
+                                                                // a second
+                                                                // code.
+                                                                if (isVerifyingCode) {
+                                                                  return;
+                                                                }
+                                                                _initiate2FASetup();
+                                                              }
                                                             : null,
                                                         style: ElevatedButton
                                                             .styleFrom(
                                                           backgroundColor:
-                                                              selected2FAMethod
-                                                                      .isNotEmpty
+                                                              _can2FAEnable
                                                                   ? blueColor
                                                                   : Colors.grey,
                                                           foregroundColor:
@@ -1874,6 +2133,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             TextInputType
                                                                 .number,
                                                         maxLength: 6,
+                                                        // Web greys the field
+                                                        // out once the code
+                                                        // has expired.
+                                                        enabled:
+                                                            !is2FACodeExpired,
                                                         decoration:
                                                             InputDecoration(
                                                           hintText:
@@ -1935,13 +2199,35 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           MainAxisAlignment
                                                               .spaceBetween,
                                                       children: [
-                                                        if (seconds.value > 0)
-                                                          ValueListenableBuilder<
-                                                              int>(
+                                                        ValueListenableBuilder<
+                                                            int>(
                                                             valueListenable:
                                                                 seconds,
                                                             builder: (context,
                                                                 value, child) {
+                                                              // Once the
+                                                              // countdown runs
+                                                              // out this reads
+                                                              // "Code expired"
+                                                              // instead of a
+                                                              // stuck 0m 0s.
+                                                              if (value <= 0) {
+                                                                return Text(
+                                                                  is2FACodeExpired
+                                                                      ? "Code expired"
+                                                                      : "",
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                );
+                                                              }
                                                               return RichText(
                                                                 textAlign:
                                                                     TextAlign
@@ -1981,13 +2267,28 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           ),
                                                         GestureDetector(
                                                           onTap: () {
+                                                            // Locked for the
+                                                            // first 60s. Bail
+                                                            // before clearing
+                                                            // so a tap that
+                                                            // sends nothing
+                                                            // does not wipe
+                                                            // the typed code.
+                                                            // isVerifyingCode
+                                                            // is set
+                                                            // synchronously by
+                                                            // _initiate2FASetup,
+                                                            // so it also stops
+                                                            // a double tap.
+                                                            if (!showVerificationInput ||
+                                                                seconds.value >
+                                                                    540 ||
+                                                                isVerifyingCode) {
+                                                              return;
+                                                            }
                                                             verificationCodeController
                                                                 .clear();
-                                                            if (showVerificationInput &&
-                                                                seconds.value <=
-                                                                    540) {
-                                                              _initiate2FASetup();
-                                                            }
+                                                            _initiate2FASetup();
                                                           },
                                                           child: ValueListenableBuilder<
                                                                   int>(
@@ -2047,7 +2348,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       width: double.infinity,
                                                       height: 48,
                                                       child: ElevatedButton(
-                                                        onPressed: isVerifyingCode
+                                                        // An expired code is
+                                                        // rejected by the
+                                                        // server, so block the
+                                                        // tap until a new one
+                                                        // is requested.
+                                                        onPressed: (isVerifyingCode ||
+                                                                is2FACodeExpired)
                                                             ? null
                                                             : () => _formKey
                                                                     .currentState!
@@ -2161,7 +2468,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                             const SizedBox(height: 20),
 
                                             // Disable 2FA Verification Input
-                                            if (showDisableVerification)
+                                            // Web nests this inside the
+                                            // `twoFactorEnabled` arm — it only
+                                            // makes sense while 2FA is on.
+                                            if (showDisableVerification &&
+                                                enble2FA)
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -2186,6 +2497,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       keyboardType:
                                                           TextInputType.number,
                                                       maxLength: 6,
+                                                      // Web greys the field
+                                                      // out once the code has
+                                                      // expired.
+                                                      enabled:
+                                                          !is2FACodeExpired,
                                                       decoration:
                                                           InputDecoration(
                                                         hintText:
@@ -2214,12 +2530,27 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         counterText: "",
                                                       ),
                                                     ),
+                                                    const SizedBox(height: 10),
+
+                                                    // The disable code expires
+                                                    // after 10 minutes, so
+                                                    // show the countdown and a
+                                                    // way to request a new one.
+                                                    _build2FACodeTimerRow(
+                                                      onResend: () {
+                                                        disableVerificationController
+                                                            .clear();
+                                                        _sendDisable2FACode();
+                                                      },
+                                                    ),
+
                                                     const SizedBox(height: 20),
                                                     SizedBox(
                                                       width: double.infinity,
                                                       height: 48,
                                                       child: ElevatedButton(
-                                                        onPressed: isVerifyingCode
+                                                        onPressed: (isVerifyingCode ||
+                                                                is2FACodeExpired)
                                                             ? null
                                                             : () =>
                                                                 _disable2FAWithVerification(),
@@ -2267,6 +2598,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       height: 48,
                                                       child: OutlinedButton(
                                                         onPressed: () {
+                                                          // Leaving the flow
+                                                          // must not leave a
+                                                          // countdown ticking.
+                                                          stopTimer();
                                                           setState(() {
                                                             showDisableVerification =
                                                                 false;
@@ -2304,9 +2639,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                               ),
 
                                             // 2FA Action Buttons
+                                            // Also hidden during an enable
+                                            // flow, else "Disable 2FA" stays
+                                            // tappable under the chooser and
+                                            // re-creates the overlap.
                                             if (enble2FA &&
                                                 !showDisableVerification &&
-                                                !showRegenerateVerification)
+                                                !showRegenerateVerification &&
+                                                !show2FASetup &&
+                                                !showVerificationInput)
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -2321,6 +2662,16 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         height: 60,
                                                         child: ElevatedButton(
                                                           onPressed: () {
+                                                            // showDisableVerification
+                                                            // only flips after
+                                                            // the 200;
+                                                            // isVerifyingCode
+                                                            // is set
+                                                            // synchronously.
+                                                            if (isVerifyingCode ||
+                                                                showDisableVerification) {
+                                                              return;
+                                                            }
                                                             _sendDisable2FACode();
                                                           },
                                                           style: ElevatedButton
@@ -2389,6 +2740,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         height: 60,
                                                         child: ElevatedButton(
                                                           onPressed: () {
+                                                            // Blocks a double
+                                                            // tap generating a
+                                                            // second set of
+                                                            // backup codes.
+                                                            if (isVerifyingCode) {
+                                                              return;
+                                                            }
                                                             _regenerateBackupCodesWithVerification();
                                                           },
                                                           style: ElevatedButton
@@ -2565,24 +2923,46 @@ class _Profile_screenState extends State<Profile_screen> {
                                                   ),
                                                 ),
                                                 CustomSwitch(
-                                                  initialValue: enble2FA,
+                                                  // Follows web's
+                                                  // twoFactorToggle: on when
+                                                  // 2FA is enabled OR while
+                                                  // setting it up.
+                                                  initialValue: enble2FA ||
+                                                      show2FASetup,
                                                   onChanged: (value) {
-                                                    setState(() {
-                                                      if (value) {
+                                                    if (isVerifyingCode) return;
+                                                    if (value) {
+                                                      if (enble2FA) return;
+                                                      setState(() {
                                                         show2FASetup = true;
                                                         showVerificationInput =
                                                             false;
                                                         selected2FAMethod = '';
-                                                      } else {
-                                                        enble2FA = false;
+                                                      });
+                                                    } else if (enble2FA) {
+                                                      // Web keeps 2FA enabled
+                                                      // and only asks for a
+                                                      // code; the flag flips
+                                                      // after it is verified.
+                                                      if (showDisableVerification) {
+                                                        return;
+                                                      }
+                                                      _sendDisable2FACode();
+                                                    } else {
+                                                      stopTimer();
+                                                      setState(() {
                                                         show2FASetup = false;
                                                         showVerificationInput =
                                                             false;
+                                                        showDisableVerification =
+                                                            false;
                                                         selected2FAMethod = '';
-                                                        sms2FA = false;
-                                                        email2FA = false;
-                                                      }
-                                                    });
+                                                        verificationCodeController
+                                                            .clear();
+                                                        disableVerificationController
+                                                            .clear();
+                                                      });
+                                                    }
                                                   },
                                                 ),
                                               ],
@@ -2620,35 +3000,52 @@ class _Profile_screenState extends State<Profile_screen> {
 
                                                   // SMS Radio Button
                                                   _buildOptionTile(
-                                                    label:
-                                                        "SMS (${profiledata['tenant_phoneNumber']})",
+                                                    label: "SMS",
+                                                    detail: _canUseSms2FA
+                                                        ? _phone2FA
+                                                        : "Phone number required",
+                                                    enabled: _canUseSms2FA,
                                                     value: 'sms',
                                                   ),
                                                   //  const SizedBox(height: 12),
 
                                                   // Email Option
                                                   _buildOptionTile(
-                                                    label:
-                                                        "Email (${profiledata['tenant_email']})",
+                                                    label: "Email",
+                                                    detail: _canUseEmail2FA
+                                                        ? _email2FA
+                                                        : "Email required",
+                                                    enabled: _canUseEmail2FA,
                                                     value: 'email',
                                                   ),
-                                                  const SizedBox(height: 12),
+                                                                                                  const SizedBox(height: 12),
 
                                                   // Enable 2FA Button
                                                   SizedBox(
                                                     width: double.infinity,
                                                     height: 48,
                                                     child: ElevatedButton(
-                                                      onPressed: selected2FAMethod
-                                                              .isNotEmpty
-                                                          ? () =>
-                                                              _initiate2FASetup()
+                                                      onPressed: _can2FAEnable
+                                                          ? () {
+                                                              // isVerifyingCode
+                                                              // is set
+                                                              // synchronously
+                                                              // by
+                                                              // _initiate2FASetup,
+                                                              // so a second
+                                                              // fast tap
+                                                              // cannot send a
+                                                              // second code.
+                                                              if (isVerifyingCode) {
+                                                                return;
+                                                              }
+                                                              _initiate2FASetup();
+                                                            }
                                                           : null,
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         backgroundColor:
-                                                            selected2FAMethod
-                                                                    .isNotEmpty
+                                                            _can2FAEnable
                                                                 ? blueColor
                                                                 : Colors.grey,
                                                         foregroundColor:
@@ -2718,6 +3115,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             TextInputType
                                                                 .number,
                                                         maxLength: 6,
+                                                        // Web greys the field
+                                                        // out once the code
+                                                        // has expired.
+                                                        enabled:
+                                                            !is2FACodeExpired,
                                                         decoration:
                                                             InputDecoration(
                                                           hintText:
@@ -2779,13 +3181,35 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           MainAxisAlignment
                                                               .spaceBetween,
                                                       children: [
-                                                        if (seconds.value > 0)
-                                                          ValueListenableBuilder<
-                                                              int>(
+                                                        ValueListenableBuilder<
+                                                            int>(
                                                             valueListenable:
                                                                 seconds,
                                                             builder: (context,
                                                                 value, child) {
+                                                              // Once the
+                                                              // countdown runs
+                                                              // out this reads
+                                                              // "Code expired"
+                                                              // instead of a
+                                                              // stuck 0m 0s.
+                                                              if (value <= 0) {
+                                                                return Text(
+                                                                  is2FACodeExpired
+                                                                      ? "Code expired"
+                                                                      : "",
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                                );
+                                                              }
                                                               return RichText(
                                                                 textAlign:
                                                                     TextAlign
@@ -2826,16 +3250,23 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           ),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            print(
-                                                                "showVerificationInput: $showVerificationInput");
-                                                            // clear the field
+                                                            // Locked for the
+                                                            // first 60s, and
+                                                            // while a request
+                                                            // is in flight.
+                                                            // Bail before
+                                                            // clearing so a
+                                                            // no-op tap keeps
+                                                            // the typed code.
+                                                            if (!showVerificationInput ||
+                                                                seconds.value >
+                                                                    540 ||
+                                                                isVerifyingCode) {
+                                                              return;
+                                                            }
                                                             verificationCodeController
                                                                 .clear();
-                                                            if (showVerificationInput &&
-                                                                seconds.value <=
-                                                                    540) {
-                                                              _initiate2FASetup();
-                                                            }
+                                                            _initiate2FASetup();
                                                           },
                                                           child: ValueListenableBuilder<
                                                                   int>(
@@ -2897,7 +3328,13 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       width: double.infinity,
                                                       height: 40,
                                                       child: ElevatedButton(
-                                                        onPressed: isVerifyingCode
+                                                        // An expired code is
+                                                        // rejected by the
+                                                        // server, so block the
+                                                        // tap until a new one
+                                                        // is requested.
+                                                        onPressed: (isVerifyingCode ||
+                                                                is2FACodeExpired)
                                                             ? null
                                                             : () => _formKey
                                                                     .currentState!
@@ -3015,7 +3452,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                             const SizedBox(height: 20),
 
                                             // Disable 2FA Verification Input
-                                            if (showDisableVerification)
+                                            // Web nests this inside the
+                                            // `twoFactorEnabled` arm — it only
+                                            // makes sense while 2FA is on.
+                                            if (showDisableVerification &&
+                                                enble2FA)
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -3042,6 +3483,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       keyboardType:
                                                           TextInputType.number,
                                                       maxLength: 6,
+                                                      // Web greys the field
+                                                      // out once the code has
+                                                      // expired.
+                                                      enabled:
+                                                          !is2FACodeExpired,
                                                       decoration:
                                                           InputDecoration(
                                                         hintText:
@@ -3071,6 +3517,20 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       ),
                                                     ),
 
+                                                    const SizedBox(height: 10),
+
+                                                    // The disable code expires
+                                                    // after 10 minutes, so
+                                                    // show the countdown and a
+                                                    // way to request a new one.
+                                                    _build2FACodeTimerRow(
+                                                      onResend: () {
+                                                        disableVerificationController
+                                                            .clear();
+                                                        _sendDisable2FACode();
+                                                      },
+                                                    ),
+
                                                     const SizedBox(height: 20),
 
                                                     // Disable 2FA Button
@@ -3078,7 +3538,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       width: double.infinity,
                                                       height: 48,
                                                       child: ElevatedButton(
-                                                        onPressed: isVerifyingCode
+                                                        onPressed: (isVerifyingCode ||
+                                                                is2FACodeExpired)
                                                             ? null
                                                             : () =>
                                                                 _disable2FAWithVerification(),
@@ -3129,6 +3590,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       height: 48,
                                                       child: OutlinedButton(
                                                         onPressed: () {
+                                                          // Leaving the flow
+                                                          // must not leave a
+                                                          // countdown ticking.
+                                                          stopTimer();
                                                           setState(() {
                                                             showDisableVerification =
                                                                 false;
@@ -3330,9 +3795,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                               ),
 
                                             // 2FA Action Buttons
+                                            // Also hidden during an enable
+                                            // flow, else "Disable 2FA" stays
+                                            // tappable under the chooser and
+                                            // re-creates the overlap.
                                             if (enble2FA &&
                                                 !showDisableVerification &&
-                                                !showRegenerateVerification)
+                                                !showRegenerateVerification &&
+                                                !show2FASetup &&
+                                                !showVerificationInput)
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -3354,6 +3825,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             child:
                                                                 ElevatedButton(
                                                               onPressed: () {
+                                                                // showDisableVerification
+                                                                // only flips
+                                                                // after the
+                                                                // 200;
+                                                                // isVerifyingCode
+                                                                // is set
+                                                                // synchronously.
+                                                                if (isVerifyingCode ||
+                                                                    showDisableVerification) {
+                                                                  return;
+                                                                }
                                                                 _sendDisable2FACode();
                                                               },
                                                               style:
@@ -3423,6 +3905,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             child:
                                                                 ElevatedButton(
                                                               onPressed: () {
+                                                                // Blocks a
+                                                                // double tap
+                                                                // generating a
+                                                                // second set
+                                                                // of backup
+                                                                // codes.
+                                                                if (isVerifyingCode) {
+                                                                  return;
+                                                                }
                                                                 _regenerateBackupCodesWithVerification();
                                                               },
                                                               style:
@@ -3507,6 +3998,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               child:
                                                                   ElevatedButton(
                                                                 onPressed: () {
+                                                                  // showDisableVerification
+                                                                  // only flips
+                                                                  // after the
+                                                                  // 200;
+                                                                  // isVerifyingCode
+                                                                  // is set
+                                                                  // synchronously.
+                                                                  if (isVerifyingCode ||
+                                                                      showDisableVerification) {
+                                                                    return;
+                                                                  }
                                                                   _sendDisable2FACode();
                                                                 },
                                                                 style: ElevatedButton
@@ -3580,6 +4082,16 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               child:
                                                                   ElevatedButton(
                                                                 onPressed: () {
+                                                                  // Blocks a
+                                                                  // double tap
+                                                                  // generating
+                                                                  // a second
+                                                                  // set of
+                                                                  // backup
+                                                                  // codes.
+                                                                  if (isVerifyingCode) {
+                                                                    return;
+                                                                  }
                                                                   _regenerateBackupCodesWithVerification();
                                                                 },
                                                                 style: ElevatedButton
@@ -3805,13 +4317,20 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
-  Widget _buildOptionTile({required String label, required String value}) {
+  Widget _buildOptionTile({
+    required String label,
+    required String value,
+    String detail = '',
+    bool enabled = true,
+  }) {
     final bool isSelected = selected2FAMethod == value;
 
     return GestureDetector(
-      onTap: () {
-        setState(() => selected2FAMethod = value);
-      },
+      onTap: enabled
+          ? () {
+              setState(() => selected2FAMethod = value);
+            }
+          : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         // padding: const EdgeInsets.all(12),
@@ -3828,19 +4347,35 @@ class _Profile_screenState extends State<Profile_screen> {
             Radio<String>(
               value: value,
               groupValue: selected2FAMethod,
-              onChanged: (val) => setState(() => selected2FAMethod = val!),
+              onChanged: enabled
+                  ? (val) => setState(() => selected2FAMethod = val!)
+                  : null,
               activeColor: blueColor,
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[800],
-                  fontWeight: FontWeight.w500,
-                ),
-                overflow: TextOverflow.visible,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.visible,
+                  ),
+                  Text(
+                    detail,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w400,
+                    ),
+                    overflow: TextOverflow.visible,
+                  ),
+                ],
               ),
             ),
           ],

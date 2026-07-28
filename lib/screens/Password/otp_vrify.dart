@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -30,6 +31,66 @@ class _otp_verifyState extends State<otp_verify> {
   // Full code currently shown in the boxes. Kept as a String so a partially
   // filled code can be detected before submitting.
   String otpCode = '';
+
+  // ── Resend cooldown + code validity ─────────────────────────────────────
+  // A single ticker drives both so they can never drift apart.
+  //  * _resendIn      — visible "Resend in Ns" cooldown (60s, same as login 2FA)
+  //  * _validityLeft  — silent 10 minute window the OTP email promises
+  // The server does not currently expire the code itself, so this is a
+  // client-side courtesy: once it lapses we clear the boxes and ask for a
+  // fresh code rather than letting the user type into a stale one.
+  static const int _resendCooldownSeconds = 60;
+  static const int _codeValiditySeconds = 600;
+
+  Timer? _ticker;
+  final ValueNotifier<int> _resendIn = ValueNotifier<int>(0);
+  int _validityLeft = 0;
+  bool _expired = false;
+  bool _isResending = false;
+
+  // Bumping this rebuilds _OtpBoxes with empty fields (it owns its own
+  // controllers, so a fresh key is the cheapest way to clear it).
+  int _boxesGeneration = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // A code was already sent to reach this screen, so start both clocks now.
+    _startTimers();
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    _resendIn.dispose();
+    super.dispose();
+  }
+
+  void _startTimers() {
+    _ticker?.cancel();
+    _resendIn.value = _resendCooldownSeconds;
+    _validityLeft = _codeValiditySeconds;
+    if (_expired && mounted) {
+      setState(() => _expired = false);
+    } else {
+      _expired = false;
+    }
+    _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_resendIn.value > 0) _resendIn.value--;
+      if (_validityLeft > 0) {
+        _validityLeft--;
+        return;
+      }
+      timer.cancel();
+      if (!mounted) return;
+      setState(() {
+        _expired = true;
+        otpCode = '';
+        otp = 0;
+        _boxesGeneration++; // clears the six boxes
+      });
+    });
+  }
   void verifyOTP(int otp) async {
     setState(() {
       loading = true; // Set loading to true while verifying OTP
@@ -77,43 +138,55 @@ class _otp_verifyState extends State<otp_verify> {
     }
   }
   void sendOTP(String email) async {
+    // Locked during the cooldown and while a resend is already in flight —
+    // each send issues a NEW code, so spamming Resend would invalidate the
+    // code the user may already be typing.
+    if (_isResending || _resendIn.value > 0) return;
+    _isResending = true;
     setState(() {
       loading = true; // Show loading indicator while sending OTP
     });
 
-    final response = await apiPost(
-      Uri.parse('$Api_url/api/admin/sendOTP'),
-      // Resend must send the same identifying fields as the initial send
-      // (forgotpassword.dart) — the server looks up the user by role + user_id
-      // (+ admin_id); email alone returns "Email not found".
-      body: {
-        'email': email,
-        'admin_id': widget.admin_id,
-        'role': widget.role,
-        'user_id': widget.userId,
-      },
-    );
+    // A throw here (dropped connection, non-JSON body) used to leave both
+    // _isResending and loading stuck true, which killed Resend for the rest of
+    // the screen's life. The finally block always releases them.
+    try {
+      final response = await apiPost(
+        Uri.parse('$Api_url/api/admin/sendOTP'),
+        // Resend must send the same identifying fields as the initial send
+        // (forgotpassword.dart) — the server looks up the user by role + user_id
+        // (+ admin_id); email alone returns "Email not found".
+        body: {
+          'email': email,
+          'admin_id': widget.admin_id,
+          'role': widget.role,
+          'user_id': widget.userId,
+        },
+      );
 
-    setState(() {
-      loading = false; // Hide loading indicator after receiving response
-    });
-
-    final jsonData = json.decode(response.body);
-    if (jsonData["statusCode"] == 200) {
-      print(jsonData);
-     /* Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => otp_verify(email: email,)),
-      );*/
-      Fluttertoast.showToast(msg: "OTP sent successfully");
-      setState(() {
-        loading = false;
-      });
-    } else {
-      Fluttertoast.showToast(msg: jsonData["message"]);
-      setState(() {
-        loading = false;
-      });
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200) {
+        print(jsonData);
+        Fluttertoast.showToast(msg: "OTP sent successfully");
+        setState(() {
+          // Fresh code: clear whatever was typed against the old one.
+          otpCode = '';
+          otp = 0;
+          _boxesGeneration++;
+        });
+        _startTimers();
+      } else {
+        Fluttertoast.showToast(msg: jsonData["message"]);
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not send OTP. Please try again.");
+    } finally {
+      _isResending = false;
+      if (mounted) {
+        setState(() {
+          loading = false; // Hide loading indicator whatever happened
+        });
+      }
     }
   }
   @override
@@ -164,6 +237,7 @@ class _otp_verifyState extends State<otp_verify> {
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: _OtpBoxes(
+                  key: ValueKey<int>(_boxesGeneration),
                   fieldHeight: 50,
                   fieldWidth: 50,
                   numberOfFields: 6,
@@ -182,31 +256,63 @@ class _otp_verifyState extends State<otp_verify> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Didn't receive the OTP ? ",
-                    style: TextStyle(
-                        color: Color(0xFF152B51),
-                        fontSize: MediaQuery.of(context).size.width * 0.04),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      sendOTP(widget.email);
-                    },
-                    child: Container(
-                      child: Text(
-                        " Resend OTP",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:  Color(0xFF152B51),
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.037),
+              // Resend is locked for the first 60s after a code is issued, and
+              // greys out so the user can see why tapping does nothing.
+              ValueListenableBuilder<int>(
+                valueListenable: _resendIn,
+                builder: (context, secondsLeft, _) {
+                  final bool canResend = secondsLeft <= 0 && !_isResending;
+                  return Column(
+                    children: [
+                      if (_expired)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            "Code expired \u2014 request a new one",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.035,
+                            ),
+                          ),
+                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Didn't receive the OTP ? ",
+                            style: TextStyle(
+                                color: const Color(0xFF152B51),
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04),
+                          ),
+                          GestureDetector(
+                            onTap: canResend
+                                ? () => sendOTP(widget.email)
+                                : null,
+                            child: Container(
+                              child: Text(
+                                canResend
+                                    ? " Resend OTP"
+                                    : " Resend in ${secondsLeft}s",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: canResend
+                                        ? const Color(0xFF152B51)
+                                        : Colors.grey,
+                                    fontSize: MediaQuery.of(context)
+                                            .size
+                                            .width *
+                                        0.037),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.07,
@@ -217,6 +323,12 @@ class _otp_verifyState extends State<otp_verify> {
                   // a server that already consumed the OTP, so the retry fails
                   // over a successful verification.
                   if (loading) return;
+                  // An expired code can only fail — send them to Resend instead.
+                  if (_expired) {
+                    Fluttertoast.showToast(
+                        msg: "Code expired. Please tap Resend OTP.");
+                    return;
+                  }
                   // Guard the partial code: the screen has no field validators,
                   // so validate() alone would let an incomplete OTP be posted.
                   if (otpCode.length < 6) {
@@ -299,6 +411,7 @@ class _OtpBoxes extends StatefulWidget {
   final ValueChanged<String> onCompleted;
 
   const _OtpBoxes({
+    super.key,
     required this.onChanged,
     required this.onCompleted,
     this.numberOfFields = 6,

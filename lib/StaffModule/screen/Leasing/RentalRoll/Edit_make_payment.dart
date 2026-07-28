@@ -1723,7 +1723,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                           ? Container(
                                               child: const Center(
                                                   child: Text(
-                                                      'No Cards Avaiable')),
+                                                      'No Cards Available')),
                                             )
                                           : SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,

@@ -1738,7 +1738,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             //           ),
                             //           cardDetails.isEmpty
                             //               ? Container(
-                            //                   child: Center(child: Text('No Cards Avaiable')),
+                            //                   child: Center(child: Text('No Cards Available')),
                             //                 )
                             //               : SingleChildScrollView(
                             //                   scrollDirection: Axis.horizontal,
