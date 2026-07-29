@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/cupertino.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -78,12 +79,204 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
   String? lastFromDate;
   String? lastToDate;
 
-  void _fetchData() {
+  DateTime? _pickedFrom;
+  DateTime? _pickedTo;
+
+  /// Local filled date field. Kept local on purpose: the shared
+  /// CustomDateField is used by many other screens, so the grey fill from the
+  /// agreed design is applied here rather than changing that widget. Picker
+  /// behaviour matches it — same theme, same range, same date formatting.
+  Widget _filledDateField(TextEditingController controller,
+      {required bool isFrom}) {
+    final bool empty = controller.text.trim().isEmpty;
+    return GestureDetector(
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: (isFrom ? _pickedFrom : _pickedTo) ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2101),
+          builder: (context, child) => Theme(
+            data: ThemeData.light().copyWith(
+              primaryColor: blueColor,
+              colorScheme: ColorScheme.light(primary: blueColor),
+            ),
+            child: child!,
+          ),
+        );
+        if (picked == null) return;
+        final dp = Provider.of<DateProvider>(context, listen: false);
+        setState(() {
+          if (isFrom) {
+            _pickedFrom = picked;
+          } else {
+            _pickedTo = picked;
+          }
+          controller.text = dp.formatCurrentDate(picked.toString());
+          // Hand-picking a date means the preset no longer describes the range.
+          daterange = 'Custom';
+        });
+      },
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F6F8),
+          border: Border.all(color: const Color(0xFFEDEFF2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                empty ? 'MM/DD/YYYY' : controller.text,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: empty ? const Color(0xFF8A95A8) : blueColor,
+                ),
+              ),
+            ),
+            const Icon(Icons.calendar_today_outlined,
+                size: 18, color: Color(0xFF8A95A8)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static const List<String> _dateRangeOptions = [
+    'Today',
+    'Yesterday',
+    'Last 7 Days',
+    'Last 14 Days',
+    'Last 30 Days',
+    'This Week',
+    'Last Week',
+    'This Month',
+    'Last Month',
+    'This Quarter',
+    'Last Quarter',
+    'Year to Date',
+    'Last Year',
+    'Custom',
+  ];
+
+  /// Small uppercase field label used across the filter card.
+  Widget _filterLabel(String text) => Text(
+        text,
+        style: const TextStyle(
+          color: Color(0xFF8A95A8),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+        ),
+      );
+
+  /// Web parity: the Date Range dropdown starts on Custom with both dates
+  /// empty, and Run stays disabled until a range is chosen.
+  String? daterange = 'Custom';
+
+  /// True once a run has returned rows. Export is hidden until then, so the
+  /// search field spans the full width on an empty report.
+  bool _hasRows = false;
+
+  void _onDateFieldChanged() {
+    if (mounted) setState(() {});
+  }
+
+  bool get _canRun =>
+      _fromDateController.text.trim().isNotEmpty &&
+      _toDateController.text.trim().isNotEmpty;
+
+  /// Fills From/To from a preset, matching the ranges the Expiring Insurance
+  /// report already uses so both screens agree. Presets only set the fields —
+  /// nothing loads until Run is tapped, exactly as web behaves.
+  void _applyDateRangePreset(String value, DateProvider dateProvider) {
+    final now = DateTime.now();
+    String fmt(DateTime d) => dateProvider.formatCurrentDate(d.toString());
+    DateTime? from;
+    DateTime? to;
+    switch (value) {
+      case 'Today':
+        from = now;
+        to = now;
+        break;
+      case 'Yesterday':
+        final y = now.subtract(const Duration(days: 1));
+        from = y;
+        to = y;
+        break;
+      case 'Last 7 Days':
+        from = now.subtract(const Duration(days: 6));
+        to = now;
+        break;
+      case 'Last 14 Days':
+        from = now.subtract(const Duration(days: 13));
+        to = now;
+        break;
+      case 'Last 30 Days':
+        from = now.subtract(const Duration(days: 29));
+        to = now;
+        break;
+      case 'This Week':
+        from = now.subtract(Duration(days: now.weekday - 1));
+        to = from.add(const Duration(days: 6));
+        break;
+      case 'Last Week':
+        final start = now.subtract(Duration(days: now.weekday - 1 + 7));
+        from = start;
+        to = start.add(const Duration(days: 6));
+        break;
+      case 'This Month':
+        from = DateTime(now.year, now.month, 1);
+        to = DateTime(now.year, now.month + 1, 0);
+        break;
+      case 'Last Month':
+        from = DateTime(now.year, now.month - 1, 1);
+        to = DateTime(now.year, now.month, 0);
+        break;
+      case 'This Quarter':
+        final q = (now.month - 1) ~/ 3;
+        from = DateTime(now.year, q * 3 + 1, 1);
+        to = DateTime(now.year, q * 3 + 4, 0);
+        break;
+      case 'Last Quarter':
+        final q = (now.month - 1) ~/ 3 - 1;
+        final year = q < 0 ? now.year - 1 : now.year;
+        final qi = q < 0 ? 3 : q;
+        from = DateTime(year, qi * 3 + 1, 1);
+        to = DateTime(year, qi * 3 + 4, 0);
+        break;
+      case 'Year to Date':
+        from = DateTime(now.year, 1, 1);
+        to = now;
+        break;
+      case 'Last Year':
+        from = DateTime(now.year - 1, 1, 1);
+        to = DateTime(now.year - 1, 12, 31);
+        break;
+      case 'Custom':
+      default:
+        // Custom clears the fields so the user picks the range themselves,
+        // which is why Run is greyed until they do.
+        _fromDateController.clear();
+        _toDateController.clear();
+        return;
+    }
+    _fromDateController.text = fmt(from);
+    _toDateController.text = fmt(to);
+  }
+
+  void _fetchData({bool force = false}) {
     String currentFromDate = _fromDateController.text;
     String currentToDate = _toDateController.text;
 
-    // Check if the current dates are the same as the last selected dates
-    if (currentFromDate == lastFromDate && currentToDate == lastToDate) {
+    // Check if the current dates are the same as the last selected dates.
+    // Run passes force so tapping it always re-applies the current range.
+    if (!force &&
+        currentFromDate == lastFromDate &&
+        currentToDate == lastToDate) {
       // If the dates are the same, do not call the API
       return;
     }
@@ -94,15 +287,25 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
         toDate: currentToDate,
       );
 
+      // Track whether the run produced rows so Export can appear only then.
+      _futureReport!.then((rows) {
+        if (mounted) setState(() => _hasRows = rows.isNotEmpty);
+      }).catchError((_) {
+        if (mounted) setState(() => _hasRows = false);
+        return <ReportExpiringLeaseData>[];
+      });
+
       // Update the last selected dates
       lastFromDate = currentFromDate;
       lastToDate = currentToDate;
     } else {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Please select both From and To dates.')),
-      // );
-      // return;
-      _futureReport = ExpiringLeaseTableService().fetchExpiringLeases();
+      // Web parity: with no range chosen the report stays empty and waits for
+      // Run. Fetching unfiltered here is what made mobile show every lease
+      // before a date was picked.
+      _futureReport = null;
+      _hasRows = false;
+      lastFromDate = null;
+      lastToDate = null;
     }
     setState(() {});
   }
@@ -352,6 +555,11 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
       });
     });
     checkInternet();
+    // The date fields write straight to their controllers, so without
+    // these the Run button never noticed a date was chosen and stayed
+    // greyed out forever.
+    _fromDateController.addListener(_onDateFieldChanged);
+    _toDateController.addListener(_onDateFieldChanged);
     _fetchData();
   }
 
@@ -609,6 +817,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
 
   List<ReportExpiringLeaseData> get _pagedData {
     int startIndex = _currentPage * _rowsPerPage;
+    if (startIndex >= _tableData.length) startIndex = 0;
     int endIndex = startIndex + _rowsPerPage;
     return _tableData.sublist(startIndex,
         endIndex > _tableData.length ? _tableData.length : endIndex);
@@ -785,10 +994,10 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
+                            color: Colors.white,
                             border: Border.all(
-                              color: blueColor,
-                            ),
-                            borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFFEDEFF2)),
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
@@ -796,78 +1005,168 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                               key: _formKey,
                               child: Column(
                                 children: [
+                                  // Filter card laid out to the agreed
+                                  // design: DATE RANGE beside Run, then
+                                  // FROM/TO underneath, uppercase labels and
+                                  // filled inputs.
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.end,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _filterLabel('DATE RANGE'),
+                                            const SizedBox(height: 6),
+                                            Container(
+                                              height: 48,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 14),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFF5F6F8),
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFEDEFF2)),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  value: daterange,
+                                                  // The plain DropdownButton
+                                                  // opened a full-screen white
+                                                  // sheet; this keeps the menu
+                                                  // sized to the field.
+                                                  iconStyleData: IconStyleData(
+                                                    icon: Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down,
+                                                        color: blueColor),
+                                                  ),
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          height: 48),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                          height: 44),
+                                                  dropdownStyleData:
+                                                      DropdownStyleData(
+                                                    maxHeight: 320,
+                                                    elevation: 3,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      border: Border.all(
+                                                          color: const Color(
+                                                              0xFFE3E6EB)),
+                                                    ),
+                                                  ),
+                                                  style: TextStyle(
+                                                      color: blueColor,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                  items: _dateRangeOptions
+                                                      .map((v) =>
+                                                          DropdownMenuItem<
+                                                              String>(
+                                                            value: v,
+                                                            child: Text(
+                                                                v == 'Custom'
+                                                                    ? 'Custom Date'
+                                                                    : v,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
+                                                          ))
+                                                      .toList(),
+                                                  onChanged: (value) {
+                                                    if (value == null) return;
+                                                    final dp = Provider.of<
+                                                            DateProvider>(
+                                                        context,
+                                                        listen: false);
+                                                    setState(() {
+                                                      daterange = value;
+                                                      _applyDateRangePreset(
+                                                          value, dp);
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      SizedBox(
+                                        height: 48,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: _canRun
+                                                ? blueColor
+                                                : blueColor.withOpacity(0.4),
+                                            foregroundColor: Colors.white,
+                                            padding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 22),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          onPressed: _canRun
+                                              ? () => _fetchData(force: true)
+                                              : null,
+                                          child: const Text('Run',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight:
+                                                      FontWeight.w600)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 14),
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('From',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                              const SizedBox(height: 5),
-                                              CustomDateField(
-                                                  hintText: 'dd-mm-yyyy',
-                                                  controller:
-                                                      _fromDateController),
-                                            ],
-                                          ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _filterLabel('FROM'),
+                                            const SizedBox(height: 6),
+                                            _filledDateField(
+                                                _fromDateController,
+                                                isFrom: true),
+                                          ],
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 16,
-                                      ),
+                                      const SizedBox(width: 12),
                                       Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('To',
-                                                  style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                              const SizedBox(height: 5),
-                                              CustomDateField(
-                                                  hintText: 'dd-mm-yyyy',
-                                                  controller:
-                                                      _toDateController),
-                                            ],
-                                          ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            _filterLabel('TO'),
+                                            const SizedBox(height: 6),
+                                            _filledDateField(
+                                                _toDateController,
+                                                isFrom: false),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor),
-                                        onPressed: _fetchData,
-                                        child: const Text('Show Leases'),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor),
-                                        onPressed: () {
-                                          _fromDateController.clear();
-                                          _toDateController.clear();
-                                        },
-                                        child: const Text('Clear'),
                                       ),
                                     ],
                                   ),
@@ -1026,7 +1325,12 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(
+                                  // A raw Dart exception is not a user
+                                  // message; keep the detail in the log.
+                                  'Could not load the report. Please try again.',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14)));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -1127,65 +1431,121 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 10),
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 40
-                                              : 50,
+                                          height: 52,
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(5),
-                                            border:
-                                                Border.all(color: Colors.grey),
+                                                BorderRadius.circular(14),
+                                            border: Border.all(
+                                                color: const Color(0xFFEDEFF2)),
                                           ),
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              setState(() {
-                                                searchvalue = value;
-                                              });
-                                            },
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: "Search here...",
-                                              hintStyle: TextStyle(
+                                          // Icon and field as explicit Row
+                                          // children: the Row centres both, so
+                                          // the hint no longer depends on the
+                                          // input decorator's own padding.
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Icon(Icons.search,
+                                                  size: 20,
                                                   color: Color(0xFF8A95A8)),
-                                              contentPadding:
-                                                  EdgeInsets.all(10),
-                                            ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: TextField(
+                                                  textAlignVertical:
+                                                      TextAlignVertical.center,
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      searchvalue = value;
+                                                    });
+                                                  },
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border: InputBorder.none,
+                                                    // Collapsed removes the
+                                                    // decorator's built-in
+                                                    // height so the text sits
+                                                    // level with the icon.
+                                                    isCollapsed: true,
+                                                    hintText: "Search here...",
+                                                    hintStyle: TextStyle(
+                                                        color:
+                                                            Color(0xFF8A95A8),
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
 
-                                    // Export button takes only the space it needs
+                                    // Export appears only once the report has
+                                    // rows, so the search field spans the full
+                                    // width on an empty report.
+                                    if (_hasRows)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 5.0),
-                                      child: ElevatedButton(
+                                      // Fixed box so the pill is exactly as
+                                      // tall as the search field; the nested
+                                      // PopupMenuButton was adding its own
+                                      // padding and pushing it taller.
+                                      child: SizedBox(
+                                        height: 52,
+                                        child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
+                                          foregroundColor: Colors.white,
+                                          minimumSize:
+                                              const Size(0, 52),
+                                          tapTargetSize: MaterialTapTargetSize
+                                              .shrinkWrap,
+                                          padding: const EdgeInsets
+                                              .symmetric(horizontal: 14),
+                                          shape:
+                                              RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(14),
+                                          ),
                                         ),
                                         onPressed: () {},
                                         child: PopupMenuButton<String>(
+                                          padding: EdgeInsets.zero,
                                           onSelected: (value) async {
                                             final hasDates = _fromDateController
                                                     .text.isNotEmpty &&
                                                 _toDateController
                                                     .text.isNotEmpty;
 
-                                            final data = hasDates
-                                                ? await ExpiringLeaseTableService()
+                                            // Export must match what the
+                                            // report shows. Without a range
+                                            // nothing has been run, so
+                                            // exporting every lease would hand
+                                            // back rows the user never saw.
+                                            if (!hasDates) {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    'Choose a date range and tap Run before exporting.',
+                                                backgroundColor: Colors.red,
+                                              );
+                                              return;
+                                            }
+                                            final data =
+                                                await ExpiringLeaseTableService()
                                                     .fetchExpiringLeases(
-                                                    fromDate:
-                                                        _fromDateController
-                                                            .text,
-                                                    toDate:
-                                                        _toDateController.text,
-                                                  )
-                                                : await ExpiringLeaseTableService()
-                                                    .fetchExpiringLeases();
+                                              fromDate:
+                                                  _fromDateController.text,
+                                              toDate: _toDateController.text,
+                                            );
 
                                             if (value == 'PDF') {
                                               await generatePdf(data);
@@ -1215,6 +1575,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                                             ],
                                           ),
                                         ),
+                                      ),
                                       ),
                                     ),
                                   ],

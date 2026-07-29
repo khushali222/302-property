@@ -758,7 +758,8 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     child: Column(
                                                       children: [
                                                         _detailRow('Rent Cycle', '${Propertytype.rentCycle ?? 'N/A'}'),
-                                                        _detailRow('Rent', '\$${Propertytype.leaseAmount ?? 0}'),
+                                                        _detailRow('Rent',
+                                                            '\$${(Propertytype.leaseAmount ?? 0).toStringAsFixed(2)}'),
                                                         _detailRow('Deposits Held', '\$${Propertytype.deposite ?? 0}'),
                                                         _detailRow('Charges', '\$${Propertytype.recurringCharge ?? 0}'),
                                                         _detailRow('Created At', Propertytype.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.createdAt}') : 'N/A'),

@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class ReportExpiringLeaseTable {
   final int? statusCode;
   final List<ReportExpiringLeaseData>? data;
@@ -6,7 +8,7 @@ class ReportExpiringLeaseTable {
 
   factory ReportExpiringLeaseTable.fromJson(Map<String, dynamic> json) {
     return ReportExpiringLeaseTable(
-      statusCode: json['statusCode'],
+      statusCode: asIntN(json['statusCode']),
       data: json['data'] != null
           ? List<ReportExpiringLeaseData>.from(
               json['data'].map((v) => ReportExpiringLeaseData.fromJson(v)))
@@ -31,7 +33,10 @@ class ReportExpiringLeaseData {
   final String? leaseType;
   final String? startDate;
   final String? endDate;
-  final int? amount;
+  // Rent is money and the API sends decimals (1250.5), so this must not be an
+  // int — declaring it int? made every lease with a fractional rent throw
+  // "type 'double' is not a subtype of type 'int?'" before a row could render.
+  final num? amount;
   final int? recurring;
   final String? tenantNames;
   final String? rentalAddress;
@@ -73,8 +78,8 @@ class ReportExpiringLeaseData {
       leaseType: json['lease_type'],
       startDate: json['start_date'],
       endDate: json['end_date'],
-      amount: json['amount'],
-      recurring: json['recurring'],
+      amount: asNumN(json['amount']),
+      recurring: asIntN(json['recurring']),
       tenantNames: json['tenantNames'],
       rentalAddress: json['rental_address'],
       rentalUnit: json['rental_unit'],

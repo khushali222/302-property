@@ -60,12 +60,17 @@ class SummeryPageLease extends StatefulWidget {
   String? enddate;
   /// When true, hides app bar and drawer (e.g. when embedded in Tenant Summary).
   bool embeddedInTenantSummary;
+  /// Opens a specific tab on entry, given by its title (e.g. 'Lease').
+  /// A title is used rather than an index so the deep link keeps working if the
+  /// tab order ever changes.
+  final String? initialTabTitle;
   SummeryPageLease(
       {super.key,
       required this.leaseId,
       this.isredirectpayment = false,
       this.enddate,
-      this.embeddedInTenantSummary = false});
+      this.embeddedInTenantSummary = false,
+      this.initialTabTitle});
   @override
   State<SummeryPageLease> createState() => _SummeryPageLeaseState();
 }
@@ -75,6 +80,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   late Future<LeaseSummary> futureLeaseSummary;
+  String? _leaseRentalAddress;
   late Future<List<LeaseTenant>> futureLeasetenant;
   late Future<LeaseLedger?> _leaseLedgerFuture;
   late Future<LeaseCharges?> _leaseChargesFuture;
@@ -101,6 +107,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     checkInternet();
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
+    // Cache the lease's property address for screens (Scheduled Charges) whose
+    // lease-scoped API doesn't return it.
+    futureLeaseSummary.then((summary) {
+      final addr = summary.data?.rentalAddress;
+      if (addr != null && addr.trim().isNotEmpty && mounted) {
+        _leaseRentalAddress = addr;
+      }
+    }).catchError((_) {});
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _leaseLedgerFuture =
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
@@ -117,6 +131,17 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
       _selectedIndex = 1;
+    }
+    // Deep link straight to a named tab (used by lease-document notifications,
+    // which web opens on the Lease tab rather than Financial). Only the
+    // dropdown-driven _selectedIndex needs setting — the legacy 3-tab
+    // _tabController no longer renders anything, so animateTo is skipped.
+    final String? requestedTab = widget.initialTabTitle;
+    if (requestedTab != null && requestedTab.isNotEmpty) {
+      final int requestedIndex = tabTitles.indexOf(requestedTab);
+      if (requestedIndex >= 0) {
+        _selectedIndex = requestedIndex;
+      }
     }
     fetchLeaseTenants();
     super.initState();
@@ -2137,6 +2162,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     builder: (context) =>
                                                         ScheduledChargeTable(
                                                       leaseID: widget.leaseId,
+                                                      leaseRentalAddress:
+                                                          _leaseRentalAddress,
                                                     ),
                                                   ),
                                                 );

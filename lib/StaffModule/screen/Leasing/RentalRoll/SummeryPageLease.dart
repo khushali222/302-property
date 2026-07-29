@@ -72,6 +72,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   late Future<LeaseSummary> futureLeaseSummary;
+  String? _leaseRentalAddress;
   late Future<LeaseLedger?> _leaseLedgerFuture;
   late Future<LeaseCharges?> _leaseChargesFuture;
   late Future<List<Map<String, dynamic>>> _lateFeesFuture;
@@ -102,6 +103,14 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // TODO: implement initState
     print("tenant summery calling");
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
+    // Cache the lease's property address for screens (Scheduled Charges) whose
+    // lease-scoped API doesn't return it.
+    futureLeaseSummary.then((summary) {
+      final addr = summary.data?.rentalAddress;
+      if (addr != null && addr.trim().isNotEmpty && mounted) {
+        _leaseRentalAddress = addr;
+      }
+    }).catchError((_) {});
     futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);
     _leaseLedgerFuture =
         LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
@@ -1722,6 +1731,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     builder: (context) =>
                                                         ScheduledChargeTable(
                                                       leaseID: widget.leaseId,
+                                                      leaseRentalAddress:
+                                                          _leaseRentalAddress,
                                                     ),
                                                   ),
                                                 );
@@ -2437,6 +2448,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                               ScheduledChargeTable(
                                                             leaseID:
                                                                 widget.leaseId,
+                                                            leaseRentalAddress:
+                                                                _leaseRentalAddress,
                                                           ),
                                                         ),
                                                       );

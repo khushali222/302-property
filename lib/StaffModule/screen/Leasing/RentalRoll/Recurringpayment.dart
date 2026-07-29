@@ -345,7 +345,7 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                       children: [
                         SizedBox(width: 8),
                         Text(
-                          "Total Rent Amount : \$${widget.leaseData.amount}",
+                          "Total Rent Amount : \$${(widget.leaseData.amount ?? 0).toStringAsFixed(2)}",
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,

@@ -363,7 +363,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      "\$${lease.amount ?? 0.0}",
+                                                      "\$${(lease.amount ?? 0).toStringAsFixed(2)}",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,

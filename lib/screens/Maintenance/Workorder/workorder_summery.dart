@@ -1683,12 +1683,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("\$${row.partsPrice}"),
+                                    child: Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        "\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                        "\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
                                   ),
                                 ]);
                               }).toList(),
@@ -1719,7 +1719,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text("\$${grandTotal.toString()}",
+                                  child: Text("\$${grandTotal.toStringAsFixed(2)}",
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold)),
                                 ),
@@ -5446,7 +5446,7 @@ class PartWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '\$${part.partsPrice} x ${part.partsQuantity}',
+                '\$${(part.partsPrice ?? 0).toStringAsFixed(2)} x ${part.partsQuantity}',
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
               Text(

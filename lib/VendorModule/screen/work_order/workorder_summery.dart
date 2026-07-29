@@ -3891,7 +3891,7 @@ class PartWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '\$${part.partsPrice} x ${part.partsQuantity}',
+                '\$${(part.partsPrice ?? 0).toStringAsFixed(2)} x ${part.partsQuantity}',
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
               Text(

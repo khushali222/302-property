@@ -584,7 +584,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                         ),
                                         SizedBox(width: 6),
                                         Text(
-                                          '\$${leasesummery.data?.amount}',
+                                          '\$${(leasesummery.data?.amount ?? 0).toStringAsFixed(2)}',
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.bold,

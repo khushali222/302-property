@@ -44,6 +44,7 @@ import 'Commnunication/communication.dart';
 import 'Payments/Tenant_payments.dart';
 import 'edit_tenants.dart';
 import 'package:three_zero_two_property/screens/Maintenance/Workorder/Workorder_table.dart';
+import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/addcard/AddCard.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
@@ -124,6 +125,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
           widget.tenants!.leaseData = allLeaseData;
         }
       });
+      // Lease data is in, so the lease id is now resolvable — load the
+      // rental-owner acceptance that decides whether the ACH row exists.
+      _ensureAchSettings();
       return allLeaseData;
     } else {
       throw Exception('Failed to load lease data');
@@ -2998,14 +3002,114 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     }
   }
 
-  void _openManagePaymentMethods() {
+  /// Rental-owner acceptance for this tenant+lease, the same source web reads
+  /// (`tenant/payment_settings`) to decide whether ACH exists as an option at
+  /// all. Fail-closed: anything other than an explicit true hides ACH.
+  bool _leaseAchAccepted = false;
+  bool _achSettingsFetched = false;
+  bool _achFetchInFlight = false;
+  // Blocks a second tap while the first is still awaiting the settings call.
+  bool _openingPaymentMethods = false;
+
+  Future<void> _fetchAchAccepted(String leaseId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await apiGet(
+        Uri.parse('$Api_url/api/tenant/payment_settings/${widget.tenantId}/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        _leaseAchAccepted = jsonData['data']['achAccepted'] == true;
+        // Only a real answer counts as "known". Marking a failed call as
+        // fetched would hide ACH for the rest of the screen's life with no
+        // retry, since both entry points skip the call once this is true.
+        _achSettingsFetched = true;
+      }
+    } catch (e) {
+      print("Error fetching ACH settings: $e");
+    } finally {
+      _achFetchInFlight = false;
+      // The ACH row's visibility depends on the answer, so repaint once it is
+      // in — this is what removes the row for an owner that declines ACH.
+      if (mounted) setState(() {});
+    }
+  }
+
+  /// Loads the acceptance once, as soon as a lease id is available.
+  void _ensureAchSettings() {
+    if (_achSettingsFetched || _achFetchInFlight) return;
+    final leaseId = _leaseIdForAddCard;
+    if (leaseId == null || leaseId.isEmpty) return;
+    _achFetchInFlight = true;
+    _fetchAchAccepted(leaseId);
+  }
+
+  Future<void> _openManagePaymentMethods() async {
+    // The button stays live across the settings await, so without this a
+    // double tap can stack two dialogs or push two AddCard routes.
+    if (_openingPaymentMethods) return;
+    _openingPaymentMethods = true;
+    try {
+      await _handleManagePaymentMethods();
+    } finally {
+      _openingPaymentMethods = false;
+    }
+  }
+
+  Future<void> _handleManagePaymentMethods() async {
     final leaseId = _leaseIdForAddCard;
     if (leaseId == null || leaseId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No lease found to manage cards.')),
+      Fluttertoast.showToast(
+        msg:
+            'This tenant needs at least one lease to add or manage saved payment methods.',
+        backgroundColor: Colors.red,
       );
       return;
     }
+    // Whether ACH exists at all is the rental owner's setting, not the tenant's
+    // tick — web renders the ACH checkbox only when the owner accepts it.
+    if (!_achSettingsFetched) {
+      await _fetchAchAccepted(leaseId);
+      if (!mounted) return;
+    }
+    // Read live from the tenant object so the chooser reflects the Card/ACH
+    // toggles above, including a change made moments ago.
+    final t = _tenantDetails ?? widget.tenants;
+    // Card stays fail-open, the way the toggles above already read it: only an
+    // explicit false turns it off.
+    final allowCard = t?.allowCard != false;
+    // ACH needs BOTH: the owner accepting it and the tenant's own tick, which
+    // is what web's "Allowed Payment Methods" list encodes.
+    final allowAch = _leaseAchAccepted && t?.allowAch == true;
+
+    if (!allowCard && !allowAch) {
+      Fluttertoast.showToast(
+        msg: 'Turn on Card or ACH in Payment Options to add a payment method.',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+    // With only one method accepted the chooser would hold a single row, so go
+    // straight to it — the tenant module hides the unavailable action the same
+    // way rather than showing it disabled.
+    if (!allowAch) {
+      _openAddCard(leaseId);
+      return;
+    }
+    if (!allowCard) {
+      _openAddAch(leaseId);
+      return;
+    }
+    _showPaymentMethodChooser(leaseId);
+  }
+
+  void _openAddCard(String leaseId) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -3013,6 +3117,110 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
           leaseId: leaseId,
           initialTenantId: widget.tenantId,
           useStaffIdHeader: false,
+        ),
+      ),
+    );
+  }
+
+  void _openAddAch(String leaseId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddAchAccount(
+          tenantId: widget.tenantId,
+          leaseId: leaseId,
+          authAsAdmin: true,
+        ),
+      ),
+    );
+  }
+
+  /// Centered chooser, matching the other dialogs in this screen.
+  void _showPaymentMethodChooser(String leaseId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: Text(
+          'Manage Payment Methods',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: blueColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _paymentMethodOption(
+              icon: Icons.credit_card,
+              label: 'Add Card',
+              onTap: () {
+                Navigator.pop(dialogContext);
+                _openAddCard(leaseId);
+              },
+            ),
+            const SizedBox(height: 10),
+            _paymentMethodOption(
+              icon: Icons.account_balance,
+              label: 'Add Bank Account (ACH)',
+              onTap: () {
+                Navigator.pop(dialogContext);
+                _openAddAch(leaseId);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentMethodOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: blueColor),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: blueColor,
+                ),
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 18, color: Colors.grey.shade600),
+          ],
         ),
       ),
     );
@@ -3552,6 +3760,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     final t = _tenantDetails ?? widget.tenants;
     final allowAch = t?.allowAch != false;
     final allowCard = t?.allowCard != false;
+    // Hidden only once we positively KNOW the owner declines ACH. A failed
+    // settings call leaves _achSettingsFetched false, so the row stays.
+    final showAchRow = !(_achSettingsFetched && !_leaseAchAccepted);
     final canEdit = t != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3566,25 +3777,33 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                 fontWeight: FontWeight.bold,
                 fontSize: 14)),
         const SizedBox(height: 8),
-        Row(children: [
-          SizedBox(
-            width: 24,
-            child: Checkbox(
-              value: allowAch,
-              onChanged:
-                  canEdit ? (v) => _onPaymentAllowAchChanged(v == true) : null,
-              activeColor: blueColor,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        // Web paints the ACH row first and removes it only once the
+        // rental-owner settings come back saying ACH is not accepted — which
+        // is why a lease-less tenant (no settings call possible) keeps it.
+        // Visibility deliberately ignores the tenant's own tick, so unticking
+        // ACH cannot hide the control that turns it back on.
+        if (showAchRow) ...[
+          Row(children: [
+            SizedBox(
+              width: 24,
+              child: Checkbox(
+                value: allowAch,
+                onChanged: canEdit
+                    ? (v) => _onPaymentAllowAchChanged(v == true)
+                    : null,
+                activeColor: blueColor,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text("ACH",
-              style: TextStyle(
-                  color: allowAch ? blueColor : Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14)),
-        ]),
-        const SizedBox(height: 4),
+            const SizedBox(width: 10),
+            Text("ACH",
+                style: TextStyle(
+                    color: allowAch ? blueColor : Colors.grey.shade600,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14)),
+          ]),
+          const SizedBox(height: 4),
+        ],
         Row(children: [
           SizedBox(
             width: 24,
@@ -4409,14 +4628,100 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     }
   }
 
-  void _tabletOpenAddCard(Tenant tenant) {
+  // Mirrors the phone layout: the rental owner's acceptance decides whether
+  // ACH exists, and the tenant's tick decides whether it is offered.
+  bool _leaseAchAccepted = false;
+  bool _achSettingsFetched = false;
+  bool _achFetchInFlight = false;
+  bool _openingPaymentMethods = false;
+
+  Future<void> _fetchAchAccepted(String leaseId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      final response = await apiGet(
+        Uri.parse(
+            '$Api_url/api/tenant/payment_settings/${widget.tenantId}/$leaseId'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+      );
+      final jsonData = json.decode(response.body);
+      if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+        _leaseAchAccepted = jsonData['data']['achAccepted'] == true;
+        _achSettingsFetched = true;
+      }
+    } catch (e) {
+      print("Error fetching ACH settings: $e");
+    } finally {
+      _achFetchInFlight = false;
+      if (mounted) setState(() {});
+    }
+  }
+
+  /// Kicked off from the payment card's builder. The guards make it run at
+  /// most once, and the post-frame hop keeps setState out of the build phase —
+  /// this layout creates its lease future inside build, so a direct call would
+  /// loop.
+  void _tabletEnsureAchSettings(Tenant tenant) {
+    if (_achSettingsFetched || _achFetchInFlight) return;
+    final leaseId = _tabletLeaseIdForAddCard(tenant);
+    if (leaseId == null || leaseId.isEmpty) return;
+    _achFetchInFlight = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _fetchAchAccepted(leaseId);
+    });
+  }
+
+  Future<void> _tabletOpenAddCard(Tenant tenant) async {
+    if (_openingPaymentMethods) return;
+    _openingPaymentMethods = true;
+    try {
+      await _tabletHandleManagePaymentMethods(tenant);
+    } finally {
+      _openingPaymentMethods = false;
+    }
+  }
+
+  Future<void> _tabletHandleManagePaymentMethods(Tenant tenant) async {
     final leaseId = _tabletLeaseIdForAddCard(tenant);
     if (leaseId == null || leaseId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No lease found to manage cards.')),
+      Fluttertoast.showToast(
+        msg:
+            'This tenant needs at least one lease to add or manage saved payment methods.',
+        backgroundColor: Colors.red,
       );
       return;
     }
+    if (!_achSettingsFetched && !_achFetchInFlight) {
+      _achFetchInFlight = true;
+      await _fetchAchAccepted(leaseId);
+      if (!mounted) return;
+    }
+    final allowCard = tenant.allowCard != false;
+    final allowAch = _leaseAchAccepted && tenant.allowAch == true;
+
+    if (!allowCard && !allowAch) {
+      Fluttertoast.showToast(
+        msg: 'Turn on Card or ACH in Payment Options to add a payment method.',
+        backgroundColor: Colors.red,
+      );
+      return;
+    }
+    if (!allowAch) {
+      _tabletPushAddCard(leaseId);
+      return;
+    }
+    if (!allowCard) {
+      _tabletPushAddAch(leaseId);
+      return;
+    }
+    _tabletShowChooser(leaseId);
+  }
+
+  void _tabletPushAddCard(String leaseId) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -4424,6 +4729,109 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
           leaseId: leaseId,
           initialTenantId: widget.tenantId,
           useStaffIdHeader: false,
+        ),
+      ),
+    );
+  }
+
+  void _tabletPushAddAch(String leaseId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddAchAccount(
+          tenantId: widget.tenantId,
+          leaseId: leaseId,
+          authAsAdmin: true,
+        ),
+      ),
+    );
+  }
+
+  void _tabletShowChooser(String leaseId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: Text(
+          'Manage Payment Methods',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: blueColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _tabletMethodOption(
+              icon: Icons.credit_card,
+              label: 'Add Card',
+              onTap: () {
+                Navigator.pop(dialogContext);
+                _tabletPushAddCard(leaseId);
+              },
+            ),
+            const SizedBox(height: 10),
+            _tabletMethodOption(
+              icon: Icons.account_balance,
+              label: 'Add Bank Account (ACH)',
+              onTap: () {
+                Navigator.pop(dialogContext);
+                _tabletPushAddAch(leaseId);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: blueColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tabletMethodOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: blueColor),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: blueColor,
+                ),
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 18, color: Colors.grey.shade600),
+          ],
         ),
       ),
     );
@@ -5849,6 +6257,11 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                       final tTab = tenantsummery.first;
                       final ach = tTab.allowAch != false;
                       final card = tTab.allowCard != false;
+                      // Same rule as the phone layout: paint ACH, then remove it
+                      // only once the owner's settings say it is not accepted.
+                      _tabletEnsureAchSettings(tTab);
+                      final showAchRow =
+                          !(_achSettingsFetched && !_leaseAchAccepted);
                       return Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -5880,25 +6293,26 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: ach,
-                                  onChanged: (v) =>
-                                      _tabletOnPaymentAch(tTab, v == true),
-                                  activeColor: blueColor,
-                                ),
-                                Text(
-                                  "ACH",
-                                  style: TextStyle(
-                                    color:
-                                        ach ? blueColor : Colors.grey.shade600,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
+                            if (showAchRow)
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: ach,
+                                    onChanged: (v) =>
+                                        _tabletOnPaymentAch(tTab, v == true),
+                                    activeColor: blueColor,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Text(
+                                    "ACH",
+                                    style: TextStyle(
+                                      color:
+                                          ach ? blueColor : Colors.grey.shade600,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             Row(
                               children: [
                                 Checkbox(

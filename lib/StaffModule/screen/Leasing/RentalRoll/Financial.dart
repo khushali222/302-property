@@ -841,8 +841,10 @@ class _FinancialTableState extends State<FinancialTable> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      ScheduledChargeTable(leaseID: widget.leaseId),
+                  builder: (context) => ScheduledChargeTable(
+                    leaseID: widget.leaseId,
+                    leaseRentalAddress: widget.rentalAddress,
+                  ),
                 ),
               );
             },
@@ -1439,8 +1441,8 @@ class _FinancialTableState extends State<FinancialTable> {
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(
                     ledger.type == "Refund" || ledger.type == "Charge"
-                        ? '\$${ledger.totalAmount}'
-                        : ' - \$${ledger.totalAmount}',
+                        ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
+                        : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
                   ),
                 ),
                 ledger.balance! < 0
@@ -1586,8 +1588,8 @@ class _FinancialTableState extends State<FinancialTable> {
 
       sheet.getRangeByIndex(2 + i, 5).setText(
             ledger.type == "Refund" || ledger.type == "Charge"
-                ? '\$${ledger.totalAmount}'
-                : ' - \$${ledger.totalAmount}',
+                ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
+                : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
           );
 
       print(ledger.balance);
@@ -1661,8 +1663,8 @@ class _FinancialTableState extends State<FinancialTable> {
             ? "${ledger.entry?.first.memo}"
             : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
         ledger.type == "Refund" || ledger.type == "Charge"
-            ? '\$${ledger.totalAmount}'
-            : ' - \$${ledger.totalAmount}',
+            ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
+            : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
         ledger.balance! < 0
             ? ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
             : '\$${ledger.balance!.abs().toStringAsFixed(2)}',

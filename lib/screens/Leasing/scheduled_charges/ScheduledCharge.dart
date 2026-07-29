@@ -39,7 +39,12 @@ import '../../../Model/profile.dart';
 
 class ScheduledChargeTable extends StatefulWidget {
   String? leaseID;
-  ScheduledChargeTable({super.key, this.leaseID});
+  // Property address of the lease this screen was opened from. The
+  // lease-scoped endpoint (/charge/lease-scheduled-charges/{id}) does not
+  // return rental_address, so rows would otherwise render "N/A" — every row
+  // in a lease-scoped list belongs to this one property anyway.
+  final String? leaseRentalAddress;
+  ScheduledChargeTable({super.key, this.leaseID, this.leaseRentalAddress});
 
   @override
   State<ScheduledChargeTable> createState() => _ScheduledChargeTableState();
@@ -181,8 +186,25 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     });
     checkInternet();
     fetchDropdownData();
-    futurescheduledpayment = ScheduledChargesRepository()
+    futurescheduledpayment = _fetchCharges();
+  }
+
+  /// Fetches the charges and backfills the property address on rows the
+  /// lease-scoped endpoint returns without one (display, search and exports
+  /// all read charge.rentalAddress, so one backfill covers them all).
+  Future<List<ScheduledCharges>> _fetchCharges() async {
+    final charges = await ScheduledChargesRepository()
         .fetchScheduledCharges(leaseid: widget.leaseID);
+    final fallback = widget.leaseRentalAddress?.trim() ?? '';
+    if (fallback.isNotEmpty) {
+      for (final c in charges) {
+        if ((c.rentalAddress ?? '').trim().isEmpty ||
+            c.rentalAddress == 'N/A') {
+          c.rentalAddress = fallback;
+        }
+      }
+    }
+    return charges;
   }
 
   void checkInternet() async {
@@ -601,8 +623,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
               if (response != null) {
                 Fluttertoast.showToast(msg: "Charge updated successfully");
                 setState(() {
-                  futurescheduledpayment = ScheduledChargesRepository()
-                      .fetchScheduledCharges(leaseid: widget.leaseID);
+                  futurescheduledpayment = _fetchCharges();
                 });
                 Navigator.of(context).pop();
               } else {
@@ -891,7 +912,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             child: pw.Align(
                               alignment: pw.Alignment.centerRight,
                               child: pw.Text(charge.amount != null
-                                  ? '\$${charge.amount}'
+                                  ? '\$${charge.amount.toStringAsFixed(2)}'
                                   : ''),
                             ),
                           ),
@@ -930,7 +951,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         charge.rentalAddress ?? '',
         _displayOrNA(charge.description),
         _displayOrNA(charge.account),
-        "\$${charge.amount != null ? charge.amount.toString() : ""}"
+        "\$${charge.amount.toStringAsFixed(2)}"
       ].map((e) => '"${e.replaceAll('"', '""')}"').join(','));
     }
 

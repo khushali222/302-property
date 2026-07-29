@@ -14,6 +14,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../Leasing/RentalRoll/Financial.dart';
 import '../Maintenance/Workorder/Edit_workorders.dart';
+import '../Maintenance/Workorder/workorder_summery.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
 class notifications extends StatefulWidget {
   const notifications({super.key});
@@ -174,23 +175,41 @@ class _notificationsState extends State<notifications> {
 
         // Check if it's a work order or payment
         if (responseData['is_workorder'] == true) {
-          print("Navigating to Edit Work Order...");
+          // Web parity: the notification opens the work order in VIEW mode
+          // (web routes to /workorderdetails/{id}). Tapping a passive
+          // notification should never drop the user into an editable form.
+          // Staff/Tenant/Vendor already open Workorder_summery here.
+          print("Navigating to Work Order details...");
           String workOrderId = responseData['notification_type']['workorder_id'];
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ResponsiveEditWorkOrder(workorderId: workOrderId),
+              builder: (context) => Workorder_summery(workorder_id: workOrderId),
             ),
           );
         } else {
-          print("Navigating to Payment...");
           String leaseId = responseData['notification_type']['lease_id'];
+          // Web parity (AdminNavbar.js): lease-document notifications open the
+          // Lease tab; every other lease notification opens Financial.
+          final String notificationType =
+              '${responseData['notification_type']?['type'] ?? ''}';
+          const Set<String> leaseTabNotifications = {
+            'Lease Document Signed',
+            'Lease Document Ready to Download',
+          };
+          final bool openLeaseTab =
+              leaseTabNotifications.contains(notificationType);
+          print(openLeaseTab
+              ? "Navigating to Lease documents..."
+              : "Navigating to Payment...");
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => SummeryPageLease(
                 leaseId: leaseId,
-                isredirectpayment: true, // Pass this to trigger tab navigation
+                // Financial tab for payment/other lease notifications.
+                isredirectpayment: !openLeaseTab,
+                initialTabTitle: openLeaseTab ? 'Lease' : null,
               ),
             ),
           );

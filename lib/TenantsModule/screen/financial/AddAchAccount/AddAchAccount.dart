@@ -65,6 +65,10 @@ class _AddAchAccountState extends State<AddAchAccount> {
   List<Map<String, dynamic>> _existingAchAccounts = [];
   bool _loadingExisting = true;
   String? _resolvedVaultId;
+  // Distinguishes "no accounts on file" from "the list could not be loaded".
+  bool _existingLoadFailed = false;
+  // Set when the secure-field key could not be fetched.
+  bool _keyLoadFailed = false;
 
   // PCI: Collect.js ACH tokenization — replaces the raw routing/account inputs.
   // Sends a payment_token (+ the masked account/routing Collect.js returns) to
@@ -237,21 +241,31 @@ class _AddAchAccountState extends State<AddAchAccount> {
   }
 
   // PCI: fetch the Collect.js public key (unauth by-admin route, same as cards).
+  /// Without the key the secure bank fields never initialise, so every exit
+  /// here used to leave a form that silently could not be completed. Each
+  /// failure now reports itself and can be retried.
   Future<void> _fetchTokenizationKey() async {
+    if (mounted) setState(() => _keyLoadFailed = false);
     final prefs = await SharedPreferences.getInstance();
     final adminId = prefs.getString('adminId');
-    if (adminId == null || adminId.isEmpty) return;
+    if (adminId == null || adminId.isEmpty) {
+      if (mounted) setState(() => _keyLoadFailed = true);
+      return;
+    }
     try {
       final res = await apiGet(
         Uri.parse('$Api_url/api/tenant/nmi_public_key_by_admin/$adminId'),
       );
-      if (res.statusCode == 200) {
-        final key = json.decode(res.body)['publicKey'];
-        if (key is String && key.isNotEmpty && mounted) {
-          setState(() => _publicKey = key);
-        }
+      final decoded = res.statusCode == 200 ? json.decode(res.body) : null;
+      final key = decoded is Map ? decoded['publicKey'] : null;
+      if (key is String && key.isNotEmpty) {
+        if (mounted) setState(() => _publicKey = key);
+      } else {
+        if (mounted) setState(() => _keyLoadFailed = true);
       }
-    } catch (_) {}
+    } catch (_) {
+      if (mounted) setState(() => _keyLoadFailed = true);
+    }
   }
 
   Future<void> _loadExistingAchAccounts() async {
@@ -262,7 +276,12 @@ class _AddAchAccountState extends State<AddAchAccount> {
       if (mounted) setState(() => _loadingExisting = false);
       return;
     }
-    if (mounted) setState(() => _loadingExisting = true);
+    if (mounted) {
+      setState(() {
+        _loadingExisting = true;
+        _existingLoadFailed = false;
+      });
+    }
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       // id header: staff_id for staff, adminId for admin — matches make_payment.dart
@@ -342,11 +361,21 @@ class _AddAchAccountState extends State<AddAchAccount> {
         }
       } else {
         if (kDebugMode) debugPrint('[ACH] get-billing-customer-vault failed or not mounted');
-        if (mounted) setState(() => _loadingExisting = false);
+        if (mounted) {
+          setState(() {
+            _loadingExisting = false;
+            _existingLoadFailed = true;
+          });
+        }
       }
     } catch (e) {
       if (kDebugMode) debugPrint('[ACH] ERROR in _loadExistingAchAccounts: $e');
-      if (mounted) setState(() => _loadingExisting = false);
+      if (mounted) {
+        setState(() {
+          _loadingExisting = false;
+          _existingLoadFailed = true;
+        });
+      }
     }
   }
 
@@ -494,7 +523,15 @@ class _AddAchAccountState extends State<AddAchAccount> {
     String? headerId = _headerIdForRequest(prefs);
     String? authToken = prefs.getString('token');
     if (headerId == null) {
-      if (mounted) setState(() => _isSubmitting = false);
+      // Aborting silently left the user looking at a form that simply did
+      // nothing on submit.
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+          _validationError =
+              'Your session details are missing. Please sign in again to add a bank account.';
+        });
+      }
       return;
     }
 
@@ -530,19 +567,35 @@ class _AddAchAccountState extends State<AddAchAccount> {
         debugPrint('add-tenant-ach status ${response.statusCode}');
       }
       if (!mounted) return;
-      setState(() => _isSubmitting = false);
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final decoded = json.decode(response.body);
+      // The API signals auth failures as HTTP 200 with statusCode 401 in the
+      // BODY (Server/routes/api/Authorization/VerifyToken.js), so the HTTP
+      // status alone would report a save that never happened.
+      final bodyStatus = decoded is Map ? decoded['statusCode'] : null;
+      final bool httpOk =
+          response.statusCode == 200 || response.statusCode == 201;
+      final bool bodyOk =
+          bodyStatus == null || bodyStatus == 200 || bodyStatus == 201;
+      if (httpOk && bodyOk) {
         Fluttertoast.showToast(msg: 'ACH account added successfully');
         await _fetchVaultIdThenLoadAccounts();
-        if (mounted) Navigator.pop(context, true);
+        // _isSubmitting stays true until the screen actually leaves, so the
+        // button cannot be tapped again during the reload above and post a
+        // second bank account.
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+          Navigator.pop(context, true);
+        }
       } else {
-        final err = json.decode(response.body);
         setState(() {
-          final data = err is Map ? err['data'] : null;
+          _isSubmitting = false;
+          final data = decoded is Map ? decoded['data'] : null;
           final dataError = data is Map ? data['error']?.toString() : null;
-          _validationError = dataError ??
-              err['message']?.toString() ??
-              'Failed to add ACH account';
+          _validationError = bodyStatus == 401
+              ? 'Your session has expired. Please sign in again — the bank account was not added.'
+              : (dataError ??
+                  (decoded is Map ? decoded['message']?.toString() : null) ??
+                  'Failed to add ACH account');
         });
       }
     } catch (e) {
@@ -689,6 +742,26 @@ class _AddAchAccountState extends State<AddAchAccount> {
               // PCI: account holder name / routing / account number are typed
               // inside Collect.js secure fields (WebView); only a token leaves
               // the app. Raw account/routing never touch Dart or our server.
+              // Without the key the secure fields below stay blank forever, so
+              // say so and offer a retry instead of leaving a dead form.
+              if (_keyLoadFailed) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Secure bank fields could not be loaded.',
+                        style: TextStyle(fontSize: 13, color: Colors.red),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _fetchTokenizationKey,
+                      child:
+                          Text('Retry', style: TextStyle(color: blueColor)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+              ],
               CollectJsCardField(
                 mode: CollectJsMode.ach,
                 height: 236,
@@ -766,7 +839,24 @@ class _AddAchAccountState extends State<AddAchAccount> {
                               SpinKitFadingCircle(color: blueColor, size: 40),
                         ),
                       )
-                    : _existingAchAccounts.isEmpty
+                    : _existingLoadFailed
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Could not load saved bank accounts.',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.red),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: _fetchVaultIdThenLoadAccounts,
+                                child: Text('Retry',
+                                    style: TextStyle(color: blueColor)),
+                              ),
+                            ],
+                          )
+                        : _existingAchAccounts.isEmpty
                         ? Text(
                             'No ACH accounts yet.',
                             style: TextStyle(fontSize: 14, color: grey),
@@ -918,8 +1008,12 @@ class _AddAchAccountState extends State<AddAchAccount> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            // Web parity: greyed until required fields are filled.
-                            color: _requiredFieldsFilled
+                            // Web parity: greyed until required fields are
+                            // filled. Also greyed while the secure bank fields
+                            // are not ready — the tap handler already refuses
+                            // in that state, so this only stops the button
+                            // from looking usable when it isn't.
+                            color: (_requiredFieldsFilled && _achReady)
                                 ? blueColor
                                 : blueColor.withOpacity(0.4),
                             borderRadius: BorderRadius.circular(8),

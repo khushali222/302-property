@@ -5862,11 +5862,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child:Text("\$${row.partsPrice}"),
+                                          child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                          child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
                                         ),
                                       ]);
                                     }).toList(),*/
@@ -5998,7 +5998,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
                                   ),
                                   /* Padding(
                                         padding: EdgeInsets.all(8.0),
-                                        child: Text("\$${grandTotal.toString()}",style: TextStyle(
+                                        child: Text("\$${grandTotal.toStringAsFixed(2)}",style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                       ),*/
 

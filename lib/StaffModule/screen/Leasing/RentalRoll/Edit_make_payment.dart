@@ -3026,11 +3026,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${row.partsPrice}"),
+                                                child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!)}"),
+                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
                                               ),
                                             ]);
                                           }).toList(),*/

@@ -631,8 +631,8 @@ class _Rent_collectionState extends State<Rent_collection> {
           detail.leaseData?.startDate != null
               ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
               : 'N/A',
-          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
-          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
+          formatCurrency(detail.leaseData?.leaseAmount),
+          formatCurrency(detail.leaseData?.balance),
           autoPay,
           notes,
         ]);
@@ -693,8 +693,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             detail.leaseData?.startDate != null
                 ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
                 : 'N/A',
-            '\$${detail.leaseData?.leaseAmount?.toStringAsFixed(2) ?? '0.00'}',
-            '\$${balance.toStringAsFixed(2)}',
+            formatCurrency(detail.leaseData?.leaseAmount),
+            formatCurrency(balance),
             autoPay,
             notes,
           ]);
@@ -797,8 +797,8 @@ class _Rent_collectionState extends State<Rent_collection> {
           detail.leaseData?.startDate != null
               ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
               : 'N/A',
-          "\$${detail.leaseData?.leaseAmount?.toString()}" ?? 'N/A',
-          "\$${detail.leaseData?.balance?.toString()}" ?? 'N/A',
+          formatCurrency(detail.leaseData?.leaseAmount),
+          formatCurrency(detail.leaseData?.balance),
           autoPay,
           notes,
         ]);
@@ -859,8 +859,8 @@ class _Rent_collectionState extends State<Rent_collection> {
             detail.leaseData?.startDate != null
                 ? dateProvider.formatCurrentDate(detail.leaseData!.startDate!)
                 : 'N/A',
-            '\$${detail.leaseData?.leaseAmount?.toStringAsFixed(2) ?? '0.00'}',
-            '\$${balance.toStringAsFixed(2)}',
+            formatCurrency(detail.leaseData?.leaseAmount),
+            formatCurrency(balance),
             autoPay,
             notes,
           ]);
@@ -2721,7 +2721,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                 height: 4,
                                               ),
                                               Text(
-                                                '\$${item.totalCharged ?? '-'}',
+                                                formatCurrency(item.totalCharged),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontWeight: FontWeight.bold,
@@ -2876,7 +2876,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               height: 4,
                                             ),
                                             Text(
-                                              '\$${data.totalSummary?.totalCharged ?? '-'}',
+                                              formatCurrency(data.totalSummary?.totalCharged),
                                               style: TextStyle(
                                                 color: grey,
                                                 fontWeight: FontWeight.bold,
@@ -3135,7 +3135,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                         flex: isSmallScreen ? 2 : 2,
                                         child: Text(
                                           item.leaseData?.balance != null
-                                              ? '\$${item.leaseData!.balance!.toStringAsFixed(2)}'
+                                              ? formatCurrency(item.leaseData!.balance)
                                               : '-',
                                           style: TextStyle(
                                             color: blueColor,
@@ -3216,7 +3216,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    formatCurrency(item.leaseData?.leaseAmount),
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -3280,7 +3280,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Text(
-                                                    '\$${item.leaseData?.leaseAmount ?? 'N/A'}',
+                                                    formatCurrency(item.leaseData?.leaseAmount),
                                                     style: TextStyle(
                                                       color: grey,
                                                       fontSize: 14,
@@ -3767,7 +3767,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                '\$${item.leaseData?.leaseAmount ?? '-'}',
+                                                formatCurrency(item.leaseData?.leaseAmount),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
