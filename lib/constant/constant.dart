@@ -253,7 +253,13 @@ String reverseFormatDate(String formattedDate) {
       'MM-dd-yyyy',
       'M-d-yyyy',
       'dd/MM/yyyy',
-      'd/M/yyyy'
+      'd/M/yyyy',
+      // Month-name format ("2026-Jul-29"). DateProvider sets this whenever the
+      // admin picks YYYY-MMM-DD; without it the parse fell through and this
+      // function returned "", sending an empty date to the API. Appended last
+      // so it can only catch inputs every earlier pattern already rejected.
+      'yyyy-MMM-dd',
+      'yyyy-MMM-d',
     ];
 
     DateTime? parsedDate;

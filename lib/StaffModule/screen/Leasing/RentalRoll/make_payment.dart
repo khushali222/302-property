@@ -323,20 +323,44 @@ class _MakePaymentState extends State<MakePayment> {
       }
       setState(() {
         tenants = fetchedTenants;
-        if (tenants.length == 1) {
+
+        // Mirrors the Admin screen exactly: honour the tenant the caller
+        // preset, else auto-select only when there is a single tenant (or
+        // when editing). The old Staff branch selected the first of several
+        // tenants but never fetched charges/cards/payment settings for them,
+        // so on a multi-tenant lease the payment-method list stayed on its
+        // defaults (no ACH) until the user re-picked a tenant by hand.
+        if (widget.tenantId.isNotEmpty) {
+          var presetTenant = tenants.firstWhere(
+            (tenant) => tenant['tenant_id'] == widget.tenantId,
+            orElse: () =>
+                tenants.first, // Fallback to first tenant if not found
+          );
+
+          selectedTenantId = presetTenant["tenant_id"];
+          tenantname = presetTenant["tenant_name"]!;
+
+          fetchChargesForSelectedTenant(selectedTenantId!);
+          fetchcreditcard(selectedTenantId!);
+          fetchPaymentSettings();
+        } else if (tenants.length == 1) {
           selectedTenantId = tenants.first["tenant_id"];
+          tenantname = tenants.first["tenant_name"]!;
+
           fetchChargesForSelectedTenant(selectedTenantId!);
           fetchcreditcard(selectedTenantId!);
           fetchPaymentSettings();
         } else if (tenants.length > 1) {
-          // If there are multiple tenants, select the first tenant and fetch their charges
-          selectedTenantId = tenants.first["tenant_id"];
-          tenantname = tenants.first["tenant_name"]!;
+          // For multiple tenants, don't auto-select unless editing
+          if (widget.isEdit == true) {
+            selectedTenantId = tenants.first["tenant_id"];
+            tenantname = tenants.first["tenant_name"]!;
+
+            fetchChargesForSelectedTenant(selectedTenantId!);
+            fetchcreditcard(selectedTenantId!);
+            fetchPaymentSettings();
+          }
         }
-        // if (selectedTenantId != null) {
-        //   fetchChargesForSelectedTenant(selectedTenantId!);
-        //   fetchcreditcard(selectedTenantId!);
-        // }
         final inner = data['data'];
         processor_id = inner is Map
             ? (inner['processor_id']?.toString() ?? '')
@@ -559,7 +583,19 @@ class _MakePaymentState extends State<MakePayment> {
   String? _selectedHoldertype;
   double? surchage_percent;
   // Payment methods list
-  List<String> _paymentMethods = [];
+  // Seeded with the full list exactly as Admin does. Starting empty meant that
+  // whenever the payment-settings call did not return 200 (or threw), the
+  // dropdown had no options at all and no method could be selected — which is
+  // why it worked on some accounts and not others.
+  List<String> _paymentMethods = [
+    'Card',
+    'Check',
+    'Cash',
+    'ACH',
+    'Cashier \'s Check',
+    'Money Order',
+    'Manual'
+  ];
 
   // Initialize payment methods
   void _initializePaymentMethods({bool isExternal = false}) {
@@ -690,9 +726,13 @@ class _MakePaymentState extends State<MakePayment> {
         });
       } else {
         print("Failed to fetch payment settings: ${jsonData["message"]}");
+        // Keep the dropdown usable on a failed lookup rather than leaving it
+        // in whatever state it was in.
+        if (mounted) setState(() => _initializePaymentMethods());
       }
     } catch (e) {
       print("Error fetching payment settings: $e");
+      if (mounted) setState(() => _initializePaymentMethods());
     }
   }
 
@@ -1437,16 +1477,22 @@ class _MakePaymentState extends State<MakePayment> {
                                                 'Selected tenant_id: $selectedTenantId');
                                           },
                                           buttonStyleData: ButtonStyleData(
-                                            height: 45,
+                                            height: 50,
                                             // width: 250,
                                             padding: const EdgeInsets.only(
                                                 left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8),
                                               color: Colors.white,
+                                              // Matches the text fields on this
+                                              // screen: same radius, same hairline,
+                                              // and flat instead of raised.
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1),
                                             ),
-                                            elevation: 2,
+                                            elevation: 0,
                                           ),
                                           iconStyleData: const IconStyleData(
                                             icon: Icon(
@@ -1457,9 +1503,13 @@ class _MakePaymentState extends State<MakePayment> {
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            // Capped so the menu opens under the field and scrolls,
+                                            // instead of growing to cover the whole screen.
+                                            maxHeight: 300,
+                                            offset: const Offset(0, -6),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
@@ -1643,13 +1693,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                     },
                                                     buttonStyleData:
                                                         ButtonStyleData(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .width <
-                                                                  500
-                                                              ? 45
-                                                              : 55,
+                                                      height: 50,
                                                       width: 250,
                                                       padding:
                                                           const EdgeInsets.only(
@@ -1658,10 +1702,15 @@ class _MakePaymentState extends State<MakePayment> {
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(6),
+                                                                .circular(8),
                                                         color: Colors.white,
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade300,
+                                                            width: 1),
                                                       ),
-                                                      elevation: 2,
+                                                      elevation: 0,
                                                     ),
                                                     iconStyleData:
                                                         const IconStyleData(
@@ -1676,10 +1725,14 @@ class _MakePaymentState extends State<MakePayment> {
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
+                                                      // Capped so the menu opens under the field and scrolls,
+                                                      // instead of growing to cover the whole screen.
+                                                      maxHeight: 300,
+                                                      offset: const Offset(0, -6),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(6),
+                                                                .circular(8),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
@@ -1817,8 +1870,14 @@ class _MakePaymentState extends State<MakePayment> {
                                 }
                                 final raw = value.trim().replaceAll(',', '');
                                 final parsed = double.tryParse(raw);
-                                if (parsed == null || parsed <= 0) {
+                                if (parsed == null) {
                                   return 'Please enter valid amount';
+                                }
+                                // Same wording and 0.01 floor as Add Charge
+                                // (web's AddCharge.jsx), so a zero amount is
+                                // explained rather than called invalid.
+                                if (parsed < 0.01) {
+                                  return 'Amount must be greater than zero.';
                                 }
                                 return null;
                               },
@@ -1834,13 +1893,25 @@ class _MakePaymentState extends State<MakePayment> {
                               controller: amountController,
                               onChanged: (value) {
                                 validateAmounts();
-                                final v = double.tryParse(
-                                    value.trim().replaceAll(',', ''));
+                                final raw = value.trim().replaceAll(',', '');
+                                final v = double.tryParse(raw);
                                 setState(() {
-                                  _amountLimitError =
-                                      (v != null && v > 999999.99)
-                                          ? 'Amount cannot exceed \$999,999.99'
-                                          : null;
+                                  // Shown through this inline error rather than
+                                  // the field's validator: this CustomTextField
+                                  // (AddCard.dart) never calls the validator it
+                                  // is given, so a message put there is dead.
+                                  if (v != null && v > 999999.99) {
+                                    _amountLimitError =
+                                        'Amount cannot exceed \$999,999.99';
+                                  } else if (raw.isNotEmpty &&
+                                      v != null &&
+                                      v < 0.01) {
+                                    // Same wording and 0.01 floor as Add Charge.
+                                    _amountLimitError =
+                                        'Amount must be greater than zero.';
+                                  } else {
+                                    _amountLimitError = null;
+                                  }
                                 });
                               },
                             ),
@@ -1915,10 +1986,17 @@ class _MakePaymentState extends State<MakePayment> {
                                     padding: const EdgeInsets.only(
                                         left: 2, right: 14),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                    ),
-                                    elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.white,
+                                              // Matches the text fields on this
+                                              // screen: same radius, same hairline,
+                                              // and flat instead of raised.
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1),
+                                            ),
+                                    elevation: 0,
                                   ),
                                   iconStyleData: const IconStyleData(
                                     icon: Icon(
@@ -1929,8 +2007,12 @@ class _MakePaymentState extends State<MakePayment> {
                                     iconDisabledColor: Colors.grey,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
+                                    // Capped so the menu opens under the field and scrolls,
+                                    // instead of growing to cover the whole screen.
+                                    maxHeight: 300,
+                                    offset: const Offset(0, -6),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(8),
                                       color: Colors.white,
                                     ),
                                     scrollbarTheme: ScrollbarThemeData(
@@ -2036,10 +2118,16 @@ class _MakePaymentState extends State<MakePayment> {
                                                 left: 2, right: 14),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8),
                                               color: Colors.white,
+                                              // Matches the text fields on this
+                                              // screen: same radius, same hairline,
+                                              // and flat instead of raised.
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1),
                                             ),
-                                            elevation: 2,
+                                            elevation: 0,
                                           ),
                                           iconStyleData: const IconStyleData(
                                             icon: Icon(Icons.arrow_drop_down),
@@ -2048,9 +2136,13 @@ class _MakePaymentState extends State<MakePayment> {
                                             iconDisabledColor: Colors.grey,
                                           ),
                                           dropdownStyleData: DropdownStyleData(
+                                            // Capped so the menu opens under the field and scrolls,
+                                            // instead of growing to cover the whole screen.
+                                            maxHeight: 300,
+                                            offset: const Offset(0, -6),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(8),
                                               color: Colors.white,
                                             ),
                                             scrollbarTheme: ScrollbarThemeData(
@@ -3153,7 +3245,7 @@ class _MakePaymentState extends State<MakePayment> {
                                                     },
                                                     buttonStyleData:
                                                         ButtonStyleData(
-                                                      height: 45,
+                                                      height: 50,
                                                       // width: 220,
                                                       padding:
                                                           const EdgeInsets.only(
@@ -3162,10 +3254,15 @@ class _MakePaymentState extends State<MakePayment> {
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(6),
+                                                                .circular(8),
                                                         color: Colors.white,
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .grey
+                                                                .shade300,
+                                                            width: 1),
                                                       ),
-                                                      elevation: 2,
+                                                      elevation: 0,
                                                     ),
                                                     iconStyleData:
                                                         const IconStyleData(
@@ -3179,11 +3276,14 @@ class _MakePaymentState extends State<MakePayment> {
                                                     ),
                                                     dropdownStyleData:
                                                         DropdownStyleData(
-                                                      width: 250,
+                                                      // Capped so the menu opens under the field and scrolls,
+                                                      // instead of growing to cover the whole screen.
+                                                      maxHeight: 300,
+                                                      offset: const Offset(0, -6),
                                                       decoration: BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(6),
+                                                                .circular(8),
                                                         color: Colors.white,
                                                       ),
                                                       scrollbarTheme:
@@ -3455,16 +3555,22 @@ class _MakePaymentState extends State<MakePayment> {
                                           });
                                         },
                                         buttonStyleData: ButtonStyleData(
-                                          height: 45,
+                                          height: 50,
                                           width: 220,
                                           padding: const EdgeInsets.only(
                                               left: 14, right: 14),
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            color: Colors.white,
-                                          ),
-                                          elevation: 2,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.white,
+                                              // Matches the text fields on this
+                                              // screen: same radius, same hairline,
+                                              // and flat instead of raised.
+                                              border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1),
+                                            ),
+                                          elevation: 0,
                                         ),
                                         iconStyleData: const IconStyleData(
                                           icon: Icon(Icons.arrow_drop_down),
@@ -3473,10 +3579,13 @@ class _MakePaymentState extends State<MakePayment> {
                                           iconDisabledColor: Colors.grey,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
-                                          width: 250,
+                                          // Capped so the menu opens under the field and scrolls,
+                                          // instead of growing to cover the whole screen.
+                                          maxHeight: 300,
+                                          offset: const Offset(0, -6),
                                           decoration: BoxDecoration(
                                             borderRadius:
-                                                BorderRadius.circular(6),
+                                                BorderRadius.circular(8),
                                             color: Colors.white,
                                           ),
                                           scrollbarTheme: ScrollbarThemeData(
@@ -3841,9 +3950,12 @@ class _MakePaymentState extends State<MakePayment> {
                   top: 20),
               child: Row(
                 children: [
-                  Container(
-                      height: 45,
-                      width: 150,
+                  // Flexible instead of a fixed 150px so the label is
+                  // never cramped, and 50 tall to match the fields and
+                  // dropdowns on this screen.
+                  Expanded(
+                    child: Container(
+                      height: 50,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0)),
                       child: ElevatedButton(
@@ -4268,12 +4380,13 @@ class _MakePaymentState extends State<MakePayment> {
                                       color: Color(0xFFf7f8f9),
                                       fontWeight: FontWeight.bold),
                                 ))),
+                  ),
                   const SizedBox(
                     width: 8,
                   ),
-                  Container(
+                  Expanded(
+                    child: Container(
                       height: 50,
-                      width: 120,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0)),
                       child: ElevatedButton(
@@ -4299,6 +4412,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 color: Color(0xFF748097),
                                 fontWeight: FontWeight.bold),
                           ))),
+                  ),
                 ],
               ),
             ),
