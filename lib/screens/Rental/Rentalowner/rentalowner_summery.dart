@@ -168,7 +168,7 @@ class _RentalownersSummeryForMobileState
       Uri.parse('${Api_url}/api/payment/rental_owner/setting/${widget.rentalowners?.rentalownerId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     final jsonData = json.decode(response.body);

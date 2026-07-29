@@ -22,7 +22,7 @@ class WorkOrderRepository {
       Uri.parse('$Api_url/api/work-order/work-orders/$id'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       },
     );
 
@@ -90,7 +90,7 @@ class WorkOrderRepository {
       uri,
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       },
     );
 
@@ -173,7 +173,7 @@ class WorkOrderRepository {
       Uri.parse('${Api_url}/api/work-order/work-order'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
@@ -204,7 +204,7 @@ class WorkOrderRepository {
       Uri.parse('${Api_url}/api/work-order/workorder_details/$workorderId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     ); // Update with your actual API URL
     //print('hello${response.body}');
@@ -275,7 +275,7 @@ class WorkOrderRepository {
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode({
@@ -354,7 +354,7 @@ class WorkOrderRepository {
       Uri.parse('$Api_url/api/work-order/delete_workorder/$workOrderid'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -382,7 +382,7 @@ class WorkOrderRepository {
     print('$Api_url/api/work-order/workorder_details/$workorderId');
     final response = await apiGet(url, headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
 
     if (response.statusCode == 200) {
@@ -404,7 +404,7 @@ class WorkOrderRepository {
     final response = await apiPut(url,
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode({"workOrder": workorder}));

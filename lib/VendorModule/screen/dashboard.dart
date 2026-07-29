@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -88,7 +89,8 @@ class Dashboard_vendors extends StatefulWidget {
   State<Dashboard_vendors> createState() => _Dashboard_vendorsState();
 }
 
-class _Dashboard_vendorsState extends State<Dashboard_vendors> {
+class _Dashboard_vendorsState extends State<Dashboard_vendors>
+    with WidgetsBindingObserver {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   String firstname = '';
   String lastname = '';
@@ -344,16 +346,28 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   List<WorkOrder> allworkorder = [];
   List<WorkOrder> nearestPropertyWorkOrders = [];
   RentalData? nearestProperty;
+  // True when the last load couldn't get a location (off/denied/timeout), so the
+  // app-resume handler knows it's worth silently re-fetching the nearby section.
+  bool _locationWasUnavailable = false;
+
+  // Watches the device location toggle so nearby can load the instant location is
+  // switched on — even without leaving the app. Cancelled in dispose.
+  StreamSubscription<ServiceStatus>? _serviceStatusSub;
+
   // Function to fetch work order data and extract rental data
-  Future<void> fetchWorkOrdersAndRentalData() async {
-    setState(() {
-      loading = true;
-    });
+  Future<void> fetchWorkOrdersAndRentalData({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        loading = true;
+      });
+    }
     try {
       // Time-box the location call so a hanging GPS request can't freeze the
       // dashboard (Android can hang forever on getCurrentPosition).
       Position userLocation =
           await getCurrentLocation().timeout(const Duration(seconds: 15));
+      _locationWasUnavailable = false;
+      print('[LOCATION][Vendor] location available → loading nearby properties');
       final workOrders = await WorkOrderRepository().fetchWorkOrders();
       allRentalData.clear();
       final Map<String, RentalData> uniqueRentals = {};
@@ -398,7 +412,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       if (nearestProperty != null) {
         nearestPropertyWorkOrders = workOrders
             .where((workOrder) =>
-        workOrder.rentalData!.rentalId == nearestProperty!.rentalId! &&
+        workOrder.rentalData != null &&
+            workOrder.rentalData!.rentalId == nearestProperty!.rentalId! &&
             workOrder.status != "Completed")
             .toList();
         nearbyProperties
@@ -406,14 +421,17 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
       }
       print(
           'Fetched \\${allRentalData.length} rental records from work orders.');
-      setState(() {
-        loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     } catch (e) {
       // Same behaviour as the Staff dashboard: if location is off / denied /
       // timed out, stop the spinner and show the dashboard anyway (the nearby
       // section simply stays empty). Nearby logic above is unchanged.
-      print('Error fetching work orders or rental data: $e');
+      _locationWasUnavailable = true;
+      print('[LOCATION][Vendor] location unavailable (off/denied/timeout) → nearby skipped: $e');
       if (mounted) {
         setState(() {
           loading = false;
@@ -425,6 +443,8 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _listenForLocationServiceOn();
     dashboardData = DashboardData(countList: [0, 0], amountList: [0, 0]);
     //  fetchDatacount();
     fetchWorkOrdersAndRentalData();
@@ -433,6 +453,51 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors> {
     _loadName();
     // Fetch work orders and rental data
     // fetchDatafinancial();
+  }
+
+  // Instant nearby-load when the device location service is switched ON while the
+  // app is open (stronger than resume-only). Fully guarded so it can neither crash
+  // nor disturb other logic: wrapped in try/catch, stream errors swallowed, gated
+  // on the same _locationWasUnavailable flag, and it only calls the existing silent
+  // fetch (no new fetch / nearby logic).
+  void _listenForLocationServiceOn() {
+    try {
+      _serviceStatusSub = Geolocator.getServiceStatusStream().listen(
+        (ServiceStatus status) {
+          print('[LOCATION][Vendor] service status changed → $status');
+          if (status == ServiceStatus.enabled &&
+              _locationWasUnavailable &&
+              mounted) {
+            print('[LOCATION][Vendor] location re-enabled while app open → refreshing nearby');
+            fetchWorkOrdersAndRentalData(silent: true);
+          }
+        },
+        onError: (_) {},
+        cancelOnError: false,
+      );
+    } catch (_) {
+      // Platform can't stream service status → skip; resume-refresh still covers it.
+    }
+  }
+
+  @override
+  void dispose() {
+    _serviceStatusSub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // User returned to the foreground (e.g. after enabling location in
+    // Settings). Silently re-fetch the nearby section only if location was
+    // unavailable last time — no full-screen spinner, no re-login, and no
+    // needless API call when nearby already loaded.
+    if (state == AppLifecycleState.resumed && _locationWasUnavailable) {
+      print('[LOCATION][Vendor] app resumed & location was unavailable → refreshing nearby');
+      fetchWorkOrdersAndRentalData(silent: true);
+    }
   }
 
   Future<void> _loadName() async {

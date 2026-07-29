@@ -930,7 +930,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
   /// 1) Balance API (GET /api/payment/admin_balance/{adminId})
   ///    - totalRentPastDue: fallback for Total Unpaid if late-letters API fails
   ///    - totalUnpaidRentLeases: count of leases with unpaid rent → "Total Properties with Unpaid Rent"
-  ///    - totalActiveLeases: count of active leases → "Total Rental Property" and percentage denominator
+  ///    - totalActiveLeases: count of active leases → "Total Active Leases" and percentage denominator
   ///
   /// 2) Preview late letters API (GET /api/leases/preview-late-letters/{adminId})
   ///    - total_past_due_amount: source of truth for past-due $ → "Total Unpaid"
@@ -940,7 +940,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
   /// - Unpaid Rent: (totalUnpaidRentLeases / totalActiveLeases) * 100
   /// - Total Unpaid: total_past_due_amount (from preview-late-letters)
   /// - Total Properties with Unpaid Rent: totalUnpaidRentLeases
-  /// - Total Rental Property: totalActiveLeases
+  /// - Total Active Leases: totalActiveLeases
   Future<void> _fetchUnpaidRentData() async {
     // 1. Admin identifier required
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1013,7 +1013,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
           debugPrint(
               '[UnpaidRentChart] Preview-late-letters: total_past_due_amount → Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}');
           debugPrint(
-              '[UnpaidRentChart] Chart: Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}, Total Rental Property=$totalRentalPropertyForChart, Total with Unpaid=$totalUnpaidRentLeases, percentage=${percentage.toStringAsFixed(1)}%');
+              '[UnpaidRentChart] Chart: Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}, Total Active Leases=$totalRentalPropertyForChart, Total with Unpaid=$totalUnpaidRentLeases, percentage=${percentage.toStringAsFixed(1)}%');
 
           if (mounted) {
             setState(() {
@@ -1216,7 +1216,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
                 const SizedBox(height: 8),
                 _legendRow(
                     const Color.fromRGBO(40, 60, 95, 1),
-                    'Unpaid Rent : ${_percentage.toStringAsFixed(1)} %',
+                    'Unpaid Rent: ${_percentage.toStringAsFixed(1)}%',
                     subTextStyle),
                 _legendRow(
                     const Color.fromRGBO(40, 60, 95, 1),
@@ -1224,10 +1224,10 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
                     subTextStyle),
                 _legendRow(
                     Colors.grey.shade700,
-                    'Total Properties with Unpaid Rent : $_totalUnpaidRentLeases',
+                    'Properties with Unpaid Rent: $_totalUnpaidRentLeases',
                     subTextStyle),
                 _legendRow(Colors.grey.shade400,
-                    'Total Rental Property : $_totalProperties', subTextStyle),
+                    'Total Active Leases: $_totalProperties', subTextStyle),
               ],
             ),
           ),

@@ -13,6 +13,8 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_picker.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_suffix.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../Model/RentalOwnersData.dart';
@@ -162,30 +164,37 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     }
   }
 
+  void _clearStartDate() {
+    setState(() {
+      startdate = null;
+      startdateController.clear();
+      startdatederror = false;
+    });
+  }
+
+  void _clearEndDate() {
+    setState(() {
+      enddate = null;
+      enddateController.clear();
+      enddatederror = false;
+    });
+  }
+
   Future<void> _startDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final ClearableDatePickerResult? result = await showClearableDatePicker(
       context: context,
       initialDate: startdate ?? DateTime.now(),
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: blueColor, // Header background color
-            // accentColor: Colors.white, // Button text color
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // Selection color
-              onPrimary: Colors.white, // Text color
-              surface: Colors.white, // Calendar background color
-              onSurface: Colors.black, // Calendar text color
-            ),
-            dialogBackgroundColor: Colors.white, // Background color
-          ),
-          child: child!,
-        );
-      },
+      helpText: 'Select start date',
     );
-    if (picked != null && picked != startdate) {
+    if (result == null) return; // cancelled — keep the current value
+    if (result.cleared) {
+      _clearStartDate();
+      return;
+    }
+    final DateTime picked = result.date!;
+    if (picked != startdate) {
       setState(() {
         startdate = picked;
         // Get dateProvider to format the date according to user's preference
@@ -198,30 +207,21 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   }
 
   Future<void> _endDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final ClearableDatePickerResult? result = await showClearableDatePicker(
       context: context,
       initialDate: enddate ?? DateTime.now(),
       firstDate: startdate ?? DateTime.now(),
       // firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            primaryColor: blueColor, // Header background color
-            // accentColor: Colors.white, // Button text color
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // Selection color
-              onPrimary: Colors.white, // Text color
-              surface: Colors.white, // Calendar background color
-              onSurface: Colors.black, // Calendar text color
-            ),
-            dialogBackgroundColor: Colors.white, // Background color
-          ),
-          child: child!,
-        );
-      },
+      helpText: 'Select end date',
     );
-    if (picked != null && picked != enddate) {
+    if (result == null) return; // cancelled — keep the current value
+    if (result.cleared) {
+      _clearEndDate();
+      return;
+    }
+    final DateTime picked = result.date!;
+    if (picked != enddate) {
       setState(() {
         enddate = picked;
         // Get dateProvider to format the date according to user's preference
@@ -973,16 +973,20 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                       contentPadding:
                                                           const EdgeInsets.all(
                                                               12),
-                                                      suffixIcon: IconButton(
-                                                        icon: const Icon(Icons
-                                                            .calendar_today),
-                                                        onPressed: () {
+                                                      suffixIcon:
+                                                          ClearableDateSuffix(
+                                                        controller:
+                                                            startdateController,
+                                                        onPick: () {
                                                           _startDate(context);
                                                           setState(() {
                                                             startdatederror =
                                                                 false;
                                                           });
                                                         },
+                                                        onClear:
+                                                            _clearStartDate,
+                                                        iconSize: 20,
                                                       ),
                                                     ),
                                                     readOnly: true,
@@ -1082,11 +1086,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                       contentPadding:
                                                           const EdgeInsets.all(
                                                               12),
-                                                      suffixIcon: IconButton(
-                                                        icon: const Icon(Icons
-                                                            .calendar_today),
-                                                        onPressed: () =>
+                                                      suffixIcon:
+                                                          ClearableDateSuffix(
+                                                        controller:
+                                                            enddateController,
+                                                        onPick: () =>
                                                             _endDate(context),
+                                                        onClear: _clearEndDate,
+                                                        iconSize: 20,
                                                       ),
                                                     ),
                                                     readOnly: true,
@@ -1241,15 +1248,18 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   border: InputBorder.none,
                                                   contentPadding:
                                                       const EdgeInsets.all(12),
-                                                  suffixIcon: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.calendar_today),
-                                                    onPressed: () {
+                                                  suffixIcon:
+                                                      ClearableDateSuffix(
+                                                    controller:
+                                                        startdateController,
+                                                    onPick: () {
                                                       _startDate(context);
                                                       setState(() {
                                                         startdatederror = false;
                                                       });
                                                     },
+                                                    onClear: _clearStartDate,
+                                                    iconSize: 20,
                                                   ),
                                                 ),
                                                 readOnly: true,
@@ -1369,11 +1379,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                                   border: InputBorder.none,
                                                   contentPadding:
                                                       const EdgeInsets.all(12),
-                                                  suffixIcon: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.calendar_today),
-                                                    onPressed: () =>
+                                                  suffixIcon:
+                                                      ClearableDateSuffix(
+                                                    controller:
+                                                        enddateController,
+                                                    onPick: () =>
                                                         _endDate(context),
+                                                    onClear: _clearEndDate,
+                                                    iconSize: 20,
                                                   ),
                                                 ),
                                                 readOnly: true,

@@ -12,6 +12,7 @@ class Added_TotalRepository{
   Future<List<Rentaladded>> fetchRentaladded() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     if (id == null) {
       throw Exception('No adminId found in SharedPreferences');
@@ -19,7 +20,7 @@ class Added_TotalRepository{
 
     final response = await apiGet(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'),
       headers: {
-        "id":"CRM $id",
+        "id":"CRM $staffId", // staff's own id (web parity)
       "authorization" : "CRM $token"
       },);
     if (response.statusCode == 200) {
@@ -38,7 +39,7 @@ class Added_TotalRepository{
     if (id == null) {
       throw Exception('No adminId found in SharedPreferences');
     }
-    final response = await apiGet(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Staffadded.fromJson(data)).toList();
@@ -54,7 +55,7 @@ class Added_TotalRepository{
     if (id == null) {
       throw Exception('No adminId found in SharedPreferences');
     }
-    final response = await apiGet(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('${Api_url}/api/staffmember/limitation/$id'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => Rentalwneradded.fromJson(data)).toList();

@@ -60,6 +60,8 @@ import '../../Leasing/RentalRoll/newAddLease.dart';
 import '../../Maintenance/Workorder/Add_workorder.dart';
 import '../../Maintenance/Workorder/Edit_workorders.dart';
 import '../../../repository/workorder.dart';
+import '../../../../widgets/clearable_date_picker.dart';
+import '../../../../widgets/clearable_date_suffix.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../../widgets/summary_lease_info_expandable.dart';
 import '../../../../widgets/custom_history_table.dart';
@@ -1075,16 +1077,19 @@ class _Summery_pageState extends State<Summery_page>
               _noiRow('Maintenance', maintenance, bodySize),
               _noiRow('Insurance', -insurance, bodySize),
               Divider(height: 20, color: Colors.grey[400]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Web parity: total label above the amount, same as the rows.
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Net Operating Income',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: bodySize,
                           color: blueColor)),
+                  const SizedBox(height: 2),
                   Text(
                     '${fmtCurrencySimple(netOperatingIncome)} / year',
+                    softWrap: true,
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: bodySize,
@@ -1147,10 +1152,13 @@ class _Summery_pageState extends State<Summery_page>
     final display = (isNegative ? '-' : '') +
         NumberFormat.currency(symbol: '\$', decimalDigits: 2)
             .format(value.abs());
+    // Web parity: the label sits on its own line with the amount stacked
+    // underneath, so however long the figure is it wraps naturally at full
+    // size instead of being squeezed against the right edge.
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -1159,14 +1167,18 @@ class _Summery_pageState extends State<Summery_page>
                 Image.asset(leadingIconAsset, width: 20, height: 20),
                 const SizedBox(width: 8),
               ],
-              Text(label,
-                  style: TextStyle(
-                      fontSize: bodySize,
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold)),
+              Flexible(
+                child: Text(label,
+                    style: TextStyle(
+                        fontSize: bodySize,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w500)),
+              ),
             ],
           ),
+          const SizedBox(height: 2),
           Text(display,
+              softWrap: true,
               style: TextStyle(
                   fontSize: bodySize,
                   color: blueColor,
@@ -5569,46 +5581,34 @@ class _Summery_pageState extends State<Summery_page>
                                                     color: blueColor),
                                               ),
                                               const SizedBox(height: 6),
-                                              SizedBox(
-                                                height: 45,
-                                                child: InkWell(
-                                                onTap: () async {
-                                                  final DateTime? picked =
-                                                      await showDatePicker(
-                                                    context: context,
-                                                    initialDate: selectedDate ??
-                                                        DateTime.now(),
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2100),
-                                                    builder:
-                                                        (BuildContext context,
-                                                            Widget? child) {
-                                                      return Theme(
-                                                        data: ThemeData.light()
-                                                            .copyWith(
-                                                          primaryColor:
-                                                              blueColor, // Header background color
-                                                          // accentColor: Colors.white, // Button text color
-                                                          colorScheme:
-                                                              ColorScheme.light(
-                                                            primary:
-                                                                blueColor, // Selection color
-                                                            onPrimary: Colors
-                                                                .white, // Text color
-                                                            surface: Colors
-                                                                .white, // Calendar background color
-                                                            onSurface: Colors
-                                                                .black, // Calendar text color
-                                                          ),
-                                                          dialogBackgroundColor:
-                                                              Colors
-                                                                  .white, // Background color
-                                                        ),
-                                                        child: child!,
-                                                      );
-                                                    },
-                                                  );
-                                                  if (picked != null) {
+                                              Builder(
+                                                builder: (context) {
+                                                  Future<void>
+                                                      pickPurchaseDate() async {
+                                                    final ClearableDatePickerResult?
+                                                        result =
+                                                        await showClearableDatePicker(
+                                                      context: context,
+                                                      initialDate:
+                                                          selectedDate ??
+                                                              DateTime.now(),
+                                                      firstDate: DateTime(2000),
+                                                      lastDate: DateTime(2100),
+                                                      helpText:
+                                                          'Select purchase date',
+                                                    );
+                                                    // cancelled — keep the current value
+                                                    if (result == null) return;
+                                                    if (result.cleared) {
+                                                      setState(() {
+                                                        selectedDate = null;
+                                                        purchaseDateController
+                                                            .clear();
+                                                      });
+                                                      return;
+                                                    }
+                                                    final DateTime picked =
+                                                        result.date!;
                                                     setState(() {
                                                       selectedDate = picked;
                                                       // Get dateProvider to format the date according to user's preference
@@ -5629,31 +5629,52 @@ class _Summery_pageState extends State<Summery_page>
                                                                   apiFormatDate);
                                                     });
                                                   }
-                                                },
-                                                child: AbsorbPointer(
-                                                  child: TextField(
-                                                    controller:
-                                                        purchaseDateController,
-                                                    decoration: InputDecoration(
-                                                      contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 12,
-                                                              vertical: 12),
-                                                      hintText:
-                                                          'Enter purchase date',
-                                                      suffixIcon: const Icon(
-                                                          Icons.calendar_today),
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
+
+                                                  return SizedBox(
+                                                    height: 45,
+                                                    child: TextField(
+                                                      controller:
+                                                          purchaseDateController,
+                                                      readOnly: true,
+                                                      onTap: pickPurchaseDate,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 12),
+                                                        hintText:
+                                                            'Enter purchase date',
+                                                        suffixIcon:
+                                                            ClearableDateSuffix(
+                                                          controller:
+                                                              purchaseDateController,
+                                                          onPick:
+                                                              pickPurchaseDate,
+                                                          onClear: () {
+                                                            setState(() {
+                                                              selectedDate =
+                                                                  null;
+                                                              purchaseDateController
+                                                                  .clear();
+                                                            });
+                                                          },
+                                                          icon: Icons
+                                                              .calendar_today,
+                                                          iconSize: 20,
+                                                        ),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
+                                                  );
+                                                },
                                               ),
-                                            ),
                                               const SizedBox(height: 16),
                                               Text(
                                                 "Purchase Price",
@@ -20809,7 +20830,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     final jsonData = json.decode(response.body);

@@ -14,7 +14,6 @@ import '../../../../model/properties.dart';
 import '../../../../model/unitsummery_propeties.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../repository/appliance_details_service.dart';
-import '../../../../repository/fetch_allcategories.dart';
 import '../summery_page.dart';
 import 'AddMaintenanceHistoryDialog.dart';
 import 'AddNoteDialog.dart';
@@ -56,35 +55,10 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
     });
   }
 
-  bool _isLoadingCategories = false;
-
   @override
   void initState() {
     super.initState();
-    _loadDropdownCategories();
     _loadApplianceData();
-  }
-
-  List<allcategories_model> _dropdownCategories = [];
-  allcategories_model? _selectedDropdownCategory;
-  Future<void> _loadDropdownCategories() async {
-    setState(() {
-      _isLoadingCategories = true;
-    });
-    try {
-      final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
-      setState(() {
-        _dropdownCategories = cats;
-        _isLoadingCategories = false;
-      });
-    } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
-          e.toString());
-      setState(() {
-        _isLoadingCategories = false;
-      });
-    }
   }
 
   Future<void> _loadApplianceData() async {
@@ -100,9 +74,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
         setState(() {
           _liveAppliance = appliance;
-          _selectedDropdownCategory = _dropdownCategories.firstWhere(
-            (cat) => cat.categoryId == appliance?.categoryId,
-          );
           _isLoading = false;
         });
       } catch (e) {
@@ -110,14 +81,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = false;
         });
-
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading appliance data: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
       }
     } else {
       setState(() {
@@ -346,25 +309,34 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                           _buildDetailCard(
                             'Appliance Details',
                             [
+                              // Values are resolved with _detailValue(): the
+                              // detail response wins, but each field falls back
+                              // to the row we were opened with. The detail
+                              // endpoint omits some fields the list carries
+                              // (e.g. category_name), so a per-field fallback
+                              // keeps every row populated.
                               _buildDetailRowPair(
                                   'Name',
-                                  appliance.applianceName ?? '',
+                                  _detailValue((a) => a.applianceName),
                                   'Category',
-                                  _selectedDropdownCategory?.name ?? ''),
-                              _buildDetailRowPair('Type', appliance.type ?? '',
-                                  'Status', appliance.status ?? '',
-                                  valueColor2:
-                                      _getStatusColor(appliance.status)),
+                                  _detailValue((a) => a.categoryName)),
+                              _buildDetailRowPair(
+                                  'Type',
+                                  _resolveType(),
+                                  'Status',
+                                  _detailValue((a) => a.status),
+                                  valueColor2: _getStatusColor(
+                                      _detailValue((a) => a.status))),
                               _buildDetailRowPair(
                                   'Model',
-                                  appliance.model ?? '',
+                                  _detailValue((a) => a.model),
                                   'Brand',
-                                  appliance.brand ?? ''),
+                                  _detailValue((a) => a.brand)),
                               _buildDetailRowPair(
                                   'Description',
-                                  appliance.applianceDescription ?? '',
+                                  _detailValue((a) => a.applianceDescription),
                                   'Serial Number',
-                                  appliance.serialNumber ?? ''),
+                                  _detailValue((a) => a.serialNumber)),
                               _buildDetailRowPair(
                                   'Installed Date',
                                   appliance.installedDate != null
@@ -637,6 +609,63 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         ],
       ),
     );
+  }
+
+  /// Resolves a display value for the Appliance Details card.
+  ///
+  /// Prefers the freshly fetched detail record, then falls back to the
+  /// appliance row this screen was opened with. The two payloads are not
+  /// identical — GET appliance_details returns the raw document (no
+  /// `category_name`), while the unit appliance LIST adds it — so reading a
+  /// single source blanked out whichever fields that source happens to omit.
+  String _detailValue(String? Function(unit_appliance a) get) =>
+      _rawDetail(get) ?? '-';
+
+  /// Same resolution as [_detailValue] but returns null instead of a placeholder
+  /// so callers can branch on "no value at all".
+  String? _rawDetail(String? Function(unit_appliance a) get) {
+    final fromDetail = (_liveAppliance == null ? null : get(_liveAppliance!));
+    if ((fromDetail ?? '').trim().isNotEmpty) return fromDetail!.trim();
+    final fromList = get(widget.appliance);
+    if ((fromList ?? '').trim().isNotEmpty) return fromList!.trim();
+    return null;
+  }
+
+  /// Categories that count as a Major System rather than an Appliance — same
+  /// list the Add/Edit form and the Home System Report use.
+  static const List<String> _majorSystemCategories = [
+    'Roof',
+    'Electrical',
+    'Plumbing',
+    'Exterior',
+    'Water Heater',
+    'HVAC',
+  ];
+
+  /// Resolves the "Type" shown on this card.
+  ///
+  /// Web parity (HomeSystemDetails.js): Type is 'Major System' or 'Appliance',
+  /// derived from the appliance's category — it is NOT the legacy free-text
+  /// `type` column. The Add/Edit form dropdown writes `system_type`, while the
+  /// old `type` field is no longer bound to any input and therefore comes back
+  /// empty for anything created through the current form, which is why this row
+  /// used to render "-". Prefer the stored system_type, then derive from the
+  /// category, and only then fall back to the legacy value.
+  String _resolveType() {
+    final stored = _rawDetail((a) => a.systemType);
+    if (stored != null) {
+      return stored.toLowerCase().contains('major')
+          ? 'Major System'
+          : 'Appliance';
+    }
+    final category = _rawDetail((a) => a.categoryName);
+    if (category != null) {
+      return _majorSystemCategories
+              .any((m) => m.toLowerCase() == category.toLowerCase())
+          ? 'Major System'
+          : 'Appliance';
+    }
+    return _rawDetail((a) => a.type) ?? '-';
   }
 
   Widget _buildDetailRowPair(

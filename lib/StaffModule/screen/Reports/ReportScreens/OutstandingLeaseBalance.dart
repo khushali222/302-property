@@ -37,7 +37,7 @@ class OutstandingLeaseBalance extends StatefulWidget {
 class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   late Future<OutstandingLeaseBalanceModel> _futureOutstandingLeaseBalance;
   OutstandingLeaseBalanceModel? outstandingLeaseBalanceModel;
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
   int? expandedRowIndex;
   ConnectivityResult? _connectivityResult;
@@ -67,7 +67,12 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       });
     });
     checkInternet();
-    _futureOutstandingLeaseBalance = fetchOutstandingLeaseBalanceData();
+    // Web parity: do not auto-load the report on open. The rental-owner scope
+    // is not ready on the first frame, so an initial fetch would omit the owner
+    // filter and return unscoped data. Load the owners now (all selected) and
+    // wait for the user to tap Run to fetch the correctly scoped report.
+    _futureOutstandingLeaseBalance =
+        Future.value(OutstandingLeaseBalanceModel(success: true));
     _fetchRentalOwners();
   }
 
@@ -382,9 +387,23 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
           return _buildErrorWidget();
         }
 
-        if (outstandingLeaseBalanceModel?.data == null ||
+        if (outstandingLeaseBalanceModel == null ||
+            outstandingLeaseBalanceModel!.data == null ||
             outstandingLeaseBalanceModel!.data!.isEmpty) {
-          return _buildNoDataWidget();
+          // Before Run (or a run that returned nothing): show the report chrome
+          // — a $0.00 total plus a "no data" message. Run populates it.
+          return Column(
+            children: [
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: _buildSummaryCards(),
+              ),
+              SizedBox(height: 40),
+              _buildNoDataWidget(),
+              SizedBox(height: 20),
+            ],
+          );
         }
 
         return _buildDataTable();
@@ -980,9 +999,9 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   }
 
   Widget _buildSummaryCards() {
-    if (outstandingLeaseBalanceModel?.totals == null) return SizedBox.shrink();
-
-    final totals = outstandingLeaseBalanceModel!.totals!;
+    // Show $0.00 before Run (no totals yet) instead of hiding the card.
+    final balance =
+        outstandingLeaseBalanceModel?.totals?.outstandingBalance ?? 0;
 
     return Container(
       padding: EdgeInsets.all(8),
@@ -1010,7 +1029,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '\$${NumberFormat('#,##0.00').format(totals.outstandingBalance ?? 0)}',
+                    '\$${NumberFormat('#,##0.00').format(balance)}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -1656,9 +1675,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                   children: [
                     pw.Text(
-                      profileData?.companyName?.isNotEmpty == true
-                          ? profileData!.companyName!
-                          : 'N/A',
+                      profileData?.companyName ?? '',
                       style: pw.TextStyle(
                         fontSize: 10,
                         fontWeight: pw.FontWeight.bold,
@@ -1931,10 +1948,16 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Outstanding_lease_balance_report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Outstanding_lease_balance_report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       print('Error generating PDF: $e');
       Fluttertoast.showToast(
@@ -1998,9 +2021,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'OutstandingLeaseBalance_$formattedDate.xlsx';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 
@@ -2074,9 +2095,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
       final String fileName = 'OutstandingLeaseBalance_$formattedDate.csv';
 
-      final Directory directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final Directory directory = await getApplicationDocumentsDirectory();
 
       final path = '${directory.path}/$fileName';
 

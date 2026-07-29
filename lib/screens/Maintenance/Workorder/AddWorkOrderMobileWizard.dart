@@ -112,7 +112,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final token = prefs.getString('token');
       final response = await apiGet(
         Uri.parse('${Api_url}/api/rentals/rentals/$id'),
-        headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
+        headers: {'authorization': 'CRM $token', 'id': 'CRM ${prefs.getString("staff_id") ?? id}'},
       );
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -153,7 +153,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final token = prefs.getString('token');
       final response = await apiGet(
         Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'),
-        headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
+        headers: {'authorization': 'CRM $token', 'id': 'CRM ${prefs.getString("staff_id") ?? id}'},
       );
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -190,7 +190,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final token = prefs.getString('token');
       final response = await apiGet(
         Uri.parse('$Api_url/api/leases/get_tenants/$rentalId/$unitId'),
-        headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
+        headers: {'authorization': 'CRM $token', 'id': 'CRM ${prefs.getString("staff_id") ?? id}'},
       );
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -241,7 +241,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final token = prefs.getString('token');
       final response = await apiGet(
         Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
-        headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
+        headers: {'authorization': 'CRM $token', 'id': 'CRM ${prefs.getString("staff_id") ?? id}'},
       );
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -272,7 +272,7 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       final token = prefs.getString('token');
       final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/vendors/$id'),
-        headers: {'authorization': 'CRM $token', 'id': 'CRM $id'},
+        headers: {'authorization': 'CRM $token', 'id': 'CRM ${prefs.getString("staff_id") ?? id}'},
       );
       if (!mounted) return;
       if (response.statusCode == 200) {

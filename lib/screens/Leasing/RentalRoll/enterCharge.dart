@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -240,7 +241,7 @@ class _enterChargeState extends State<enterCharge> {
       Uri.parse('$Api_url/api/charge/charge/${widget.chargeid}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 
@@ -307,7 +308,7 @@ class _enterChargeState extends State<enterCharge> {
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 
@@ -344,7 +345,7 @@ class _enterChargeState extends State<enterCharge> {
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -392,6 +393,9 @@ class _enterChargeState extends State<enterCharge> {
 
   List<Map<String, dynamic>> rows = [];
   double totalAmount = 0.0;
+  // Live "Amount cannot exceed $999,999.99" inline error (web parity); the
+  // submit-time bounds toast stays as a backstop.
+  String? _amountLimitError;
   void addRow() {
     setState(() {
       rows.add({
@@ -432,7 +436,7 @@ class _enterChargeState extends State<enterCharge> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${intl.NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -449,12 +453,20 @@ class _enterChargeState extends State<enterCharge> {
   // Returns an error message if any row amount (or the total) is out of the
   // web-allowed bounds, otherwise null. Matches AddCharge.jsx validation.
   String? _validateChargeBounds(List<num> amounts, num total) {
+    // Web wording (AddCharge.jsx / RentRollDetail.js yup schema) for the
+    // zero/negative case, so mobile explains the block the same way web does.
     for (final amt in amounts) {
-      if (amt < _minChargeAmount || amt > _maxChargeAmount) {
+      if (amt < _minChargeAmount) {
+        return 'Amount must be greater than zero.';
+      }
+      if (amt > _maxChargeAmount) {
         return 'Each charge amount must be between \$0.01 and \$999,999.99.';
       }
     }
-    if (total < _minChargeAmount || total > _maxChargeAmount) {
+    if (total < _minChargeAmount) {
+      return 'Amount must be greater than zero.';
+    }
+    if (total > _maxChargeAmount) {
       return 'Amount must be between \$0.01 and \$999,999.99.';
     }
     return null;
@@ -745,7 +757,7 @@ class _enterChargeState extends State<enterCharge> {
                         //         ),
 
                         if (MediaQuery.of(context).size.width < 500)
-                          const Text('Date',
+                          const Text('Date *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -979,7 +991,7 @@ class _enterChargeState extends State<enterCharge> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Date',
+                                      Text('Date *',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
@@ -1066,7 +1078,7 @@ class _enterChargeState extends State<enterCharge> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text('Amount',
+                        const Text('Amount *',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -1075,17 +1087,41 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9.]')),
+                          ],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Please enter amount';
+                            }
+                            if (double.tryParse(value.trim()) == null) {
+                              return 'Please enter a valid amount';
                             }
                             return null;
                           },
                           keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: Amount,
-                          onChanged: (value) => validateAmounts(),
+                          onChanged: (value) {
+                            validateAmounts();
+                            final v = double.tryParse(value.trim());
+                            setState(() {
+                              _amountLimitError = (v != null && v > 999999.99)
+                                  ? 'Amount cannot exceed \$999,999.99'
+                                  : null;
+                            });
+                          },
                         ),
+                        if (_amountLimitError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              _amountLimitError!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                         const SizedBox(height: 8),
                         const SizedBox(
                           height: 8,
@@ -1099,14 +1135,11 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter memo';
-                            }
-                            return null;
-                          },
+                          optional: true,
+                          validator: (value) => null,
                           keyboardType: TextInputType.text,
-                          hintText: 'Enter Memo',
+                          hintText:
+                              'If left blank, it will include all account names',
                           controller: Memo,
                         ),
                       ],
@@ -1423,6 +1456,42 @@ class _enterChargeState extends State<enterCharge> {
                                                 ),
                                             ];
 
+                                            // Ensure the currently-selected account has a
+                                            // matching dropdown item so DropdownButton2's
+                                            // value maps to exactly one item. On edit, a
+                                            // charge's stored charge_type can differ from the
+                                            // account's category in the accounts list (e.g.
+                                            // legacy data), which otherwise crashes with the
+                                            // "exactly one item" assertion.
+                                            final String? currentValue = row[
+                                                        'account'] !=
+                                                    null
+                                                ? (row['charge_type'] ==
+                                                            "Surcharge" &&
+                                                        surchargetype != null
+                                                    ? "${row['account']}_$surchargetype"
+                                                    : "${row['account']}_${row['charge_type']}")
+                                                : null;
+                                            if (currentValue != null &&
+                                                !dropdownItems.any((i) =>
+                                                    i.value == currentValue)) {
+                                              dropdownItems
+                                                  .add(DropdownMenuItem<String>(
+                                                value: currentValue,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      left: 0.0),
+                                                  child: Text(
+                                                    row['account'] ?? '',
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ));
+                                            }
+
                                             return Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -1443,14 +1512,7 @@ class _enterChargeState extends State<enterCharge> {
                                                   // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
                                                   //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                                   //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
-                                                  value: row['account'] != null
-                                                      ? ((row['charge_type'] ==
-                                                                  "Surcharge" &&
-                                                              surchargetype !=
-                                                                  null
-                                                          ? "${row['account']}_$surchargetype"
-                                                          : "${row['account']}_${row['charge_type']}"))
-                                                      : null,
+                                                  value: currentValue,
                                                   items: dropdownItems,
                                                   onChanged: (value) {
                                                     dynamic? chargeType;
@@ -1508,6 +1570,7 @@ class _enterChargeState extends State<enterCharge> {
                                                   ),
                                                   dropdownStyleData:
                                                       DropdownStyleData(
+                                                    maxHeight: 350,
                                                     width: 250,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -1577,6 +1640,10 @@ class _enterChargeState extends State<enterCharge> {
                                               focusNode: focusNodes[index],
                                               keyboardType:
                                                   TextInputType.number,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(RegExp(r'[0-9.]')),
+                                              ],
                                               onChanged: (value) =>
                                                   updateAmount(index, value),
                                               decoration: const InputDecoration(
@@ -1612,7 +1679,9 @@ class _enterChargeState extends State<enterCharge> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        '\$${totalAmount.toStringAsFixed(2)}'),
+                                        // NumberFormat never falls back to scientific
+                                        // notation (toStringAsFixed does for >= 1e21).
+                                        '\$${intl.NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                   ),
                                   const SizedBox.shrink(),
                                 ]),
@@ -1842,11 +1911,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 _validateChargeBounds(
                                                     rowAmounts, totalAmount);
                                             if (boundsError != null) {
+                                              // Web parity: show WHY the submit
+                                              // was blocked instead of failing
+                                              // silently.
                                               setState(() {
                                                 _isLoading = false;
+                                                validationMessage = boundsError;
                                               });
-                                              Fluttertoast.showToast(
-                                                  msg: boundsError);
                                               return;
                                             }
 
@@ -1868,7 +1939,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 amount: amount,
                                                 // Web sends due_amount = amount.
                                                 dueAmount: amount,
-                                                memo: row['memo'],
+                                                memo: (row['memo']
+                                                            ?.toString()
+                                                            .trim()
+                                                            .isEmpty ??
+                                                        true)
+                                                    ? row['account']
+                                                    : row['memo'],
                                                 date: formattedDate,
                                                 chargeType:
                                                     _resolveChargeType(row),
@@ -1972,11 +2049,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 _validateChargeBounds(
                                                     rowAmounts, totalAmount);
                                             if (boundsError != null) {
+                                              // Web parity: show WHY the submit
+                                              // was blocked instead of failing
+                                              // silently.
                                               setState(() {
                                                 _isLoading = false;
+                                                validationMessage = boundsError;
                                               });
-                                              Fluttertoast.showToast(
-                                                  msg: boundsError);
                                               return;
                                             }
 
@@ -1998,7 +2077,13 @@ class _enterChargeState extends State<enterCharge> {
                                                 amount: amount,
                                                 // Web sends due_amount = amount.
                                                 dueAmount: amount,
-                                                memo: row['memo'],
+                                                memo: (row['memo']
+                                                            ?.toString()
+                                                            .trim()
+                                                            .isEmpty ??
+                                                        true)
+                                                    ? row['account']
+                                                    : row['memo'],
                                                 date: formattedDate,
                                                 chargeType:
                                                     _resolveChargeType(row),

@@ -128,10 +128,12 @@ class Properies_summery_Repo{
   Future<Map<String, dynamic>> addappliances({
     String? adminId,
     String? unitId,
+    String? rentalId,
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
     String? type,
+    String? systemType,
     String? brand,
     String? model,
     String? serialNumber,
@@ -156,10 +158,12 @@ class Properies_summery_Repo{
     var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
+      'rental_id': rentalId,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
       'type': type,
+      'system_type': systemType ?? '',
       'brand': brand,
       'model': model,
       'serial_number': serialNumber,
@@ -189,22 +193,27 @@ class Properies_summery_Repo{
     print("Add appliances response: ${response.body}");
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: "add appliances successfully");
+      Fluttertoast.showToast(msg: "Infrastructure added successfully");
       return json.decode(response.body);
     } else {
-      Fluttertoast.showToast(msg: "Failed to add appliances");
-      throw Exception('Failed to add appliances');
+      final serverMsg =
+          responseData["message"]?.toString() ?? "Failed to add infrastructure";
+      Fluttertoast.showToast(msg: serverMsg);
+      throw Exception(serverMsg);
     }
   }
 
   Future<Map<String, dynamic>> Editappliances({
     String? adminId,
     String? unitId,
+    String? rentalId,
     String? applianceid,
+    String? removeApplianceImages,
     String? appliancename,
     String? appliancedescription,
     String? installeddate,
     String? type,
+    String? systemType,
     String? brand,
     String? model,
     String? serialNumber,
@@ -229,11 +238,13 @@ class Properies_summery_Repo{
     var formData = {
       'admin_id': adminId,
       'unit_id': unitId,
+      'rental_id': rentalId,
       'appliance_id': applianceid,
       'appliance_name': appliancename,
       'appliance_description': appliancedescription,
       'installed_date': installeddate,
       'type': type,
+      'system_type': systemType ?? '',
       'brand': brand,
       'model': model,
       'serial_number': serialNumber,
@@ -244,6 +255,7 @@ class Properies_summery_Repo{
       'category_id': categoryId,
       'filters': filtersJson,
       'appliance_image': appliance_image, // Add this field
+      'remove_appliance_images': removeApplianceImages ?? 'false',
     };
 
     print('Sending form data for edit: ${json.encode(formData)}');
@@ -445,7 +457,7 @@ class Properies_summery_Repo{
       Uri.parse('$Api_url/api/rentals/rental/$rentalId/property_values'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({
@@ -485,7 +497,7 @@ class Properies_summery_Repo{
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
       },
       body: jsonEncode({
@@ -522,7 +534,7 @@ class Properies_summery_Repo{
           '$Api_url/api/rentals/rental/$rentalId/property_values/$propertyValueId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     if (response.statusCode == 200) {
@@ -549,7 +561,7 @@ class Properies_summery_Repo{
       Uri.parse('${Api_url}/api/leases/leases/$adminid/$unitId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(" get summery lease details ${response.body}");
@@ -574,7 +586,7 @@ class Properies_summery_Repo{
       Uri.parse('${Api_url}/api/leases/revenue/$adminid/$unitId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(" get summery lease details ${response.body}");
@@ -600,7 +612,7 @@ class Properies_summery_Repo{
       Uri.parse('$Api_url/api/work-order/rental_workorder/$rentalId'),
       headers: {
         'authorization': 'CRM $token',
-        'id': 'CRM $id',
+        'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       },
     );
     // Check the response status

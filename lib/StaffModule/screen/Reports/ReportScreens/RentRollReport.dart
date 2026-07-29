@@ -17,14 +17,15 @@ import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/rentrollreportrepo.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
@@ -673,7 +674,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       print("Error fetching profile data: $e");
-      return;
+      // Continue and still generate the PDF (header falls back to N/A)
     }
 
     final pdf = pw.Document();
@@ -884,13 +885,20 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text(profileData?.companyName ?? 'N/A',
+                      pw.Text(profileData?.companyName ?? '',
                           style: pw.TextStyle(
                               fontSize: 9, fontWeight: pw.FontWeight.bold)),
-                      pw.Text(profileData?.companyAddress ?? 'N/A',
+                      pw.Text(profileData?.companyAddress ?? '',
                           style: const pw.TextStyle(fontSize: 8)),
                       pw.Text(
-                        '${profileData?.companyCity ?? ''}, ${profileData?.companyState ?? ''}, ${profileData?.companyCountry ?? ''}',
+                        [
+                          profileData?.companyCity,
+                          profileData?.companyState,
+                          profileData?.companyCountry
+                        ]
+                            .where((e) =>
+                                e != null && e.toString().trim().isNotEmpty)
+                            .join(', '),
                         style: const pw.TextStyle(fontSize: 8),
                       ),
                       pw.Text(profileData?.companyPostalCode ?? '',
@@ -1043,12 +1051,13 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 9)),
                 if (rental.activeLeases!.length > 0) pw.SizedBox(height: 3),
-                ...rental.activeLeases!.map((leasedata) {
-                  return pw.Container(
+                // leaseTable already contains one row per lease — emit it once
+                // (was re-emitted once per lease, duplicating every property's rows)
+                if (rental.activeLeases!.length > 0)
+                  pw.Container(
                       padding: const pw.EdgeInsets.symmetric(
                           vertical: 2, horizontal: 0),
-                      child: leaseTable);
-                }),
+                      child: leaseTable),
                 if (rental.totals != null && rental.activeLeases!.length > 0)
                   pw.SizedBox(height: 4),
                 if (rental.totals != null && rental.activeLeases!.length > 0)
@@ -1216,7 +1225,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
+                          '\$${data.grandTotal!.totalDeposits!.toStringAsFixed(2) ?? "0.0"}',
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1238,7 +1247,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             pw.SizedBox(height: 20),
             pw.Table.fromTextArray(
               headers: [
-                "Summery by Bed/Bath",
+                "Summary by Bed/Bath",
                 "Occupancy",
                 "Square Feet",
                 "Market Rent"
@@ -1299,7 +1308,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             pw.SizedBox(height: 20),
             pw.Table.fromTextArray(
               headers: [
-                "Summery by Property",
+                "Summary by Property",
                 "Occupancy",
                 "Square Feet",
                 "Market Rent"
@@ -1361,9 +1370,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     if (Platform.isIOS) {
       // Use sharePdf for iOS to ensure proper A4 format recognition
       await Printing.sharePdf(
-          bytes: await pdf.save(), filename: 'RentRollReport.pdf');
+          bytes: await pdf.save(), filename: 'RentRoll_Report.pdf');
     } else {
       await Printing.layoutPdf(
+          name: 'RentRoll_Report',
           onLayout: (PdfPageFormat format) async => pdf.save());
     }
   }
@@ -1746,11 +1756,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'Daily_transaction_report_$formattedDate.xlsx';
+    final String fileName = 'RentRollReport_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -2004,11 +2012,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     // Save the file
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
-    final String fileName = 'Daily_transaction_report_$formattedDate.csv';
+    final String fileName = 'RentRollReport_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -2230,7 +2236,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       drawer: CustomDrawerStaff(
         currentpage: "Reports",
         dropdown: false,
@@ -2975,6 +2981,10 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                               ),
                                             ],
                                           ),
+                                        // Web parity: show "Total For {property}" once per
+                                        // property group (after its last lease), not per lease
+                                        if (leaseIndex ==
+                                            item.activeLeases!.length - 1)
                                         Container(
                                           decoration: BoxDecoration(
                                               border: Border(
@@ -3046,7 +3056,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                             ),
                                           ),
                                         ),
-                                        if (isLeaseIndexExpanded)
+                                        if (isLeaseIndexExpanded &&
+                                            leaseIndex ==
+                                                item.activeLeases!.length - 1)
                                           Row(
                                             children: [
                                               Expanded(
@@ -3190,7 +3202,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Summery by Bed/Bath",
+                "Summary by Bed/Bath",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: blueColor,
@@ -3752,7 +3764,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Summery by Property",
+                "Summary by Property",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: blueColor,

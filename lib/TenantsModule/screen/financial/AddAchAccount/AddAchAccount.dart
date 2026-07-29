@@ -4,12 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/collectjs_card_field.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart' as admin_appbar;
@@ -65,8 +66,29 @@ class _AddAchAccountState extends State<AddAchAccount> {
   bool _loadingExisting = true;
   String? _resolvedVaultId;
 
+  // PCI: Collect.js ACH tokenization — replaces the raw routing/account inputs.
+  // Sends a payment_token (+ the masked account/routing Collect.js returns) to
+  // add-tenant-ach (the token-aware web route); raw account/routing never leave
+  // the app.
+  final CollectJsController _achCtrl = CollectJsController();
+  String? _publicKey;
+  bool _achReady = false;
+
   static const List<String> _accountTypes = ['Checking', 'Savings'];
   static const List<String> _holderTypes = ['Personal', 'Business'];
+
+  // Web parity (AddACHForm.jsx): the submit button stays disabled until the
+  // required NATIVE fields are filled. The Collect.js bank fields validate
+  // themselves on submit, so they're excluded here — same as the web.
+  bool get _requiredFieldsFilled =>
+      _firstName.text.trim().isNotEmpty &&
+      _lastName.text.trim().isNotEmpty &&
+      _accountType != null &&
+      _accountHolderType != null;
+
+  void _onRequiredChanged() {
+    if (mounted) setState(() {});
+  }
 
   static String? _extractString(dynamic v) {
     if (v == null) return null;
@@ -79,7 +101,11 @@ class _AddAchAccountState extends State<AddAchAccount> {
   @override
   void initState() {
     super.initState();
+    // Re-evaluate the submit button as the name fields change (web parity).
+    _firstName.addListener(_onRequiredChanged);
+    _lastName.addListener(_onRequiredChanged);
     _loadProfile();
+    _fetchTokenizationKey();
     _resolvedVaultId = widget.customerVaultId;
     if (_resolvedVaultId != null && _resolvedVaultId!.isNotEmpty) {
       _loadExistingAchAccounts();
@@ -210,6 +236,24 @@ class _AddAchAccountState extends State<AddAchAccount> {
     } catch (_) {}
   }
 
+  // PCI: fetch the Collect.js public key (unauth by-admin route, same as cards).
+  Future<void> _fetchTokenizationKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    final adminId = prefs.getString('adminId');
+    if (adminId == null || adminId.isEmpty) return;
+    try {
+      final res = await apiGet(
+        Uri.parse('$Api_url/api/tenant/nmi_public_key_by_admin/$adminId'),
+      );
+      if (res.statusCode == 200) {
+        final key = json.decode(res.body)['publicKey'];
+        if (key is String && key.isNotEmpty && mounted) {
+          setState(() => _publicKey = key);
+        }
+      }
+    } catch (_) {}
+  }
+
   Future<void> _loadExistingAchAccounts() async {
     final vaultId = _resolvedVaultId ?? widget.customerVaultId;
     if (kDebugMode) debugPrint('[ACH] _loadExistingAchAccounts START vaultId=$vaultId');
@@ -270,12 +314,22 @@ class _AddAchAccountState extends State<AddAchAccount> {
           if (kDebugMode) debugPrint('[ACH] billing item: check_name=$checkName check_account=$checkAccount');
           if ((checkAccount != null && checkAccount.isNotEmpty) ||
               (checkName != null && checkName.isNotEmpty)) {
+            // Capture billing_id so a specific ACH entry can be deleted
+            // (NMI returns it under @attributes.id, or a flat billing_id).
+            String? billingId;
+            final attrs = item['@attributes'];
+            if (attrs is Map && attrs['id'] != null) {
+              billingId = attrs['id'].toString();
+            } else if (item['billing_id'] != null) {
+              billingId = item['billing_id'].toString();
+            }
             list.add({
               'account_name': checkName ?? '',
               'account_number': checkAccount ?? '',
               'account_type': _extractString(item['account_type']) ?? '',
               'account_holder_type':
                   _extractString(item['account_holder_type']) ?? '',
+              'billing_id': billingId,
             });
           }
         }
@@ -296,52 +350,171 @@ class _AddAchAccountState extends State<AddAchAccount> {
     }
   }
 
-  Future<bool> _submit() async {
-    if (_accountType == null ||
-        _accountHolderType == null ||
-        _accountHolderName.text.trim().isEmpty ||
-        _routingNumber.text.trim().isEmpty ||
-        _accountNumber.text.trim().isEmpty) {
-      setState(() => _validationError = 'Please fill all the required fields*');
-      return false;
+  // Swipe-to-delete confirmation popup (mirrors the web "Are you sure?" card dialog).
+  Future<void> _confirmDeleteAch(Map<String, dynamic> acc) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        contentPadding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.orange, width: 3),
+              ),
+              child: const Icon(Icons.priority_high,
+                  color: Colors.orange, size: 40),
+            ),
+            const SizedBox(height: 20),
+            const Text('Are you sure?',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text(
+              'Once deleted, you will not be able to recover this ACH account!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: Color(0xFFD0D5DD)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Delete',
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xFFFDECEC),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Cancel',
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+    if (confirmed == true) {
+      await _deleteAchAccount(acc);
     }
-    if (!(_formKey.currentState?.validate() ?? false)) return false;
-    setState(() {
-      _validationError = null;
-      _isSubmitting = true;
-    });
+  }
 
+  // Deletes one ACH account. Uses the exact same two calls as the card delete
+  // (billing-level only — never delete-customer-vault — so saved cards stay).
+  Future<void> _deleteAchAccount(Map<String, dynamic> acc) async {
+    final billingId = acc['billing_id']?.toString();
+    final vaultId = _resolvedVaultId;
+    if (billingId == null ||
+        billingId.isEmpty ||
+        vaultId == null ||
+        vaultId.isEmpty) {
+      Fluttertoast.showToast(
+          msg: 'Unable to delete this ACH account (missing reference).');
+      return;
+    }
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? headerId = _headerIdForRequest(prefs);
+      String? adminId = prefs.getString('adminId');
+      String? token = prefs.getString('token');
+      if (headerId == null || token == null) {
+        Fluttertoast.showToast(msg: 'Session expired. Please log in again.');
+        return;
+      }
+      final headers = {
+        'Content-Type': 'application/json',
+        'authorization': 'CRM $token',
+        'id': 'CRM $headerId',
+      };
+      // 1) Remove from the NMI customer vault (billing-level).
+      final nmiRes = await apiPost(
+        Uri.parse('$Api_url/api/nmipayment/delete-customer-billing'),
+        headers: headers,
+        body: json.encode({
+          'admin_id': adminId ?? '',
+          'customer_vault_id': vaultId,
+          'billing_id': billingId,
+        }),
+      );
+      // 2) Remove the DB record.
+      final dbRes = await apiDelete(
+        Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
+        headers: headers,
+        body: json.encode({'tenant_id': widget.tenantId}),
+      );
+      if (nmiRes.statusCode == 200 && dbRes.statusCode == 200) {
+        Fluttertoast.showToast(msg: 'ACH account deleted successfully');
+        if (_resolvedVaultId != null && _resolvedVaultId!.isNotEmpty) {
+          await _loadExistingAchAccounts();
+        } else {
+          await _fetchVaultIdThenLoadAccounts();
+        }
+      } else {
+        Fluttertoast.showToast(msg: 'Failed to delete ACH account');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[ACH] delete error: $e');
+      Fluttertoast.showToast(msg: 'Failed to delete ACH account');
+    }
+  }
+
+  // PCI: called by the Collect.js widget once the bank fields are tokenized.
+  // We post the payment_token (+ the masked account/routing Collect.js returns)
+  // to add-tenant-ach (the web endpoint, which USES the token; the -mobile route
+  // ignored it and choked on the masked account number). No raw data leaves the
+  // app. Same server as before — just the token-aware route the website uses.
+  Future<void> _saveWithToken(CardToken token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
     String? headerId = _headerIdForRequest(prefs);
-    String? token = prefs.getString('token');
+    String? authToken = prefs.getString('token');
     if (headerId == null) {
       if (mounted) setState(() => _isSubmitting = false);
-      return false;
+      return;
     }
 
-    final String url = '$Api_url/api/nmipayment/tenant/add-tenant-ach-mobile';
-    final String accountHolderName = _accountHolderName.text.trim();
+    final String url = '$Api_url/api/nmipayment/tenant/add-tenant-ach';
     final Map<String, dynamic> body = {
       'first_name': _firstName.text.trim(),
       'last_name': _lastName.text.trim(),
       'account_type': _accountType!,
       'account_holder_type': _accountHolderType!,
-      'account_name': accountHolderName,
-      // 'check_name':
-      //     accountHolderName, // Backend requires check_name (NMI field)
-      'routing_number': _routingNumber.text.trim(),
-      'account_number': _accountNumber.text.trim(),
+      'account_name': token.accountName ?? '',
+      'payment_token': token.token,
+      'routing_number': token.routingNumber ?? '',
+      'account_number': token.accountNumber ?? '', // already masked by Collect.js
       'tenant_id': widget.tenantId,
       'admin_id': adminId ?? '',
       'user_active_recently': true,
       'is_web': false,
     };
     if (kDebugMode) {
-      final masked = Map<String, dynamic>.from(body)
-        ..['account_number'] = '****'
-        ..['routing_number'] = '****';
-      debugPrint('add-tenant-ach body $masked');
+      debugPrint('add-tenant-ach (tokenized) body keys: ${body.keys.toList()}');
     }
     try {
       final response = await apiPost(
@@ -349,31 +522,28 @@ class _AddAchAccountState extends State<AddAchAccount> {
         headers: {
           'Content-Type': 'application/json',
           'id': 'CRM $headerId',
-          'authorization': 'CRM $token',
+          'authorization': 'CRM $authToken',
         },
         body: json.encode(body),
       );
       if (kDebugMode) {
         debugPrint('add-tenant-ach status ${response.statusCode}');
       }
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          Fluttertoast.showToast(msg: 'ACH account added successfully');
-          await _fetchVaultIdThenLoadAccounts();
-          Navigator.pop(context, true);
-          return true;
-        } else {
-          final err = json.decode(response.body);
-          setState(() {
-            final data = err is Map ? err['data'] : null;
-            final dataError = data is Map ? data['error']?.toString() : null;
-            _validationError = dataError ??
-                err['message']?.toString() ??
-                'Failed to add ACH account';
-          });
-          return false;
-        }
+      if (!mounted) return;
+      setState(() => _isSubmitting = false);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Fluttertoast.showToast(msg: 'ACH account added successfully');
+        await _fetchVaultIdThenLoadAccounts();
+        if (mounted) Navigator.pop(context, true);
+      } else {
+        final err = json.decode(response.body);
+        setState(() {
+          final data = err is Map ? err['data'] : null;
+          final dataError = data is Map ? data['error']?.toString() : null;
+          _validationError = dataError ??
+              err['message']?.toString() ??
+              'Failed to add ACH account';
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -382,9 +552,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
           _validationError = 'Network error. Please try again.';
         });
       }
-      return false;
     }
-    return false;
   }
 
   @override
@@ -418,20 +586,20 @@ class _AddAchAccountState extends State<AddAchAccount> {
               const SizedBox(height: 20),
               _buildLabel('First Name'),
               const SizedBox(height: 6),
-              TextFormField(
+              _cardField(
                 controller: _firstName,
-                decoration: _inputDecoration('First Name'),
-                textCapitalization: TextCapitalization.words,
+                hint: 'First Name',
+                textCap: TextCapitalization.words,
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
               const SizedBox(height: 16),
               _buildLabel('Last Name'),
               const SizedBox(height: 6),
-              TextFormField(
+              _cardField(
                 controller: _lastName,
-                decoration: _inputDecoration('Last Name'),
-                textCapitalization: TextCapitalization.words,
+                hint: 'Last Name',
+                textCap: TextCapitalization.words,
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? 'Required' : null,
               ),
@@ -444,7 +612,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                   hint: const Padding(
                     padding: EdgeInsets.only(left: 0),
                     child: Text('Account Type',
-                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                        style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3))),
                   ),
                   value: _accountType,
                   selectedItemBuilder: (context) => _accountTypes
@@ -462,8 +630,8 @@ class _AddAchAccountState extends State<AddAchAccount> {
                     height: 48,
                     padding: const EdgeInsets.only(left: 0, right: 0),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: blueColor.withOpacity(0.6)),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
                       color: Colors.white,
                     ),
                   ),
@@ -484,7 +652,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                   hint: const Padding(
                     padding: EdgeInsets.only(left: 0),
                     child: Text('Account Holder Type',
-                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                        style: TextStyle(fontSize: 14, color: Color(0xFFb0b6c3))),
                   ),
                   value: _accountHolderType,
                   selectedItemBuilder: (context) => _holderTypes
@@ -502,8 +670,8 @@ class _AddAchAccountState extends State<AddAchAccount> {
                     height: 48,
                     padding: const EdgeInsets.only(left: 0, right: 0),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: blueColor.withOpacity(0.6)),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.shade300),
                       color: Colors.white,
                     ),
                   ),
@@ -516,51 +684,32 @@ class _AddAchAccountState extends State<AddAchAccount> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildLabel('Account Holder Name *'),
+              _buildLabel('Bank Details *'),
               const SizedBox(height: 6),
-              TextFormField(
-                controller: _accountHolderName,
-                decoration: _inputDecoration('Account Holder Name'),
-                textCapitalization: TextCapitalization.words,
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
-              ),
-              const SizedBox(height: 16),
-              _buildLabel('Bank Routing Number *'),
-              const SizedBox(height: 6),
-              TextFormField(
-                controller: _routingNumber,
-                decoration: _inputDecoration('Routing Number'),
-                keyboardType: TextInputType.number,
-                maxLength: 9,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Required';
-                  if (!RegExp(r'^\d+$').hasMatch(v.trim()))
-                    return 'Only numbers allowed';
-                  if (v.trim().length != 9)
-                    return 'Routing number must be 9 digits';
-                  return null;
+              // PCI: account holder name / routing / account number are typed
+              // inside Collect.js secure fields (WebView); only a token leaves
+              // the app. Raw account/routing never touch Dart or our server.
+              CollectJsCardField(
+                mode: CollectJsMode.ach,
+                height: 236,
+                publicKey: _publicKey,
+                controller: _achCtrl,
+                onReady: () => setState(() => _achReady = true),
+                onToken: (t) => _saveWithToken(t),
+                onError: (msg) {
+                  if (mounted) setState(() => _isSubmitting = false);
+                  Fluttertoast.showToast(msg: msg);
                 },
-              ),
-              const SizedBox(height: 10),
-              _buildLabel('Bank Account Number *'),
-              const SizedBox(height: 6),
-              TextFormField(
-                controller: _accountNumber,
-                decoration: _inputDecoration('Account Number'),
-                keyboardType: TextInputType.number,
-                obscureText: true,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Required';
-                  if (!RegExp(r'^\d+$').hasMatch(v.trim()))
-                    return 'Only numbers allowed';
-                  return null;
+                onValidation: (field, valid, message) {
+                  // Collect.js fires this (instead of a token) when a bank field
+                  // is invalid after the user taps Add — release the button.
+                  if (!valid && _isSubmitting) {
+                    setState(() => _isSubmitting = false);
+                    Fluttertoast.showToast(
+                        msg: message.isNotEmpty
+                            ? message
+                            : 'Please enter valid bank details.');
+                  }
                 },
               ),
               if (_validationError != null) ...[
@@ -581,6 +730,34 @@ class _AddAchAccountState extends State<AddAchAccount> {
                   ),
                 ),
                 SizedBox(height: 8),
+                // Hint shown only when there is at least one saved ACH account.
+                if (!_loadingExisting && _existingAchAccounts.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: blueColor.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: blueColor.withOpacity(0.25)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.swipe_left, size: 16, color: blueColor),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Note: Swipe left on an account to delete',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: blueColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 _loadingExisting
                     ? Center(
                         child: Padding(
@@ -612,6 +789,21 @@ class _AddAchAccountState extends State<AddAchAccount> {
                               return Padding(
                                 padding:
                                     const EdgeInsets.only(bottom: 8, top: 8),
+                                child: Slidable(
+                                endActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  extentRatio: 0.25,
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (_) => _confirmDeleteAch(acc),
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ],
+                                ),
                                 child: Container(
                                   padding: const EdgeInsets.all(14),
                                   decoration: BoxDecoration(
@@ -691,7 +883,8 @@ class _AddAchAccountState extends State<AddAchAccount> {
                                     ],
                                   ),
                                 ),
-                              );
+                              ),
+                            );
                             }).toList(),
                           ),
               ],
@@ -700,13 +893,35 @@ class _AddAchAccountState extends State<AddAchAccount> {
                 children: [
                   Expanded(
                     child: GestureDetector(
-                        onTap: () => _submit(),
+                        onTap: (!_requiredFieldsFilled || _isSubmitting)
+                            ? null
+                            : () {
+                                // Required native fields are filled (button
+                                // enabled) → tokenize; save runs in onToken.
+                                if (!(_formKey.currentState?.validate() ??
+                                    false)) {
+                                  return;
+                                }
+                                if (!_achReady) {
+                                  Fluttertoast.showToast(
+                                      msg: 'Bank fields are still loading…');
+                                  return;
+                                }
+                                setState(() {
+                                  _validationError = null;
+                                  _isSubmitting = true;
+                                });
+                                _achCtrl.tokenize();
+                              },
                         child: Container(
                           height: 45,
                           padding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: blueColor,
+                            // Web parity: greyed until required fields are filled.
+                            color: _requiredFieldsFilled
+                                ? blueColor
+                                : blueColor.withOpacity(0.4),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: _isSubmitting
@@ -755,20 +970,64 @@ class _AddAchAccountState extends State<AddAchAccount> {
   Widget _buildLabel(String text) {
     return Text(
       text,
+      // Match the card screens' field labels exactly (grey, bold, 13).
       style: const TextStyle(
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: Colors.grey,
       ),
     );
   }
 
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: const TextStyle(fontSize: 14, color: Colors.black54),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+  // Structurally identical to the card screens' CustomTextField: Material(elev 0)
+  // + white Container(grey.shade300 border, radius 8, h50) + a borderless field
+  // with hint #b0b6c3 @13, and any validation error shown below the box.
+  Widget _cardField({
+    required TextEditingController controller,
+    required String hint,
+    TextCapitalization textCap = TextCapitalization.none,
+    String? Function(String?)? validator,
+  }) {
+    return FormField<String>(
+      validator: (_) => validator?.call(controller.text),
+      builder: (state) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Material(
+            elevation: 0,
+            borderRadius: BorderRadius.circular(8.0),
+            child: Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
+              ),
+              child: Center(
+                child: TextFormField(
+                  controller: controller,
+                  textCapitalization: textCap,
+                  onChanged: (v) => state.didChange(v),
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: const TextStyle(
+                        fontSize: 13, color: Color(0xFFb0b6c3)),
+                    border: InputBorder.none,
+                    isCollapsed: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (state.hasError && (state.errorText ?? '').isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 4),
+              child: Text(state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12)),
+            ),
+        ],
+      ),
     );
   }
 }

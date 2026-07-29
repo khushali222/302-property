@@ -759,9 +759,15 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Reopen_Work_Order_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Reopen_Work_Order_Report',
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       setState(() {
         isDataLoading = false;

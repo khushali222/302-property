@@ -26,12 +26,13 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -87,7 +88,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         Uri.parse('${Api_url}/api/rental_owner/accounts-report/$id'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         });
     final jsonData = json.decode(response.body);
     print(jsonData);
@@ -564,7 +565,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       });
 
       if (response.statusCode == 200) {
@@ -645,7 +646,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text} to ${toDate.text}',
+                    'Date: ${fromDate.text} to ${toDate.text}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -656,40 +657,22 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -740,10 +723,16 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Account_totals_report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Account_totals_report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateAccountTotalReportExcel(
@@ -835,9 +824,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Account_totals_report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -916,9 +903,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final String fileName = 'Account_totals_report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1114,7 +1099,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     final response = await http
         .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     final jsonData = json.decode(response.body);
     print(jsonData);

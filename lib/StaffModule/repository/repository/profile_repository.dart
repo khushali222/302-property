@@ -22,7 +22,7 @@ class ProfileRepository {
       Uri.parse('$apiUrl$id'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print('hello$apiUrl$id');
@@ -47,7 +47,7 @@ class ProfileRepository {
       body: data,
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print('abc$apiUrl$id');

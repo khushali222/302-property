@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # of the product and file versions while build-number is used as the build suffix.
 
-version: 1.0.163+166
+version: 1.0.178+181
 
 #always uncomment the version when go in live popup one
 
@@ -113,6 +113,8 @@ dependencies:
   camera:
   pay: ^3.2.1
   uuid: ^4.5.1
+  webview_flutter: ^4.13.1
+
 
 
   # pdf:

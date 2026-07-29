@@ -35,6 +35,16 @@ class ApplicationDetailsView extends StatelessWidget {
     return s;
   }
 
+  /// Web-parity fallback for the two renamed emergency-contact fields:
+  /// prefer the new key, fall back to the legacy key when the new one is
+  /// empty. Mirrors ApplicantSummary.js (`relation || relationship`,
+  /// `phoneNumber || phone_number`) so records stored under either schema
+  /// display correctly.
+  dynamic _emOrLegacy(dynamic primary, dynamic legacy) {
+    final p = (primary ?? '').toString().trim();
+    return (p.isEmpty || p.toLowerCase() == 'null') ? legacy : primary;
+  }
+
   String _rawStr(String key) => _str(raw[key]);
 
   String _fullName() {
@@ -143,16 +153,33 @@ class ApplicationDetailsView extends StatelessWidget {
     return id;
   }
 
-  /// Web merge rule: emergency_contacts[] when filled, else legacy single
-  /// emergency_contact{}; section hidden when neither has values.
+  /// Web merge rule: the stored `emergency_contacts` array can be partial
+  /// (only name+email) while the singular `emergency_contact` holds the full
+  /// record (relationship/phone_number). Merge the singular into the first
+  /// entry so those fields aren't shown as N/A — mirroring ApplicationEditForm's
+  /// load merge and the web view. Section hidden when neither has values.
   List<Map<String, dynamic>> _emergencyEntries() {
-    final filled = _list('emergency_contacts');
-    if (filled.isNotEmpty) return filled;
-    final single = raw['emergency_contact'];
-    if (single is Map && _hasAnyValue(single)) {
-      return [Map<String, dynamic>.from(single)];
+    final single = raw['emergency_contact'] is Map
+        ? Map<String, dynamic>.from(raw['emergency_contact'] as Map)
+        : <String, dynamic>{};
+    final array = _list('emergency_contacts');
+    if (array.isEmpty) {
+      return _hasAnyValue(single) ? [single] : [];
     }
-    return [];
+    if (_hasAnyValue(single)) {
+      // new + legacy key spellings so either schema survives the merge
+      const keys = [
+        'name', 'relationship', 'relation',
+        'email', 'phone_number', 'phoneNumber',
+      ];
+      for (final k in keys) {
+        final cur = (array[0][k] ?? '').toString().trim();
+        if (cur.isEmpty && (single[k] ?? '').toString().trim().isNotEmpty) {
+          array[0][k] = single[k];
+        }
+      }
+    }
+    return array;
   }
 
   // ------------------------------------------------------------ UI building
@@ -568,8 +595,9 @@ class ApplicationDetailsView extends StatelessWidget {
         'Contact',
         (e) => [
           _F('Name', _str(e['name'])),
-          _F('Relationship', _str(e['relationship'])),
-          _F('Phone Number', _str(e['phone_number'])),
+          _F('Relationship', _str(_emOrLegacy(e['relationship'], e['relation']))),
+          _F('Phone Number',
+              _str(_emOrLegacy(e['phone_number'], e['phoneNumber']))),
           _F('Email', _str(e['email'])),
         ],
       ),

@@ -34,6 +34,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 
 import '../../../widgets/custom_drawer.dart';
 
@@ -162,40 +163,22 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text(
-                        profileData?.companyName?.isNotEmpty == true
-                            ? profileData!.companyName!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyAddress?.isNotEmpty == true
-                            ? profileData!.companyAddress!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyPostalCode?.isNotEmpty == true
-                            ? profileData!.companyPostalCode!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
+                      // Company/contact block: omit empty fields (web parity) —
+                      // never render "N/A". See buildPdfCompanyLines.
+                      ...buildPdfCompanyLines(
+                        companyName: profileData?.companyName,
+                        companyAddress: profileData?.companyAddress,
+                        companyCity: profileData?.companyCity,
+                        companyState: profileData?.companyState,
+                        companyCountry: profileData?.companyCountry,
+                        companyPostalCode: profileData?.companyPostalCode,
+                      ).map(
+                        (line) => pw.Text(
+                          line,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -259,9 +242,15 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Expiring-lease.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Expiring-lease',
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateExcel(List<ReportExpiringLeaseData> leaseData) async {
@@ -332,9 +321,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.xlsx';
 
     // Get the directory to save the file.
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -422,9 +409,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
     final String fileName = 'ExpiringLeaseReport_$formattedDate.csv';
 
     // Get the directory to save the file.
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

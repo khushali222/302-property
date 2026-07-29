@@ -7,11 +7,13 @@ class titleBar extends StatelessWidget {
   final double width;
   final double size;
   final double radius;
+  final bool center;
   titleBar(
       {required this.title,
       required this.width,
       this.size = 21,
-      this.radius = 5.0});
+      this.radius = 5.0,
+      this.center = false});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +36,9 @@ class titleBar extends StatelessWidget {
           ],
         ),
         child: Align(
-          alignment: Alignment.centerLeft,
+          alignment: center ? Alignment.center : Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(left: 20.0),
+            padding: EdgeInsets.only(left: center ? 0 : 20.0),
             child: Text(
               "${title}",
               style: TextStyle(

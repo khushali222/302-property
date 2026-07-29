@@ -36,14 +36,31 @@ class _CustomSwitchState extends State<CustomSwitch>
     if (isOn) _controller.forward();
   }
 
-  void toggleSwitch() {
-    setState(() => isOn = !isOn);
-    if (isOn) {
-      _controller.forward();
-    } else {
-      _controller.reverse();
+  /// Re-sync when the parent's value changes.
+  ///
+  /// Without this the switch was uncontrolled: it painted from a local flip and
+  /// never followed the parent again, so it could sit OFF while the screen said
+  /// 2FA was enabled. Web's Switch is fully controlled (`checked={...}`).
+  @override
+  void didUpdateWidget(CustomSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue &&
+        isOn != widget.initialValue) {
+      setState(() => isOn = widget.initialValue);
+      if (isOn) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
     }
-    widget.onChanged?.call(isOn);
+  }
+
+  void toggleSwitch() {
+    // Controlled: report the intent and let the parent decide. The knob only
+    // moves when the parent's value actually changes (via didUpdateWidget), so
+    // a tap the parent refuses — e.g. turning 2FA off before the disable code
+    // is verified — no longer leaves the knob lying about the real state.
+    widget.onChanged?.call(!isOn);
   }
 
   @override

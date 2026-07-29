@@ -22,7 +22,7 @@ class VendorRepository {
     print(vendor.toJson());
     final response = await apiPost(
       url,
-        headers: {"authorization" : "CRM $token","id":"CRM $id",},
+        headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
 
       body: vendor.toJson(),
     );
@@ -42,7 +42,7 @@ class VendorRepository {
     print("CRM $token");
     print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/vendors/$id');
-    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body)["data"];
@@ -60,7 +60,7 @@ class VendorRepository {
     print("CRM $token");
     print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/get_vendor/$vender_id');
-    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
 
     if (response.statusCode == 200) {
       final Map<String,dynamic> data = jsonDecode(response.body)["data"];
@@ -79,7 +79,7 @@ class VendorRepository {
     print(vendor.toJson());
     final response = await apiPut(
       url,
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
 
       body: vendor.toJson(),
     );
@@ -101,7 +101,7 @@ class VendorRepository {
 
     final http.Response response = await apiDelete(
       Uri.parse('$Api_url/api/vendor/delete_vendor/${vender_id}'),
-        headers: {"authorization" : "CRM $token","id":"CRM $id",}
+        headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",}
     );
     var responseData = json.decode(response.body);
     print(response.body);

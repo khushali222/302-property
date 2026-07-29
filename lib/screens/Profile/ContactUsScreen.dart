@@ -13,7 +13,17 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/appbar.dart';
+import 'package:three_zero_two_property/VendorModule/widgets/appbar.dart'
+    as vendor_ui;
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart'
+    as staff_ui;
+import 'package:three_zero_two_property/TenantsModule/widgets/appbar.dart'
+    as tenant_ui;
 import '../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart'
+    as staff_drawer;
+import 'package:three_zero_two_property/TenantsModule/widgets/custom_drawer.dart'
+    as tenant_drawer;
 import '../../repository/ContactRepository.dart';
 
 class ContactUsScreen extends StatefulWidget {
@@ -401,31 +411,67 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isAdmin = _role == 'Admin';
+    final bool isVendor = _role == 'Vendor';
+    final bool isStaff = _role == 'Staffmember';
+    final bool isTenant = _role == 'Tenant';
     return Scaffold(
       backgroundColor: Colors.white,
       // Admin keeps the full Admin appbar + drawer (unchanged behaviour).
       // Vendor/Tenant/Staff get a plain back-arrow AppBar with no drawer and
       // no avatar menu, so Admin navigation cannot leak into their session.
+      // Each role gets its OWN navigation drawer (opened by the app bar's
+      // hamburger). Vendor's app bar has no hamburger, so it needs none.
       drawer: isAdmin
           ? CustomDrawer(
               currentpage: "Contact Support",
               dropdown: false,
             )
-          : null,
+          : isStaff
+              ? staff_drawer.CustomDrawerStaff(
+                  currentpage: "Contact Support",
+                  dropdown: false,
+                )
+              : isTenant
+                  ? tenant_drawer.CustomDrawer(
+                      currentpage: "Contact Support",
+                    )
+                  : null,
+      // Each role shows its OWN real app bar (so its avatar/menu is correct and
+      // nothing from another role can leak). Back navigation is provided by the
+      // back button beside "Contact Support" in the body below.
       appBar: isAdmin
           ? widget_302.App_Bar(context: context)
-          : AppBar(
-              backgroundColor: Colors.white,
-              elevation: 1,
-              iconTheme: IconThemeData(color: blueColor),
-              title: Text(
-                'Contact Us',
-                style: TextStyle(
-                  color: blueColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+          : isVendor
+              ? vendor_ui.widget_302.App_Bar(
+                  context: context,
+                  onDrawerIconPressed: () {},
+                )
+              : isStaff
+                  ? staff_ui.widget_302_Staff.App_Bar(context: context)
+                  : isTenant
+                      ? tenant_ui.widget_302.App_Bar(
+                          context: context,
+                          onDrawerIconPressed: () {},
+                        )
+                      : AppBar(
+                          // Fallback for an unknown role: plain branded bar.
+                          backgroundColor: blueColor,
+                          elevation: 1,
+                          centerTitle: false,
+                          leading: IconButton(
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.white),
+                            onPressed: () =>
+                                Navigator.of(context).maybePop(),
+                          ),
+                          title: const Text(
+                            'Contact Us',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20),
         child: Form(
@@ -433,13 +479,47 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Text(
-                'Contact Support',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: blueColor,
+              // Header: report-screen style back button beside the title.
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Row(
+                  children: [
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).maybePop(),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.black87,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        'Contact Support',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: blueColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 8),

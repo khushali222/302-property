@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/OpenWorkOrderReportModel.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
@@ -643,40 +644,22 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text(
-                  profileData?.companyName?.isNotEmpty == true
-                      ? profileData!.companyName!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyAddress?.isNotEmpty == true
-                      ? profileData!.companyAddress!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                  '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                  '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyPostalCode?.isNotEmpty == true
-                      ? profileData!.companyPostalCode!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
+                // Company/contact block: omit empty fields (web parity) —
+                // never render "N/A". See buildPdfCompanyLines.
+                ...buildPdfCompanyLines(
+                  companyName: profileData?.companyName,
+                  companyAddress: profileData?.companyAddress,
+                  companyCity: profileData?.companyCity,
+                  companyState: profileData?.companyState,
+                  companyCountry: profileData?.companyCountry,
+                  companyPostalCode: profileData?.companyPostalCode,
+                ).map(
+                  (line) => pw.Text(
+                    line,
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -704,8 +687,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
             ],
             data: workOrderData.map((workOrder) {
               return [
-                workOrder.date != null && workOrder.date!.isNotEmpty
-                    ? dateProvider.formatCurrentDate(workOrder.date!)
+                workOrder.createdAt != null && workOrder.createdAt!.isNotEmpty
+                    ? dateProvider.formatCurrentDate(workOrder.createdAt!)
                     : '-',
                 (workOrder.rentalAddress == null ||
                         workOrder.rentalAddress!.isEmpty)
@@ -753,9 +736,15 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Open-work-orders.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Open-work-orders',
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateWorkOrderExcel(
@@ -792,8 +781,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       // Safe date parsing with default/fallback value
       String formattedDate;
       try {
-        formattedDate = workOrder.date != null && workOrder.date!.isNotEmpty
-            ? dateProvider.formatCurrentDate(workOrder.date!)
+        formattedDate = workOrder.createdAt != null && workOrder.createdAt!.isNotEmpty
+            ? dateProvider.formatCurrentDate(workOrder.createdAt!)
             : '-';
       } catch (e) {
         formattedDate = '-';
@@ -824,9 +813,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'OpenWorkOrderReport_$formattedDate.xlsx';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -853,8 +840,8 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
     for (var workOrder in workOrderData) {
       rows.add([
-        workOrder.date != null && workOrder.date!.isNotEmpty
-            ? dateProvider.formatCurrentDate(workOrder.date!)
+        workOrder.createdAt != null && workOrder.createdAt!.isNotEmpty
+            ? dateProvider.formatCurrentDate(workOrder.createdAt!)
             : '-',
         (workOrder.rentalAddress == null || workOrder.rentalAddress!.isEmpty)
             ? '-'
@@ -877,9 +864,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'OpenWorkOrderReport_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1852,7 +1837,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        '   ${workOrder.date == null || workOrder.date!.isEmpty ? '-' : dateProvider.formatCurrentDate(workOrder.date!)} ',
+                                                        '   ${workOrder.createdAt == null || workOrder.createdAt!.isEmpty ? '-' : dateProvider.formatCurrentDate(workOrder.createdAt!)} ',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -2332,7 +2317,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                   //                             'Date',
                   //                             0,
                   //                             (workOrder) =>
-                  //                                 workOrder.date ?? ''),
+                  //                                 workOrder.createdAt ?? ''),
                   //                         _buildHeader(
                   //                             'Address',
                   //                             1,

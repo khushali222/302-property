@@ -11,9 +11,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:provider/provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -1240,6 +1241,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             bytes: bytes, filename: 'Home_System_Report.pdf');
       } else {
         await Printing.layoutPdf(
+            name: 'Home_System_Report',
             onLayout: (PdfPageFormat format) async => pdf.save());
       }
     } catch (e) {
@@ -1506,9 +1508,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Home_Systems_Report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1654,9 +1656,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Home_Systems_Report_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1800,7 +1802,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       drawer: CustomDrawerStaff(
         currentpage: "Reports",
         dropdown: false,

@@ -422,6 +422,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   const SizedBox(
                                     width: 25,
                                   ),
+                                // Lease title above Summary — hidden for now, kept for future
+                                /*
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width > 500
                                       ? 200
@@ -430,9 +432,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     padding: const EdgeInsets.only(left: 1),
                                     child: Text(
                                       '${snapshot.data?.data?.rentalAddress}',
-                                      maxLines: 5, // Set maximum number of lines
-                                      overflow: TextOverflow
-                                          .ellipsis, // Handle overflow with ellipsis
+                                      maxLines: 5,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                           fontSize:
                                               MediaQuery.of(context).size.width <
@@ -444,6 +445,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     ),
                                   ),
                                 ),
+                                */
                                 // Text('${snapshot.data!.data!.rentalAddress}',
                               //     style: TextStyle(
                               //         color: blueColor,
@@ -459,6 +461,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 const EdgeInsets.symmetric(horizontal: 18.0),
                             child: Row(
                               children: [
+                                // Status above Summary — hidden for now, kept for future
+                                /*
                                 Text(
                                   '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
                                   style: TextStyle(
@@ -472,6 +476,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                             : 16,
                                   ),
                                 ),
+                                */
                                 const Spacer(),
                                 GestureDetector(
                                   onTap: () async {
@@ -925,12 +930,30 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       renewableHistoryExpandedIndex; // Separate variable for renewable history table
   bool isExpanded = false;
 
+  // Web parity: an At-will (month-to-month) lease has no fixed expiry, so web
+  // shows its end as "At Will" and always treats it as Active — it never reads
+  // "Expired" by date (RentRoll.js: lease_type === "At-will(month to month)").
+  bool _isAtWill(String? leaseType) =>
+      (leaseType ?? '').toLowerCase().trim() == 'at-will(month to month)';
+
+  String _leaseStatusWithType(
+      String? startDate, String? endDate, String? leaseType) {
+    if (_isAtWill(leaseType)) return 'Active';
+    return determineStatus(startDate, endDate);
+  }
+
   String determineStatus(String? startDate, String? endDate) {
     if (startDate == null || endDate == null) return 'Unknown';
 
-    DateTime start = formatDates(startDate);
-    DateTime end = formatDates(endDate);
-    DateTime today = DateTime.now();
+    // Compare by calendar date only, matching web's getStatus (which formats to
+    // YYYY-MM-DD). Using DateTime.now() with its time made a lease ending *today*
+    // read as Expired (now > midnight end); date-only keeps end-of-today Active.
+    final rawStart = formatDates(startDate);
+    final rawEnd = formatDates(endDate);
+    final rawToday = DateTime.now();
+    DateTime start = DateTime(rawStart.year, rawStart.month, rawStart.day);
+    DateTime end = DateTime(rawEnd.year, rawEnd.month, rawEnd.day);
+    DateTime today = DateTime(rawToday.year, rawToday.month, rawToday.day);
     // print(start);
     // print(end);
     if (today.isBefore(start)) {
@@ -962,7 +985,12 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     } catch (e) {
       return 'Unknown';
     }
-    DateTime today = DateTime.now();
+    // Compare by calendar date only (match web's getStatus / determineStatus):
+    // a lease ending today must read Active, not Expired.
+    start = DateTime(start.year, start.month, start.day);
+    end = DateTime(end.year, end.month, end.day);
+    final rawToday = DateTime.now();
+    DateTime today = DateTime(rawToday.year, rawToday.month, rawToday.day);
 
     if (isRenewed) {
       // Renewed lease logic
@@ -1066,7 +1094,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             children: [
                               const SizedBox(width: 8),
                               Text(
-                                "Tenant Details",
+                                "Property Details",
                                 style: TextStyle(
                                   color: blueColor,
                                   fontWeight: FontWeight.bold,
@@ -1134,6 +1162,48 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       ],
                                     ),
                                   ],
+                                ),
+
+                                const SizedBox(height: 20),
+
+                                /// Lease status + Active date range (web parity)
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${_leaseStatusWithType(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate, snapshot.data!.data!.leaseType)}'
+                                        '${(snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty) ? " - Renewed" : ""}',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: _getStatusColor(
+                                              _leaseStatusWithType(
+                                                  snapshot.data!.data!.startDate,
+                                                  snapshot.data!.data!.endDate,
+                                                  snapshot
+                                                      .data!.data!.leaseType)),
+                                        ),
+                                      ),
+                                      if (snapshot.data!.data!.startDate !=
+                                              null &&
+                                          snapshot.data!.data!.endDate !=
+                                              null) ...[
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${dateProvider.formatCurrentDate(snapshot.data!.data!.startDate!)} – ${_isAtWill(snapshot.data!.data!.leaseType) ? "At Will" : dateProvider.formatCurrentDate(snapshot.data!.data!.endDate!)}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
 
                                 const SizedBox(height: 20),
@@ -1459,7 +1529,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         ),
                                                       ),
                                                       Text(
-                                                        "${dateProvider.formatCurrentDate(leasesummery.data!.date!)}",
+                                                        (leasesummery.data?.date == null ||
+                                                                leasesummery.data!.date!.trim().isEmpty)
+                                                            ? "N/A"
+                                                            : dateProvider.formatCurrentDate(leasesummery.data!.date!),
                                                         style: const TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:
@@ -1749,6 +1822,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                 showRecurringChargeDialog(
                                                   context: context,
                                                   leaseId: widget.leaseId,
+                                                  isStaff: true,
                                                   onSuccess: () {
                                                     setState(() {
                                                       _leaseChargesFuture =
@@ -1984,7 +2058,10 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                         ),
                                                       ),
                                                       Text(
-                                                        "${dateProvider.formatCurrentDate(leasesummery.data!.date!)}",
+                                                        (leasesummery.data?.date == null ||
+                                                                leasesummery.data!.date!.trim().isEmpty)
+                                                            ? "N/A"
+                                                            : dateProvider.formatCurrentDate(leasesummery.data!.date!),
                                                         style: const TextStyle(
                                                           fontSize: 15,
                                                           fontWeight:

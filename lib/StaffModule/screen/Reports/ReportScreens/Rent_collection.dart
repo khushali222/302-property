@@ -12,6 +12,7 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 
@@ -19,7 +20,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
-import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../../Model/Rent_collection_model.dart';
@@ -27,7 +28,7 @@ import 'package:three_zero_two_property/StaffModule/repository/Rent_colllection_
 import '../../../repository/daily_transaction_report.dart';
 import '../../../widgets/custom_drawer.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:pdf/pdf.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
@@ -507,10 +508,16 @@ class _Rent_collectionState extends State<Rent_collection> {
         ),
       );
     }
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'RentCollection_Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'RentCollection_Report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   List<List<dynamic>> _generateSummaryTableData(
@@ -1004,9 +1011,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_collection_report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1067,9 +1074,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Rent_collection_report_$formattedDate.csv';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1407,12 +1414,9 @@ class _Rent_collectionState extends State<Rent_collection> {
   Widget _buildHeaders() {
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1462,7 +1466,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                         child: Text("Entity",
                             overflow: TextOverflow.ellipsis,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 14)),
+                                TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       // const SizedBox(width: 3),
@@ -1517,7 +1521,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                       child: Text("Total Outstanding",
                           overflow: TextOverflow.ellipsis,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                     ),
                     const SizedBox(width: 25),
                   ],
@@ -1565,12 +1569,9 @@ class _Rent_collectionState extends State<Rent_collection> {
     bool isSmallScreen = width < 536;
     return Container(
       decoration: BoxDecoration(
-        color: blueColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        ),
-      ),
+          color: const Color(0xFFF4F8FF),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFDBE0E5))),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         // leading: Container(
@@ -1619,28 +1620,28 @@ class _Rent_collectionState extends State<Rent_collection> {
                   child: Row(
                     children: [
                       Flexible(
-                        child: const Text("Address",
+                        child: Text("Address",
                             overflow: TextOverflow.ellipsis,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 14)),
+                                TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       ),
                       // Text("Property", style: TextStyle(color: Colors.white)),
                       const SizedBox(width: 3),
                       ascending1
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 10, left: 2),
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 20,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1678,7 +1679,7 @@ class _Rent_collectionState extends State<Rent_collection> {
                       child: Text("Entity",
                           overflow: TextOverflow.ellipsis,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                     ),
                   ],
                 ),
@@ -1716,25 +1717,25 @@ class _Rent_collectionState extends State<Rent_collection> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text("Balance",
+                      Text("Balance",
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14)),
                       const SizedBox(width: 3),
                       ascending3
-                          ? const Padding(
-                              padding: EdgeInsets.only(top: 10, left: 2),
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 10, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortUp,
                                 size: 16,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             )
-                          : const Padding(
-                              padding: EdgeInsets.only(bottom: 7, left: 2),
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 7, left: 2),
                               child: FaIcon(
                                 FontAwesomeIcons.sortDown,
                                 size: 16,
-                                color: Colors.white,
+                                color: blueColor,
                               ),
                             ),
                     ],
@@ -1822,7 +1823,7 @@ class _Rent_collectionState extends State<Rent_collection> {
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
-      appBar: widget_302.App_Bar(context: context),
+      appBar: widget_302_Staff.App_Bar(context: context),
       drawer: CustomDrawerStaff(
         currentpage: "Report",
         dropdown: false,
@@ -1843,17 +1844,11 @@ class _Rent_collectionState extends State<Rent_collection> {
                       // Always show filters
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
+                        child: Row(
+                          children: [
                               // Month Dropdown
-                              Container(
-                                width: 120,
+                              Expanded(
+                                flex: 3,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -1931,8 +1926,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ),
                               const SizedBox(width: 8),
                               // Year Dropdown
-                              Container(
-                                width: 84,
+                              Expanded(
+                                flex: 2,
                                 child: DropdownButtonHideUnderline(
                                   child: Material(
                                     elevation: 0,
@@ -2102,8 +2097,6 @@ class _Rent_collectionState extends State<Rent_collection> {
                               ),
                               ],
                             ),
-                          ),
-                        ),
                       ),
                       const SizedBox(height: 10),
                       // Content based on state
@@ -2618,10 +2611,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             _buildHeaders(),
             const SizedBox(height: 20),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
               child: Column(
                 children: [
                   ...sortedData.asMap().entries.map((entry) {
@@ -2629,12 +2618,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3011,10 +3001,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             _buildHeadersDetails(),
             const SizedBox(height: 20),
             Container(
-              decoration: BoxDecoration(
-                border:
-                    Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
-              ),
               child: Column(
                 children: [
                   // Show empty state if no data after filtering
@@ -3053,12 +3039,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                     var item = entry.value;
                     bool isRowExpanded = expandedRowIndex == rowIndex;
                     return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
                         color: rowIndex % 2 != 0
-                            ? Colors.white
-                            : blueColor.withOpacity(0.09),
-                        border: Border.all(
-                            color: const Color.fromRGBO(152, 162, 179, .5)),
+                            ? const Color(0xFFF4F8FF)
+                            : Colors.white,
+                        border: Border.all(color: const Color(0xFFDBE0E5)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: <Widget>[
@@ -3615,10 +3602,6 @@ class _Rent_collectionState extends State<Rent_collection> {
             if (currentPageData.isNotEmpty) const SizedBox(height: 20),
             if (currentPageData.isNotEmpty)
               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color.fromRGBO(152, 162, 179, .5)),
-                ),
                 child: Column(
                   children: [
                     ...currentPageData.asMap().entries.map((entry) {
@@ -3626,12 +3609,13 @@ class _Rent_collectionState extends State<Rent_collection> {
                       var item = entry.value;
                       bool isRowExpanded = expandedRowIndex == rowIndex;
                       return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 6),
                         decoration: BoxDecoration(
                           color: rowIndex % 2 != 0
-                              ? Colors.white
-                              : blueColor.withOpacity(0.09),
-                          border: Border.all(
-                              color: const Color.fromRGBO(152, 162, 179, .5)),
+                              ? const Color(0xFFF4F8FF)
+                              : Colors.white,
+                          border: Border.all(color: const Color(0xFFDBE0E5)),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
                           children: <Widget>[
@@ -3715,7 +3699,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                       flex: 2,
                                       child: Text(
                                         item.leaseData?.balance != null
-                                            ? '${item.leaseData!.balance}'
+                                            ? formatCurrency(
+                                                item.leaseData!.balance)
                                             : '-',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -3819,7 +3804,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                '\$${item.leaseData?.balance ?? '-'}',
+                                                formatCurrency(
+                                                    item.leaseData?.balance),
                                                 style: TextStyle(
                                                   color: grey,
                                                   fontSize: 14,
@@ -3904,7 +3890,8 @@ class _Rent_collectionState extends State<Rent_collection> {
                                     const SizedBox(width: 30),
                                     Expanded(
                                       child: Text(
-                                        '\$${data.deadBeatsSummary?.totalBalance ?? '-'}',
+                                        formatCurrency(
+                                            data.deadBeatsSummary?.totalBalance),
                                         style: TextStyle(
                                           color: blueColor,
                                           fontWeight: FontWeight.bold,

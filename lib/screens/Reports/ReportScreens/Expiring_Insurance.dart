@@ -32,6 +32,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import '../../../Model/Expiring_insurance_model.dart';
 import '../../../repository/Expiring_insurance.dart';
 import '../../../widgets/custom_drawer.dart';
@@ -91,9 +92,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     // Store last selected dates
     lastFromDate = todayStr;
     lastToDate = oneMonthLaterStr;
-    _futureReport = ExpiringInsuranceTableService()
-        .fetchExpiringInsurnce(startDate: lastFromDate, endDate: lastToDate);
-    _fetchData();
+
+    // Default the filter to "Custom Date" (today -> +1 month shown, fields
+    // editable). Do NOT auto-load — data loads only when the user taps Run.
+    daterange = 'Custom';
+    customdate = true;
   }
 
   void checkInternet() async {
@@ -186,12 +189,13 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     }
   }
 
-  void _fetchData() {
+  void _fetchData({bool force = false}) {
     String currentFromDate = _fromDateController.text;
     String currentToDate = _toDateController.text;
 
-    // Check if the current dates are the same as the last selected dates
-    if (currentFromDate == lastFromDate && currentToDate == lastToDate) {
+    // Check if the current dates are the same as the last selected dates.
+    // Run passes force: true so it always re-applies the selected range.
+    if (!force && currentFromDate == lastFromDate && currentToDate == lastToDate) {
       // If the dates are the same, do not call the API
       return;
     }
@@ -286,40 +290,22 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                   pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
-                      pw.Text(
-                        profileData?.companyName?.isNotEmpty == true
-                            ? profileData!.companyName!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyAddress?.isNotEmpty == true
-                            ? profileData!.companyAddress!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                        '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                        '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
-                        ),
-                      ),
-                      pw.Text(
-                        profileData?.companyPostalCode?.isNotEmpty == true
-                            ? profileData!.companyPostalCode!
-                            : 'N/A',
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.bold,
+                      // Company/contact block: omit empty fields (web parity) —
+                      // never render "N/A". See buildPdfCompanyLines.
+                      ...buildPdfCompanyLines(
+                        companyName: profileData?.companyName,
+                        companyAddress: profileData?.companyAddress,
+                        companyCity: profileData?.companyCity,
+                        companyState: profileData?.companyState,
+                        companyCountry: profileData?.companyCountry,
+                        companyPostalCode: profileData?.companyPostalCode,
+                      ).map(
+                        (line) => pw.Text(
+                          line,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -387,9 +373,16 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(),
+          filename: 'Expiring-Renter-Insurances-Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Expiring-Renter-Insurances-Report',
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateExcel(List<RentersInsuranceData> leaseData) async {
@@ -459,9 +452,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final String fileName = 'Renters_insurance_report_$formattedDate.xlsx';
 
     // Get the directory to save the file.
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -549,9 +540,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     final String fileName = 'Account_totals_report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -985,7 +974,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                     title: 'Expiring Insurance',
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.fromLTRB(15.0, 4.0, 15.0, 15.0),
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -1429,10 +1418,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                               _toDateController.text = "";
                                             }
 
-                                            // Trigger data fetch when date range changes
-                                            if (value != "Custom") {
-                                              _fetchData();
-                                            }
+                                            // Date range selection only sets the
+                                            // From/To fields. Data loads only when
+                                            // the user taps Run (web parity).
                                           });
                                         },
                                         buttonStyleData: ButtonStyleData(
@@ -1448,12 +1436,11 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                         ),
                                         dropdownStyleData: DropdownStyleData(
                                           maxHeight: 250,
-                                          width: 200,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(14),
                                           ),
-                                          offset: const Offset(-20, 0),
+                                          offset: const Offset(0, 0),
                                           scrollbarTheme: ScrollbarThemeData(
                                             radius: const Radius.circular(40),
                                             thickness:
@@ -1575,6 +1562,112 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                             ),
                           ),
                           //const SizedBox(height: 10),
+                          const SizedBox(height: 8),
+                          // Run + Export buttons — web parity (Run explicitly
+                          // triggers the fetch; Export sits next to it).
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 46,
+                                    child: ElevatedButton(
+                                      onPressed: () => _fetchData(force: true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: blueColor,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text('Run'),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: PopupMenuButton<String>(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    onSelected: (value) async {
+                                      if (value == 'PDF') {
+                                        final data =
+                                            await ExpiringInsuranceTableService()
+                                                .fetchExpiringInsurnce(
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
+                                        );
+                                        await generatePdf(data);
+                                      } else if (value == 'XLSX') {
+                                        final data =
+                                            await ExpiringInsuranceTableService()
+                                                .fetchExpiringInsurnce(
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
+                                        );
+                                        await generateExcel(data);
+                                      } else if (value == 'CSV') {
+                                        final data =
+                                            await ExpiringInsuranceTableService()
+                                                .fetchExpiringInsurnce(
+                                          startDate: formatDate(
+                                              _fromDateController.text),
+                                          endDate: formatDate(
+                                              _toDateController.text),
+                                        );
+                                        await generateCsv(data);
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'PDF',
+                                        child: Text('PDF'),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'XLSX',
+                                        child: Text('XLSX'),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'CSV',
+                                        child: Text('CSV'),
+                                      ),
+                                    ],
+                                    child: Container(
+                                      height: 46,
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Export',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_drop_down,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -1833,181 +1926,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
-                                Expanded(
-                                  flex: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 5, right: 5),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        // Material(
-                                        //   elevation: 3,
-                                        //   borderRadius:
-                                        //       BorderRadius.circular(8),
-                                        //   child: Container(
-                                        //     padding: const EdgeInsets.symmetric(
-                                        //         horizontal: 10),
-                                        //     // height: 40,
-                                        //     height: MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width <
-                                        //             500
-                                        //         ? 48
-                                        //         : 50,
-                                        //     width: MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width <
-                                        //             500
-                                        //         ? MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width *
-                                        //             .45
-                                        //         : MediaQuery.of(context)
-                                        //                 .size
-                                        //                 .width *
-                                        //             .4,
-                                        //     decoration: BoxDecoration(
-                                        //       color: Colors.white,
-                                        //       borderRadius:
-                                        //           BorderRadius.circular(8),
-                                        //       border: Border.all(
-                                        //           color:
-                                        //               const Color(0xFF8A95A8)),
-                                        //     ),
-                                        //     child: TextField(
-                                        //       onChanged: (value) {
-                                        //         setState(() {
-                                        //           searchvalue = value;
-                                        //         });
-                                        //       },
-                                        //       decoration: const InputDecoration(
-                                        //         border: InputBorder.none,
-                                        //         hintText: "Search here...",
-                                        //         hintStyle: TextStyle(
-                                        //             color: Color(0xFF8A95A8)),
-                                        //         contentPadding:
-                                        //             EdgeInsets.all(10),
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: blueColor,
-                                          ),
-                                          onPressed: () {},
-                                          child: PopupMenuButton<String>(
-                                            onSelected: (value) async {
-                                              // Add your export logic here based on the selected value
-                                              if (value == 'PDF') {
-                                                if (_fromDateController
-                                                        .text.isNotEmpty &&
-                                                    _toDateController
-                                                        .text.isNotEmpty) {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce(
-                                                    startDate: formatDate(
-                                                        _fromDateController
-                                                            .text),
-                                                    endDate: formatDate(
-                                                        _toDateController.text),
-                                                  );
-
-                                                  await generatePdf(data);
-                                                } else {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce();
-
-                                                  await generatePdf(data);
-                                                }
-
-                                                print('pdf');
-                                                // Export as PDF
-                                              } else if (value == 'XLSX') {
-                                                if (_fromDateController
-                                                        .text.isNotEmpty &&
-                                                    _toDateController
-                                                        .text.isNotEmpty) {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce(
-                                                    startDate: formatDate(
-                                                        _fromDateController
-                                                            .text),
-                                                    endDate: formatDate(
-                                                        _toDateController.text),
-                                                  );
-
-                                                  await generateExcel(data);
-                                                } else {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce();
-
-                                                  await generateExcel(data);
-                                                }
-                                                print('XLSX');
-                                                // Export as XLSX
-                                              } else if (value == 'CSV') {
-                                                if (_fromDateController
-                                                        .text.isNotEmpty &&
-                                                    _toDateController
-                                                        .text.isNotEmpty) {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce(
-                                                    startDate: formatDate(
-                                                        _fromDateController
-                                                            .text),
-                                                    endDate: formatDate(
-                                                        _toDateController.text),
-                                                  );
-
-                                                  await generateCsv(data);
-                                                } else {
-                                                  final data =
-                                                      await ExpiringInsuranceTableService()
-                                                          .fetchExpiringInsurnce();
-
-                                                  await generateCsv(data);
-                                                }
-                                                print('CSV');
-                                                // Export as CSV
-                                              }
-                                            },
-                                            itemBuilder:
-                                                (BuildContext context) =>
-                                                    <PopupMenuEntry<String>>[
-                                              const PopupMenuItem<String>(
-                                                value: 'PDF',
-                                                child: Text('PDF'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'XLSX',
-                                                child: Text('XLSX'),
-                                              ),
-                                              const PopupMenuItem<String>(
-                                                value: 'CSV',
-                                                child: Text('CSV'),
-                                              ),
-                                            ],
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text('Export'),
-                                                Icon(Icons.arrow_drop_down),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
+                                const SizedBox(height: 12),
                                 _buildHeaders(),
                                 SizedBox(height: 10),
                                 Container(
@@ -2342,107 +2261,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                   ),
                                 ),
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
-                                ),
-                                onPressed: () {},
-                                child: PopupMenuButton<String>(
-                                  onSelected: (value) async {
-                                    // Add your export logic here based on the selected value
-                                    if (value == 'PDF') {
-                                      if (_fromDateController.text.isNotEmpty &&
-                                          _toDateController.text.isNotEmpty) {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce(
-                                          startDate: formatDate(
-                                              _fromDateController.text),
-                                          endDate: formatDate(
-                                              _toDateController.text),
-                                        );
-
-                                        await generatePdf(data);
-                                      } else {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce();
-
-                                        await generatePdf(data);
-                                      }
-
-                                      print('pdf');
-                                      // Export as PDF
-                                    } else if (value == 'XLSX') {
-                                      if (_fromDateController.text.isNotEmpty &&
-                                          _toDateController.text.isNotEmpty) {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce(
-                                          startDate: formatDate(
-                                              _fromDateController.text),
-                                          endDate: formatDate(
-                                              _toDateController.text),
-                                        );
-
-                                        await generateExcel(data);
-                                      } else {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce();
-
-                                        await generateExcel(data);
-                                      }
-                                      print('XLSX');
-                                      // Export as XLSX
-                                    } else if (value == 'CSV') {
-                                      if (_fromDateController.text.isNotEmpty &&
-                                          _toDateController.text.isNotEmpty) {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce(
-                                          startDate: formatDate(
-                                              _fromDateController.text),
-                                          endDate: formatDate(
-                                              _toDateController.text),
-                                        );
-
-                                        await generateCsv(data);
-                                      } else {
-                                        final data =
-                                            await ExpiringInsuranceTableService()
-                                                .fetchExpiringInsurnce();
-
-                                        await generateCsv(data);
-                                      }
-                                      print('CSV');
-                                      // Export as CSV
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry<String>>[
-                                    const PopupMenuItem<String>(
-                                      value: 'PDF',
-                                      child: Text('PDF'),
-                                    ),
-                                    const PopupMenuItem<String>(
-                                      value: 'XLSX',
-                                      child: Text('XLSX'),
-                                    ),
-                                    const PopupMenuItem<String>(
-                                      value: 'CSV',
-                                      child: Text('CSV'),
-                                    ),
-                                  ],
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text('Export'),
-                                      Icon(Icons.arrow_drop_down),
-                                    ],
-                                  ),
-                                ),
-                              )
                             ],
                           ),
                         )),

@@ -18,7 +18,7 @@ class UnitData {
     print(url);
 
     try {
-      final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
       print(response.body);
       print(["data"].first.length);
       if (response.statusCode == 200) {
@@ -38,7 +38,7 @@ class UnitData {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await apiGet(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('${baseUrl}leases/unit_leases/$unitId'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body)["data"];

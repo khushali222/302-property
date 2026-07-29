@@ -30,7 +30,7 @@ class RentalOwnerReportService {
       final response = await apiGet(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },);
 
       print('rentalowners abc ${response.body}');

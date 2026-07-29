@@ -48,6 +48,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:io';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
@@ -191,6 +192,39 @@ class _Lease_tableState extends State<Lease_table> {
     return const MapEntry('end_date', 'descending');
   }
 
+  // Web parity (RentRoll.js filterRentRollsBySearch): the Active/Expired/Future
+  // date filter is applied client-side on top of the fetched leases. This is
+  // what keeps "Expired - Renewed" leases (end_date < today) out of the Active
+  // list. Applied on BOTH the local and server-paginated paths so they match web.
+  // For 'All' it is a no-op; for Expired/Future the server already matches, so
+  // only the Active case actually changes anything.
+  List<Lease1> _applyStatusDateFilter(List<Lease1> list) {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    if (selectedStatus == 'Active') {
+      return list.where((lease) {
+        if (lease.startDate == null) return false;
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return lease.startDate!.compareTo(today) <= 0;
+        }
+        return lease.startDate!.compareTo(today) <= 0 &&
+            lease.endDate!.compareTo(today) >= 0;
+      }).toList();
+    } else if (selectedStatus == 'Expired') {
+      return list.where((lease) {
+        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
+          return false;
+        }
+        return lease.endDate!.compareTo(today) < 0;
+      }).toList();
+    } else if (selectedStatus == 'Future') {
+      return list.where((lease) {
+        if (lease.startDate == null) return false;
+        return lease.startDate!.compareTo(today) > 0;
+      }).toList();
+    }
+    return list;
+  }
+
   List<Lease1> _applyLocalLeaseFilters(List<Lease1> data) {
     var list = List<Lease1>.from(data);
     if (searchValue.isNotEmpty && searchValue != 'All') {
@@ -219,31 +253,7 @@ class _Lease_tableState extends State<Lease_table> {
                 : false);
       }).toList();
     }
-    if (selectedStatus == 'Active') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.startDate == null) return false;
-        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
-          return lease.startDate!.compareTo(today) <= 0;
-        }
-        return lease.startDate!.compareTo(today) <= 0 &&
-            lease.endDate!.compareTo(today) >= 0;
-      }).toList();
-    } else if (selectedStatus == 'Expired') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.endDate == null || _leaseEndIsAtWill(lease.endDate)) {
-          return false;
-        }
-        return lease.endDate!.compareTo(today) < 0;
-      }).toList();
-    } else if (selectedStatus == 'Future') {
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      list = list.where((lease) {
-        if (lease.startDate == null) return false;
-        return lease.startDate!.compareTo(today) > 0;
-      }).toList();
-    }
+    list = _applyStatusDateFilter(list);
     if (selectedRentalOwners.isNotEmpty) {
       list = list
           .where((lease) => selectedRentalOwners.contains(lease.rentalOwnerName))
@@ -283,7 +293,24 @@ class _Lease_tableState extends State<Lease_table> {
         sortOrder: sort.value,
       );
     }
-    return result;
+    // Match web: enforce the status date filter on the server page too, so
+    // "Expired - Renewed" leases don't leak into the Active list.
+    return LeasesPageResult(
+      items: _applyStatusDateFilter(result.items),
+      pagination: result.pagination,
+    );
+  }
+
+  // Web parity (RentRoll.js filterRentRollsBySearch): exports must include the
+  // FULL filtered lease set across all pages, not just the current server page.
+  // Mirrors the client-pagination branch of _loadLeasesPage(): fetch every
+  // lease, then apply the same search/status/rental-owner filters and sort as
+  // the on-screen list.
+  Future<List<Lease1>> _fetchAllLeasesForExport() async {
+    var list = await LeaseRepository().fetchLease('');
+    list = _applyLocalLeaseFilters(list);
+    sortData(list);
+    return list;
   }
 
   void _scheduleLeaseLoad() {
@@ -852,7 +879,6 @@ class _Lease_tableState extends State<Lease_table> {
   List<String> availableRentalOwners = [];
   final ValueNotifier<List<String>> _selectedRentalOwnersNotifier =
       ValueNotifier<List<String>>([]);
-  List<Lease1>? _leasesForExport;
 
   @override
   Widget build(BuildContext context) {
@@ -1130,72 +1156,113 @@ class _Lease_tableState extends State<Lease_table> {
                             const SizedBox(width: 10),
                             // Export button - blue style, aligned next to dropdown
                             Expanded(
-                              child: Container(
-                                height:
-                                    (MediaQuery.of(context).size.width < 768)
-                                        ? 45
-                                        : 50,
-                                decoration: BoxDecoration(
-                                  color: blueColor,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: PopupMenuButton<String>(
-                                  onSelected: (value) async {
-                                    if (_leasesForExport == null ||
-                                        _leasesForExport!.isEmpty) {
-                                      Fluttertoast.showToast(
-                                        msg: 'No data to export',
-                                        toastLength: Toast.LENGTH_SHORT,
-                                      );
-                                      return;
-                                    }
-                                    final dateProvider =
-                                        Provider.of<DateProvider>(context,
-                                            listen: false);
-                                    if (value == 'pdf') {
-                                      await _generatePdf(
-                                          _leasesForExport!, dateProvider);
-                                    } else if (value == 'excel') {
-                                      await _generateExcel(
-                                          _leasesForExport!, dateProvider);
-                                    } else if (value == 'csv') {
-                                      await _generateCsv(
-                                          _leasesForExport!, dateProvider);
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry<String>>[
-                                    const PopupMenuItem<String>(
-                                        value: 'pdf',
-                                        child: Text('Export as PDF')),
-                                    const PopupMenuItem<String>(
-                                        value: 'excel',
-                                        child: Text('Export as Excel')),
-                                    const PopupMenuItem<String>(
-                                        value: 'csv',
-                                        child: Text('Export as CSV')),
-                                  ],
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 8),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.download,
-                                            size: 20, color: Colors.white),
-                                        const SizedBox(width: 8),
-                                        Text('Export',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14)),
-                                        const SizedBox(width: 4),
-                                        const Icon(Icons.keyboard_arrow_down,
-                                            size: 20, color: Colors.white),
-                                      ],
+                              // Greyed/disabled when there is no data to export
+                              // (QA CRM: no Export on empty list).
+                              child: FutureBuilder<LeasesPageResult>(
+                                future: futureLease,
+                                builder: (context, exportSnap) {
+                                  // Leases list is status-filtered server-side, so an empty
+                                  // result means "no leases for this filter", not "no data".
+                                  // Keep Export enabled (don't grey on filter/search-empty).
+                                  final bool hasExportData = true;
+                                  return Container(
+                                    height:
+                                        (MediaQuery.of(context).size.width <
+                                                768)
+                                            ? 45
+                                            : 50,
+                                    decoration: BoxDecoration(
+                                      color: hasExportData
+                                          ? blueColor
+                                          : Colors.grey.shade400,
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
-                                  ),
-                                ),
+                                    child: PopupMenuButton<String>(
+                                      enabled: hasExportData,
+                                      onSelected: (value) async {
+                                        final dateProvider =
+                                            Provider.of<DateProvider>(context,
+                                                listen: false);
+                                        final navigator = Navigator.of(context,
+                                            rootNavigator: true);
+                                        // Web parity: export the FULL filtered
+                                        // lease set across all pages, not just
+                                        // the current server page.
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                        List<Lease1> exportData;
+                                        try {
+                                          exportData =
+                                              await _fetchAllLeasesForExport();
+                                        } catch (e) {
+                                          navigator.pop();
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                'Failed to load data for export',
+                                            toastLength: Toast.LENGTH_SHORT,
+                                          );
+                                          return;
+                                        }
+                                        navigator.pop();
+                                        if (exportData.isEmpty) {
+                                          Fluttertoast.showToast(
+                                            msg: 'No data to export',
+                                            toastLength: Toast.LENGTH_SHORT,
+                                          );
+                                          return;
+                                        }
+                                        if (value == 'pdf') {
+                                          await _generatePdf(
+                                              exportData, dateProvider);
+                                        } else if (value == 'excel') {
+                                          await _generateExcel(
+                                              exportData, dateProvider);
+                                        } else if (value == 'csv') {
+                                          await _generateCsv(
+                                              exportData, dateProvider);
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) =>
+                                          <PopupMenuEntry<String>>[
+                                        const PopupMenuItem<String>(
+                                            value: 'pdf',
+                                            child: Text('Export as PDF')),
+                                        const PopupMenuItem<String>(
+                                            value: 'excel',
+                                            child: Text('Export as Excel')),
+                                        const PopupMenuItem<String>(
+                                            value: 'csv',
+                                            child: Text('Export as CSV')),
+                                      ],
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(Icons.download,
+                                                size: 20, color: Colors.white),
+                                            const SizedBox(width: 8),
+                                            Text('Export',
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14)),
+                                            const SizedBox(width: 4),
+                                            const Icon(
+                                                Icons.keyboard_arrow_down,
+                                                size: 20, color: Colors.white),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           
@@ -1320,14 +1387,6 @@ class _Lease_tableState extends State<Lease_table> {
                                 .toList();
                             canChangePageSize = data.isNotEmpty;
                           }
-
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (mounted) {
-                              setState(() {
-                                _leasesForExport = List.from(data);
-                              });
-                            }
-                          });
 
                           return SingleChildScrollView(
                             child: Column(
@@ -2881,9 +2940,14 @@ class _Lease_tableState extends State<Lease_table> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'lease_table.pdf');
+    } else {
       await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
       // Fluttertoast.showToast(msg: 'PDF exported successfully');
       print('PDF exported successfully');
     } catch (e) {
@@ -2948,13 +3012,22 @@ class _Lease_tableState extends State<Lease_table> {
       final List<int> bytes = workbook.saveAsStream();
       workbook.dispose();
 
-      final directory = await getApplicationDocumentsDirectory();
+      // Save to a user-visible location (Download on Android, Documents on iOS)
+      // and share it, so the file actually lands — matches the Scheduled export.
+      final Directory directory = await getApplicationDocumentsDirectory();
+      if (!await directory.exists() && !Platform.isIOS) {
+        await directory.create(recursive: true);
+      }
       final path =
           '${directory.path}/Leases_Report_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.xlsx';
       final file = File(path);
-      await file.writeAsBytes(bytes);
-
-      Fluttertoast.showToast(msg: 'Excel file saved');
+      await file.writeAsBytes(bytes, flush: true);
+      // Only confirm when the user actually completes the save/share — dismissing
+      // the Android share sheet no longer shows a false "saved" toast.
+      final ShareResult result = await Share.shareXFiles([XFile(path)]);
+      if (result.status != ShareResultStatus.dismissed) {
+        Fluttertoast.showToast(msg: 'Excel file saved');
+      }
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error generating Excel: $e');
     }
@@ -2993,13 +3066,22 @@ class _Lease_tableState extends State<Lease_table> {
         csvBuffer.writeln(row.join(','));
       }
 
-      final directory = await getApplicationDocumentsDirectory();
+      // Save to a user-visible location (Download on Android, Documents on iOS)
+      // and share it, so the file actually lands — matches the Scheduled export.
+      final Directory directory = await getApplicationDocumentsDirectory();
+      if (!await directory.exists() && !Platform.isIOS) {
+        await directory.create(recursive: true);
+      }
       final path =
           '${directory.path}/Leases_Report_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.csv';
       final file = File(path);
       await file.writeAsString(csvBuffer.toString(), flush: true);
-
-      Fluttertoast.showToast(msg: 'CSV file saved');
+      // Only confirm when the user actually completes the save/share — dismissing
+      // the Android share sheet no longer shows a false "saved" toast.
+      final ShareResult result = await Share.shareXFiles([XFile(path)]);
+      if (result.status != ShareResultStatus.dismissed) {
+        Fluttertoast.showToast(msg: 'CSV file saved');
+      }
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error generating CSV: $e');
     }

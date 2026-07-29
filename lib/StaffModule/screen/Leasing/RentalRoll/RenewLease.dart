@@ -243,7 +243,7 @@ class _RenewleaseState extends State<Renewlease> {
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -332,7 +332,7 @@ class _RenewleaseState extends State<Renewlease> {
           Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM ${prefs.getString('staff_id') ?? id}",
           },
         );
         print('Test API call status: ${testResponse.statusCode}');
@@ -344,7 +344,7 @@ class _RenewleaseState extends State<Renewlease> {
           await apiPost(Uri.parse('$Api_url/api/leases/renew_lease'),
               headers: {
                 "authorization": "CRM $token",
-                "id": "CRM $id",
+                "id": "CRM ${prefs.getString('staff_id') ?? id}",
                 'Content-Type': 'application/json',
               },
               body: json.encode(renewlease));
@@ -478,7 +478,7 @@ class _RenewleaseState extends State<Renewlease> {
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
 

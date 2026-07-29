@@ -1250,6 +1250,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             bytes: bytes, filename: 'Home_System_Report.pdf');
       } else {
         await Printing.layoutPdf(
+            name: 'Home_System_Report',
             onLayout: (PdfPageFormat format) async => pdf.save());
       }
     } catch (e) {
@@ -1516,9 +1517,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Home_Systems_Report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1664,9 +1665,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Home_Systems_Report_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Pictures');
+    // /storage/emulated/0/Pictures is blocked by Android scoped storage; use
+    // the app documents dir on both platforms (file is shared via Share sheet)
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

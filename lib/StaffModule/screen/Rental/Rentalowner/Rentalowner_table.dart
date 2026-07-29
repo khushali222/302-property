@@ -1134,6 +1134,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                               ),
+                                              if (permissions?.rentalownerDelete == true) ...[
                                               const SizedBox(
                                                 width: 5,
                                               ),
@@ -1169,6 +1170,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                                                   ),
                                                 ),
                                               ),
+                                              ],
                                             ],
                                           ),
                                         ],

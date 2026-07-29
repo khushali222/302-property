@@ -643,6 +643,8 @@ class PaymentService {
     final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
+    String? staffIdHdr = prefs.getString("staff_id");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final Map<String, dynamic> requestBody = {
@@ -665,7 +667,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM $staffIdHdr", // staff's own id (web parity)
         "Content-Type": "application/json",
           "X-Idempotency-Key": Uuid().v4(),
           "X-Client-Source": _clientSource,
@@ -698,7 +700,7 @@ class PaymentService {
   }) async {
     final String baseUrl = '$Api_url/api/payment/payment/$paymentId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString('adminId');
+    String? id = prefs.getString('staff_id'); // staff's own id (web parity)
     String? token = prefs.getString('token');
 
     final Map<String, dynamic> requestBody = {
@@ -721,7 +723,7 @@ class PaymentService {
       Uri.parse(baseUrl),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
         "Content-Type": "application/json",
         "X-Idempotency-Key": Uuid().v4(),
         "X-Client-Source": _clientSource,
@@ -795,7 +797,7 @@ class PaymentService {
 //       Uri.parse(baseUrl),
 //       headers: {
 //         "authorization": "CRM $token",
-//         "id": "CRM $id",
+//         "id": "CRM ${prefs.getString('staff_id') ?? id}",
 //         "Content-Type": "application/json",
 //       },
 //       body: jsonEncode({

@@ -39,6 +39,7 @@ class WorkOrderReportData {
   final String? priority;
   final String? status;
   final String? date;
+  final String? createdAt;
   final String? rentalAddress;
   final String? rentalUnit;
   final String? staffMemberName;
@@ -53,6 +54,7 @@ class WorkOrderReportData {
     this.priority,
     this.status,
     this.date,
+    this.createdAt,
     this.rentalAddress,
     this.rentalUnit,
     this.staffMemberName,
@@ -72,6 +74,7 @@ class WorkOrderReportData {
       priority: json['priority'] as String?,
       status: json['status'] as String?,
       date: json['date'] as String?,
+      createdAt: json['createdAt'] as String?,
       rentalAddress: json['rental_adress'] as String?,
       rentalUnit: json['rental_unit'] as String?,
       staffMemberName: json['staff_member_name'] as String?,
@@ -89,6 +92,7 @@ class WorkOrderReportData {
       'priority': priority,
       'status': status,
       'date': date,
+      'createdAt': createdAt,
       'rental_address': rentalAddress,
       'rental_unit': rentalUnit,
       'staff_member_name': staffMemberName,

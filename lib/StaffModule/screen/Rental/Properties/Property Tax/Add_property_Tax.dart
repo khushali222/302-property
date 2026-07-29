@@ -18,6 +18,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../../../provider/dateProvider.dart';
 import '../../../../widgets/appbar.dart';
+import '../../../../../widgets/clearable_date_picker.dart';
+import '../../../../../widgets/clearable_date_suffix.dart';
 import '../../../../widgets/custom_drawer.dart';
 
 class Add_property_Tax extends StatefulWidget {
@@ -147,42 +149,39 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    final DateTime? picked = await showDatePicker(
+    final ClearableDatePickerResult? result = await showClearableDatePicker(
       context: context,
       initialDate: initialDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
-    if (picked != null) {
-      setState(() {
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
-        if (controller == _dueDateController) {
-          _dueDate = picked;
-          controller.text = dateProvider.formatCurrentDate(apiFormatDate);
-        } else if (controller == _paidDateController) {
-          _paidDate = picked;
-          controller.text = dateProvider.formatCurrentDate(apiFormatDate);
-        }
-      });
+    if (result == null) return; // cancelled — keep the current value
+    if (result.cleared) {
+      _clearDate(controller);
+      return;
     }
+    final DateTime picked = result.date!;
+    setState(() {
+      String apiFormatDate = DateFormat('yyyy-MM-dd').format(picked);
+      if (controller == _dueDateController) {
+        _dueDate = picked;
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+      } else if (controller == _paidDateController) {
+        _paidDate = picked;
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+      }
+    });
+  }
+
+  void _clearDate(TextEditingController controller) {
+    setState(() {
+      controller.clear();
+      if (controller == _dueDateController) {
+        _dueDate = null;
+      } else if (controller == _paidDateController) {
+        _paidDate = null;
+      }
+    });
   }
 
   String? _validateRequired(String? value, String fieldName) {
@@ -846,18 +845,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                         ? 'Update tax record details'
                         : 'Add new tax record for this property'),
                     const SizedBox(height: 16),
-                    // _buildDropdownField(
-                    //   controller: _taxYearController,
-                    //   label: 'Tax Year *',
-                    //   hint: 'Select tax year',
-                    //   validator: (value) =>
-                    //       _validateRequired(value, 'Tax year'),
-                    //   items: _yearOptions,
-                    // ),
-                    _buildTextField(
+                    // Web parity: Tax Year is a dropdown of valid years (no free
+                    // text), so an oversized/garbled value can't be entered.
+                    _buildDropdownField(
                       controller: _taxYearController,
                       label: 'Tax Year *',
                       hint: 'Select tax year',
+                      items: _yearOptions,
                       validator: (value) =>
                           _validateRequired(value, 'Tax year'),
                     ),
@@ -898,6 +892,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                           .toUpperCase(),
                       onTap: () =>
                           _selectDate(context, _dueDateController, _dueDate),
+                      onClear: () => _clearDate(_dueDateController),
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
@@ -908,6 +903,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
                           .toUpperCase(),
                       onTap: () =>
                           _selectDate(context, _paidDateController, _paidDate),
+                      onClear: () => _clearDate(_paidDateController),
                     ),
                     const SizedBox(height: 16),
                     _buildDropdownField(
@@ -1259,6 +1255,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
     required String label,
     required String hint,
     required VoidCallback onTap,
+    VoidCallback? onClear,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -1273,37 +1270,37 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           ),
         ),
         const SizedBox(height: 8),
-        GestureDetector(
+        TextFormField(
+          controller: controller,
+          readOnly: true,
           onTap: onTap,
-          child: AbsorbPointer(
-            child: TextFormField(
+          validator: null, // Remove built-in validation
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey[300]!),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            suffixIcon: ClearableDateSuffix(
               controller: controller,
-              validator: null, // Remove built-in validation
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 14,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                suffixIcon: Icon(
-                  Icons.calendar_today,
-                  color: blueColor,
-                ),
-              ),
+              onPick: onTap,
+              onClear: onClear ?? controller.clear,
+              icon: Icons.calendar_today,
+              iconColor: blueColor,
             ),
           ),
         ),
@@ -1403,11 +1400,10 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               ),
               dropdownStyleData: DropdownStyleData(
                 maxHeight: 250,
-                width: 200,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                offset: const Offset(-20, 0),
+                offset: const Offset(0, 0),
                 scrollbarTheme: ScrollbarThemeData(
                   radius: const Radius.circular(40),
                   thickness: MaterialStateProperty.all(6),

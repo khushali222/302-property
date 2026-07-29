@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -101,7 +102,8 @@ class Dashboard_staff extends StatefulWidget {
   State<Dashboard_staff> createState() => _Dashboard_staffState();
 }
 
-class _Dashboard_staffState extends State<Dashboard_staff> {
+class _Dashboard_staffState extends State<Dashboard_staff>
+    with WidgetsBindingObserver {
   String firstname = '';
   String lastname = '';
   bool loading = false;
@@ -211,10 +213,20 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   double currentMonthRentPaid = 0.0;
   double lastMonthRentPaid = 0.0;
   double totalRentPastDue = 0.0;
-  Future<Map<String, dynamic>> fetchProperties() async {
-    setState(() {
-      loading = true;
-    });
+  // True when the last load couldn't get a location (off/denied/timeout), so the
+  // app-resume handler knows it's worth silently re-fetching the nearby section.
+  bool _locationWasUnavailable = false;
+
+  // Watches the device location toggle so nearby can load the instant location is
+  // switched on — even without leaving the app. Cancelled in dispose.
+  StreamSubscription<ServiceStatus>? _serviceStatusSub;
+
+  Future<Map<String, dynamic>> fetchProperties({bool silent = false}) async {
+    if (!silent) {
+      setState(() {
+        loading = true;
+      });
+    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
@@ -236,7 +248,12 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         jsonResponse.map((data) => Rentals.fromJson(data)).toList();
 
         try {
-          Position userLocation = await getCurrentLocation();
+          // Time-box location so a hanging GPS request can't freeze the Staff
+          // dashboard (matches the Vendor dashboard's 15s timeout).
+          Position userLocation =
+              await getCurrentLocation().timeout(const Duration(seconds: 15));
+          _locationWasUnavailable = false;
+          print('[LOCATION][Staff] location available → loading nearby properties');
           Rentals? nearestProperty;
           double minDistance = double.infinity;
           List<Rentals> nearbyProperties = [];
@@ -279,7 +296,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
             "nearby": nearbyProperties,
           };
         } catch (e) {
-          print('Error finding nearby properties: $e');
+          _locationWasUnavailable = true;
+          print('[LOCATION][Staff] location unavailable (off/denied/timeout) → nearby skipped: $e');
           setState(() {
             loading = false;
           });
@@ -308,11 +326,24 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
     }
   }
 
-  void fetchNearbyProperties() async {
-    setState(() {
-      loading = true;
-    });
-    final result = await fetchProperties();
+  void fetchNearbyProperties({bool silent = false, bool nearbyOnly = false}) async {
+    if (!silent) {
+      setState(() {
+        loading = true;
+      });
+    }
+    // Load counts / data / name up front (independent of location) so they
+    // appear immediately instead of waiting behind the location lookup — and
+    // so both initState and the refresh button get them via this one method.
+    // nearbyOnly (app-resume / location-toggle refresh) skips these 3
+    // location-independent calls, so a brief app-switch doesn't re-hit them —
+    // only the location-dependent nearby lookup below is redone.
+    if (!nearbyOnly) {
+      fetchDatacount();
+      fetchData();
+      _loadName();
+    }
+    final result = await fetchProperties(silent: silent);
     if (result.isNotEmpty) {
       List<Data> workOrders = await fetchWorkOrders("");
       print(result);
@@ -320,14 +351,17 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       if (nearstProperty != null) {
         nearestPropertyWorkOrders = workOrders
             .where((workOrder) =>
-        workOrder.rentalAddress!.rentalId ==
+        workOrder.rentalAddress != null &&
+            workOrder.rentalAddress!.rentalId ==
             nearstProperty!.rentalId! &&
             (workOrder.workOrderData?.status ?? "") != "Completed")
             .toList();
       }
 // Multiple near properties work orders
-      List<dynamic> multipleRentalIds =
-      result["nearby"].map((property) => property.rentalId!).toList();
+      List<dynamic> multipleRentalIds = result["nearby"]
+          .where((property) => property.rentalId != null)
+          .map((property) => property.rentalId!)
+          .toList();
 
       // List<Data> multiplePropertiesWorkOrders = workOrders
       //     .where((workOrder) => multipleRentalIds.contains(workOrder.rentalAddress!.rentalId))
@@ -340,13 +374,21 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
         // nearestPropertyWorkOrders = nearestPropertyWorkOrders;
         loading = false;
       });
+    } else {
+      // Location off/denied or no data: clear any stale nearby results so an
+      // old list can't linger under the "turn on location" banner.
+      if (mounted) {
+        setState(() {
+          nearstProperty = null;
+          properties = [];
+          nearestPropertyWorkOrders = [];
+        });
+      }
     }
     // setState(() {
     //   properties = data;
     // });
-    fetchDatacount();
-    fetchData();
-    _loadName();
+    // (counts / data / name are now loaded at the top of this method, once.)
   }
 
   Future<void> fetchData() async {
@@ -422,6 +464,8 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _listenForLocationServiceOn();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         print(result);
@@ -429,11 +473,55 @@ class _Dashboard_staffState extends State<Dashboard_staff> {
       });
     });
     checkInternet();
-    fetchNearbyProperties();
     dashboardData = DashboardData(countList: [0, 0], amountList: [0, 0]);
-    fetchDatacount();
-    fetchData();
-    _loadName();
+    // fetchNearbyProperties() loads counts / data / name itself (once), so they
+    // are no longer called again here — they were previously firing twice.
+    fetchNearbyProperties();
+  }
+
+  // Instant nearby-load when the device location service is switched ON while the
+  // app is open (stronger than resume-only). Fully guarded so it can neither crash
+  // nor disturb other logic: wrapped in try/catch, stream errors swallowed, gated
+  // on the same _locationWasUnavailable flag, and it only calls the existing silent
+  // fetch (no new fetch / nearby logic).
+  void _listenForLocationServiceOn() {
+    try {
+      _serviceStatusSub = Geolocator.getServiceStatusStream().listen(
+        (ServiceStatus status) {
+          print('[LOCATION][Staff] service status changed → $status');
+          if (status == ServiceStatus.enabled &&
+              _locationWasUnavailable &&
+              mounted) {
+            print('[LOCATION][Staff] location re-enabled while app open → refreshing nearby');
+            fetchNearbyProperties(silent: true, nearbyOnly: true);
+          }
+        },
+        onError: (_) {},
+        cancelOnError: false,
+      );
+    } catch (_) {
+      // Platform can't stream service status → skip; resume-refresh still covers it.
+    }
+  }
+
+  @override
+  void dispose() {
+    _serviceStatusSub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // User returned to the foreground (e.g. after enabling location in
+    // Settings). Silently re-fetch the nearby section only if location was
+    // unavailable last time — no full-screen spinner, no re-login, and no
+    // needless API call when nearby already loaded.
+    if (state == AppLifecycleState.resumed && _locationWasUnavailable) {
+      print('[LOCATION][Staff] app resumed & location was unavailable → refreshing nearby');
+      fetchNearbyProperties(silent: true, nearbyOnly: true);
+    }
   }
 
   ConnectivityResult? _connectivityResult;

@@ -23,7 +23,7 @@ class SurchargeRepository {
         Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
         headers: {
           "authorization": "CRM $token",
-          "id":"CRM $id",
+          "id":"CRM ${prefs.getString('staff_id') ?? id}",
           "Content-Type": "application/json"
         }
     );
@@ -45,7 +45,7 @@ class SurchargeRepository {
     String? token = prefs.getString('token');
     final response = await apiPut(
         Uri.parse('${Api_url}/api/surcharge/surcharge/$id'),
-        headers: {"authorization" : "CRM $token","id":"CRM $id",},
+        headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
         body:data );
     final response_Data = jsonDecode(response.body,);
     if (response_Data["statusCode"] == 200) {
@@ -64,7 +64,7 @@ class SurchargeRepository {
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -88,7 +88,7 @@ class SurchargeRepository {
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -109,7 +109,7 @@ class latefeeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await apiGet(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -131,7 +131,7 @@ class latefeeRepository {
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -157,7 +157,7 @@ class latefeeRepository {
       headers: {
         "authorization" : "CRM $token",
         'Content-Type': 'application/json',
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );
@@ -178,7 +178,7 @@ class mailserviceRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    final response = await apiGet(Uri.parse('$Api_url/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+    final response = await apiGet(Uri.parse('$Api_url/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     final response_Data = jsonDecode(response.body);
     print(response_Data);
     if (response_Data["statusCode"] == 200) {
@@ -200,7 +200,7 @@ class mailserviceRepository {
       Uri.parse('$Api_url/api/latefee/latefee/$surchargeId'),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -226,7 +226,7 @@ class mailserviceRepository {
       headers: {
         "authorization" : "CRM $token",
         'Content-Type': 'application/json',
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
       },
       body: jsonEncode(data),
     );

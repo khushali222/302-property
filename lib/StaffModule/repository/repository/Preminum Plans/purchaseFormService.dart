@@ -8,7 +8,7 @@ import 'package:three_zero_two_property/constant/constant.dart';
 class purchaseFormService {
   Future<int?> postPurchaseForm(purchaseFormModel purchaseForm) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id"); // staff's own id (web parity)
     String? token = prefs.getString('token');
 
     final headers = {

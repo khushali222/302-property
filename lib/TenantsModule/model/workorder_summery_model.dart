@@ -232,12 +232,12 @@ class PartsandchargeData {
   String? id;
   String? partsId;
   String? workOrderId;
-  int? partsQuantity;
+  num? partsQuantity;
   String? account;
   String? chargeType;
   String? description;
-  int? partsPrice;
-  int? amount;
+  num? partsPrice;
+  num? amount;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;

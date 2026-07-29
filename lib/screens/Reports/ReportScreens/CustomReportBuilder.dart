@@ -370,7 +370,10 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                          color: blueColor,
+                                          color: (_reportData.isNotEmpty &&
+                                                  _selectedReport != null)
+                                              ? blueColor
+                                              : Colors.grey.shade400,
                                         ),
                                       ),
                                       dropdownStyleData: DropdownStyleData(
@@ -987,9 +990,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       final columns = _selectedReport!.selectedColumns;
       final headers =
           columns.map((k) => customReportColumnLabels[k] ?? k).toList();
-      final companyName = profileData.companyName?.isNotEmpty == true
-          ? profileData.companyName!
-          : 'N/A';
+      final companyName = profileData.companyName ?? '';
       final addressParts = [
         profileData.companyAddress,
         profileData.companyCity,
@@ -1090,10 +1091,16 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
           ],
         ),
       );
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'custom-report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'custom-report',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
     } catch (e) {
       Fluttertoast.showToast(
         msg: 'Error generating PDF',
@@ -1140,9 +1147,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       workbook.dispose();
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.xlsx';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);
@@ -1182,9 +1187,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       }
       final fileName =
           'CustomReport_${_selectedReport!.name.replaceAll(RegExp(r'[^\w]'), '_')}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}.csv';
-      final directory = Platform.isIOS
-          ? await getApplicationDocumentsDirectory()
-          : Directory('/storage/emulated/0/Download');
+      final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/$fileName';
       if (!await directory.exists() && !Platform.isIOS) {
         await directory.create(recursive: true);

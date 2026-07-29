@@ -67,6 +67,23 @@ double asDouble(dynamic value, [double fallback = 0]) {
   return fallback;
 }
 
+/// Nullable, type-preserving numeric parse for model `fromJson`.
+/// Keeps null as null (does NOT coerce to 0), keeps int as int and double as
+/// double (so payload round-trips are unchanged), and parses a numeric String
+/// to num. Use for `num?` fields so a decimal/int/string from the API can't
+/// throw "type 'X' is not a subtype of type 'int?'".
+num? asNumN(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value;
+  if (value is String) return num.tryParse(value.trim());
+  return null;
+}
+
+/// Nullable variants for `double?` / `int?` fields: null stays null, any present
+/// value (int, double, or numeric String) is coerced safely to the field type.
+double? asDoubleN(dynamic value) => value == null ? null : asDouble(value);
+int? asIntN(dynamic value) => value == null ? null : asInt(value);
+
 /// A loose value → Map<String, dynamic> (empty map if it isn't a map).
 Map<String, dynamic> asObject(dynamic value) =>
     value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
@@ -597,6 +614,29 @@ class CVVFormatter extends TextInputFormatter {
       text: digitsOnly,
       selection: TextSelection.collapsed(offset: digitsOnly.length),
     );
+  }
+}
+
+/// Restricts input to a 0–100 percentage. Web parity for the Debit Card Fee
+/// Override field: mirrors the web onChange gate — accepts only an empty value,
+/// or digits with a single optional decimal point whose numeric value is
+/// between 0 and 100 (inclusive). Any keystroke that would fall outside that
+/// range (or isn't numeric) is rejected, so out-of-range values can't be typed.
+class PercentRangeFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+    // Allow clearing the field.
+    if (text.isEmpty) return newValue;
+    // Only digits with at most one decimal point (web regex: /^\d*\.?\d*$/).
+    if (!RegExp(r'^\d*\.?\d*$').hasMatch(text)) return oldValue;
+    // Reject values that don't parse (e.g. a lone ".") — matches web parseFloat.
+    final parsed = double.tryParse(text);
+    if (parsed == null) return oldValue;
+    // Range 0–100 inclusive (web: parseFloat(value) >= 0 && <= 100).
+    if (parsed < 0 || parsed > 100) return oldValue;
+    return newValue;
   }
 }
 

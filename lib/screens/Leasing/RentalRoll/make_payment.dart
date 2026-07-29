@@ -61,6 +61,9 @@ class _MakePaymentState extends State<MakePayment> {
   late Future<Map<String, List<String>>> futureDropdownData;
   List<Map<String, dynamic>> charges = [];
   String? validationMessage;
+  // Live "Amount cannot exceed $999,999.99" inline error (QA ticket parity with
+  // Enter/Edit Charge); 999999.99 is the max of the DECIMAL(8,2) amount column.
+  String? _amountLimitError;
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
@@ -455,7 +458,7 @@ class _MakePaymentState extends State<MakePayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
-    print(token);
+    // print(token); // removed: do not log auth token
     print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await apiGet(
@@ -520,7 +523,7 @@ class _MakePaymentState extends State<MakePayment> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -889,8 +892,16 @@ class _MakePaymentState extends State<MakePayment> {
     setState(() {
       //print(value);
       if (value == "") {
+        // Field cleared: this charge now applies 0, so restore its balance to the
+        // full charge amount and recompute the total from all rows (empty == 0),
+        // matching the web. Without this the total keeps the previous keystroke.
+        rows[index]['amount'] = 0.0;
         charges_balances[index] = rows[index]["charge_amount"];
-        // totalAmount > rows[index]["charge_amount"] ? totalAmount - rows[index]["charge_amount"]: totalAmount;
+        totalAmount = 0.0;
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i]["amount"] != 0.0)
+            totalAmount = totalAmount + rows[i]["amount"];
+        }
       } else {
         if (rows[index]["newfield"] == true) {
           double amount = double.tryParse(value) ?? 0.0;
@@ -1822,8 +1833,28 @@ class _MakePaymentState extends State<MakePayment> {
                               ],
                               hintText: 'Enter amount',
                               controller: amountController,
-                              onChanged: (value) => validateAmounts(),
+                              onChanged: (value) {
+                                validateAmounts();
+                                final v = double.tryParse(
+                                    value.trim().replaceAll(',', ''));
+                                setState(() {
+                                  _amountLimitError =
+                                      (v != null && v > 999999.99)
+                                          ? 'Amount cannot exceed \$999,999.99'
+                                          : null;
+                                });
+                              },
                             ),
+                            if (_amountLimitError != null)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 6, left: 4),
+                                child: Text(
+                                  _amountLimitError!,
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
+                                ),
+                              ),
                             const SizedBox(
                               height: 15,
                             ),
@@ -2122,7 +2153,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           ? Container(
                                               child: const Center(
                                                   child: Text(
-                                                      'No Cards Avaiable')),
+                                                      'No Cards Available')),
                                             )
                                           : SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
@@ -3584,7 +3615,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${totalAmount.toStringAsFixed(2)}'),
+                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3594,7 +3625,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                                               ),*/
                               ]),
                             ],
@@ -3613,7 +3644,7 @@ class _MakePaymentState extends State<MakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                             ),
                           ],
                         ),
@@ -3836,7 +3867,8 @@ class _MakePaymentState extends State<MakePayment> {
                             //   return; // Exit early to prevent payment processing
                             // }
                             if ((_formKey.currentState?.validate() ?? false) &&
-                                validationMessage == null) if (isChecked) {
+                                validationMessage == null &&
+                                _amountLimitError == null) if (isChecked) {
                               if ((double.tryParse(amountController.text) ??
                                       0.0) <=
                                   0) {

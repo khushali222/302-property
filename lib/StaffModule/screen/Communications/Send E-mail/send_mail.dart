@@ -17,6 +17,7 @@ import 'package:three_zero_two_property/screens/Rental/Tenants/add_tenants.dart'
 
 import '../../../../Model/template_model.dart';
 import '../../../repository/Communication/Templet_Repo.dart';
+import 'Send_email_table.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 
@@ -58,6 +59,7 @@ class _send_emailState extends State<send_email> {
   ];
 
   List<String> selectedTenantIds = [];
+  final TextEditingController _tenantSearchController = TextEditingController();
   bool isLoading = false;
   String? _selectedEvent;
   List<String> events = [
@@ -95,7 +97,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/tenant/lease-tenant/$adminId"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -138,7 +140,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/templates/get/$adminId/$_selectedEvent"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -310,7 +312,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("${Api_url}/api/templates/get/"),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       },
     );
 
@@ -384,7 +386,7 @@ class _send_emailState extends State<send_email> {
   //     headers: {
   //       "Content-Type": "application/json",
   //       "authorization": "CRM $token",
-  //       "id": "CRM $adminId",
+  //       "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
   //     },
   //     body: json.encode(updatedTemplate),
   //   );
@@ -697,6 +699,67 @@ class _send_emailState extends State<send_email> {
                                 );
                               }).toList()],
                               onChanged: (_) {},
+                              dropdownSearchData: DropdownSearchData(
+                                searchController: _tenantSearchController,
+                                searchInnerWidgetHeight: 60,
+                                searchInnerWidget: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8, bottom: 4, left: 8, right: 8),
+                                  child: TextFormField(
+                                    controller: _tenantSearchController,
+                                    maxLines: 1,
+                                    cursorColor: blueColor,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 10),
+                                      hintText: 'Search tenant',
+                                      hintStyle: const TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFFb0b6c3)),
+                                      prefixIcon: const Icon(Icons.search,
+                                          size: 20, color: Color(0xFFb0b6c3)),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFb0b6c3)),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFb0b6c3)),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide:
+                                            BorderSide(color: blueColor),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                searchMatchFn: (item, searchValue) {
+                                  if (item.value == "select_all") {
+                                    return true;
+                                  }
+                                  final tenant = tenants.firstWhere(
+                                    (t) => t['tenant_id'] == item.value,
+                                    orElse: () => {},
+                                  );
+                                  final fullName =
+                                      "${tenant['tenant_firstName'] ?? ''} ${tenant['tenant_lastName'] ?? ''}"
+                                          .toLowerCase();
+                                  return fullName.contains(
+                                      searchValue.toLowerCase().trim());
+                                },
+                              ),
+                              onMenuStateChange: (isOpen) {
+                                if (!isOpen) {
+                                  _tenantSearchController.clear();
+                                }
+                              },
                               buttonStyleData: ButtonStyleData(
                                 height: 46,
                                 padding:
@@ -1536,7 +1599,24 @@ class _send_emailState extends State<send_email> {
                                 setState(() {
                                   isLoading = false;
                                 });
-                                Navigator.of(context).pop(true);
+                                if (!mounted) return;
+                                // Opened from Communications menu (no lease
+                                // context) -> land on Email Logs so the user
+                                // sees the sent email, matching web. Contextual
+                                // sends (from Tenant/Lease Summary) keep
+                                // returning to their previous screen.
+                                if (widget.lease == null) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Send_Email_table(),
+                                      settings: const RouteSettings(
+                                          name: "E-mail Logs"),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.of(context).pop(true);
+                                }
                               } catch (e) {
                                 setState(() {
                                   isLoading = false;
@@ -1621,7 +1701,7 @@ class _send_emailState extends State<send_email> {
       Uri.parse("$Api_url/api/email-logs"),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $adminid",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminid}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),

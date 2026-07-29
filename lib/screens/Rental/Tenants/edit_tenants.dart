@@ -14,6 +14,8 @@ import 'package:provider/provider.dart';
 import '../../../provider/dateProvider.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_picker.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_suffix.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 
 import '../../../Model/tenants.dart';
@@ -89,41 +91,28 @@ class _EditTenantsState extends State<EditTenants> {
       }
     }
 
-    DateTime? selectedDate = await showDatePicker(
+    final ClearableDatePickerResult? result = await showClearableDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: DateTime(1900),
-      // lastDate: DateTime(2101),
       lastDate: DateTime.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
-    if (selectedDate != null) {
+    if (result == null) return; // cancelled — keep the current value
+    if (result.cleared) {
       setState(() {
-        // Get dateProvider to format the date according to user's preference
-        final dateProvider = Provider.of<DateProvider>(context, listen: false);
-        // Display format: Use provider's format for user display
-        String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-        _dateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+        _dateController.clear();
       });
+      return;
     }
+    final DateTime selectedDate = result.date!;
+    setState(() {
+      // Get dateProvider to format the date according to user's preference
+      final dateProvider = Provider.of<DateProvider>(context, listen: false);
+      // Display format: Use provider's format for user display
+      String apiFormatDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      _dateController.text = dateProvider.formatCurrentDate(apiFormatDate);
+    });
   }
 
   bool isValidEmail(String email) {
@@ -712,10 +701,10 @@ class _EditTenantsState extends State<EditTenants> {
           readOnly: true,
           optional: true,
           onTap: () => _selectDate(context),
-          suffixIcon: Icon(
-            Icons.calendar_today_outlined,
-            color: mutedClr,
-            size: 18,
+          suffixIcon: ClearableDateSuffix(
+            controller: _dateController,
+            onPick: () => _selectDate(context),
+            iconColor: mutedClr,
           ),
         ),
         const SizedBox(height: 16),

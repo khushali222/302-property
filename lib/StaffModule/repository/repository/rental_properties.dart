@@ -46,7 +46,7 @@ class Rental_PropertiesRepository{
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -94,7 +94,7 @@ class Rental_PropertiesRepository{
       Uri.parse(apiUrl),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -155,7 +155,7 @@ class Rental_PropertiesRepository{
       Uri.parse('${Api_url}/api/rental_owner/check_rental_owner'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(requestData),
@@ -196,7 +196,7 @@ class Rental_PropertiesRepository{
       Uri.parse('$apiUrl/$id'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
@@ -220,7 +220,7 @@ class Rental_PropertiesRepository{
       Uri.parse(apiUrl),
       headers: {
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json'},
       body: jsonEncode(rentalRequest.toJson()),
     );

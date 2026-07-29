@@ -184,9 +184,16 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           ),
         ],
       ));
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(),
+          filename: 'Loan_Summary_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+          name: 'Loan_Summary_Report',
           format: PdfPageFormat.a4.landscape,
           onLayout: (_) async => pdf.save());
+    }
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error generating PDF: $e');
@@ -283,6 +290,9 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
   }
 
   Widget _buildFilterRow() {
+    // Grey only when there is genuinely no data (raw list), NOT when the
+    // lender filter narrows the view to empty.
+    final bool hasExportData = _allItems.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -336,6 +346,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           const SizedBox(width: 10),
           // ── Export button ───────────────────────────────────────────
           PopupMenuButton<String>(
+            enabled: hasExportData,
             offset: const Offset(0, 46),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8)),
@@ -343,7 +354,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
               height: 46,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: blueColor,
+                color: hasExportData ? blueColor : Colors.grey.shade400,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

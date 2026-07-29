@@ -1547,6 +1547,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               ),
                                                             ),
                                                           ),
+                                                          if (permissions?.tenantDelete == true) ...[
                                                           const SizedBox(
                                                             width: 5,
                                                           ),
@@ -1587,6 +1588,7 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               ),
                                                             ),
                                                           ),
+                                                          ],
                                                         
                                                         ],
                                                       ),

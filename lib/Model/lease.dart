@@ -391,6 +391,12 @@ class TenantData {
   String? rentShare;
   int? v;
   String? id;
+  bool? sendWelcomeEmail;
+  List<EmergencyContacts>? emergencyContactsList;
+  bool? enableOverrideFee;
+  String? overrideFee;
+  bool? allowAch;
+  bool? allowCard;
 
   TenantData({
     this.adminId,
@@ -415,6 +421,12 @@ class TenantData {
     this.rentShare,
     this.v,
     this.id,
+    this.sendWelcomeEmail,
+    this.emergencyContactsList,
+    this.enableOverrideFee,
+    this.overrideFee,
+    this.allowAch,
+    this.allowCard,
   });
 
   factory TenantData.fromJson(Map<String, dynamic> json) {
@@ -438,7 +450,7 @@ class TenantData {
       tenant_residentStatus: json['tenant_residentStatus'] ?? '',
       tenantPhoneNumber: json['tenant_phoneNumber'],
       updatedAt: json['updatedAt'],
-      rentShare: json['percentage'] ?? "",
+      rentShare: json['percentage']?.toString() ?? "",
       v: json['__v'],
       id: json['_id'],
     );
@@ -453,7 +465,6 @@ class TenantData {
       'is_delete': isDelete,
       'rental_adress': rentalAddress,
       'rental_unit': rentalUnit,
-      'taxPayer_id': taxPayerId,
       'tenant_alternativeEmail': tenantAlternativeEmail,
       'tenant_alternativeNumber': tenantAlternativeNumber,
       'tenant_birthDate': tenantBirthDate,
@@ -462,9 +473,24 @@ class TenantData {
       'tenant_residentStatus': tenant_residentStatus,
       'tenant_id': tenantId,
       'tenant_lastName': tenantLastName,
-      'tenant_password': tenantPassword,
       'tenant_phoneNumber': tenantPhoneNumber,
-      'percentage': rentShare
+      // Web parity (CRM-4132): send `percentage` as a NUMBER (e.g. 100 / 0),
+      // matching web's numeric payload. Falls back to the raw value only if it
+      // is non-numeric/empty, so nothing breaks for unexpected inputs.
+      'percentage': rentShare == null
+          ? null
+          : (num.tryParse(rentShare!.trim()) ?? rentShare),
+      // Web welcome-email flow: no tenant_password / taxPayer_id sent. A new
+      // tenant (empty id) gets a welcome email; an existing one (has id) does not.
+      'send_welcome_email': sendWelcomeEmail ?? ((tenantId ?? '').isEmpty),
+      // Full-parity extras (emitted only when the submit populates them).
+      if (emergencyContactsList != null)
+        'emergency_contacts':
+            emergencyContactsList!.map((e) => e.toJson()).toList(),
+      if (enableOverrideFee != null) 'enable_override_fee': enableOverrideFee,
+      if (overrideFee != null) 'override_fee': overrideFee,
+      if (allowAch != null) 'allow_ach': allowAch,
+      if (allowCard != null) 'allow_card': allowCard,
     };
   }
 }

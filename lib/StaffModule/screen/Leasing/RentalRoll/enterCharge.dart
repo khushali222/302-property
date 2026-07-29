@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -327,7 +328,6 @@ class _enterChargeState extends State<enterCharge> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       String? sid = prefs.getString("staff_id");
-      print(token);
       print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiGet(
@@ -350,8 +350,12 @@ class _enterChargeState extends State<enterCharge> {
         ];
 
         for (var item in jsonResponse) {
-          String chargeType = item['charge_type'];
-          String account = item['account'];
+          // Match Admin: some accounts have a null charge_type (non-income
+          // accounts). Without this fallback the parse threw and left the whole
+          // Account dropdown empty in the Staff module.
+          String chargeType = item['charge_type'] ?? "One Time Charge";
+          String? account = item['account'];
+          if (account == null) continue;
 
           if (!fetchedData.containsKey(chargeType)) {
             fetchedData[chargeType] = [];
@@ -379,6 +383,9 @@ class _enterChargeState extends State<enterCharge> {
 
   List<Map<String, dynamic>> rows = [];
   double totalAmount = 0.0;
+  // Live "Amount cannot exceed $999,999.99" inline error (web parity); the
+  // submit-time bounds toast stays as a backstop.
+  String? _amountLimitError;
   void addRow() {
     setState(() {
       rows.add({
@@ -415,7 +422,7 @@ class _enterChargeState extends State<enterCharge> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${intl.NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -680,7 +687,7 @@ class _enterChargeState extends State<enterCharge> {
                             height: 20,
                           ),
                         if (MediaQuery.of(context).size.width < 500)
-                          const Text('Date',
+                          const Text('Date *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -913,7 +920,7 @@ class _enterChargeState extends State<enterCharge> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text('Date',
+                                      Text('Date *',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
@@ -998,7 +1005,7 @@ class _enterChargeState extends State<enterCharge> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text('Amount',
+                        const Text('Amount *',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -1007,17 +1014,41 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9.]')),
+                          ],
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
+                            if (value == null || value.trim().isEmpty) {
                               return 'Please enter amount';
+                            }
+                            if (double.tryParse(value.trim()) == null) {
+                              return 'Please enter a valid amount';
                             }
                             return null;
                           },
                           keyboardType: TextInputType.number,
                           hintText: 'Enter Amount',
                           controller: Amount,
-                          onChanged: (value) => validateAmounts(),
+                          onChanged: (value) {
+                            validateAmounts();
+                            final v = double.tryParse(value.trim());
+                            setState(() {
+                              _amountLimitError = (v != null && v > 999999.99)
+                                  ? 'Amount cannot exceed \$999,999.99'
+                                  : null;
+                            });
+                          },
                         ),
+                        if (_amountLimitError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6, left: 4),
+                            child: Text(
+                              _amountLimitError!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                         const SizedBox(height: 8),
                         const SizedBox(
                           height: 8,
@@ -1031,14 +1062,11 @@ class _enterChargeState extends State<enterCharge> {
                           height: 8,
                         ),
                         CustomTextField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter memo';
-                            }
-                            return null;
-                          },
+                          optional: true,
+                          validator: (value) => null,
                           keyboardType: TextInputType.text,
-                          hintText: 'Enter Memo',
+                          hintText:
+                              'If left blank, it will include all account names',
                           controller: Memo,
                         ),
                       ],
@@ -1324,6 +1352,40 @@ class _enterChargeState extends State<enterCharge> {
                                       ),
                                   ];
 
+                                  // Ensure the currently-selected account has a matching
+                                  // dropdown item so DropdownButton2's value maps to exactly
+                                  // one item. On edit, a charge's stored charge_type can
+                                  // differ from the account's category in the accounts list
+                                  // (e.g. legacy data), which otherwise crashes with the
+                                  // "exactly one item" assertion.
+                                  final String? currentValue = row['account'] !=
+                                          null
+                                      ? (liabilityAccounts.contains(row['account'])
+                                          ? "${row['account']}_Liability Account"
+                                          : (row['charge_type'] == "Surcharge" &&
+                                                  surchargetype != null
+                                              ? "${row['account']}_$surchargetype"
+                                              : "${row['account']}_${row['charge_type']}"))
+                                      : null;
+                                  if (currentValue != null &&
+                                      !dropdownItems
+                                          .any((i) => i.value == currentValue)) {
+                                    dropdownItems.add(DropdownMenuItem<String>(
+                                      value: currentValue,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 0.0),
+                                        child: Text(
+                                          row['account'] ?? '',
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                                  }
+
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -1344,16 +1406,7 @@ class _enterChargeState extends State<enterCharge> {
                                         // value: row['account'] != null ? liabilityAccounts.contains(row['account']) ?
                                         //  "${row['account']}_Liability Account" : row['charge_type'] == "Surcharge" ?
                                         //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
-                                        value: row['account'] != null
-                                            ? (liabilityAccounts
-                                                    .contains(row['account'])
-                                                ? "${row['account']}_Liability Account"
-                                                : (row['charge_type'] ==
-                                                            "Surcharge" &&
-                                                        surchargetype != null
-                                                    ? "${row['account']}_$surchargetype"
-                                                    : "${row['account']}_${row['charge_type']}"))
-                                            : null,
+                                        value: currentValue,
                                         items: dropdownItems,
                                         onChanged: (value) {
                                           dynamic? chargeType;
@@ -1396,6 +1449,7 @@ class _enterChargeState extends State<enterCharge> {
                                           iconDisabledColor: Colors.grey,
                                         ),
                                         dropdownStyleData: DropdownStyleData(
+                                          maxHeight: 350,
                                           width: 250,
                                           decoration: BoxDecoration(
                                             borderRadius:
@@ -1449,6 +1503,10 @@ class _enterChargeState extends State<enterCharge> {
                                         : "0", // Make sure 0 is a string,
                                     focusNode: focusNodes[index],
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9.]')),
+                                    ],
                                     onChanged: (value) =>
                                         updateAmount(index, value),
                                     decoration: const InputDecoration(
@@ -1479,7 +1537,10 @@ class _enterChargeState extends State<enterCharge> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text('\$${totalAmount.toStringAsFixed(2)}'),
+                          child: Text(
+                              // NumberFormat never falls back to scientific notation
+                              // (toStringAsFixed does for values >= 1e21).
+                              '\$${intl.NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                         ),
                         const SizedBox.shrink(),
                       ]),
@@ -1674,18 +1735,22 @@ class _enterChargeState extends State<enterCharge> {
                                       .where((e) => e["charge_type"] == null));
 
                                   if (validationMessage == null) {
-                                    // Amount bounds guard (web parity): > 0.01 and <= 999999.99.
+                                    // Amount bounds guard (web parity): at
+                                    // least $0.01 and at most $999,999.99.
+                                    // Note $0.01 itself is valid, so the lower
+                                    // bound is "<", not "<=".
                                     num enteredAmount =
                                         num.tryParse(Amount.text.trim()) ?? 0;
-                                    if (enteredAmount <= 0.01 ||
+                                    if (enteredAmount < 0.01 ||
                                         enteredAmount > 999999.99) {
+                                      // Web parity: explain WHY the submit was
+                                      // blocked instead of failing silently.
                                       setState(() {
                                         _isLoading = false;
+                                        validationMessage = enteredAmount < 0.01
+                                            ? 'Amount must be greater than zero.'
+                                            : 'Amount must be between \$0.01 and \$999,999.99.';
                                       });
-                                      Fluttertoast.showToast(
-                                        msg:
-                                            "Amount must be greater than 0.01 and no more than 999999.99",
-                                      );
                                       return;
                                     }
                                     if (widget.chargeid != null) {
@@ -1702,7 +1767,13 @@ class _enterChargeState extends State<enterCharge> {
                                           account: row['account'],
                                           amount: amount,
                                           dueAmount: amount,
-                                          memo: row['memo'],
+                                          memo: (row['memo']
+                                                      ?.toString()
+                                                      .trim()
+                                                      .isEmpty ??
+                                                  true)
+                                              ? row['account']
+                                              : row['memo'],
                                           date: reverseFormatDate(
                                               row['date'] != ""
                                                   ? row['date']
@@ -1792,7 +1863,13 @@ class _enterChargeState extends State<enterCharge> {
                                           account: row['account'],
                                           amount: amount,
                                           dueAmount: amount,
-                                          memo: row['memo'],
+                                          memo: (row['memo']
+                                                      ?.toString()
+                                                      .trim()
+                                                      .isEmpty ??
+                                                  true)
+                                              ? row['account']
+                                              : row['memo'],
                                           date: reverseFormatDate(
                                               row['date'] != ""
                                                   ? row['date']

@@ -50,7 +50,7 @@ class RentersInsuranceService {
   }
 
   Future<List<lease_renter_insurance>> fetchRentersInsurance(
-      String leaseid) async {
+      String leaseid, {bool includeDeleted = false}) async {
     print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -58,7 +58,10 @@ class RentersInsuranceService {
     String? token = prefs.getString('token');
     try {
       final response = await apiGet(
-          Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'),
+          // Web parity: ?include_deleted=1 asks the server to also return
+          // soft-deleted policies ("Show Deleted Policies" toggle).
+          Uri.parse('$Api_url/api/renter-insurance/policies/$leaseid'
+              '${includeDeleted ? '?include_deleted=1' : ''}'),
           headers: {
             "authorization": "CRM $token",
             "id": "CRM $id",
@@ -129,13 +132,18 @@ class RentersInsuranceService {
     }
   }
 
-  Future<RentersEdit> fetchRentersDetails(String renters_insurance_id) async {
+  Future<RentersEdit> fetchRentersDetails(String renters_insurance_id,
+      {bool includeDeleted = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
     String? id = prefs.getString("staff_id");
+    // Web parity: deleted policies are only returned by the detail endpoint
+    // when ?include_deleted=1 is passed (the report/list adds it for deleted rows).
+    final query = includeDeleted ? '?include_deleted=1' : '';
     final response = await apiGet(
-      Uri.parse('${Api_url}/api/renter-insurance/policy/$renters_insurance_id'),
+      Uri.parse(
+          '${Api_url}/api/renter-insurance/policy/$renters_insurance_id$query'),
       headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",

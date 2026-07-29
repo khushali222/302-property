@@ -16,7 +16,7 @@ import 'package:three_zero_two_property/Model/lease_renewal_report.dart'
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease_renewal_report_repo.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart' as widget_302_Staff;
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -267,9 +267,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                   children: [
                     if (profileData != null) ...[
                       pw.Text(
-                        profileData.companyName?.isNotEmpty == true
-                            ? profileData.companyName!
-                            : 'N/A',
+                        profileData.companyName ?? '',
                         style: pw.TextStyle(
                           fontSize: 10,
                           fontWeight: pw.FontWeight.bold,
@@ -401,10 +399,16 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'LeaseRenewalReport.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'LeaseRenewalReport',
         format: PdfPageFormat.a4.landscape,
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
@@ -979,6 +983,10 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Grey only when the report genuinely has no leases (raw), NOT when the
+    // text search narrows the view to empty.
+    final bool hasExportData = (_reportData?.leasesEnding.isNotEmpty ?? false) ||
+        (_reportData?.mtmLeases.isNotEmpty ?? false);
     return Scaffold(
       appBar: widget_302_Staff.widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1237,6 +1245,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                             ),
                             SizedBox(width: 12),
                             PopupMenuButton<String>(
+                              enabled: hasExportData,
                               offset: Offset(0, 50),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1245,7 +1254,9 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 32, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: blueColor,
+                                  color: hasExportData
+                                      ? blueColor
+                                      : Colors.grey.shade400,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(

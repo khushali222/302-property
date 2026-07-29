@@ -4292,6 +4292,7 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 //   }
 // }*/
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
@@ -4346,6 +4347,22 @@ class _Login_ScreenState extends State<Login_Screen> {
   bool backupcode = false;
   bool timerStart = false;
   bool switchtoBackupcode = false;
+
+  // Countdown for the 2FA verification code, mirroring the Profile screen and
+  // web: 10 minutes to use the code, and Resend unlocks once the first 60
+  // seconds have passed (i.e. at 540s remaining).
+  Timer? _twoFATimer;
+  final ValueNotifier<int> twoFASeconds = ValueNotifier<int>(0);
+
+  // The login body that produced the 2FA challenge. The two login paths send
+  // different shapes (one maps the role and includes company), so Resend
+  // replays this instead of rebuilding it and guessing.
+  Map<String, dynamic>? _last2FALoginBody;
+  bool _isResending2FA = false;
+
+  // True only when the countdown actually ran out. Stopping the timer on a
+  // successful verify must NOT read as expired.
+  bool _twoFAExpired = false;
 
   String OtpId = "";
 
@@ -4635,6 +4652,172 @@ class _Login_ScreenState extends State<Login_Screen> {
   void initState() {
     super.initState();
     _loadSavedCredentials();
+  }
+
+  @override
+  void dispose() {
+    _twoFATimer?.cancel();
+    twoFASeconds.dispose();
+    super.dispose();
+  }
+
+  /// Starts the 10 minute countdown for a freshly issued 2FA code.
+  void _start2FATimer() {
+    _twoFATimer?.cancel();
+    twoFASeconds.value = 600;
+    if (_twoFAExpired) {
+      setState(() {
+        _twoFAExpired = false;
+      });
+    }
+    _twoFATimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (twoFASeconds.value > 1) {
+        twoFASeconds.value--;
+      } else {
+        twoFASeconds.value = 0;
+        timer.cancel();
+        twoFA.clear();
+        if (mounted) {
+          setState(() {
+            _twoFAExpired = true;
+          });
+        }
+        Fluttertoast.showToast(
+          msg: 'Verification code expired',
+          backgroundColor: Colors.red,
+        );
+      }
+    });
+  }
+
+  /// Stops the countdown without marking the code expired — used once the code
+  /// has been accepted.
+  void _stop2FATimer() {
+    _twoFATimer?.cancel();
+    twoFASeconds.value = 0;
+  }
+
+  String _twoFATimerString() {
+    if (twoFASeconds.value <= 0) return '0m 0s';
+    return '${twoFASeconds.value ~/ 60}m ${twoFASeconds.value % 60}s';
+  }
+
+  /// Resend re-posts the login request and reads the fresh `otp_id` out of the
+  /// 205 response — the same approach web takes, as there is no dedicated
+  /// resend endpoint for login 2FA.
+  Future<void> _resend2FACode() async {
+    // Locked for the first 60 seconds after a code is issued.
+    if (twoFASeconds.value > 540) return;
+    if (_isResending2FA || _last2FALoginBody == null) return;
+
+    setState(() {
+      _isResending2FA = true;
+    });
+
+    final response = await apiPost(Uri.parse('${Api_url}/api/auth/login'),
+        body: _last2FALoginBody);
+    print(response.body);
+    final jsonData = json.decode(response.body);
+
+    setState(() {
+      _isResending2FA = false;
+    });
+
+    if (jsonData["statusCode"] == 205) {
+      setState(() {
+        requires2FA = true;
+        if (jsonData["data"] != null && jsonData["data"]["otp_id"] != null) {
+          OtpId = jsonData["data"]["otp_id"];
+        }
+      });
+      twoFA.clear();
+      _start2FATimer();
+      Fluttertoast.showToast(msg: "New verification code sent");
+    } else {
+      final dynamic message = jsonData["message"];
+      Fluttertoast.showToast(
+          msg: message is String
+              ? _formatErrorMessage(message)
+              : "Failed to resend verification code");
+    }
+  }
+
+  /// Timer text plus the Resend control, shown under the 2FA code field.
+  Widget _build2FATimerRow() {
+    return ValueListenableBuilder<int>(
+      valueListenable: twoFASeconds,
+      builder: (context, value, child) {
+        // Disabled during the 60s cooldown and while a resend is in flight —
+        // same gating web applies to its resend control.
+        final bool canResend = value <= 540 && !_isResending2FA;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (value > 0)
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Code will expire in ",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextSpan(
+                      text: _twoFATimerString(),
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (_twoFAExpired)
+              Text(
+                "Code expired",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            else
+              const SizedBox.shrink(),
+            GestureDetector(
+              onTap: canResend ? _resend2FACode : null,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.refresh,
+                        color: canResend ? blueColor : Colors.grey.shade600,
+                        size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Resend Code",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: canResend ? blueColor : Colors.grey.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Load saved credentials if Remember Me was previously enabled
@@ -5040,6 +5223,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                             style: const TextStyle(color: Colors.red),
                           ))
                         : Container(),
+                    // Code expiry countdown + Resend, matching the Profile
+                    // screen. A backup code neither expires nor can be
+                    // resent, so this is OTP mode only.
+                    if (!switchtoBackupcode)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal:
+                              MediaQuery.of(context).size.width * 0.099,
+                          vertical: 8,
+                        ),
+                        child: _build2FATimerRow(),
+                      ),
                     if (backupcode) ...[
                       SizedBox(
                         height: 10,
@@ -5115,6 +5310,22 @@ class _Login_ScreenState extends State<Login_Screen> {
                               required2FA = true;
                               required2FAmessage = "Code is required";
                             });
+                            return;
+                          }
+                          // Web requires the full 6 digits before verifying.
+                          if (!switchtoBackupcode &&
+                              twoFA.text.trim().length != 6) {
+                            setState(() {
+                              required2FA = true;
+                              required2FAmessage =
+                                  "Please enter the complete 6-digit code";
+                            });
+                            return;
+                          }
+                          if (_twoFAExpired) {
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Verification code expired. Please resend the code.");
                             return;
                           }
                           await loginsubmitverify2fa();
@@ -5627,6 +5838,18 @@ class _Login_ScreenState extends State<Login_Screen> {
                             style: const TextStyle(color: Colors.red),
                           ))
                         : Container(),
+                    // Code expiry countdown + Resend, matching the Profile
+                    // screen. A backup code neither expires nor can be
+                    // resent, so this is OTP mode only.
+                    if (!switchtoBackupcode)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal:
+                              MediaQuery.of(context).size.width * 0.099,
+                          vertical: 8,
+                        ),
+                        child: _build2FATimerRow(),
+                      ),
                     if (backupcode) ...[
                       SizedBox(
                         height: 10,
@@ -5702,6 +5925,22 @@ class _Login_ScreenState extends State<Login_Screen> {
                               required2FA = true;
                               required2FAmessage = "Code is required";
                             });
+                            return;
+                          }
+                          // Web requires the full 6 digits before verifying.
+                          if (!switchtoBackupcode &&
+                              twoFA.text.trim().length != 6) {
+                            setState(() {
+                              required2FA = true;
+                              required2FAmessage =
+                                  "Please enter the complete 6-digit code";
+                            });
+                            return;
+                          }
+                          if (_twoFAExpired) {
+                            Fluttertoast.showToast(
+                                msg:
+                                    "Verification code expired. Please resend the code.");
                             return;
                           }
                           await loginsubmitverify2fa();
@@ -6141,8 +6380,8 @@ class _Login_ScreenState extends State<Login_Screen> {
     print("${Api_url}/api/auth/login");
     print(rolename);
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
-    final response =
-        await apiPost(Uri.parse('${Api_url}/api/auth/login'), body: {
+    // Remembered so Resend can replay the exact body that triggered 2FA.
+    _last2FALoginBody = {
       "email": email.text.trim(),
       "password": password.text.trim(),
       "admin_id": adminId,
@@ -6150,7 +6389,9 @@ class _Login_ScreenState extends State<Login_Screen> {
       "company": selectedCompany,
       "user_id": userId,
       "rememberMe": rememberMe.toString(),
-    });
+    };
+    final response = await apiPost(Uri.parse('${Api_url}/api/auth/login'),
+        body: _last2FALoginBody);
     print(response.body);
     await backupcodeapicall();
     final jsonData = json.decode(response.body);
@@ -6182,6 +6423,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           requires2FA = true;
           OtpId = jsonData["data"]["otp_id"];
         });
+        _start2FATimer();
         await backupcodeapicall();
       }
       setState(() {
@@ -6212,6 +6454,15 @@ class _Login_ScreenState extends State<Login_Screen> {
       "user_id": userId,
       "rememberMe": rememberMe.toString(),
     });
+    // Remembered so Resend can replay the exact body that triggered 2FA.
+    _last2FALoginBody = {
+      "email": email.text.trim(),
+      "password": password.text.trim(),
+      "role": selectedrole,
+      "admin_id": adminId,
+      "user_id": userId,
+      "rememberMe": rememberMe.toString(),
+    };
     print(response.body);
     final jsonData = json.decode(response.body);
 
@@ -6244,6 +6495,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           requires2FA = true;
           OtpId = jsonData["data"]["otp_id"];
         });
+        _start2FATimer();
         await backupcodeapicall();
       }
       setState(() {
@@ -6279,6 +6531,9 @@ class _Login_ScreenState extends State<Login_Screen> {
     if (jsonData["statusCode"] == 200) {
       print(jsonData);
 
+      // Code accepted — the countdown is no longer relevant.
+      _stop2FATimer();
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
@@ -6309,6 +6564,11 @@ class _Login_ScreenState extends State<Login_Screen> {
         setState(() {
           requires2FA = true;
         });
+        // A rejected code does not re-issue the OTP, so the server-side
+        // expiry is unchanged — keep the running countdown instead of
+        // resetting it (which would also re-lock Resend for 60s). Only
+        // start one if none is running and the code has not already expired.
+        if (twoFASeconds.value == 0 && !_twoFAExpired) _start2FATimer();
       }
       setState(() {
         loading = false;

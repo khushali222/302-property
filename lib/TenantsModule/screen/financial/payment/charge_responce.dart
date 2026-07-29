@@ -127,7 +127,7 @@ class ChargeRepositorys {
         Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('tenant_id') ?? id}",
         },
       );
 

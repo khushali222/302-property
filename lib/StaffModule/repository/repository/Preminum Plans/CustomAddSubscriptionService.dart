@@ -9,7 +9,7 @@ class CustomAddSubscriptionService {
   Future<CustomAddSubscriptionResponse?> postCustomAddSubscription(
       customAddSubscriptionModel subscription) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("adminId");
+    String? id = prefs.getString("staff_id"); // staff's own id (web parity)
     String? token = prefs.getString('token');
 
     final headers = {

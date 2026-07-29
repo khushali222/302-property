@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
@@ -391,9 +392,7 @@ class _Recurring_Payments_Configuration_ReportState
                                       margin: const EdgeInsets.symmetric(
                                           vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: totalDisplayData % 2 != 0
-                                            ? const Color(0xFFF4F8FF)
-                                            : Colors.white,
+                                        color: Colors.white,
                                         border: Border.all(
                                             color: const Color(0xFFDBE0E5)),
                                         borderRadius: BorderRadius.circular(10),
@@ -569,7 +568,7 @@ class _Recurring_Payments_Configuration_ReportState
                                                                       const EdgeInsets
                                                                           .only(
                                                                           left:
-                                                                              24),
+                                                                              0),
                                                                   child: FaIcon(
                                                                     isTenantExpanded
                                                                         ? FontAwesomeIcons
@@ -626,76 +625,124 @@ class _Recurring_Payments_Configuration_ReportState
                                                       ),
                                                     ),
                                                     if (isTenantExpanded)
-                                                      Column(
-                                                        children: tenant
-                                                            .recurrings!
-                                                            .asMap()
-                                                            .entries
-                                                            .map((entry) {
-                                                          var recurring =
-                                                              entry.value;
-                                                          return Column(
+                                                      Padding(
+                                                        padding: const EdgeInsets
+                                                            .symmetric(
+                                                            vertical: 8.0),
+                                                        child: Container(
+                                                          color: Colors.white,
+                                                          child: Column(
                                                             children: [
-                                                              Divider(
-                                                                color:
-                                                                    blueColor,
+                                                              Container(
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  border: Border(
+                                                                      bottom: BorderSide(
+                                                                          color: Color(
+                                                                              0xFFDBE0E5))),
+                                                                ),
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        12,
+                                                                    vertical: 8),
+                                                                child: Row(
+                                                                  children: [
+                                                                    SizedBox(
+                                                                        width:
+                                                                            84,
+                                                                        child: Text(
+                                                                            'Day of month',
+                                                                            style: TextStyle(
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: blueColor))),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    Expanded(
+                                                                        child: Text(
+                                                                            'Account',
+                                                                            style: TextStyle(
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: blueColor))),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            84,
+                                                                        child: Text(
+                                                                            'Amount',
+                                                                            textAlign: TextAlign.right,
+                                                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: blueColor))),
+                                                                  ],
+                                                                ),
                                                               ),
-                                                              ListTile(
-                                                                contentPadding:
-                                                                    EdgeInsets
-                                                                        .zero,
-                                                                title: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          2.0),
+                                                              ...tenant
+                                                                  .recurrings!
+                                                                  .asMap()
+                                                                  .entries
+                                                                  .map((entry) {
+                                                                var recurring =
+                                                                    entry.value;
+                                                                final bool
+                                                                    isLast =
+                                                                    entry.key ==
+                                                                        tenant.recurrings!.length -
+                                                                            1;
+                                                                return Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    border: isLast
+                                                                        ? null
+                                                                        : const Border(
+                                                                            bottom:
+                                                                                BorderSide(color: Color(0xFFDBE0E5))),
+                                                                  ),
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          12,
+                                                                      vertical:
+                                                                          10),
                                                                   child: Row(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .start,
                                                                     crossAxisAlignment:
                                                                         CrossAxisAlignment
                                                                             .center,
-                                                                    children: <Widget>[
+                                                                    children: [
+                                                                      SizedBox(
+                                                                          width:
+                                                                              84,
+                                                                          child: Text(
+                                                                              '${recurring.date ?? ''}',
+                                                                              textAlign: TextAlign.left,
+                                                                              style: TextStyle(fontSize: 14, color: blueColor))),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
                                                                       Expanded(
-                                                                          flex:
-                                                                              1,
-                                                                          child:
-                                                                              Text("")),
-                                                                      Expanded(
-                                                                          flex:
-                                                                              2,
-                                                                          child:
-                                                                              Text(
-                                                                            "Date: ${recurring.date != null ? dateProvider.formatCurrentDate(DateTime.fromMillisecondsSinceEpoch(recurring.date! * 1000).toString()) : ""}",
-                                                                            style:
-                                                                                TextStyle(fontSize: 14, color: blueColor),
-                                                                          )),
-                                                                      Expanded(
-                                                                          flex:
-                                                                              5,
-                                                                          child:
-                                                                              Text(
-                                                                            "    ${recurring.account}",
-                                                                            style:
-                                                                                TextStyle(fontSize: 14, color: blueColor),
-                                                                          )),
-                                                                      Expanded(
-                                                                          flex:
-                                                                              3,
-                                                                          child:
-                                                                              Text(
-                                                                            "\$${recurring.amount}",
-                                                                            style:
-                                                                                TextStyle(fontSize: 14, color: blueColor),
-                                                                          )),
+                                                                          child: Text(
+                                                                              '${recurring.account ?? ''}',
+                                                                              style: TextStyle(fontSize: 14, color: blueColor))),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              84,
+                                                                          child: Text(
+                                                                              '\$${(recurring.amount ?? 0).toStringAsFixed(2)}',
+                                                                              textAlign: TextAlign.right,
+                                                                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor))),
                                                                     ],
                                                                   ),
-                                                                ),
-                                                              ),
+                                                                );
+                                                              }).toList(),
                                                             ],
-                                                          );
-                                                        }).toList(),
+                                                          ),
+                                                        ),
                                                       ),
                                                   ],
                                                 );
@@ -763,7 +810,7 @@ class _Recurring_Payments_Configuration_ReportState
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
+                    'Date: ${dateProvider.formatCurrentDate(DateTime.now().toString())}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -774,40 +821,22 @@ class _Recurring_Payments_Configuration_ReportState
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -838,7 +867,11 @@ class _Recurring_Payments_Configuration_ReportState
                 ),
                 cellStyle: pw.TextStyle(fontSize: 10),
                 cellAlignment: pw.Alignment.centerLeft,
+                // Right-align the Amount column (index 5) so the header sits
+                // directly above the right-aligned amount values.
+                cellAlignments: {5: pw.Alignment.centerRight},
                 headerAlignment: pw.Alignment.centerLeft,
+                headerAlignments: {5: pw.Alignment.centerRight},
                 border: null),
             pw.Divider(thickness: 3),
             pw.Padding(
@@ -857,10 +890,16 @@ class _Recurring_Payments_Configuration_ReportState
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Recurring_Payments_Configuration_table.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Recurring_payments_configuration',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   List<List<dynamic>> _generateTableData(
@@ -886,7 +925,7 @@ class _Recurring_Payments_Configuration_ReportState
             tableData.add([
               isFirstTenant
                   ? pw.Text(
-                      "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}",
+                      makeRentalAddress(lease.rentalAdress, lease.rentalUnit),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 10))
                   : pw.Text(''),
@@ -902,12 +941,7 @@ class _Recurring_Payments_Configuration_ReportState
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, fontSize: 10)),
               pw.Text(
-                  tenant.recurrings![0].date != null
-                      ? dateProvider.formatCurrentDate(
-                          DateTime.fromMillisecondsSinceEpoch(
-                                  tenant.recurrings![0].date! * 1000)
-                              .toString())
-                      : "",
+                  '${tenant.recurrings![0].date ?? ''}',
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, fontSize: 10)),
               pw.Text(tenant.recurrings![0].account ?? "",
@@ -930,12 +964,7 @@ class _Recurring_Payments_Configuration_ReportState
                 "", // Empty lease end date column
                 "", // Empty tenant column
                 pw.Text(
-                    recurring.date != null
-                        ? dateProvider.formatCurrentDate(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    recurring.date! * 1000)
-                                .toString())
-                        : "",
+                    '${recurring.date ?? ''}',
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold, fontSize: 10)),
                 pw.Text(recurring.account ?? "",
@@ -1017,7 +1046,7 @@ class _Recurring_Payments_Configuration_ReportState
 
             // Add the first recurring payment (with rental address, lease end date, and tenant name)
             sheet.getRangeByIndex(rowIndex, 1).setText(isFirstTenant
-                ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                ? makeRentalAddress(lease.rentalAdress, lease.rentalUnit)
                 : '');
             sheet.getRangeByIndex(rowIndex, 2).setText(isFirstTenant
                 ? (lease.endDate != null
@@ -1026,12 +1055,7 @@ class _Recurring_Payments_Configuration_ReportState
                 : '');
             sheet.getRangeByIndex(rowIndex, 3).setText(tenant.tenantName ?? '');
             sheet.getRangeByIndex(rowIndex, 4).setText(
-                  tenant.recurrings![0].date != null
-                      ? dateProvider.formatCurrentDate(
-                          DateTime.fromMillisecondsSinceEpoch(
-                                  tenant.recurrings![0].date! * 1000)
-                              .toString())
-                      : "",
+                  '${tenant.recurrings![0].date ?? ''}',
                 );
             sheet
                 .getRangeByIndex(rowIndex, 5)
@@ -1051,12 +1075,7 @@ class _Recurring_Payments_Configuration_ReportState
               sheet.getRangeByIndex(rowIndex, 2).setText('');
               sheet.getRangeByIndex(rowIndex, 3).setText('');
               sheet.getRangeByIndex(rowIndex, 4).setText(
-                    recurring.date != null
-                        ? dateProvider.formatCurrentDate(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    recurring.date! * 1000)
-                                .toString())
-                        : "",
+                    '${recurring.date ?? ''}',
                   );
               sheet
                   .getRangeByIndex(rowIndex, 5)
@@ -1070,7 +1089,7 @@ class _Recurring_Payments_Configuration_ReportState
           } else {
             // If no recurring payments, just add tenant details without recurring columns
             sheet.getRangeByIndex(rowIndex, 1).setText(k == 0
-                ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                ? makeRentalAddress(lease.rentalAdress, lease.rentalUnit)
                 : '');
             sheet.getRangeByIndex(rowIndex, 2).setText(k == 0
                 ? (lease.endDate != null
@@ -1106,9 +1125,7 @@ class _Recurring_Payments_Configuration_ReportState
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Recurring_Payment_Report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     if (!await directory.exists() && !Platform.isIOS) {
       await directory.create(recursive: true);
@@ -1118,7 +1135,6 @@ class _Recurring_Payments_Configuration_ReportState
     final File file = File(path);
     await file.writeAsBytes(bytes, flush: true);
     Share.shareXFiles([XFile(path)]);
-    Fluttertoast.showToast(msg: 'Excel file saved to $path');
   }
 
   Future<void> generateRecurringPaymentCsv(List<Data> recurringPayment) async {
@@ -1154,7 +1170,7 @@ class _Recurring_Payments_Configuration_ReportState
           if (tenant.recurrings != null && tenant.recurrings!.isNotEmpty) {
             csvBuffer.writeln([
               isFirstTenant
-                  ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                  ? makeRentalAddress(lease.rentalAdress, lease.rentalUnit)
                   : '',
               isFirstTenant
                   ? (lease.endDate != null
@@ -1162,12 +1178,7 @@ class _Recurring_Payments_Configuration_ReportState
                       : '')
                   : '',
               tenant.tenantName ?? '',
-              tenant.recurrings![0].date != null
-                  ? dateProvider.formatCurrentDate(
-                      DateTime.fromMillisecondsSinceEpoch(
-                              tenant.recurrings![0].date! * 1000)
-                          .toString())
-                  : "",
+              '${tenant.recurrings![0].date ?? ''}',
               tenant.recurrings![0].account ?? "",
               "\$${tenant.recurrings![0].amount}" ?? 0.0
             ].map((e) => '"$e"').join(
@@ -1183,12 +1194,7 @@ class _Recurring_Payments_Configuration_ReportState
                 '',
                 '',
                 '',
-                recurring.date != null
-                    ? dateProvider.formatCurrentDate(
-                        DateTime.fromMillisecondsSinceEpoch(
-                                recurring.date! * 1000)
-                            .toString())
-                    : "",
+                '${recurring.date ?? ''}',
                 recurring.account ?? "",
                 "\$${recurring.amount}" ?? 0.0
               ].map((e) => '"$e"').join(','));
@@ -1199,7 +1205,7 @@ class _Recurring_Payments_Configuration_ReportState
             // If no recurring payments, just add tenant details without recurring columns
             csvBuffer.writeln([
               isFirstTenant
-                  ? "${lease.rentalAdress ?? ''} ${lease.rentalUnit ?? ''}"
+                  ? makeRentalAddress(lease.rentalAdress, lease.rentalUnit)
                   : '',
               isFirstTenant
                   ? (lease.endDate != null
@@ -1235,9 +1241,7 @@ class _Recurring_Payments_Configuration_ReportState
     final String fileName = 'Recurring_Payment_Report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1251,9 +1255,18 @@ class _Recurring_Payments_Configuration_ReportState
     await file.writeAsBytes(bytes, flush: true);
     Share.shareXFiles([XFile(path)]);
 
-    // Show success toast message
-    Fluttertoast.showToast(
-      msg: 'CSV file saved to $path',
-    );
   }
+}
+
+/// Mirrors web makeRentalAddress (plugins/helpers.js): avoids duplicating the
+/// address when the unit already contains it; joins with " - " otherwise.
+String makeRentalAddress(String? rentalAddress, String? rentalUnit) {
+  final String addr = (rentalAddress ?? '').trim();
+  if (addr.isEmpty) return '';
+  final String unit = (rentalUnit ?? '').trim();
+  if (unit.isEmpty || unit == '-' || unit == 'null' || unit == 'undefined') {
+    return addr;
+  }
+  if (unit.contains(addr)) return unit;
+  return '$addr - $unit';
 }

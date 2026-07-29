@@ -15,6 +15,8 @@ import '../../../../../constant/constant.dart';
 import '../../../../../provider/dateProvider.dart';
 import 'package:provider/provider.dart';
 import '../../../../../repository/fetch_allcategories.dart';
+import '../../../../../widgets/clearable_date_picker.dart';
+import '../../../../../widgets/clearable_date_suffix.dart';
 import '../../../../widgets/appbar.dart';
 import '../../../../widgets/custom_drawer.dart';
 import '../summery_page.dart';
@@ -92,6 +94,7 @@ class _AddApplienceState extends State<AddApplience> {
   }
 
   String? _imageUrl; // Add this line
+  bool _imageRemoved = false;
 
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
@@ -171,12 +174,26 @@ class _AddApplienceState extends State<AddApplience> {
         orElse: () => _dropdownCategories.first,
       );
 
+      // Web parity: derive Type (system_type) from the category.
+      final catName = _selectedDropdownCategory?.name ?? '';
+      _selectedSystemType = _majorSystemCategories
+              .any((m) => m.toLowerCase() == catName.toLowerCase())
+          ? 'Major System'
+          : 'Appliance';
+
       brandList = _selectedDropdownCategory?.brands ?? [];
-      _selectedBrand = widget.appliance?.brand ?? '';
+      final existingBrand = widget.appliance?.brand ?? '';
+      if (existingBrand.isNotEmpty && !brandList.contains(existingBrand)) {
+        _selectedBrand = 'Other';
+        _customBrand.text = existingBrand;
+      } else {
+        _selectedBrand = existingBrand;
+      }
       _selectedStatus = widget.appliance?.status ?? '';
 
       // Load existing image if available
-      if (widget.appliance?.applianceImage != null) {
+      if (widget.appliance?.applianceImage != null &&
+          widget.appliance!.applianceImage!.isNotEmpty) {
         _imageUrl = widget.appliance?.applianceImage;
       }
 
@@ -219,7 +236,7 @@ class _AddApplienceState extends State<AddApplience> {
       );
     }
 
-    if (_imageUrl != null) {
+    if (_imageUrl != null && _imageUrl!.isNotEmpty && _imageUrl!.contains(',')) {
       try {
         return Image.memory(
           base64Decode(_imageUrl!.split(',')[1]),
@@ -277,6 +294,39 @@ class _AddApplienceState extends State<AddApplience> {
 
   String? _selectedBrand;
   String? _selectedStatus;
+  String? _selectedSystemType;
+  final List<String> systemTypeList = ['Major System', 'Appliance'];
+  final List<String> _majorSystemCategories = [
+    'Roof',
+    'Electrical',
+    'Plumbing',
+    'Exterior',
+    'Water Heater',
+    'HVAC',
+  ];
+  final TextEditingController _customBrand = TextEditingController();
+
+  // Web parity: Category options are filtered by the selected Type (system_type).
+  // Major System -> the fixed major-system category set; Appliance -> the rest.
+  List<allcategories_model> get _filteredCategories {
+    if (_selectedSystemType == null || _selectedSystemType!.isEmpty) {
+      return _dropdownCategories;
+    }
+    final isMajor = _selectedSystemType == 'Major System';
+    return _dropdownCategories.where((cat) {
+      final inMajor = _majorSystemCategories
+          .any((m) => m.toLowerCase() == (cat.name ?? '').toLowerCase());
+      return isMajor ? inMajor : !inMajor;
+    }).toList();
+  }
+
+  // Web parity: brand list always offers "Other" -> free-text custom brand.
+  List<String> get _brandOptions {
+    final opts = List<String>.from(brandList);
+    if (!opts.contains('Other')) opts.add('Other');
+    return opts;
+  }
+
   // Add these to your state class
   List<Map<String, TextEditingController>> filterControllers = [];
   bool showFilters = false;
@@ -374,6 +424,7 @@ class _AddApplienceState extends State<AddApplience> {
       setState(() {
         _image = File(image.path);
         _images.add(File(image.path));
+        _imageRemoved = false;
       });
       _uploadImage(File(image.path));
     }
@@ -477,6 +528,68 @@ class _AddApplienceState extends State<AddApplience> {
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
+                      'Type *',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        isExpanded: true,
+                        hint: const Text('Select Type'),
+                        value: _selectedSystemType,
+                        items: systemTypeList.map((t) {
+                          return DropdownMenuItem<String>(
+                            value: t,
+                            child: Text(t),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedSystemType = newValue;
+                            // Web parity: changing Type resets Category + Brand.
+                            _selectedDropdownCategory = null;
+                            brandList = [];
+                            _selectedBrand = null;
+                            _customBrand.clear();
+                            showFiltersSection = false;
+                          });
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 45,
+                          padding: const EdgeInsets.only(left: 14, right: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                          elevation: 2,
+                        ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          iconEnabledColor: Color(0xFFb0b6c3),
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: Colors.white,
+                          ),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 50,
+                          padding: EdgeInsets.only(left: 14, right: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text(
                       'Category *',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -491,11 +604,11 @@ class _AddApplienceState extends State<AddApplience> {
                         hint: Text(_isLoadingCategories
                             ? 'Loading categories...'
                             : 'Select Category'),
-                        value: _dropdownCategories
+                        value: _filteredCategories
                                 .contains(_selectedDropdownCategory)
                             ? _selectedDropdownCategory
                             : null,
-                        items: _dropdownCategories.map((cat) {
+                        items: _filteredCategories.map((cat) {
                           return DropdownMenuItem<allcategories_model>(
                             value: cat,
                             child: Text(cat.name ?? ''),
@@ -519,6 +632,8 @@ class _AddApplienceState extends State<AddApplience> {
                                   print(_selectedDropdownCategory?.brands);
                                   brandList =
                                       _selectedDropdownCategory?.brands ?? [];
+                                  _selectedBrand = null;
+                                  _customBrand.clear();
                                   // Don't show filters section immediately for HVAC
                                   showFiltersSection = false;
                                   // Clear any existing filters
@@ -564,22 +679,7 @@ class _AddApplienceState extends State<AddApplience> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Type',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  CustomTextFormField(
-                    labelText: '',
-                    hintText: 'Enter type',
-                    controller: _type,
-                    keyboardType: TextInputType.name,
-                  ),
-                  const SizedBox(height: 8),
-                  if (!['Electrical', 'Exterior', 'Roof']
-                      .contains(_selectedDropdownCategory?.name)) ...[
+                  ...[
                     const Padding(
                       padding: EdgeInsets.only(left: 10),
                       child: Text(
@@ -593,10 +693,10 @@ class _AddApplienceState extends State<AddApplience> {
                         child: DropdownButton2<String>(
                           isExpanded: true,
                           hint: const Text('Select Brand'),
-                          value: brandList.contains(_selectedBrand)
+                          value: _brandOptions.contains(_selectedBrand)
                               ? _selectedBrand
                               : null,
-                          items: brandList.map((brand) {
+                          items: _brandOptions.map((brand) {
                             return DropdownMenuItem<String>(
                               value: brand,
                               child: Text(brand),
@@ -605,6 +705,7 @@ class _AddApplienceState extends State<AddApplience> {
                           onChanged: (String? newValue) {
                             setState(() {
                               _selectedBrand = newValue;
+                              if (newValue != 'Other') _customBrand.clear();
                             });
                           },
                           buttonStyleData: ButtonStyleData(
@@ -641,6 +742,22 @@ class _AddApplienceState extends State<AddApplience> {
                         ),
                       ),
                     ),
+                    if (_selectedBrand == 'Other') ...[
+                      const SizedBox(height: 8),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Custom Brand Name *',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      CustomTextFormField(
+                        labelText: '',
+                        hintText: 'Enter custom brand name',
+                        controller: _customBrand,
+                        keyboardType: TextInputType.text,
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     const Padding(
                       padding: EdgeInsets.only(left: 10),
@@ -896,7 +1013,8 @@ class _AddApplienceState extends State<AddApplience> {
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: Column(
                       children: [
-                        if (_imageUrl == null && _images.isEmpty)
+                        if ((_imageUrl == null || _imageUrl!.isEmpty) &&
+                            _images.isEmpty)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
@@ -949,7 +1067,8 @@ class _AddApplienceState extends State<AddApplience> {
                               ),
                             ),
                           ),
-                        if (_imageUrl != null || _images.isNotEmpty)
+                        if ((_imageUrl != null && _imageUrl!.isNotEmpty) ||
+                            _images.isNotEmpty)
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(10),
@@ -992,6 +1111,7 @@ class _AddApplienceState extends State<AddApplience> {
                                             _image = null;
                                             _imageUrl = null;
                                             _images.clear();
+                                            _imageRemoved = true;
                                           });
                                         },
                                         child: Container(
@@ -1116,7 +1236,8 @@ class _AddApplienceState extends State<AddApplience> {
                                       await _images.first.readAsBytes();
                                   base64Image = 'data:image/jpeg;base64,' +
                                       base64Encode(imageBytes);
-                                } else if (_imageUrl != null) {
+                                } else if (_imageUrl != null &&
+                                    _imageUrl!.isNotEmpty) {
                                   base64Image = _imageUrl;
                                 }
 
@@ -1125,12 +1246,18 @@ class _AddApplienceState extends State<AddApplience> {
                                         .addappliances(
                                         adminId: id,
                                         unitId: widget.unit?.unitId ?? "",
+                                        rentalId: widget.unit?.rentalId ??
+                                            widget.properties?.rentalId ??
+                                            "",
                                         appliancename: _name.text,
                                         appliancedescription: _description.text,
                                         installeddate: _convertToApiFormat(
                                             _installedDate.text),
                                         type: _type.text,
-                                        brand: _selectedBrand ?? "",
+                                        systemType: _selectedSystemType ?? "",
+                                        brand: _selectedBrand == 'Other'
+                                            ? _customBrand.text
+                                            : (_selectedBrand ?? ""),
                                         model: _model.text,
                                         serialNumber: _serialNumber.text,
                                         warrantyExpiry:
@@ -1156,8 +1283,13 @@ class _AddApplienceState extends State<AddApplience> {
                                       )
                                     : await Properies_summery_Repo()
                                         .Editappliances(
+                                        removeApplianceImages:
+                                            _imageRemoved ? 'true' : 'false',
                                         adminId: id,
                                         unitId: widget.unit?.unitId ?? "",
+                                        rentalId: widget.unit?.rentalId ??
+                                            widget.properties?.rentalId ??
+                                            "",
                                         applianceid:
                                             widget.appliance?.applianceId ?? "",
                                         appliancename: _name.text,
@@ -1165,7 +1297,10 @@ class _AddApplienceState extends State<AddApplience> {
                                         installeddate: _convertToApiFormat(
                                             _installedDate.text),
                                         type: _type.text,
-                                        brand: _selectedBrand ?? "",
+                                        systemType: _selectedSystemType ?? "",
+                                        brand: _selectedBrand == 'Other'
+                                            ? _customBrand.text
+                                            : (_selectedBrand ?? ""),
                                         model: _model.text,
                                         serialNumber: _serialNumber.text,
                                         warrantyExpiry:
@@ -1221,10 +1356,10 @@ class _AddApplienceState extends State<AddApplience> {
                               } catch (e) {
                                 print('Error adding appliance: $e');
                                 setState(() => isLoading = false);
+                                final cleanMsg =
+                                    e.toString().replaceFirst('Exception: ', '');
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Failed to add appliance: ${e.toString()}')),
+                                  SnackBar(content: Text(cleanMsg)),
                                 );
                               }
                             }
@@ -1269,83 +1404,116 @@ class _AddApplienceState extends State<AddApplience> {
       errorText = _lastMaintenanceDateError;
     }
 
+    // Warranty Expiry / Last Maintenance Date are optional, so they offer a
+    // Clear action (web parity). Installed Date is required — no Clear.
+    final bool clearable = label != 'Installed Date';
+
+    void applyPickedDate(DateTime date) {
+      setState(() {
+        // Get dateProvider to format the date according to user's preference
+        final dateProvider = Provider.of<DateProvider>(context, listen: false);
+        // Display format: Use provider's format for user display
+        String apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
+        controller.text = dateProvider.formatCurrentDate(apiFormatDate);
+        validateDates(); // Validate dates after selection
+      });
+    }
+
+    void clearDate() {
+      setState(() {
+        controller.clear();
+        validateDates();
+      });
+    }
+
+    Future<void> openPicker() async {
+      // If installed date is empty and trying to set warranty or maintenance date
+      if (_installedDate.text.isEmpty &&
+          (label == 'Warranty Expiry' || label == 'Last Maintenance Date')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select Installed Date first'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      DateTime? initialDate;
+      DateTime? firstDate;
+
+      // Set minimum date based on installed date for warranty and maintenance
+      if (label == 'Installed Date') {
+        // For installed date, allow any date from 2000 to 2100
+        firstDate = DateTime(2000);
+        initialDate = DateTime.now();
+      } else if (_installedDate.text.isNotEmpty &&
+          (label == 'Warranty Expiry' || label == 'Last Maintenance Date')) {
+        firstDate = DateTime.parse(_convertToApiFormat(_installedDate.text));
+        initialDate = firstDate;
+      } else {
+        firstDate = DateTime(2000);
+        initialDate = DateTime.now();
+      }
+
+      if (clearable) {
+        final ClearableDatePickerResult? result = await showClearableDatePicker(
+          context: context,
+          initialDate: initialDate,
+          firstDate: firstDate,
+          lastDate: DateTime(2100),
+          helpText: 'Select $label',
+        );
+        if (result == null) return; // cancelled — keep the current value
+        if (result.cleared) {
+          clearDate();
+          return;
+        }
+        applyPickedDate(result.date!);
+        return;
+      }
+
+      final DateTime? date = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: DateTime(2100),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: blueColor,
+                onSurface: Colors.black,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (date != null) {
+        applyPickedDate(date);
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GestureDetector(
-          onTap: () {
-            // If installed date is empty and trying to set warranty or maintenance date
-            if (_installedDate.text.isEmpty &&
-                (label == 'Warranty Expiry' ||
-                    label == 'Last Maintenance Date')) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Please select Installed Date first'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              return;
-            }
-
-            DateTime? initialDate;
-            DateTime? firstDate;
-
-            // Set minimum date based on installed date for warranty and maintenance
-            if (label == 'Installed Date') {
-              // For installed date, allow any date from 2000 to 2100
-              firstDate = DateTime(2000);
-              initialDate = DateTime.now();
-            } else if (_installedDate.text.isNotEmpty &&
-                (label == 'Warranty Expiry' ||
-                    label == 'Last Maintenance Date')) {
-              firstDate =
-                  DateTime.parse(_convertToApiFormat(_installedDate.text));
-              initialDate = firstDate;
-            } else {
-              firstDate = DateTime(2000);
-              initialDate = DateTime.now();
-            }
-
-            showDatePicker(
-              context: context,
-              initialDate: initialDate,
-              firstDate: firstDate,
-              lastDate: DateTime(2100),
-              builder: (context, child) {
-                return Theme(
-                  data: ThemeData.light().copyWith(
-                    colorScheme: ColorScheme.light(
-                      primary: blueColor,
-                      onSurface: Colors.black,
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
-            ).then((date) {
-              if (date != null) {
-                setState(() {
-                  // Get dateProvider to format the date according to user's preference
-                  final dateProvider =
-                      Provider.of<DateProvider>(context, listen: false);
-                  // Display format: Use provider's format for user display
-                  String apiFormatDate = DateFormat('yyyy-MM-dd').format(date);
-                  controller.text =
-                      dateProvider.formatCurrentDate(apiFormatDate);
-                  validateDates(); // Validate dates after selection
-                });
-              }
-            });
-          },
-          child: AbsorbPointer(
-            child: CustomTextFormField(
-              labelText: label,
-              hintText: 'Select $label',
-              controller: controller,
-              keyboardType: TextInputType.datetime,
-              suffixIcon: const Icon(Icons.calendar_today, color: Colors.grey),
-            ),
-          ),
+        CustomTextFormField(
+          labelText: label,
+          hintText: 'Select $label',
+          controller: controller,
+          keyboardType: TextInputType.datetime,
+          readOnly: true,
+          onTap: openPicker,
+          suffixIcon: clearable
+              ? ClearableDateSuffix(
+                  controller: controller,
+                  onPick: openPicker,
+                  onClear: clearDate,
+                  icon: Icons.calendar_today,
+                  iconColor: Colors.grey,
+                )
+              : const Icon(Icons.calendar_today, color: Colors.grey),
         ),
         if (errorText != null)
           Padding(
@@ -1370,6 +1538,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final bool obscureText;
   final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -1379,6 +1549,8 @@ class CustomTextFormField extends StatefulWidget {
     required this.controller,
     this.obscureText = false,
     this.suffixIcon,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -1432,6 +1604,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
+          readOnly: widget.readOnly,
+          canRequestFocus: !widget.readOnly,
+          onTap: widget.onTap,
           style: const TextStyle(fontSize: 16),
           decoration: InputDecoration(
             // labelText: widget.labelText,

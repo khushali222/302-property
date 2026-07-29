@@ -725,11 +725,10 @@ class _Applicants_tableState extends State<Applicants_table>
               (jsonData['statusCode'] == 200 ||
                   jsonData['statusCode'] == 201));
       if (ok) {
-        final msg = jsonData is Map && jsonData['message'] != null
-            ? jsonData['message'].toString()
-            : 'Invitation sent successfully.';
+        // Resend flow: use a distinct message so it isn't confused with a
+        // brand-new invite ("1 invitation sent successfully" from the server).
         Fluttertoast.showToast(
-          msg: msg,
+          msg: 'Invitation resent successfully.',
           backgroundColor: Colors.green,
           textColor: Colors.white,
           toastLength: Toast.LENGTH_LONG,
@@ -1835,42 +1834,73 @@ class _Applicants_tableState extends State<Applicants_table>
                           );
                         } else {
                           var data = snapshot.data!;
-                          if (selectedValue == null && searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if ((selectedValue == null ||
-                                  selectedValue == "All") &&
-                              searchvalue.isEmpty) {
-                            data = snapshot.data!;
-                          } else if (searchvalue.isNotEmpty) {
-                            data = snapshot.data!
-                                .where((applicant) =>
-                                    (applicant.applicantFirstName?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantLastName?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantPhoneNumber
-                                                ?.toLowerCase() ??
-                                            '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantEmail?.toLowerCase() ?? '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.rentalData?.rentalAdress
-                                                ?.toLowerCase() ??
-                                            '')
-                                        .contains(searchvalue.toLowerCase()) ||
-                                    (applicant.applicantStatus.isNotEmpty &&
-                                        applicant.applicantStatus.last.status
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains(searchvalue.toLowerCase())))
-                                .toList();
-                          } else {
-                            data = snapshot.data!
-                                .where((applicant) =>
-                                    applicant.applicantStatus.isNotEmpty &&
-                                    applicant.applicantStatus.last.status ==
-                                        selectedValue)
-                                .toList();
+
+                          // Web-aligned filtering (Applicants.js): search,
+                          // status and date all narrow the list cumulatively.
+
+                          // 1) Search — same fields the web matches (full name,
+                          //    first/last, latest status, email, phone,
+                          //    created/updated, single + multiple addresses).
+                          if (searchvalue.isNotEmpty) {
+                            final q = searchvalue.toLowerCase();
+                            data = data.where((applicant) {
+                              final first =
+                                  applicant.applicantFirstName?.toLowerCase() ??
+                                      '';
+                              final last =
+                                  applicant.applicantLastName?.toLowerCase() ??
+                                      '';
+                              final fullName = '$first $last'.trim();
+                              final latestStatus =
+                                  applicant.applicantStatus.isNotEmpty
+                                      ? applicant.applicantStatus.last.status
+                                          .toString()
+                                          .toLowerCase()
+                                      : 'undecided';
+                              final addresses = [
+                                applicant.rentalData?.rentalAdress,
+                                ...?applicant.propertyaddress
+                                    ?.map((p) => p.address),
+                              ].whereType<String>().join(' ').toLowerCase();
+                              return fullName.contains(q) ||
+                                  first.contains(q) ||
+                                  last.contains(q) ||
+                                  latestStatus.contains(q) ||
+                                  (applicant.applicantEmail?.toLowerCase() ?? '')
+                                      .contains(q) ||
+                                  (applicant.applicantPhoneNumber
+                                              ?.toString()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  (applicant.createdAt
+                                              ?.toIso8601String()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  (applicant.updatedAt
+                                              ?.toIso8601String()
+                                              .toLowerCase() ??
+                                          '')
+                                      .contains(q) ||
+                                  addresses.contains(q);
+                            }).toList();
+                          }
+
+                          // 2) Status — web treats a missing status array as
+                          //    "Undecided", so that option covers both
+                          //    explicit-Undecided and not-yet-set applicants.
+                          if (selectedValue != null && selectedValue != "All") {
+                            final target = selectedValue!.toLowerCase();
+                            data = data.where((applicant) {
+                              final latestStatus =
+                                  applicant.applicantStatus.isNotEmpty
+                                      ? applicant.applicantStatus.last.status
+                                          .toString()
+                                          .toLowerCase()
+                                      : 'undecided';
+                              return latestStatus == target;
+                            }).toList();
                           }
 
                           // Apply date filter (15, 30, 45, 60 days; skip for All / All Time)

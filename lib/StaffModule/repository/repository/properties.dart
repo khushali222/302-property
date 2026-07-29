@@ -21,7 +21,7 @@ class PropertiesRepository {
     String? token = prefs.getString('token');
 
     final response = await apiGet(Uri.parse('${Api_url}/api/rentals/rentals/$id'),
-      headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+      headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     print('${Api_url}/api/rentals/rentals/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
@@ -82,7 +82,7 @@ class PropertiesRepository {
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $id",
+        "id":"CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(data),
@@ -108,7 +108,7 @@ class PropertiesRepository {
     String? id = prefs.getString('adminId');
     final headers = {
       'Content-Type': 'application/json',
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
       'Authorization': 'Bearer $token',
     };
 
@@ -175,7 +175,7 @@ class PropertiesRepository {
       }),
       headers: <String, String>{
         "authorization" : "CRM $token",
-        "id":"CRM $adminid",
+        "id":"CRM ${prefs.getString('staff_id') ?? adminid}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
       // body: jsonEncode(<String, String>{

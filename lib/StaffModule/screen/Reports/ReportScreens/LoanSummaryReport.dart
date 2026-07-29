@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/LoanSummaryReportService.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
@@ -54,7 +54,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final adminId = prefs.getString('adminId') ?? '';
-      final items = await _service.fetchLoanSummary(adminId);
+      final items = await _service.fetchLoanSummary(adminId, isStaff: true);
       if (items != null) {
         final lenders = items.map((e) => e.bankName).toSet().toList()..sort();
         setState(() {
@@ -184,9 +184,15 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           ),
         ],
       ));
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'LoanSummaryReport.pdf');
+    } else {
       await Printing.layoutPdf(
+          name: 'LoanSummaryReport',
           format: PdfPageFormat.a4.landscape,
           onLayout: (_) async => pdf.save());
+    }
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error generating PDF: $e');
@@ -283,6 +289,9 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
   }
 
   Widget _buildFilterRow() {
+    // Grey only when there is genuinely no data (raw list), NOT when the
+    // lender filter narrows the view to empty.
+    final bool hasExportData = _allItems.isNotEmpty;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
@@ -330,13 +339,14 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           ),
           const SizedBox(width: 10),
           PopupMenuButton<String>(
+            enabled: hasExportData,
             offset: const Offset(0, 46),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             child: Container(
               height: 46,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: blueColor,
+                color: hasExportData ? blueColor : Colors.grey.shade400,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

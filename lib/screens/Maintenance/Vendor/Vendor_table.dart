@@ -1341,8 +1341,12 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                                         blueColor),
                                                               ),
                                                               TextSpan(
-                                                                text:
-                                                                    '${Propertytype.trade ?? '---'}',
+                                                                // Capitalize the first letter for display (web parity:
+                                                                // trade.charAt(0).toUpperCase() + trade.slice(1)).
+                                                                text: (Propertytype.trade == null ||
+                                                                        Propertytype.trade!.trim().isEmpty)
+                                                                    ? '---'
+                                                                    : '${Propertytype.trade!.trim()[0].toUpperCase()}${Propertytype.trade!.trim().substring(1)}',
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight

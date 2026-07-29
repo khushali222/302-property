@@ -843,7 +843,9 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
               // Export Button
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: propertyData.isEmpty
+                      ? null
+                      : () {
                     if (filteredData.isNotEmpty) {
                       showModalBottomSheet(
                         context: context,
@@ -903,6 +905,7 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: blueColor,
+                    disabledBackgroundColor: Colors.grey.shade400,
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                     shape: RoundedRectangleBorder(
@@ -1294,9 +1297,15 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
         ),
       );
 
+      if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Live_Property_Report.pdf');
+    } else {
       await Printing.layoutPdf(
+        name: 'Live_Property_Report',
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
+    }
 
       setState(() {
         isDataLoading = false;

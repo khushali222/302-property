@@ -442,7 +442,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
       Uri.parse('${Api_url}/api/rental_owner/limitation/$id'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     final jsonData = json.decode(response.body);
@@ -2576,6 +2576,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       applianceid: _tableData.first.applianceId,
                                                                                       adminId: id,
                                                                                       unitId: widget.unit?.unitId,
+                                                                                      rentalId: widget.unit?.rentalId ?? widget.properties?.rentalId ?? "",
                                                                                       appliancename: _name.text,
                                                                                       appliancedescription: _description.text,
                                                                                       installeddate: reverseFormatDate(_installedDate.text),

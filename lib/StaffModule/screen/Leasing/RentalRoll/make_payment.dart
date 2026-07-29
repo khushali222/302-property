@@ -60,6 +60,9 @@ class _MakePaymentState extends State<MakePayment> {
   late Future<Map<String, List<String>>> futureDropdownData;
   List<Map<String, dynamic>> charges = [];
   String? validationMessage;
+  // Live "Amount cannot exceed $999,999.99" inline error (QA ticket parity with
+  // Enter/Edit Charge); 999999.99 is the max of the DECIMAL(8,2) amount column.
+  String? _amountLimitError;
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
@@ -369,14 +372,14 @@ class _MakePaymentState extends State<MakePayment> {
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
 
-    print(token);
+    // print(token); // removed: do not log auth token
     print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await apiGet(
       Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
     print(response.body);
@@ -471,7 +474,7 @@ class _MakePaymentState extends State<MakePayment> {
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
       });
     } else {
       setState(() {
@@ -663,7 +666,7 @@ class _MakePaymentState extends State<MakePayment> {
             '${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -751,7 +754,7 @@ class _MakePaymentState extends State<MakePayment> {
         Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 
@@ -970,50 +973,29 @@ class _MakePaymentState extends State<MakePayment> {
   void updateAmount(int index, String value) {
     //print("object calling");
     setState(() {
-      //print(value);
+      // charge_amount/amount come from the model as num? — a whole-dollar charge
+      // (e.g. 1200) decodes as int, and an untouched Edit row can be null. Coerce
+      // every read to double: assigning an int/null into charges_balances
+      // (List<double>) or adding it to totalAmount (double) would throw and crash
+      // the screen while the user types. (Web behaviour otherwise preserved.)
+      final double charge =
+          (rows[index]["charge_amount"] as num?)?.toDouble() ?? 0.0;
       if (value == "") {
-        charges_balances[index] = rows[index]["charge_amount"];
-        // totalAmount > rows[index]["charge_amount"] ? totalAmount - rows[index]["charge_amount"]: totalAmount;
+        // Field cleared: this charge applies 0, so restore its full balance.
+        rows[index]['amount'] = 0.0;
+        charges_balances[index] = charge;
       } else {
-        if (rows[index]["newfield"] == true) {
-          double amount = double.tryParse(value) ?? 0.0;
-          double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
-          rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() + amount).toDouble();
-          totalAmount += amount;
-
-          totalAmount = 0.0;
-
-          for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
-          }
-        } else {
-          double amount = double.tryParse(value) ?? 0.0;
-          double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
-          rows[index]['amount'] = amount;
-          charges_balances[index] = (charge.toDouble() - amount).toDouble();
-          totalAmount += amount;
-
-          totalAmount = 0.0;
-
-          for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
-            if (rows[i]["amount"] != 0.0)
-              totalAmount = totalAmount + rows[i]["amount"];
-          }
-        }
-
-        // print(totalAmount);
-        // totalAmount = rows.fold(0.0, (sum, row) => sum + (row['amount'] ?? 0.0));
+        final double amount = double.tryParse(value) ?? 0.0;
+        rows[index]['amount'] = amount;
+        // New rows add to the balance; existing rows reduce it.
+        charges_balances[index] =
+            rows[index]["newfield"] == true ? charge + amount : charge - amount;
       }
-
-      //print(totalAmount);
+      // Recompute the total applied across all rows (empty/untouched counts as 0).
+      totalAmount = 0.0;
+      for (var i = 0; i < rows.length; i++) {
+        totalAmount += (rows[i]["amount"] as num?)?.toDouble() ?? 0.0;
+      }
     });
     //counttotal();
     validateAmounts();
@@ -1850,8 +1832,28 @@ class _MakePaymentState extends State<MakePayment> {
                               ],
                               hintText: 'Enter amount',
                               controller: amountController,
-                              onChanged: (value) => validateAmounts(),
+                              onChanged: (value) {
+                                validateAmounts();
+                                final v = double.tryParse(
+                                    value.trim().replaceAll(',', ''));
+                                setState(() {
+                                  _amountLimitError =
+                                      (v != null && v > 999999.99)
+                                          ? 'Amount cannot exceed \$999,999.99'
+                                          : null;
+                                });
+                              },
                             ),
+                            if (_amountLimitError != null)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 6, left: 4),
+                                child: Text(
+                                  _amountLimitError!,
+                                  style: const TextStyle(
+                                      color: Colors.red, fontSize: 12),
+                                ),
+                              ),
                             const SizedBox(
                               height: 12,
                             ),
@@ -2146,7 +2148,7 @@ class _MakePaymentState extends State<MakePayment> {
                                           ? Container(
                                               child: const Center(
                                                   child: Text(
-                                                      'No Cards Avaiable')),
+                                                      'No Cards Available')),
                                             )
                                           : SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
@@ -3579,7 +3581,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${totalAmount.toStringAsFixed(2)}'),
+                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3589,7 +3591,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${totalAmount.toStringAsFixed(2)}'),
+                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                                                               ),*/
                               ]),
                             ],
@@ -3608,7 +3610,7 @@ class _MakePaymentState extends State<MakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${totalAmount.toStringAsFixed(2)}'),
+                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
                             ),
                           ],
                         ),
@@ -3854,7 +3856,8 @@ class _MakePaymentState extends State<MakePayment> {
                                 await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
                             if ((_formKey.currentState?.validate() ?? false) &&
-                                validationMessage == null) {
+                                validationMessage == null &&
+                                _amountLimitError == null) {
                               if ((double.tryParse(amountController.text) ??
                                       0.0) <=
                                   0) {

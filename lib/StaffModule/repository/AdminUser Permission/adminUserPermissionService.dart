@@ -11,13 +11,14 @@ class PermissionService {
   Future<UserPermissionData?> fetchPermissions() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
+    String? staffId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/permission/permission/$adminId'),
       headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM $staffId", // staff's own id (web parity)
       },
     );
 
@@ -31,7 +32,7 @@ class PermissionService {
 
   Future<int> postUserPermissionData(UserPermissionData data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? adminId = prefs.getString("adminId");
+    String? adminId = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
     try {
@@ -40,7 +41,7 @@ class PermissionService {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $adminId",
+          "id": "CRM ${prefs.getString('staff_id') ?? adminId}", // staff's own id (web parity)
         },
         body: json.encode(data.toJson()),
       );

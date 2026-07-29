@@ -14,7 +14,7 @@ class ChargeRepositorys {
   //   String?  id = prefs.getString('adminId');
   //   String? token = prefs.getString('token');
   //   final response = await apiGet(Uri.parse('$Api_url/api/charge/charges/$leaseId/$tenantId'),
-  //     headers: {"authorization" : "CRM $token","id":"CRM $id",},);
+  //     headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
   //   print('charge ${response.body}');
   //   print('$Api_url/api/charge/charges/$leaseId/$tenantId');
   //   print(jsonEncode.hashCode);
@@ -39,7 +39,7 @@ class ChargeRepositorys {
         Uri.parse('$Api_url/api/charge/tenant_charges/$leaseId'),
         headers: {
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
 

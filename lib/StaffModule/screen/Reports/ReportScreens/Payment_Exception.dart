@@ -25,12 +25,13 @@ import 'package:three_zero_two_property/Model/payment_exception.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:three_zero_two_property/StaffModule/repository/payment_Exception.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/staff_report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
 import 'package:three_zero_two_property/repository/AccountTotalsReports.dart';
 import 'package:three_zero_two_property/repository/DelinquentTenantsService.dart';
-import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
+import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/repository/RentersInsuranceService.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
@@ -89,63 +90,36 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
   }
 
   void fetchReport() {
-    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    // Match web (CRM-3761): defer the API call until the user picks a
+    // From + To date and taps Run. On first load we show an empty state
+    // instead of auto-fetching (the server now requires a date range).
     setState(() {
       daterange = "Custom";
       customdate = true;
       fromDate.text = "";
       toDate.text = "";
-      // fromDate.text = dateProvider.formatCurrentDate(DateTime.now().toString());
-      // toDate.text = dateProvider.formatCurrentDate(DateTime.now().toString());
+      isLoading = false;
+      _futurePaymentException = Future.value(<Data>[]);
     });
-
-    // Get the current date
-    DateTime now = DateTime.now();
-
-    // Set the fromDate and toDate for "Today"
-    DateTime from = DateTime(now.year, now.month, now.day);
-    DateTime to =
-        DateTime(now.year, now.month, now.day, 23, 59, 59); // End of the day
-    if (daterange == "Custom" && fromDate.text.isEmpty && toDate.text.isEmpty) {
-      // Fetch all data logic here
-      _futurePaymentException =
-          fetchPaymentExceptionReportsData(); // Adjust this method to fetch all data
-    }
-    // Call the fetch method with the date range
-    //_futurePaymentException = fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
   }
 
   void _runReport() {
-    // Fetch the report data with the selected date range
-    if (daterange != null && daterange != "Custom") {
-      if (fromDate.text.isNotEmpty && toDate.text.isNotEmpty) {
-        DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
-        DateTime to = DateTime.parse(convertDateFormat(toDate.text));
-        setState(() {
-          _futurePaymentException =
-              fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
-        });
-      }
-    } else if (daterange == "Custom") {
-      if (fromDate.text.isNotEmpty && toDate.text.isNotEmpty) {
-        DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
-        DateTime to = DateTime.parse(convertDateFormat(toDate.text));
-        setState(() {
-          _futurePaymentException =
-              fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
-        });
-      } else {
-        // Fetch all data if custom date fields are empty
-        setState(() {
-          _futurePaymentException = fetchPaymentExceptionReportsData();
-        });
-      }
-    } else {
-      // If no date range selected, fetch all data
-      setState(() {
-        _futurePaymentException = fetchPaymentExceptionReportsData();
-      });
+    // Both dates are required (server filters by date and rejects a request
+    // without them). Mirror the web's validation message when either is empty.
+    if (fromDate.text.trim().isEmpty || toDate.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg:
+            "Please select a From date and a To date before running the report.",
+      );
+      return;
     }
+    DateTime from = DateTime.parse(convertDateFormat(fromDate.text));
+    DateTime to = DateTime.parse(convertDateFormat(toDate.text));
+    setState(() {
+      isLoading = true;
+      _futurePaymentException =
+          fetchPaymentExceptionReportsData(fromDate: from, toDate: to);
+    });
   }
 
   DateTime? parseDate(String dateString) {
@@ -165,26 +139,24 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
 
   Future<List<Data>> fetchPaymentExceptionReportsData(
       {DateTime? fromDate, DateTime? toDate}) async {
+    // Server (CRM-3761) requires both dates and filters by date server-side.
+    // Without a complete range there is nothing to request (matches web, which
+    // defers the API call until a From + To date are chosen and Run is tapped).
+    if (fromDate == null || toDate == null) {
+      setState(() {
+        isLoading = false;
+        errorMessage = null;
+      });
+      return [];
+    }
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString("adminId");
-      String? token = prefs.getString('token');
+      final String startStr = DateFormat('yyyy-MM-dd').format(fromDate);
+      final String endStr = DateFormat('yyyy-MM-dd').format(toDate);
 
+      // Server already returns only the payments inside the range, so we show
+      // the response as-is (no client-side date filtering).
       List<Data> data = await PaymentExceptionReportsServices()
-          .fetchPaymentExceptionReports();
-
-      // Filter data based on the provided date range
-      if (fromDate != null && toDate != null) {
-        data = data.where((item) {
-          DateTime? itemDate = parseDate(
-              item.entry?.first.date ?? ""); // Use the new parseDate function
-          if (itemDate == null) {
-            return false; // Exclude this item if the date could not be parsed
-          }
-          return itemDate.isAfter(fromDate.subtract(Duration(days: 1))) &&
-              itemDate.isBefore(toDate.add(Duration(days: 1)));
-        }).toList();
-      }
+          .fetchPaymentExceptionReports(startDate: startStr, endDate: endStr);
 
       setState(() {
         DelinquentTenantsModel = data;
@@ -245,7 +217,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         // Text('Rows per page: '),
         // SizedBox(width: 10),
         Material(
-          elevation: 2,
+          elevation: 0,
           color: Colors.white,
           child: Container(
             height: 55,
@@ -588,7 +560,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       final response = await http
           .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $adminId",
+        "id": "CRM ${prefs.getString('staff_id') ?? adminId}",
       });
 
       if (response.statusCode == 200) {
@@ -669,7 +641,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                     ),
                   ),
                   pw.Text(
-                    'Date : - ${fromDate.text} to ${toDate.text}',
+                    'Date: ${fromDate.text} to ${toDate.text}',
                     style: pw.TextStyle(
                       fontSize: 14,
                       fontWeight: pw.FontWeight.bold,
@@ -680,40 +652,22 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
-                  pw.Text(
-                    profileData?.companyName?.isNotEmpty == true
-                        ? profileData!.companyName!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyAddress?.isNotEmpty == true
-                        ? profileData!.companyAddress!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                    '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                    '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    profileData?.companyPostalCode?.isNotEmpty == true
-                        ? profileData!.companyPostalCode!
-                        : 'N/A',
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.bold,
+                  // Company/contact block: omit empty fields (web parity) —
+                  // never render "N/A". See buildPdfCompanyLines.
+                  ...buildPdfCompanyLines(
+                    companyName: profileData?.companyName,
+                    companyAddress: profileData?.companyAddress,
+                    companyCity: profileData?.companyCity,
+                    companyState: profileData?.companyState,
+                    companyCountry: profileData?.companyCountry,
+                    companyPostalCode: profileData?.companyPostalCode,
+                  ).map(
+                    (line) => pw.Text(
+                      line,
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                      ),
                     ),
                   ),
                   //  pw.SizedBox(height: 30)
@@ -760,10 +714,16 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Payment_exception_report.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Payment_exception_report',
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateAccountTotalReportExcel(
@@ -888,9 +848,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Payment_exception_report_$formattedDate.xlsx';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     // Create directory if it doesn't exist (for Android)
     if (!await directory.exists() && !Platform.isIOS) {
@@ -989,9 +947,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     final String fileName = 'Payment_exception_report_$formattedDate.csv';
 
     // Define file path
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -1017,24 +973,31 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     double total = 0.0;
 
     for (var owner in rentalOwnerReports) {
+      // Some exception payments (e.g. application fees) have no rental_data
+      // and may have an empty entry list; access both safely so the export
+      // never crashes.
+      final Entryy? firstEntry =
+          (owner.entry != null && owner.entry!.isNotEmpty)
+              ? owner.entry!.first
+              : null;
       // Main row for the rental owner name
       tableData.add([
-        pw.Text(owner.rentalData!.rentalAdress ?? "",
+        pw.Text(owner.rentalData?.rentalAdress ?? "",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         pw.Text(owner.paymentType ?? "",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         pw.Text(
-            owner.entry!.first.date != null
-                ? dateProvider.formatCurrentDate(owner.entry!.first.date!)
+            firstEntry?.date != null
+                ? dateProvider.formatCurrentDate(firstEntry!.date!)
                 : "",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
-        pw.Text(owner.entry!.first.chargeType ?? "",
+        pw.Text(firstEntry?.chargeType ?? "",
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
         pw.Text(owner.totalAmount.toString(),
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10)),
       ]);
 
-      for (var property in owner.entry!) {
+      for (var property in (owner.entry ?? <Entryy>[])) {
         tableData.add([
           pw.Padding(
               child: pw.Text(
@@ -1089,7 +1052,8 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       //   '', '', '', '', '', '', '',
       //
       // ]);
-      total += owner.totalAmount!.toInt();
+      // Use toDouble() (not toInt) so cents aren't dropped from the total.
+      total += (owner.totalAmount ?? 0).toDouble();
     }
 
     setState(() {
@@ -1126,16 +1090,9 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       setState(() {
         _selectedDate = picked;
 
-        // Update the fromDate text field
+        // Update the fromDate text field only. The report is fetched on Run
+        // (web parity) once both dates are chosen.
         fromDate.text = dateProvider.formatCurrentDate(picked.toString());
-        // Assuming you want to set the toDate to the same day for now
-        toDate.text = dateProvider.formatCurrentDate(picked.toString());
-
-        // Call fetchPaymentExceptionReportsData with the selected date
-        _futurePaymentException = fetchPaymentExceptionReportsData(
-          fromDate: picked,
-          toDate: picked, // You can adjust this as needed
-        );
       });
     }
   }
@@ -1167,15 +1124,9 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       setState(() {
         _selectedDate = picked;
 
-        // Update the toDate text field
+        // Update the toDate text field only. The report is fetched on Run
+        // (web parity) once both dates are chosen.
         toDate.text = dateProvider.formatCurrentDate(picked.toString());
-
-        // Call fetchPaymentExceptionReportsData with both fromDate and toDate
-        _futurePaymentException = fetchPaymentExceptionReportsData(
-          fromDate:
-              DateTime.parse(fromDate.text), // Assuming fromDate is already set
-          toDate: picked, // Use the selected end date
-        );
       });
     }
   }
@@ -1189,7 +1140,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     final response = await http
         .get(Uri.parse('${Api_url}/api/rentals/rental-owners/$id'), headers: {
       "authorization": "CRM $token",
-      "id": "CRM $id",
+      "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     final jsonData = json.decode(response.body);
     print(jsonData);
@@ -1303,14 +1254,15 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue.isNotEmpty) {
+                        final String q = searchvalue.toLowerCase();
                         data = snapshot.data!
                             .where((lease) =>
-                                lease.rentalData!.rentalAdress!
+                                (lease.rentalData?.rentalAdress ?? '')
                                     .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()) ||
-                                lease.paymentType!
+                                    .contains(q) ||
+                                (lease.paymentType ?? '')
                                     .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()))
+                                    .contains(q))
                             .toList();
                       } else {
                         data = snapshot.data!
@@ -1326,9 +1278,11 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                           .take(itemsPerPage)
                           .toList();
 
-                      // Calculate grand total from filtered data
+                      // Grand total of the CURRENT PAGE only, matching web
+                      // (Report.js sums `tableData`, which is the paginated
+                      // page slice — not the full result set).
                       double grandTotal = 0.0;
-                      for (var item in data) {
+                      for (var item in currentPageData) {
                         grandTotal += (item.totalAmount ?? 0.0);
                       }
 
@@ -1775,7 +1729,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                     children: [
                                       const SizedBox(width: 10),
                                       Material(
-                                        elevation: 3,
+                                        elevation: 0,
                                         child: Container(
                                           height: 40,
                                           padding: const EdgeInsets.symmetric(
@@ -2430,7 +2384,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                 children: [
                                   const SizedBox(width: 10),
                                   Material(
-                                    elevation: 3,
+                                    elevation: 0,
                                     child: Container(
                                       height: 40,
                                       padding: const EdgeInsets.symmetric(
@@ -3009,8 +2963,9 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                               customdate = true;
                               fromDate.text = ""; // Set fromDate to empty
                               toDate.text = "";
-                              _futurePaymentException =
-                                  fetchPaymentExceptionReportsData(); // Set toDate to empty
+                              // No fetch here: wait for the user to pick the
+                              // custom From/To dates and tap Run (web parity).
+                              _futurePaymentException = Future.value(<Data>[]);
                             }
                           });
                           // Handle the selected charge type
@@ -3151,7 +3106,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                   child: Row(
                     children: [
                       Material(
-                        elevation: 3,
+                        elevation: 0,
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10),

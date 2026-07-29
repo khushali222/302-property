@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
@@ -39,6 +40,9 @@ import '../../../model/LeaseLedgerModel.dart';
 
 import 'addcard/AddCard.dart';
 import 'enterCharge.dart';
+import '../scheduled_charges/ScheduledCharge.dart';
+import 'package:three_zero_two_property/repository/ScheduledChargesRepository.dart';
+import 'package:three_zero_two_property/Model/schduled_charge.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
@@ -649,6 +653,126 @@ class _FinancialTableState extends State<FinancialTable> {
   List<bool> _expanded = [];
   bool _leaseAchAccepted = false;
 
+  List<ScheduledCharges> _pendingScheduled = [];
+
+  // Pending scheduled charges (future-dated, not yet posted to the ledger).
+  // Surfaces the same banner the web shows on the Financial/Ledger tab.
+  Future<void> _fetchPendingScheduled() async {
+    try {
+      final list = await ScheduledChargesRepository()
+          .fetchScheduledCharges(leaseid: widget.leaseId);
+      if (!mounted) return;
+      setState(() => _pendingScheduled = list);
+    } catch (_) {
+      if (mounted) setState(() => _pendingScheduled = []);
+    }
+  }
+
+  DateTime? _parseSchedDate(String? s) {
+    if (s == null || s.trim().isEmpty) return null;
+    final iso = DateTime.tryParse(s.trim());
+    if (iso != null) return iso;
+    final p = s.trim().split('/');
+    if (p.length == 3) {
+      final m = int.tryParse(p[0]),
+          d = int.tryParse(p[1]),
+          y = int.tryParse(p[2]);
+      if (m != null && d != null && y != null) return DateTime(y, m, d);
+    }
+    return null;
+  }
+
+  String? _nextScheduledLabel() {
+    DateTime? earliest;
+    for (final c in _pendingScheduled) {
+      final d = _parseSchedDate(c.actionDate);
+      if (d == null) continue;
+      if (earliest == null || d.isBefore(earliest)) earliest = d;
+    }
+    if (earliest == null) return null;
+    // Render the date in the user's configured DateProvider format (same as the ledger).
+    final iso = DateFormat('yyyy-MM-dd').format(earliest);
+    return Provider.of<DateProvider>(context, listen: false)
+        .formatCurrentDate(iso);
+  }
+
+  Widget _buildScheduledChargeBanner() {
+    if (_pendingScheduled.isEmpty) return const SizedBox.shrink();
+    final n = _pendingScheduled.length;
+    final next = _nextScheduledLabel();
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(11, 10, 11, 0),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF7E0),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFF0E3B2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF6E3A6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.warning_amber_rounded,
+                    size: 18, color: Color(0xFF9A6B00)),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Text(
+                    '$n scheduled charge${n == 1 ? '' : 's'} pending — not yet posted to the ledger'
+                    '${next != null ? ' (next on $next)' : ''}.',
+                    style: const TextStyle(
+                        fontSize: 12.5,
+                        height: 1.4,
+                        color: Color(0xFF6B5416),
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Divider(height: 1, color: Color(0xFFEBD9A6)),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ScheduledChargeTable(leaseID: widget.leaseId),
+                ),
+              );
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('View Scheduled Charges',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: blueColor,
+                        fontWeight: FontWeight.bold)),
+                const SizedBox(width: 6),
+                Icon(Icons.arrow_forward, size: 16, color: blueColor),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _fetchAchAccepted() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -686,6 +810,7 @@ class _FinancialTableState extends State<FinancialTable> {
     _toDateController = TextEditingController(text: '');
     filteredData = allData;
     _fetchAchAccepted();
+    _fetchPendingScheduled();
   }
 
   @override
@@ -1307,10 +1432,15 @@ class _FinancialTableState extends State<FinancialTable> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Financial.pdf');
+    } else {
+      await Printing.layoutPdf(
       format: PdfPageFormat.a4.landscape,
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateWorkOrderExcel(List<Data> ledgerdata) async {
@@ -1396,7 +1526,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.xlsx';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -1464,7 +1594,7 @@ class _FinancialTableState extends State<FinancialTable> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'Tenant_statement.csv';
-    final directory = Directory('/storage/emulated/0/Download');
+    final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/$fileName';
     if (!await directory.exists()) {
       await directory.create(recursive: true);
@@ -1938,6 +2068,7 @@ class _FinancialTableState extends State<FinancialTable> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            _buildScheduledChargeBanner(),
             const SizedBox(
               height: 0,
             ),

@@ -12,6 +12,8 @@ import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_picker.dart';
+import 'package:three_zero_two_property/widgets/clearable_date_suffix.dart';
 
 // Custom Phone Number Formatter
 class PhoneNumberFormatter extends TextInputFormatter {
@@ -220,9 +222,23 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     return hint;
   }
 
+  /// Blanks an OPTIONAL date field (controller + its backing DateTime).
+  void _clearDate(TextEditingController controller) {
+    setState(() {
+      controller.text = '';
+      if (controller == _lastPaymentDateController) {
+        _lastPaymentDate = null;
+      } else if (controller == _nextPaymentDateController) {
+        _nextPaymentDate = null;
+      } else if (controller == _fixedInterestExpirationDateController) {
+        _fixedInterestExpirationDate = null;
+      }
+    });
+  }
+
   Future<void> _selectDate(BuildContext context,
       TextEditingController controller, DateTime? initialDate,
-      {DateTime? firstDate, DateTime? lastDate}) async {
+      {DateTime? firstDate, DateTime? lastDate, bool clearable = false}) async {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
 
@@ -254,30 +270,48 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       }
     }
 
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: actualInitialDate,
-      firstDate: actualFirstDate,
-      lastDate: actualLastDate,
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor, // header background color
-              onPrimary: Colors.white, // header text color
-              // onSurface: Colors.blue, // body text color
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: blueColor, // button text color
+    DateTime? pickedResult;
+    if (clearable) {
+      // Optional date field — offer a Clear action (web parity).
+      final ClearableDatePickerResult? result = await showClearableDatePicker(
+        context: context,
+        initialDate: actualInitialDate,
+        firstDate: actualFirstDate,
+        lastDate: actualLastDate,
+      );
+      if (result == null) return; // cancelled — keep the current value
+      if (result.cleared) {
+        _clearDate(controller);
+        return;
+      }
+      pickedResult = result.date!;
+    } else {
+      pickedResult = await showDatePicker(
+        context: context,
+        initialDate: actualInitialDate,
+        firstDate: actualFirstDate,
+        lastDate: actualLastDate,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: blueColor, // header background color
+                onPrimary: Colors.white, // header text color
+                // onSurface: Colors.blue, // body text color
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: blueColor, // button text color
+                ),
               ),
             ),
-          ),
-          child: child!,
-        );
-      },
-    );
+            child: child!,
+          );
+        },
+      );
+    }
+    final DateTime? picked = pickedResult;
     if (picked != null) {
       setState(() {
         // Get dateProvider to format the date according to user's preference
@@ -405,15 +439,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
   String? _validateInterestRate(String? value) {
     final trimmed = value?.trim() ?? '';
-    if (trimmed.isEmpty) {
-      return 'Interest rate must be between 0 to 100';
-    }
+    // Spread fields are optional (match Admin) — empty is valid, so an
+    // untouched Spread on Floating Rate field never blocks Save.
+    if (trimmed.isEmpty) return null;
     final rate = double.tryParse(trimmed.replaceAll('%', ''));
     if (rate == null || rate < 0 || rate > 100) {
       return 'Interest rate must be between 0 to 100';
     }
     return null;
   }
+
 
   /// Returns true if another mortgage already uses this loan number (excluding current when editing).
   Future<bool> _isDuplicateMortgageNo(String mortgageNo) async {
@@ -427,7 +462,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         },
       ).timeout(const Duration(seconds: 15));
       if (response.statusCode != 200) return false;
@@ -490,7 +525,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         headers: {
           'Content-Type': 'application/json',
           "authorization": "CRM $token",
-          "id": "CRM $id",
+          "id": "CRM ${prefs.getString('staff_id') ?? id}",
           // Add your authentication headers here if needed
           // 'Authorization': 'Bearer $token',
         },
@@ -612,7 +647,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       //   headers: {
       //     'Content-Type': 'application/json',
       //     'authorization': 'CRM $token',
-      //     'id': 'CRM $id',
+      //     'id': 'CRM ${prefs.getString("staff_id") ?? id}',
       //   },
       // ).timeout(const Duration(seconds: 30));
 
@@ -1691,8 +1726,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _interestRateController,
                       label: 'Interest Rate',
                       hint: 'Enter Interest Rate %',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateInterestRate,
                     ),
                     const SizedBox(height: 16),
@@ -1700,8 +1743,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _loanAmountController,
                       label: 'Loan Amount',
                       hint: 'Enter Loan Amount',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1709,8 +1760,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _remainingBalanceController,
                       label: 'Current Balance',
                       hint: '\$ Enter current balance',
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // Web parity: decimal keyboard; digits + a single decimal point only.
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1718,7 +1777,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _principalController,
                       label: 'Monthly Principal',
                       hint: 'Enter monthly principal',
+                      // Web parity: digits + a single decimal point only.
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1726,7 +1793,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                       controller: _interestController,
                       label: 'Monthly Interest',
                       hint: 'Enter monthly interest',
+                      // Web parity: digits + a single decimal point only.
                       keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        TextInputFormatter.withFunction((oldValue, newValue) =>
+                            RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                ? newValue
+                                : oldValue),
+                      ],
                       validator: _validateAmount,
                     ),
                     const SizedBox(height: 16),
@@ -1764,6 +1839,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             controller: _fixedInterestExpirationDateController,
                             label: 'Fixed Interest Expiration Date',
                             hint: dateHint,
+                            onClear: () => _clearDate(
+                                _fixedInterestExpirationDateController),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return null;
@@ -1836,6 +1913,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                 _fixedInterestExpirationDate,
                                 firstDate: minDate,
                                 lastDate: maxDate,
+                                clearable: true,
                               );
                             },
                           );
@@ -1846,9 +1924,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         controller: _spreadOnFloatingRateController,
                         label: 'Spread on Floating Rate (%)',
                         hint: 'Enter spread on floating rate',
-                        keyboardType: TextInputType.number,
+                        // Web parity: decimal % — digits + a single decimal point.
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          TextInputFormatter.withFunction((oldValue, newValue) =>
+                              RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                  ? newValue
+                                  : oldValue),
                         ],
                         validator: _validateInterestRate,
                       ),
@@ -1862,9 +1946,15 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                         controller: _spreadController,
                         label: 'Spread (%)',
                         hint: 'Enter spread',
-                        keyboardType: TextInputType.number,
+                        // Web parity: decimal % — digits + a single decimal point.
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
                         inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          TextInputFormatter.withFunction((oldValue, newValue) =>
+                              RegExp(r'^\d*\.?\d*$').hasMatch(newValue.text)
+                                  ? newValue
+                                  : oldValue),
                         ],
                         validator: _validateInterestRate,
                       ),
@@ -1889,6 +1979,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                           controller: _lastPaymentDateController,
                           label: 'Last Payment Date',
                           hint: dateHint,
+                          onClear: () =>
+                              _clearDate(_lastPaymentDateController),
                           onTap: () {
                             final DateTime now = DateTime.now();
                             final DateTime today =
@@ -1896,7 +1988,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             // Allow today and past dates, but not future dates
                             _selectDate(context, _lastPaymentDateController,
                                 _lastPaymentDate,
-                                firstDate: DateTime(2000), lastDate: today);
+                                firstDate: DateTime(2000),
+                                lastDate: today,
+                                clearable: true);
                           },
                         );
                       },
@@ -1911,6 +2005,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                           controller: _nextPaymentDateController,
                           label: 'Next Payment Date',
                           hint: dateHint,
+                          onClear: () =>
+                              _clearDate(_nextPaymentDateController),
                           onTap: () {
                             final DateTime now = DateTime.now();
                             final DateTime today =
@@ -1918,7 +2014,9 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                             // Don't let select past dates, allow today and future dates
                             _selectDate(context, _nextPaymentDateController,
                                 _nextPaymentDate,
-                                firstDate: today, lastDate: DateTime(2100));
+                                firstDate: today,
+                                lastDate: DateTime(2100),
+                                clearable: true);
                           },
                         );
                       },
@@ -2228,6 +2326,8 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
     required String hint,
     required VoidCallback onTap,
     String? Function(String?)? validator,
+    // Optional date fields pass this so the field gets a "clear" (X) action.
+    VoidCallback? onClear,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2242,11 +2342,16 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: onTap,
+          // When the field is clearable the suffix holds its own tap targets,
+          // so the taps must reach it instead of being absorbed here.
+          onTap: onClear == null ? onTap : null,
           child: AbsorbPointer(
+            absorbing: onClear == null,
             child: TextFormField(
               controller: controller,
               validator: validator,
+              readOnly: onClear != null,
+              onTap: onClear == null ? null : onTap,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: TextStyle(
@@ -2267,10 +2372,19 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                 ),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                suffixIcon: Icon(
-                  Icons.calendar_today,
-                  color: blueColor,
-                ),
+                suffixIcon: onClear == null
+                    ? Icon(
+                        Icons.calendar_today,
+                        color: blueColor,
+                      )
+                    : ClearableDateSuffix(
+                        controller: controller,
+                        onPick: onTap,
+                        onClear: onClear,
+                        icon: Icons.calendar_today,
+                        iconColor: blueColor,
+                        iconSize: 20,
+                      ),
               ),
             ),
           ),

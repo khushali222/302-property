@@ -60,6 +60,12 @@ class _TabBarExampleState extends State<TabBarExample> {
   TextEditingController flat = TextEditingController();
   TextEditingController late_fee = TextEditingController();
   TextEditingController duration = TextEditingController();
+  TextEditingController description = TextEditingController();
+  TextEditingController grace_balance = TextEditingController();
+  String calculationType = "percent";
+  String selectedLateFeeAccount = "Late Fee Income";
+  String selectedSurchargeAccount = "";
+  List<Setting4> _accounts = [];
   TextEditingController durationmail = TextEditingController();
   TextEditingController replyToEmail = TextEditingController();
 
@@ -95,6 +101,9 @@ class _TabBarExampleState extends State<TabBarExample> {
     // TODO: implement initState
     super.initState();
     futureaccount = accountRepository().fetchAccounts();
+    futureaccount.then((value) {
+      if (mounted) setState(() => _accounts = value);
+    });
     fetchSurchargeData();
     fetchlatefeeData();
     fetchMailData();
@@ -109,6 +118,109 @@ class _TabBarExampleState extends State<TabBarExample> {
     note.dispose();
     _settingsSearchController.dispose();
     super.dispose();
+  }
+
+  // Chart-of-accounts options for the Charge Account / surcharge account
+  // dropdowns (built from the fetched accounts, matching the web Staff page).
+  List<String> _accountOptionsList() {
+    final options = <String>{
+      "Late Fee Income",
+      ..._accounts.map((a) => a.account ?? '').where((s) => s.isNotEmpty),
+    }.toList();
+    options.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return options;
+  }
+
+  Widget _feeLabel(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18,
+        color: const Color(0xFF8A95A8),
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _feeAccountDropdown(String selected, ValueChanged<String> onChanged) {
+    final options = _accountOptionsList();
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 13),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            isExpanded: true,
+            value: options.contains(selected) ? selected : null,
+            hint: Text(
+              "Select Account",
+              style: TextStyle(
+                color: const Color(0xFF8A95A8),
+                fontSize: MediaQuery.of(context).size.width * .037,
+              ),
+            ),
+            icon: Icon(Icons.keyboard_arrow_down, color: blueColor),
+            style: TextStyle(
+              color: blueColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+            items: options
+                .map((name) => DropdownMenuItem<String>(
+                      value: name,
+                      child: Text(name, overflow: TextOverflow.ellipsis),
+                    ))
+                .toList(),
+            onChanged: (v) => onChanged(v ?? ''),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _calcOption(String value, String label) {
+    final bool selected = calculationType == value;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => calculationType = value),
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: selected ? blueColor.withOpacity(0.08) : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: selected ? blueColor : Colors.grey.shade300,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                color: blueColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: blueColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.width < 500 ? 15 : 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _refreshAccounts() {
@@ -142,6 +254,7 @@ class _TabBarExampleState extends State<TabBarExample> {
               ? surcharges.surchargeFlatACH.toString()
               : "";
           surge_id = surcharges.surchargeId.toString();
+          selectedSurchargeAccount = surcharges.surcharge_account ?? "";
           _selectedRadio = surcharges.surchargePercentACH != 0.0 &&
                   surcharges.surchargeFlatACH != 0.0
               ? 3
@@ -167,6 +280,14 @@ class _TabBarExampleState extends State<TabBarExample> {
           islatefeeupdate = true;
           late_fee.text = latefee.late_fee;
           duration.text = latefee.duration;
+          description.text = latefee.description;
+          grace_balance.text = latefee.graceBalance.toString();
+          calculationType = latefee.calculationType.isNotEmpty
+              ? latefee.calculationType
+              : "percent";
+          selectedLateFeeAccount = latefee.chargeAccount.isNotEmpty
+              ? latefee.chargeAccount
+              : "Late Fee Income";
           latefee_id = latefee.latefeeId;
         });
       }
@@ -194,6 +315,9 @@ class _TabBarExampleState extends State<TabBarExample> {
         "surcharge_flat_ACH": flat.text.trim().isNotEmpty
             ? int.tryParse(flat.text.trim())
             : null, // Add your logic to get this value
+        "surcharge_account": selectedSurchargeAccount.isNotEmpty
+            ? selectedSurchargeAccount
+            : null,
       };
 
       bool success =
@@ -233,6 +357,9 @@ class _TabBarExampleState extends State<TabBarExample> {
         "surcharge_flat_ACH": flat.text.trim().isNotEmpty
             ? int.tryParse(flat.text.trim())
             : null, // Add your logic to get this value
+        "surcharge_account": selectedSurchargeAccount.isNotEmpty
+            ? selectedSurchargeAccount
+            : null,
       };
 
       bool success =
@@ -266,6 +393,13 @@ class _TabBarExampleState extends State<TabBarExample> {
         "late_fee": late_fee.text.trim().isNotEmpty
             ? double.tryParse(late_fee.text.trim())
             : null,
+        "grace_balance": grace_balance.text.trim().isNotEmpty
+            ? int.tryParse(grace_balance.text.trim())
+            : null,
+        "calculation_type": calculationType,
+        "charge_account": selectedLateFeeAccount,
+        "description":
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
       };
 
       bool success =
@@ -346,6 +480,13 @@ class _TabBarExampleState extends State<TabBarExample> {
         "late_fee": late_fee.text.trim().isNotEmpty
             ? int.tryParse(late_fee.text.trim())
             : null,
+        "grace_balance": grace_balance.text.trim().isNotEmpty
+            ? int.tryParse(grace_balance.text.trim())
+            : null,
+        "calculation_type": calculationType,
+        "charge_account": selectedLateFeeAccount,
+        "description":
+            description.text.trim().isNotEmpty ? description.text.trim() : null,
       };
 
       bool success =
@@ -1655,6 +1796,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: credit,
                                                 cursorColor: blueColor,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters: [
+                                                  PercentRangeFormatter()
+                                                ],
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
@@ -1733,6 +1880,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 },
                                                 controller: debit,
                                                 cursorColor: blueColor,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters: [
+                                                  PercentRangeFormatter()
+                                                ],
                                                 decoration: InputDecoration(
                                                   // hintText: "Enter password",
                                                   hintStyle: TextStyle(
@@ -1826,6 +1979,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: credit,
                                                   cursorColor: blueColor,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters: [
+                                                    PercentRangeFormatter()
+                                                  ],
                                                   decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
@@ -1908,6 +2067,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   },
                                                   controller: debit,
                                                   cursorColor: blueColor,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters: [
+                                                    PercentRangeFormatter()
+                                                  ],
                                                   decoration: InputDecoration(
                                                     // hintText: "Enter password",
                                                     hintStyle: TextStyle(
@@ -2076,6 +2241,11 @@ class _TabBarExampleState extends State<TabBarExample> {
                                           },
                                           controller: percent,
                                           cursorColor: blueColor,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(decimal: true),
+                                          inputFormatters: [
+                                            PercentRangeFormatter()
+                                          ],
                                           decoration: InputDecoration(
                                             // hintText: "Enter password",
                                             hintStyle: TextStyle(
@@ -2203,6 +2373,14 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ],
                           ),
                         ],
+                        const SizedBox(height: 20),
+                        _feeLabel("Account to receive surcharges"),
+                        const SizedBox(height: 8),
+                        _feeAccountDropdown(
+                          selectedSurchargeAccount,
+                          (v) =>
+                              setState(() => selectedSurchargeAccount = v),
+                        ),
                         const SizedBox(height: 30),
                         Row(
                           children: [
@@ -2263,6 +2441,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 credit.clear();
                                 flat.clear();
                                 percent.clear();
+                                setState(() {
+                                  selectedSurchargeAccount = "";
+                                });
                               },
                               child: Container(
                                   height:
@@ -2292,6 +2473,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                           ],
                         ),
+                        SizedBox(
+                            height:
+                                MediaQuery.of(context).padding.bottom + 24),
                       ],
                     ),
                   if (ismail) _buildMailServiceSection(),
@@ -2380,6 +2564,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             Positioned.fill(
                                               child: TextFormField(
                                                 controller: late_fee,
+                                                keyboardType: const TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                inputFormatters:
+                                                    calculationType == "percent"
+                                                        ? [PercentRangeFormatter()]
+                                                        : null,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     //  passworderror = false;
@@ -2749,6 +2940,13 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               Positioned.fill(
                                                 child: TextFormField(
                                                   controller: late_fee,
+                                                  keyboardType: const TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  inputFormatters:
+                                                      calculationType == "percent"
+                                                          ? [PercentRangeFormatter()]
+                                                          : null,
                                                   onChanged: (value) {
                                                     setState(() {
                                                       //  passworderror = false;
@@ -2885,6 +3083,103 @@ class _TabBarExampleState extends State<TabBarExample> {
                               ],
                             ),
                           ),
+                        const SizedBox(height: 20),
+                        _feeLabel("Min. Balance"),
+                        const SizedBox(height: 5),
+                        Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextFormField(
+                              controller: grace_balance,
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              cursorColor: blueColor,
+                              decoration: InputDecoration(
+                                hintText: "0",
+                                hintStyle: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * .037,
+                                  color: const Color(0xFF8A95A8),
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.all(13),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _feeLabel("Late Fee Calculation"),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            _calcOption("fixed", "Fixed"),
+                            const SizedBox(width: 12),
+                            _calcOption("percent", "Percent"),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        _feeLabel("Charge Account"),
+                        const SizedBox(height: 8),
+                        _feeAccountDropdown(
+                          selectedLateFeeAccount,
+                          (v) => setState(() => selectedLateFeeAccount =
+                              v.isEmpty ? "Late Fee Income" : v),
+                        ),
+                        const SizedBox(height: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Description",
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width < 500
+                                          ? 15
+                                          : 20,
+                                  color: const Color(0xFF8A95A8),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 5),
+                            Material(
+                              elevation: 4,
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: TextFormField(
+                                  controller: description,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                  },
+                                  cursorColor: blueColor,
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                    hintText:
+                                        "Enter a description for late fees",
+                                    hintStyle: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .037,
+                                      color: const Color(0xFF8A95A8),
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.all(13),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 30),
                         Row(
                           children: [
@@ -2944,6 +3239,12 @@ class _TabBarExampleState extends State<TabBarExample> {
                               onTap: () {
                                 duration.clear();
                                 late_fee.clear();
+                                description.clear();
+                                setState(() {
+                                  grace_balance.clear();
+                                  calculationType = "percent";
+                                  selectedLateFeeAccount = "Late Fee Income";
+                                });
                               },
                               child: Row(
                                 children: [
@@ -2980,6 +3281,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                             ),
                           ],
                         ),
+                        SizedBox(
+                            height:
+                                MediaQuery.of(context).padding.bottom + 24),
                       ],
                     ),
                   if (isaccounts)

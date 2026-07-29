@@ -954,9 +954,15 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
       await file.writeAsBytes(await pdf.save());
 
       if (Platform.isAndroid) {
-        await Printing.layoutPdf(
+        if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Property_Tax_Report.pdf');
+    } else {
+      await Printing.layoutPdf(
+          name: 'Property_Tax_Report',
           onLayout: (PdfPageFormat format) async => pdf.save(),
         );
+    }
       } else {
         await Share.shareXFiles(
           [XFile(file.path)],

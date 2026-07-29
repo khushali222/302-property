@@ -1420,7 +1420,7 @@ class _Change_passwordState extends State<Change_password> {
       Uri.parse('$Api_url/api/vendor/reset_password/$email'),
       headers: <String, String>{
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('vendor_id') ?? id}",
         //'Content-Type': 'application/json; charset=UTF-8',
       },
       body: values,

@@ -19,6 +19,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/report_header.dart';
+import 'package:three_zero_two_property/widgets/pdf_report_header.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/services.dart' show rootBundle;
@@ -683,40 +684,22 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text(
-                  profileData?.companyName?.isNotEmpty == true
-                      ? profileData!.companyName!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyAddress?.isNotEmpty == true
-                      ? profileData!.companyAddress!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  '${profileData?.companyCity?.isNotEmpty == true ? profileData!.companyCity! : 'N/A'}, '
-                  '${profileData?.companyState?.isNotEmpty == true ? profileData!.companyState! : 'N/A'}, '
-                  '${profileData?.companyCountry?.isNotEmpty == true ? profileData!.companyCountry! : 'N/A'}',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Text(
-                  profileData?.companyPostalCode?.isNotEmpty == true
-                      ? profileData!.companyPostalCode!
-                      : 'N/A',
-                  style: pw.TextStyle(
-                    fontSize: 10,
-                    fontWeight: pw.FontWeight.bold,
+                // Company/contact block: omit empty fields (web parity) —
+                // never render "N/A". See buildPdfCompanyLines.
+                ...buildPdfCompanyLines(
+                  companyName: profileData?.companyName,
+                  companyAddress: profileData?.companyAddress,
+                  companyCity: profileData?.companyCity,
+                  companyState: profileData?.companyState,
+                  companyCountry: profileData?.companyCountry,
+                  companyPostalCode: profileData?.companyPostalCode,
+                ).map(
+                  (line) => pw.Text(
+                    line,
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -778,9 +761,15 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       ),
     );
 
-    await Printing.layoutPdf(
+    if (Platform.isIOS) {
+      await Printing.sharePdf(
+          bytes: await pdf.save(), filename: 'Completed-work-orders.pdf');
+    } else {
+      await Printing.layoutPdf(
+      name: 'Completed-work-orders',
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+    }
   }
 
   Future<void> generateWorkOrderExcel(
@@ -837,9 +826,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'CompletedWorkOrderReport_$formattedDate.xlsx';
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 
@@ -880,9 +867,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);
     final String fileName = 'CompletedWorkOrderReport_$formattedDate.csv';
 
-    final Directory directory = Platform.isIOS
-        ? await getApplicationDocumentsDirectory()
-        : Directory('/storage/emulated/0/Download');
+    final Directory directory = await getApplicationDocumentsDirectory();
 
     final path = '${directory.path}/$fileName';
 

@@ -72,7 +72,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
         headers: {
           'Content-Type': 'application/json',
           'authorization': 'CRM $token',
-          'id': 'CRM $id',
+          'id': 'CRM ${prefs.getString("staff_id") ?? id}',
         },
       ).timeout(const Duration(seconds: 30));
 
@@ -244,7 +244,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
             headers: {
               'Content-Type': 'application/json',
               'authorization': 'CRM $token',
-              'id': 'CRM $adminId',
+              'id': 'CRM ${prefs.getString("staff_id") ?? adminId}',
             },
             body: json.encode({
               'reason': reason,

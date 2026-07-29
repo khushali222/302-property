@@ -238,7 +238,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('${Api_url}/api/rentals/rentals/$id');
       if (!mounted) return;
@@ -281,7 +281,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       final response = await http
           .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
@@ -319,7 +319,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
@@ -419,7 +419,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('Loading units for rental: $rentalId');
 
@@ -699,7 +699,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
-                width: 160,
+                width: double.infinity,
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.0),
@@ -2470,7 +2470,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                           const SizedBox(
                             height: 10,
                           ),
-                          const Text('Entery Allowed ',
+                          const Text('Entry Allowed ',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -3693,7 +3693,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
       final response = await http
           .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('${Api_url}/api/rentals/rentals/$id');
       if (!mounted) return;
@@ -3733,7 +3733,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
       final response = await http
           .get(Uri.parse('$Api_url/api/unit/rental_unit/$rentalId'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('$Api_url/api/unit/rental_unit/$rentalId');
 
@@ -3773,7 +3773,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
       final response = await http
           .get(Uri.parse('${Api_url}/api/vendor/vendors/$id'), headers: {
         "authorization": "CRM $token",
-        "id": "CRM $id",
+        "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
       print('${Api_url}/api/vendor/vendors/$id');
 
@@ -3814,7 +3814,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
           Uri.parse('${Api_url}/api/staffmember/staff_member/$id'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
       print('${Api_url}/api/staffmember/staff_member/$id');
 
@@ -3856,7 +3856,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
           Uri.parse('${Api_url}/api/leases/get_tenants/$rentalId/$unitId'),
           headers: {
             "authorization": "CRM $token",
-            "id": "CRM $id",
+            "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
       print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
       print(response.body);
@@ -5160,7 +5160,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text('Entery Allowed ',
+                                      const Text('Entry Allowed ',
                                           style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
