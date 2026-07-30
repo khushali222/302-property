@@ -508,6 +508,58 @@ class _Tenants_tableState extends State<Tenants_table> {
     await TenantsRepository().sendSetupEmail(data.tenantId ?? '');
   }
 
+  // Web parity (TenantsTable.js): per-tenant Enable/Disable 2FA from the row
+  // actions. Enable posts method "email"; takes effect on the tenant's next
+  // login. The set guards against double taps while a call is in flight.
+  final Set<String> _twoFaBusy = {};
+
+  Future<void> _handleToggle2FA(Tenant data) async {
+    final String id = data.tenantId ?? '';
+    if (id.isEmpty || _twoFaBusy.contains(id)) return;
+    final bool enable = !data.twoFactorEnabled;
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        title: Text(
+          enable ? 'Enable 2FA' : 'Disable 2FA',
+          style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          '${enable ? 'Enable' : 'Disable'} two-factor authentication for '
+          '${data.tenantFirstName ?? ''} ${data.tenantLastName ?? ''}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('Cancel', style: TextStyle(color: blueColor)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              enable ? 'Enable' : 'Disable',
+              style: TextStyle(color: blueColor, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    setState(() => _twoFaBusy.add(id));
+    final bool ok = await TenantsRepository().setTenant2FA(
+      tenantId: id,
+      enable: enable,
+      email: data.tenantEmail,
+      phoneNumber: data.tenantPhoneNumber,
+    );
+    if (!mounted) return;
+    setState(() {
+      _twoFaBusy.remove(id);
+      if (ok) data.twoFactorEnabled = enable;
+    });
+  }
+
   Widget _buildActionsCell(Tenant data) {
     return TableCell(
       child: Padding(
@@ -542,6 +594,30 @@ class _Tenants_tableState extends State<Tenants_table> {
               const SizedBox(
                 width: 15,
               ),
+              // --- 2FA from table: temporarily disabled (uncomment for table 2FA update).
+              //     Uncomment this block to re-enable the shield action.
+//               // Web hides the 2FA action for trial accounts.
+//               if (data.adminId != "is_trial") ...[
+//                 InkWell(
+//                   onTap: () => _handleToggle2FA(data),
+//                   child: _twoFaBusy.contains(data.tenantId)
+//                       ? const SizedBox(
+//                           height: 24,
+//                           width: 24,
+//                           child: CircularProgressIndicator(strokeWidth: 2),
+//                         )
+//                       : FaIcon(
+//                           FontAwesomeIcons.shieldHalved,
+//                           size: 26,
+//                           color: data.twoFactorEnabled
+//                               ? const Color(0xFFB55B3D)
+//                               : null,
+//                         ),
+//                 ),
+//                 const SizedBox(
+//                   width: 15,
+//                 ),
+//               ],
               InkWell(
                 onTap: () {
                   handleDelete(data);
@@ -1534,6 +1610,43 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               ),
                                                             ),
                                                           ),
+                                                          // --- 2FA from table: temporarily disabled (uncomment for table 2FA update).
+                                                          //     Uncomment this block to re-enable the shield action.
+//                                                           // Web hides the 2FA action for trial accounts.
+//                                                           if (tenants.adminId != "is_trial") ...[
+//                                                             const SizedBox(
+//                                                               width: 5,
+//                                                             ),
+//                                                             GestureDetector(
+//                                                               onTap: () => _handleToggle2FA(tenants),
+//                                                               child: Container(
+//                                                                 height: 35,
+//                                                                 width: 35,
+//                                                                 decoration: BoxDecoration(
+//                                                                     borderRadius: BorderRadius.circular(8),
+//                                                                     color: const Color(0xFFF9EDE7)),
+//                                                                 child: Row(
+//                                                                   mainAxisAlignment: MainAxisAlignment.center,
+//                                                                   crossAxisAlignment: CrossAxisAlignment.center,
+//                                                                   children: [
+//                                                                     _twoFaBusy.contains(tenants.tenantId)
+//                                                                         ? const SizedBox(
+//                                                                             height: 15,
+//                                                                             width: 15,
+//                                                                             child: CircularProgressIndicator(strokeWidth: 2),
+//                                                                           )
+//                                                                         : FaIcon(
+//                                                                             FontAwesomeIcons.shieldHalved,
+//                                                                             size: 15,
+//                                                                             color: tenants.twoFactorEnabled
+//                                                                                 ? const Color(0xFFB55B3D)
+//                                                                                 : Colors.grey,
+//                                                                           ),
+//                                                                   ],
+//                                                                 ),
+//                                                               ),
+//                                                             ),
+//                                                           ],
                                                           const SizedBox(
                                                             width: 5,
                                                           ),

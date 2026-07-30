@@ -3558,7 +3558,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     context: context,
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
-                                    desc: "${e.toString().split('Exception:').last.trimLeft()}",
+                                    desc: friendlyErrorMessage(e,
+                                        networkMessage:
+                                            paymentNetworkErrorMessage),
                                     style: AlertStyle(
                                       backgroundColor: Colors.white,
                                     ),
@@ -3631,7 +3633,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                     _isLoading = false;
                                   });
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                               } else if (_selectedPaymentMethod == "Cash" ||
                                   _selectedPaymentMethod == "Manual") {
@@ -3682,12 +3686,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
                                   print(e);
-                                  Fluttertoast.showToast(msg: e);
+                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                               }
 

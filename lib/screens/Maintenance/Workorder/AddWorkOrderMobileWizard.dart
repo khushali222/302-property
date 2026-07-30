@@ -450,7 +450,8 @@ class _AddWorkOrderMobileWizardState extends State<AddWorkOrderMobileWizard> {
       );
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Failed to add work order: $e');
+      Fluttertoast.showToast(
+          msg: 'Failed to add work order: ${friendlyErrorMessage(e)}');
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

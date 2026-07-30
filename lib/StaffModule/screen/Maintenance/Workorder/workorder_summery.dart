@@ -172,7 +172,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -5049,7 +5049,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                           .showSnackBar(
                                         SnackBar(
                                             content: Text(
-                                                'Failed to update work order: $e')),
+                                                'Failed to update work order: ${friendlyErrorMessage(e)}')),
                                       );
                                     }
                                   } finally {

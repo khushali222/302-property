@@ -16,12 +16,12 @@ Widget buildListTile(
   bool active,
 ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
+    margin: EdgeInsets.symmetric(horizontal: 14),
     decoration: BoxDecoration(
       color: active ? blueColor : Colors.transparent,
       borderRadius: BorderRadius.circular(10),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
       onTap: () {
       //  navigateToOption(context, "Properties");
@@ -49,7 +49,8 @@ Widget buildListTile(
       title: Text(
         title,
         style: TextStyle(
-          color: active ? Colors.white : Colors.black,
+          fontSize: 15,
+          color: active ? Colors.white : blueColor,
         ),
       ),
     ),
@@ -82,8 +83,8 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     String title, List<String> subTopics,
     {String? selectedSubtopic, bool? initvalue}) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    margin: EdgeInsets.symmetric(horizontal: 14),
+    padding: EdgeInsets.symmetric(horizontal: 5),
     // decoration: BoxDecoration(
     //   color: subTopics.contains(selectedOption) ? blueColor : Colors.transparent,
     //   borderRadius: BorderRadius.circular(10),
@@ -91,13 +92,19 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
     child: ExpansionTile(
       // initiallyExpanded: initvalue!,
       leading: leadingIcon,
-      title: Text(title),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 15,
+          color: blueColor,
+        ),
+      ),
       children: subTopics.map((
         subTopic,
       ) {
         bool active = selectedSubtopic == subTopic;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           child: Container(
             decoration: BoxDecoration(
               color:
@@ -109,7 +116,8 @@ Widget buildDropdownListTile(BuildContext context, Widget leadingIcon,
               title: Text(
                 subTopic,
                 style: TextStyle(
-                  color: active ? Colors.white : Colors.black,
+                  fontSize: 15,
+                  color: active ? Colors.white : blueColor,
                 ),
               ),
               onTap: () {

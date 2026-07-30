@@ -33,6 +33,7 @@ class PaymentService {
     required List<Map<String, dynamic>> entries,
     String? notificationTime,
     required String paymentAmountType,
+    String? idempotencyKey,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -82,7 +83,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
@@ -127,12 +128,25 @@ class PaymentService {
         }
       } else {
         print("[CARD PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
-        throw Exception('Failed to make payment');
+        String serverMessage = '';
+        try {
+          serverMessage =
+              (jsonDecode(response.body)['message'] ?? '').toString();
+        } catch (_) {}
+        if (response.statusCode >= 500) {
+          // The server may have completed the payment before failing to
+          // respond, so the outcome must be reported as unknown.
+          throw Exception(' $paymentUnknownOutcomeMessage');
+        }
+        throw Exception(serverMessage.isNotEmpty
+            ? ' $serverMessage'
+            : 'Failed to make payment');
       }
     } else {
       try {
         // Store payment for future transactions
         await storePayment(
+            idempotencyKey: idempotencyKey,
             companyName: company_name,
             adminId: adminId,
             tenantId: tenantId,
@@ -178,7 +192,8 @@ class PaymentService {
     required String date,
     required bool scheduledPayment,
     List<Map<String, dynamic>>? entries,
-  }) async {
+        String? idempotencyKey,
+}) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -210,7 +225,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{
@@ -270,6 +285,7 @@ class PaymentService {
     String? billingId,
     String? customerVaultId,
     String? paymentAmountType,
+    String? idempotencyKey,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -325,7 +341,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
@@ -369,12 +385,25 @@ class PaymentService {
         }
       } else {
         print("[ACH PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
-        throw Exception('Failed to make payment');
+        String serverMessage = '';
+        try {
+          serverMessage =
+              (jsonDecode(response.body)['message'] ?? '').toString();
+        } catch (_) {}
+        if (response.statusCode >= 500) {
+          // The server may have completed the payment before failing to
+          // respond, so the outcome must be reported as unknown.
+          throw Exception(' $paymentUnknownOutcomeMessage');
+        }
+        throw Exception(serverMessage.isNotEmpty
+            ? ' $serverMessage'
+            : 'Failed to make payment');
       }
     } else {
       try {
         // Scheduled future ACH payment — still uses /api/payment/tenant-payment directly (no NMI call)
         await storePaymentAch(
+            idempotencyKey: idempotencyKey,
           adminId: adminId,
           tenantId: tenantId,
           leaseId: leaseid,
@@ -408,7 +437,8 @@ class PaymentService {
     required String responseCode,
     required String paymentAmountType,
     required String date,
-  }) async {
+        String? idempotencyKey,
+}) async {
     final String baseUrl = '$Api_url/api/payment/tenant-payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -443,7 +473,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
       },
       body: jsonEncode(body),
@@ -483,6 +513,7 @@ class PaymentService {
     required bool Check,
     required String payment_method,
     required List<Map<String, dynamic>> entries,
+    String? idempotencyKey,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -517,7 +548,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
@@ -556,12 +587,25 @@ class PaymentService {
         }
       } else {
         print("[NORMAL/CHECK PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
-        throw Exception('Failed to make payment');
+        String serverMessage = '';
+        try {
+          serverMessage =
+              (jsonDecode(response.body)['message'] ?? '').toString();
+        } catch (_) {}
+        if (response.statusCode >= 500) {
+          // The server may have completed the payment before failing to
+          // respond, so the outcome must be reported as unknown.
+          throw Exception(' $paymentUnknownOutcomeMessage');
+        }
+        throw Exception(serverMessage.isNotEmpty
+            ? ' $serverMessage'
+            : 'Failed to make payment');
       }
     } else {
       try {
         // Scheduled future check/normal payment — still uses /api/payment/payment directly
         storePaymentfornormal(
+            idempotencyKey: idempotencyKey,
             companyName: company_name,
             adminId: adminId,
             tenantId: tenantId,
@@ -594,7 +638,8 @@ class PaymentService {
     required String checknumber,
     required String responseText,
     required String surcharge,
-  }) async {
+        String? idempotencyKey,
+}) async {
     final String baseUrl = '$Api_url/api/payment/payment';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -606,7 +651,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
       },
       body: jsonEncode(<String, dynamic>{

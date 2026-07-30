@@ -496,7 +496,10 @@ Widget buildDropdownListTile(
       leading: leadingIcon,
       title: Text(
         title,
-        style: TextStyle(color: blueColor),
+        style: TextStyle(
+          fontSize: 15,
+          color: blueColor,
+        ),
       ),
       children: subTopics.asMap().entries.map((entry) {
         int index = entry.key;

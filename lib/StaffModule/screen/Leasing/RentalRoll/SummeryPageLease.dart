@@ -946,7 +946,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       (leaseType ?? '').toLowerCase().trim() == 'at-will(month to month)';
 
   String _leaseStatusWithType(
-      String? startDate, String? endDate, String? leaseType) {
+      String? startDate, String? endDate, String? leaseType,
+      [bool? isEvicted]) {
+    // Web parity (CRM-4201): an evicted lease reads EVICTED regardless of dates
+    // — eviction shortens end_date to today, which would otherwise read Active.
+    if (isEvicted == true) return 'EVICTED';
     if (_isAtWill(leaseType)) return 'Active';
     return determineStatus(startDate, endDate);
   }
@@ -1050,6 +1054,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Color _getStatusColor(String status) {
+    if (status == 'EVICTED') {
+      return const Color(0xFFD32F2F); // web parity: red for EVICTED
+    }
     if (status == 'Active') {
       return Colors.green; // Green color for 'Active'
     } else if (status == 'Expired') {
@@ -1184,7 +1191,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${_leaseStatusWithType(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate, snapshot.data!.data!.leaseType)}'
+                                        '${_leaseStatusWithType(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate, snapshot.data!.data!.leaseType, snapshot.data!.data!.isEvicted)}'
                                         '${(snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty) ? " - Renewed" : ""}',
                                         style: TextStyle(
                                           fontSize: 15,
@@ -1194,7 +1201,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                   snapshot.data!.data!.startDate,
                                                   snapshot.data!.data!.endDate,
                                                   snapshot
-                                                      .data!.data!.leaseType)),
+                                                      .data!.data!.leaseType, snapshot.data!.data!.isEvicted)),
                                         ),
                                       ),
                                       if (snapshot.data!.data!.startDate !=

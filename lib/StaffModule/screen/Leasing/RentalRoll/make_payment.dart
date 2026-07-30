@@ -54,6 +54,42 @@ class MakePayment extends StatefulWidget {
 class _MakePaymentState extends State<MakePayment> {
   late Future<List<ChargeResponses>> futurectablecharge;
   bool _isLoading = false;
+
+  // One idempotency key per payment attempt: kept while the outcome is
+  // unknown (network drop / still processing) so a retry replays the first
+  // result instead of charging twice; cleared on a definitive answer.
+  String? _saleIdempotencyKey;
+  String? _saleKeyScope;
+  bool _saleInFlight = false;
+
+  // Identifies the payment being attempted. A key may only be replayed for the
+  // same payment — a changed amount/method/tenant must start a new key, or the
+  // server would replay the earlier result and record nothing.
+  String _saleScope() => [
+        _selectedPaymentMethod,
+        amountController.text.trim(),
+        selectedTenantId,
+        _startDate.text.trim(),
+        rows.length,
+      ].join('|');
+
+  void _beginSale() {
+    final scope = _saleScope();
+    if (_saleKeyScope != scope) {
+      _saleIdempotencyKey = null;
+      _saleKeyScope = scope;
+    }
+    _beginSale();
+    _saleInFlight = true;
+  }
+
+  void _settleSaleKey([Object? error]) {
+    _saleInFlight = false;
+    if (error == null || !isOutcomeUnknown(error)) {
+      _saleIdempotencyKey = null;
+      _saleKeyScope = null;
+    }
+  }
   final TextEditingController _startDate = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController Memo = TextEditingController();
@@ -3964,6 +4000,7 @@ class _MakePaymentState extends State<MakePayment> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0))),
                           onPressed: () async {
+                            if (_saleInFlight) return;
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
@@ -4035,8 +4072,10 @@ class _MakePaymentState extends State<MakePayment> {
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
                                   String notificationTime =
                                       formatter.format(DateTime.now());
+                                  _beginSale();
                                   await PaymentService()
                                       .makePaymentforcard(
+                                    idempotencyKey: _saleIdempotencyKey,
                                     adminId: id ?? "",
                                     firstName: selectedTenant["first_name"]!,
                                     lastName: selectedTenant["last_name"]!,
@@ -4061,6 +4100,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     notificationTime: notificationTime,
                                   )
                                       .then((value) {
+                                    _settleSaleKey();
                                     Fluttertoast.showToast(msg: "$value");
                                     setState(() {
                                       _isLoading = false;
@@ -4071,11 +4111,8 @@ class _MakePaymentState extends State<MakePayment> {
                                       Navigator.pop(context, true);
                                     }
                                   }).catchError((e) {
-                                    print(e
-                                        .toString()
-                                        .split("Exception")[1]
-                                        .toString()
-                                        .trimLeft());
+                                    _settleSaleKey(e);
+                                    print(e.toString());
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -4084,7 +4121,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       type: AlertType.warning,
                                       title: "Payment Failed!",
                                       desc:
-                                          "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                          friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
                                       style: const AlertStyle(
                                         backgroundColor: Colors.white,
                                         //  overlayColor: Colors.black.withOpacity(.8)
@@ -4137,8 +4174,10 @@ class _MakePaymentState extends State<MakePayment> {
                                 final double achPrincipal = _achPrincipalForSale();
                                 final Map<String, dynamic> vaultAch =
                                     achAccounts[selectedAchIndex!];
+                                _beginSale();
                                 await PaymentService()
                                     .makePaymentforach(
+                                  idempotencyKey: _saleIdempotencyKey,
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
@@ -4188,6 +4227,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   notificationTime: notificationTime,
                                 )
                                     .then((value) {
+                                  _settleSaleKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     _isLoading = false;
@@ -4198,11 +4238,8 @@ class _MakePaymentState extends State<MakePayment> {
                                     Navigator.pop(context, true);
                                   }
                                 }).catchError((e) {
-                                  print(e
-                                      .toString()
-                                      .split("Exception")[1]
-                                      .toString()
-                                      .trimLeft());
+                                  _settleSaleKey(e);
+                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -4211,7 +4248,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
                                     desc:
-                                        "${e.toString().split('Exception:')[1].toString().trimLeft()}",
+                                        friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
                                     style: const AlertStyle(
                                       backgroundColor: Colors.white,
                                       //  overlayColor: Colors.black.withOpacity(.8)
@@ -4249,8 +4286,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
+                                  idempotencyKey: _saleIdempotencyKey,
                                   adminId: id ?? "",
                                   firstName:
                                       selectedTenant?["first_name"] ?? "",
@@ -4276,6 +4315,7 @@ class _MakePaymentState extends State<MakePayment> {
                                   notificationTime: notificationTime,
                                 )
                                     .then((value) {
+                                  _settleSaleKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     _isLoading = false;
@@ -4286,11 +4326,14 @@ class _MakePaymentState extends State<MakePayment> {
                                     Navigator.pop(context, true);
                                   }
                                 }).catchError((e) {
+                                  _settleSaleKey(e);
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                               } else if (_selectedPaymentMethod == "Cash" ||
                                   _selectedPaymentMethod == "Manual") {
@@ -4309,8 +4352,10 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
+                                        idempotencyKey: _saleIdempotencyKey,
                                         adminId: id ?? "",
                                         firstName:
                                             selectedTenant?["first_name"] ?? "",
@@ -4337,6 +4382,7 @@ class _MakePaymentState extends State<MakePayment> {
                                         uploadedFile: _uploadedFileNames,
                                         notificationTime: notificationTime)
                                     .then((value) {
+                                  _settleSaleKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     _isLoading = false;
@@ -4347,13 +4393,16 @@ class _MakePaymentState extends State<MakePayment> {
                                     Navigator.pop(context, true);
                                   }
                                 }).catchError((e) {
+                                  _settleSaleKey(e);
                                   print(e);
-                                  Fluttertoast.showToast(msg: e);
+                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                               }
 

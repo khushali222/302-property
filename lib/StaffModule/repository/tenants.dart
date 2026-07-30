@@ -338,6 +338,60 @@ class TenantsRepository {
     }
   }
 
+  // Web parity (TenantsTable.js): toggle a tenant's 2FA from the row actions.
+  // Enable posts method "email"; the flag takes effect on the tenant's next
+  // login. Disable sends user_type + user_id only, matching the web body.
+  Future<bool> setTenant2FA({
+    required String tenantId,
+    required bool enable,
+    String? email,
+    String? phoneNumber,
+  }) async {
+    final url = Uri.parse(
+        '${Api_url}/api/2fa/${enable ? "admin-enable-2fa" : "admin-disable-2fa"}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString("staff_id");
+    String? token = prefs.getString('token');
+    try {
+      final response = await apiPost(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+        },
+        body: jsonEncode(enable
+            ? {
+                'user_type': 'tenant',
+                'user_id': tenantId,
+                'method': 'email',
+                'email': email,
+                'phone_number': phoneNumber,
+              }
+            : {
+                'user_type': 'tenant',
+                'user_id': tenantId,
+              }),
+      );
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseData['statusCode'] == 200) {
+        Fluttertoast.showToast(
+            msg:
+                '2FA ${enable ? "enabled" : "disabled"} successfully for tenant');
+        return true;
+      } else {
+        Fluttertoast.showToast(
+            msg: responseData['message'] ??
+                'Failed to ${enable ? "enable" : "disable"} 2FA');
+        return false;
+      }
+    } catch (error) {
+      print('setTenant2FA error: $error');
+      Fluttertoast.showToast(msg: 'An error occurred');
+      return false;
+    }
+  }
+
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
     print(url);

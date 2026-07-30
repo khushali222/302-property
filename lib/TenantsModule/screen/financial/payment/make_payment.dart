@@ -71,6 +71,41 @@ class _MakePaymentState extends State<MakePayment> {
   bool isLoading = true;
   bool IsLoading = false;
   bool isloading = false;
+
+  // One idempotency key per payment attempt: kept while the outcome is
+  // unknown (network drop / still processing) so a retry replays the first
+  // result instead of charging twice; cleared on a definitive answer.
+  String? _saleIdempotencyKey;
+  String? _saleKeyScope;
+  bool _saleInFlight = false;
+
+  // Identifies the payment being attempted. A key may only be replayed for the
+  // same payment — a changed amount/account must start a new key, or the server
+  // would replay the earlier result and record nothing.
+  String _saleScope() => [
+        totalamount,
+        selected_account,
+        widget.tenantId,
+        _startDate.text.trim(),
+      ].join('|');
+
+  void _beginSale() {
+    final scope = _saleScope();
+    if (_saleKeyScope != scope) {
+      _saleIdempotencyKey = null;
+      _saleKeyScope = scope;
+    }
+    _saleIdempotencyKey ??= newIdempotencyKey();
+    _saleInFlight = true;
+  }
+
+  void _settleSaleKey([Object? error]) {
+    _saleInFlight = false;
+    if (error == null || !isOutcomeUnknown(error)) {
+      _saleIdempotencyKey = null;
+      _saleKeyScope = null;
+    }
+  }
   bool isLoadingamount = false;
   bool hasError = false;
   double chargeAmount = 0.0;
@@ -3040,6 +3075,7 @@ class _MakePaymentState extends State<MakePayment> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
+                          if (_saleInFlight) return;
                           if ((_formKey.currentState?.validate() ?? false) &&
                               (!partialamount || _amountLimitError == null)) {
                             if (totalpayamount > 0.0) {
@@ -3109,8 +3145,10 @@ class _MakePaymentState extends State<MakePayment> {
                                 final String processorId =
                                     lease_data?['processorId']?.toString() ??
                                         '';
+                                _beginSale();
                                 await PaymentService()
                                     .makePaymentforach(
+                                  idempotencyKey: _saleIdempotencyKey,
                                   adminId: id ?? "",
                                   firstName: first_name ?? "",
                                   lastName: last_name ?? "",
@@ -3135,17 +3173,20 @@ class _MakePaymentState extends State<MakePayment> {
                                   paymentAmountType: selected_account ?? 'full',
                                 )
                                     .then((value) {
+                                  _settleSaleKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() => IsLoading = false);
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
+                                  _settleSaleKey(e);
                                   setState(() => IsLoading = false);
                                   Alert(
                                     context: context,
                                     type: AlertType.warning,
                                     title: "Payment Failed!",
-                                    desc:
-                                        "${e.toString().split('Exception:').length > 1 ? e.toString().split('Exception:')[1].toString().trimLeft() : e.toString()}",
+                                    desc: friendlyErrorMessage(e,
+                                        networkMessage:
+                                            paymentNetworkErrorMessage),
                                     style: AlertStyle(
                                         backgroundColor: Colors.white),
                                     buttons: [
@@ -3160,13 +3201,17 @@ class _MakePaymentState extends State<MakePayment> {
                                     ],
                                   ).show();
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                                 return;
                               }
                               try {
+                                _beginSale();
                                 await PaymentService()
                                     .makePaymentforcard(
+                                  idempotencyKey: _saleIdempotencyKey,
                                   scheduledPayment: scheduledPayment ?? false,
                                   entries: manualEntries,
                                   paymentAmountType: selected_account ?? '',
@@ -3197,22 +3242,20 @@ class _MakePaymentState extends State<MakePayment> {
                                   notificationTime: notificationTime,
                                 )
                                     .then((value) {
+                                  _settleSaleKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     IsLoading = false;
                                   });
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
+                                  _settleSaleKey(e);
                                   setState(() {
                                     IsLoading = false;
                                   });
-                                  final msg =
-                                      e.toString().contains('Exception:')
-                                          ? e
-                                              .toString()
-                                              .split('Exception:')[1]
-                                              .trimLeft()
-                                          : e.toString();
+                                  final msg = friendlyErrorMessage(e,
+                                      networkMessage:
+                                          paymentNetworkErrorMessage);
                                   Alert(
                                     context: context,
                                     type: AlertType.warning,
@@ -3232,14 +3275,18 @@ class _MakePaymentState extends State<MakePayment> {
                                     ],
                                   ).show();
                                   Fluttertoast.showToast(
-                                      msg: "Payment failed $e");
+                                      msg: friendlyErrorMessage(e,
+                                          networkMessage:
+                                              paymentNetworkErrorMessage));
                                 });
                               } catch (e) {
                                 setState(() => IsLoading = false);
                                 print(
                                     "[CARD PAYMENT] Sync error before API call: $e");
                                 Fluttertoast.showToast(
-                                    msg: "Payment error: $e");
+                                    msg: friendlyErrorMessage(e,
+                                        networkMessage:
+                                            paymentNetworkErrorMessage));
                               }
                             } else {
                               setState(() {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
@@ -413,6 +414,104 @@ TableRow buildTableRow(
 String getDisplayValue(String? value) {
   // Return 'N/A' if the value is null or empty, otherwise return the value
   return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+}
+
+// Payments may already be processed server-side when the connection drops,
+// so the message must not claim a definitive failure.
+const String paymentNetworkErrorMessage =
+    'Payment status unknown — the connection was lost. Please check the ledger before trying again.';
+
+const String networkErrorMessage =
+    'No internet connection. Please check your network and try again.';
+
+const String paymentUnknownOutcomeMessage =
+    'Payment status unknown — the server did not confirm the result. Please check the ledger before trying again.';
+
+const List<String> _networkErrorMarkers = [
+  'socketexception',
+  'clientexception',
+  'handshakeexception',
+  'httpexception',
+  'certificateexception',
+  'tlsexception',
+  'timeoutexception',
+  'connection abort',
+  'failed host lookup',
+  'connection refused',
+  'connection reset',
+  'connection closed',
+  'network is unreachable',
+  'connection timed out',
+  'no address associated with hostname',
+];
+
+// True when the error is a transport-level failure, meaning the request's
+// outcome on the server is unknown (it may still have been processed).
+bool isNetworkError(Object? error) {
+  final lower = (error?.toString() ?? '').toLowerCase();
+  return _networkErrorMarkers.any(lower.contains);
+}
+
+// Server-side failures that also leave the outcome undecided: a gateway/proxy
+// error may hide a completed payment, and a 409 means the first attempt is
+// still running. An idempotency key must be kept across these.
+const List<String> _outcomeUnknownMarkers = [
+  'currently being processed',
+  'status unknown',
+  'bad gateway',
+  'gateway timeout',
+  'service unavailable',
+];
+
+bool isOutcomeUnknown(Object? error) {
+  if (isNetworkError(error)) return true;
+  final lower = (error?.toString() ?? '').toLowerCase();
+  return _outcomeUnknownMarkers.any(lower.contains);
+}
+
+String newIdempotencyKey() => const Uuid().v4();
+
+// Anything that would expose internals rather than inform the user: a URI or
+// hostname, a parser/programming-error dump, or an absent server message.
+const List<String> _unsafeMessageMarkers = [
+  'uri=',
+  'http://',
+  'https://',
+  'hostname',
+  'os error',
+  'errno',
+  'formatexception',
+  'at character',
+  '<html',
+  'is not a subtype of',
+  'nosuchmethoderror',
+  'rangeerror',
+  'argumenterror',
+  'stateerror',
+  'typeerror',
+];
+
+String friendlyErrorMessage(
+  Object? error, {
+  String networkMessage = networkErrorMessage,
+  String fallbackMessage = 'Something went wrong. Please try again.',
+}) {
+  final raw = error?.toString() ?? '';
+  if (isNetworkError(raw)) return networkMessage;
+  // Dart Errors are programming faults, never user-facing information.
+  if (error is Error) return fallbackMessage;
+  var message = raw;
+  if (message.contains('Exception:')) {
+    message = message.split('Exception:').last;
+  }
+  message = message.trim();
+  final lower = message.toLowerCase();
+  if (message.isEmpty ||
+      lower == 'null' ||
+      _unsafeMessageMarkers.any(lower.contains)) {
+    return fallbackMessage;
+  }
+  return message;
 }
 
 // Common currency formatting function for US-centric format

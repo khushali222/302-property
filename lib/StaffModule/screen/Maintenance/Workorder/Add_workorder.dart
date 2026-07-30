@@ -514,7 +514,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3482,7 +3482,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
         if (mounted) Navigator.pop(context, true);
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Failed to add work order: $e",
+            msg: "Failed to add work order: ${friendlyErrorMessage(e)}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -3717,7 +3717,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3797,7 +3797,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         _isLoadingvendors = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3839,7 +3839,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         _isLoadingstaff = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3883,7 +3883,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -6547,7 +6547,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         if (mounted) Navigator.pop(context, true);
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Failed to add work order: $e",
+            msg: "Failed to add work order: ${friendlyErrorMessage(e)}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

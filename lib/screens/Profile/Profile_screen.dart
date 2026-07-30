@@ -156,73 +156,154 @@ class _Profile_screenState extends State<Profile_screen> {
         // Locked for the first 60s of the 10 minute window, and while a
         // request is already in flight — same gating as web and login.
         final bool canResend = value <= 540 && !isVerifyingCode;
+        // Web design: clock + "Expires in Xm Xs" on the left, a plain blue
+        // "Resend Code" link on the right.
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (value > 0)
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Code will expire in ",
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+              Row(
+                children: [
+                  Icon(Icons.access_time,
+                      size: 15, color: Colors.grey.shade500),
+                  const SizedBox(width: 5),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Expires in ",
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        TextSpan(
+                          text: getTimerString(),
+                          style: const TextStyle(
+                            color: Color(0xFFE2574C),
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                    TextSpan(
-                      text: getTimerString(),
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               )
             else if (is2FACodeExpired)
               const Text(
                 "Code expired",
                 style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFE2574C),
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
                 ),
               )
             else
               const SizedBox.shrink(),
             GestureDetector(
               onTap: canResend ? onResend : null,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.refresh,
-                        color: canResend ? blueColor : Colors.grey.shade600,
-                        size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Resend Code",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: canResend ? blueColor : Colors.grey.shade600,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Row(
+                children: [
+                  Icon(Icons.refresh,
+                      color:
+                          canResend ? const Color(0xFF2F6FE4) : Colors.grey.shade500,
+                      size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Resend Code",
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      color: canResend
+                          ? const Color(0xFF2F6FE4)
+                          : Colors.grey.shade500,
+                      fontWeight: FontWeight.w700,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  /// One selectable 2FA method row (web design).
+  ///
+  /// Soft grey card that turns navy-bordered with a blue wash when picked;
+  /// the method icon sits on the right and an unavailable destination is
+  /// called out in salmon.
+  Widget _build2FAOptionTile({
+    required String label,
+    required String value,
+    String detail = '',
+    bool enabled = true,
+  }) {
+    final bool isSelected = selected2FAMethod == value;
+    return GestureDetector(
+      onTap: enabled ? () => setState(() => selected2FAMethod = value) : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color:
+              isSelected ? const Color(0xFFE9EFFB) : const Color(0xFFF7F9FB),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? blueColor : const Color(0xFFEDF0F4),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Radio<String>(
+              value: value,
+              groupValue: selected2FAMethod,
+              onChanged: enabled
+                  ? (val) => setState(() => selected2FAMethod = val!)
+                  : null,
+              activeColor: blueColor,
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      color: enabled ? blueColor : Colors.grey[500],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    detail,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: enabled
+                          ? Colors.grey[600]
+                          : const Color(0xFFF08A76),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              value == 'sms' ? Icons.smartphone_outlined : Icons.mail_outline,
+              size: 20,
+              color:
+                  enabled ? const Color(0xFF8A93A3) : const Color(0xFFC3C9D3),
+            ),
+            const SizedBox(width: 6),
+          ],
+        ),
+      ),
     );
   }
 
@@ -745,27 +826,52 @@ class _Profile_screenState extends State<Profile_screen> {
                               //  height: 10,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
+                                border:
+                                    Border.all(color: const Color(0xFFE5E9F0)),
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
+                                  // Web design: bold navy title, contextual
+                                  // grey subtitle, toggle pinned to the right.
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 10),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        16, 16, 16, 12),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          "Two-Factor Authentication (2FA) :",
-                                          style: TextStyle(
-                                              color: Color(0xFF8A95A8),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Two-Factor Authentication",
+                                                style: TextStyle(
+                                                    color: blueColor,
+                                                    fontSize: 16.5,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                showDisableVerification
+                                                    ? "Verification required to disable"
+                                                    : enble2FA
+                                                        ? "Protecting your account"
+                                                        : "Adds a second step at sign-in",
+                                                style: const TextStyle(
+                                                    color: Color(0xFF8A93A3),
+                                                    fontSize: 13,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         const SizedBox(
                                           width: 10,
@@ -821,6 +927,11 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ],
                                     ),
                                   ),
+                                  const Divider(
+                                      height: 1,
+                                      thickness: 1,
+                                      color: Color(0xFFEFF2F6)),
+                                  const SizedBox(height: 14),
                                   // Show different content based on 2FA state
                                   if (!enble2FA && !show2FASetup)
                                     Padding(
@@ -853,101 +964,30 @@ class _Profile_screenState extends State<Profile_screen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Choose your preferred 2FA method:",
+                                            "Choose your preferred method",
                                             style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
+                                              color: blueColor,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           SizedBox(height: 16),
 
-                                          // SMS Radio Button
-                                          Row(
-                                            children: [
-                                              Radio<String>(
-                                                value: 'sms',
-                                                groupValue: selected2FAMethod,
-                                                onChanged: _canUseSms2FA
-                                                    ? (value) {
-                                                        setState(() {
-                                                          selected2FAMethod =
-                                                              value!;
-                                                        });
-                                                      }
-                                                    : null,
-                                                activeColor: blueColor,
-                                              ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Text(
-                                                      "SMS",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      _canUseSms2FA
-                                                          ? _phone2FA
-                                                          : "Phone number required",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black54,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
+                                          _build2FAOptionTile(
+                                            label: "SMS",
+                                            value: 'sms',
+                                            enabled: _canUseSms2FA,
+                                            detail: _canUseSms2FA
+                                                ? _phone2FA
+                                                : "No phone number on file",
                                           ),
-
-                                          // Email Radio Button
-                                          Row(
-                                            children: [
-                                              Radio<String>(
-                                                value: 'email',
-                                                groupValue: selected2FAMethod,
-                                                onChanged: _canUseEmail2FA
-                                                    ? (value) {
-                                                        setState(() {
-                                                          selected2FAMethod =
-                                                              value!;
-                                                        });
-                                                      }
-                                                    : null,
-                                                activeColor: blueColor,
-                                              ),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Text(
-                                                      "Email",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      _canUseEmail2FA
-                                                          ? _email2FA
-                                                          : "Email required",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black54,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
+                                          _build2FAOptionTile(
+                                            label: "Email",
+                                            value: 'email',
+                                            enabled: _canUseEmail2FA,
+                                            detail: _canUseEmail2FA
+                                                ? _email2FA
+                                                : "No email on file",
                                           ),
 
                                           SizedBox(height: 20),
@@ -972,14 +1012,18 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     }
                                                   : null,
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    _can2FAEnable
-                                                        ? blueColor
-                                                        : Colors.grey,
+                                                backgroundColor: blueColor,
                                                 foregroundColor: Colors.white,
+                                                // Web design: disabled = light
+                                                // grey pill with muted text.
+                                                disabledBackgroundColor:
+                                                    const Color(0xFFE5E8ED),
+                                                disabledForegroundColor:
+                                                    const Color(0xFF9AA3B0),
+                                                elevation: 0,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(12),
                                                 ),
                                               ),
                                               child: Text(
@@ -1293,20 +1337,129 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                     ),
 
-                                  // 2FA Enabled Status
+                                  // 2FA Enabled Status - web's green banner:
+                                  // circled check + bold green text on a soft
+                                  // green pill.
                                   if (enble2FA && !show2FASetup)
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
-                                      child: Text(
-                                        email2FA
-                                            ? "✓ 2FA is enabled via Email"
-                                            : sms2FA
-                                                ? "✓ 2FA is enabled via SMS"
-                                                : "✓ 2FA is enabled",
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 16,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 14, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFE9F6EE),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 22,
+                                              width: 22,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFF34A661),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.check,
+                                                  size: 14,
+                                                  color: Colors.white),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                email2FA
+                                                    ? "2FA is enabled via Email"
+                                                    : sms2FA
+                                                        ? "2FA is enabled via SMS"
+                                                        : "2FA is enabled",
+                                                style: const TextStyle(
+                                                  color: Color(0xFF2E8B57),
+                                                  fontSize: 14.5,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                  // Verification-method tile (web design):
+                                  // mail/phone icon in a soft blue square,
+                                  // caps label, bold destination. Main
+                                  // enabled view only - the disable card
+                                  // shows "Sent to ..." itself.
+                                  if (enble2FA &&
+                                      !show2FASetup &&
+                                      !showDisableVerification &&
+                                      !showRegenerateVerification)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 12, 16, 0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF7F9FB),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                              color: const Color(0xFFE8ECF1)),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              height: 40,
+                                              width: 40,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFE4EDFB),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Icon(
+                                                sms2FA && !email2FA
+                                                    ? Icons.sms_outlined
+                                                    : Icons.mail_outline,
+                                                size: 20,
+                                                color: const Color(0xFF2F6FE4),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "VERIFICATION METHOD",
+                                                    style: TextStyle(
+                                                      color: Color(0xFF8A93A3),
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      letterSpacing: 0.8,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    sms2FA && !email2FA
+                                                        ? _phone2FA
+                                                        : _email2FA,
+                                                    style: TextStyle(
+                                                      color: blueColor,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -1325,140 +1478,208 @@ class _Profile_screenState extends State<Profile_screen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            "Enter verification code to disable 2FA:",
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          SizedBox(height: 16),
-
-                                          // Verification Code Input Field
-                                          TextField(
-                                            controller:
-                                                disableVerificationController,
-                                            keyboardType: TextInputType.number,
-                                            maxLength: 6,
-                                            // Web greys the field out once the
-                                            // code has expired.
-                                            enabled: !is2FACodeExpired,
-                                            decoration: InputDecoration(
-                                              hintText: "Enter 6-digit code",
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                borderSide: BorderSide(
-                                                    color: Colors.red,
-                                                    width: 2),
-                                              ),
-                                              counterText: "",
-                                            ),
-                                          ),
-
-                                          SizedBox(height: 10),
-
-                                          // The disable code expires server
-                                          // side after 10 minutes, so show the
-                                          // countdown and a way to get a new
-                                          // one — as web does here.
-                                          _build2FACodeTimerRow(
-                                            onResend: () {
-                                              // The previous code is dead once
-                                              // a new one is issued, so drop
-                                              // the stale digits.
-                                              disableVerificationController
-                                                  .clear();
-                                              _sendDisable2FACode();
-                                            },
-                                          ),
-
-                                          SizedBox(height: 20),
-
-                                          // Disable 2FA Button
-                                          SizedBox(
+                                          const SizedBox(height: 12),
+                                          // Web design: the code entry lives
+                                          // in its own soft card with the
+                                          // destination under the title.
+                                          Container(
                                             width: double.infinity,
-                                            height: 48,
-                                            child: ElevatedButton(
-                                              // An expired code is rejected by
-                                              // the server, so block the tap
-                                              // until a new one is requested.
-                                              onPressed: (isVerifyingCode ||
-                                                      is2FACodeExpired)
-                                                  ? null
-                                                  : () =>
-                                                      _disable2FAWithVerification(),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                foregroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                            padding: const EdgeInsets.all(14),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF8FAFC),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFE9EDF2)),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Enter verification code to disable 2FA",
+                                                  style: TextStyle(
+                                                    color: blueColor,
+                                                    fontSize: 14.5,
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                  ),
                                                 ),
-                                              ),
-                                              child: isVerifyingCode
-                                                  ? SizedBox(
-                                                      width: 20,
-                                                      height: 20,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color: Colors.white,
-                                                        strokeWidth: 2,
-                                                      ),
-                                                    )
-                                                  : Text(
-                                                      "Disable 2FA",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  "Sent to ${email2FA ? _email2FA : (sms2FA ? _phone2FA : _email2FA)}",
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF8A93A3),
+                                                    fontSize: 12.5,
+                                                    fontWeight:
+                                                        FontWeight.w500,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+
+                                                // Verification Code Input Field
+                                                TextField(
+                                                  controller:
+                                                      disableVerificationController,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  maxLength: 6,
+                                                  // Web greys the field out once the
+                                                  // code has expired.
+                                                  enabled: !is2FACodeExpired,
+                                                  decoration: InputDecoration(
+                                                    hintText:
+                                                        "Enter 6-digit code",
+                                                    filled: true,
+                                                    fillColor: Colors.white,
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      borderSide: const BorderSide(
+                                                          color: Color(
+                                                              0xFFE2E6EC)),
+                                                    ),
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      borderSide: const BorderSide(
+                                                          color: Color(
+                                                              0xFFE2E6EC)),
+                                                    ),
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      borderSide: BorderSide(
+                                                          color: blueColor,
+                                                          width: 1.5),
+                                                    ),
+                                                    counterText: "",
+                                                  ),
+                                                ),
+
+                                                const SizedBox(height: 10),
+
+                                                // The disable code expires server
+                                                // side after 10 minutes, so show the
+                                                // countdown and a way to get a new
+                                                // one — as web does here.
+                                                _build2FACodeTimerRow(
+                                                  onResend: () {
+                                                    // The previous code is dead once
+                                                    // a new one is issued, so drop
+                                                    // the stale digits.
+                                                    disableVerificationController
+                                                        .clear();
+                                                    _sendDisable2FACode();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 16),
+
+                                          // Web design: Cancel + solid Disable
+                                          // side by side.
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: SizedBox(
+                                                  height: 48,
+                                                  child: OutlinedButton(
+                                                    onPressed: () {
+                                                      // Leaving the flow must not
+                                                      // leave a countdown ticking.
+                                                      stopTimer();
+                                                      setState(() {
+                                                        showDisableVerification =
+                                                            false;
+                                                        disableVerificationController
+                                                            .clear();
+                                                      });
+                                                    },
+                                                    style: OutlinedButton
+                                                        .styleFrom(
+                                                      side: const BorderSide(
+                                                          color: Color(
+                                                              0xFFE2E6EC)),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                       ),
                                                     ),
-                                            ),
-                                          ),
-
-                                          SizedBox(height: 12),
-
-                                          // Cancel Button
-                                          SizedBox(
-                                            width: double.infinity,
-                                            height: 48,
-                                            child: OutlinedButton(
-                                              onPressed: () {
-                                                // Leaving the flow must not
-                                                // leave a countdown ticking.
-                                                stopTimer();
-                                                setState(() {
-                                                  showDisableVerification =
-                                                      false;
-                                                  disableVerificationController
-                                                      .clear();
-                                                });
-                                              },
-                                              style: OutlinedButton.styleFrom(
-                                                side: BorderSide(
-                                                    color: Colors.grey),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                                    child: Text(
+                                                      "Cancel",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: blueColor,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                              child: Text(
-                                                "Cancel",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.grey[700],
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: SizedBox(
+                                                  height: 48,
+                                                  child: ElevatedButton(
+                                                    // An expired code is rejected by
+                                                    // the server, so block the tap
+                                                    // until a new one is requested.
+                                                    onPressed: (isVerifyingCode ||
+                                                            is2FACodeExpired)
+                                                        ? null
+                                                        : () =>
+                                                            _disable2FAWithVerification(),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          const Color(
+                                                              0xFFD96A45),
+                                                      foregroundColor:
+                                                          Colors.white,
+                                                      elevation: 0,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                    ),
+                                                    child: isVerifyingCode
+                                                        ? SizedBox(
+                                                            width: 20,
+                                                            height: 20,
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              color:
+                                                                  Colors.white,
+                                                              strokeWidth: 2,
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            "Disable 2FA",
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
+                                            ],
                                           ),
                                         ],
                                       ),
@@ -1537,7 +1758,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       ),
                                                     )
                                                   : Text(
-                                                      "Regenerate Backup Codes",
+                                                      "Backup Codes",
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
@@ -1626,16 +1847,16 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         backgroundColor:
-                                                            Colors.red.shade50,
+                                                            const Color(
+                                                                0xFFFDF0EA),
                                                         foregroundColor:
-                                                            Colors.red.shade700,
-                                                        side: BorderSide(
-                                                            color: Colors
-                                                                .red.shade300,
-                                                            width: 1.5),
-                                                        elevation: 2,
-                                                        shadowColor:
-                                                            Colors.red.shade100,
+                                                            const Color(
+                                                                0xFFD2603C),
+                                                        side: const BorderSide(
+                                                            color: Color(
+                                                                0xFFF2C7B5),
+                                                            width: 1.2),
+                                                        elevation: 0,
                                                         padding: EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 16),
@@ -1643,7 +1864,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             RoundedRectangleBorder(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(8),
+                                                                  .circular(12),
                                                         ),
                                                       ),
                                                       child: Row(
@@ -1651,7 +1872,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             MainAxisAlignment
                                                                 .center,
                                                         children: [
-                                                          Icon(Icons.security,
+                                                          Icon(
+                                                              Icons
+                                                                  .shield_outlined,
                                                               size: 18),
                                                           SizedBox(width: 8),
                                                           Text(
@@ -1687,19 +1910,14 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         backgroundColor:
-                                                            blueColor
-                                                                .withOpacity(
-                                                                    0.1),
+                                                            Colors.white,
                                                         foregroundColor:
                                                             blueColor,
-                                                        side: BorderSide(
-                                                            color: blueColor
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            width: 1.5),
-                                                        elevation: 2,
-                                                        shadowColor: blueColor
-                                                            .withOpacity(0.1),
+                                                        side: const BorderSide(
+                                                            color: Color(
+                                                                0xFFE2E6EC),
+                                                            width: 1.2),
+                                                        elevation: 0,
                                                         padding: EdgeInsets
                                                             .symmetric(
                                                                 horizontal: 16),
@@ -1707,7 +1925,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             RoundedRectangleBorder(
                                                           borderRadius:
                                                               BorderRadius
-                                                                  .circular(8),
+                                                                  .circular(12),
                                                         ),
                                                       ),
                                                       child: Row(
@@ -1720,7 +1938,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           SizedBox(width: 8),
                                                           Flexible(
                                                             child: Text(
-                                                              "Regenerate Backup Codes",
+                                                              "Backup Codes",
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -1750,7 +1968,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       flex: 1,
                                                       child: SizedBox(
                                                         height:
-                                                            60, // Fixed height for consistency
+                                                            48, // Fixed height for consistency
                                                         child: ElevatedButton(
                                                           onPressed: () {
                                                             // showDisableVerification
@@ -1768,19 +1986,17 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           style: ElevatedButton
                                                               .styleFrom(
                                                             backgroundColor:
-                                                                Colors.red
-                                                                    .shade50,
+                                                                const Color(
+                                                                    0xFFFDF0EA),
                                                             foregroundColor:
-                                                                Colors.red
-                                                                    .shade700,
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .red
-                                                                    .shade300,
-                                                                width: 1.5),
-                                                            elevation: 2,
-                                                            shadowColor: Colors
-                                                                .red.shade100,
+                                                                const Color(
+                                                                    0xFFD2603C),
+                                                            side:
+                                                                const BorderSide(
+                                                                    color: Color(
+                                                                        0xFFF2C7B5),
+                                                                    width: 1.2),
+                                                            elevation: 0,
                                                             padding: EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
@@ -1790,7 +2006,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
-                                                                          8),
+                                                                          12),
                                                             ),
                                                           ),
                                                           child: Row(
@@ -1800,7 +2016,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                             children: [
                                                               Icon(
                                                                   Icons
-                                                                      .security,
+                                                                      .shield_outlined,
                                                                   size: 18),
                                                               SizedBox(
                                                                   width: 8),
@@ -1828,7 +2044,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       flex: 1,
                                                       child: SizedBox(
                                                         height:
-                                                            60, // Same fixed height
+                                                            48, // Same fixed height
                                                         child: ElevatedButton(
                                                           onPressed: () {
                                                             // Blocks a double
@@ -1843,21 +2059,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           style: ElevatedButton
                                                               .styleFrom(
                                                             backgroundColor:
-                                                                blueColor
-                                                                    .withOpacity(
-                                                                        0.1),
+                                                                Colors.white,
                                                             foregroundColor:
                                                                 blueColor,
-                                                            side: BorderSide(
-                                                                color: blueColor
-                                                                    .withOpacity(
-                                                                        0.3),
-                                                                width: 1.5),
-                                                            elevation: 2,
-                                                            shadowColor:
-                                                                blueColor
-                                                                    .withOpacity(
-                                                                        0.1),
+                                                            side:
+                                                                const BorderSide(
+                                                                    color: Color(
+                                                                        0xFFE2E6EC),
+                                                                    width: 1.2),
+                                                            elevation: 0,
                                                             padding: EdgeInsets
                                                                 .symmetric(
                                                                     horizontal:
@@ -1867,7 +2077,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
-                                                                          8),
+                                                                          12),
                                                             ),
                                                           ),
                                                           child: Row(
@@ -1882,7 +2092,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                                   width: 8),
                                                               Flexible(
                                                                 child: Text(
-                                                                  "Regenerate Backup Codes",
+                                                                  "Backup Codes",
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:

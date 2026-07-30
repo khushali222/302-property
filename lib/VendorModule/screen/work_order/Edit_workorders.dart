@@ -202,7 +202,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       _selectedUnit = fetchedDetails.unitId;
     });
     //} catch (e) {
-    //print('Failed to fetch lease details: $e');
+    //print('Failed to fetch lease details: ${friendlyErrorMessage(e)}');
     //}
   }
 
@@ -239,7 +239,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -281,7 +281,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _isLoading = false;
       });
       /*   ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
+        SnackBar(content: Text('Failed to fetch units: ${friendlyErrorMessage(e)}')),
       );*/
     }
   }
@@ -321,7 +321,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _isLoadingvendors = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -362,7 +362,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _isLoadingstaff = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -405,7 +405,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -4132,7 +4132,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       }).catchError((e) {
         // Error
         Fluttertoast.showToast(
-          msg: "Failed to edit work order: $e",
+          msg: "Failed to edit work order: ${friendlyErrorMessage(e)}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

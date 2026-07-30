@@ -44,7 +44,6 @@ Widget buildListTile(
     ),
     padding: EdgeInsets.symmetric(horizontal: 5),
     child: ListTile(
-      dense: true,
       onTap: () {
         if (title == "Dashboard" && active != true) {
           NavigationHelper.navigateWithValidationBuilder(
@@ -213,13 +212,13 @@ Widget buildCommunicationsSection(
     final Color c = active ? Colors.white : blueColor;
     switch (page) {
       case 'Send E-mail':
-        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.envelopeCircleCheck, size: 20, color: c);
       case 'E-mail Logs':
-        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.envelopeOpenText, size: 20, color: c);
       case 'Templates':
-        return FaIcon(FontAwesomeIcons.fileLines, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.fileLines, size: 20, color: c);
       default:
-        return FaIcon(FontAwesomeIcons.circle, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.circle, size: 20, color: c);
     }
   }
 
@@ -234,7 +233,6 @@ Widget buildCommunicationsSection(
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListTile(
-          dense: true,
           leading: iconForPage(title, active),
           title: Text(
             title,
@@ -298,7 +296,7 @@ Widget buildCommunicationsSection(
                       collapsedIconColor: chevronCollapsed,
                       leading: FaIcon(
                         FontAwesomeIcons.envelope,
-                        size: 18,
+                        size: 20,
                         color: blueColor,
                       ),
                       title: Text(
@@ -367,7 +365,6 @@ Widget buildCommunicationsSection(
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: ListTile(
-                            dense: true,
                             leading: iconForPage('Templates', active),
                             title: Text(
                               'Templates',
@@ -418,11 +415,11 @@ Widget buildPropertyMaintenanceSection(
     final Color c = active ? Colors.white : blueColor;
     switch (page) {
       case 'Bid Room':
-        return FaIcon(FontAwesomeIcons.fileLines, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.fileLines, size: 20, color: c);
       case 'Vendors':
-        return FaIcon(FontAwesomeIcons.user, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.user, size: 20, color: c);
       default:
-        return FaIcon(FontAwesomeIcons.circle, size: 18, color: c);
+        return FaIcon(FontAwesomeIcons.circle, size: 20, color: c);
     }
   }
 
@@ -437,7 +434,6 @@ Widget buildPropertyMaintenanceSection(
           borderRadius: BorderRadius.circular(10),
         ),
         child: ListTile(
-          dense: true,
           leading: iconForPage(title, active),
           title: Text(
             title,
@@ -526,7 +522,10 @@ Widget buildDropdownListTile(
       leading: leadingIcon,
       title: Text(
         title,
-        style: TextStyle(color: blueColor),
+        style: TextStyle(
+          fontSize: 15,
+          color: blueColor,
+        ),
       ),
       children: subTopics.asMap().entries.map((entry) {
         int index = entry.key;
@@ -541,7 +540,6 @@ Widget buildDropdownListTile(
               borderRadius: BorderRadius.circular(10),
             ),
             child: ListTile(
-              dense: true,
               leading: subTopicIcons[index], // Add icon here
               title: Text(
                 subTopic,

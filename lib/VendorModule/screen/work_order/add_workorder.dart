@@ -307,7 +307,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -348,7 +348,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
+        SnackBar(content: Text('Failed to fetch units: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -1186,7 +1186,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         // Handle success: Maybe navigate to another screen or reset the form
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Failed to add work order: $e",
+            msg: "Failed to add work order: ${friendlyErrorMessage(e)}",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

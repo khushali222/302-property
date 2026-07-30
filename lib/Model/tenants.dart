@@ -61,6 +61,8 @@ class Tenant {
   String? welcomeEmailSentAt;
   String? passwordSetAt;
   bool? hasPassword;
+  // Web parity (TenantsTable.js): drives the row's Enable/Disable 2FA action.
+  bool twoFactorEnabled = false;
   // Welcome-email flow (replaces the password field) — captured from
   // AddTenantCosignerScreen; matches the web lease dialog.
   bool? sendWelcomeEmail;
@@ -147,6 +149,7 @@ class Tenant {
     hasPassword = json['has_password'] == true ||
         (json['tenant_password'] != null &&
             json['tenant_password'].toString().isNotEmpty);
+    twoFactorEnabled = json['two_factor_enabled'] == true;
     if (json['leaseData'] != null) {
       // Fixed the field name
       leaseData = <TenantLeaseData>[];

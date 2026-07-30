@@ -53,8 +53,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     return ClipRRect(
       borderRadius: const BorderRadius.only(
-        topRight: Radius.circular(16),
-        bottomRight: Radius.circular(16),
+        topRight: Radius.circular(80),
+        bottomRight: Radius.circular(80),
       ),
       child: Drawer(
         backgroundColor: Colors.white,
@@ -92,14 +92,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     ? SvgPicture.asset(
                         "assets/images/tenants/dashboard1.svg",
                         fit: BoxFit.cover,
-                        height: 18,
-                        width: 18,
+                        height: 20,
+                        width: 20,
                       )
                     : SvgPicture.asset(
                         "assets/images/tenants/dashboard.svg",
                         fit: BoxFit.cover,
-                        height: 18,
-                        width: 18,
+                        height: 20,
+                        width: 20,
                         color: blueColor,
                       ),
                 "Dashboard",
@@ -111,7 +111,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.buildingUser,
-                  size: 18,
+                  size: 20,
                   color: widget.currentpage == "Properties"
                       ? Colors.white
                       : blueColor,
@@ -140,8 +140,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               buildListTile(
                 context,
                 FaIcon(
-                  FontAwesomeIcons.users,
-                  size: 18,
+                  FontAwesomeIcons.houseChimneyUser,
+                  size: 20,
                   color: widget.currentpage == "Tenants"
                       ? Colors.white
                       : blueColor,
@@ -226,14 +226,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 [
                   FaIcon(
                     FontAwesomeIcons.wallet,
-                    size: 18,
+                    size: 20,
                     color: widget.currentpage == "Leases"
                         ? Colors.white
                         : blueColor,
                   ), // Icon for Properties
                   FaIcon(
                     FontAwesomeIcons.addressCard,
-                    size: 18,
+                    size: 20,
                     color: widget.currentpage == "Applicants"
                         ? Colors.white
                         : blueColor,
@@ -256,14 +256,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         //Pending Lease
                   FaIcon(
                     FontAwesomeIcons.fileLines,
-                    size: 18,
+                    size: 20,
                     color: widget.currentpage == "Pending Lease"
                         ? Colors.white
                         : blueColor,
                   ),
                   FaIcon(
                     FontAwesomeIcons.clock,
-                    size: 18,
+                    size: 20,
                     color: widget.currentpage == "Scheduled Payment"
                         ? Colors.white
                         : blueColor,
@@ -371,7 +371,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.folderOpen,
-                  size: 18,
+                  size: 20,
                   color: widget.currentpage == "Reports"
                       ? Colors.white
                       : blueColor,
@@ -397,7 +397,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 context,
                 FaIcon(
                   FontAwesomeIcons.cog,
-                  size: 18,
+                  size: 20,
                   color: widget.currentpage == "Settings"
                       ? Colors.white
                       : blueColor,

@@ -501,13 +501,13 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                                   ),
                                 ),
                               ),
-                              if (_selectedReport != null)
+                              // The result count lives in the results header
+                              // below - only fetch feedback is shown here.
+                              if (_selectedReport != null && _reportDataLoading)
                                 Padding(
                                   padding: const EdgeInsets.only(left: 12),
                                   child: Text(
-                                    _reportDataLoading
-                                        ? '(Loading...)'
-                                        : '(${_reportData.length} ${_reportData.length == 1 ? 'result' : 'results'})',
+                                    '(Loading...)',
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: blueColor,
@@ -631,8 +631,10 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
   ) {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     final entries = <MapEntry<String, String>>[];
-    // First two columns are shown in row header; show rest inside expanded
-    final columnsToShow = columns.length > 2 ? columns.sublist(2) : <String>[];
+    // All columns are repeated inside the expanded view - the row header can
+    // clip long values (e.g. co-tenant names), so the first two must also be
+    // readable in full here.
+    final columnsToShow = columns;
     for (final key in columnsToShow) {
       final label = customReportColumnLabels[key] ?? key;
       final raw = row[key];
@@ -865,18 +867,12 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                   bottom: BorderSide(color: Colors.grey[300]!),
                 ),
               ),
+              // The dropdown above already names the selected report - this
+              // header only carries the result count.
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    _selectedReport!.name,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[800],
-                    ),
-                  ),
                   Text(
                     '(${_reportData.length} ${_reportData.length == 1 ? 'result' : 'results'})',
                     style: TextStyle(
@@ -949,8 +945,11 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
                       fontSize: 14,
                       color: blueColor,
                     ),
+                    // Web parity: full value stays visible (web table shows
+                    // the complete tenant name) - wrap instead of truncating.
+                    softWrap: true,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
                   children: [
                     _buildExpandedContent(

@@ -256,9 +256,8 @@ class _enterChargeState extends State<enterCharge> {
   @override
   void initState() {
     super.initState();
-    // The redesign shows "Received From" on every width (web/Staff parity), so
-    // the lease tenants have to be loaded here - previously this screen only
-    // rendered the dropdown above 500dp and never populated it.
+    // Web parity: AddCharge.js still fetches the lease tenants on load even
+    // though its "Received From" selector is gone, so this stays too.
     fetchTenants();
     fetchDropdownData();
     // if (widget.chargeid != null) {
@@ -785,13 +784,12 @@ class _enterChargeState extends State<enterCharge> {
     );
   }
 
-  // Received From / Date / Amount / Memo.
+  // Date / Amount / Memo. Web parity: AddCharge.js no longer renders a
+  // "Received From" selector - the charge belongs to the lease and the
+  // tenant link rides along in the payload.
   Widget _chargeHeaderCard() {
     return _sectionCard(
       children: [
-        _fieldLabel('Received From', required: true),
-        _receivedFromField(),
-        const SizedBox(height: 16),
         _fieldLabel('Date', required: true),
         CustomTextField(
           onTap: () async {
@@ -911,112 +909,6 @@ class _enterChargeState extends State<enterCharge> {
           onChanged: (_) => setState(() {}),
         ),
       ],
-    );
-  }
-
-  Widget _receivedFromField() {
-    if (tenants.isEmpty) {
-      return Container(
-        height: 50,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: outlineClr, width: 1),
-        ),
-        child: Row(
-          children: [
-            SpinKitFadingCircle(color: mutedClr, size: 18.0),
-            const SizedBox(width: 10),
-            Text('Loading tenants...',
-                style: TextStyle(fontSize: 13, color: mutedClr)),
-          ],
-        ),
-      );
-    }
-    return DropdownButtonHideUnderline(
-      child: FormField<String>(
-        validator: (value) {
-          if (selectedTenantId == null) {
-            return 'Please select a tenant';
-          }
-          return null;
-        },
-        builder: (FormFieldState<String> state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DropdownButton2<String>(
-                isExpanded: true,
-                hint: Text(
-                  'Select Tenant',
-                  style:
-                      TextStyle(fontSize: 13, color: const Color(0xFFb0b6c3)),
-                ),
-                value: selectedTenantId,
-                items: tenants.map((tenant) {
-                  return DropdownMenuItem<String>(
-                    value: tenant['tenant_id'],
-                    child: Text(
-                      tenant['tenant_name']!,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedTenantId = value;
-                    state.didChange(value);
-                  });
-                  state.reset();
-                },
-                buttonStyleData: ButtonStyleData(
-                  height: 50,
-                  padding: const EdgeInsets.only(left: 14, right: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                        color: state.hasError ? redClr : outlineClr, width: 1),
-                  ),
-                  elevation: 0,
-                ),
-                iconStyleData: IconStyleData(
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                  iconSize: 22,
-                  iconEnabledColor: mutedClr,
-                  iconDisabledColor: Colors.grey,
-                ),
-                dropdownStyleData: DropdownStyleData(
-                  maxHeight: 350,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.white,
-                  ),
-                  scrollbarTheme: ScrollbarThemeData(
-                    radius: const Radius.circular(6),
-                    thickness: MaterialStateProperty.all(6),
-                    thumbVisibility: MaterialStateProperty.all(true),
-                  ),
-                ),
-                menuItemStyleData: const MenuItemStyleData(
-                  height: 44,
-                  padding: EdgeInsets.only(left: 14, right: 14),
-                ),
-              ),
-              if (state.hasError && (state.errorText ?? '').isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, left: 2),
-                  child: Text(
-                    state.errorText ?? '',
-                    style: TextStyle(color: redClr, fontSize: 12),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
     );
   }
 
@@ -1727,7 +1619,7 @@ class _enterChargeState extends State<enterCharge> {
                             adminId: adminId,
                             isLeaseAdded: false,
                             leaseId: widget.leaseId,
-                            tenantId: selectedTenantId!,
+                            tenantId: selectedTenantId ?? "",
                             totalAmount: totalAmount,
                             uploadedFile: _uploadedFileNames,
                             entry: entryList,

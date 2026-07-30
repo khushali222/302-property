@@ -368,7 +368,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -482,7 +482,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         _isLoadingvendors = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -524,7 +524,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         _isLoadingstaff = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -569,7 +569,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3521,7 +3521,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       } catch (e) {
         // Error
         Fluttertoast.showToast(
-          msg: "Failed to edit work order: $e",
+          msg: "Failed to edit work order: ${friendlyErrorMessage(e)}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -3705,7 +3705,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       _selectedUnit = fetchedDetails.unitId;
     });
     //} catch (e) {
-    //print('Failed to fetch lease details: $e');
+    //print('Failed to fetch lease details: ${friendlyErrorMessage(e)}');
     //}
   }
 
@@ -3749,7 +3749,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3829,7 +3829,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         _isLoadingvendors = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3871,7 +3871,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         _isLoadingstaff = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+        SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3915,7 +3915,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -7044,7 +7044,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       }).catchError((e) {
         // Error
         Fluttertoast.showToast(
-          msg: "Failed to edit work order: $e",
+          msg: "Failed to edit work order: ${friendlyErrorMessage(e)}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,

@@ -28,6 +28,7 @@ class Data {
   String? rentalId;
   String? unitId;
   String? leaseType;
+  bool? isEvicted;
   String? startDate;
   String? endDate;
   List<Tenant>? tenantData;
@@ -54,6 +55,7 @@ class Data {
     this.rentalId,
     this.unitId,
     this.leaseType,
+    this.isEvicted,
     this.startDate,
     this.endDate,
     this.tenantData,
@@ -82,6 +84,7 @@ class Data {
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
     leaseType = json['lease_type'];
+    isEvicted = json['is_evicted'] == true;
     startDate = json['start_date'];
     endDate = json['end_date'];
     tenantData = json['tenant_data'] != null
@@ -112,6 +115,7 @@ class Data {
     data['rental_id'] = rentalId;
     data['unit_id'] = unitId;
     data['lease_type'] = leaseType;
+    data['is_evicted'] = isEvicted;
     data['start_date'] = startDate;
     data['end_date'] = endDate;
     if (tenantData != null) {
