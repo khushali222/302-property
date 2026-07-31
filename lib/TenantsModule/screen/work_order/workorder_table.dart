@@ -1017,25 +1017,23 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       //    print(snapshot.data!.length);
                       data = snapshot.data!
                           .where((workorder) =>
-                      workorder.workSubject!.toLowerCase().contains(
-                          searchvalue!.toLowerCase()) ||
-                          workorder.status!.toLowerCase().contains(
-                              searchvalue!.toLowerCase()) ||
+                      (workorder.workSubject?.toLowerCase() ?? '')
+                          .contains(searchvalue!.toLowerCase()) ||
+                          (workorder.status?.toLowerCase() ?? '')
+                              .contains(searchvalue!.toLowerCase()) ||
                           (workorder.isBillable?.toString() ?? '')
                               .toLowerCase()
                               .contains(
                               searchvalue!.toLowerCase()) ||
-                          workorder.rentalAddress!
+                          (workorder.rentalAddress?.toLowerCase() ?? '')
+                              .contains(
+                              searchvalue!.toLowerCase()) ||
+                          (workorder.createdAt?.toString() ?? '')
                               .toLowerCase()
                               .contains(
                               searchvalue!.toLowerCase()) ||
-                          workorder.createdAt
-                              .toString()
-                              .toLowerCase()
-                              .contains(
-                              searchvalue!.toLowerCase()) ||
-                          workorder.workCategory!.toLowerCase().contains(
-                              searchvalue!.toLowerCase()) ||
+                          (workorder.workCategory?.toLowerCase() ?? '')
+                              .contains(searchvalue!.toLowerCase()) ||
                           (workorder.staffMemberName?.toLowerCase() ?? '')
                               .contains(searchvalue.toLowerCase()))
                           .toList();

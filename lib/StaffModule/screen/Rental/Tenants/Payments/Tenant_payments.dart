@@ -188,6 +188,10 @@ class _FinancialTableState extends State<FinancialTable> {
                   children: [
                     GestureDetector(
                       onTap: () async {
+                        // WEB parity (RentRollDetail.js: `if (paymentLoader) return;`)
+                        // A second tap while the refund is in flight would submit
+                        // a second real refund.
+                        if (isLoading) return;
                         if (_amountController.text.trim().isEmpty ||
                             (double.tryParse(_amountController.text) ?? 0) <= 0) {
                           Fluttertoast.showToast(
@@ -221,41 +225,40 @@ class _FinancialTableState extends State<FinancialTable> {
                           memo: _memoController.text,
                           adminId: adminId!,
                         );
-                        if (message != "success") {
-                          //   Navigator.pop(context);
-                          Alert(
-                            context: context,
-                            type: AlertType.error,
-                            title: "Refund Failed!",
-                            desc: "${message}",
-                            style: AlertStyle(
-                              backgroundColor: Colors.white,
-                              //  overlayColor: Colors.black.withOpacity(.8)
-                            ),
-                            buttons: [
-                              DialogButton(
-                                child: Text(
-                                  "Ok",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                },
-                                color: blueColor,
-                              ),
-                            ],
-                          ).show();
-                        }
-                        if (message != "success") {
+                        // WEB parity: close the dialog only on success, then refresh.
+                        if (message == "success") {
                           Navigator.pop(context);
-                        }
-                        setState(() {
-                          isLoading =
-                              false; // Set loading to false after the refund process is done
                           reload_screen();
+                          return;
+                        }
+                        // WEB parity: on failure the dialog stays open so the
+                        // amount can be corrected and retried.
+                        setState(() {
+                          isLoading = false;
                         });
+                        Alert(
+                          context: context,
+                          type: AlertType.error,
+                          title: "Refund Failed!",
+                          desc: "${message}",
+                          style: AlertStyle(
+                            backgroundColor: Colors.white,
+                            //  overlayColor: Colors.black.withOpacity(.8)
+                          ),
+                          buttons: [
+                            DialogButton(
+                              child: Text(
+                                "Ok",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              color: blueColor,
+                            ),
+                          ],
+                        ).show();
                       },
                       child: Container(
                         width: 120,

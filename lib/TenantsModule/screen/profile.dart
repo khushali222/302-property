@@ -1805,7 +1805,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                       ),
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          border: Border.all(color: blueColor),
+                                          border: Border.all(color: const Color(0xFFE5E9F0)),
                                           borderRadius:
                                               BorderRadius.circular(6),
                                         ),

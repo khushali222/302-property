@@ -214,8 +214,11 @@ class _MakePaymentState extends State<MakePayment> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final dateProvider = Provider.of<DateProvider>(context);
-    _startDate.text = dateProvider
-        .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    _startDate.text = dateProvider.formatCurrentDate(
+      _startDate.text.isNotEmpty
+          ? _startDate.text
+          : DateFormat('yyyy-MM-dd').format(DateTime.now()),
+    );
   }
 
   void _updateTotalAmount() {
@@ -389,14 +392,16 @@ class _MakePaymentState extends State<MakePayment> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(amountController.text) ?? 0.0;
+    double roundedEntered = double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
 
     /* setState(() {
       totalAmount = enteredAmount;
     });*/
-    if (enteredAmount != totalAmount) {
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((roundedEntered - roundedTotal).abs())}";
       });
     } else {
       setState(() {
@@ -1198,16 +1203,24 @@ class _MakePaymentState extends State<MakePayment> {
 
                   customerData.billing = filteredCards;
 
-                  // Assign card types
-                  for (int i = 0;
-                      i < cardDetailsList.length &&
-                          i < customerData.billing.length;
-                      i++) {
-                    if (cardDetailsList[i] is Map &&
-                        cardDetailsList[i].containsKey("card_type")) {
-                      customerData.billing[i].binResult =
-                          cardDetailsList[i]["card_type"];
-                    } else {
+                  // Assign card types by billing_id (web: cardTypeMap keyed on
+                  // billing_id, read off "@attributes".id). Index pairing is
+                  // wrong here because `billing` was just filtered above while
+                  // cardDetailsList was not.
+                  final Map<String, String> cardTypeByBillingId = {};
+                  for (final dynamic item in cardDetailsList) {
+                    if (item is Map) {
+                      final bid = item['billing_id']?.toString();
+                      final ct = item['card_type']?.toString();
+                      if (bid != null && bid.isNotEmpty && ct != null) {
+                        cardTypeByBillingId[bid] = ct;
+                      }
+                    }
+                  }
+                  for (final billing in customerData.billing) {
+                    final id = billing.billingId;
+                    if (id != null && cardTypeByBillingId.containsKey(id)) {
+                      billing.binResult = cardTypeByBillingId[id];
                     }
                   }
 
@@ -1465,7 +1478,10 @@ class _MakePaymentState extends State<MakePayment> {
                       return 'Please select a payment method';
                     }
                     if (_selectedPaymentMethod == 'Card' &&
-                        _cardOnlyList.isNotEmpty &&
+                        _cardOnlyList.isEmpty) {
+                      return 'Please add a card first';
+                    }
+                    if (_selectedPaymentMethod == 'Card' &&
                         selectedcardindex == null) {
                       return 'Please select a card';
                     }
@@ -2932,6 +2948,12 @@ class _MakePaymentState extends State<MakePayment> {
                                   tenants.where((tenant) {
                                 return tenant['tenant_id'] == selectedTenantId;
                               }).toList();
+                              if (filteredTenants.isEmpty) {
+                                Fluttertoast.showToast(
+                                    msg: "Please select a tenant");
+                                setState(() => IsLoading = false);
+                                return;
+                              }
                               Map<String, dynamic> selectedTenant =
                                   filteredTenants.first;
                               final DateFormat formatter =
@@ -3040,6 +3062,16 @@ class _MakePaymentState extends State<MakePayment> {
                                 });
                                 return;
                               }
+                              if (selectedcardindex == null ||
+                                  selectedcardindex! < 0 ||
+                                  selectedcardindex! >= _cardOnlyList.length) {
+                                Fluttertoast.showToast(
+                                    msg: "Please select a card");
+                                setState(() => IsLoading = false);
+                                return;
+                              }
+                              final BillingData selectedBilling =
+                                  _cardOnlyList[selectedcardindex!];
                               try {
                                 _beginSale();
                                 await PaymentService()
@@ -3053,19 +3085,13 @@ class _MakePaymentState extends State<MakePayment> {
                                   lastName: last_name ?? "",
                                   emailName: email ?? "",
                                   customerVaultId:
-                                      _cardOnlyList[selectedcardindex!]
-                                              .customerVaultId ??
-                                          "",
-                                  billingId: _cardOnlyList[selectedcardindex!]
-                                          .billingId ??
-                                      "",
+                                      selectedBilling.customerVaultId ?? "",
+                                  billingId: selectedBilling.billingId ?? "",
                                   surcharge: surchargeamount.toStringAsFixed(2),
                                   amount: totalamount.toStringAsFixed(2),
                                   tenantId: widget.tenantId,
                                   date: _normalizeToIsoDate(_startDate.text),
-                                  address1: _cardOnlyList[selectedcardindex!]
-                                          .address_1 ??
-                                      "",
+                                  address1: selectedBilling.address_1 ?? "",
                                   processorId:
                                       lease_data?['processorId']?.toString() ??
                                           "",
@@ -3113,6 +3139,7 @@ class _MakePaymentState extends State<MakePayment> {
                                               paymentNetworkErrorMessage));
                                 });
                               } catch (e) {
+                                _settleSaleKey(e);
                                 setState(() => IsLoading = false);
                                 Fluttertoast.showToast(
                                     msg: friendlyErrorMessage(e,

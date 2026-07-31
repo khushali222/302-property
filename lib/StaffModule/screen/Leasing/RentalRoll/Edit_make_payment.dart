@@ -59,6 +59,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   late Future<Map<String, List<String>>> futureDropdownData;
   List<Map<String, dynamic>> charges = [];
   String? validationMessage;
+  bool _saleInFlight = false;
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
@@ -778,9 +779,21 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
       customerData.billing.forEach((billing) {
       });
-      for (int i = 0; i < customerData.billing.length; i++) {
-        if (i < cardDetailsList.length) {
-          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+      // Map card types to billing records safely (avoids index mismatch and nulls).
+      final Map<String, String> cardTypeByBillingId = {};
+      for (final dynamic item in cardDetailsList) {
+        if (item is Map) {
+          final billingId = item['billing_id']?.toString();
+          final cardType = item['card_type']?.toString();
+          if (billingId != null && billingId.isNotEmpty && cardType != null) {
+            cardTypeByBillingId[billingId] = cardType;
+          }
+        }
+      }
+      for (final billing in customerData.billing) {
+        final id = billing.billingId;
+        if (id != null && cardTypeByBillingId.containsKey(id)) {
+          billing.binResult = cardTypeByBillingId[id];
         }
       }
 
@@ -3438,6 +3451,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0))),
                           onPressed: () async {
+                            if (_saleInFlight) return;
+                            _saleInFlight = true;
+                            try {
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             String? id = prefs.getString('adminId');
@@ -3645,6 +3661,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               }
 
                               //print(_selectedPaymentMethod);
+                            }
+                            } finally {
+                              _saleInFlight = false;
                             }
                           },
                           child: _isLoading

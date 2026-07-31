@@ -80,7 +80,7 @@ class _MakePaymentState extends State<MakePayment> {
       _saleIdempotencyKey = null;
       _saleKeyScope = scope;
     }
-    _beginSale();
+    _saleIdempotencyKey ??= newIdempotencyKey();
     _saleInFlight = true;
   }
 
@@ -531,14 +531,16 @@ class _MakePaymentState extends State<MakePayment> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(amountController.text) ?? 0.0;
+    double roundedEntered = double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
 
     /* setState(() {
       totalAmount = enteredAmount;
     });*/
-    if (enteredAmount != totalAmount) {
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
+            "The charge's amount must match the total applied to balance. The difference is ${NumberFormat('#,##0.00', 'en_US').format((roundedEntered - roundedTotal).abs())}";
       });
     } else {
       setState(() {

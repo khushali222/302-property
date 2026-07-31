@@ -303,9 +303,16 @@ class PaymentCronjobRepository {
     String? billingId,
     required BuildContext context,
   }) async {
-    final String apiUrll = (paymentType == "Cash" || paymentType == "Check")
-        ? "$Api_url/api/nmipayment/manual-refund/$paymentId"
-        : "$Api_url/api/nmipayment/new-refund";
+    final String apiUrll;
+    if (paymentType == "Cash" || paymentType == "Check") {
+      apiUrll = "$Api_url/api/nmipayment/manual-refund/$paymentId";
+    } else if (paymentType == "Card" || paymentType == "ACH") {
+      apiUrll = "$Api_url/api/nmipayment/new-refund";
+    } else {
+      Fluttertoast.showToast(
+          msg: "Refund is only available for Card, Cash, or Check payments.");
+      return null;
+    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString('adminId');
@@ -333,8 +340,15 @@ class PaymentCronjobRepository {
     };
 
     if (paymentType == "Card" || paymentType == "ACH") {
-      commonData["customer_vault_id"] = customerVaultId;
-      commonData["billing_id"] = billingId;
+      // Web parity (CronPaymentTable.js): the key is omitted entirely when
+      // there is no id, so the server's Number column is never sent a
+      // non-numeric value.
+      if (customerVaultId != null && customerVaultId.isNotEmpty) {
+        commonData["customer_vault_id"] = customerVaultId;
+      }
+      if (billingId != null && billingId.isNotEmpty) {
+        commonData["billing_id"] = billingId;
+      }
     }
 
     final response = await apiPost(

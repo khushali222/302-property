@@ -1351,8 +1351,21 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         customerData.billing.forEach((billing) {
         });
 
-        for (int i = 0; i < cardDetailsList.length; i++) {
-          customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+        final billingById = <String, BillingData>{};
+        for (final b in customerData.billing) {
+          final id = b.billingId;
+          if (id != null) billingById[id] = b;
+        }
+
+        for (final detail in cardDetailsList) {
+          if (detail is! Map) continue;
+          final billingId = detail["billing_id"]?.toString();
+          if (billingId == null) continue;
+          final cardType = detail["card_type"]?.toString();
+          final matched = billingById[billingId];
+          if (matched != null) {
+            matched.binResult = cardType;
+          }
         }
 
         return customerData;

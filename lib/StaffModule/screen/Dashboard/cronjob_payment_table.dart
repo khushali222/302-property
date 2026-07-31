@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1226,9 +1227,13 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             height: 45,
             child: TextField(
               controller: amount,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+              ],
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: 'Enter reason for void',
+                hintText: 'Enter refund amount',
                 contentPadding: EdgeInsets.only(top: 8, left: 15),
               ),
             ),
@@ -1278,8 +1283,19 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               return;
             }
 
-            if (amount.text.isEmpty || double.tryParse(amount.text) == null) {
+            final double? parsedAmount = double.tryParse(amount.text.trim());
+            if (amount.text.trim().isEmpty ||
+                parsedAmount == null ||
+                !parsedAmount.isFinite ||
+                parsedAmount <= 0) {
               Fluttertoast.showToast(msg: "Please enter a valid refund amount");
+              return;
+            }
+            final double? originalAmount = refund?.totalAmount;
+            if (originalAmount != null && parsedAmount > originalAmount) {
+              Fluttertoast.showToast(
+                  msg:
+                      "Refund amount cannot exceed the original payment amount of \$${originalAmount.toStringAsFixed(2)}");
               return;
             }
 
@@ -1289,7 +1305,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               paymentId: id,
               paymentType: refund?.paymentType ?? "",
               transactionId: refund?.transactionId ?? "",
-              refundAmount: double.tryParse(amount.text) ?? 0.0,
+              refundAmount: parsedAmount,
               refundDate: retrydate.text,
               memo: memo.text,
               tenantFirstName: refund?.tenantData?.tenantFirstName ?? "",
@@ -1297,8 +1313,8 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
               tenantEmail: refund?.tenantData?.tenantEmail ?? "",
               tenantId: refund?.tenantData?.tenantId ?? "",
               leaseId: refund?.leaseData?.leaseId ?? "",
-              customerVaultId: refund?.customerVaultId.toString() ?? "",
-              billingId: refund?.billingId.toString() ?? "",
+              customerVaultId: refund?.customerVaultId?.toString(),
+              billingId: refund?.billingId?.toString(),
               context: context,
               entry: (refund?.entry ?? [])
                   .map((item) => {

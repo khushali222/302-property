@@ -592,30 +592,28 @@ class _Tenants_tableState extends State<Tenants_table> {
               const SizedBox(
                 width: 15,
               ),
-              // --- 2FA from table: temporarily disabled (uncomment for table 2FA update).
-              //     Uncomment this block to re-enable the shield action.
-//               // Web hides the 2FA action for trial accounts.
-//               if (data.adminId != "is_trial") ...[
-//                 InkWell(
-//                   onTap: () => _handleToggle2FA(data),
-//                   child: _twoFaBusy.contains(data.tenantId)
-//                       ? const SizedBox(
-//                           height: 24,
-//                           width: 24,
-//                           child: CircularProgressIndicator(strokeWidth: 2),
-//                         )
-//                       : FaIcon(
-//                           FontAwesomeIcons.shieldHalved,
-//                           size: 26,
-//                           color: data.twoFactorEnabled
-//                               ? const Color(0xFFB55B3D)
-//                               : null,
-//                         ),
-//                 ),
-//                 const SizedBox(
-//                   width: 15,
-//                 ),
-//               ],
+              // Web hides the 2FA action for trial accounts.
+              if (data.adminId != "is_trial") ...[
+                InkWell(
+                  onTap: () => _handleToggle2FA(data),
+                  child: _twoFaBusy.contains(data.tenantId)
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : FaIcon(
+                          FontAwesomeIcons.shieldHalved,
+                          size: 26,
+                          color: data.twoFactorEnabled
+                              ? const Color(0xFFB55B3D)
+                              : blueColor,
+                        ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+              ],
               InkWell(
                 onTap: () {
                   handleDelete(data);
@@ -1609,43 +1607,43 @@ class _Tenants_tableState extends State<Tenants_table> {
                                                               ),
                                                             ),
                                                           ),
-                                                          // --- 2FA from table: temporarily disabled (uncomment for table 2FA update).
-                                                          //     Uncomment this block to re-enable the shield action.
-//                                                           // Web hides the 2FA action for trial accounts.
-//                                                           if (tenants.adminId != "is_trial") ...[
-//                                                             const SizedBox(
-//                                                               width: 5,
-//                                                             ),
-//                                                             GestureDetector(
-//                                                               onTap: () => _handleToggle2FA(tenants),
-//                                                               child: Container(
-//                                                                 height: 35,
-//                                                                 width: 35,
-//                                                                 decoration: BoxDecoration(
-//                                                                     borderRadius: BorderRadius.circular(8),
-//                                                                     color: const Color(0xFFF9EDE7)),
-//                                                                 child: Row(
-//                                                                   mainAxisAlignment: MainAxisAlignment.center,
-//                                                                   crossAxisAlignment: CrossAxisAlignment.center,
-//                                                                   children: [
-//                                                                     _twoFaBusy.contains(tenants.tenantId)
-//                                                                         ? const SizedBox(
-//                                                                             height: 15,
-//                                                                             width: 15,
-//                                                                             child: CircularProgressIndicator(strokeWidth: 2),
-//                                                                           )
-//                                                                         : FaIcon(
-//                                                                             FontAwesomeIcons.shieldHalved,
-//                                                                             size: 15,
-//                                                                             color: tenants.twoFactorEnabled
-//                                                                                 ? const Color(0xFFB55B3D)
-//                                                                                 : Colors.grey,
-//                                                                           ),
-//                                                                   ],
-//                                                                 ),
-//                                                               ),
-//                                                             ),
-//                                                           ],
+                                                          // Web hides the 2FA action for trial accounts.
+                                                          if (tenants.adminId != "is_trial") ...[
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () => _handleToggle2FA(tenants),
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: 35,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                    color: tenants.twoFactorEnabled
+                                                                        ? const Color(0xFFF9EDE7)
+                                                                        : const Color(0xFFEAF0FB)),
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    _twoFaBusy.contains(tenants.tenantId)
+                                                                        ? const SizedBox(
+                                                                            height: 15,
+                                                                            width: 15,
+                                                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                                                          )
+                                                                        : FaIcon(
+                                                                            FontAwesomeIcons.shieldHalved,
+                                                                            size: 15,
+                                                                            color: tenants.twoFactorEnabled
+                                                                                ? const Color(0xFFB55B3D)
+                                                                                : blueColor,
+                                                                          ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
                                                           if (permissions?.tenantDelete == true) ...[
                                                           const SizedBox(
                                                             width: 5,

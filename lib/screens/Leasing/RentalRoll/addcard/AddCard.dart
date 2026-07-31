@@ -2601,12 +2601,21 @@ class CustomTextFieldState extends State<CustomTextField> {
                 });
                 return '';
               }
-            } else if (widget.amount_check != null &&
-                (double.tryParse(widget.controller!.text.trim()) ?? 0.0) >
-                    (double.tryParse(widget.max_amount!) ?? 0.0))
-              setState(() {
-                _errorMessage = '${widget.error_mess}';
-              });
+            } else if (widget.amount_check != null) {
+              // Web parity: AddPayment.js "is-less-than-balance" test only
+              // applies when the balance is truthy, so a null/zero max must
+              // not block the row.
+              final double? maxValue =
+                  double.tryParse(widget.max_amount ?? '');
+              final double entered =
+                  double.tryParse(widget.controller!.text.trim()) ?? 0.0;
+              if (maxValue != null && maxValue > 0 && entered > maxValue) {
+                setState(() {
+                  _errorMessage = '${widget.error_mess}';
+                });
+                return '';
+              }
+            }
             return null;
           },
           builder: (FormFieldState<String> state) {

@@ -218,10 +218,12 @@ class _RenewleaseState extends State<Renewlease> {
   String? validationMessage;
   void validateAmounts() {
     double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
-    if (enteredAmount != totalAmount) {
+    double roundedEntered = double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${(enteredAmount - totalAmount).abs().toStringAsFixed(2)}";
+            "The charge's amount must match the total applied to balance. The difference is ${(roundedEntered - roundedTotal).abs().toStringAsFixed(2)}";
       });
     } else {
       setState(() {

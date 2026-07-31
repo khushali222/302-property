@@ -510,10 +510,12 @@ class _enterChargeState extends State<enterCharge> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
-    if (enteredAmount != totalAmount) {
+    double roundedEntered = double.parse(enteredAmount.toStringAsFixed(2));
+    double roundedTotal = double.parse(totalAmount.toStringAsFixed(2));
+    if (roundedEntered != roundedTotal) {
       setState(() {
         validationMessage =
-            "The charge's amount must match the total applied to balance. The difference is ${intl.NumberFormat('#,##0.00', 'en_US').format((enteredAmount - totalAmount).abs())}";
+            "The charge's amount must match the total applied to balance. The difference is ${intl.NumberFormat('#,##0.00', 'en_US').format((roundedEntered - roundedTotal).abs())}";
       });
     } else {
       setState(() {

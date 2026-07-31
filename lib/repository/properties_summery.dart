@@ -692,8 +692,21 @@ class tenant_cards {
       customerData.billing.forEach((billing) {
       });
 
-      for (int i = 0; i < customerData.billing.length; i++) {
-        customerData.billing[i].binResult = cardDetailsList[i]["card_type"];
+      final Map<String, String> cardTypeByBillingId = {};
+      for (final dynamic item in cardDetailsList) {
+        if (item is Map) {
+          final billingId = item['billing_id']?.toString();
+          final cardType = item['card_type']?.toString();
+          if (billingId != null && billingId.isNotEmpty && cardType != null) {
+            cardTypeByBillingId[billingId] = cardType;
+          }
+        }
+      }
+      for (final billing in customerData.billing) {
+        final id = billing.billingId;
+        if (id != null && cardTypeByBillingId.containsKey(id)) {
+          billing.binResult = cardTypeByBillingId[id];
+        }
       }
 
       return customerData;

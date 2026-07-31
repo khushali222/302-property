@@ -228,13 +228,16 @@ class _UpdateWorkOrderVendorState extends State<UpdateWorkOrderVendor> {
     };
     try {
       await WorkOrderRepository.updateworkorderSummary(values, widget.workorderId);
-    } catch (_) {
-      // The backend currently returns a 500 on this endpoint even though the
-      // record is saved, so we still pop & let the caller refresh the history.
-    }
-    if (mounted) {
-      setState(() => _saving = false);
-      Navigator.of(context).pop(true);
+      if (mounted) {
+        setState(() => _saving = false);
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _saving = false);
+      }
+      // Log failure but don't block the user
+      print('Work order update failed: $e');
     }
   }
 

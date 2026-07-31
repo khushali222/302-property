@@ -637,7 +637,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               height: 220,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
+                                border: Border.all(color: const Color(0xFFE5E9F0)),
                                 // color: Colors.grey.shade100,
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -712,7 +712,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               //  height: 10,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
+                                border: Border.all(color: const Color(0xFFE5E9F0)),
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -2126,7 +2126,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black),
+                                  border: Border.all(color: const Color(0xFFE5E9F0)),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Padding(
@@ -2599,7 +2599,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               // height: 220,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
+                                border: Border.all(color: const Color(0xFFE5E9F0)),
                                 color: Colors.grey.shade100,
                                 borderRadius: BorderRadius.circular(10),
                               ),

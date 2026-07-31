@@ -76,7 +76,7 @@ void _checkSoftUpdate(http.Response response) {
 
 Future<http.Response> apiGet(Uri url, {Map<String, String>? headers}) async {
   _logOutgoing('GET', url);
-  final response = await http.get(url, headers: _mergeHeaders(headers));
+  final response = await http.get(url, headers: _mergeHeaders(headers)).timeout(Duration(seconds: 30));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -94,7 +94,7 @@ Future<http.Response> apiPost(
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  );
+  ).timeout(Duration(seconds: 30));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -112,7 +112,7 @@ Future<http.Response> apiPut(
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  );
+  ).timeout(Duration(seconds: 30));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -130,7 +130,7 @@ Future<http.Response> apiDelete(
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  );
+  ).timeout(Duration(seconds: 30));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -148,7 +148,7 @@ Future<http.Response> apiPatch(
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  );
+  ).timeout(Duration(seconds: 30));
   _check426(response);
   _checkSoftUpdate(response);
   return response;

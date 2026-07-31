@@ -84,9 +84,9 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
       Fluttertoast.showToast(msg: 'Price breakdown is required');
       return;
     }
-    final totalPrice = int.tryParse(totalPriceStr);
+    final totalPrice = double.tryParse(totalPriceStr);
     if (totalPrice == null || totalPrice < 0) {
-      Fluttertoast.showToast(msg: 'Please enter a valid total price (numbers only)');
+      Fluttertoast.showToast(msg: 'Please enter a valid total price');
       return;
     }
 
