@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -911,7 +912,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                                   element.status != "Completed";
                               return isOverDue && isNotCompleted;
                             } catch (e) {
-                              print(
+                              logError(
                                   'Error parsing date for work order ${element.workOrderId}: ${element.date} - $e');
                               return false; // Skip invalid dates
                             }
@@ -1397,30 +1398,11 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   }
 
   void printRentalData(List<WorkOrder> workOrders) {
-    print('\n=== Rental Data from WorkOrders ===');
     for (var workOrder in workOrders) {
-      print('\nWork Order ID: ${workOrder.workOrderId}');
-      print('Subject: ${workOrder.workSubject}');
 
       if (workOrder.rentalData != null) {
-        print('Rental Details:');
-        print('  Address: ${workOrder.rentalData?.rentalAddress}');
-        print('  City: ${workOrder.rentalData?.rentalCity}');
-        print('  State: ${workOrder.rentalData?.rentalState}');
-        print('  Country: ${workOrder.rentalData?.rentalCountry}');
-        print('  Postcode: ${workOrder.rentalData?.rentalPostcode}');
-        print('  Is Rent On: ${workOrder.rentalData?.isRentOn}');
-        print('  Rental ID: ${workOrder.rentalData?.rentalId}');
-        print('  Property ID: ${workOrder.rentalData?.propertyId}');
-        print('  Owner ID: ${workOrder.rentalData?.rentalownerId}');
-        print('  Processor ID: ${workOrder.rentalData?.processorId}');
-        print('  Staff Member ID: ${workOrder.rentalData?.staffmemberId}');
-        print('  Created At: ${workOrder.rentalData?.createdAt}');
-        print('  Updated At: ${workOrder.rentalData?.updatedAt}');
       } else {
-        print('No rental data available');
       }
-      print('----------------------------------------');
     }
   }
 }

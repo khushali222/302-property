@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -45,7 +46,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   @override
   void initState() {
     super.initState();
-    print(widget.mortgageData!['_id']);
     //mortgageData = widget.mortgageData;
     // if (mortgageData == null) {
     _loadMortgageData();
@@ -77,7 +77,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         setState(() {
           mortgageData = data["data"];
 
-          print(mortgageData!["properties"]);
         });
       }
     } catch (e) {
@@ -100,7 +99,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           'monthly_payment': 4518.75,
         };
       });
-      print(e);
+      logError(e);
     } finally {
       setState(() {
         _isLoading = false;
@@ -1604,7 +1603,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         }
       }
     } catch (e) {
-      print('Error adding payoff event: $e');
+      logError('Error adding payoff event: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1671,7 +1670,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         }
       }
     } catch (e) {
-      print('Error updating remaining balance: $e');
+      logError('Error updating remaining balance: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -2446,7 +2445,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         }
       }
     } catch (e) {
-      print('Error deleting document: $e');
+      logError('Error deleting document: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -2732,32 +2731,16 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         }
       }
 
-      print('── Mortgage upload DIAG (admin) ──');
-      print('URL: ${Api_url}/api/mortgage/$mortgageId/documents');
-      print('formFields: is_web=true, user_active_recently=true');
-      print(
-          'auth: token=${token == null ? "MISSING" : "ok"} id=${id == null ? "MISSING" : "ok"}');
-      print(
-          'multipart: field name "files" | ${request.files.length} file part(s)');
       for (var i = 0; i < files.length; i++) {
         final f = files[i];
-        print(
-            '  file[$i]: ${f.name} | ${f.size} bytes | ${f.path != null ? "path" : "bytes"}');
       }
 
       final streamedResponse = await apiSend(request);
       final response = await http.Response.fromStream(streamedResponse);
       sw.stop();
 
-      print('⏱️ Round-trip: ${sw.elapsedMilliseconds} ms');
-      print(
-          'HTTP ${response.statusCode} | content-type: ${response.headers['content-type']}');
-      print('Body length: ${response.body.length}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print(
-            '✅ Mortgage documents upload SUCCESS — HTTP ${response.statusCode} | mortgageId=$mortgageId');
         await _loadMortgageData();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -2770,8 +2753,6 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           ));
         }
       } else {
-        print(
-            '❌ ISSUE: ${_mortgageUploadFailureCauseHint(response.statusCode, response.body)}');
         final msg = _mortgageUploadFailureMessage(response);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -2786,8 +2767,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
       }
     } catch (e, st) {
       sw.stop();
-      print('❌ UPLOAD EXCEPTION after ${sw.elapsedMilliseconds} ms: $e');
-      print('Stack: $st');
+      logError('❌ UPLOAD EXCEPTION after ${sw.elapsedMilliseconds} ms: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text('Something went wrong. Please try again.'),

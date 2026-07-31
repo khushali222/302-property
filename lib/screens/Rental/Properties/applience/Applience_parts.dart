@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -56,11 +57,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
-    print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
-      print('hello');
       leases = fetchedLeases;
       isLoading = false;
     });
@@ -78,13 +75,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
     } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
+      logError('Error fetching categories in AddWorkOrderForMobile: ' +
           e.toString());
       setState(() {
         _isLoadingCategories = false;
@@ -389,14 +385,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
   void handleDelete(unit_appliance rental) {
     _showDeleteAlert(context, rental.applianceId!);
     // Handle delete action
-    print('Delete ${rental.applianceId}');
   }
 
   String? rentalOwnersid;
   int rentalownerCount = 0;
   int rentalOwnerCountLimit = 0;
   Future<void> fetchRentalOwneradded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -408,15 +402,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalownerCount);
-      print(rentalOwnerCountLimit);
       setState(() {
         rentalownerCount = jsonData['rentalownerCount'];
-        print(rentalownerCount);
         rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
-        print(rentalOwnerCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -2512,7 +2501,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                     });
                                                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                     String? id = prefs.getString("adminId");
-                                                                                    print("calling");
                                                                                     Properies_summery_Repo()
                                                                                         .Editappliances(
                                                                                       applianceid: _tableData.first.applianceId,
@@ -2524,8 +2512,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       installeddate: reverseFormatDate(_installedDate.text),
                                                                                     )
                                                                                         .then((value) {
-                                                                                      print(widget.properties?.adminId);
-                                                                                      print(widget.unit?.unitId);
                                                                                       setState(() {
                                                                                         isLoading = false;
                                                                                       });

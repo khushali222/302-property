@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -133,7 +134,6 @@ class _RenewleaseState extends State<Renewlease> {
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
 
-    print('$Api_url/api/leases/lease_summary/${widget.leaseId}');
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
@@ -145,7 +145,6 @@ class _RenewleaseState extends State<Renewlease> {
     if (response.statusCode == 200) {
       setState(() {
         leasegetdata = LeaseSummary.fromJson(jsonDecode(response.body));
-        print("Renew lease ${leasegetdata.data!.renewLeases!.length}");
         if (determineStatus(
             leasegetdata.data!.startDate, leasegetdata.data!.endDate)) {
           // Lease is expired
@@ -269,8 +268,6 @@ class _RenewleaseState extends State<Renewlease> {
   String? validationMessage;
   void validateAmounts() {
     double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
-    print(enteredAmount);
-    print(totalAmount);
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
@@ -284,7 +281,6 @@ class _RenewleaseState extends State<Renewlease> {
   }
 
   Future<void> fetchDropdownData() async {
-    print("calling drops ");
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
@@ -299,7 +295,6 @@ class _RenewleaseState extends State<Renewlease> {
         },
       );
 
-      print('lease drop ${response.body}');
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         if (jsonResponse['data'] != null) {
@@ -354,7 +349,7 @@ class _RenewleaseState extends State<Renewlease> {
         });
       }
     } catch (e) {
-      print('Error in fetchDropdownData: $e');
+      logError('Error in fetchDropdownData: $e');
       setState(() {
         hasError = true;
         isLoading = false;
@@ -369,11 +364,6 @@ class _RenewleaseState extends State<Renewlease> {
       String? token = prefs.getString('token');
       String? id = prefs.getString("adminId");
 
-      print('=== DEBUG INFO ===');
-      print('Token: $token');
-      print('Admin ID: $id');
-      print('API URL: $Api_url/api/leases/renew_lease');
-      print('Request Data: ${json.encode(renewlease)}');
 
       // Test if the API endpoint is reachable
       try {
@@ -384,9 +374,8 @@ class _RenewleaseState extends State<Renewlease> {
             "id": "CRM $id",
           },
         );
-        print('Test API call status: ${testResponse.statusCode}');
       } catch (e) {
-        print('Test API call failed: $e');
+        logError('Test API call failed: $e');
       }
 
       final response =
@@ -398,24 +387,18 @@ class _RenewleaseState extends State<Renewlease> {
               },
               body: json.encode(renewlease));
 
-      print('=== RESPONSE INFO ===');
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-      print('Response Headers: ${response.headers}');
 
       if (response.statusCode == 200) {
-        print('SUCCESS: Lease renewal completed');
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => SummeryPageLease(
                   leaseId: widget.leaseId,
                 )));
       } else {
-        print('ERROR: Lease renewal failed with status ${response.statusCode}');
         Fluttertoast.showToast(msg: "Lease renewal failed: ${response.body}");
       }
     } catch (e) {
-      print('EXCEPTION: $e');
+      logError('EXCEPTION: $e');
       Fluttertoast.showToast(msg: "Network error: $e");
     }
   }
@@ -489,12 +472,11 @@ class _RenewleaseState extends State<Renewlease> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      logError('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -504,7 +486,6 @@ class _RenewleaseState extends State<Renewlease> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
@@ -1697,8 +1678,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       .value
                                                                       .contains(
                                                                           selectedAccount)) {
-                                                                    print(
-                                                                        "Account found: $selectedAccount in category: ${entry.key}");
                                                                     surchargetype =
                                                                         entry
                                                                             .key;
@@ -1710,8 +1689,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                                   false;
                                                               if (row["charge_type"] ==
                                                                   "Surcharge") {
-                                                                print(
-                                                                    "Surcharge calling");
 
                                                                 for (var entry
                                                                     in categorizedData
@@ -1720,8 +1697,6 @@ class _RenewleaseState extends State<Renewlease> {
                                                                       .value
                                                                       .contains(
                                                                           row['account'])) {
-                                                                    print(
-                                                                        "Account found: ${row['account']} in category: ${entry.key}");
                                                                     surchargetype =
                                                                         entry
                                                                             .key;
@@ -2470,10 +2445,6 @@ class _RenewleaseState extends State<Renewlease> {
                                   };
 
                                   // Debug: Print the date values before formatting
-                                  print(
-                                      "Start Date Controller: ${startDateController.text}");
-                                  print(
-                                      "End Date Controller: ${endDateController.text}");
 
                                   // Validate that dates are not empty
                                   if (startDateController.text.trim().isEmpty ||
@@ -2519,8 +2490,6 @@ class _RenewleaseState extends State<Renewlease> {
                                   };
 
                                   // Debug: Print the final lease data
-                                  print("Final lease data: $leasedata");
-                                  print(leasedata);
                                   updatenewrenewallease(leasedata);
                                 },
                                 child: Container(
@@ -2604,8 +2573,6 @@ class _RenewleaseState extends State<Renewlease> {
     DateTime start = formatDates(startDate);
     DateTime end = formatDates(endDate);
     DateTime today = DateTime.now();
-    print(start);
-    print(end);
     if (today.isAfter(end)) {
       return true;
     } else {

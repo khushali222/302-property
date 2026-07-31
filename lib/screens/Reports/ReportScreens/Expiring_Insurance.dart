@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -65,7 +66,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -251,7 +251,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();
@@ -533,7 +533,6 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
     }
 // Convert buffer to list of bytes for CSV file
     final List<int> bytes = utf8.encode(csvBuffer.toString());
-    print(bytes);
     // Define file name with current date and time
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyyMMddHHmmss').format(now);

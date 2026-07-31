@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -71,7 +72,6 @@ class _Rent_collectionState extends State<Rent_collection> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -144,18 +144,10 @@ class _Rent_collectionState extends State<Rent_collection> {
           .FetchRentColllection(id!, fromDate, toDate, chargetype: chargedata);
 
       // Debug: Print API response structure
-      print("=== API RESPONSE DEBUG ===");
-      print("Report Month: ${data.reportMonth}");
-      print("Number of Summary Items: ${data.summary?.length ?? 0}");
-      print("Number of Leases: ${data.leases?.length ?? 0}");
-      print("Number of DeadBeats: ${data.deadBeats?.length ?? 0}");
 
       // Debug: Print summary data as received from API
       if (data.summary != null) {
-        print("=== SUMMARY DATA FROM API ===");
         for (int i = 0; i < data.summary!.length; i++) {
-          print(
-              "$i: ${data.summary![i].rentalOwnerCompany} - \$${data.summary![i].totalPending}");
         }
       }
 
@@ -201,7 +193,7 @@ class _Rent_collectionState extends State<Rent_collection> {
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
 
@@ -1484,7 +1476,6 @@ class _Rent_collectionState extends State<Rent_collection> {
   final List<String> downloadOptions = ['PDF', 'Excel', 'CSV'];
   void handleDownload(String format) {
     // Replace with your download logic
-    print("Downloading as $format");
   }
 
   List<Leases> getSortedLeases(List<Leases> data) {
@@ -1775,7 +1766,6 @@ class _Rent_collectionState extends State<Rent_collection> {
                                               selectedYear,
                                             );
                                           });
-                                          print("Run Report");
                                         },
                                         tooltip: "Run Report",
                                       ),
@@ -2509,20 +2499,14 @@ class _Rent_collectionState extends State<Rent_collection> {
 
   SummeryScreen(List<Summary> currentPageData, Rentcollection_model data) {
     // Debug: Print the original data order
-    print("=== ORIGINAL SUMMARY DATA ORDER ===");
     for (int i = 0; i < currentPageData.length; i++) {
-      print(
-          "$i: ${currentPageData[i].rentalOwnerCompany} - \$${currentPageData[i].totalPending}");
     }
 
     // Apply sorting to ensure consistent order
     List<Summary> sortedData = _getSortedSummaryData(currentPageData);
 
     // Debug: Print the sorted data order
-    print("=== SORTED SUMMARY DATA ORDER ===");
     for (int i = 0; i < sortedData.length; i++) {
-      print(
-          "$i: ${sortedData[i].rentalOwnerCompany} - \$${sortedData[i].totalPending}");
     }
 
     return SingleChildScrollView(

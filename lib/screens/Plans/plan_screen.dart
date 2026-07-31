@@ -325,7 +325,6 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -450,7 +449,6 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                         });
                         Fluttertoast.showToast(
                             msg: 'Subscription cancelled successfully.');
-                        print('Subscription cancelled successfully.');
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -463,8 +461,6 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                         });
                         Fluttertoast.showToast(
                             msg: 'Failed to cancel subscription.');
-                        print(
-                            'Failed to cancel subscription. Status code: $statusCode');
                       }
                     },
                   ),
@@ -1277,7 +1273,6 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       context,
                                                       data.subscriptionId!,
                                                       data.purchaseId!);
-                                                  print(data.subscriptionId);
                                                 },
                                                 child: Container(
                                                   alignment: Alignment.center,

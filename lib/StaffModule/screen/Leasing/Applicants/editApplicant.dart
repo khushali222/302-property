@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
@@ -460,7 +461,6 @@ class _EditApplicantState extends State<EditApplicant> {
                                 telePhoneNumber.text != initialTelephoneNumber;
 
                             if (!hasChanges) {
-                              print("No changes made, API call not necessary.");
                               Navigator.of(context)
                                   .pop(false); // Optionally navigate back
                               return;
@@ -630,7 +630,7 @@ class _EditApplicantState extends State<EditApplicant> {
       // print('Response: $response');
     } catch (e) {
       // Handle error
-      print('Error posting applicant and lease: $e');
+      logError('Error posting applicant and lease: $e');
     } finally {
       setState(() {
         _Loading = false;

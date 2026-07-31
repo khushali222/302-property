@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -94,16 +95,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     // await _loadProperties();
     EditData fetchedDetails =
     await WorkOrderRepository().fetchWorkordersDetails(workorderId);
-    print('fetchedDetails after fetch ${json.encode(fetchedDetails)}');
-    print(workorderId);
 
-    print('Address ${fetchedDetails.propertyData?.address}');
-    print('rentalid ${fetchedDetails.rentalId}');
-    print('category ${fetchedDetails.workCategory}');
-    print('vendors ${fetchedDetails.vendorId}');
-    print('entry ${fetchedDetails.entryAllowed}');
-    print('entry ${fetchedDetails.staffmemberId}');
-    print('_selectedOption  ${fetchedDetails.priority}');
 
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
@@ -128,9 +120,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           return '$fileName'; // Adjust the path as needed
         }).toList();
       }
-      print("    unit id is   ${fetchedDetails.unitId}");
-      print(
-          "    fetchedDetails.workCategory is   ${fetchedDetails.workCategory}");
       // print(fetchedDetails.rental.rentalAddress);
       subject.text = fetchedDetails.workSubject ?? '';
       _selectedstaffId = fetchedDetails.staffData?.staffName;
@@ -164,7 +153,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
       partsAndLabor =
           fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
-            print(data.partsId);
             return {
               "parts_id": data.partsId,
               "qtyController": TextEditingController(
@@ -179,15 +167,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             };
           }).toList() ??
               [];
-      print(partsAndLabor);
-      print(partsAndLabor.runtimeType);
       //partsAndLabor.clear();
       updateTotalAmount();
 
       // totalAmount = calculateTotalAmount(partsAndLabor);
     });
 
-    print(fetchedDetails.tenantId);
     if (_selectedPropertyId != null) {
       _loadUnits(_selectedPropertyId!);
       if (_selectedUnitId != null) {
@@ -219,7 +204,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/rentals/rentals/$id');
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -257,7 +241,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -267,7 +250,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
               data['rental_unit'].toString();
         });
         //  200 no hoy tyare _loadtennant
-        print('unit addresses: $unitAddresses');
         setState(() {
           units = unitAddresses;
           _isLoading = false;
@@ -300,7 +282,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/vendor/vendors/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -340,7 +321,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -381,8 +361,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
-      print(response.body);
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -396,7 +374,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           tenants = tenantsnames;
           _isLoadingtenant = false;
         });
-        print(tenants);
       } else {
         throw Exception('Failed to load data');
       }
@@ -416,13 +393,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in EditWorkOrder: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
     } catch (e) {
-      print('Error fetching categories in EditWorkOrder: ' + e.toString());
+      logError('Error fetching categories in EditWorkOrder: ' + e.toString());
       setState(() {
         _isLoadingCategories = false;
       });
@@ -582,8 +558,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                 setState(() {
                   partsAndLabor[index]['selectedAccount'] = newValue;
                 });
-                print(
-                    'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
@@ -717,7 +691,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
@@ -730,7 +703,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -763,7 +735,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         _imageUrls.add(fileName!);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -1443,7 +1415,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                               // addRow();
 
                                                                                   });
-                                                                                  print('Selected category: $_selectedEntry');
                                                                                 }*/
                                                   ,
                                                   buttonStyleData:
@@ -1891,8 +1862,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       'selectedAccount'] =
                                                           newValue;
                                                     });
-                                                    print(
-                                                        'Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                                   },
                                                   buttonStyleData:
                                                   ButtonStyleData(
@@ -2222,7 +2191,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                   tenantId = value.toString();
                                                   _selectedtenantId = value;
                                                   _selectedTenants = tenants[value]; // Store selected tenant name
-                                                  print('Selected Tenant: $_selectedTenants');
                                                 });
                                               },
                                               buttonStyleData: ButtonStyleData(
@@ -2373,8 +2341,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                       _selectedStatus =
                                                           newValue;
                                                     });
-                                                    print(
-                                                        'Selected category: $_selectedStatus');
                                                   },
                                                   buttonStyleData:
                                                   ButtonStyleData(
@@ -3306,7 +3272,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       // addRow();
 
                                     });
-                                    print('Selected category: $_selectedEntry');
                                   }*/
                                   ,
                                   buttonStyleData: ButtonStyleData(
@@ -3678,7 +3643,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                 tenantId = value.toString();
                                                 _selectedtenantId = value;
                                                 _selectedTenants = tenants[value]; // Store selected tenant name
-                                                print('Selected Tenant: $_selectedTenants');
                                               });
                                             },
                                             buttonStyleData: ButtonStyleData(
@@ -3866,8 +3830,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         setState(() {
                                           _selectedStatus = newValue;
                                         });
-                                        print(
-                                            'Selected category: $_selectedStatus');
                                       },
                                       buttonStyleData: ButtonStyleData(
                                         height: 48,
@@ -4087,7 +4049,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           "amount": double.tryParse(part['totalController'].text) ?? 0.0,
         };
       }).toList();
-      print(parts);
       WorkOrderRepository()
           .EditWorkOrder(
         adminId: id,
@@ -4140,7 +4101,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        print(e);
       }).whenComplete(() {
         // Final cleanup
         setState(() {
@@ -4151,7 +4111,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       setState(() {
         formValid = false;
       });
-      print('Form is invalid');
     }
   }
 }

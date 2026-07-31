@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,15 +23,11 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
     final response = await apiGet(Uri.parse('$Api_url/api/rentals/rental-owners/$adminId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-    print('$Api_url/api/rentals/rental-owners/$adminId');
-    print(adminId);
-    print(response.body);
   //  print('$baseUrl/rental-owners/$adminId');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => RentalOwnerData.fromJson(data)).toList();
     } else {
-      print('Failed to fetch rentalowners: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
@@ -133,9 +130,6 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    print(url);
-    print(rentalOwner.processorList!.length);
-    print('Body: ${jsonEncode(rentalOwner.toJson())}');
 
     try {
       final response = await apiPost(
@@ -149,30 +143,26 @@ class RentalOwnerService {
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
           String rentalOwnerId = responseData['data']['rentalowner_id']; // Extracting rentalOwnerId
-          print('Rental Owner ID: $rentalOwnerId');
 
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added rental owner');
           return rentalOwnerId;
         } else {
-          print('Failed to add rental owner: $responseData');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add rental owner');
           return null;
         }
       } else {
-        print('Failed to add rental owner: $responseData');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to add rental owner');
         return null;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return null;
     }
@@ -224,10 +214,7 @@ class RentalOwnerService {
       "processor_list": processorList?.map((e) => e.toJson()).toList(),
       "ach_processor_id": achProcessorId
     };
-    print(data);
     String apiUrl = "${Api_url}/api/rental_owner/rental_owner/$rentalownerId";
-    print('rentalowners ${rentalownerId}');
-    print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
@@ -241,8 +228,6 @@ class RentalOwnerService {
       },
       body: jsonEncode(data),
     );
-    print(jsonEncode(data));
-    print(response.body);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -270,7 +255,6 @@ class RentalOwnerService {
         body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -287,8 +271,6 @@ class RentalOwnerService {
     String? token = prefs.getString('token');
    // adminId = prefs.getString("adminId");
    //  rentalOwnerId = "1718715476950"
-    print(rentalOwnerId);
-    print(rentalOwnerId);
     final response = await apiGet(Uri.parse('$Api_url/api/rental_owner/rentalowner_details/${rentalOwnerId}'),
 
       headers: {"authorization" : "CRM $token","id":"CRM $id",},

@@ -64,7 +64,6 @@ class PropertyTypeRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => propertytype.fromJson(data)).toList();
     } else {
-      print('Failed to fetch property type: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
@@ -99,9 +98,7 @@ class PropertyTypeRepository {
       },
       body: jsonEncode(data),
     );
-    print(data);
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -135,7 +132,6 @@ class PropertyTypeRepository {
         })
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

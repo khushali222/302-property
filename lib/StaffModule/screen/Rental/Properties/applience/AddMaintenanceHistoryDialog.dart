@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
@@ -311,7 +312,7 @@ class _AddMaintenanceHistoryDialogState
         });
       }
     } catch (e) {
-      print('Error picking files: $e');
+      logError('Error picking files: $e');
     }
   }
 

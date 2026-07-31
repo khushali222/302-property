@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class _Utilities_tableState extends State<Utilities_table> {
         }
       });
     } catch (e) {
-      print('Error loading units: $e');
+      logError('Error loading units: $e');
       setState(() {
         units = [];
         isMultiUnit = false;
@@ -107,7 +108,6 @@ class _Utilities_tableState extends State<Utilities_table> {
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print('Utilities API Response: $parsedJson');
 
         if (parsedJson['data'] != null && parsedJson['data'] is List) {
           List<Map<String, dynamic>> utilities =
@@ -170,7 +170,7 @@ class _Utilities_tableState extends State<Utilities_table> {
         isLoading = false;
         errorMessage = 'Failed to load utilities data. Please try again later.';
       });
-      print('Error fetching utilities: $e');
+      logError('Error fetching utilities: $e');
       return [];
     }
   }

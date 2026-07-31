@@ -374,8 +374,6 @@ class LeaseApplicant {
   }
 
   Map<String, dynamic> toJson() {
-    print('rentalAddress ${rentalAddress}');
-    print('rentalUnit ${rentalUnit}');
     return {
       'rental_id': rentalAddress,
       'unit_id': rentalUnit,

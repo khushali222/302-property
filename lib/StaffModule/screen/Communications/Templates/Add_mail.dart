@@ -77,7 +77,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
   }
 
   String replaceSpanTags(String html) {
-    print("spn${html}");
     // Mapping class names to corresponding font sizes
     final Map<String, String> classToFontSizeMap = {
       'text-tiny': '1',
@@ -219,7 +218,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
         });
       }
     } else {
-      print("Failed to load templates");
     }
   }
   // void saveTemplate() async {
@@ -685,7 +683,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                                       eventError = false;
                                       //  fetchTemplates();
                                     });
-                                    print('Selected Event: $_selectedEvent');
 
                                     // Notify FormField of value change
                                   },
@@ -1235,7 +1232,6 @@ class _Add_Email_templetState extends State<Add_Email_templet> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          print(await _htmlEditorController.getText());
                           // Validate name
                           if (name.text.trim().isEmpty) {
                             setState(() {

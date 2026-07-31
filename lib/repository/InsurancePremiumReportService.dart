@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -30,7 +31,7 @@ class InsurancePremiumReportService {
         throw Exception('Failed to load years: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching insurance premium years: $e');
+      logError('Error fetching insurance premium years: $e');
       throw Exception('Failed to load years: $e');
     }
   }
@@ -56,7 +57,6 @@ class InsurancePremiumReportService {
           "years": years,
         }),
       );
-      print("insurance premium report ${response.body}");
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         return InsurancePremiumReportModel.fromJson(jsonData);
@@ -64,7 +64,7 @@ class InsurancePremiumReportService {
         throw Exception('Failed to load report: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching insurance premium report: $e');
+      logError('Error fetching insurance premium report: $e');
       throw Exception('Failed to load report: $e');
     }
   }

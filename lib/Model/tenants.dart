@@ -103,7 +103,6 @@ class Tenant {
   }); // Added leaseData
 
   Tenant.fromJson(Map<String, dynamic> json) {
-    print("calling tenants");
     tenantId = json['tenant_id'];
     applicantId = json['applicant_id'];
     tenantResidentStatus = json['tenant_residentStatus'];

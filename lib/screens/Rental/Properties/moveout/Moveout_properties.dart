@@ -404,7 +404,6 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                           });
                         }
                       }
-                      print(multipletenant);
 
                       await LeaseMoveoutRepository()
                           .addMoveoutTenant(

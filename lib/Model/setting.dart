@@ -151,16 +151,12 @@ class Setting3 {
 
   // Method to parse JSON
   Setting3.fromJson(Map<String, dynamic> json) {
-    print(json);
     id = json['_id'];
     adminId = json['admin_id'];
     remindermail = json['remindermail'];
     duration = json['duration'].toString();
     replyTo = json['reply_to'];
 
-    print("reminder mail $remindermail");
-    print("duration $duration");
-    print("reply to $replyTo");
   }
 
   // Method to convert object to JSON

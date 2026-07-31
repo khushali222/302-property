@@ -11,7 +11,6 @@ class LivePropertyRepository {
     String? token = prefs.getString('token');
 
     final String url = '$Api_url/api/mortgage/report/$adminId';
-    print(url);
 
     try {
       final response = await apiGet(Uri.parse(url), headers: {
@@ -19,7 +18,6 @@ class LivePropertyRepository {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });
-      print(response.body);
       if (response.statusCode == 200) {
         return LivePropertyResponse.fromJson(json.decode(response.body));
       } else {

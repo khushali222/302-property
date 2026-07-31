@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -81,7 +82,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   @override
   void initState() {
-    print(widget.workorder_id);
     // TODO: implement initState
     _connectivitySub = Connectivity()
         .onConnectivityChanged
@@ -96,7 +96,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
     futureworkorderSummary = widget.workorder_id != null
         ? WorkOrderRepository.getworkorderSummary(widget.workorder_id!)
         : Future<WorkOrderData_summery>.error('No work order id provided');
-    print('id work ${widget.workorder_id}');
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
     _loadStaff();
@@ -153,7 +152,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
             "authorization": "CRM $token",
             "id": "CRM $id",
           }).timeout(const Duration(seconds: 20));
-      print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -191,7 +189,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   List<String> _uploadedFileNames = [];
   List<bool> isvideo = [];
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -203,7 +200,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -348,8 +344,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   // Pick image from specific source
   Future<void> _pickImageFromSource(ImageSource source,
       [VoidCallback? onImageAdded]) async {
-    print('pickImageFromSource');
-    print(source);
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickMedia();
 
@@ -371,7 +365,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
           isvideo.add(false);
           videofiles.add(file);
         });
-        print('Image added to _images list. Total images: ${_images.length}');
       }
       await _uploadImage(file);
       // Force dialog to refresh if it's open
@@ -402,14 +395,11 @@ class _Workorder_summeryState extends State<Workorder_summery>
             camera: camera,
             onImageCaptured: (File imageFile) async {
               // Handle captured image
-              print('Camera captured image: ${imageFile.path}');
               setState(() {
                 _images.add(imageFile);
                 isvideo.add(false);
                 videofiles.add(imageFile);
               });
-              print(
-                  'Camera image added to _images list. Total images: ${_images.length}');
               await _uploadImage(imageFile);
               // Force dialog to refresh if it's open
               setState(() {});
@@ -426,8 +416,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                   isvideo.add(true);
                   videofiles.add(videoFile);
                 });
-                print(
-                    'Video thumbnail added to _images list. Total images: ${_images.length}');
               }
               await _uploadImage(videoFile);
               // Force dialog to refresh if it's open
@@ -474,18 +462,15 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   Future<void> _uploadImage(File imageFile) async {
     try {
-      print('Starting image upload...');
       String? fileName = await uploadImage(imageFile);
-      print('Image uploaded successfully: $fileName');
       if (!mounted || fileName == null) return;
       setState(() {
         _uploadedFileNames.add(fileName!);
         _uploadedFileName = fileName;
         _imageUrls.add(fileName!);
       });
-      print('UI updated with uploaded image. Total images: ${_images.length}');
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -820,8 +805,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
-    print(' update image ${summery.workorderUpdates}');
-    print(' update tenant ${summery.vendorData?.companyName}');
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
 
@@ -2811,7 +2794,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Task(WorkOrderData_summery summery) {
-    print(summery.workOrderImages);
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
@@ -3237,7 +3219,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                             CircularProgressIndicator()),
                                                 errorWidget:
                                                     (context, url, error) {
-                                                  print(error);
                                                   return Container();
                                                 },
                                                 fit: BoxFit.cover,
@@ -4721,8 +4702,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         value]; // Store selected rental_adress
 
                                                     //StaffId = value.toString();
-                                                    print(
-                                                        'Selected Staffs: $_selectedStaffs');
                                                     // Fetch units for the selected property
                                                   });
                                                 },

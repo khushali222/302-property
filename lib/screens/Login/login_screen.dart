@@ -13,6 +13,7 @@
 //
 // import 'package:three_zero_two_property/screens/Signup/signup_screen.dart';
 // import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/services/api_helpers.dart';
 //
 // import '../../StaffModule/repository/staffpermission_provider.dart';
@@ -4390,7 +4391,6 @@ class _Login_ScreenState extends State<Login_Screen> {
   String? userId;
   String? userName;
   void setEmail(String email) {
-    print(email);
     setState(() {
       if (_email != email) {
         _email = email;
@@ -4411,17 +4411,11 @@ class _Login_ScreenState extends State<Login_Screen> {
     userId = user_id;
     userName = userName;
     // Set role when selecting company
-    print(selectedrole);
-    print(admin_id);
-    print(selectedCompany);
-    print(userId);
     setState(() {});
   }
 
   void login() {
     // Implement login logic here
-    print(
-        'Logging in with email: $_email, company: $_selectedCompany, password: $_password');
   }
 
   void setPassword(String password) {
@@ -4491,7 +4485,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       passworderror = false;
     });
 
-    print("Calling check-credentials API with email: ${email.text.trim()}");
 
     try {
       final response = await apiPost(
@@ -4503,7 +4496,6 @@ class _Login_ScreenState extends State<Login_Screen> {
         }),
       );
 
-      print("Response: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -4520,7 +4512,6 @@ class _Login_ScreenState extends State<Login_Screen> {
 
         if (shouldLogin) {
           // Single account found - auto login
-          print("Single account found - proceeding with auto login");
           setState(() {
             if (roles[0]['role'] == "admin") {
               _hasMultipleCompanies = false;
@@ -4548,7 +4539,6 @@ class _Login_ScreenState extends State<Login_Screen> {
           }
         } else {
           // Multiple accounts found - show selection
-          print("Multiple accounts found - showing selection");
           setState(() {
             _hasMultipleCompanies = true;
             _companies = roles
@@ -4574,7 +4564,7 @@ class _Login_ScreenState extends State<Login_Screen> {
         });
       }
     } catch (e) {
-      print("Error checking credentials: $e");
+      logError("Error checking credentials: $e");
       Fluttertoast.showToast(msg: "Network error. Please try again.");
       setState(() {
         loading = false;
@@ -4716,7 +4706,6 @@ class _Login_ScreenState extends State<Login_Screen> {
 
     final response = await apiPost(Uri.parse('${Api_url}/api/auth/login'),
         body: _last2FALoginBody);
-    print(response.body);
     final jsonData = json.decode(response.body);
 
     setState(() {
@@ -4827,15 +4816,10 @@ class _Login_ScreenState extends State<Login_Screen> {
     String? savedEmail = prefs.getString('savedEmail');
     String? savedPassword = prefs.getString('savedPassword');
 
-    print('🔍 Loading saved credentials:');
-    print('   rememberMe: $savedRememberMe');
-    print('   savedEmail: $savedEmail');
-    print('   savedPassword: ${savedPassword != null ? '***' : 'null'}');
 
     if (savedRememberMe == true &&
         savedEmail != null &&
         savedPassword != null) {
-      print('✅ Auto-filling credentials (Remember Me)');
       setState(() {
         rememberMe = true;
         isChecked = true;
@@ -4844,7 +4828,6 @@ class _Login_ScreenState extends State<Login_Screen> {
         // Fields are pre-filled only; user must tap Login to authenticate.
       });
     } else {
-      print('❌ No saved credentials found or Remember Me not enabled');
     }
   }
 
@@ -4852,13 +4835,10 @@ class _Login_ScreenState extends State<Login_Screen> {
   Future<void> _saveCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (rememberMe) {
-      print('Saving credentials for Remember Me');
       await prefs.setBool('rememberMe', true);
       await prefs.setString('savedEmail', email.text.trim());
       await prefs.setString('savedPassword', password.text.trim());
-      print('Credentials saved successfully');
     } else {
-      print('Clearing Remember Me credentials');
       await prefs.setBool('rememberMe', false);
       await prefs.remove('savedEmail');
       await prefs.remove('savedPassword');
@@ -5142,9 +5122,7 @@ class _Login_ScreenState extends State<Login_Screen> {
                       buttonOptions: companies,
                       onSelected: (index) {
                         setState(() {
-                          print(companies[index]);
                           adminId = companies[index]['admin_id'];
-                          print(adminId);
                         });
                         selectCompany(
                             companies[index]["company"]!,
@@ -5761,7 +5739,6 @@ class _Login_ScreenState extends State<Login_Screen> {
                           adminId = companies[index]['admin_id'];
                           userId = companies[index]['user_id'];
                         });
-                        print(adminId);
                         selectCompany(
                             companies[index]["company"]!,
                             companies[index]["role"]!,
@@ -6078,22 +6055,17 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
 
     if (jsonData['id'] != "") {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['admin_id'];
-      print(jsonData);
       String? companyName = jsonData['company_name'];
 
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
 
       prefs.setString('companyName', companyName!);
-      print('Company Name: $companyName');
       prefs.setString("role", "Admin");
       prefs.setString('first_name', jsonData['first_name']);
       prefs.setString('last_name', jsonData['last_name']);
@@ -6112,9 +6084,7 @@ class _Login_ScreenState extends State<Login_Screen> {
           brandLogo.isNotEmpty &&
           brandLogo.startsWith("data:image")) {
         prefs.setString('brand_logo', brandLogo);
-        print("Saved brand logo.");
       } else {
-        print("Warning: Brand logo missing or invalid.");
         prefs.remove('brand_logo'); // Use default in drawer
         // Optional: block login
         /*
@@ -6125,7 +6095,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       */
       }
 
-      print("user id${userId}");
       if (!mounted) return;
 
       await Provider.of<checkPlanPurchaseProiver>(context, listen: false)
@@ -6142,18 +6111,14 @@ class _Login_ScreenState extends State<Login_Screen> {
         expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
       }
 
-      print('Expiration Date: $expirationDate');
 
       DateTime now = DateTime.now();
       String currentDate = DateFormat('yyyy-MM-dd').format(now);
-      print(currentDate);
 
       bool isPlanActive = expirationDate != null && expirationDate.isAfter(now);
 
       if (isPlanActive) {
-        print('The plan is active.');
       } else {
-        print('The plan is not active.');
       }
       // Refresh DateProvider to load new user's date format preferences
       await Provider.of<DateProvider>(context, listen: false).loadDateFormat();
@@ -6163,14 +6128,12 @@ class _Login_ScreenState extends State<Login_Screen> {
               builder: (context) =>
                   isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
-      print('Failed to check token');
     }
   }
 
   Future<void> checkTokenStaff(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
-    print("calling the staff login token");
     //log();
     final response = await apiPost(
       Uri.parse('${Api_url}/api/auth'),
@@ -6184,23 +6147,19 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["staffmember_id"] != null) {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       // await Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
       prefs.setString("staff_id", jsonData["staffmember_id"]);
       prefs.setString("role", "Staffmember");
-      print(jsonData["staffmember_firstName"]);
       prefs.setString('companyName', selectedCompany);
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
       String stafffirstname = jsonData['staffmember_name'];
       List<String> firstname = stafffirstname.split(" ");
-      print(firstname);
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname.length > 1 ? firstname.last : "");
       prefs.setString('staffemail', jsonData['staffmember_email']);
@@ -6214,7 +6173,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
-      print('Failed to check token');
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));
@@ -6238,16 +6196,13 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["tenant_id"] != null) {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       prefs.setString("role", "Tenant");
       prefs.setString('companyName', selectedCompany);
-      print(jsonData["tenant_firstName"]);
       prefs.setString("tenant_id", jsonData["tenant_id"]);
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
@@ -6264,7 +6219,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
-      print('Failed to check token');
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));
@@ -6288,16 +6242,13 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    print("vendor token ${response.body}");
     final jsonData = json.decode(response.body);
     if (jsonData["vendor_id"] != null) {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       String stafffirstname = jsonData['vendor_name'];
       List<String> firstname = stafffirstname.split(" ");
-      print(firstname);
       await Provider.of<PermissionProvider>(context, listen: false)
           .fetchPermissions();
       prefs.setString('first_name', firstname.first);
@@ -6305,7 +6256,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       prefs.setString('last_name', firstname.length > 1 ? firstname[1] : "");
       prefs.setString('companyName', selectedCompany);
       prefs.setString("role", "Vendor");
-      print(jsonData["vendor_firstName"]);
       prefs.setString("vendor_id", jsonData["vendor_id"]);
       prefs.setString('checkedToken', token);
       //  prefs.setString('user_id', jsonData['user_id']);
@@ -6324,7 +6274,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
-      print('Failed to check token');
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));
@@ -6337,7 +6286,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
-    print("${Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/admin/check_company/${token}'),
       headers: {
@@ -6347,14 +6295,11 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       // body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     //if (jsonData["data"]['id'] != "") {
-    print(jsonData);
     if (jsonData["statusCode"] == 200) {
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
       // prefs.setString('user_id', jsonData['user_id']);
@@ -6377,8 +6322,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     // String? userid = prefs.getString("user_id");
     String rolename = selectedrole;
 
-    print("${Api_url}/api/auth/login");
-    print(rolename);
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     // Remembered so Resend can replay the exact body that triggered 2FA.
     _last2FALoginBody = {
@@ -6392,11 +6335,9 @@ class _Login_ScreenState extends State<Login_Screen> {
     };
     final response = await apiPost(Uri.parse('${Api_url}/api/auth/login'),
         body: _last2FALoginBody);
-    print(response.body);
     await backupcodeapicall();
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
@@ -6406,7 +6347,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       // Save credentials if Remember Me is enabled
       await _saveCredentials();
 
-      print(rolename);
       if (rolename == "staffmember" || selectedrole == "staff")
         await checkTokenStaff(jsonData["token"]);
       if (rolename == "tenant") await checkTokenTenant(jsonData["token"]);
@@ -6418,7 +6358,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     } else {
       Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       if (jsonData["statusCode"] == 205) {
-        print("2FA ON");
         setState(() {
           requires2FA = true;
           OtpId = jsonData["data"]["otp_id"];
@@ -6436,15 +6375,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     setState(() {
       loading = true;
     });
-    print(selectedrole);
-    print({
-      "email": email.text.trim(),
-      "password": password.text.trim(),
-      "role": selectedrole,
-      "admin_id": adminId,
-      "user_id": userId,
-    });
-    print("userid${userId}");
     final response =
         await apiPost(Uri.parse('${Api_url}/api/auth/login'), body: {
       "email": email.text.trim(),
@@ -6463,11 +6393,9 @@ class _Login_ScreenState extends State<Login_Screen> {
       "user_id": userId,
       "rememberMe": rememberMe.toString(),
     };
-    print(response.body);
     final jsonData = json.decode(response.body);
 
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
@@ -6477,7 +6405,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       // Save credentials if Remember Me is enabled
       await _saveCredentials();
 
-      print(jsonData);
       //  print("required 2FA ${jsonData["data"]["requires2FA"]}");
       await checkToken(jsonData["token"]);
       //  await checkToken("token", "id");
@@ -6490,7 +6417,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     } else {
       Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       if (jsonData["statusCode"] == 205) {
-        print("2FA ON");
         setState(() {
           requires2FA = true;
           OtpId = jsonData["data"]["otp_id"];
@@ -6509,9 +6435,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       loading = true;
     });
 
-    print("userid${userId}");
-    print('${Api_url}/api/auth/verify-login-2fa');
-    print(OtpId);
     final response = await apiPost(
       Uri.parse('${Api_url}/api/auth/verify-login-2fa'),
       headers: {
@@ -6526,10 +6449,8 @@ class _Login_ScreenState extends State<Login_Screen> {
         "rememberMe": rememberMe,
       }),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
 
       // Code accepted — the countdown is no longer relevant.
       _stop2FATimer();
@@ -6542,8 +6463,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       // Save credentials if Remember Me is enabled
       await _saveCredentials();
 
-      print(jsonData);
-      print(selectedrole);
       //print("required 2FA ${jsonData["data"]["requires2FA"]}");
       if (selectedrole == "staffmember" || selectedrole == "staff")
         await checkTokenStaff(jsonData["token"]);
@@ -6560,7 +6479,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     } else {
       Fluttertoast.showToast(msg: _formatErrorMessage(jsonData["message"]));
       if (jsonData["statusCode"] == 205) {
-        print("2FA ON");
         setState(() {
           requires2FA = true;
         });
@@ -6580,18 +6498,14 @@ class _Login_ScreenState extends State<Login_Screen> {
     // setState(() {
     //   loading = true;
     // });
-    print(selectedrole);
 
     selectedrole =
         selectedrole == "staffmember" ? "staff" : selectedrole.toLowerCase();
 
-    print("userid${userId}");
     final response = await apiGet(Uri.parse(
         '${Api_url}/api/backup-codes/backup-codes/${userId}?user_type=$selectedrole'));
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
 
       //  await checkToken("token", "id");
       // Navigator.push(
@@ -6651,7 +6565,6 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                   onPressed: () {
                     setState(() {
                       _selectedIndex = index;
-                      print(index);
                     });
                     widget.onSelected(index);
                   },
@@ -6725,7 +6638,6 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
                 onPressed: () {
                   setState(() {
                     _selectedIndex = index;
-                    print(index);
                   });
                   widget.onSelected(index);
                 },
@@ -6955,7 +6867,6 @@ class _Login_ScreenState extends State<Login_Screen> {
   }
 
   Future<void> submitEmail() async {
-    print("Calling  ${email.text}");
     // Make API call to check email
     final response = await apiPost(
       Uri.parse('$Api_url/api/admin/check_role'),
@@ -8097,12 +8008,10 @@ class _Login_ScreenState extends State<Login_Screen> {
       print(jsonData);
       String? companyName = jsonData['data']['company_name'];
 
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
 
       prefs.setString('companyName', companyName!);
-      print('Company Name: $companyName');
       prefs.setString("role", "Admin");
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);
@@ -8127,7 +8036,6 @@ class _Login_ScreenState extends State<Login_Screen> {
         expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
       }
 
-      print('Expiration Date: $expirationDate');
 
       DateTime now = DateTime.now();
       String currentDate = DateFormat('yyyy-MM-dd').format(now);
@@ -8246,7 +8154,6 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    print("vendor token ${response.body}");
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
       print(jsonData);
@@ -8285,7 +8192,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
-    print("${Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/admin/check_company/${token}'),
       headers: {
@@ -8302,7 +8208,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     if (jsonData["statusCode"] == 200) {
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
 
@@ -8321,7 +8226,6 @@ class _Login_ScreenState extends State<Login_Screen> {
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
     String rolename = selectedrole;
 
-    print("${Api_url}/api/${rolename.toLowerCase()}/login");
     // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     final response = await apiPost(
         Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),

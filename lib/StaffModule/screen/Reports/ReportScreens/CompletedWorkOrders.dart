@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -48,7 +49,6 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -115,28 +115,16 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       // Use stored API format dates
       apiFromDate = _apiFromDate!;
       apiToDate = _apiToDate!;
-      print(
-          'Using stored API dates (Completed Staff): $apiFromDate to $apiToDate');
     } else {
       // Fallback: convert display dates to API format
       apiFromDate = _convertToApiFormat(fromDate.text);
       apiToDate = _convertToApiFormat(toDate.text);
-      print(
-          'Converted display dates (Completed Staff): $apiFromDate to $apiToDate');
     }
 
     // Get status parameter
     String? statusParam = statusType == 'All' ? null : statusType;
 
     // Print API parameters for debugging
-    print('=== API DEBUG INFO (COMPLETED STAFF) ===');
-    print('From Date (Display): ${fromDate.text}');
-    print('To Date (Display): ${toDate.text}');
-    print('From Date (API): $apiFromDate');
-    print('To Date (API): $apiToDate');
-    print('Status: $statusParam');
-    print('Status Type: $statusType');
-    print('=======================================');
 
     // Fetch data with filters
     _fetchCompletedWorkOrders(
@@ -660,7 +648,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();

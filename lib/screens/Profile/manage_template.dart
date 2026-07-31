@@ -122,7 +122,6 @@ class _manage_templatesState extends State<manage_templates> {
       "authorization" : "CRM $token",
       "id":"CRM $id",
       },);
-      print(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)["templates"];
 
@@ -153,7 +152,6 @@ class _manage_templatesState extends State<manage_templates> {
         });
       } else {
         // Handle non-200 errors
-        print("Failed to fetch templates. Status Code: ${response.statusCode}");
       }
 
   }
@@ -345,7 +343,6 @@ class _manage_templatesState extends State<manage_templates> {
                     final jsonData = dummyTemplateList.map((e) => e.toJson()).toList();
                     log(jsonEncode(jsonData));
                     await updateSelectedTemplates();
-                    print(selectedTemplates);
                   }
                 : null,
             child: Opacity(
@@ -430,12 +427,9 @@ class _manage_templatesState extends State<manage_templates> {
           },
           body: jsonEncode({'is_active': true}),
         );
-        print(response.body);
         if (response.statusCode == 200) {
-          print("✅ Updated template $templateId successfully.");
           await updateSwitchBasedPreferences();
         } else {
-          print("❌ Failed to update template $templateId. Status: ${response.statusCode}");
         }
       }
     }
@@ -475,7 +469,6 @@ class _manage_templatesState extends State<manage_templates> {
       }),
     );
 
-    print(response.body);
     if (response.statusCode == 200) {
       // Update original values after successful save
       setState(() {
@@ -487,9 +480,7 @@ class _manage_templatesState extends State<manage_templates> {
         }
       });
       Fluttertoast.showToast(msg: "Changes saved");
-      print("✅ Mail preferences updated successfully.");
     } else {
-      print("❌ Failed to update mail preferences. Status: ${response.statusCode}");
     }
   }
 

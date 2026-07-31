@@ -12,7 +12,6 @@ class cronjob_payment_tableService {
   Future<LeaseResponse> fetchCronjob_payment(
   {int limit = 5,int page= 1}
       ) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -24,14 +23,10 @@ class cronjob_payment_tableService {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-print('responce get ${response.body}');
-print('staff ${id}');
-print('admin ${adminId}');
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final InsuranceResponse = LeaseResponse.fromJson(parsedJson);
         return InsuranceResponse;
       } else {
@@ -40,7 +35,6 @@ print('admin ${adminId}');
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
       throw Exception('Failed to load renters insurance');
     }
   }

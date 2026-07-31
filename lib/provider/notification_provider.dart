@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class NotificationProvider with ChangeNotifier {
         _notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       }
     } catch (error) {
-      print("Error fetching notifications: $error");
+      logError("Error fetching notifications: $error");
     }
     AppBarTitle = title;
     _isLoading = false;
@@ -69,7 +70,7 @@ class NotificationProvider with ChangeNotifier {
         _notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       }
     } catch (error) {
-      print("Error fetching notifications: $error");
+      logError("Error fetching notifications: $error");
     }
     AppBarTitle = title;
     _isLoading = false;
@@ -101,7 +102,7 @@ class NotificationProvider with ChangeNotifier {
         _notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       }
     } catch (error) {
-      print("Error fetching notifications: $error");
+      logError("Error fetching notifications: $error");
     }
     AppBarTitle = title;
     _isLoading = false;
@@ -132,7 +133,7 @@ class NotificationProvider with ChangeNotifier {
         _notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       }
     } catch (error) {
-      print("Error fetching notifications: $error");
+      logError("Error fetching notifications: $error");
     }
     AppBarTitle = title;
     _isLoading = false;

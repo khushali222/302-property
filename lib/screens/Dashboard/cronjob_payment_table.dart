@@ -1187,7 +1187,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
         retrydate.text = refund.entry!.first.date ?? "";
       }
       amount.text = refund.totalAmount?.toString() ?? "0.0";
-      print(" r ${refund.entry}");
     }
 
     Alert(
@@ -2413,8 +2412,6 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 } else {
                   var data = snapshot.data?.data ?? [];
                   var failedData = snapshot.data?.failedPayments ?? [];
-                  print("data ${data.length}");
-                  print("failedData ${failedData.length}");
 
                   final totalPages =
                       ((snapshot.data?.metadata?.total ?? 0) / itemsPerPage)

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -300,7 +301,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     _checkUserType();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -544,7 +544,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge dataaa: $e');
+      logError('Failed to load surcharge dataaa: $e');
     }
   }
 
@@ -559,7 +559,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         isLoadingAccounts = false;
       });
     } catch (e) {
-      print('Failed to load accounts: $e');
+      logError('Failed to load accounts: $e');
       setState(() {
         isLoadingAccounts = false;
       });
@@ -597,7 +597,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      logError('Failed to load surcharge data: $e');
     }
   }
 
@@ -642,7 +642,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       return; // No changes made, don't proceed with update
     }
 
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -692,7 +691,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         //     SnackBar(content: Text('Failed to Update Surcharge')));
       }
     } catch (e) {
-      print('Failed to update surcharge data: $e');
+      logError('Failed to update surcharge data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -704,7 +703,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    print("calling");
 
     try {
       Map<String, dynamic> data = {
@@ -734,7 +732,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             const SnackBar(content: Text('Failed to Update Surcharge')));
       }
     } catch (e) {
-      print('Failed to update surcharge data: $e');
+      logError('Failed to update surcharge data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -748,7 +746,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       return; // No changes made, don't proceed with update
     }
 
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -793,7 +790,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         Fluttertoast.showToast(msg: 'Failed to Update Late Fee');
       }
     } catch (e) {
-      print('Failed to update Late Fee data: $e');
+      logError('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
       Fluttertoast.showToast(msg: 'Error: $e');
@@ -837,7 +834,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       return; // No changes made, don't proceed with add
     }
 
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -875,7 +871,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         Fluttertoast.showToast(msg: 'Failed to Update Late Fee');
       }
     } catch (e) {
-      print('Failed to update Late Fee data: $e');
+      logError('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
       Fluttertoast.showToast(msg: 'Error: $e');
@@ -936,7 +932,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         Fluttertoast.showToast(msg: 'Failed to save Property Owner override');
       }
     } catch (e) {
-      print('Failed to save property owner override: $e');
+      logError('Failed to save property owner override: $e');
       Fluttertoast.showToast(msg: 'Error: $e');
     }
   }
@@ -947,20 +943,16 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? id = prefs.getString("adminId");
     try {
       Setting3 latefee = await mailrepository.fetchMailData('$id');
-      print(latefee != null);
       if (latefee != null) {
-        print("setting3 calling");
         setState(() {
           id = latefee.adminId;
           mailupdate = true;
-          print(latefee.duration);
           durationmail.text = latefee.duration.toString();
           replyToEmail.text = latefee.replyTo ?? "";
           //  rentDueReminderEmail = true;
           if (latefee.remindermail != null) {
             rentDueReminderEmail = latefee.remindermail!;
           }
-          print(rentDueReminderEmail);
 
           // Store original values for change tracking
           _originalDurationMail = latefee.duration?.toString() ?? "";
@@ -969,7 +961,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      logError('Failed to load surcharge data: $e');
     }
   }
 
@@ -978,9 +970,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   void loadChargeSetting() async {
     Map<String, dynamic>? chargeData = await fetchChargeSetting();
     if (chargeData != null) {
-      print("Charge Settings: $chargeData");
       bool unbundle = chargeData["unbundle_charges"] ?? false;
-      print("Unbundle charges: $unbundle");
       setState(() {
         chargesetting = chargeData;
       });
@@ -1016,13 +1006,12 @@ class _TabBarExampleState extends State<TabBarExample> {
         throw Exception('Failed to load charge data');
       }
     } catch (e) {
-      print('Failed to load charge data: $e');
+      logError('Failed to load charge data: $e');
       return null;
     }
   }
 
   Future<void> updateMail() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -1054,7 +1043,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             const SnackBar(content: Text('Failed to Update mail')));
       }
     } catch (e) {
-      print('Failed to update mail data: $e');
+      logError('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -1067,9 +1056,7 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
 
-    print(data);
     final response = await apiPost(
       Uri.parse('$Api_url/api/charge-setting'),
       headers: {
@@ -1079,7 +1066,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
@@ -1103,7 +1089,6 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   Future<void> Addmail() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -1131,7 +1116,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             const SnackBar(content: Text('Failed to Update ,ail')));
       }
     } catch (e) {
-      print('Failed to update mail data: $e');
+      logError('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
@@ -1345,7 +1330,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Company profile fetch failed: $e');
+      logError('Company profile fetch failed: $e');
       setState(() {
         _cpLoadedOnce = true;
         _cpApiError = 'Could not load company profile.';
@@ -2039,7 +2024,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Failed to load Twilio settings: $e');
+      logError('Failed to load Twilio settings: $e');
     }
   }
 
@@ -2077,7 +2062,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       }
       if (hasError) {
         setState(() {});
-        print("Please fill all required fields.");
         // _showTwilioSnackBar("Please fill all required fields.");
         return;
       }
@@ -2120,7 +2104,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         );
       }
     } catch (e) {
-      print('Failed to save Twilio settings: $e');
+      logError('Failed to save Twilio settings: $e');
       _showTwilioSnackBar("Error saving Twilio settings.");
     }
   }
@@ -2391,7 +2375,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     _showDeleteAlert(context, staff.accountId!);
 
     // Handle delete action
-    print('Delete ${staff.accountId}');
   }
 
   //for teblet
@@ -2751,7 +2734,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
 
     try {
       final response = await http
@@ -2760,7 +2742,6 @@ class _TabBarExampleState extends State<TabBarExample> {
         "id": "CRM $id",
       });
 
-      print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -2792,7 +2773,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     setState(() {
       _isLoadingtenant = true;
     });
@@ -2803,8 +2783,6 @@ class _TabBarExampleState extends State<TabBarExample> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
-      print(response.body);
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> tenantsnames = {};
@@ -2818,7 +2796,6 @@ class _TabBarExampleState extends State<TabBarExample> {
           tenants = tenantsnames;
           _isLoadingtenant = false;
         });
-        print(tenants);
       } else {
         throw Exception('Failed to load data');
       }
@@ -2848,7 +2825,6 @@ class _TabBarExampleState extends State<TabBarExample> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/vendor/vendors/$adminid');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -2885,7 +2861,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
 
     setState(() {
       _isLoadingstaff = true;
@@ -2897,7 +2872,6 @@ class _TabBarExampleState extends State<TabBarExample> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/staffmember/staff_member/$adminId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -2939,7 +2913,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
 
     // Ensure a category is selected
     if (_selectedDropdownCategory == null ||
@@ -2951,10 +2924,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       return;
     }
 
-    print(
-        "Sending categoryId: " + (_selectedDropdownCategory?.categoryId ?? ""));
-    print(
-        'Selected category for update: ${_selectedDropdownCategory?.name} (${_selectedDropdownCategory?.categoryId})');
 
     final url = '${Api_url}/api/work-order/work-defaults';
     final headers = {
@@ -2975,8 +2944,6 @@ class _TabBarExampleState extends State<TabBarExample> {
           await apiPost(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
-      print('add and update workorder  \\${responseData}');
-      print('add workorder  \\${response.body}');
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -3002,7 +2969,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     try {
       WorkOrderModel.Data workorder = await fetchWorkOrderSetting();
       String? entryAllowedString;
@@ -3013,8 +2979,6 @@ class _TabBarExampleState extends State<TabBarExample> {
       if (workorder != null) {
         // Get category_id from workDefaults.category
         String? fetchedCategoryId = workorder.workDefaults?.category;
-        print("Fetched category_id from workDefaults: " +
-            (fetchedCategoryId ?? "null"));
         setState(() {
           _selectedvendorsId = workorder.workDefaults?.vendorId?.isEmpty ?? true
               ? null
@@ -3040,7 +3004,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         });
       }
     } catch (e) {
-      print('Failed to load workorder data: $e');
+      logError('Failed to load workorder data: $e');
     }
   }
 
@@ -3053,7 +3017,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     if (adminId == null || adminId.isEmpty) {
-      print('Admin ID is null or empty');
       return;
     }
 
@@ -3067,13 +3030,9 @@ class _TabBarExampleState extends State<TabBarExample> {
       'Content-Type': 'application/json; charset=UTF-8',
     };
 
-    print('Fetching notification settings from: $url');
-    print('Admin ID: $adminId');
 
     try {
       final response = await apiGet(Uri.parse(url), headers: headers);
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         var responseData = json.decode(response.body);
@@ -3082,7 +3041,6 @@ class _TabBarExampleState extends State<TabBarExample> {
           // Check if data exists
           if (responseData["data"] != null) {
             var data = responseData["data"];
-            print('Notification settings data: $data');
             setState(() {
               createAdmin = data["create_admin"] ?? false;
               createAssignee = data["create_assignee"] ?? false;
@@ -3094,18 +3052,10 @@ class _TabBarExampleState extends State<TabBarExample> {
               completeAssignee = data["complete_assignee"] ?? false;
               completeTenant = data["complete_tenant"] ?? false;
             });
-            print('Settings loaded successfully');
-            print(
-                'Create - Admin: $createAdmin, Assignee: $createAssignee, Tenant: $createTenant');
-            print(
-                'Update - Admin: $updateAdmin, Assignee: $updateAssignee, Tenant: $updateTenant');
-            print(
-                'Complete - Admin: $completeAdmin, Assignee: $completeAssignee, Tenant: $completeTenant');
             setState(() {
               _hasLoadedNotifications = true; // Mark as loaded
             });
           } else {
-            print('No data in response, using default values');
             // Set default values if no data exists (first time setup)
             setState(() {
               createAdmin = false;
@@ -3122,11 +3072,8 @@ class _TabBarExampleState extends State<TabBarExample> {
             });
           }
         } else {
-          print('API returned error statusCode: ${responseData["statusCode"]}');
-          print('Message: ${responseData["message"] ?? "No message"}');
         }
       } else if (response.statusCode == 404) {
-        print('Settings not found (404), using default values');
         // First time - no settings exist yet, use defaults
         setState(() {
           createAdmin = false;
@@ -3141,16 +3088,13 @@ class _TabBarExampleState extends State<TabBarExample> {
           _hasLoadedNotifications = true; // Mark as loaded even with defaults
         });
       } else {
-        print('API returned error status: ${response.statusCode}');
         var errorBody = response.body;
-        print('Error response: $errorBody');
         Fluttertoast.showToast(
             msg:
                 'Failed to load notification settings: ${response.statusCode}');
       }
     } catch (e) {
-      print('Exception loading workorder notification settings: $e');
-      print('Stack trace: ${StackTrace.current}');
+      logError('Exception loading workorder notification settings: $e');
       Fluttertoast.showToast(msg: 'Failed to load notification settings: $e');
     }
   }
@@ -3199,7 +3143,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             msg: responseData["message"] ?? "Failed to save settings");
       }
     } catch (error) {
-      print('Error saving notification settings: $error');
+      logError('Error saving notification settings: $error');
       Fluttertoast.showToast(msg: 'An error occurred while saving settings');
     } finally {
       setState(() {
@@ -3216,7 +3160,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     final url = Uri.parse('${Api_url}/api/themes/date-format');
     final response = await apiPost(
       url,
@@ -3297,7 +3240,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String? staffid = prefs.getString("staff_id");
     String? adminId = prefs.getString('adminId');
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 staff $id");
 
     setState(() {
       _isStaff = (staffid != null && staffid.isNotEmpty);
@@ -6881,8 +6823,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   _selectedVendors =
                                                       vendors[value];
                                                   vendorId = value.toString();
-                                                  print(
-                                                      'Selected Vendors: $_selectedVendors');
                                                   _loadUnits(value!);
                                                   state.didChange(
                                                       value); // Fetch units for the selected vendor
@@ -6997,7 +6937,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       // if(_selectedCategory == 'Other')
                                       // addRow();
                                     });
-                                    print('Selected category: $_selectedEntry');
                                   },
                                   buttonStyleData: ButtonStyleData(
                                     height: 45,
@@ -7119,8 +7058,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                   _selectedStaffs =
                                                       staffs[value];
                                                   StaffId = value.toString();
-                                                  print(
-                                                      'Selected Staffs: $_selectedStaffs');
                                                   state.didChange(value);
                                                 });
                                                 state.reset();
@@ -7214,7 +7151,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         ),
                                       ),
                                       onPressed: () async {
-                                        print("hello");
                                         updateWorkOrderSettings();
                                       },
                                       child: isLoading
@@ -7310,7 +7246,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                             };
                                         });
 
-                                        print(chargesetting);
                                       },
                                       activeColor:
                                           blueColor, // Color when switch is on
@@ -7401,7 +7336,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                                     onTap: () async {
                                       setState(() {
                                         chargesetting = null;
-                                        print(" $chargesetting");
                                       });
                                     },
                                     child: ClipRRect(
@@ -8368,7 +8302,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     String categoryName = categories.text.trim();
     String? token = prefs.getString('token');
 
-    print("adminId: $adminId, categoryName: $categoryName, token: $token");
 
     if (categoryName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -8398,7 +8331,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     );
 
     final responseData = jsonDecode(response.body);
-    print("responce categories $responseData");
     if (response.statusCode == 200 && responseData["statusCode"] == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Category added successfully')),
@@ -8454,7 +8386,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     );
 
     final responseData = jsonDecode(response.body);
-    print("response update category $responseData");
     if (response.statusCode == 200 && responseData["statusCode"] == 200) {
       Fluttertoast.showToast(
           msg: responseData["message"] ?? 'Category updated successfully');
@@ -8530,7 +8461,6 @@ class _TabBarExampleState extends State<TabBarExample> {
                       items: accountitems,
                       selectedValue: _selectedAccount,
                       onChanged: (String? value) {
-                        print(_selectedAccount);
                         setState(() {
                           _selectedAccount = value;
                           Navigator.pop(context);
@@ -9068,7 +8998,6 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   // Add this function to show a delete confirmation dialog with reason for categories
   void _showDeleteCategoryAlert(BuildContext context, String id) {
-    print("calling this detele categories 1");
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -9101,7 +9030,6 @@ class _TabBarExampleState extends State<TabBarExample> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print("calling this detele categories 2");
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             } else {
@@ -9252,7 +9180,6 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   // Add this function to show a delete confirmation dialog for vendors
   void _showDeleteVendorAlert(BuildContext context, String id) {
-    print("calling this delete vendor 1");
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -9285,7 +9212,6 @@ class _TabBarExampleState extends State<TabBarExample> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            print("calling this delete vendor 2");
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
             } else {

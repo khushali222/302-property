@@ -46,7 +46,6 @@ class ChargeData {
   });
 
   factory ChargeData.fromJson(Map<String, dynamic> json) {
-    print(json['entry']);
     return ChargeData(
       adminId: json['admin_id'],
       entry: (json['entry'] as List).map((i) => Entry.fromJson(i)).toList(),
@@ -86,9 +85,7 @@ class Entry {
       this.entry_id});
 
   factory Entry.fromJson(Map<String, dynamic> json) {
-    print('\n\nEntry\'s data');
     json.forEach((key, value) {
-      print('$key: $value');
     });
     return Entry(
         account: json['account'],
@@ -269,8 +266,6 @@ class LeaseData {
   }
 
   Map<String, dynamic> toJson() {
-    print("start date json:${startDate}");
-    print("end date json:${endDate}");
     return {
       'lease_id': leaseId,
       'admin_id': adminId,

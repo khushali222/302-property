@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -19,8 +20,6 @@ class ApplianceDetailsService {
         throw Exception('Authentication credentials not found');
       }
 
-      print('Fetching appliance details for ID: $applianceId');
-      print('API URL: $Api_url/api/appliance/appliance_details/$applianceId');
 
       final response = await apiGet(
         Uri.parse('$Api_url/api/appliance/appliance_details/$applianceId'),
@@ -30,8 +29,6 @@ class ApplianceDetailsService {
         },
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body for get details of applience: ${response.body}');
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
@@ -51,7 +48,7 @@ class ApplianceDetailsService {
         throw Exception(responseData['message'] ?? 'Failed to fetch appliance details');
       }
     } catch (e) {
-      print('Error fetching appliance details: $e');
+      logError('Error fetching appliance details: $e');
       throw Exception('Failed to fetch appliance details: $e');
     }
   }

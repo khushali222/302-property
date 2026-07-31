@@ -202,8 +202,6 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
     if (applicantDetails.data != null) {
       Provider.of<ApplicantDetailsProvider>(context, listen: false)
           .setApplicantDetails(applicantDetails.data!);
-      print(applicantDetails.data!.applicantStreetAddress);
-      print(applicantDetails.data!.applicantFirstName);
 
       setState(() {
         _applicantStreetAddressController.text =
@@ -1517,18 +1515,14 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     applicantPhoneNumber: _applicantPhoneNumberController.text,
                     isApplicantDataEmpty: false, // Default value
                   );
-                  print('entry');
                   ApplicantSummeryRepository applicantSummeryRepository =
                   ApplicantSummeryRepository();
-                  print('entry');
                   bool success = await applicantSummeryRepository
                       .editApplicantSummaryForm(data, widget.applicantId);
                   if (success == true) {
                     Navigator.pop(context);
                     editFormState.setEditForm(!editFormState.showEditForm);
-                    print('complete');
                   } else {
-                    print('not complete');
                   }
                 } else {
                   if (!checked) {
@@ -1536,7 +1530,6 @@ class _EditApplicantSummaryState extends State<EditApplicantSummary> {
                     //     msg: 'You must agree to the terms and conditions.');
                   }
                   setState(() {}); // Rebuild to show the error message
-                  print('Form is invalid');
                 }
               },
               child: const Text('Save Applicant'),

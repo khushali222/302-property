@@ -39,7 +39,6 @@ class SurchargeRepository {
         }
     );
     final response_Data = jsonDecode(response.body);
-    print(response_Data);
     if (response_Data["statusCode"] == 200) {
       // Guard against an empty list so a "no surcharge configured" response
       // hides the fee line cleanly (web parity) instead of crashing on [0].
@@ -55,7 +54,6 @@ class SurchargeRepository {
 
   Future<List<Setting1>> fetchUpdat(Map<String,dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await apiPut(
@@ -84,7 +82,6 @@ class SurchargeRepository {
       body: jsonEncode(data),
     );
 
-    print(response.body);
 
 
     if (response.statusCode == 200) {
@@ -95,7 +92,6 @@ class SurchargeRepository {
   }
 
   Future<bool> AddSurgeData(String surchargeId, Map<String, dynamic> data) async {
-    print("$baseUrl/api/surcharge/surcharge");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
@@ -107,7 +103,6 @@ class SurchargeRepository {
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -126,10 +121,7 @@ class latefeeRepository {
     String?  id = prefs.getString('adminId');
     final response = await apiGet(Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     final response_Data = jsonDecode(response.body);
-    print(response_Data);
     if (response_Data["statusCode"] == 200) {
-      print("callling latefee");
-      print(jsonDecode(response.body)["data"]);
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse = Setting2.fromJson(jsonDecode(response.body)["data"]);
       return apiResponse;
@@ -150,8 +142,6 @@ class latefeeRepository {
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    print('$baseUrl/api/latefee/latefee/$surchargeId');
-    print(response.body);
 
 
     if (response.statusCode == 200) {
@@ -165,8 +155,6 @@ class latefeeRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    print("$Api_url/api/latefee/latefee");
-    print(data);
     final response = await apiPost(
       Uri.parse('$Api_url/api/latefee/latefee'),
       headers: {
@@ -176,7 +164,6 @@ class latefeeRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -196,10 +183,7 @@ class mailserviceRepository {
     String?  id = prefs.getString('adminId');
     final response = await apiGet(Uri.parse('$baseUrl/api/mail_permission/$adminId'),headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},);
     final response_Data = jsonDecode(response.body);
-    print('mail data $response_Data');
     if (response_Data["statusCode"] == 200) {
-      print("callling latefee");
-      print(jsonDecode(response.body)["data"]);
 
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse = Setting3.fromJson(jsonDecode(response.body)["data"]);
@@ -221,7 +205,6 @@ class mailserviceRepository {
         'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -233,8 +216,6 @@ class mailserviceRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
-    print("$Api_url/api/mail_permission");
-    print(data);
     final response = await apiPost(
       Uri.parse('$Api_url/api/mail_permission'),
       headers: {
@@ -244,7 +225,6 @@ class mailserviceRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -275,7 +255,6 @@ class accountRepository{
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Setting4.fromJson(data)).toList();
     } else {
-      print('Failed to fetch settings: ${response.body}');
       return [];
     }
   }
@@ -311,7 +290,6 @@ class accountRepository{
     );
     var responseData = json.decode(response.body);
 
-    print('account ${response.body}');
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -343,7 +321,6 @@ class accountRepository{
       },
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

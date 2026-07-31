@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -83,7 +84,6 @@ class _NotesTableState extends State<NotesTable> {
   }
 
   Future<List<lease_notes>> fetchleaseNote(String leaseid) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -93,26 +93,21 @@ class _NotesTableState extends State<NotesTable> {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });
-      print("$Api_url/api/lease-notes/$leaseid");
-      print(response.body);
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
-        print(response.body);
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         List leasesJson = parsedJson['data'];
         setState(() {
           isLoading = false;
         });
         return leasesJson.map((data) => lease_notes.fromJson(data)).toList();
       } else {
-        print(response.body);
         // If the server did not return a 200 OK response, throw an exception
         throw Exception('Failed to load renters insurance');
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }
@@ -144,7 +139,6 @@ class _NotesTableState extends State<NotesTable> {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
       // print(renters_insurance_id);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
@@ -183,7 +177,6 @@ class _NotesTableState extends State<NotesTable> {
         ? Uri.parse("$Api_url/api/lease-notes/add_note")
         : Uri.parse("$Api_url/api/lease-notes/update_note/${noteId}");
 
-    print("$url");
     final body = {
       "lease_id": leaseId,
       "admin_id": Id,
@@ -202,9 +195,7 @@ class _NotesTableState extends State<NotesTable> {
             "id": "CRM $Id",
             "Content-Type": "application/json",
           });
-    print(body);
 
-    print(response.body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       var responseData = json.decode(response.body);
       Fluttertoast.showToast(
@@ -873,7 +864,6 @@ class _NotesTableState extends State<NotesTable> {
                     final shouldRefresh =
                         await showNoteDialog(context, leaseId: widget.leaseid);
                     if (shouldRefresh == true) {
-                      print("should Refresh $shouldRefresh");
                       setState(() {
                         _futureleasenotes =
                             fetchleasenotedata(); // or whatever your data refresh method is
@@ -944,7 +934,6 @@ class _NotesTableState extends State<NotesTable> {
                       child: ColabShimmerLoadingWidget(),
                     );
                   } else if (snapshot.hasError) {
-                    print(snapshot.error);
                   }
 
                   var data = snapshot.data ?? <lease_notes>[];

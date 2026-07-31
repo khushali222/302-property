@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -208,7 +209,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
       try {
         profileData = await service.fetchAdminAddress();
       } catch (e) {
-        print("Error fetching profile data: $e");
+        logError("Error fetching profile data: $e");
       }
 
       final pdf = pw.Document();
@@ -418,7 +419,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
-      print('Error generating PDF: $e');
+      logError('Error generating PDF: $e');
       Fluttertoast.showToast(msg: 'Error generating PDF: $e');
     }
   }
@@ -682,7 +683,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
       Fluttertoast.showToast(msg: 'Excel exported successfully');
     } catch (e) {
-      print('Error generating Excel: $e');
+      logError('Error generating Excel: $e');
       Fluttertoast.showToast(msg: 'Error generating Excel: $e');
     }
   }

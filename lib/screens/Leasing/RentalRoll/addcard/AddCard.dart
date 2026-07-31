@@ -183,7 +183,6 @@ class _AddCardState extends State<AddCard> {
     String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
     // print("token $token"); // removed: do not log auth token
-    print("Admin $id");
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
@@ -191,7 +190,6 @@ class _AddCardState extends State<AddCard> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
       for (var tenant in data['data']['tenants']) {
         fetchedTenants.add({
@@ -380,8 +378,6 @@ class _AddCardState extends State<AddCard> {
       );
 
       if (response.statusCode == 200) {
-        if (kDebugMode) print(
-            '🟪 [ADMIN ADD-CARD] READ getCreditCards RESPONSE: ${response.body}');
         var jsonResponse = json.decode(response.body);
         customervaultid = jsonResponse['customer_vault_id'];
         final rawDetail = jsonResponse['card_detail'];
@@ -401,15 +397,12 @@ class _AddCardState extends State<AddCard> {
                 final cn = b.ccNumber?.trim() ?? '';
                 return cn.isNotEmpty;
               }).toList();
-        if (kDebugMode) print(
-            '🟪 [ADMIN ADD-CARD] READ → cards to display: ${cardsOnly.length}');
         setState(() {
           cardDetails = cardsOnly;
           messageCardAvailable =
               cardsOnly.isEmpty ? 'No card found for this tenant' : '';
         });
       } else if (response.statusCode == 404) {
-        print('customer_vault_id not found');
         setState(() {
           messageCardAvailable = 'No card found for this tenant';
         });
@@ -419,7 +412,6 @@ class _AddCardState extends State<AddCard> {
         });
       }
     } catch (e) {
-      print('fetchcreditcard error: $e');
       setState(() {
         messageCardAvailable = 'Failed to load cards';
       });
@@ -454,7 +446,6 @@ class _AddCardState extends State<AddCard> {
       },
       body: json.encode(requestBody),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       final customerJson = jsonResponse['data']?['customer'];
@@ -489,7 +480,6 @@ class _AddCardState extends State<AddCard> {
 
       return customerData;
     } else {
-      print('Failed to post data: ${response.statusCode}');
       return null;
     }
   }
@@ -583,12 +573,10 @@ class _AddCardState extends State<AddCard> {
   String _nfcData = "";
 
   String generateRandomNumber(int length) {
-    print(10);
     String randomNumber = "";
     for (int i = 0; i < length; i++) {
       randomNumber += (Random().nextInt(9) + 1).toString();
     }
-    print(randomNumber);
     return randomNumber;
   }
 
@@ -790,8 +778,6 @@ class _AddCardState extends State<AddCard> {
 
                                                             fetchcreditcard(
                                                                 value!);
-                                                            print(
-                                                                'Selected tenant_id: $selectedTenantId');
                                                           },
                                                           buttonStyleData:
                                                               ButtonStyleData(
@@ -1418,7 +1404,6 @@ class _AddCardState extends State<AddCard> {
                                                             tenant[
                                                                 'tenant_id'] ==
                                                             value);
-                                                    print(selectedTenant);
                                                     // Update the text controllers with the selected tenant's values
                                                     firstName.text =
                                                         selectedTenant[
@@ -1445,8 +1430,6 @@ class _AddCardState extends State<AddCard> {
                                                         'rental_zip']!;
 
                                                     fetchcreditcard(value!);
-                                                    print(
-                                                        'Selected tenant_id: $selectedTenantId');
                                                   },
                                                   buttonStyleData:
                                                       ButtonStyleData(
@@ -1920,7 +1903,6 @@ class _AddCardState extends State<AddCard> {
   }
 
   Widget _buildCreditCard(BillingData billingData, String customervaultid) {
-    print("billingData.billingId: ${billingData.billingId}");
     String _formatCardNumber(String cardNumber) {
       // Strip any grouping spaces so the input can be already-masked or raw.
       final String raw = cardNumber.replaceAll(' ', '');
@@ -1972,7 +1954,6 @@ class _AddCardState extends State<AddCard> {
       }
     }
 
-    print('card type :' + billingData.ccType.toString());
     return Slidable(
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
@@ -2127,7 +2108,6 @@ Widget _buildDetailsBlock({required String label, required String value}) {
 }
 
 LinearGradient _getCardGradient(String cardType) {
-  print(cardType);
   if (cardType.toLowerCase() == "mastercard" ||
       cardType.toLowerCase() == "discover") {
     return const LinearGradient(
@@ -2663,7 +2643,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                           }
 
                         }
-                        print(value);
                         widget.onChanged2;
                       },*/
                       textInputAction: TextInputAction.done,
@@ -2683,7 +2662,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                                 value); // Assuming ValidateExpirationDate() checks for expiration date format
                           }
 
-                          print(validationMessage);
 
                           setState(() {
                             if (validationMessage != null) {

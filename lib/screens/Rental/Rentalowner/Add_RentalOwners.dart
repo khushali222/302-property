@@ -3458,7 +3458,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                       color: const Color(0xFF101828)),
                   child: GestureDetector(
                     onTap: () async {
-                      print("callllll");
                       if (name.text.trim().isEmpty) {
                         setState(() {
                           nameerror = true;
@@ -3726,7 +3725,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           loading = true;
                         });
 
-                        print("Callinnnng");
                         // List<ProcessorList> processor = [];
                         // for (var i = 0; i < _controllers.length; i++) {
                         //   if (_controllers.isNotEmpty)
@@ -3741,7 +3739,6 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                                 ProcessorList(processorId: controller.text));
                           }
                         });
-                        print(processorList.length);
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         var adminId = prefs.getString("adminId");
@@ -3779,9 +3776,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           processorList: processorList,
                           achProcessorId: achProcessorId.text.trim(),
                         );
-                        print(processorList);
                         // print(processorIds);
-                        print('hello');
                         // var result =
                         //     await RentalOwnerService().addRentalOwner(rentalOwner);
                         // if (result) {
@@ -3796,18 +3791,14 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                             loading = false;
                           });
                           if (result != "") {
-                            print("sucess");
                             await updatePaymentSettings(result);
-                            print('rentaloid ${result}');
                             Navigator.of(context).pop(result);
                           } else {
-                            print("Failed to add rental owner");
                           }
                         }).catchError((e) {
                           setState(() {
                             loading = false;
                           });
-                          print("Error: $e");
                         });
                       }
                     },

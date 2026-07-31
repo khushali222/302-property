@@ -216,7 +216,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
           } else if (snapshot.hasData) {
             var data = snapshot.data!.data;
 
-            print(data!.isApplicantDataEmpty.toString());
 
             // Web-parity "Enter Applicant Details" form (edit + manual-entry
             // add). Replaces the legacy inline form for both flows.
@@ -1616,22 +1615,18 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                           isApplicantDataEmpty:
                                           false, // Default value
                                         );
-                                        print('entry');
                                         ApplicantSummeryRepository
                                         applicantSummeryRepository =
                                         ApplicantSummeryRepository();
-                                        print('entry');
                                         bool success =
                                         await ApplicantSummeryRepository()
                                             .addApplicantSummaryForm(
                                             data, widget.applicant_id);
                                         if (success == true) {
-                                          print('complete');
                                           Fluttertoast.showToast(
                                               msg:
                                               'Applicant Added Successfully');
                                         } else {
-                                          print('not complete');
                                           Fluttertoast.showToast(
                                               msg: 'Failed to add applicant');
                                         }
@@ -1642,7 +1637,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         }
                                         setState(
                                                 () {}); // Rebuild to show the error message
-                                        print('Form is invalid');
                                       }
                                     },
                                     child: const Text('Save Applicantt',style: TextStyle(fontWeight: FontWeight.bold),),
@@ -1709,11 +1703,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                         Expanded(
                                           child: GestureDetector(
                                             onTap: () {
-                                              print('entry $showAddForm');
                                               setState(() {
                                                 showAddForm = true;
                                               });
-                                              print('$showAddForm');
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -1810,11 +1802,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        print('entry $showAddForm');
                                         setState(() {
                                           showAddForm = true;
                                         });
-                                        print('$showAddForm');
                                       },
                                       child: Container(
                                         width: double.infinity,
@@ -3501,11 +3491,9 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                     isApplicantDataEmpty:
                                                         false, // Default value
                                                   );
-                                                  print('entry');
                                                   ApplicantSummeryRepository
                                                       applicantSummeryRepository =
                                                       ApplicantSummeryRepository();
-                                                  print('entry');
                                                   bool success =
                                                       await ApplicantSummeryRepository()
                                                           .addApplicantSummaryForm(
@@ -3513,12 +3501,10 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                               widget
                                                                   .applicant_id);
                                                   if (success == true) {
-                                                    print('complete');
                                                     Fluttertoast.showToast(
                                                         msg:
                                                             'Applicant Added Successfully');
                                                   } else {
-                                                    print('not complete');
                                                     Fluttertoast.showToast(
                                                         msg:
                                                             'Failed to add applicant');
@@ -3526,7 +3512,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                 } else {
                                                   setState(
                                                       () {}); // Rebuild to show the error message
-                                                  print('Form is invalid');
                                                 }
                                               },
                                               child: const Text(
@@ -3611,8 +3596,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                         ElevatedButton(
                                                                       onPressed:
                                                                           () {
-                                                                        print(
-                                                                            'full edit');
                                                                         setState(
                                                                             () {
                                                                           showEditForm =
@@ -3932,8 +3915,6 @@ class _ApplicantContentState extends State<ApplicantContent> {
                                                                       ElevatedButton(
                                                                     onPressed:
                                                                         () {
-                                                                      print(
-                                                                          'full edit');
                                                                       setState(
                                                                           () {
                                                                         showEditForm =
@@ -7329,51 +7310,5 @@ class _ApplicantContentState extends State<ApplicantContent> {
   }
 
   void printAllFields() {
-    print('Applicant : ${widget.applicant_id}');
-    print(
-        'Applicant Street Address: ${_applicantStreetAddressController.text}');
-    print('Applicant City: ${_applicantCityController.text}');
-    print('Applicant State: ${_applicantStateController.text}');
-    print('Applicant Country: ${_applicantCountryController.text}');
-    print('Applicant Postal Code: ${_applicantPostalCodeController.text}');
-    print('Applicant First Name: ${_applicantFirstNameController.text}');
-    print('Applicant Last Name: ${_applicantLastNameController.text}');
-    print('Applicant Email: ${_applicantEmailController.text}');
-    print('Applicant Phone Number: ${_applicantPhoneNumberController.text}');
-    print('Applicant Birthdate: ${_applicantBirthdateController.text}');
-    print('Agree By: ${_agreeByController.text}');
-    print('Emergency First Name: ${_emergencyFirstNameController.text}');
-    print('Emergency Last Name: ${_emergencyLastNameController.text}');
-    print('Emergency Relationship: ${_emergencyRelationshipController.text}');
-    print('Emergency Email: ${_emergencyEmailController.text}');
-    print('Emergency Phone Number: ${_emergencyPhoneNumberController.text}');
-    print('Rental Address: ${_rentalAddressController.text}');
-    print('Rental City: ${_rentalCityController.text}');
-    print('Rental State: ${_rentalStateController.text}');
-    print('Rental Country: ${_rentalCountryController.text}');
-    print('Rental Postcode: ${_rentalPostcodeController.text}');
-    print('Rental Owner First Name: ${_rentalOwnerFirstNameController.text}');
-    print('Rental Owner Last Name: ${_rentalOwnerLastNameController.text}');
-    print('Start Date: ${_startDateController.text}');
-    print('End Date: ${_endDateController.text}');
-    print('Rent: ${_rentController.text}');
-    print('Leaving Reason: ${_leavingReasonController.text}');
-    print('Rental Owner Email: ${_rentalOwnerEmailController.text}');
-    print(
-        'Rental Owner Phone Number: ${_rentalOwnerPhoneNumberController.text}');
-    print('Employment Name: ${_employmentNameController.text}');
-    print(
-        'Employment Street Address: ${_employmentStreetAddressController.text}');
-    print('Employment City: ${_employmentCityController.text}');
-    print('Employment State: ${_employmentStateController.text}');
-    print('Employment Country: ${_employmentCountryController.text}');
-    print('Employment Postal Code: ${_employmentPostalCodeController.text}');
-    print(
-        'Employment Primary Email: ${_employmentPrimaryEmailController.text}');
-    print('Employment Phone Number: ${_employmentPhoneNumberController.text}');
-    print('Employment Position: ${_employmentPositionController.text}');
-    print('Supervisor First Name: ${_supervisorFirstNameController.text}');
-    print('Supervisor Last Name: ${_supervisorLastNameController.text}');
-    print('Supervisor Title: ${_supervisorTitleController.text}');
   }
 }

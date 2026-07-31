@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -150,7 +151,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
     String? token = prefs.getString('token');
     String? id = prefs.getString("adminId");
 
-    print('$Api_url/api/leases/lease_summary/${widget.leaseId}');
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/${widget.leaseId}'),
       headers: {
@@ -165,7 +165,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
         leasegetdata = summary;
         final leaseData = summary.data;
         if (leaseData != null) {
-          print("Renew lease ${leaseData.renewLeases?.length ?? 0}");
           if (determineStatus(leaseData.startDate, leaseData.endDate)) {
             // Lease is expired
             startDateController.text = formatDate(DateTime.now().toString());
@@ -244,8 +243,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease ${renewlease}');
       String? id = prefs.getString("adminId");
       final response =
           await apiPost(Uri.parse('$Api_url/api/leases/renew_lease'),
@@ -255,7 +252,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
                 'Content-Type': 'application/json',
               },
               body: json.encode(renewlease));
-      print(' lease renew ${response.body}');
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -266,7 +262,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
         Fluttertoast.showToast(msg: "Renewal Lease not success");
       }
     } catch (e) {
-      print(e);
+      logError(e);
     }
   }
 
@@ -391,7 +387,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
         "admin_id": adminId,
       };
 
-      print("Evicting tenants with data: $evictData");
 
       try {
         final response = await apiPost(
@@ -404,8 +399,6 @@ class _Evict_tenantState extends State<Evict_tenant> {
           body: jsonEncode(evictData),
         );
 
-        print("Evict tenant response status: ${response.statusCode}");
-        print("Evict tenant response body: ${response.body}");
 
         String? successMessage;
 
@@ -417,10 +410,8 @@ class _Evict_tenantState extends State<Evict_tenant> {
             if (responseStatusCode == 200 || responseStatusCode == '200') {
               successMessage =
                   responseData['message'] ?? 'Tenant(s) evicted successfully';
-              print("Success: $successMessage");
             } else {
               final errorMsg = responseData['message'] ?? 'Unknown error';
-              print("Error evicting tenants: $errorMsg");
               setState(() {
                 isEvicting = false;
               });
@@ -429,21 +420,20 @@ class _Evict_tenantState extends State<Evict_tenant> {
             }
           } catch (e) {
             // If parsing fails but HTTP status is 200, assume success
-            print("Response parsed as success (HTTP 200): $e");
+            logError("Response parsed as success (HTTP 200): $e");
             successMessage = 'Tenant(s) evicted successfully';
           }
         } else {
           try {
             final errorData = jsonDecode(response.body);
             final errorMsg = errorData['message'] ?? errorData.toString();
-            print("Error evicting tenants: $errorMsg");
             setState(() {
               isEvicting = false;
             });
             Fluttertoast.showToast(msg: errorMsg);
             return;
           } catch (e) {
-            print("Error evicting tenants: ${response.body}");
+            logError("Error evicting tenants: ${response.body}");
             setState(() {
               isEvicting = false;
             });
@@ -461,7 +451,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
             msg: successMessage ?? "Tenant(s) evicted successfully");
         Navigator.of(context).pop();
       } catch (e) {
-        print("Exception evicting tenants: $e");
+        logError("Exception evicting tenants: $e");
         setState(() {
           isEvicting = false;
         });
@@ -469,7 +459,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
             msg: "An error occurred: ${e.toString()}. Please try again.");
       }
     } catch (e) {
-      print("Error in evictTenant: $e");
+      logError("Error in evictTenant: $e");
       setState(() {
         isEvicting = false;
       });

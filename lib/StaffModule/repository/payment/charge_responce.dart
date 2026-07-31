@@ -78,14 +78,12 @@ class ChargeRepositorys {
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = json.decode(response.body);
         //  log(jsonResponse.toString());
-        print("jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List ${jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List}");
         // Check if 'totalCharges' exists in the response
         if (jsonResponse.containsKey('totalCharges') && jsonResponse['totalCharges'] is List) {
           List<Entrycharge> allEntries = [];
 
           // Extract 'totalCharges'
           List<dynamic> totalCharges = jsonResponse['totalCharges'];
-          print("totalCharges ${totalCharges.length}");
           // Loop through 'totalCharges' to get all 'entry' objects
           for (var charge in totalCharges) {
             //    print("charge.containsKey('entry') && charge['entry'] is List ${charge.containsKey('entry') && charge['entry'] is List}");
@@ -99,10 +97,8 @@ class ChargeRepositorys {
             //
             //      }
             allEntries.add(Entrycharge.fromJson(charge));
-            print("allEntries......${allEntries.length}");
           }
           //}
-          print("Total entry charges: ${allEntries.length}");
           return allEntries;
         } else {
           throw Exception('No charges found');
@@ -111,7 +107,6 @@ class ChargeRepositorys {
         throw Exception('Failed to load');
       }
     } catch (e) {
-      print('Error fetching charges: $e');
       throw Exception('Failed to load charges');
     }
   }

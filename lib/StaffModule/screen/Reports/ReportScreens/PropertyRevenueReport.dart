@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -151,7 +152,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       _previousStartDate = DateFormat('yyyy-MM-dd').format(ps);
       _previousEndDate = DateFormat('yyyy-MM-dd').format(pe);
     } catch (e) {
-      print('Error calculating previous period: $e');
+      logError('Error calculating previous period: $e');
     }
   }
 
@@ -1686,7 +1687,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       try {
         profileData = await service.fetchAdminAddress();
       } catch (e) {
-        print("Error fetching profile data: $e");
+        logError("Error fetching profile data: $e");
         Fluttertoast.showToast(
           msg: 'Error fetching profile data',
           toastLength: Toast.LENGTH_SHORT,
@@ -2037,7 +2038,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
       );
     }
     } catch (e) {
-      print('Error generating PDF: $e');
+      logError('Error generating PDF: $e');
       Fluttertoast.showToast(
         msg: 'Error generating PDF',
         toastLength: Toast.LENGTH_SHORT,
@@ -2134,7 +2135,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating Excel: $e');
+      logError('Error generating Excel: $e');
       Fluttertoast.showToast(
         msg: 'Error generating Excel',
         toastLength: Toast.LENGTH_SHORT,
@@ -2202,7 +2203,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating CSV: $e');
+      logError('Error generating CSV: $e');
       Fluttertoast.showToast(
         msg: 'Error generating CSV',
         toastLength: Toast.LENGTH_SHORT,

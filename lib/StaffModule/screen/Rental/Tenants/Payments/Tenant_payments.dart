@@ -201,7 +201,6 @@ class _FinancialTableState extends State<FinancialTable> {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         String? adminId = prefs.getString("adminId");
-                        print(data.paymentId);
                         if (adminId == null ||
                             adminId.isEmpty ||
                             data.paymentId == null ||
@@ -222,7 +221,6 @@ class _FinancialTableState extends State<FinancialTable> {
                           memo: _memoController.text,
                           adminId: adminId!,
                         );
-                        print(message);
                         if (message != "success") {
                           //   Navigator.pop(context);
                           Alert(
@@ -372,7 +370,6 @@ class _FinancialTableState extends State<FinancialTable> {
       } else {
         throw Exception("Unsupported payment type: $paymentType");
       }
-      print(apiUrl);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       //String? id = prefs.getString("rentalid");
       String? id = prefs.getString('adminId');
@@ -390,11 +387,9 @@ class _FinancialTableState extends State<FinancialTable> {
 
       if (response.statusCode == 200) {
         // Handle successful refund response
-        print('Refund processed successfully: ${response.body}');
         return "success";
       } else {
         // Handle error case safely (body may be empty/HTML on failure)
-        print('Refund failed: ${response.statusCode} ${response.body}');
         try {
           final responsedata = jsonDecode(response.body);
           if (responsedata is Map) {
@@ -412,7 +407,6 @@ class _FinancialTableState extends State<FinancialTable> {
     } catch (e) {
       return e.toString();
       // Handle exceptions during API calls
-      print('Refund error: $e');
     }
   }
 
@@ -473,10 +467,8 @@ class _FinancialTableState extends State<FinancialTable> {
               // });
             }
             // Custom logic when the user submits
-            print("Submitted: $value");
           },
           onChanged: (value) {
-            print("Value changed: $value");
             if (value.isNotEmpty) {
               // setState(() {
               //   _errorMessage = null;
@@ -968,7 +960,6 @@ class _FinancialTableState extends State<FinancialTable> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();
@@ -1470,7 +1461,6 @@ class _FinancialTableState extends State<FinancialTable> {
           return _paymentInDateRange(pd, fromDate, toDate);
         }).toList();
       } catch (e) {
-        print("Date filter error: $e");
       }
     }
 

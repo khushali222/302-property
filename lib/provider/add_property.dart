@@ -8,7 +8,6 @@ class OwnerDetailsProvider with ChangeNotifier {
   RentalOwner? get ownerDetails => OwnerDetails;
 
   void setOwnerDetails(RentalOwner ownerDetails) {
-    print("object is set");
     OwnerDetails = ownerDetails;
     notifyListeners();
   }

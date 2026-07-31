@@ -86,8 +86,6 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
 
   Future<void> _fetchReportData() async {
     if (_adminId == null || _selectedReport == null) {
-      print(
-          '[CustomReportBuilder] _fetchReportData SKIP: adminId or selectedReport null');
       setState(() {
         _reportData = [];
         _reportDataError = null;
@@ -95,15 +93,12 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       return;
     }
     final reportId = _selectedReport!.reportId;
-    print(
-        '[CustomReportBuilder] _fetchReportData reportId=$reportId name=${_selectedReport!.name}');
     setState(() {
       _reportDataLoading = true;
       _reportDataError = null;
       _reportData = [];
     });
     // 1) GET /api/reports/saved/:reportId - get report config, then pass same report_id to POST
-    print('[CustomReportBuilder] --- step 1: GET saved report ---');
     final getResult = await _service.fetchSavedReportById(
       adminId: _adminId!,
       reportId: reportId,
@@ -116,11 +111,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
       return;
     }
     final reportFromGet = getResult.data!;
-    print(
-        '[CustomReportBuilder] GET done. Passing report_id=${reportFromGet.reportId} to POST.');
     // 2) POST /api/reports/custom - pass full report config from GET (same as web) so backend returns 7
-    print(
-        '[CustomReportBuilder] --- step 2: POST custom report data (body = GET response like web) ---');
     final result = await _service.fetchCustomReportData(
       adminId: _adminId!,
       reportId: reportFromGet.reportId,
@@ -135,12 +126,9 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
         _reportData =
             rawList.length > count ? rawList.sublist(0, count) : rawList;
         _reportDataError = null;
-        print(
-            '[CustomReportBuilder] POST done. data.length=${rawList.length} count=$count -> display ${_reportData.length}');
       } else {
         _reportDataError = result.message;
         _reportData = [];
-        print('[CustomReportBuilder] ERROR: ${result.message}');
       }
     });
   }

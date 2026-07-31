@@ -561,7 +561,6 @@ class _Tenant_communicationState extends State<Tenant_communication> {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
       // print(renters_insurance_id);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);

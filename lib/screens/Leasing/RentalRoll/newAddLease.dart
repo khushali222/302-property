@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
@@ -64,8 +65,6 @@ class _addLease3State extends State<addLease3>
   @override
   void initState() {
     super.initState();
-    print(widget.rentalId);
-    print(widget.unitId);
 
     // Delay execution of setting values and loading units
     Future.delayed(const Duration(seconds: 1), () {
@@ -83,10 +82,8 @@ class _addLease3State extends State<addLease3>
       }
     });
 
-    print('idid ${widget.leaseId}');
 
     if (widget.leaseId != null && widget.leaseId!.isNotEmpty) {
-      print('idi3 ${widget.leaseId}');
       setState(() {
         fetchDetails(widget.leaseId!);
       }); // Using widget.leaseId safely
@@ -104,7 +101,6 @@ class _addLease3State extends State<addLease3>
       LeaseDetails fetchedDetails =
           await LeaseRepository()
               .fetchLeaseDetails(leaseId, applicantId: widget.applicantId);
-      print('Lease type: ${fetchedDetails.lease.leaseType}');
 
       // Optional delay for demonstration purposes
       await Future.delayed(const Duration(seconds: 1));
@@ -112,7 +108,6 @@ class _addLease3State extends State<addLease3>
       // Check if the widget is still mounted before calling setState
       if (mounted) {
         setState(() {
-          print('Rental Address: ${fetchedDetails.rental.rentalAddress}');
 
           // Update state variables
           _selectedProperty = fetchedDetails.rental.rentalId ?? "";
@@ -126,38 +121,32 @@ class _addLease3State extends State<addLease3>
           if (leaseTypeitems.contains(fetchedDetails.lease.leaseType)) {
             _selectedLeaseType = fetchedDetails.lease.leaseType;
           }
-          print("calling stage 1");
           if (fetchedDetails.lease.startDate.isNotEmpty) {
             final dateProvider =
                 Provider.of<DateProvider>(context, listen: false);
             startDateController.text =
                 dateProvider.formatCurrentDate(fetchedDetails.lease.startDate);
           }
-          print("calling stage 2");
           if (fetchedDetails.lease.endDate.isNotEmpty) {
             final dateProvider =
                 Provider.of<DateProvider>(context, listen: false);
             endDateController.text =
                 dateProvider.formatCurrentDate(fetchedDetails.lease.endDate);
           }
-          print("calling stage 3");
           // Calculate rent cycle items
           if (fetchedDetails.lease.startDate != null &&
               fetchedDetails.lease.startDate != null)
             // rentCycleItemsDynamic(DateTime.parse(fetchedDetails.lease.endDate)
             //     .difference(DateTime.parse(fetchedDetails.lease.startDate))
             //     .inDays);
-            print("calling stage 4");
           // Update rent charges
           //  _selectedRent = fetchedDetails.rentCharges?.first.rentCycle ?? "";
           // rentMemo.text = fetchedDetails.rentCharges?.first.memo ?? "";
           if (fetchedDetails.tenant != null) {
             for (var t in fetchedDetails.tenant!) {
               applicantIds.add(t.applicantId!);
-              print("Appllicant id  ${t.applicantId}");
             }
           }
-          print(applicantIds);
 
           // Handle uploaded files
           if (fetchedDetails.lease.uploadedFile != null &&
@@ -201,7 +190,7 @@ class _addLease3State extends State<addLease3>
       }
     } catch (e) {
       // Handle any errors that occur during the fetch
-      print('Failed to fetch lease details: $e');
+      logError('Failed to fetch lease details: $e');
     }
   }
 
@@ -267,7 +256,6 @@ class _addLease3State extends State<addLease3>
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
-      print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -332,7 +320,6 @@ class _addLease3State extends State<addLease3>
             "authorization": "CRM $token",
             "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
-      print('$Api_url/api/unit/rental_unit_dropdown/$rentalId');
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responses = jsonDecode(response.body);
@@ -353,7 +340,6 @@ class _addLease3State extends State<addLease3>
             return unitId.isNotEmpty && unitName.trim().isNotEmpty;
           }).toList();
 
-          print('Found ${unitAddresses.length} valid units');
 
           setState(() {
             units = unitAddresses;
@@ -392,7 +378,6 @@ class _addLease3State extends State<addLease3>
       "authorization": "CRM $token",
       "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
-    print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -401,7 +386,6 @@ class _addLease3State extends State<addLease3>
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
-        print(accounts.length);
       });
     } else {
       // Handle error
@@ -424,7 +408,7 @@ class _addLease3State extends State<addLease3>
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
+        logError('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }
@@ -491,7 +475,6 @@ class _addLease3State extends State<addLease3>
   ];
 
   rentCycleItemsDynamic(int days) {
-    print("days = $days");
     if (days == 1) {
       rentCycleitems = ['Daily'];
     } else if (days >= 365) {
@@ -764,23 +747,17 @@ class _addLease3State extends State<addLease3>
         double totalRent = double.tryParse(rentAmount.text) ?? 0.0;
 
         // Debug prints
-        print("Start Date (current date): $currentDate");
-        print("Next Due Date: $nextDueDate");
-        print("Total Rent Entered: $totalRent");
 
         // Validate rent and dates
         if (totalRent <= 0 || !nextDueDate.isAfter(currentDate)) {
           setState(() {
             proRatedRentController.text = "0.00";
           });
-          print(
-              "Validation failed: Either rent is <= 0 or next due date is not after start date.");
           return;
         }
 
         // Calculate days left, including the current day
         int daysLeft = nextDueDate.difference(currentDate).inDays;
-        print("Days Left: $daysLeft");
 
         // Calculate pro-rated rent
         double proRatedRent = 0.0;
@@ -810,7 +787,6 @@ class _addLease3State extends State<addLease3>
           case 'Monthly':
             int totalDaysInMonth =
                 _getDaysInMonth(currentDate.year, currentDate.month);
-            print("Total Days in Month: $totalDaysInMonth");
             proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
             break;
           case 'Every two months':
@@ -818,7 +794,6 @@ class _addLease3State extends State<addLease3>
             int totalDaysInTwoMonths =
                 _getDaysInMonth(currentDate.year, currentDate.month) +
                     _getDaysInMonth(nextDueDate.year, nextDueDate.month);
-            print("Total Days in Two Months: $totalDaysInTwoMonths");
 
             // Adjust the calculation to ensure rent remains at totalRent
             proRatedRent = totalRent;
@@ -869,13 +844,12 @@ class _addLease3State extends State<addLease3>
         setState(() {
           proRatedRentController.text = proRatedRent.toStringAsFixed(2);
         });
-        print("Calculated Pro-Rated Rent: $proRatedRent");
       } catch (e) {
         // Handle unexpected errors
         setState(() {
           proRatedRentController.text = "Error";
         });
-        print("Error occurred while calculating pro-rated rent: $e");
+        logError("Error occurred while calculating pro-rated rent: $e");
       }
     }
   }
@@ -945,7 +919,6 @@ class _addLease3State extends State<addLease3>
   void _handleSubmit() async {
     if (_formKey.currentState!.validate() && await _validateSignature()) {
       // Proceed with submission
-      print("Signature validated and form submitted!");
     } else {
       // Show validation error
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1106,12 +1079,11 @@ class _addLease3State extends State<addLease3>
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      logError('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -1390,7 +1362,6 @@ class _addLease3State extends State<addLease3>
                                                       value); // Notify the FormField that the value has changed
                                                   renderId = value.toString();
 
-                                                  print("units $units");
                                                   _loadUnits(value!);
                                                 });
                                                 state.reset();
@@ -4569,15 +4540,9 @@ class _addLease3State extends State<addLease3>
                                                 startDateController.text);
                                         String leaseEndDate = reverseFormatDate(
                                             endDateController.text);
-                                        print(
-                                            'ends date : ${endDateController.text}');
 
-                                        print(
-                                            'rent next due date ${reverseFormatDate(rentNextDueDate.text)}');
                                         List<Entry> chargeEntries =
                                             mergedFormDataList.map((data) {
-                                          print(data['account']);
-                                          print(data['rent_cycle']);
                                           return Entry(
                                             account: data['account'] ?? '',
                                             amount: double.tryParse(
@@ -4636,23 +4601,18 @@ class _addLease3State extends State<addLease3>
                                           entry: chargeEntries,
                                           isLeaseAdded: _isLeaseAdded,
                                         );
-                                        print('${chargeEntries}');
                                         //Tenant
                                         List<TenantData> tenants = [];
                                         Map<String, String>? firstCosigner =
                                             cosignersMap.isNotEmpty
                                                 ? cosignersMap[0]
                                                 : {};
-                                        print(
-                                            'tenant\'s length ${tenantsMap.length}');
                                         String currentDate =
                                             DateTime.now().toString();
                                         List<TenantData> tenantDataList =
                                             tenantsMap.entries.map((entry) {
                                           int index = entry.key;
                                           final tenantMap = entry.value;
-                                          print(tenantMap['firstName']);
-                                          print(tenantMap['firstName']);
                                           return TenantData(
                                           emergencyContactsList: (tenantMap['ecArray'] ?? '').isEmpty
                                               ? null
@@ -4723,56 +4683,17 @@ class _addLease3State extends State<addLease3>
                                                 : (index == 0 ? "100" : "0"),
                                           );
                                         }).toList();
-                                        print(tenantDataList.length);
                                         // Assuming tenantDataList is a List<TenantData>
                                         List<String> tenantIds = tenantDataList
                                             .map((tenant) =>
                                                 tenant.tenantId ?? '')
                                             .toList();
 
-                                        print(
-                                            'tenant ids :${tenantIds.length}');
 
                                         //print all data
-                                        print(firstCosigner);
-                                        print('Tenant Data List:');
                                         for (var tenant in tenantDataList) {
-                                          print('admin ID: ${tenant.adminId}');
-                                          print(
-                                              'Tenant First Name: ${tenant.tenantFirstName}');
-                                          print(
-                                              'Tenant Last Name: ${tenant.tenantLastName}');
-                                          print(
-                                              'Tenant Email: ${tenant.tenantEmail}');
-                                          print(
-                                              'Tenant Phone Number: ${tenant.tenantPhoneNumber}');
-                                          print(
-                                              'Tenant Birth Date: ${tenant.tenantBirthDate}');
-                                          print(
-                                              'Rental Address: ${tenant.rentalAddress}');
-                                          print(
-                                              'Rental Unit: ${tenant.rentalUnit}');
-                                          print(
-                                              'Tax Payer ID: ${tenant.taxPayerId}');
-                                          print(
-                                              'Tenant Alternative Email: ${tenant.tenantAlternativeEmail}');
-                                          print(
-                                              'Tenant Alternative Number: ${tenant.tenantAlternativeNumber}');
-                                          print(
-                                              'Created At: ${tenant.createdAt}');
-                                          print(
-                                              'Updated At: ${tenant.updatedAt}');
-                                          print(
-                                              'Is Delete: ${tenant.isDelete}');
-                                          print('Comments: ${tenant.comments}');
-                                          print('Admin ID: ${tenant.adminId}');
 
-                                          print('v: ${tenant.v}');
-                                          print('ID: ${tenant.id}');
-                                          print('-----------------------');
                                         }
-                                        print(_selectedResidentsEmail);
-                                        print('unit id data :${unitId}');
                                         Lease lease = Lease(
                                           chargeData: ChargeData(
                                             adminId: adminId ?? "",
@@ -4838,16 +4759,7 @@ class _addLease3State extends State<addLease3>
                                           ),
                                           tenantData: tenantDataList,
                                         );
-                                        print(
-                                            "Pro-rated Rent Value: ${proRatedRentController.text.trim()}");
-                                        print('lease data full ${lease}');
                                         lease.tenantData.forEach((tenant) {
-                                          print(
-                                              '  Tenant First Name: ${tenant.tenantFirstName}');
-                                          print(
-                                              '  Tenant Last Name: ${tenant.tenantLastName}');
-                                          print(
-                                              '  Tenant ID: ${tenant.tenantId}');
                                         });
 
                                         await addLeaseAndNavigate(lease);
@@ -4857,18 +4769,13 @@ class _addLease3State extends State<addLease3>
                                         });
                                         if (applicantIds != null &&
                                             applicantIds!.isNotEmpty) {
-                                          print(
-                                              'applicant id is: ${widget.applicantId}');
                                           ifApplicantMoveIn(widget.applicantId!,
                                               applicantIds);
                                         } else {
-                                          print('No applicant id provided');
                                         }
 
-                                        print('valid');
                                       }
                                     } else {
-                                      print("faild");
                                       String leaseStartDate = reverseFormatDate(
                                           startDateController.text);
                                       String leaseEndDate = reverseFormatDate(
@@ -4892,7 +4799,6 @@ class _addLease3State extends State<addLease3>
                                       // Creating Entry objects from the merged list
                                       List<Entry> chargeEntries =
                                           mergedFormDataList.map((data) {
-                                        print(data['account']);
                                         return Entry(
                                           account: data['account'] ?? '',
                                           amount: double.tryParse(
@@ -4916,8 +4822,6 @@ class _addLease3State extends State<addLease3>
                                         entry: chargeEntries,
                                         isLeaseAdded: _isLeaseAdded,
                                       );
-                                      print(
-                                          'ChargeData: ${jsonEncode(chargeData.toJson())}');
                                       //consiger
                                       Map<String, String>? firstCosigner =
                                           cosignersMap.isNotEmpty
@@ -5066,7 +4970,6 @@ class _addLease3State extends State<addLease3>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
-    print("lease check ${lease.leaseData.entry!.first.toJson()}");
     var checkdata = {
       "admin_id": id,
       "lease_id": "",
@@ -5076,7 +4979,6 @@ class _addLease3State extends State<addLease3>
       "start_date": lease.leaseData.startDate,
       "end_date": lease.leaseData.endDate
     };
-    print(checkdata);
     try {
       final response = await apiPost(
         url,
@@ -5087,7 +4989,6 @@ class _addLease3State extends State<addLease3>
         },
         body: jsonEncode(checkdata),
       );
-      print(response.body);
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
@@ -5105,7 +5006,6 @@ class _addLease3State extends State<addLease3>
           }
           return true;
         } else {
-          print('Failed to add lease: ${responseData['message']}');
           setState(() {
             errormessagefordateissue = responseData['message'];
             isLoading = false;
@@ -5115,13 +5015,12 @@ class _addLease3State extends State<addLease3>
           return false;
         }
       } else {
-        print('Failed to add lease: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to add lease');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -5136,7 +5035,6 @@ class _addLease3State extends State<addLease3>
       Navigator.pop(context); // Replace with the actual navigation logic
     } else {
       // Handle the failure case, maybe show a message
-      print('Failed to update applicant status');
     }
   }
 
@@ -5159,7 +5057,6 @@ class _addLease3State extends State<addLease3>
 
     // Creating Entry objects from the merged list
     List<Entry> chargeEntries = mergedFormDataList.map((data) {
-      print(data['account']);
       return Entry(
         account: data['account'] ?? '',
         amount: double.tryParse(data['amount'] ?? '0.0') ?? 0.0,
@@ -5179,7 +5076,6 @@ class _addLease3State extends State<addLease3>
       isLeaseAdded: _isLeaseAdded,
     );
 
-    print('ChargeData: ${jsonEncode(chargeData.toJson())}');
 
     setState(() {
       isLoading = false;
@@ -5586,7 +5482,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       "authorization": "CRM $token",
       "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
-    print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -5594,7 +5489,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
-        print(items.length);
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -5978,7 +5872,6 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
   Future _submitSubForm() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId').toString();
-    print(adminId);
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
@@ -6014,10 +5907,8 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
         _notesController.clear();
 
         if (mounted) { WidgetsBinding.instance.addPostFrameCallback((_) { if (Navigator.of(context).canPop()) Navigator.of(context).pop(); }); }
-        print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to add account')),
         );
@@ -6423,7 +6314,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
       "authorization": "CRM $token",
       "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
-    print(response.body);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
@@ -6432,7 +6322,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
             .map((item) => item['account'] as String)
             .toList();
         _isLoading = false;
-        print(items.length);
       });
     } else {
       // Handle error
@@ -6793,7 +6682,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
                         String formattedEndDate =
                             "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-                        print(formattedStartDate);
                         setState(() {
                           startDateController.text = Provider.of<DateProvider>(context, listen: false).formatCurrentDate(formattedStartDate);
                         });
@@ -6841,7 +6729,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
 
                           String formattedEndDate =
                               "${endDate.day.toString().padLeft(2, '0')}-${endDate.month.toString().padLeft(2, '0')}-${endDate.year}";
-                          print(formattedStartDate);
                           setState(() {
                             startDateController.text = Provider.of<DateProvider>(context, listen: false).formatCurrentDate(formattedStartDate);
                           });
@@ -6953,7 +6840,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
   Future _submitSubForm(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId').toString();
-    print(adminId);
     if (_subFormKey.currentState?.validate() ?? false) {
       final formData = {
         'admin_id': adminId,
@@ -6964,7 +6850,6 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         // 'charge_type': 'Recurring Charge',
       };
 
-      print(formData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString('adminId');
       String? token = prefs.getString('token');
@@ -6990,11 +6875,9 @@ class _RecurringChargePopUpState extends State<RecurringChargePopUp> {
         _selectedFundType = null;
         _notesController.clear();
         if (mounted) { WidgetsBinding.instance.addPostFrameCallback((_) { if (Navigator.of(context).canPop()) Navigator.of(context).pop(); }); }
-        print(response.body);
         Fluttertoast.showToast(msg: 'Account Added Successfully');
       } else {
         // Handle error response
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to add account')),
         );
@@ -7183,10 +7066,8 @@ class _AddTenantState extends State<AddTenant> {
               .map((item) => convertApplicantToTenant(Datum.fromJson(item)))
               .toList());
         } else {
-          print("Unexpected tenant response structure: Missing 'data' key");
         }
       } else {
-        print("Failed to load tenants: ${tenantResponse.statusCode}");
       }
 
       // Fetch applicants
@@ -7217,7 +7098,7 @@ class _AddTenantState extends State<AddTenant> {
       filteredTenants = List.from(tenants);
       selected = List<bool>.filled(tenants.length, false);
     } catch (e) {
-      print("Error fetching tenants or applicants: $e");
+      logError("Error fetching tenants or applicants: $e");
     } finally {
       setState(() {
         isLoading = false;
@@ -7346,15 +7227,13 @@ class _AddTenantState extends State<AddTenant> {
           select = List<bool>.filled(Applicant.length, false);
         } else {
           // Handle unexpected response structure
-          print("Unexpected response structure: Missing 'data' key");
         }
       } else {
         // Handle HTTP errors
-        print("Failed to load Applicant: ${response.statusCode}");
       }
     } catch (e) {
       // Handle other errors
-      print("Error fetching Applicant: $e");
+      logError("Error fetching Applicant: $e");
     } finally {
       setState(() {
         isloading = false;
@@ -7437,7 +7316,6 @@ class _AddTenantState extends State<AddTenant> {
                                           : test.applicantId ==
                                               tenant.applicantId)
                                       .toList();
-                              print(matchingTenants);
 
                               final isSelected =
                                   matchingTenants.length > 0 ? true : false;
@@ -7792,7 +7670,6 @@ class _AddTenantState extends State<AddTenant> {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter an email';
                                 } else if (!isValidEmail(value)) {
-                                  print('!isValidEmail(value) invalid');
                                   return 'Please enter a valid email';
                                 }
                                 return null;

@@ -45,7 +45,6 @@ class Properies_summery_Repo{
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print(id);
     final response = await apiGet(Uri.parse('${Api_url}/api/tenant/rental_tenant/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
@@ -53,7 +52,6 @@ class Properies_summery_Repo{
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => TenantData.fromJson(data)).toList();
     } else {
-      print('Failed to fetch property type: ${response.body}');
       return [];
       //throw Exception('Failed to load data');
     }
@@ -111,12 +109,9 @@ class Properies_summery_Repo{
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    print(id);
-    print("obj");
     final response = await apiGet(Uri.parse('${Api_url}/api/unit/rental_unit/$rentalId'),
       headers: {"authorization" : "CRM $token","id":"CRM $id",},);
     // print(jsonEncode('data'));
-    print('unit responce ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => unit_properties.fromJson(data)).toList();
@@ -152,7 +147,6 @@ class Properies_summery_Repo{
 
     // Convert filters to JSON string
     String filtersJson = json.encode(filters ?? []);
-    print('Filters as JSON string: $filtersJson');
 
     // Create FormData
     var formData = {
@@ -177,7 +171,6 @@ class Properies_summery_Repo{
       'appliance_image': appliance_image, // Add this field
     };
 
-    print('Sending form data: ${json.encode(formData)}');
 
     final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/appliance/appliance'),
@@ -190,7 +183,6 @@ class Properies_summery_Repo{
       body: formData, // Send as form data
     );
 
-    print("Add appliances response: ${response.body}");
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: "Infrastructure added successfully");
@@ -232,7 +224,6 @@ class Properies_summery_Repo{
 
     // Convert filters to JSON string
     String filtersJson = json.encode(filters ?? []);
-    print('Filters as JSON string edit : $filtersJson');
 
     // Create form data
     var formData = {
@@ -258,7 +249,6 @@ class Properies_summery_Repo{
       'remove_appliance_images': removeApplianceImages ?? 'false',
     };
 
-    print('Sending form data for edit: ${json.encode(formData)}');
 
     final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/appliance/appliance/$applianceid'),
@@ -271,7 +261,6 @@ class Properies_summery_Repo{
       body: formData, // Send as form data
     );
 
-    print('Edit appliance response: ${response.body}');
 
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
@@ -323,11 +312,8 @@ class Properies_summery_Repo{
       },
       body: jsonEncode(data),
     );
-    print(jsonEncode(data));
-    print(unitId);
 
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -342,7 +328,6 @@ class Properies_summery_Repo{
     required String? appliance_id
   }) async {
     // print('$apiUrl/$id');
-    print('hello 123 ${appliance_id}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -356,7 +341,6 @@ class Properies_summery_Repo{
       },
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -370,7 +354,6 @@ class Properies_summery_Repo{
     required String? unitId
   }) async {
     // print('$apiUrl/$id');
-    print('hello 123 ${unitId}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -384,7 +367,6 @@ class Properies_summery_Repo{
       },
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -429,8 +411,6 @@ class Properies_summery_Repo{
         }
     );
     log(response.body);
-    print(rentalId);
-    print('${Api_url}/api/rentals/rental_summary/$rentalId');
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       if (jsonResponse['data'] is List) {
@@ -556,7 +536,6 @@ class Properies_summery_Repo{
     String? adminid = prefs.getString('adminId');
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print(id);
     final response = await apiGet(
       Uri.parse('${Api_url}/api/leases/leases/$adminid/$unitId'),
       headers: {
@@ -564,13 +543,10 @@ class Properies_summery_Repo{
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
-    print(" get summery lease details ${response.body}");
-    print("lease  api for calling ${'${Api_url}/api/leases/leases/$adminid/$unitId'}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Properties_lease_model.fromJson(data)).toList();
     } else {
-      print('Failed to fetch lease table properties: ${response.body}');
       return [];
       //throw Exception('Failed to load data');
     }
@@ -581,7 +557,6 @@ class Properies_summery_Repo{
     String? adminid = prefs.getString('adminId');
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print(id);
     final response = await apiGet(
       Uri.parse('${Api_url}/api/leases/revenue/$adminid/$unitId'),
       headers: {
@@ -589,13 +564,10 @@ class Properies_summery_Repo{
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
-    print(" get summery lease details ${response.body}");
-    print("lease  api for calling ${'${Api_url}/api/leases/revenue/$adminid/$unitId'}");
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Properties_Revenu_model.fromJson(data)).toList();
     } else {
-      print('Failed to fetch lease revenue table properties: ${response.body}');
       return [];
       //throw Exception('Failed to load data');
     }
@@ -616,8 +588,6 @@ class Properies_summery_Repo{
       },
     );
     // Check the response status
-    print(response.body);
-    print(rentalId);
     if (response.statusCode == 200) {
       // Parse the JSON response
       List jsonResponse = json.decode(response.body)['data'];

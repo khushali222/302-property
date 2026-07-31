@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -77,11 +78,9 @@ class _applicant_summeryState extends State<applicant_summery>
   @override
   void initState() {
     // TODO: implement initState
-    print(widget.applicant_id);
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -90,7 +89,6 @@ class _applicant_summeryState extends State<applicant_summery>
     futureLeaseSummary =
         ApplicantSummeryRepository.getApplicantSummary(widget.applicant_id!);
     _tabController = TabController(length: 4, vsync: this);
-    print('end init');
     super.initState();
   }
 
@@ -106,7 +104,6 @@ class _applicant_summeryState extends State<applicant_summery>
   Future<bool> updateApplicantStatus(
       String applicantId, String status, String rentalId, String unitId,
       {String rejectionReason = ''}) async {
-    print(status);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -132,29 +129,25 @@ class _applicant_summeryState extends State<applicant_summery>
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
 
       if (response.statusCode == 200) {
         if (responseData['statusCode'] == 200) {
-          print('Status update successful: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Status updated successfully');
 
           return true;
         } else {
-          print('Failed to update status: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to update status');
           return false;
         }
       } else {
-        print('Failed to update status: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to update status');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -219,7 +212,6 @@ class _applicant_summeryState extends State<applicant_summery>
                     _selectedValue = 'Select';
                   }
 
-                  print('Move in is: ${applicantSummary.isMovedin ?? 'Unknown'}');
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -365,7 +357,6 @@ class _applicant_summeryState extends State<applicant_summery>
                                   rejectionReason: rejectionReason);
 
                               if (success) {
-                                print('Status update successful');
                                 Fluttertoast.showToast(
                                   msg:
                                       'The Applicant Status has been changed to $value',
@@ -486,8 +477,6 @@ class _applicant_summeryState extends State<applicant_summery>
                                   ),
                                 ),
                               );
-                              print(
-                                  'applicant lease ${snapshot.data?.leaseData?.leaseId}');
                             }
 
                             Widget actionButton({
@@ -887,7 +876,6 @@ class _applicant_summeryState extends State<applicant_summery>
                                                 ),
                                               ),
                                             );
-                                            print('applicant lease ${snapshot.data?.leaseData?.leaseId}');
                                           },
                                     child: const Center(
                                       child: Text(
@@ -1532,7 +1520,6 @@ class _applicant_summeryState extends State<applicant_summery>
       setState(() {});
     } else {
       // Log the response body for debugging
-      print('Failed to update data: ${response.body}');
       throw Exception('Failed to update applicant data');
     }
   }
@@ -1559,7 +1546,6 @@ class _applicant_summeryState extends State<applicant_summery>
       setState(() {});
     } else {
       // Log the response body for debugging
-      print('Failed to update data: ${response.body}');
       throw Exception('Failed to update applicant data');
     }
   }

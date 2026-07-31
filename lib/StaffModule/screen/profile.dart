@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -90,7 +91,6 @@ class _Profile_screenState extends State<Profile_screen> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -201,13 +201,8 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print('📥 [StaffProfile] GET $apiUrl');
-    print('📥 [StaffProfile] http status: ${response.statusCode}');
-    print('📥 [StaffProfile] body: ${response.body}');
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print(
-          '📥 [StaffProfile] data == null? ${response_Data["data"] == null}');
       setState(() {
         profiledata = response_Data["data"];
         _isLoading = false;
@@ -216,8 +211,6 @@ class _Profile_screenState extends State<Profile_screen> {
       backupcodeapicall();
       // return profile.fromJson(jsonDecode(response.body)["data"]);
     } else {
-      print(
-          '❌ [StaffProfile] non-200 statusCode in body: ${response_Data["statusCode"]} message: ${response_Data["message"]}');
       setState(() {
         _isLoading = false;
       });
@@ -239,8 +232,7 @@ class _Profile_screenState extends State<Profile_screen> {
         _isLoading = false;
       });*/
     } catch (e, st) {
-      print('❌ [StaffProfile] load failed: $e');
-      print('❌ [StaffProfile] stack: $st');
+      logError('❌ [StaffProfile] load failed: $e');
       setState(() {
         _hasError = true;
         _errorMessage = e.toString();
@@ -271,7 +263,6 @@ class _Profile_screenState extends State<Profile_screen> {
       _isLoading = false;
     });
 
-    print('2FA status response: ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -296,15 +287,12 @@ class _Profile_screenState extends State<Profile_screen> {
           }
         });
 
-        print("2FA Status - Enabled: $enabled, Method: $method");
-        print("Email 2FA: $email2FA, SMS 2FA: $sms2FA");
       } else {
         setState(() {
           enble2FA = false;
           email2FA = false;
           sms2FA = false;
         });
-        print("2FA data not found or invalid response");
       }
     } else {
       setState(() {
@@ -312,7 +300,6 @@ class _Profile_screenState extends State<Profile_screen> {
         email2FA = false;
         sms2FA = false;
       });
-      print("Failed to fetch 2FA status: ${response.statusCode}");
     }
   }
 
@@ -331,19 +318,16 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       setState(() {
         backupCode = true;
         codes = List<Map<String, dynamic>>.from(jsonData["data"]["codes"]);
       });
-      print(jsonData);
     } else {
       setState(() {
         backupCode = false;
       });
-      print(jsonData);
     }
   }
 
@@ -515,7 +499,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA setup response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -579,7 +562,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA verification response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -661,7 +643,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('Send disable 2FA code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -735,7 +716,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('Disable 2FA response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -807,7 +787,6 @@ class _Profile_screenState extends State<Profile_screen> {
         jsonEncode({"staff_id": id, "method": email2FA ? "email" : "sms"}),
       );
 
-      print('Send regenerate backup codes code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -871,7 +850,6 @@ class _Profile_screenState extends State<Profile_screen> {
         body: jsonEncode({"user_id": id, "user_type": "staff"}),
       );
 
-      print('Regenerate backup codes response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -1212,12 +1190,9 @@ class _Profile_screenState extends State<Profile_screen> {
                 SizedBox(height: 16),
                 _personalDetailsCard(),
                 SizedBox(height: 30),
-                // 2FA Section
-                titleBar(
-                  title: 'Two-Factor Authentication',
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  radius: 12,
-                ),
+                // 2FA Section — the card below carries its own header
+                // (title + subtitle + toggle), matching web, so no separate
+                // navy title bar here.
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final double width = constraints.maxWidth;
@@ -1340,14 +1315,13 @@ class _Profile_screenState extends State<Profile_screen> {
                               // Show different content based on 2FA state
                               if (!enble2FA && !show2FASetup)
                                 Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: innerPadding
-                                          .toDouble()),
+                                  padding: EdgeInsets.zero,
                                   child: Text(
                                     "Turn on the toggle above to enable Two-Factor Authentication for enhanced security.",
                                     style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: fontSizeTitle,
+                                      color: const Color(0xFF8A93A3),
+                                      fontSize: 13,
+                                      height: 1.4,
                                     ),
                                   ),
                                 ),
@@ -2296,13 +2270,9 @@ Container(
               const SizedBox(height: 12),
               _personalDetailsCard(),
               const SizedBox(height: 20),
-              // 2FA Section
-              titleBar(
-                title: 'Two-Factor Authentication',
-                width: MediaQuery.of(context).size.width - 32,
-                radius: 12,
-              ),
-              const SizedBox(height: 12),
+              // 2FA Section — the card below carries its own header
+              // (title + subtitle + toggle), matching web, so no separate
+              // navy title bar here.
               LayoutBuilder(
                 builder: (context, constraints) {
                   double cardPadding =
@@ -2410,14 +2380,13 @@ Container(
                             ),
                             if (!enble2FA && !show2FASetup)
                               Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                    horizontalContentPadding),
+                                padding: EdgeInsets.zero,
                                 child: Text(
                                   "Turn on the toggle above to enable Two-Factor Authentication for enhanced security.",
                                   style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: inputFontSize,
+                                    color: const Color(0xFF8A93A3),
+                                    fontSize: 13,
+                                    height: 1.4,
                                   ),
                                 ),
                               ),

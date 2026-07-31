@@ -290,13 +290,10 @@ class _Tenants_tableState extends State<Tenants_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
     checkInternet();
-    debugPrint(
-        '[Tenants_table][Admin] initState → fetchTenantsV2Page (server pagination)');
     futureTenants = _tenantsPageFuture();
     fetchtenantsadded();
     fetchCompany();
@@ -319,7 +316,6 @@ class _Tenants_tableState extends State<Tenants_table> {
 
   void handleEdit(Tenant tenants) async {
     //Handle edit action
-    print('Edit ${tenants.tenantId}');
     //
     // final result = await Navigator.push(
     //     context,
@@ -449,7 +445,6 @@ class _Tenants_tableState extends State<Tenants_table> {
     _showDeleteAlert(context, tenants.tenantId!);
 
     // Handle delete action
-    print('Delete ${tenants.tenantId}');
   }
 
   Widget _buildHeader<T>(String text, int columnIndex,
@@ -719,7 +714,6 @@ class _Tenants_tableState extends State<Tenants_table> {
   int rentalCount = 0;
   int propertyCountLimit = 0;
   Future<void> fetchtenantsadded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -731,15 +725,10 @@ class _Tenants_tableState extends State<Tenants_table> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalCount);
-      print(propertyCountLimit);
       setState(() {
         rentalCount = jsonData['rentalCount'];
-        print(rentalCount);
         //propertyCountLimit = jsonData['propertyCountLimit'];
-        print(propertyCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -802,7 +791,6 @@ class _Tenants_tableState extends State<Tenants_table> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }

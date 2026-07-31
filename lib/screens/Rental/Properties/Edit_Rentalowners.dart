@@ -54,13 +54,8 @@ class _EditRentalownersState extends State<EditRentalowners> {
     //   try {
     Rentals fetchedDetails =
         await Properies_summery_Repo().fetchrentalDetails(rentalId);
-    print(fetchedDetails);
-    print(rentalId);
-    print(fetchedDetails.rentalCountry);
-    print(fetchedDetails.rentalOwnerData?.rentalOwnerName);
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
-      print(fetchedDetails.rentalAddress);
       // selectedpropertytype = fetchedDetails.propertyTypeData?.propertyType;
       Ownersdetails = RentalOwner(
         rentalOwnerId: fetchedDetails.rentalOwnerId,
@@ -74,13 +69,10 @@ class _EditRentalownersState extends State<EditRentalowners> {
           fetchedDetails.rentalOwnerData!.rentalOwnerPrimaryEmail!;
       alternativeemail.text =
           fetchedDetails.rentalOwnerData!.rentalOwnerAlternativeEmail!;
-      print(alternativeemail);
       phonenum.text = formatPhoneNumberedit(
           fetchedDetails.rentalOwnerData!.rentalOwnerPhoneNumber!);
-      print(phonenum);
       homenum.text = formatPhoneNumberedit(
           fetchedDetails.rentalOwnerData!.rentalOwnerHomeNumber!);
-      print(homenum);
       businessnum.text = formatPhoneNumberedit(
           fetchedDetails.rentalOwnerData!.rentalOwnerBuisinessNumber!);
 
@@ -98,7 +90,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
             isChecked: processor["processor_id"] == widget.pro_id,
             controller: controller));
       }
-      print(_processorGroups.length);
       // _selectedProperty = fetchedDetails.rentalId; // Uncomment and update based on your use case
     });
     /* } catch (e) {
@@ -2021,7 +2012,6 @@ class _EditRentalownersState extends State<EditRentalowners> {
                                     .isNotEmpty) // Filter out empty IDs
                                 .toList();
 
-                        print(selectedOwner?.rentalOwnerId);
                         Ownersdetails = RentalOwner(
                           rentalOwnerId: selectedOwner?.rentalOwnerId,
                           rentalOwnerPhoneNumber: phonenum.text,

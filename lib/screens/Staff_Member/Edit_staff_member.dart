@@ -96,7 +96,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
     final response = await apiGet(Uri.parse('$Api_url/api/staffmember/staff/member/${widget.staff?.staffmemberId}'),
       headers: {"authorization" : "CRM $token","id":"CRM ${prefs.getString('staff_id') ?? id}",},
     );
-    print('reponse ${response.body}');
     if (response.statusCode == 200) {
       // Parse the response body
       final Map<String, dynamic> data = jsonDecode(response.body);
@@ -110,7 +109,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
        initialconpass =  data['data']['staffmember_password'] ?? "";
      });
 
-   print(password.text);
 
     } else {
       throw Exception('Failed to load tenant override fee data');
@@ -940,7 +938,6 @@ class _Edit_staff_memberState extends State<Edit_staff_member> {
                                       widget.staff?.staffmemberPassword = password.text;
                                       isLoading = false;
                                     });
-                                    print('New Password: ${password.text}');
 
                                     // Navigate back with success response
                                     Navigator.of(context).pop(true);

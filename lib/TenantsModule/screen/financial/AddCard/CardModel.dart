@@ -57,23 +57,7 @@ class CardModel {
   }
 
   Map<String, dynamic> toJson() {
-    print('tojson ${firstName}');
-    print('tojson ${lastName}');
-    print('tojson ${ccexp}');
-    print('tojson ${ccnumber}');
-    print('tojson ${address1}');
-    print('tojson ${city}');
-    print('tojson ${state}');
-    print('tojson ${zip}');
-    print('tojson ${cvv}');
-    print('tojson ${country}');
-    print('tojson ${company}');
-    print('tojson ${phone}');
-    print('tojson ${email}');
-    print('tojson ${adminId}');
-    print('tojson ${billingId}');
-
-    print(firstName);
+    // PCI: never log card number, CVV or billing details.
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
@@ -294,7 +278,6 @@ class CustomerData {
     List<BillingData> billingList = [];
 
     if (billingJson is List) {
-      print('billingJson is List');
       billingList = billingJson.map((item) {
         // print('Processing item: $item');
         return BillingData.fromJson(item as Map<String, dynamic>);
@@ -304,7 +287,6 @@ class CustomerData {
       billingList
           .add(BillingData.fromJson(billingJson as Map<String, dynamic>));
     } else {
-      print('billingJson is neither List nor Map');
     }
 
     return CustomerData(billing: billingList);

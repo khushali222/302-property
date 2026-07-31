@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
@@ -129,7 +130,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {
       setState(() {
         loading = false;
@@ -174,7 +175,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {
       setState(() {
         loading = false;
@@ -203,7 +204,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
         _statsLoading = false;
       });
     } catch (e) {
-      print('Error fetching vendor stats: $e');
+      logError('Error fetching vendor stats: $e');
       if (!mounted) return;
       setState(() {
         _statsLoading = false;
@@ -212,12 +213,10 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
   }
 
   Future<void> fetchData() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("vendor_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print(admin_id);
     final response = await apiGet(
         Uri.parse('${Api_url}/api/vendor/dashboard_workorder/$id/$admin_id'),
         headers: {
@@ -367,7 +366,6 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
       Position userLocation =
           await getCurrentLocation().timeout(const Duration(seconds: 15));
       _locationWasUnavailable = false;
-      print('[LOCATION][Vendor] location available → loading nearby properties');
       final workOrders = await WorkOrderRepository().fetchWorkOrders();
       allRentalData.clear();
       final Map<String, RentalData> uniqueRentals = {};
@@ -398,7 +396,6 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
             coords.longitude,
           );
           double distanceInKm = distanceInMeters / 1000;
-          print("${rental.rentalAddress} $distanceInKm");
           if (distanceInKm <= 5) {
             if (distanceInMeters < minDistance) {
               minDistance = distanceInMeters;
@@ -419,8 +416,6 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
         nearbyProperties
             .removeWhere((r) => r.rentalId == nearestProperty!.rentalId);
       }
-      print(
-          'Fetched \\${allRentalData.length} rental records from work orders.');
       if (mounted) {
         setState(() {
           loading = false;
@@ -431,7 +426,7 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
       // timed out, stop the spinner and show the dashboard anyway (the nearby
       // section simply stays empty). Nearby logic above is unchanged.
       _locationWasUnavailable = true;
-      print('[LOCATION][Vendor] location unavailable (off/denied/timeout) → nearby skipped: $e');
+      logError('[LOCATION][Vendor] location unavailable (off/denied/timeout) → nearby skipped: $e');
       if (mounted) {
         setState(() {
           loading = false;
@@ -464,11 +459,9 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
     try {
       _serviceStatusSub = Geolocator.getServiceStatusStream().listen(
         (ServiceStatus status) {
-          print('[LOCATION][Vendor] service status changed → $status');
           if (status == ServiceStatus.enabled &&
               _locationWasUnavailable &&
               mounted) {
-            print('[LOCATION][Vendor] location re-enabled while app open → refreshing nearby');
             fetchWorkOrdersAndRentalData(silent: true);
           }
         },
@@ -495,7 +488,6 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
     // unavailable last time — no full-screen spinner, no re-login, and no
     // needless API call when nearby already loaded.
     if (state == AppLifecycleState.resumed && _locationWasUnavailable) {
-      print('[LOCATION][Vendor] app resumed & location was unavailable → refreshing nearby');
       fetchWorkOrdersAndRentalData(silent: true);
     }
   }
@@ -596,7 +588,6 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
         appBar: widget_302.App_Bar(
           context: context,
           onDrawerIconPressed: () {
-            print("calling appbar");
             key.currentState!.openDrawer();
             // Scaffold.of(context).openDrawer();
           },

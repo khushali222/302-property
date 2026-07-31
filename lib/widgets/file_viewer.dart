@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data' show Uint8List;
@@ -35,23 +36,15 @@ class FileViewer extends StatefulWidget {
   // Static method to show receipt in dialog
   static void showReceiptDialog(BuildContext context, String fileName,
       {String? fileUrl, String? mimeType}) {
-    print('=== DIALOG DEBUG ===');
-    print('showReceiptDialog called with fileName: $fileName');
-    print('fileUrl: $fileUrl');
-    print('mimeType: $mimeType');
-    print('Api_url: $Api_url');
     if (fileUrl == null) {
-      print('Full URL would be: ${image_url}$fileName');
     }
 
     try {
-      print('=== SHOWING DIALOG ===');
       showDialog(
         context: context,
         barrierDismissible: true,
         barrierColor: Colors.black54,
         builder: (BuildContext dialogContext) {
-          print('=== DIALOG BUILDER CALLED ===');
           return Dialog(
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 48),
@@ -131,7 +124,7 @@ class FileViewer extends StatefulWidget {
                               showInDialog: true,
                             );
                           } catch (e) {
-                            print('Error in FileViewer widget: $e');
+                            logError('Error in FileViewer widget: $e');
                             return Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -172,13 +165,10 @@ class FileViewer extends StatefulWidget {
           );
         },
       ).then((_) {
-        print('=== DIALOG CLOSED ===');
       }).catchError((error) {
-        print('=== DIALOG ERROR ===');
-        print('Error: $error');
       });
     } catch (e) {
-      print('Error showing dialog: $e');
+      logError('Error showing dialog: $e');
       // Fallback: Show a simple error dialog
       showDialog(
         context: context,
@@ -211,10 +201,6 @@ class _FileViewerState extends State<FileViewer> {
   @override
   void initState() {
     super.initState();
-    print('=== FILE VIEWER INIT STATE ===');
-    print('fileName: ${widget.fileName}');
-    print('showInDialog: ${widget.showInDialog}');
-    print('fileUrl: ${widget.fileUrl}');
     _checkFileAvailability();
     _cleanupOldTempFiles(); // Clean up old temp files on init
   }
@@ -237,16 +223,15 @@ class _FileViewerState extends State<FileViewer> {
               await file.delete();
               cleanedCount++;
             } catch (e) {
-              print('Error deleting old temp file: $e');
+              logError('Error deleting old temp file: $e');
             }
           }
         }
       }
       if (cleanedCount > 0) {
-        print('=== CLEANED UP $cleanedCount OLD TEMP FILES ===');
       }
     } catch (e) {
-      print('Error cleaning up temp files: $e');
+      logError('Error cleaning up temp files: $e');
     }
   }
 
@@ -261,11 +246,9 @@ class _FileViewerState extends State<FileViewer> {
           final file = File(_downloadedFilePath!);
           if (file.existsSync()) {
             file.deleteSync();
-            print('=== CLEANED UP TEMP FILE ===');
-            print('Deleted: $_downloadedFilePath');
           }
         } catch (e) {
-          print('Error cleaning up temp file: $e');
+          logError('Error cleaning up temp file: $e');
         }
       });
     }
@@ -273,7 +256,6 @@ class _FileViewerState extends State<FileViewer> {
   }
 
   void _checkFileAvailability() {
-    print('=== CHECKING FILE AVAILABILITY ===');
 
     // For lease documents, download the file first (both images and PDFs)
     // since cachedFromUrl doesn't support custom headers for authentication
@@ -288,7 +270,6 @@ class _FileViewerState extends State<FileViewer> {
           });
         }
       }
-      print('_isLoading set to false');
     }
   }
 
@@ -301,10 +282,6 @@ class _FileViewerState extends State<FileViewer> {
         });
       }
 
-      print('=== DOWNLOADING AUTHENTICATED FILE ===');
-      print('URL: ${widget.fileUrl}');
-      print('MIME Type: ${widget.mimeType}');
-      print('MIME Type: ${widget.mimeType}');
 
       // Get authentication tokens
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -326,17 +303,13 @@ class _FileViewerState extends State<FileViewer> {
         },
       );
 
-      print('Download response status: ${response.statusCode}');
-      print('Response headers: ${response.headers}');
-      print('Response body length: ${response.bodyBytes.length}');
 
       // Check if response is actually an error JSON
       if (response.statusCode != 200) {
         try {
           final errorBody = json.decode(response.body);
-          print('Error response body: $errorBody');
         } catch (e) {
-          print('Could not parse error response as JSON');
+          logError('Could not parse error response as JSON');
         }
       }
 
@@ -346,8 +319,6 @@ class _FileViewerState extends State<FileViewer> {
         final contentLength = response.bodyBytes.length;
         final contentType = response.headers['content-type'] ?? '';
 
-        print('Content-Type from header: $contentType');
-        print('File size: $contentLength bytes');
 
         // Determine file type first
         final isPdf = contentType.contains('application/pdf') ||
@@ -458,10 +429,6 @@ class _FileViewerState extends State<FileViewer> {
             '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}_$fileName.$extension');
         await file.writeAsBytes(response.bodyBytes);
 
-        print('File downloaded to: ${file.path}');
-        print('File size: ${file.lengthSync()} bytes');
-        print('File extension: $extension');
-        print('Content-Type: $contentType');
 
         if (!_isDisposed && mounted) {
           setState(() {
@@ -490,8 +457,8 @@ class _FileViewerState extends State<FileViewer> {
         throw Exception(errorMessage);
       }
     } catch (e) {
-      print('=== FILE DOWNLOAD ERROR ===');
-      print('Error: $e');
+      logError('=== FILE DOWNLOAD ERROR ===');
+      logError('Error: $e');
       String errorMessage = e.toString();
 
       // Check if it's a "file not found" error
@@ -518,15 +485,9 @@ class _FileViewerState extends State<FileViewer> {
     // Check if filename has an extension
     if (fileName.contains('.')) {
       final extension = fileName.split('.').last.toLowerCase();
-      print('=== FILE EXTENSION DEBUG ===');
-      print('fileName: $fileName');
-      print('extension: $extension');
       return extension;
     }
     // No extension found
-    print('=== FILE EXTENSION DEBUG ===');
-    print('fileName: $fileName');
-    print('No extension found in filename');
     return '';
   }
 
@@ -539,9 +500,6 @@ class _FileViewerState extends State<FileViewer> {
       final parts = mimeType.split('/');
       if (parts.length == 2) {
         final type = parts[1].split(';')[0].trim(); // Remove any parameters
-        print('=== MIME TYPE DEBUG ===');
-        print('mimeType: ${widget.mimeType}');
-        print('extracted type: $type');
         return type;
       }
     }
@@ -574,20 +532,11 @@ class _FileViewerState extends State<FileViewer> {
     if (widget.mimeType != null) {
       final mimeType = widget.mimeType!.toLowerCase();
       if (mimeType.startsWith('image/')) {
-        print('=== IS IMAGE CHECK ===');
-        print('fileName: $fileName');
-        print('mimeType: ${widget.mimeType}');
-        print('isImage: true (from mime type)');
         return true;
       }
     }
 
     final isImage = extension.isNotEmpty && imageExtensions.contains(extension);
-    print('=== IS IMAGE CHECK ===');
-    print('fileName: $fileName');
-    print('extension: $extension');
-    print('mimeType: ${widget.mimeType}');
-    print('isImage: $isImage');
     return isImage;
   }
 
@@ -674,36 +623,21 @@ class _FileViewerState extends State<FileViewer> {
     if (widget.mimeType != null) {
       final mimeType = widget.mimeType!.toLowerCase();
       if (mimeType == 'application/pdf') {
-        print('=== IS PDF CHECK ===');
-        print('fileName: $fileName');
-        print('mimeType: ${widget.mimeType}');
-        print('isPdf: true (from mime type)');
         return true;
       }
     }
 
     final isPdf = extension == 'pdf';
-    print('=== IS PDF CHECK ===');
-    print('fileName: $fileName');
-    print('extension: $extension');
-    print('mimeType: ${widget.mimeType}');
-    print('isPdf: $isPdf');
     return isPdf;
   }
 
   String _getFileUrl() {
     if (widget.fileUrl != null && widget.fileUrl!.isNotEmpty) {
-      print('=== FILE VIEWER DEBUG ===');
-      print('Using provided fileUrl: ${widget.fileUrl}');
       return widget.fileUrl!;
     }
 
     // Construct URL from API base and filename
     final constructedUrl = '${image_url}${widget.fileName}';
-    print('=== FILE VIEWER DEBUG ===');
-    print('image_url: $image_url');
-    print('fileName: ${widget.fileName}');
-    print('Constructed URL: $constructedUrl');
     return constructedUrl;
   }
 
@@ -734,8 +668,6 @@ class _FileViewerState extends State<FileViewer> {
     // If we have a downloaded file path (authenticated image), use it
     if (_downloadedFilePath != null &&
         File(_downloadedFilePath!).existsSync()) {
-      print('=== IMAGE WIDGET DEBUG ===');
-      print('Loading image from file: $_downloadedFilePath');
 
       return InteractiveViewer(
         minScale: 0.5,
@@ -747,9 +679,6 @@ class _FileViewerState extends State<FileViewer> {
               File(_downloadedFilePath!),
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
-                print('=== IMAGE FILE ERROR ===');
-                print('File: $_downloadedFilePath');
-                print('Error: $error');
                 return _buildErrorWidget(
                   'Failed to load image\nError: $error',
                   FontAwesomeIcons.image,
@@ -763,14 +692,11 @@ class _FileViewerState extends State<FileViewer> {
 
     // Otherwise, use the URL (for non-authenticated images)
     final imageUrl = _getFileUrl();
-    print('=== IMAGE WIDGET DEBUG ===');
-    print('Loading image from URL: $imageUrl');
 
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: BoxFit.contain,
       placeholder: (context, url) {
-        print('Image loading placeholder for: $url');
         return Center(
           child: SpinKitFadingCircle(
             color: Colors.black,
@@ -779,9 +705,6 @@ class _FileViewerState extends State<FileViewer> {
         );
       },
       errorWidget: (context, url, error) {
-        print('=== IMAGE ERROR ===');
-        print('URL: $url');
-        print('Error: $error');
         return _buildErrorWidget(
           'Failed to load image\nURL: $url\nError: $error',
           FontAwesomeIcons.image,
@@ -797,8 +720,6 @@ class _FileViewerState extends State<FileViewer> {
         File(_downloadedFilePath!).existsSync() &&
         widget.fileUrl != null &&
         widget.fileUrl!.contains('/api/lease-document/preview-document/')) {
-      print('=== PDF WIDGET DEBUG ===');
-      print('Loading PDF from downloaded file: $_downloadedFilePath');
 
       // Use Printing.previewPdf to display PDF in dialog
       return FutureBuilder<Uint8List>(
@@ -821,8 +742,6 @@ class _FileViewerState extends State<FileViewer> {
           }
 
           if (snapshot.hasError) {
-            print('=== PDF READ ERROR ===');
-            print('Error: ${snapshot.error}');
             return _buildErrorWidget(
               'Failed to read PDF file\nError: ${snapshot.error}',
               FontAwesomeIcons.filePdf,
@@ -831,8 +750,6 @@ class _FileViewerState extends State<FileViewer> {
 
           if (snapshot.hasData) {
             final pdfBytes = snapshot.data!;
-            print('=== PDF BYTES LOADED ===');
-            print('PDF size: ${pdfBytes.length} bytes');
 
             // Validate PDF file size and header
             if (pdfBytes.length < 100) {
@@ -845,9 +762,6 @@ class _FileViewerState extends State<FileViewer> {
             // Check PDF header (should start with %PDF)
             final pdfHeader = String.fromCharCodes(pdfBytes.take(4));
             if (pdfHeader != '%PDF') {
-              print('=== INVALID PDF HEADER ===');
-              print('Expected: %PDF');
-              print('Got: $pdfHeader');
               return _buildErrorWidget(
                 'File not found or invalid PDF file format.\n\nFile may be corrupted or not a valid PDF.',
                 FontAwesomeIcons.filePdf,
@@ -875,8 +789,6 @@ class _FileViewerState extends State<FileViewer> {
 
     // Otherwise, use the URL (for non-authenticated PDFs like property tax receipts)
     final pdfUrl = _getFileUrl();
-    print('=== PDF WIDGET DEBUG ===');
-    print('Loading PDF from URL: $pdfUrl');
 
     return PDF(
       enableSwipe: true,
@@ -892,9 +804,6 @@ class _FileViewerState extends State<FileViewer> {
         }
       },
       onError: (error) {
-        print('=== PDF ERROR ===');
-        print('PDF URL: $pdfUrl');
-        print('Error: $error');
         if (!_isDisposed && mounted) {
           setState(() {
             _isLoading = false;
@@ -903,9 +812,6 @@ class _FileViewerState extends State<FileViewer> {
         }
       },
       onPageError: (page, error) {
-        print('=== PDF PAGE ERROR ===');
-        print('Page: $page');
-        print('Error: $error');
         if (!_isDisposed && mounted) {
           setState(() {
             _error = 'Failed to load page $page: ${error.toString()}';
@@ -931,9 +837,6 @@ class _FileViewerState extends State<FileViewer> {
         ),
       ),
       errorWidget: (error) {
-        print('=== PDF CACHE ERROR ===');
-        print('PDF URL: $pdfUrl');
-        print('Cache Error: $error');
         return _buildErrorWidget(
           'Failed to load PDF\nURL: $pdfUrl\nError: $error',
           FontAwesomeIcons.filePdf,
@@ -1101,18 +1004,11 @@ class _FileViewerState extends State<FileViewer> {
 
   @override
   Widget build(BuildContext context) {
-    print('=== FILE VIEWER BUILD ===');
-    print('showInDialog: ${widget.showInDialog}');
-    print('fileName: ${widget.fileName}');
-    print('_isLoading: $_isLoading');
-    print('_error: $_error');
 
     // If showing in dialog, don't wrap with Scaffold
     if (widget.showInDialog) {
-      print('=== BUILDING DIALOG CONTENT ===');
 
       if (_isLoading) {
-        print('Returning loading widget');
         return const Center(
           child: SpinKitFadingCircle(
             color: Colors.black,
@@ -1122,7 +1018,6 @@ class _FileViewerState extends State<FileViewer> {
       }
 
       if (_error != null) {
-        print('Returning error widget: $_error');
         return _buildErrorWidget(_error!, FontAwesomeIcons.exclamationTriangle);
       }
 

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -12,30 +13,22 @@ class AppVersionService {
       // Step 1: Get current installed app version
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
-      print('📱 APP VERSION CHECK STARTED');
-      print('📱 Current App Version: $currentVersion');
 
       // Step 2: Detect platform
       final platform = Platform.isAndroid ? 'android' : 'ios';
-      print('📱 Platform: $platform');
 
       // Step 3: Call GET /api/app-version?platform=android
       final uri = Uri.parse('$Api_url$_endpoint?platform=$platform');
-      print('📱 Calling: $uri');
 
       final response = await http.get(uri).timeout(const Duration(seconds: 10));
 
-      print('📱 Response Code: ${response.statusCode}');
-      print('📱 Response Body: ${response.body}');
 
       // 404 = not configured yet → proceed normally
       if (response.statusCode == 404) {
-        print('📱 No version config → Proceeding');
         return VersionCheckResult(status: VersionStatus.upToDate);
       }
 
       if (response.statusCode != 200) {
-        print('📱 API Error → Proceeding');
         return VersionCheckResult(status: VersionStatus.upToDate);
       }
 
@@ -44,31 +37,26 @@ class AppVersionService {
       final minimumVersion = data['minimum_supported_version'] as String;
       final isForceUpdate = data['is_force_update'] as bool;
 
-      print('📱 Latest: $latestVersion | Minimum: $minimumVersion | Force: $isForceUpdate');
 
       final current = _parseVersion(currentVersion);
       final minimum = _parseVersion(minimumVersion);
       final latest = _parseVersion(latestVersion);
 
       if (_isLower(current, minimum)) {
-        print('📱 Result: FORCE UPDATE (below minimum)');
         return VersionCheckResult(status: VersionStatus.forceUpdate, latestVersion: latestVersion);
       }
 
       if (_isLower(current, latest) && isForceUpdate) {
-        print('📱 Result: FORCE UPDATE (force flag)');
         return VersionCheckResult(status: VersionStatus.forceUpdate, latestVersion: latestVersion);
       }
 
       if (_isLower(current, latest)) {
-        print('📱 Result: SOFT UPDATE');
         return VersionCheckResult(status: VersionStatus.softUpdate, latestVersion: latestVersion);
       }
 
-      print('📱 Result: UP TO DATE');
       return VersionCheckResult(status: VersionStatus.upToDate);
     } catch (e) {
-      print('📱 Version check error: $e');
+      logError('📱 Version check error: $e');
       return VersionCheckResult(status: VersionStatus.upToDate);
     }
   }

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
@@ -84,12 +85,11 @@ class _SummaryContentState extends State<SummaryContent> {
         _uploadedFileName = fileName;
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      logError('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${Api_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -123,7 +123,6 @@ class _SummaryContentState extends State<SummaryContent> {
   }
 
   void deleteNoteAndFile(int index, String applicantId, String note__id) async {
-    print("${index} ${applicantId} ${note__id} ");
     ApplicantSummeryRepository applicantSummeryRepository =
     ApplicantSummeryRepository();
 
@@ -1273,7 +1272,6 @@ class _SummaryContentState extends State<SummaryContent> {
       setState(() {});
     } else {
       // Log the response body for debugging
-      print('Failed to update data: ${response.body}');
       throw Exception('Failed to update applicant data');
     }
   }
@@ -1284,7 +1282,6 @@ class _SummaryContentState extends State<SummaryContent> {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     var checkvalue = {"applicant_checklist": applicant};
-    print(applicant);
     final response = await apiPut(
       Uri.parse(
           '$Api_url/api/applicant/applicant/${widget.applicant_id}/checklist'),
@@ -1301,7 +1298,6 @@ class _SummaryContentState extends State<SummaryContent> {
       setState(() {});
     } else {
       // Log the response body for debugging
-      print('Failed to update data: ${response.body}');
       throw Exception('Failed to update applicant data');
     }
   }

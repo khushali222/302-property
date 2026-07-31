@@ -127,7 +127,7 @@ class _MakePaymentState extends State<MakePayment> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      Fluttertoast.showToast(msg: 'Could not load surcharge settings. Amounts may be incomplete.');
     }
   }
 
@@ -144,7 +144,6 @@ class _MakePaymentState extends State<MakePayment> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }
@@ -182,11 +181,9 @@ class _MakePaymentState extends State<MakePayment> {
   Future<void> fetchPaymentSettings() async {
     // Don't fetch if no tenant is selected
     if (selectedTenantId == null || selectedTenantId!.isEmpty) {
-      print("No tenant selected, skipping payment settings fetch");
       return;
     }
 
-    print("calling payment card check");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -202,27 +199,18 @@ class _MakePaymentState extends State<MakePayment> {
       );
 
       final jsonData = json.decode(response.body);
-      print(' rental added ${jsonData}');
-      print(
-          ' rental url ${Api_url}/api/tenant/payment_settings/$selectedTenantId/${widget.leaseId}');
-      print("lease id ${widget.leaseId}");
-      print("tenant id $selectedTenantId");
-      print("jsonData ${jsonData}");
-      print("achaccepted ${achaccepted}");
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
         setState(() {
           achaccepted = jsonData['data']['achAccepted'] ?? false;
           creditcard = jsonData['data']['creditCardAccepted'] ?? true;
           debitcard = jsonData['data']['debitCardAccepted'] ?? true;
-          print(' credit card accepted ${creditcard}');
           // Update payment methods list with availability status
           _updatePaymentMethods();
         });
       } else {
-        print("Failed to fetch payment settings: ${jsonData["message"]}");
       }
     } catch (e) {
-      print("Error fetching payment settings: $e");
+      Fluttertoast.showToast(msg: 'Could not load payment settings.');
     }
   }
 
@@ -244,7 +232,6 @@ class _MakePaymentState extends State<MakePayment> {
       amountController.text = c_data.totalAmount.toString();
       _selectedPaymentMethod = c_data.paymenttype;
 
-      print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
             return {
               'entry_id': entry.entryId,
@@ -265,14 +252,12 @@ class _MakePaymentState extends State<MakePayment> {
           charges_balances.add((c_data.entry![i].amount ?? 0).ceil().toDouble());
         }
       }
-      print("rows length:- ${rows!.length}");
       /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
       controllers = rows.map((row) {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
-      print(rows);
       totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
@@ -397,7 +382,6 @@ class _MakePaymentState extends State<MakePayment> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(data);
         final List<Map<String, String>> fetchedTenants = [];
 
         for (var tenant in data['data']['tenants']) {
@@ -461,12 +445,11 @@ class _MakePaymentState extends State<MakePayment> {
               ? (inner['processor_id']?.toString() ?? '')
               : '';
         });
-        print(' fetch teant ${fetchedTenants.length}');
       } else {
         throw Exception('Failed to load tenants');
       }
     } catch (e) {
-      print(e);
+      Fluttertoast.showToast(msg: 'Could not load tenants.');
     }
   }
 
@@ -495,7 +478,6 @@ class _MakePaymentState extends State<MakePayment> {
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
     // print(token); // removed: do not log auth token
-    print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await apiGet(
       Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -504,7 +486,6 @@ class _MakePaymentState extends State<MakePayment> {
         "id": "CRM $id",
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body)['data'];
       log("accounts data $jsonResponse");
@@ -518,7 +499,6 @@ class _MakePaymentState extends State<MakePayment> {
       for (var item in jsonResponse) {
         String chargeType = item['charge_type'] ?? "One Time Charge";
         String account = item['account'];
-        print(chargeType);
         if (!fetchedData.containsKey(chargeType)) {
           fetchedData[chargeType] = [];
         }
@@ -528,7 +508,6 @@ class _MakePaymentState extends State<MakePayment> {
 
       setState(() {
         categorizedData = fetchedData;
-        print("fetch charge data ${categorizedData}");
         isLoading = false;
       });
     } else {
@@ -566,7 +545,6 @@ class _MakePaymentState extends State<MakePayment> {
         validationMessage = null;
       });
     }
-    print(totalAmount);
     surge_count();
   }
 
@@ -611,12 +589,11 @@ class _MakePaymentState extends State<MakePayment> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      Fluttertoast.showToast(msg: 'Failed to attach the file. Please try again.');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -665,8 +642,6 @@ class _MakePaymentState extends State<MakePayment> {
       'Money Order',
       'Manual'
     ];
-    print("payment methods calling ${_paymentMethods}");
-    print("achaccepted ${achaccepted}");
     // Clear selected method if it's not in the new list (avoids RangeError)
     if (_selectedPaymentMethod != null &&
         !_paymentMethods.contains(_selectedPaymentMethod)) {
@@ -693,7 +668,6 @@ class _MakePaymentState extends State<MakePayment> {
 
   // Function to check if a card type is accepted
   bool isCardTypeAccepted(String cardType) {
-    print("cardType ${cardType}");
     cardType = cardType.toLowerCase();
     if (cardType == 'credit') {
       return creditcard;
@@ -704,7 +678,6 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   void AddFields() {
-    print("selected method $_selectedPaymentMethod");
     setState(() {
       // Show fields based on selected payment method
       showCardNumberField = _selectedPaymentMethod == 'Card';
@@ -785,13 +758,12 @@ class _MakePaymentState extends State<MakePayment> {
         throw Exception('Failed to load');
       }
     } catch (e) {
-      print('Error: $e');
+      Fluttertoast.showToast(msg: 'Could not load charges and balance.');
     }
   }
 
 //for payment
   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
-    print('fetch tenant charges calling');
     setState(() {
       isLoading = true;
       hasError = false;
@@ -799,14 +771,9 @@ class _MakePaymentState extends State<MakePayment> {
     try {
       List<Entrycharge>? charges =
           await ChargeRepositorys().fetchChargesTable(widget.leaseId);
-      print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
-      print("charges length:- ${charges!.length}");
-      print('leaseid ${widget.leaseId}');
 
-      print('tenantid '
-          '$tenantId');
 
       setState(() {
         charges_balances = [0.0];
@@ -834,7 +801,6 @@ class _MakePaymentState extends State<MakePayment> {
                             return MapEntry(fallbackType, []);
                           },
                         ).key;
-              print(chargeType);
               return {
                 'entry_id': entry.entryId,
                 'account': entry.account,
@@ -863,21 +829,17 @@ class _MakePaymentState extends State<MakePayment> {
             charges_balances.add(double.parse(formattedChargeAmount));
           }
         }
-        print("charges length ${charges_balances.length}");
-        print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
       });
     } catch (e) {
-      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -942,8 +904,6 @@ class _MakePaymentState extends State<MakePayment> {
         if (rows[index]["newfield"] == true) {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() + amount).toDouble();
           totalAmount += amount;
@@ -951,15 +911,12 @@ class _MakePaymentState extends State<MakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() - amount).toDouble();
           totalAmount += amount;
@@ -967,7 +924,6 @@ class _MakePaymentState extends State<MakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
@@ -1016,17 +972,14 @@ class _MakePaymentState extends State<MakePayment> {
       List<dynamic> cardDetailsList = jsonResponse['card_detail'];
 
       // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
 
       for (var cardDetail in cardDetailsList) {
         // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
 
         //  BillingData billingData = BillingData.fromJson(cardDetail);
         // print('Parsed Billing ID: ${billingData.billingId}');
 
         // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
       }
 
       CustomerData? customerData = await postBillingCustomerVault(
@@ -1049,7 +1002,6 @@ class _MakePaymentState extends State<MakePayment> {
         });
       }
     } else if (response.statusCode == 404) {
-      print('customer_vault_id not found');
     } else {
       throw Exception('Failed to load credit card data');
     }
@@ -1084,13 +1036,11 @@ class _MakePaymentState extends State<MakePayment> {
       var jsonResponse = json.decode(response.body);
       var customerJson = jsonResponse['data']['customer'];
       if (customerJson == null) {
-        print('Failed to post data: ${response.statusCode}');
         return null;
       }
       CustomerData customerData = CustomerData.fromJson(customerJson);
 
       customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
       });
 
       // Map card types to billing records safely (avoids index mismatch and nulls).
@@ -1114,7 +1064,6 @@ class _MakePaymentState extends State<MakePayment> {
 
       return customerData;
     } else {
-      print('Failed to post data: ${response.statusCode}');
       return null;
     }
   }
@@ -1133,7 +1082,6 @@ class _MakePaymentState extends State<MakePayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
-    print(adminId);
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
@@ -1144,7 +1092,6 @@ class _MakePaymentState extends State<MakePayment> {
     );
 
     if (response.statusCode == 200) {
-      print('Response: ${response.body}');
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
@@ -1174,8 +1121,6 @@ class _MakePaymentState extends State<MakePayment> {
             final String? overrideFee = getOverrideFee(selectedTenantId!);
             final bool enableOverrideFee =
                 getEnableOverrideFee(selectedTenantId!);
-            print("overrideFee   ${overrideFee}");
-            print("enableOverrideFee   ${enableOverrideFee}");
             if (enableOverrideFee &&
                 overrideFee != null &&
                 overrideFee != "null" &&
@@ -1208,10 +1153,7 @@ class _MakePaymentState extends State<MakePayment> {
             0.0;
       });
 
-      print(surChargeAchper);
-      print(surChargeAchflat);
     } else {
-      print('Failed to fetch the surcharge: ${response}');
       var jsonResponse = jsonDecode(response.body);
       String message = jsonResponse['message'];
       throw Exception('Failed to fetch the surcharge $message');
@@ -1471,8 +1413,6 @@ class _MakePaymentState extends State<MakePayment> {
                                             });
                                             state.reset();
                                             await fetchcreditcard(value!);
-                                            print(
-                                                'Selected tenant_id: $selectedTenantId');
                                           },
                                           buttonStyleData: ButtonStyleData(
                                             height: 50,
@@ -1685,8 +1625,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                       });
                                                       await fetchcreditcard(
                                                           value!);
-                                                      print(
-                                                          'Selected tenant_id: $selectedTenantId');
                                                     },
                                                     buttonStyleData:
                                                         ButtonStyleData(
@@ -1978,15 +1916,11 @@ class _MakePaymentState extends State<MakePayment> {
                                         _selectedPaymentMethod = cleanValue;
                                         AddFields();
                                       });
-                                      print(
-                                          'Selected payment method: $_selectedPaymentMethod');
                                       surge_count();
                                       if (_selectedPaymentMethod == "Card") {
                                         fetchSurcharge();
                                       }
                                     } else {
-                                      print(
-                                          'Payment method $cleanValue is not available');
                                       // Keep the previous selection
                                       setState(() {});
                                     }
@@ -2096,8 +2030,6 @@ class _MakePaymentState extends State<MakePayment> {
                                               AddFields(); // Call your method to add fields
                                             });
                                             state.reset();
-                                            print(
-                                                'Selected payment method: $_selectedPaymentMethod');
                                             surge_count(); // Your method call
                                           },
                                           buttonStyleData: ButtonStyleData(
@@ -3132,9 +3064,6 @@ class _MakePaymentState extends State<MakePayment> {
                                               //   }
                                               //   categorizedDataCopy['Other']!.add(selectedAccount);
                                               // }
-                                              print(
-                                                  "categoriezed Data ${categorizedDataCopy}");
-                                              print(row);
                                               if (row['charge_type'] ==
                                                   "Rent") {}
                                               List<String> liabilityAccounts = [
@@ -3143,12 +3072,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                 "Security Deposit",
                                                 'Rent Income'
                                               ];
-                                              print(
-                                                  "${row['account']}_${row['charge_type']}");
-                                              print(categorizedDataCopy.values
-                                                  .expand((v) => v)
-                                                  .contains(row['account']));
-                                              print(categorizedDataCopy.values);
                                               return Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -3248,8 +3171,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                             parts
                                                                 .sublist(1)
                                                                 .join('_');
-                                                        print(
-                                                            "account chargetype ${selectedValue}   $value");
                                                         bool isDuplicate =
                                                             rows.any((row) =>
                                                                 row['account'] ==
@@ -3257,8 +3178,6 @@ class _MakePaymentState extends State<MakePayment> {
                                                                 rows.indexOf(
                                                                         row) !=
                                                                     index);
-                                                        print(
-                                                            "Duplicate Entry $isDuplicate");
                                                         if (isDuplicate) {
                                                           validationMessage =
                                                               "**Each account must be unique";
@@ -3578,7 +3497,6 @@ class _MakePaymentState extends State<MakePayment> {
                                               break;
                                             }
                                           }
-                                          print(value);
                                           setState(() {
                                             rows[index]['account'] = value;
                                             rows[index]['charge_type'] =
@@ -4015,7 +3933,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   _isLoading = false;
                                 });
                               } else if (_selectedPaymentMethod == "Card") {
-                                print("adminId ${id}");
                                 if (selectedcardindex == null ||
                                     selectedcardindex! < 0 ||
                                     selectedcardindex! >= cardDetails.length) {
@@ -4029,7 +3946,6 @@ class _MakePaymentState extends State<MakePayment> {
 
                                 final selectedBilling =
                                     cardDetails[selectedcardindex!];
-                                print("adminId ${selectedBilling.company}");
                                 if (processor_id == "zzz") {
                                   showFailedPaymentAlert(context);
                                   setState(() {
@@ -4083,7 +3999,6 @@ class _MakePaymentState extends State<MakePayment> {
                                     // Navigator.pop(context, true);
                                   }).catchError((e) {
                                     _settleSaleKey(e);
-                                    print(e.toString());
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -4207,7 +4122,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   // Navigator.pop(context, true);
                                 }).catchError((e) {
                                   _settleSaleKey(e);
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -4339,8 +4253,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   // Navigator.pop(context, true);
                                 }).catchError((e) {
                                   _settleSaleKey(e);
-                                  print(e);
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -4379,9 +4291,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   _isLoading = false;
                                 });
                               } else if (_selectedPaymentMethod == "Card") {
-                                print("adminId ${id}");
-                                print(
-                                    "adminId ${cardDetails[selectedcardindex!].company}");
                                 if (processor_id == "zzz") {
                                   showFailedPaymentAlert(context);
                                   setState(() {
@@ -4456,7 +4365,6 @@ class _MakePaymentState extends State<MakePayment> {
                                     Navigator.pop(context, true);
                                   }).catchError((e) {
                                     _settleSaleKey(e);
-                                    print(e.toString());
                                     setState(() {
                                       _isLoading = false;
                                     });
@@ -4580,7 +4488,6 @@ class _MakePaymentState extends State<MakePayment> {
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
                                   _settleSaleKey(e);
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -4732,12 +4639,9 @@ class _MakePaymentState extends State<MakePayment> {
                                   setState(() {
                                     _isLoading = false;
                                   });
-                                  print("${rows}");
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
                                   _settleSaleKey(e);
-                                  print(e);
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });

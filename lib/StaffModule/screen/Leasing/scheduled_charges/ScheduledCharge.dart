@@ -180,7 +180,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -393,7 +392,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
-    print(token);
     //   print('lease ${widget.leaseId}');
     String? id = prefs.getString("adminId");
     final response = await apiGet(
@@ -403,7 +401,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },
     );
-    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body)['data'];
       //  log("accounts data $jsonResponse");
@@ -747,7 +744,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      print("Error fetching profile data: $e");
       return;
     }
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -1140,9 +1136,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                 child: PopupMenuButton(
                                   enabled: hasExportData,
                                   onSelected: (value) async {
-                                    print(value);
                                     if (value == 'Export PDF') {
-                                      print(value);
                                       final data = await futurescheduledpayment;
                                       _exportPDF(data);
                                     }
@@ -1351,8 +1345,6 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
                               .toList();
-                          print("data ${currentPageData.length}");
-                          print("data ${data.length}");
                           return SingleChildScrollView(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 5, right: 5),

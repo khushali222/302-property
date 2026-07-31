@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -148,7 +149,7 @@ class _DashboardState extends State<Dashboard> {
         throw Exception('Failed to load dataxxx');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {}
   }
 
@@ -205,7 +206,6 @@ class _DashboardState extends State<Dashboard> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -238,7 +238,6 @@ class _DashboardState extends State<Dashboard> {
       _connectivityResult = connectiondata;
     });
 
-    print("network  ${await Connectivity().checkConnectivity()}");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -271,7 +270,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _onRefresh() async {
-    print('🔄 Dashboard refresh started!'); // Debug print
 
     try {
       // Add a small delay to show the refresh indicator
@@ -289,9 +287,8 @@ class _DashboardState extends State<Dashboard> {
       dashboardData = DashboardData(
           countList: [0, 0, 0, 0, 0], amountList: [0, 0, 0, 0, 0]);
 
-      print('✅ Dashboard refresh completed!'); // Debug print
     } catch (e) {
-      print('❌ Dashboard refresh error: $e'); // Debug print
+      logError('❌ Dashboard refresh error: $e'); // Debug print
     }
   }
 

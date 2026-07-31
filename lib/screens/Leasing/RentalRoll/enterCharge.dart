@@ -318,7 +318,6 @@ class _enterChargeState extends State<enterCharge> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)["data"];
-      print(data);
 
       Chargedata fetchedCharge = Chargedata.fromJson(data);
 
@@ -344,7 +343,6 @@ class _enterChargeState extends State<enterCharge> {
                 orElse: () => MapEntry("Unknown", []), // Default if not found
               )
               .key;
-          print(fetchedCharge.entry![i].amount);
           rows.add({
             'row_uid': _rowUid++,
             'entry_id': fetchedCharge.entry![i].entryId,
@@ -391,7 +389,6 @@ class _enterChargeState extends State<enterCharge> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
 
       for (var tenant in data['data']['tenants']) {
@@ -415,8 +412,6 @@ class _enterChargeState extends State<enterCharge> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
-      print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -460,7 +455,6 @@ class _enterChargeState extends State<enterCharge> {
         });
       }
     } catch (e) {
-      print(e);
       setState(() {
         hasError = true;
         isLoading = false;
@@ -516,8 +510,6 @@ class _enterChargeState extends State<enterCharge> {
 
   void validateAmounts() {
     double enteredAmount = double.tryParse(Amount.text) ?? 0.0;
-    print(enteredAmount);
-    print(totalAmount);
     if (enteredAmount != totalAmount) {
       setState(() {
         validationMessage =
@@ -621,12 +613,11 @@ class _enterChargeState extends State<enterCharge> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      Fluttertoast.showToast(msg: 'Failed to attach the file. Please try again.');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     //final String uploadUrl = '${Api_url}/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
@@ -1135,8 +1126,6 @@ class _enterChargeState extends State<enterCharge> {
                       if (selectedCharge == "Surcharge") {
                         for (var entry in categorizedData.entries) {
                           if (entry.value.contains(selectedAccount)) {
-                            print(
-                                "Account found: $selectedAccount in category: ${entry.key}");
                             surchargetype = entry.key;
                             break;
                           }
@@ -1144,12 +1133,9 @@ class _enterChargeState extends State<enterCharge> {
                       }
                       bool nosurcharge = false;
                       if (row["charge_type"] == "Surcharge") {
-                        print("Surcharge calling");
 
                         for (var entry in categorizedData.entries) {
                           if (entry.value.contains(row['account'])) {
-                            print(
-                                "Account found: ${row['account']} in category: ${entry.key}");
                             surchargetype = entry.key;
                           }
                         }
@@ -1551,7 +1537,6 @@ class _enterChargeState extends State<enterCharge> {
                         _isLoading = true;
                       });
 
-                      print(rows.where((e) => e["charge_type"] == null));
 
                       if (validationMessage == null) {
                         if (widget.chargeid != null) {
@@ -1614,7 +1599,6 @@ class _enterChargeState extends State<enterCharge> {
                             ));
                           }
 
-                          print("amount ${Amount.text.trim()}");
                           Charge charge = Charge(
                             adminId: adminId,
                             isLeaseAdded: false,
@@ -1624,7 +1608,6 @@ class _enterChargeState extends State<enterCharge> {
                             uploadedFile: _uploadedFileNames,
                             entry: entryList,
                           );
-                          print('file ${_uploadedFileNames}');
 
                           LeaseRepository apiService = LeaseRepository();
                           final response = await apiService.EditCharge(
@@ -1706,7 +1689,6 @@ class _enterChargeState extends State<enterCharge> {
                           List<Entry> entryList = [];
                           for (int i = 0; i < rows.length; i++) {
                             final row = rows[i];
-                            print(" accocunt ${row["account"]}");
                             // Web parity: the single Date field is applied
                             // to every entry (values.date), rather than the
                             // copy taken when the row was created.
@@ -1746,10 +1728,7 @@ class _enterChargeState extends State<enterCharge> {
                             uploadedFile: _uploadedFileNames,
                             entry: entryList,
                           );
-                          print('file ${_uploadedFileNames}');
 
-                          print('add charge ${charge.toJson()}');
-                          print('add entry ${charge.entry.first.date}');
 
                           LeaseRepository apiService = LeaseRepository();
                           final response = await apiService.postCharge(charge);
@@ -1808,13 +1787,6 @@ class _enterChargeState extends State<enterCharge> {
 
                       //charges
                     } else {
-                      print('invalid');
-                      print(selectedTenantId);
-                      print(rows);
-                      print(totalAmount);
-                      print(_startDate.text);
-                      print(Amount.text);
-                      print(Memo.text);
                     }
                   },
             style: ElevatedButton.styleFrom(

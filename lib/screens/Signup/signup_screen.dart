@@ -59,10 +59,8 @@ class _SignupState extends State<Signup> {
     });
     final url = Uri.parse('${Api_url}/api/admin/check_email');
     final response = await apiPost(url, body: {'email': email});
-    print(response.statusCode);
       final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-          print(jsonData);
           setState(() {
               emailerror = false;
               emailmessage = 'email is verified';
@@ -80,7 +78,6 @@ class _SignupState extends State<Signup> {
             loading = false;
           });
     } else if (jsonData["statusCode"] == 401) {
-      print("already use");
       setState(() {
         emailerror = true;
         emailmessage = 'Email is already in use';

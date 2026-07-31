@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -380,7 +381,6 @@ class _Workorder_tableState extends State<Workorder_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -519,7 +519,7 @@ class _Workorder_tableState extends State<Workorder_table> {
       // If none of the formats match, throw an error
       throw FormatException("Unsupported date format: $dateString");
     } catch (e) {
-      print("Error parsing date: $e");
+      logError("Error parsing date: $e");
       return DateTime.now(); // Fallback to current date if parsing fails
     }
   }
@@ -734,7 +734,6 @@ class _Workorder_tableState extends State<Workorder_table> {
   void handleDelete(Data workorder) {
     _showAlert(context, workorder.workOrderData!.workOrderId!);
     // Handle delete action
-    print('Delete ${workorder.workOrderData?.workOrderId!}');
   }
 
   // Widget _buildHeader<T>(String text, int columnIndex,

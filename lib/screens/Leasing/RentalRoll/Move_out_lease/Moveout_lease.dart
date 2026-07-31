@@ -113,7 +113,6 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
     widget.moveOutDate = dateProvider
         .formatCurrentDate(widget.enddate!); // Store the original format
-    print(dateProvider.formatCurrentDate(widget.enddate!));
     //startdateController.text = moveOutDate;
     startdateController.text = dateProvider
         .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
@@ -500,7 +499,6 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                     }
                     List<File> selectfiles =
                         selectedFiles.map((file) => file.file).toList();
-                    print(multipletenant);
 
                     await LeaseMoveoutRepository()
                         .addMoveoutTenantfromlease(
@@ -522,8 +520,6 @@ class _MoveoutScreenState extends State<MoveoutScreen> {
                         isLoading = false;
                         isMovedOut = true;
                       });
-                      print(' moved out after  ${widget.moveOutDate!}');
-                      print(' notice out after ${startdateController.text}');
                       reload_screen();
                       Navigator.pop(context, true);
                     }).catchError((e) {

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -56,7 +57,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   }
 
   Future<void> _loadInsurancePremiums() async {
-    print('=== LOADING INSURANCE PREMIUMS ===');
     setState(() {
       _isLoading = true;
     });
@@ -67,9 +67,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       String? id = prefs.getString('adminId');
 
       // Use property-specific API endpoint
-      print('Loading insurance premiums for property ID: ${widget.propertyId}');
-      print(
-          'API URL: ${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}');
       final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/rentals/insurance-premiums/${widget.propertyId}'),
@@ -80,16 +77,12 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
         },
       ).timeout(const Duration(seconds: 30));
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true &&
             data['data'] != null &&
             data['data']['insurance_premiums'] != null) {
-          print(
-              'Successfully loaded ${data['data']['insurance_premiums'].length} insurance premiums');
           setState(() {
             _premiums = List<Map<String, dynamic>>.from(
                 data['data']['insurance_premiums']);
@@ -144,7 +137,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   }
 
   void _openAddPremiumForm() {
-    print('=== OPENING ADD INSURANCE PREMIUM FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -154,8 +146,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       ),
     ).then((result) {
       if (result == true) {
-        print('=== RETURNED FROM ADD PREMIUM FORM ===');
-        print('Refreshing premium list...');
         _loadInsurancePremiums();
       }
     });
@@ -237,11 +227,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
 
-      print('=== DELETING INSURANCE PREMIUM RECORD ===');
-      print('Premium ID: $id');
-      print('Property ID: ${widget.propertyId}');
-      print('Admin ID: $adminId');
-      print('Reason: $reason');
 
       final response = await http
           .delete(
@@ -258,8 +243,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
           )
           .timeout(const Duration(seconds: 30));
 
-      print('Delete Response Status: ${response.statusCode}');
-      print('Delete Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -290,7 +273,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
         );
       }
     } catch (e) {
-      print('Error deleting insurance premium record: $e');
+      logError('Error deleting insurance premium record: $e');
       Fluttertoast.showToast(
         msg: 'Error deleting insurance premium record: ${e.toString()}',
         backgroundColor: Colors.red,
@@ -304,7 +287,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   }
 
   void _editPremium(Map<String, dynamic> premium) {
-    print('=== OPENING EDIT INSURANCE PREMIUM FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -316,8 +298,6 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       ),
     ).then((result) {
       if (result == true) {
-        print('=== RETURNED FROM EDIT PREMIUM FORM ===');
-        print('Refreshing premium list...');
         _loadInsurancePremiums();
       }
     });

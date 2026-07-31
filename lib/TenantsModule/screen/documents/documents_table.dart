@@ -437,7 +437,6 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
 
   void handleEdit(Insurance_data property) async {
     /* // Handle edit action
-    print('Edit ${property.sId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(

@@ -317,7 +317,6 @@ class _enterChargeState extends State<enterCharge> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body)["data"];
-      print(data);
 
       Chargedata fetchedCharge = Chargedata.fromJson(data);
 
@@ -335,7 +334,6 @@ class _enterChargeState extends State<enterCharge> {
         //  Memo.text = fetchedCharge["entry"]![0]["memo"];
 
         for (var i = 0; i < fetchedCharge.entry!.length; i++) {
-          print(fetchedCharge.entry![i].amount);
           rows.add({
             'row_uid': _rowUid++,
             'entry_id': fetchedCharge.entry![i].entryId,
@@ -377,7 +375,6 @@ class _enterChargeState extends State<enterCharge> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
 
       for (var tenant in data['data']['tenants']) {
@@ -402,7 +399,6 @@ class _enterChargeState extends State<enterCharge> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       String? sid = prefs.getString("staff_id");
-      print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -585,12 +581,11 @@ class _enterChargeState extends State<enterCharge> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      Fluttertoast.showToast(msg: 'Failed to attach the file. Please try again.');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     //final String uploadUrl = '${Api_url}/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
@@ -1099,8 +1094,6 @@ class _enterChargeState extends State<enterCharge> {
                       if (selectedCharge == "Surcharge") {
                         for (var entry in categorizedData.entries) {
                           if (entry.value.contains(selectedAccount)) {
-                            print(
-                                "Account found: $selectedAccount in category: ${entry.key}");
                             surchargetype = entry.key;
                             break;
                           }
@@ -1108,12 +1101,9 @@ class _enterChargeState extends State<enterCharge> {
                       }
                       bool nosurcharge = false;
                       if (row["charge_type"] == "Surcharge") {
-                        print("Surcharge calling");
 
                         for (var entry in categorizedData.entries) {
                           if (entry.value.contains(row['account'])) {
-                            print(
-                                "Account found: ${row['account']} in category: ${entry.key}");
                             surchargetype = entry.key;
                           }
                         }
@@ -1514,7 +1504,6 @@ class _enterChargeState extends State<enterCharge> {
                         _isLoading = true;
                       });
 
-                      print(rows.where((e) => e["charge_type"] == null));
 
                       if (validationMessage == null) {
                         // Amount bounds guard (web parity): at
@@ -1569,7 +1558,6 @@ class _enterChargeState extends State<enterCharge> {
                             );
                           }).toList();
 
-                          print("amount ${Amount.text}");
                           num totalAmount =
                               num.tryParse(Amount.text.trim()) ?? 0;
                           Charge charge = Charge(
@@ -1581,7 +1569,6 @@ class _enterChargeState extends State<enterCharge> {
                             uploadedFile: _uploadedFileNames,
                             entry: entryList,
                           );
-                          print('file ${_uploadedFileNames}');
 
                           LeaseRepository apiService = LeaseRepository();
                           final response = await apiService.EditCharge(
@@ -1668,7 +1655,6 @@ class _enterChargeState extends State<enterCharge> {
                             uploadedFile: _uploadedFileNames,
                             entry: entryList,
                           );
-                          print('file ${_uploadedFileNames}');
 
                           LeaseRepository apiService = LeaseRepository();
                           final response = await apiService.postCharge(charge);
@@ -1719,13 +1705,6 @@ class _enterChargeState extends State<enterCharge> {
 
                       //charges
                     } else {
-                      print('invalid');
-                      print(selectedTenantId);
-                      print(rows);
-                      print(totalAmount);
-                      print(_startDate.text);
-                      print(Amount.text);
-                      print(Memo.text);
                     }
                   },
             style: ElevatedButton.styleFrom(

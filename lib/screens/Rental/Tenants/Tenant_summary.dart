@@ -103,7 +103,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
       },
     );
     if (response.statusCode == 200) {
-      print(response.body);
       final jsonResponse = json.decode(response.body);
       final tenantResponse = TenantResponse.fromJson(jsonResponse);
       // Collect all lease data from all tenant data
@@ -112,7 +111,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
         for (var tenant in tenantResponse.data!) {
           if (tenant.leaseData != null) {
             allLeaseData.addAll(tenant.leaseData!);
-            print(allLeaseData);
           }
         }
       }
@@ -338,7 +336,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -3032,7 +3029,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
         _achSettingsFetched = true;
       }
     } catch (e) {
-      print("Error fetching ACH settings: $e");
     } finally {
       _achFetchInFlight = false;
       // The ACH row's visibility depends on the answer, so repaint once it is
@@ -4365,7 +4361,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         for (var tenant in tenantResponse.data!) {
           if (tenant.leaseData != null) {
             allLeaseData.addAll(tenant.leaseData!);
-            print(allLeaseData);
           }
         }
       }
@@ -4654,7 +4649,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         _achSettingsFetched = true;
       }
     } catch (e) {
-      print("Error fetching ACH settings: $e");
     } finally {
       _achFetchInFlight = false;
       if (mounted) setState(() {});
@@ -5392,8 +5386,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
               return Text('Error: ${snapshot.error}');
             } else {
               List<Tenant> tenantsummery = snapshot.data ?? [];
-              print("tenant${tenantsummery}");
-              print("Leangth of the tenant${snapshot.data!.length}");
               //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
               return ListView(
                 scrollDirection: Axis.vertical,

@@ -23,25 +23,21 @@ class ScheduledChargesRepository {
         url = '$Api_url/api/charge/lease-scheduled-charges/$leaseid';
       }
 
-      print(url);
       final response = await apiGet(Uri.parse(url), headers: <String, String>{
         "authorization" : "CRM $token",
         "id":"CRM $adminid",
         'Content-Type': 'application/json; charset=UTF-8',
       },);
-      print(response.body);
       if (response.statusCode == 200) {
         final responseBody = json.decode(response.body);
 
         // Parse the data array into a list of ScheduledCharges
         final List<dynamic> data = responseBody['data'];
-        print(data);
         return data.map((json) => ScheduledCharges.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load scheduled charges');
       }
     } catch (e) {
-      print(e);
       throw Exception('Error: $e');
     }
   }
@@ -72,7 +68,6 @@ class ScheduledChargesRepository {
         ? Uri.parse("$Api_url/api/charge/scheduled-charges")
         : Uri.parse("$Api_url/api/charge/scheduled-charges/${charge_id}");
 
-    print("$url");
     final body = {
       "account": account,
       "action_date": action_date,
@@ -93,9 +88,7 @@ class ScheduledChargesRepository {
       "id": "CRM $Id",
       "Content-Type": "application/json",
     });
-    print(body);
 
-    print(response.body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
       // Navigator.of(context).pop();
@@ -132,7 +125,6 @@ class ScheduledChargesRepository {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
       // print(renters_insurance_id);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);

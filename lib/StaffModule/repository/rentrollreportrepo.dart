@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -10,7 +11,6 @@ import '../../Model/rentrollreportmodel.dart';
 
 class RentRollReportService {
   Future<rentrollreportmodel> fetchRentRollreport({String? rentalOwnerId, List<String>? rentalOwnerIds}) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -56,7 +56,6 @@ class RentRollReportService {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final completedWorkOrders = rentrollreportmodel.fromJson(parsedJson["data"]);
         return completedWorkOrders ;
       } else {
@@ -66,7 +65,7 @@ class RentRollReportService {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       throw Exception('Failed to load renters insurance');
     }
   }

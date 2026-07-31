@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -54,7 +55,6 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -448,7 +448,6 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
 
   PdfDelinquentTenantsData? globalDelinquentTenantsData;
   Future<PdfDelinquentTenantsData?> fetchDelinquentTenantsGrandTotal() async {
-    print('Fetching delinquent tenants');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -474,7 +473,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
         throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return null;
     }
   }
@@ -490,7 +489,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     setState(() {
@@ -1032,14 +1031,11 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                         onSelected: (value) async {
                                           // Export logic
                                           if (value == 'PDF') {
-                                            print('pdf');
                                             generateDelinquentTenantsPdf(data);
                                           } else if (value == 'XLSX') {
-                                            print('XLSX');
                                             generateDelinquentTenantsExcel(
                                                 data);
                                           } else if (value == 'CSV') {
-                                            print('CSV');
                                             generateDelinquentTenantsCsv(data);
                                           }
                                         },

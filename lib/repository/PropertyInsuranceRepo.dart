@@ -13,7 +13,6 @@ class PropertyInsuranceRepository {
 
     final String url =
         '$Api_url/api/property-insurance/summary-report/$adminId';
-    print(url);
 
     try {
       final response = await apiGet(Uri.parse(url), headers: {

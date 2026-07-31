@@ -64,10 +64,8 @@ class PaymentService {
       };
     }).toList();
 
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -117,15 +115,8 @@ class PaymentService {
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print("========== CARD PAYMENT SUCCESS ==========");
-          print("Transaction ID : ${jsonData["data"]["transactionid"]}");
-          print("Response       : ${jsonData["data"]["responsetext"]}");
-          print("Amount         : $amount  |  Surcharge: $surcharge");
-          print("---------- ENTRIES ----------");
           for (var e in updatedEntries) {
-            print("  account: ${e['account']} | charge_type: ${e['charge_type']} | amount: ${e['amount']} | balance: ${e['balance']}");
           }
-          print("==========================================");
 
           // NEW: backend now saves the payment record to DB internally after /api/nmipayment/sale
           // storePayment() removed to prevent duplicate transaction entries (same change as tenant module)
@@ -156,8 +147,6 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
-        print(response.statusCode);
-        print(response.body);
         String serverMessage = '';
         try {
           serverMessage =
@@ -258,7 +247,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -323,10 +311,8 @@ class PaymentService {
       };
     }).toList();
 
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -367,7 +353,6 @@ class PaymentService {
         paymentDetails['checkaba'] = checkaba;
         paymentDetails['account_holder_type'] = account_holder_type;
       }
-      print(paymentDetails);
 
 
       final response = await apiPost(
@@ -385,11 +370,8 @@ class PaymentService {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
 
           // NEW: backend now saves the payment record to DB internally after /api/nmipayment/ACH_sale
           // storePaymentAch() removed to prevent duplicate entries (same change as tenant module)
@@ -418,8 +400,6 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
-        print(response.statusCode);
-        print(response.body);
         String serverMessage = '';
         try {
           serverMessage =
@@ -516,7 +496,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -582,10 +561,8 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -615,7 +592,6 @@ class PaymentService {
         'lease_id': leaseid,
         'user_active_recently': true,
       };
-      print(paymentDetails);
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -628,11 +604,8 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
           await storePaymentAch(
               idempotencyKey: idempotencyKey,
               companyName: company_name,
@@ -656,8 +629,6 @@ class PaymentService {
         }
         return jsonDecode(response.body);
       } else {
-        print(response.statusCode);
-        print(response.body);
         String serverMessage = '';
         try {
           serverMessage =
@@ -757,7 +728,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(

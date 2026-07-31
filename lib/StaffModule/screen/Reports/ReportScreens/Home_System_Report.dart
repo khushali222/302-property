@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -403,7 +404,6 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     _requestPermissions();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -429,7 +429,6 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   }
 
   Future<Home_system_report> fetchRentersInsuranceData({String? id}) async {
-    print("calling rental id call ... 1 ");
     if (id == null || id.isEmpty) {
       throw Exception('Rental ID is required');
     }
@@ -1245,7 +1244,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
             onLayout: (PdfPageFormat format) async => pdf.save());
       }
     } catch (e) {
-      print('Error generating PDF: $e');
+      logError('Error generating PDF: $e');
       Fluttertoast.showToast(
         msg: 'Error generating PDF: ${e.toString()}',
         toastLength: Toast.LENGTH_SHORT,
@@ -1700,7 +1699,6 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
 
   void handleDownload(String format) {
     // Replace with your download logic
-    print("Downloading as $format");
   }
 
   String? _selectedPropertyId;
@@ -1725,7 +1723,6 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/rentals/rentals/$adminid');
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
         Map<String, String> addresses = {};
@@ -1738,7 +1735,6 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
           properties = addresses;
           _isLoading = false;
         });
-        print("Available properties: $properties"); // Debug print
       } else {
         throw Exception('Failed to load data');
       }
@@ -1746,7 +1742,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
       setState(() {
         _isLoading = false;
       });
-      print("Error loading properties: $e"); // Debug print
+      logError("Error loading properties: $e"); // Debug print
     }
   }
 

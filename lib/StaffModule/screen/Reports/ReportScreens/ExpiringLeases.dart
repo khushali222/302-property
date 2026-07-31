@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -328,7 +329,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();
@@ -550,7 +551,6 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });

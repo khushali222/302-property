@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,6 @@ class Recurring_Payments_Configuration_Services{
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         return Recurring_Payments_Configuration.fromJson(parsedJson);
 
            } else {
@@ -33,7 +33,7 @@ class Recurring_Payments_Configuration_Services{
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       throw Exception('Failed to load renters insurance');
     }
 

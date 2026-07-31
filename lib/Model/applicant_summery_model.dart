@@ -46,62 +46,42 @@ class applicant_summery_details {
 
   applicant_summery_details.fromJson(Map<String, dynamic> json) {
     sId = json['_id']?.toString();
-    print(sId);
     applicantId = json['applicant_id']?.toString();
-    print(applicantId);
     adminId = json['admin_id']?.toString();
-    print(adminId);
     applicantFirstName = json['applicant_firstName']?.toString();
-    print(applicantFirstName);
     applicantLastName = json['applicant_lastName']?.toString();
-    print(applicantLastName);
     applicantEmail = json['applicant_email']?.toString();
-    print(applicantEmail);
     applicantPhoneNumber = json['applicant_phoneNumber']?.toString();
-    print(applicantPhoneNumber);
     applicantHomeNumber = json['applicant_homeNumber']?.toString();
-    print(applicantHomeNumber);
     applicantBusinessNumber = json['applicant_businessNumber']?.toString();
-    print(applicantBusinessNumber);
     applicantTelephoneNumber = json['applicant_telephoneNumber']?.toString();
-    print(applicantTelephoneNumber);
     if (json['applicant_checklist'] != null) {
       applicantChecklist = <String>[];
       json['applicant_checklist'].forEach((v) {
         applicantChecklist!.add(v.toString());
       });
     }
-    print(applicantChecklist);
     applicantCheckedChecklist = json['applicant_checkedChecklist'];
-    print(applicantCheckedChecklist);
     isMovedin = json['isMovedin'];
-    print(isMovedin);
     createdAt = json['createdAt']?.toString();
-    print(createdAt);
     updatedAt = json['updatedAt']?.toString();
-    print(updatedAt);
     if (json['applicant_NotesAndFile'] != null) {
       applicantNotesAndFile = <ApplicantNotesAndFile>[];
       json['applicant_NotesAndFile'].forEach((v) {
         applicantNotesAndFile!.add(new ApplicantNotesAndFile.fromJson(v));
       });
     }
-    print(applicantNotesAndFile);
     if (json['applicant_status'] != null) {
       applicantStatus = <ApplicantStatus>[];
       json['applicant_status'].forEach((v) {
         applicantStatus!.add(new ApplicantStatus.fromJson(v));
       });
     }
-    print(applicantStatus);
     isApplicantDataEmpty = json['isApplicantDataEmpty'];
-    print(isApplicantDataEmpty);
     applicantEmailsendDate = json['applicant_emailsend_date']?.toString();
-    print(applicantEmailsendDate);
     leaseData = json['lease_data'] != null
         ? new LeaseData.fromJson(json['lease_data'])
         : null;
-    print(leaseData);
   }
 
   Map<String, dynamic> toJson() {
@@ -342,7 +322,6 @@ class Data {
   });
 
   Data.fromJson(Map<String, dynamic> json) {
-    print(json['isApplicantDataEmpty']);
     emergencyContact = json['emergency_contact'] != null
         ? new EmergencyContact.fromJson(json['emergency_contact'])
         : null;

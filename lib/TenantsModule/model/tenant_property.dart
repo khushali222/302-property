@@ -13,7 +13,6 @@ class tenant_property {
         this.rentalAdress});
 
   tenant_property.fromJson(Map<String, dynamic> json) {
-    print(json);
     leaseId = json['lease_id'];
     startDate = json['start_date'];
     endDate = json['end_date'];

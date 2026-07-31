@@ -672,7 +672,6 @@ class NewCustomTextFieldState extends State<NewCustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-                  print("work same callling  ${widget.samephonenumber}");
                   if (widget.controller!.text.isEmpty) {
                     return null;
                   } else if (widget.phone != null) {

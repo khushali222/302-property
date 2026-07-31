@@ -59,7 +59,6 @@ class LoginProvider with ChangeNotifier {
   }
 
   Future<void> submitEmail() async {
-    print("Calling");
     // Make API call to check email
     final response = await apiPost(
       Uri.parse('http://192.168.1.22:4000/api/admin/check_role'),
@@ -70,7 +69,6 @@ class LoginProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       List<dynamic> roles = data['data'];
-      print(roles.length);
       if (roles.isEmpty) {
         Fluttertoast.showToast(msg: "Email does not exist");
       } else {
@@ -81,7 +79,6 @@ class LoginProvider with ChangeNotifier {
               .map<String>((role) => '${role['company_name']} (${role['role']})')
               .toList();
            _isEmailSubmitted = true;
-           print(_companies);
         } else {
           _hasMultipleCompanies = false;
            _isEmailSubmitted = true;
@@ -102,7 +99,6 @@ class LoginProvider with ChangeNotifier {
 
   void login() {
     // Implement login logic here
-    print('Logging in with email: $_email, company: $_selectedCompany, password: $_password');
   }
 
 }
@@ -197,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
  // String get password => _password;
 
   void setEmail(String email) {
-    print(email);
     setState(() {
       if (_email != email) {
         _email = email;
@@ -215,14 +210,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void selectCompany(String company, String role) {
     _selectedCompany = company;
     selectedrole = role; // Set role when selecting company
-    print(selectedrole);
-    print(selectedCompany);
   }
 
 
   void login() {
     // Implement login logic here
-    print('Logging in with email: $_email, company: $_selectedCompany, password: $_password');
   }
   void setPassword(String password) {
     _password = password;
@@ -231,7 +223,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> submitEmail() async {
 
-    print("Calling  ${email.text}");
     // Make API call to check email
     final response = await apiPost(
       Uri.parse('http://192.168.1.22:4000/api/admin/check_role'),
@@ -242,7 +233,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       List<dynamic> roles = data['data'];
-      print(roles.length);
       if (roles.isEmpty) {
         Fluttertoast.showToast(msg: "Email does not exist");
       } else {
@@ -268,7 +258,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 _isEmailSubmitted = true;
               }
               else{
-                print(roles[0]['role']);
                 _hasMultipleCompanies = false;
                 _selectedCompany = roles[0]['company_name'];
                 selectedrole = roles[0]['role']; // Set role directly
@@ -355,7 +344,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               selectedRole = value;
                               roleerror = false;
                             });
-                            print('Selected role_id: $selectedRole');
                           },
                           buttonStyleData: ButtonStyleData(
                             height: 45,
@@ -933,15 +921,12 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
 
     if (jsonData['id'] != "") {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
 
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
       prefs.setString('first_name', jsonData['data']['first_name']);
@@ -967,18 +952,14 @@ class _LoginScreenState extends State<LoginScreen> {
         expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
       }
 
-      print('Expiration Date: $expirationDate');
 
       DateTime now = DateTime.now();
       String currentDate = DateFormat('yyyy-MM-dd').format(now);
-      print(currentDate);
 
       bool isPlanActive = expirationDate != null && expirationDate.isAfter(now);
 
       if (isPlanActive) {
-        print('The plan is active.');
       } else {
-        print('The plan is not active.');
       }
       Navigator.pushReplacement(
           context,
@@ -986,7 +967,6 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (context) =>
               isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
-      print('Failed to check token');
     }
   }
 
@@ -1003,30 +983,25 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       // await Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
       prefs.setString("staff_id", jsonData["staffmember_id"]);
       prefs.setString("role", "Staffmember");
-      print(jsonData["staffmember_firstName"]);
 
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
       String stafffirstname = jsonData['staffmember_name'];
       List<String> firstname =stafffirstname.split(" ") ;
-      print(firstname);
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
       await Provider.of<StaffPermissionProvider>(context, listen: false).fetchPermissions();
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
-      print('Failed to check token');
     }
   }
   Future<void> checkTokenTenant(String token) async {
@@ -1044,16 +1019,13 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       prefs.setString("role", "Tenant");
 
-      print(jsonData["tenant_firstName"]);
       prefs.setString("tenant_id", jsonData["tenant_id"]);
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
@@ -1064,7 +1036,6 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
-      print('Failed to check token');
     }
   }
   Future<void> checkTokenVendor(String token) async {
@@ -1082,21 +1053,17 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       body: json.encode({"token": token}),
     );
-    print("vendor token ${response.body}");
     final jsonData = json.decode(response.body);
     if (jsonData['id'] != "") {
-      print(jsonData);
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
       String stafffirstname = jsonData['vendor_name'];
       List<String> firstname =stafffirstname.split(" ") ;
-      print(firstname);
       await Provider.of<PermissionProvider>(context, listen: false).fetchPermissions();
       prefs.setString('first_name', firstname.first);
       prefs.setString('last_name', firstname[1]);
       prefs.setString("role", "Vendor");
-      print(jsonData["vendor_firstName"]);
       prefs.setString("vendor_id", jsonData["vendor_id"]);
       prefs.setString('checkedToken', token);
       //  prefs.setString('adminId', adminId!);
@@ -1111,7 +1078,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => Dashboard_vendors()));
     } else {
-      print('Failed to check token');
     }
   }
   Future<void> checkCompany(String token) async {
@@ -1120,7 +1086,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
-    print("${ Uri.parse('${Api_url}/api/admin/check_company/${token}')}");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/admin/check_company/${token}'),
       headers: {
@@ -1130,15 +1095,12 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       // body: json.encode({"token": token}),
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     //if (jsonData["data"]['id'] != "") {
-    print(jsonData);
     if(jsonData["statusCode"] ==200)
     {
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['data']['admin_id'];
-      print('Admin ID: $adminId');
       prefs.setString('checkedToken', token);
       prefs.setString('adminId', adminId!);
       /*prefs.setString('first_name', jsonData['data']['first_name']);
@@ -1164,19 +1126,15 @@ class _LoginScreenState extends State<LoginScreen> {
     // List<Map<String,dynamic>> selectedroledata = roles.where((element) => element["role_id"] == selectedRole).toList();
      String rolename  =selectedrole;
 
-    print("${Api_url}/api/${rolename.toLowerCase()}/login");
    // print({"email": email.text, "password": password.text,"admin_id":adminId,"company":company.text});
     final response = await apiPost(Uri.parse('${Api_url}/api/${rolename.toLowerCase()}/login'),
         body: {"email": email.text, "password": password.text,"admin_id":adminId,"company":selectedCompany});
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
       prefs.setString('adminId', adminId);
-      print(rolename);
       if(rolename == "staffmember")
         await checkTokenStaff(jsonData["token"]);
       if(rolename == "tenant")
@@ -1226,10 +1184,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     final response = await apiPost(Uri.parse('${Api_url}/api/admin/login'),
         body: {"email": email.text,"password": password.text});
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isAuthenticated', true);
       prefs.setString('token', jsonData["token"]);
@@ -1304,7 +1260,6 @@ class _SingleSelectionButtonsState extends State<SingleSelectionButtons> {
               onPressed: () {
                 setState(() {
                   _selectedIndex = index;
-                  print(index);
                 });
                 widget.onSelected(index);
               },

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/Model/applicant_summery_model.dart';
@@ -41,13 +42,13 @@ class _ContactInfoContentState extends State<ContactInfoContent> {
       approvedDetail = await applicantSummeryRepository
           .fetchApprovedDetail(widget.applicantId);
     } catch (error) {
-      print('No approved record: $error');
+      logError('No approved record: $error');
     }
     try {
       rejectedDetail = await applicantSummeryRepository
           .fetchRejectedDetail(widget.applicantId);
     } catch (error) {
-      print('No rejected record: $error');
+      logError('No rejected record: $error');
     }
     if (mounted) {
       setState(() {

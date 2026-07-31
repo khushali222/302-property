@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -276,7 +277,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
 
   Future<void> _selectDatePlacedInService() async {
 
-    print(datePlacedInService.text);
 
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -390,8 +390,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
     if (pickedFile != null) {
       // try {
       String? filename = await uploadImage(File(pickedFile.path));
-      print(index);
-      print(filename);
       setState(() {
         propertyGroupImagenames[index] = filename!;
         //  _uploadedFilename = filename;
@@ -402,12 +400,8 @@ class _Add_new_propertyState extends State<Add_new_property> {
     }
     setState(() {
       if (pickedFile != null) {
-        print('Image selected: ${pickedFile.path}');
-        print('Before: ${propertyGroupImages.length}');
         propertyGroupImages[index] = File(pickedFile.path);
-        print('After : ${propertyGroupImages.length}');
       } else {
-        print('No image selected.');
       }
     });
   }
@@ -418,7 +412,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
   List<String?> propertyGroupImagenames = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -445,14 +438,11 @@ class _Add_new_propertyState extends State<Add_new_property> {
     var response = await apiSend(request);
     // Parse the response
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
     var responseBody = json.decode(responseData.body);
 
     // Extract the filename from the response
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
-      print(file.first["filename"]);
-      print(file.first.runtimeType);
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -659,11 +649,9 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   void addPropertyGroup() {
-    print("hello");
     List<Widget> fields = [];
     List<TextEditingController> controllers = [];
 
-    print(selectedpropertytype);
 
     if (selectedpropertytype == 'Commercial' && selectedIsMultiUnit == true) {
       var unitController = TextEditingController();
@@ -768,12 +756,10 @@ class _Add_new_propertyState extends State<Add_new_property> {
       }
     }
 
-    print(propertyGroupControllers.length);
 
     for (int i = 0; i < propertyGroupControllers.length; i++) {
       List<TextEditingController> controllers = propertyGroupControllers[i];
       for (int j = 0; j < controllers.length; j++) {
-        print(controllers[j].text);
       }
     }
   }
@@ -1337,7 +1323,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                                       });
                                                                                     });
                                                                                   }
-                                                                                  print(selectedValue);
                                                                                 },
                                                                                 child: ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(5.0),
@@ -1400,13 +1385,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                     );
                                                   } else {
                                                     setState(() {
-                                                      print(snapshot.data!
-                                                          .where((element) =>
-                                                              element
-                                                                  .propertysubType ==
-                                                              newValue)
-                                                          .first
-                                                          .isMultiunit);
                                                       // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
                                                       selectedpropertytypedata =
                                                           snapshot.data!
@@ -1415,7 +1393,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                       .propertysubType ==
                                                                   newValue)
                                                               .first;
-                                                      print(selectedProperty);
                                                       selectedProperty =
                                                           newValue;
                                                       propertyGroups = [];
@@ -2882,8 +2859,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                                   onTap: () {
                                                                     provider
                                                                         .clearOwners();
-                                                                    print(
-                                                                        "hello");
                                                                     setState(
                                                                         () {
                                                                       RentalOwner?
@@ -4743,7 +4718,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             setState(() {
                               loading = true;
                             });
-                            print(selectedpropertytypedata!.propertyId);
                             RentalOwner? ownerDetails = context
                                 .read<OwnerDetailsProvider>()
                                 .ownerDetails;
@@ -4818,7 +4792,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             .format(parsedDate);
                                   }
                                 } catch (e) {
-                                  print(
+                                  logError(
                                       'Error formatting placed_in_service date: $e');
                                 }
                               }
@@ -4921,7 +4895,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   }
                                   List<TextEditingController> controllers =
                                       propertyGroupControllers[i];
-                                  print(controllers.length);
                                   units[i].sqft = controllers[0].text.trim();
                                   units[i].bath = controllers[1].text.trim();
                                   units[i].bed = controllers[2].text.trim();
@@ -4954,7 +4927,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   DateFormat('yyyy-MM-dd HH:mm:ss');
                               String notificationTime =
                                   formatter.format(DateTime.now());
-                              print(notificationTime);
                               RentalRequest rentalrequest = RentalRequest(
                                 rentalOwner: owners,
                                 rental: rentals,
@@ -4987,7 +4959,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
                             }
                           }
                         } else {
-                          print('Form is invalid');
                         }
                       },
                       child: ClipRRect(
@@ -5293,7 +5264,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final http.Response response = await apiPost(
@@ -5319,9 +5289,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   void handleAddrentalOwner() {
-    print(rentalOwnerId);
     if (rentalOwnerId != null) {
-      print(rentalOwnerId);
       Fluttertoast.showToast(
           msg: "Rental Owner Added Successfully!",
           toastLength: Toast.LENGTH_SHORT,

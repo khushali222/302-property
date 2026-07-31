@@ -27,12 +27,6 @@ Map<String, String> _mergeHeaders(Map<String, String>? userHeaders) {
 
 void _logOutgoing(String method, Uri url) {
   // Auto-suppressed in release/profile by the zone-level print filter in main().
-  print('📡 [API] $method  ${url.toString()}');
-  print('   ↳ x-app-version:  ${AppHeaders.version}');
-  print('   ↳ x-app-platform: ${AppHeaders.platform}');
-  print('   ↳ x-app-channel:  ${AppHeaders.channel}');
-  print('   ↳ x-app-bundle:   ${AppHeaders.bundleId}');
-  print('   ↳ User-Agent:     ${AppHeaders.userAgent}');
 }
 
 void _check426(http.Response response) {
@@ -73,7 +67,6 @@ void _checkSoftUpdate(http.Response response) {
 
   final recommended = response.headers['x-app-recommended-version'];
 
-  print('💡 [API] soft-update recommended — version: ${recommended ?? "(unspecified)"}');
 
   final ctx = ApiClient.navigatorKey.currentContext;
   if (ctx != null) {

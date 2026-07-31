@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   }
 
   Future<void> _loadMortgages() async {
-    print('=== LOADING TAXES ===');
     setState(() {
       _isLoading = true;
     });
@@ -82,8 +82,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       String? satffid = prefs.getString("staff_id");
 
       // Use property-specific API endpoint
-      print('Loading tax for property ID: ${widget.propertyId}');
-      print('API URL: ${Api_url}/api/taxes/${widget.propertyId}');
       final response = await apiGet(
         Uri.parse('${Api_url}/api/taxes/${widget.propertyId}'),
         headers: {
@@ -93,13 +91,10 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         },
       ).timeout(const Duration(seconds: 30));
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
-          print('Successfully loaded ${data['data'].length} taxes');
           setState(() {
             _taxes = List<Map<String, dynamic>>.from(data['data']);
             _sortTaxes();
@@ -215,7 +210,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   }
 
   void _openAddMortgageForm() {
-    print('=== OPENING ADD TAX FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -224,8 +218,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         ),
       ),
     ).then((_) {
-      print('=== RETURNED FROM ADD TAX FORM ===');
-      print('Refreshing tax list...');
       // Refresh the mortgage list when returning from the form
       _loadMortgages();
     });
@@ -308,10 +300,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       String? adminId = prefs.getString('adminId');
       String? satffid = prefs.getString("staff_id");
 
-      print('=== DELETING TAX RECORD ===');
-      print('Tax ID: $id');
-      print('Admin ID: $adminId');
-      print('Reason: $reason');
 
       final response = await http
           .delete(
@@ -327,8 +315,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
           )
           .timeout(const Duration(seconds: 30));
 
-      print('Delete Response Status: ${response.statusCode}');
-      print('Delete Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -359,7 +345,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
         );
       }
     } catch (e) {
-      print('Error deleting tax record: $e');
+      logError('Error deleting tax record: $e');
       Fluttertoast.showToast(
         msg: 'Error deleting tax record: ${e.toString()}',
         backgroundColor: Colors.red,
@@ -398,13 +384,8 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
 
   void _viewReceipt(Map<String, dynamic> tax) {
     final receipt = tax['receipt'];
-    print('=== VIEW RECEIPT DEBUG ===');
-    print('Tax data: $tax');
-    print('Receipt field: $receipt');
-    print('Receipt type: ${receipt.runtimeType}');
 
     if (receipt == null || receipt.toString().trim().isEmpty) {
-      print('No receipt available');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No receipt available for this tax record'),
@@ -414,7 +395,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       return;
     }
 
-    print('Calling FileViewer.showReceiptDialog with: ${receipt.toString()}');
     // Show receipt in dialog
     FileViewer.showReceiptDialog(
       context,
@@ -1246,8 +1226,6 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       case 'pending':
         return Colors.orange;
       default:
-        print(
-            'Unknown status: "$status"'); // Debug print to see what status values you're getting
         return Colors.grey;
     }
   }

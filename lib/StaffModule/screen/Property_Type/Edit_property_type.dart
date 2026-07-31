@@ -381,8 +381,6 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   });
                                 });
                               } else {
-                                print(
-                                    "No changes made, API call not necessary.");
                                 // Navigator.of(context).pop(false);
                                 Fluttertoast.showToast(
                                   msg:
@@ -394,7 +392,6 @@ class _Edit_property_typeState extends State<Edit_property_type> {
                                   fontSize: 16.0,
                                 );
                               }
-                              print(selectedValue);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),

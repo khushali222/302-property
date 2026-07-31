@@ -72,7 +72,6 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });

@@ -270,7 +270,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // Validate card number for credit card and debit card
     final numberValidation = validator.validateCCNum('55555 55555 55444 4');
-    print(numberValidation.isValid); // true if the card number is valid
     if (numberValidation.isValid == true) {
       Fluttertoast.showToast(msg: "Card is valid");
     } else {

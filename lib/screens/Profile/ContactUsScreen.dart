@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -160,7 +161,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
   // Upload image function (similar to work order)
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
@@ -173,7 +173,6 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -194,7 +193,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
         });
       }
     } catch (e) {
-      print('File upload failed: $e');
+      logError('File upload failed: $e');
       Fluttertoast.showToast(
         msg: 'Failed to upload file: ${file.path.split('/').last}',
         toastLength: Toast.LENGTH_SHORT,
@@ -257,7 +256,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               validFiles.add(file);
             }
           } catch (e) {
-            print('Error checking file size: $e');
+            logError('Error checking file size: $e');
             // Continue with other files
           }
         }

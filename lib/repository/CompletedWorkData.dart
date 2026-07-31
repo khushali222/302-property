@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -12,7 +13,6 @@ class CompletedWorkOrderService {
     String? toDate,
     String? status,
   }) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -35,11 +35,6 @@ class CompletedWorkOrderService {
     }
 
     // Print the final API URL for debugging
-    print('=== API CALL DEBUG (COMPLETED) ===');
-    print('Final URL: $url');
-    print('Query Params: $queryParams');
-    print('Headers: authorization: CRM $token, id: CRM $adminId');
-    print('==================================');
 
     try {
       final response = await apiGet(Uri.parse(url), headers: {
@@ -49,20 +44,18 @@ class CompletedWorkOrderService {
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final completedWorkOrders =
             CompletedWorkOrdersModel.fromJson(parsedJson);
         return completedWorkOrders.data ?? [];
       } else {
         // Handle non-200 responses
-        print('Failed to fetch complete workorders: ${response.body}');
         return [];
         // throw Exception(
         //     'Failed to load data. Status code: ${response.statusCode}');
       }
     } catch (e) {
       // Catch all exceptions
-      print('Error occurred: $e');
+      logError('Error occurred: $e');
       throw Exception('Unexpected error: $e');
     }
   }

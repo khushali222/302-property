@@ -21,19 +21,13 @@ class ExpiringInsuranceTableService {
     }
 
     try {
-      print('entry');
       final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });
-   print(url);
-   print('abc ${response.body}');
       if (response.statusCode == 200) {
-        print('response.body ${response.body}');
         final parsedJson = jsonDecode(response.body);
-        print('parsedJson: $parsedJson');
         final report = RentersInsuranceResponse.fromJson(parsedJson);
-        print('parsed ReportExpiringLeaseTable: ${report.data}');
         return report.data ?? [];
       } else {
         throw ServerException(response.statusCode,

@@ -300,7 +300,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -345,7 +344,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
   void handleEdit(Data property) async {
     /* // Handle edit action
-    print('Edit ${property.sId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -1021,7 +1019,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                         });
                                         accounts = accounts.substring(
                                             0, accounts.length - 2);
-                                        print(accounts);
 
                                         //print(Tenant_financial.totalBalance);
                                         //return CustomExpansionTile(data: Propertytype, index: index);

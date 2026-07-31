@@ -50,15 +50,6 @@ class AppHeaders {
 
     // One-time startup banner so you can confirm what the app reports.
     // Auto-suppressed in release/profile by the zone-level print filter.
-    print('═══════════════════════════════════════════════════════════');
-    print('🚀 [AppHeaders] initialised');
-    print('   version:   $version');
-    print('   build:     $buildNumber');
-    print('   platform:  $platform');
-    print('   channel:   $channel');
-    print('   bundleId:  $bundleId');
-    print('   UA:        $userAgent');
-    print('═══════════════════════════════════════════════════════════');
   }
 
   static String _channelFromBundleId(String id) {

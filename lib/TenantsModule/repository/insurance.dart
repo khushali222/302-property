@@ -38,8 +38,6 @@ class InsuranceRepository {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    print(
-        '🗑️ DELETE insurance $TenantInsurance_id  body: ${jsonEncode({"reason": reason})}');
     final response = await apiDelete(
         Uri.parse(
             '$Api_url/api/tenantinsurance/tenantinsurance/$TenantInsurance_id'),
@@ -50,7 +48,6 @@ class InsuranceRepository {
         },
         body: jsonEncode({"reason": reason}));
 
-    print('🗑️ Delete response (${response.statusCode}): ${response.body}');
     if (response.statusCode == 200) {
       var responseData = json.decode(response.body);
       Fluttertoast.showToast(msg: responseData["message"]);

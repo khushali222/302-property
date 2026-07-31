@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -312,7 +313,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           _effectiveDateController.text =
               dateProvider.formatCurrentDate(policy.effectiveDate!);
         } catch (e) {
-          print('Error parsing effective date: $e');
+          logError('Error parsing effective date: $e');
         }
       }
       if (policy.expirationDate != null && policy.expirationDate!.isNotEmpty) {
@@ -323,7 +324,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           _expirationDateController.text =
               dateProvider.formatCurrentDate(policy.expirationDate!);
         } catch (e) {
-          print('Error parsing expiration date: $e');
+          logError('Error parsing expiration date: $e');
         }
       }
       if (policy.cancellationNoticeDate != null &&
@@ -336,7 +337,7 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
           _cancellationNoticeDateController.text =
               dateProvider.formatCurrentDate(policy.cancellationNoticeDate!);
         } catch (e) {
-          print('Error parsing cancellation date: $e');
+          logError('Error parsing cancellation date: $e');
         }
       }
     });
@@ -468,7 +469,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
   }
 
   Future<void> _saveForm() async {
-    print('=== SAVE INSURANCE POLICY FORM STARTED ===');
 
     setState(() {
       _hasValidated = true;
@@ -552,8 +552,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
 
       if (widget.policyId != null) {
         // Edit mode - PUT request
-        print('=== EDITING INSURANCE POLICY ===');
-        print('Policy ID: ${widget.policyId}');
 
         final response = await http
             .put(
@@ -567,8 +565,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             )
             .timeout(const Duration(seconds: 30));
 
-        print('Edit Response Status: ${response.statusCode}');
-        print('Edit Response Body: ${response.body}');
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
@@ -589,7 +585,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         }
       } else {
         // Add mode - POST request
-        print('=== CREATING INSURANCE POLICY ===');
 
         final response = await http
             .post(
@@ -603,8 +598,6 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
             )
             .timeout(const Duration(seconds: 30));
 
-        print('Create Response Status: ${response.statusCode}');
-        print('Create Response Body: ${response.body}');
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           final data = json.decode(response.body);
@@ -625,8 +618,8 @@ class _AddEditInsurancePolicyState extends State<AddEditInsurancePolicy> {
         }
       }
     } catch (e) {
-      print('=== EXCEPTION ===');
-      print('Exception occurred: $e');
+      logError('=== EXCEPTION ===');
+      logError('Exception occurred: $e');
       if (mounted) {
         _showFieldError('general', 'Error: ${e.toString()}');
       }

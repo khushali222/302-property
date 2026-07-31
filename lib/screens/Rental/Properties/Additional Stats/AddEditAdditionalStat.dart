@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -112,7 +113,7 @@ class _AddEditAdditionalStatState extends State<AddEditAdditionalStat> {
                 dateProvider.formatCurrentDate(apiFormatDate);
           }
         } catch (e) {
-          print('Error parsing date: $e');
+          logError('Error parsing date: $e');
         }
       }
 

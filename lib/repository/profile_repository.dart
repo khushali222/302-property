@@ -25,11 +25,8 @@ class ProfileRepository {
         "id": "CRM $id",
       },
     );
-    print('hello$apiUrl$id');
-    print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print("hello");
       return profile.fromJson(jsonDecode(response.body)["data"]);
     } else {
       throw Exception('Failed to load profile');
@@ -39,7 +36,6 @@ class ProfileRepository {
   Future<profile> Edit_profile(Map<String, dynamic> data) async {
     final String apiUrl = "${Api_url}/api/admin/admin_edit/";
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final response = await apiPut(
@@ -50,8 +46,6 @@ class ProfileRepository {
         "id": "CRM $id",
       },
     );
-    print('abc$apiUrl$id');
-    print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
       //print("hello");

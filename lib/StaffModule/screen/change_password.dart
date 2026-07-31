@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -82,12 +83,11 @@ class _Change_passwordState extends State<Change_password> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      logError('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -97,7 +97,6 @@ class _Change_passwordState extends State<Change_password> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       Fluttertoast.showToast(msg: 'PDF added successfully');
       List file = responseBody['files'];
@@ -368,7 +367,6 @@ class _Change_passwordState extends State<Change_password> {
                                                 color: Colors.grey),
                                         onSuffixIconPressed: () {
                                           setState(() {
-                                            print("111");
                                             ispassword2 = !ispassword2;
                                           });
                                         },
@@ -400,7 +398,6 @@ class _Change_passwordState extends State<Change_password> {
                                                   color: Colors.grey),
                                           onSuffixIconPressed: () {
                                             setState(() {
-                                              print("111");
                                               ispassword2 = !ispassword2;
                                             });
                                           },
@@ -1025,9 +1022,6 @@ class _Change_passwordState extends State<Change_password> {
                                           await SharedPreferences.getInstance();
                                       String? pass = prefs
                                           .getString("staffmember_password");
-                                      print(pass);
-                                      print("pass 1 $pass");
-                                      print("pass 2 $oldPassword");
                                       // Validate Current Password
                                       if (currentpassword.text.isEmpty) {
                                         setState(() {
@@ -1403,7 +1397,6 @@ class _Change_passwordState extends State<Change_password> {
         loading = true;
         isLoading = true;
       });
-      print("Calling");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? email = prefs.getString('staffemail');
@@ -1421,7 +1414,6 @@ class _Change_passwordState extends State<Change_password> {
         },
         body: json.encode(values),
       );
-      print("adb");
       log(response.body);
       var responseData = json.decode(response.body);
 
@@ -1478,7 +1470,7 @@ class _Change_passwordState extends State<Change_password> {
         errorMsg = e.toString().replaceFirst('Exception: ', '');
       }
       Fluttertoast.showToast(msg: errorMsg);
-      print('Error: $e');
+      logError('Error: $e');
     }
   }
 }

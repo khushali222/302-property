@@ -4,6 +4,7 @@
 // import 'package:intl/intl.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:http/http.dart'as http;
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/services/api_helpers.dart';
 //
 // import '../constant/constant.dart';
@@ -213,7 +214,6 @@ class DateProvider with ChangeNotifier {
   }
 
   Future<void> loadDateFormat() async {
-    print("calling loadDate");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
@@ -231,7 +231,6 @@ class DateProvider with ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print(_dateFormat);
     if (token != null) {
       final response = await apiPost(
         Uri.parse('${Api_url}/api/themes/date-format'),
@@ -246,14 +245,8 @@ class DateProvider with ChangeNotifier {
           'admin_id': id,
         }),
       );
-      print(jsonEncode({
-        'format': _dateFormat,
-        'admin_id': id,
-      }));
-      print(response.body);
       if (response.statusCode != 200) {
         // Handle error
-        print("Failed to save date format.");
         Fluttertoast.showToast(
           msg: 'Failed to save date format',
           toastLength: Toast.LENGTH_SHORT,
@@ -270,7 +263,6 @@ class DateProvider with ChangeNotifier {
   }
 
   void updateDateFormat(String newFormat, selectIndex) {
-    print(newFormat);
     _dateFormat = newFormat;
     dateformateselect = selectIndex;
     _saveDateFormat();
@@ -279,7 +271,6 @@ class DateProvider with ChangeNotifier {
   }
 
   void updateDateFormatLocally(String newFormat, selectIndex) {
-    print(newFormat);
     _dateFormat = newFormat;
     dateformateselect = selectIndex;
     _saveSelectedDateFormat();
@@ -287,7 +278,6 @@ class DateProvider with ChangeNotifier {
   }
 
   void updateTimeFormat(String newTimeFormat, selectIndex) {
-    print(newTimeFormat);
     _timeFormat = newTimeFormat;
     timeformateselect = selectIndex;
     _saveDateFormat();
@@ -296,7 +286,6 @@ class DateProvider with ChangeNotifier {
   }
 
   void updateTimeFormatLocally(String newTimeFormat, selectIndex) {
-    print(newTimeFormat);
     _timeFormat = newTimeFormat;
     timeformateselect = selectIndex;
     _saveSelectedTimeFormat();
@@ -403,14 +392,9 @@ class DateProvider with ChangeNotifier {
     String dateTimeFormat = '$_dateFormat $timeFormatPattern';
 
     // Debug print to see what's happening
-    print('Original date: $dateTime');
-    print('Parsed date: $parsedDate');
-    print('Web timezone date: $webTimezoneDate');
-    print('Format: $dateTimeFormat');
 
     // Format the date using the combined format
     String result = DateFormat(dateTimeFormat).format(webTimezoneDate);
-    print('Formatted result: $result');
     return result;
   }
 
@@ -451,7 +435,6 @@ class DateProvider with ChangeNotifier {
   // }
   Future<void> checkToken(String? token) async {
     if (token == null || token.isEmpty) {
-      print("Invalid or missing token.");
       return;
     }
 
@@ -481,7 +464,6 @@ class DateProvider with ChangeNotifier {
         },
         body: json.encode({"token": token}),
       );
-      print("Check token response: ${response.body}");
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -523,14 +505,13 @@ class DateProvider with ChangeNotifier {
         _dateFormat = fixDateFormat(_dateFormat);
         notifyListeners();
       } else {
-        print("Token validation failed. Status code: ${response.statusCode}");
         // Set default format on error
         _dateFormat = 'MM/dd/yyyy';
         dateformateselect = 0;
         notifyListeners();
       }
     } catch (e) {
-      print("Error in checkToken: $e");
+      logError("Error in checkToken: $e");
     }
   }
 

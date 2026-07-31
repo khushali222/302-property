@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -45,14 +46,13 @@ class RentersInsuranceService {
       }
       return [];
     } catch (e) {
-      print('Error fetching policies by tenant: $e');
+      logError('Error fetching policies by tenant: $e');
       return [];
     }
   }
 
   Future<List<lease_renter_insurance>> fetchRentersInsurance(
       String leaseid, {bool includeDeleted = false}) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -71,18 +71,15 @@ class RentersInsuranceService {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print('API Response: $parsedJson');
         List leasesJson = parsedJson['data'];
-        print('Data count: ${leasesJson.length}');
 
         try {
           return leasesJson.map((data) {
-            print('Processing item: $data');
             return lease_renter_insurance.fromJson(data);
           }).toList();
         } catch (e) {
-          print('Error parsing data: $e');
-          print('Data that caused error: $leasesJson');
+          logError('Error parsing data: $e');
+          logError('Data that caused error: $leasesJson');
           return [];
         }
       } else {
@@ -91,7 +88,7 @@ class RentersInsuranceService {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }
@@ -117,8 +114,6 @@ class RentersInsuranceService {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
-      print(renters_insurance_id);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -148,8 +143,6 @@ class RentersInsuranceService {
       },
     ); // Update with your actual API URL
     //print('hello${response.body}');
-    print(renters_insurance_id);
-    print(renters_insurance_id);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];

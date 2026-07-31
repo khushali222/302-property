@@ -207,7 +207,6 @@ class _TempletTableState extends State<TempletTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });

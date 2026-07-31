@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -108,10 +109,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         "authorization": "CRM $token",
         "Content-Type": "application/json"
       });
-      print("response.body tenant count $response.body");
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-        print(jsonData);
         setState(() {
           //  countList[0] = jsonData["data"]['all_workorders'] ?? 0;
           countList[0] = jsonData["data"]['workOrder'] ?? 0;
@@ -131,7 +130,6 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
               : "\$${countList[1]}";
           rentCycle = jsonData["data"]['rentCycle'] ??
               'Monthly'; // Store rent cycle from API
-          print("rent cycle $rentCycle");
           lease_id = jsonData["data"]['lease_id'];
           tenantId = id;
           loading = false;
@@ -141,7 +139,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print(e);
+      logError(e);
       setState(() {
         countList[0] = 0;
         countList[2] = 0;
@@ -149,7 +147,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         countList[4] = "--/--/----";
         countList[5] = "--/--/----";
       });
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {}
   }
 
@@ -161,8 +159,6 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("tenant_id");
       String? token = prefs.getString('token');
-      print(id);
-      print(token);
       final response = await apiGet(
           Uri.parse('${Api_url}/api/payment/tenant_financial/${id!}'),
           headers: {
@@ -170,11 +166,8 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
             "authorization": "CRM $token",
             "Content-Type": "application/json"
           });
-      print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-        print(jsonData);
-        print(jsonData["totalBalance"]);
         setState(() {
           // countList[0] = jsonData['property_staffMember'];
 
@@ -187,7 +180,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         //throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {
       setState(() {
         loading = false;
@@ -208,12 +201,10 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   List<dynamic> recentTransactions = [];
 
   Future<void> fetchData() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print(admin_id);
     final response = await apiGet(
         Uri.parse('${Api_url}/api/tenant/dashboard_workorder/$id'),
         headers: {
@@ -224,18 +215,15 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     //print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      print(jsonData);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
         setState(() {
           var newwork = data["new_workorders"];
           var overdue = data["overdue_workorders"];
-          print(newwork);
           newworkorder = newwork;
           overdueworkorder = overdue;
           // countList[0] is now set from fetchDatacount() - don't overwrite it
           // countList[0] = data["all_workorders"];
-          print(data);
         });
       } else {
         throw Exception('Failed to load data');
@@ -268,7 +256,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         }
       }
     } catch (e) {
-      print('Error fetching upcoming payments: $e');
+      logError('Error fetching upcoming payments: $e');
     }
   }
 
@@ -295,7 +283,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
         }
       }
     } catch (e) {
-      print('Error fetching recent transactions: $e');
+      logError('Error fetching recent transactions: $e');
     }
   }
 
@@ -387,7 +375,6 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });

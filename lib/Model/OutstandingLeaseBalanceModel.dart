@@ -19,7 +19,6 @@ class OutstandingLeaseBalanceModel {
 
   OutstandingLeaseBalanceModel.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
 
     success = json['success'];
@@ -101,7 +100,6 @@ class OutstandingLeaseBalanceData {
 
   OutstandingLeaseBalanceData.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
 
     id = json['_id'];

@@ -23,7 +23,6 @@ class Upcoming_renewal_repo{
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => upcoming_renewal.fromJson(data)).toList();
     } else {
-      print('Failed to fetch renewal leases: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }

@@ -62,7 +62,6 @@ class WorkOrderReportData {
 
   factory WorkOrderReportData.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     return WorkOrderReportData(
       workOrderId: json['workOrder_id'] as String?,

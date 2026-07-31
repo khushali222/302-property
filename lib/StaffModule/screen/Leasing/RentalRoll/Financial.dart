@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -220,7 +221,6 @@ class _FinancialTableState extends State<FinancialTable> {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         String? adminId = prefs.getString("adminId");
-                        print(data.paymentId);
                         if (adminId == null ||
                             adminId.isEmpty ||
                             data.paymentId == null ||
@@ -241,7 +241,6 @@ class _FinancialTableState extends State<FinancialTable> {
                           memo: _memoController.text,
                           adminId: adminId!,
                         );
-                        print(message);
                         if (message != "success") {
                           //   Navigator.pop(context);
                           Alert(
@@ -322,7 +321,6 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   void _showAlertvoid(BuildContext context, String id) {
-    print("calling");
     TextEditingController reason = TextEditingController();
     Alert(
       context: context,
@@ -470,7 +468,6 @@ class _FinancialTableState extends State<FinancialTable> {
       } else {
         throw Exception("Unsupported payment type: $paymentType");
       }
-      print(apiUrl);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       //String? id = prefs.getString("rentalid");
       String? id = prefs.getString('adminId');
@@ -489,11 +486,9 @@ class _FinancialTableState extends State<FinancialTable> {
 
       if (response.statusCode == 200) {
         // Handle successful refund response
-        print('Refund processed successfully: ${response.body}');
         return "success";
       } else {
         // Handle error case safely (body may be empty/HTML on failure)
-        print('Refund failed: ${response.statusCode} ${response.body}');
         try {
           final responsedata = jsonDecode(response.body);
           if (responsedata is Map) {
@@ -511,7 +506,7 @@ class _FinancialTableState extends State<FinancialTable> {
     } catch (e) {
       return e.toString();
       // Handle exceptions during API calls
-      print('Refund error: $e');
+      logError('Refund error: $e');
     }
   }
 
@@ -572,10 +567,8 @@ class _FinancialTableState extends State<FinancialTable> {
               // });
             }
             // Custom logic when the user submits
-            print("Submitted: $value");
           },
           onChanged: (value) {
-            print("Value changed: $value");
             if (value.isNotEmpty) {
               // setState(() {
               //   _errorMessage = null;
@@ -893,7 +886,7 @@ class _FinancialTableState extends State<FinancialTable> {
         }
       }
     } catch (e) {
-      print("Error fetching ACH settings: $e");
+      logError("Error fetching ACH settings: $e");
     }
   }
 
@@ -1309,7 +1302,7 @@ class _FinancialTableState extends State<FinancialTable> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();
@@ -1592,7 +1585,6 @@ class _FinancialTableState extends State<FinancialTable> {
                 : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
           );
 
-      print(ledger.balance);
 
       ledger.balance! < 0
           ? sheet.getRangeByIndex(2 + i, 6).setText(
@@ -1737,11 +1729,6 @@ class _FinancialTableState extends State<FinancialTable> {
         controller.text = dateProvider.formatCurrentDate(_fromDateApiFormat);
         fdate = controller.text;
 
-        print("========== FROM DATE SELECTED (StaffModule) ==========");
-        print("Selected date: $picked");
-        print("API format stored: $_fromDateApiFormat");
-        print("Display format: ${controller.text}");
-        print("=======================================================");
       });
     }
   }
@@ -1788,11 +1775,6 @@ class _FinancialTableState extends State<FinancialTable> {
         controller.text = dateProvider.formatCurrentDate(_toDateApiFormat);
         edate = picked.toString();
 
-        print("========== TO DATE SELECTED (StaffModule) ==========");
-        print("Selected date: $picked");
-        print("API format stored: $_toDateApiFormat");
-        print("Display format: ${controller.text}");
-        print("====================================================");
       });
     }
   }
@@ -2449,24 +2431,17 @@ class _FinancialTableState extends State<FinancialTable> {
                       final leaseLedger = snapshot.data!;
                       var data = leaseLedger.data?.toList() ?? [];
 
-                      print(
-                          "========== DATA RECEIVED FROM API (StaffModule) ==========");
-                      print("Total records from API: ${data.length}");
-                      print("First 5 records dates:");
                       for (int i = 0;
                           i < (data.length > 5 ? 5 : data.length);
                           i++) {
                         if (data[i].entry != null &&
                             data[i].entry!.isNotEmpty) {
-                          print(
-                              "  Record $i: Date=${data[i].entry!.first.date}, Type=${data[i].type}, Amount=${data[i].totalAmount}");
                         }
                       }
 
                       if (searchvalue != null &&
                           searchvalue!.isNotEmpty &&
                           searchvalue != "All") {
-                        print("Applying search filter: $searchvalue");
                         String searchLower = searchvalue!.toLowerCase();
                         data = data.where((lease) {
                           // Check Type
@@ -2517,17 +2492,14 @@ class _FinancialTableState extends State<FinancialTable> {
                               tenantMatch ||
                               entryMatch;
                         }).toList();
-                        print("Records after search filter: ${data.length}");
                       }
 
                       // Filter by Transaction Type
                       if (selectedTransactionType != null &&
                           selectedTransactionType != "All") {
-                        print("Applying transaction type filter: $selectedTransactionType");
                         data = data.where((lease) {
                           return lease.type == selectedTransactionType;
                         }).toList();
-                        print("Records after transaction type filter: ${data.length}");
                       }
                       // if (_fromDateController.text.isNotEmpty && _toDateController.text.isNotEmpty) {
                       //   try {
@@ -2569,11 +2541,6 @@ class _FinancialTableState extends State<FinancialTable> {
 
                       if (filterFromDate != null) {
                         try {
-                          print(
-                              "========== APPLYING DATE FILTER (StaffModule) ==========");
-                          print("Filter From Date API: $filterFromDate");
-                          print("Filter To Date API: $filterToDate");
-                          print("Records before date filter: ${data.length}");
 
                           // Parse API format dates (yyyy-MM-dd)
                           DateTime fromDate =
@@ -2581,8 +2548,6 @@ class _FinancialTableState extends State<FinancialTable> {
                           DateTime? toDate = filterToDate != null
                               ? DateFormat('yyyy-MM-dd').parse(filterToDate)
                               : null;
-                          print("Parsed From Date: $fromDate");
-                          print("Parsed To Date: $toDate");
 
                           // Filter: show all records >= fromDate (inclusive)
                           // If toDate is set, also filter <= toDate (inclusive)
@@ -2592,8 +2557,6 @@ class _FinancialTableState extends State<FinancialTable> {
                           DateTime? normalizedToDate = toDate != null
                               ? DateTime(toDate.year, toDate.month, toDate.day)
                               : null;
-                          print("Normalized From Date: $normalizedFromDate");
-                          print("Normalized To Date: $normalizedToDate");
 
                           int includedCount = 0;
                           int excludedCount = 0;
@@ -2603,8 +2566,6 @@ class _FinancialTableState extends State<FinancialTable> {
                                 lease.entry!.isEmpty ||
                                 lease.entry!.first.date == null) {
                               excludedCount++;
-                              print(
-                                  "  EXCLUDED: No entry date - Type: ${lease.type}");
                               return false;
                             }
                             try {
@@ -2639,43 +2600,27 @@ class _FinancialTableState extends State<FinancialTable> {
 
                               if (shouldInclude) {
                                 includedCount++;
-                                print(
-                                    "  INCLUDED: Date=$leaseDate, Type=${lease.type}, Amount=${lease.totalAmount}");
                               } else {
                                 excludedCount++;
-                                print(
-                                    "  EXCLUDED: Date=$leaseDate (not in range), Type=${lease.type}");
                               }
 
                               return shouldInclude;
                             } catch (e) {
                               excludedCount++;
-                              print(
+                              logError(
                                   "  EXCLUDED: Date parsing error - $e, Type: ${lease.type}");
                               return false;
                             }
                           }).toList();
 
-                          print(
-                              "========== DATE FILTER RESULTS (StaffModule) ==========");
-                          print("Records included: $includedCount");
-                          print("Records excluded: $excludedCount");
-                          print("Final filtered records: ${data.length}");
                         } catch (e) {
-                          print("Date parsing error: $e");
+                          logError("Date parsing error: $e");
                         }
                       } else {
-                        print(
-                            "No date filter applied - showing all ${data.length} records");
                       }
 
                       sortData(data);
                       _cachedLedgerData = data;
-                      print(
-                          "========== FINAL DATA SUMMARY (StaffModule) ==========");
-                      print("Total records after all filters: ${data.length}");
-                      print("Items per page: $itemsPerPage");
-                      print("Current page: ${currentPage + 1}");
 
                       final totalPages = (data.length / itemsPerPage).ceil();
                       final currentPageData = data
@@ -2683,11 +2628,6 @@ class _FinancialTableState extends State<FinancialTable> {
                           .take(itemsPerPage)
                           .toList();
 
-                      print("Total pages: $totalPages");
-                      print(
-                          "Records on current page: ${currentPageData.length}");
-                      print(
-                          "======================================================");
                       return SingleChildScrollView(
                         child: Column(
                           children: [

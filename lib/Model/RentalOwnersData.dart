@@ -122,10 +122,8 @@ class RentalOwnerData {
           this.processorList!.map((v) => v.toJson()).toList();
     }
 
-    print(processorList);
 
     data['processor_list'] = processorList;
-    print(data);
     return data;
   }
 }

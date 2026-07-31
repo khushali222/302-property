@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:email_validator/email_validator.dart';
@@ -406,7 +407,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                 DateFormat('MM-dd-yyyy').parse(enddateController.text);
             if (picked.isAfter(currentEndDate)) {
               // Clear the end date if start date is after end date
-              print('Clearing end date because start date is after end date');
               enddateController.clear();
               enddate = null;
             }
@@ -414,7 +414,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
             // This allows valid date ranges like start: 22, end: 23
           } catch (e) {
             // If parsing fails, just continue
-            print('Error parsing end date: $e');
+            logError('Error parsing end date: $e');
           }
         }
       });
@@ -466,13 +466,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
           (currentStartDate ?? DateTime.now()).add(const Duration(days: 1));
     }
 
-    print('=== END DATE PICKER DEBUG ===');
-    print('Current Start Date: ${currentStartDate}');
-    print('Current Start Date Text: ${startdateController.text}');
-    print('Current End Date Text: ${enddateController.text}');
-    print('Initial End Date: ${initialEndDate}');
-    print('First Date: ${currentStartDate ?? DateTime.now()}');
-    print('==============================');
 
     final ClearableDatePickerResult? endResult = await showClearableDatePicker(
       context: context,
@@ -483,7 +476,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       helpText: 'Select end date',
     );
     if (endResult == null) {
-      print('End date picker was cancelled');
       return; // cancelled — keep the current value
     }
     if (endResult.cleared) {
@@ -501,7 +493,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
             DateFormat(dateProvider.dateFormat).format(picked);
       });
     } else if (picked == null) {
-      print('End date picker was cancelled');
     }
   }
 
@@ -541,7 +532,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
   bool isloading = false;
 
   Future<void> fetchPaymentSettings() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -555,10 +545,7 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(' rental added ${jsonData}');
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(creditcard);
-      print(creditcard);
       setState(() {
         creditcard = jsonData['data']['creditCardAccepted'] ?? true;
         achaccepted = jsonData['data']['achAccepted'] ?? false;
@@ -600,8 +587,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
           await apiPost(Uri.parse(url), headers: headers, body: body);
 
       var responseData = json.decode(response.body);
-      print('update card type ${responseData}');
-      print('update card type ${response.body}');
       if (responseData["statusCode"] == 200) {
         // Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -3967,7 +3952,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                             ? widget
                                 .rentalOwner.processorList!.first.processorId
                             : "";
-                    print("Processor List Changed: $isProcessorListChanged");
 
                     // Check for changes
                     bool hasChanges = name.text != initialName ||
@@ -3992,7 +3976,6 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
                         _controllers[0]!.text != isProcessorListChanged;
 
                     if (!hasChanges) {
-                      print("No changes made, API call not necessary.");
                       Navigator.of(context)
                           .pop(false); // Optionally navigate back
                       return;

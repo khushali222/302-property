@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -29,11 +30,10 @@ class LeaseExpiryService {
       if (response.statusCode == 200) {
         return ExpiringLeasesResponse.fromJson(jsonDecode(response.body));
       } else {
-        print('Error fetching expiring leases: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Exception fetching expiring leases: $e');
+      logError('Exception fetching expiring leases: $e');
       return null;
     }
   }
@@ -61,11 +61,10 @@ class LeaseExpiryService {
       if (response.statusCode == 200) {
         return ExpiringLeasesResponse.fromJson(jsonDecode(response.body));
       } else {
-        print('Error fetching expired leases: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Exception fetching expired leases: $e');
+      logError('Exception fetching expired leases: $e');
       return null;
     }
   }

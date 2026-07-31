@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -39,9 +40,6 @@ class RentColllectionReport {
       url = '$url&selectedChargeType=$chargetype';
     }
 
-    print('[RentCollection][StaffRepo] role=${prefs.getString('role')} '
-        'authIdLen=${authId?.length ?? 0} pathAdminIdLen=${effectiveAdminId.length}');
-    print(url);
 
     try {
       final response = await apiGet(
@@ -52,30 +50,22 @@ class RentColllectionReport {
           "id": "CRM $authId",
         },
       );
-      print("report rent collection ${response.body}");
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print("=== STAFF MODULE - FULL API JSON RESPONSE ===");
-        print(parsedJson);
 
         if (parsedJson['summary'] != null) {
-          print("=== STAFF MODULE - SUMMARY ORDER FROM JSON ===");
           List summaryList = parsedJson['summary'];
           for (int i = 0; i < summaryList.length; i++) {
-            print(
-                "$i: ${summaryList[i]['rentalOwnerCompany']} - \$${summaryList[i]['totalPending']}");
           }
         }
 
         return Rentcollection_model.fromJson(parsedJson);
       } else {
-        print(
-            '[RentCollection][StaffRepo] failed status=${response.statusCode} body=${response.body}');
         throw Exception('Failed to load rent collection report');
       }
     } catch (error) {
-      print('[RentCollection][StaffRepo] error: $error');
+      logError('[RentCollection][StaffRepo] error: $error');
       throw Exception('Failed to load rent collection');
     }
   }

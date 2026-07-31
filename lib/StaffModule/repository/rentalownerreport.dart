@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,8 +13,6 @@ class RentalOwnerReportService {
 
   Future<List<RentalOwnerReport>> fetchRentalOwnerReport(String adminId, String selectedStartDate, String selectedEndDate,{String? rentalownerid , String? chargetype}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(selectedStartDate);
-    print(selectedEndDate);
    // String? id = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
@@ -25,7 +24,6 @@ class RentalOwnerReportService {
     if(chargetype != null){
       url = '$url&selectedChargeType=$chargetype';
     }
-    print(url);
     try {
       final response = await apiGet(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
@@ -33,7 +31,6 @@ class RentalOwnerReportService {
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       },);
 
-      print('rentalowners abc ${response.body}');
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
 
@@ -41,12 +38,11 @@ class RentalOwnerReportService {
         return jsonData.map((data) => RentalOwnerReport.fromJson(data)).toList();
       } else {
         // Handle error response
-        print('Failed to load report. Status code: ${response.statusCode}');
         return [];
       }
     } catch (error) {
       // Handle error during fetch
-      print('Error fetching rental owner reports: $error');
+      logError('Error fetching rental owner reports: $error');
       return [];
     }
   }

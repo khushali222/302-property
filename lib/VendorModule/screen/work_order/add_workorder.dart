@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -39,16 +40,13 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
 
   Future<String?> uploadImage(File imageFile) async {
     final String uploadUrl = '$image_upload_url/api/images/upload';
-    print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
       return file.first["filename"];
@@ -232,7 +230,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     try {
       for (File image in selectedImages) {
         var image_name = await uploadImage(image);
-        print(image_name);
         uploaded_images.add(image_name);
       }
       setState(() {
@@ -250,16 +247,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   Future<String?> uploadImage(File imageFile) async {
     final String uploadUrl = '$image_upload_url/api/images/upload';
-    print(uploadUrl);
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
       return file.first["filename"];
@@ -285,7 +279,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -326,7 +319,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -390,7 +382,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
         appBar: widget_302.App_Bar(
             context: context,
             onDrawerIconPressed: () {
-              print("calling appbar");
               key.currentState!.openDrawer();
               // Scaffold.of(context).openDrawer();
             }),
@@ -617,7 +608,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                         placeholder: (context, url) => Center(
                                             child: CircularProgressIndicator()),
                                         errorWidget: (context, url, error) {
-                                          print(error);
                                           return Container();
                                         },
                                         fit: BoxFit.cover,
@@ -694,8 +684,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                                   value]; // Store selected rental_adress
 
                                               renderId = value.toString();
-                                              print(
-                                                  'Selected Property: $_selectedProperty');
                                               _loadUnits(
                                                   value!); // Fetch units for the selected property
                                             });
@@ -808,8 +796,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                                     _selectedUnit = units[
                                                         value]; // Store selected rental_unit
 
-                                                    print(
-                                                        'Selected Unit: $_selectedUnit');
                                                   });
                                                 },
                                                 buttonStyleData:
@@ -904,8 +890,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     _showTextField =
                                         _selectedCategory == 'Other';
                                   });
-                                  print(
-                                      'Selected category: $_selectedCategory');
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
@@ -981,7 +965,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                                     // if(_selectedCategory == 'Other')
                                     // addRow();
                                   });
-                                  print('Selected category: $_selectedEntry');
                                 },
                                 buttonStyleData: ButtonStyleData(
                                   height: 45,
@@ -1195,7 +1178,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
             fontSize: 16.0);
 
         // Handle error: Log the error, show a dialog, etc.
-        print(e);
+        logError(e);
       } finally {
         setState(() {
           isLoading = false;
@@ -1205,7 +1188,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
       setState(() {
         formValid = false;
       });
-      print('Form is invalid');
     }
   }
 }

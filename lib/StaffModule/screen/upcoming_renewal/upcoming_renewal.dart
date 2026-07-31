@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -215,7 +216,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -769,7 +769,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   upcoming_renewal Propertytype = entry.value;
-                                  print(Propertytype.tenantNames);
                                   String tenants =
                                       Propertytype.tenantNames!.join(" , ");
                                   //return CustomExpansionTile(data: Propertytype, index: index);
@@ -1052,8 +1051,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            print(
-                                                                "calling");
 
                                                             _showAlert(
                                                                 context,
@@ -1127,8 +1124,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
                                                         ),
                                                         GestureDetector(
                                                           onTap: () {
-                                                            print(
-                                                                "calling");
 
                                                             _showUndoAlert(
                                                                 context,
@@ -1536,7 +1531,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
       // print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiPut(
@@ -1547,7 +1541,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           'Content-Type': 'application/json',
         },
       );
-      print(response.body);
       if (response.statusCode == 200) {
         /*   Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
@@ -1560,7 +1553,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         Fluttertoast.showToast(msg: "Renewal Lease not success");
       }
     } catch (e) {
-      print(e);
+      logError(e);
     }
   }
   Future<void> undorenewallease(String leaseid) async {
@@ -1568,7 +1561,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
-      print(token);
       // print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiPut(
@@ -1579,7 +1571,6 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
           'Content-Type': 'application/json',
         },
       );
-      print(response.body);
       if (response.statusCode == 200) {
         /*   Fluttertoast.showToast(msg: "Lease Renewal Successfully");
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>SummeryPageLease(leaseId: widget.leaseId,)));
@@ -1592,7 +1583,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal> {
         Fluttertoast.showToast(msg: "Renewal Lease not success");
       }
     } catch (e) {
-      print(e);
+      logError(e);
     }
   }
 }

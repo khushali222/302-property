@@ -42,7 +42,6 @@ class _MainScreenState extends State<MainScreen> {
         .listen((ConnectivityResult result) {
       if (!mounted) return;
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -51,7 +50,6 @@ class _MainScreenState extends State<MainScreen> {
       Dashboard_vendors(
         onWorkOrderSelected: (filter) {
           setState(() {
-            print(filter);
             _workOrderFilter = filter; // Update the filter value
             _onItemTapped(2);
             // Switch to the Work Order tab

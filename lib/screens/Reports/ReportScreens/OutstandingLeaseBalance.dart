@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -63,7 +64,6 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -188,7 +188,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
 
       return allData;
     } catch (e) {
-      print('Error fetching all data for export: $e');
+      logError('Error fetching all data for export: $e');
       return [];
     }
   }
@@ -302,7 +302,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         });
       }
     } catch (e) {
-      print('Error fetching rental owners: $e');
+      logError('Error fetching rental owners: $e');
     }
   }
 
@@ -1883,7 +1883,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       try {
         profileData = await service.fetchAdminAddress();
       } catch (e) {
-        print("Error fetching profile data: $e");
+        logError("Error fetching profile data: $e");
         Fluttertoast.showToast(
           msg: 'Error fetching profile data',
           toastLength: Toast.LENGTH_SHORT,
@@ -2252,7 +2252,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
       );
     }
     } catch (e) {
-      print('Error generating PDF: $e');
+      logError('Error generating PDF: $e');
       Fluttertoast.showToast(
         msg: 'Error generating PDF',
         toastLength: Toast.LENGTH_SHORT,
@@ -2334,7 +2334,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating Excel: $e');
+      logError('Error generating Excel: $e');
       Fluttertoast.showToast(
         msg: 'Error generating Excel',
         toastLength: Toast.LENGTH_SHORT,
@@ -2409,7 +2409,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating CSV: $e');
+      logError('Error generating CSV: $e');
       Fluttertoast.showToast(
         msg: 'Error generating CSV',
         toastLength: Toast.LENGTH_SHORT,

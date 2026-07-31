@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -72,7 +73,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   List<String> items = ["Approved", "Rejected"];
   @override
   void initState() {
-    print(widget.workorder_id);
     // TODO: implement initState
     _connectivitySub = Connectivity()
         .onConnectivityChanged
@@ -147,7 +147,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
             "authorization": "CRM $token",
             "id": "CRM $staffid",
           }).timeout(const Duration(seconds: 20));
-      print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -184,7 +183,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -196,7 +194,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -230,7 +227,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
         _imageUrls.add(fileName!);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -524,8 +521,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Summery_page(WorkOrderData_summery summery) {
-    print(' update image ${summery.workorderUpdates}');
-    print(' update tenant ${summery.vendorData?.companyName}');
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
 
@@ -2515,7 +2510,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Task(WorkOrderData_summery summery) {
-    print(summery.workOrderImages);
     final dateProvider = Provider.of<DateProvider>(context);
     double grandTotal = 0;
     // applicantChecklist = List<String>.from(summery.applicantCheckedChecklist!);
@@ -2941,7 +2935,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                             CircularProgressIndicator()),
                                                 errorWidget:
                                                     (context, url, error) {
-                                                  print(error);
                                                   return Container();
                                                 },
                                                 fit: BoxFit.cover,
@@ -4425,8 +4418,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         value]; // Store selected rental_adress
 
                                                     //StaffId = value.toString();
-                                                    print(
-                                                        'Selected Staffs: $_selectedStaffs');
                                                     // Fetch units for the selected property
                                                   });
                                                 },

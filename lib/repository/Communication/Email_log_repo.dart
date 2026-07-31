@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,16 +27,14 @@ class EmailLogRepository {
         },
       );
 
-      print("fetch mail responce ${response.body}");
 
       if (response.statusCode == 200) {
         return Email_log_table.fromJson(json.decode(response.body));
       } else {
-        print('Failed to fetch emails: ${response.body}');
         throw Exception('Failed to Acknowledgement payment');
       }
     } catch (e) {
-      print('Error fetching email logs: $e');
+      logError('Error fetching email logs: $e');
       throw Exception('Failed to Acknowledgement payment');
     }
   }

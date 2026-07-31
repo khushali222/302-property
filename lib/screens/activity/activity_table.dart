@@ -113,7 +113,6 @@ class _ActivityTableState extends State<ActivityTable> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
           futurePropertyTypes = ActivityRepository().fetchActivities(10, 0);
@@ -248,7 +247,6 @@ class _ActivityTableState extends State<ActivityTable> {
 /*  void handleDelete(Activity_model property) {
     _showAlert(context, property.propertyId!);
     // Handle delete action
-    print('Delete ${property.sId}');
   }*/
 
   // Widget _buildHeader<T>(String text, int columnIndex,

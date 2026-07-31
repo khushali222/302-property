@@ -38,18 +38,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   List<Map<String, String>> get companies => _companies;
   String get selectedCompany => _selectedCompany;
   Future<void> submitEmail() async {
-    print("Calling  ${email.text}");
     // Make API call to check email
     final response = await apiPost(
       Uri.parse('${Api_url}/api/auth/check_role'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.text}),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       List<dynamic> roles = data['data'];
-      print(roles.length);
       if (roles.isEmpty) {
         Fluttertoast.showToast(msg: "Email does not exist");
       } else {
@@ -76,7 +73,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               userId = roles[0]["user_id"];
               _isEmailSubmitted = true;
             } else {
-              print(roles[0]['role']);
               _hasMultipleCompanies = false;
               _selectedCompany = roles[0]['company_name'];
               selectedrole = roles[0]['role']; // Set role directly
@@ -111,14 +107,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         'user_id': userId
       },
     );
-    print(response.body);
     setState(() {
       loading = false; // Hide loading indicator after receiving response
     });
 
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -147,8 +141,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     selectedrole = role; // Set role when selecting company
     admin_id = adminid;
     userId = user_id;
-    print(selectedrole);
-    print(selectedCompany);
     setState(() {});
   }
 

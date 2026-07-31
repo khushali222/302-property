@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -15,8 +16,6 @@ class ApplicantSummeryRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print('===== APPLICATION SAVE REQUEST BODY (POST /applicant/application/$applicantId) =====');
-    print(jsonEncode(payload));
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/application/$applicantId'),
@@ -27,8 +26,6 @@ class ApplicantSummeryRepository {
         },
         body: jsonEncode(payload),
       );
-      print('===== APPLICATION SAVE RESPONSE =====');
-      print(response.body);
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200 && responseData['statusCode'] == 200) {
         Fluttertoast.showToast(
@@ -39,7 +36,7 @@ class ApplicantSummeryRepository {
           msg: responseData['message'] ?? 'Failed to save application');
       return false;
     } catch (error) {
-      print('saveApplicationRaw exception: $error');
+      logError('saveApplicationRaw exception: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -50,7 +47,6 @@ class ApplicantSummeryRepository {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    print(jsonEncode(data.toJson()));
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/application/$applicantId'),
@@ -63,43 +59,36 @@ class ApplicantSummeryRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
 
       if (response.statusCode == 200) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added tenant');
 
           return true;
         } else {
-          print('Failed to add tenant: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add tenant');
           return false;
         }
       } else {
-        print('Failed to add tenant: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to add tenant');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
   }
 
   Future<bool> editApplicantSummaryForm(Data data, String applicantId) async {
-    print(applicantId);
-    print('data.toJson() ${data.toJson()}');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    print(jsonEncode(data.toJson()));
     try {
       final response = await apiPost(
         Uri.parse('$Api_url/api/applicant/application/$applicantId'),
@@ -112,29 +101,25 @@ class ApplicantSummeryRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(response.body);
 
       if (response.statusCode == 200) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully updated tenant');
 
           return true;
         } else {
-          print('Failed to update tenant: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to update tenant');
           return false;
         }
       } else {
-        print('Failed to update tenant: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to update tenant');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -169,11 +154,9 @@ class ApplicantSummeryRepository {
 
   static Future<applicant_summery_details> getApplicantSummary(
       String applicantId) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    print('token $token');
 
     final url =
         Uri.parse('$Api_url/api/applicant/applicant_summary/$applicantId');
@@ -184,9 +167,7 @@ class ApplicantSummeryRepository {
         "id": "CRM $id",
       });
 
-      print(response.body);
       if (response.statusCode == 200) {
-        print('entry 200');
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
         // Check if the "data" field is present and is a list
@@ -195,7 +176,6 @@ class ApplicantSummeryRepository {
           if (dataList.isNotEmpty) {
             final Map<String, dynamic> data =
                 dataList[0] as Map<String, dynamic>;
-            print("response.body : ${response.body}");
             return applicant_summery_details.fromJson(data);
           } else {
             throw Exception('Data list is empty');
@@ -208,13 +188,12 @@ class ApplicantSummeryRepository {
             'Failed to fetch applicant summary: ${response.statusCode} ${response.body}');
       }
     } catch (e) {
-      print('Error fetching applicant summary: $e');
+      logError('Error fetching applicant summary: $e');
       throw Exception('Error fetching applicant summary: $e');
     }
   }
 
   Future<int> noteAndFilePost(NoteFile noteFile, String applicantId) async {
-    print(applicantId);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
@@ -234,19 +213,15 @@ class ApplicantSummeryRepository {
 
     if (response.statusCode == 200) {
       return response.statusCode;
-      print('Note and files posted successfully');
     } else {
-      print('Failed to post note and files: ${response.body}');
       throw Exception('Failed to post note and files');
     }
   }
 
   Future<int> deleteNoteAndFiles(String applicantId, String note__id) async {
-    print(" ${applicantId} ${note__id} ");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    print('token ${token}');
 
     final response = await apiDelete(
         Uri.parse(
@@ -258,10 +233,8 @@ class ApplicantSummeryRepository {
         });
 
     if (response.statusCode == 200) {
-      print('Note and File Delete sucessfully');
       return response.statusCode;
     } else {
-      print('Failed To delete a note');
       return response.statusCode;
     }
   }
@@ -281,15 +254,12 @@ class ApplicantSummeryRepository {
           });
 
       if (response.statusCode == 200) {
-        print('Response body kkk : ${response.body}');
         return ApplicantContentDetails.fromJson(json.decode(response.body));
       } else {
-        print(
-            'Failed to load applicant details, status code: ${response.statusCode}');
         throw Exception('Failed to load applicant details');
       }
     } catch (e) {
-      print('Error: $e');
+      logError('Error: $e');
       throw Exception('Failed to load applicant details');
     }
   }
@@ -299,11 +269,8 @@ class ApplicantSummeryRepository {
         .get(Uri.parse('$Api_url/api/applicant/applicant/mail/$applicantId'));
 
     if (reponse.statusCode == 200) {
-      print(reponse.body);
-      print('Mail Send Successfully');
       return reponse.statusCode;
     } else {
-      print('Failed to send the mail ${reponse.body}');
       return reponse.statusCode;
     }
   }
@@ -322,7 +289,6 @@ class ApplicantSummeryRepository {
           'Content-Type': 'application/json; charset=UTF-8',
         });
     if (response.statusCode == 200) {
-      print(response.body);
       var jsonData = json.decode(response.body);
       var data = jsonData['data'];
       if (data != null && data is List && data.isNotEmpty) {
@@ -349,7 +315,6 @@ class ApplicantSummeryRepository {
           'Content-Type': 'application/json; charset=UTF-8',
         });
     if (response.statusCode == 200) {
-      print(response.body);
       var jsonData = json.decode(response.body);
       var data = jsonData['data'];
       if (data != null && data is List && data.isNotEmpty) {
@@ -379,9 +344,7 @@ class ApplicantSummeryRepository {
     );
 
     if (response.statusCode == 200) {
-      print('Status updated successfully');
     } else {
-      print('Failed to update status');
     }
   }
 }

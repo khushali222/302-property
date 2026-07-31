@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -42,7 +43,6 @@ class _notificationsState extends State<notifications> {
   }
 
   Future<List<Map<String, dynamic>>>? fetchNotifications() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
@@ -54,7 +54,6 @@ class _notificationsState extends State<notifications> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       List<Map<String, dynamic>> notifications =
           List<Map<String, dynamic>>.from(jsonData["data"]);
@@ -118,7 +117,7 @@ class _notificationsState extends State<notifications> {
       }
       return false;
     } catch (e) {
-      print("Error fetching rental details: $e");
+      logError("Error fetching rental details: $e");
       return false;
     }
   }
@@ -131,7 +130,6 @@ class _notificationsState extends State<notifications> {
     String apiUrl =
         '${Api_url}/api/notification/staff_notification/$notificationId';
 
-    print("Notification ID: $notificationId");
 
     try {
       var response = await apiPut(
@@ -146,13 +144,10 @@ class _notificationsState extends State<notifications> {
       final jsonData = json.decode(response.body);
 
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-        print("API call successful");
 
         final responseData = jsonData['data'];
-        print(responseData);
 
         if (responseData['is_workorder'] == true) {
-          print("Navigating to Edit Work Order...");
           String workOrderId =
               responseData['notification_type']['workorder_id'];
           Navigator.push(
@@ -161,7 +156,6 @@ class _notificationsState extends State<notifications> {
                   builder: (context) =>
                       Workorder_summery(workorder_id: workOrderId)));
         } else {
-          print("Navigating to Property...");
           String rentalId = responseData['rental_id'];
 
           // Fetch rental details to determine if it's multi-unit
@@ -178,11 +172,9 @@ class _notificationsState extends State<notifications> {
           );
         }
       } else {
-        print(
-            "Failed to update notification. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error: $e");
+      logError("Error: $e");
     }
   }
 
@@ -302,13 +294,10 @@ class _notificationsState extends State<notifications> {
                                       Spacer(),
                                       GestureDetector(
                                         onTap: () {
-                                          print("calling");
                                           handleNotificationTap(
                                               context,
                                               notification['is_workorder'],
                                               notification['notification_id']);
-                                          print(
-                                              "noti id gest ${notification['notification_id']}");
                                           loadNotifications();
                                         },
                                         child: Container(

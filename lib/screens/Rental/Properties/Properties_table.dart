@@ -98,13 +98,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   late Future<List<RentalOwnerModel.RentalOwnerData>> futureRentalOwnersList;
 
   void sortData(List<Rentals> data) {
-    print('=== SORTDATA CALLED ===');
-    print('sorting1=$sorting1, sorting2=$sorting2, sorting3=$sorting3');
-    print(
-        'ascending1=$ascending1, ascending2=$ascending2, ascending3=$ascending3');
-    print('Data count before sort: ${data.length}');
     if (sorting1) {
-      print('Sorting by Property Name (ascending1=$ascending1)');
       data.sort((a, b) => ascending1
           ? a.rentalAddress!
               .toLowerCase()
@@ -113,7 +107,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
               .toLowerCase()
               .compareTo(a.rentalAddress!.toLowerCase()));
     } else if (sorting2) {
-      print('Sorting by Property Type (ascending2=$ascending2)');
       data.sort((a, b) => ascending2
           ? a.propertyTypeData!.propertyType!
               .toLowerCase()
@@ -122,11 +115,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
               .toLowerCase()
               .compareTo(a.propertyTypeData!.propertyType!.toLowerCase()));
     } else if (sorting3) {
-      print('Sorting by Accepting Application (ascending3=$ascending3)');
-      print('Sample data before sort:');
       for (int i = 0; i < (data.length > 5 ? 5 : data.length); i++) {
-        print(
-            '  [$i] ${data[i].rentalAddress} - is_available: ${data[i].is_available}');
       }
       data.sort((a, b) {
         // Primary sort: by is_available
@@ -144,10 +133,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
             .toLowerCase()
             .compareTo(b.rentalAddress!.toLowerCase());
       });
-      print('Sample data after sort:');
       for (int i = 0; i < (data.length > 5 ? 5 : data.length); i++) {
-        print(
-            '  [$i] ${data[i].rentalAddress} - is_available: ${data[i].is_available}');
       }
     } else {
       // Default sorting by createdAt in descending order (newest first) to match web
@@ -426,9 +412,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
               flex: 2,
               child: InkWell(
                 onTap: () {
-                  print('=== SORTING BY ACCEPTING APPLICATION ===');
-                  print(
-                      'Before: sorting3=$sorting3, ascending3=$ascending3, expandedIndex=$expandedIndex, expandedRentalId=$expandedRentalId');
                   setState(() {
                     if (sorting3 == true) {
                       sorting1 = false;
@@ -447,8 +430,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
                     // Reset expanded index when sorting changes
                     expandedIndex = null;
                     expandedRentalId = null;
-                    print(
-                        'After: sorting3=$sorting3, ascending3=$ascending3, expandedIndex=$expandedIndex, expandedRentalId=$expandedRentalId');
                     _currentPage = 0;
                     futurePropertiesLoad = _loadProperties();
                   });
@@ -784,7 +765,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    print('screenHeight: $screenHeight');
     final screenWidth = MediaQuery.of(context).size.width;
     final dateProvider = Provider.of<DateProvider>(context);
     return Scaffold(
@@ -1584,16 +1564,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                             // changed (e.g. 25 → 10) even when everything fits one page.
                             final bool showPagination = totalForPager > 0;
 
-                            print("=== CURRENT PAGE DATA ===");
-                            print(
-                                "Total data: ${_tableData.length}, Current page: $_currentPage, Rows per page: $_rowsPerPage");
-                            print(
-                                "Current page data count: ${currentPageData.length}");
-                            print(
-                                "expandedIndex: $expandedIndex, expandedRentalId: $expandedRentalId");
                             for (int i = 0; i < currentPageData.length; i++) {
-                              print(
-                                  "  [$i] ${currentPageData[i].rentalAddress} (rentalId: ${currentPageData[i].rentalId}, is_available: ${currentPageData[i].is_available})");
                             }
 
                             // Find the correct index for expanded property by rentalId
@@ -1608,12 +1579,8 @@ class _PropertiesTableState extends State<PropertiesTable> {
                               }
                               if (foundIndex != null &&
                                   foundIndex != expandedIndex) {
-                                print(
-                                    "Found expanded property at new index: $foundIndex (was: $expandedIndex)");
                                 expandedIndex = foundIndex;
                               } else if (foundIndex == null) {
-                                print(
-                                    "Expanded property not found in current page, resetting");
                                 expandedIndex = null;
                                 expandedRentalId = null;
                               }
@@ -1644,32 +1611,15 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                         //return CustomExpansionTile(data: Propertytype, index: index);
                                         return GestureDetector(
                                           onTap: () {
-                                            print('=== PROPERTY TAPPED ===');
-                                            print(
-                                                'Property: ${rentals.rentalAddress}');
-                                            print(
-                                                'RentalId: ${rentals.rentalId}');
-                                            print(
-                                                'Current expandedIndex: $expandedIndex');
-                                            print(
-                                                'Current expandedRentalId: $expandedRentalId');
-                                            print('Tapped index: $index');
-                                            print(
-                                                'isExpanded before: $isExpanded');
                                             setState(() {
                                               if (expandedIndex == index) {
-                                                print('Collapsing property');
                                                 expandedIndex = null;
                                                 expandedRentalId = null;
                                               } else {
-                                                print(
-                                                    'Expanding property at index $index');
                                                 expandedIndex = index;
                                                 expandedRentalId =
                                                     rentals.rentalId;
                                               }
-                                              print(
-                                                  'After: expandedIndex=$expandedIndex, expandedRentalId=$expandedRentalId');
                                             });
                                           },
                                           child: Container(
@@ -1707,28 +1657,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                       children: <Widget>[
                                                         InkWell(
                                                           onTap: () {
-                                                            print(
-                                                                '=== EXPAND/COLLAPSE ICON TAPPED ===');
-                                                            print(
-                                                                'Property: ${rentals.rentalAddress}');
-                                                            print(
-                                                                'RentalId: ${rentals.rentalId}');
-                                                            print(
-                                                                'Current expandedIndex: $expandedIndex');
-                                                            print(
-                                                                'Tapped index: $index');
                                                             setState(() {
                                                               if (expandedIndex ==
                                                                   index) {
-                                                                print(
-                                                                    'Collapsing property');
                                                                 expandedIndex =
                                                                     null;
                                                                 expandedRentalId =
                                                                     null;
                                                               } else {
-                                                                print(
-                                                                    'Expanding property at index $index');
                                                                 expandedIndex =
                                                                     index;
                                                                 expandedRentalId =
@@ -1767,28 +1703,14 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                                           flex: 4,
                                                           child: InkWell(
                                                             onTap: () {
-                                                              print(
-                                                                  '=== PROPERTY NAME TAPPED ===');
-                                                              print(
-                                                                  'Property: ${rentals.rentalAddress}');
-                                                              print(
-                                                                  'RentalId: ${rentals.rentalId}');
-                                                              print(
-                                                                  'Current expandedIndex: $expandedIndex');
-                                                              print(
-                                                                  'Tapped index: $index');
                                                               setState(() {
                                                                 if (expandedIndex ==
                                                                     index) {
-                                                                  print(
-                                                                      'Collapsing property');
                                                                   expandedIndex =
                                                                       null;
                                                                   expandedRentalId =
                                                                       null;
                                                                 } else {
-                                                                  print(
-                                                                      'Expanding property at index $index');
                                                                   expandedIndex =
                                                                       index;
                                                                   expandedRentalId =
@@ -2429,7 +2351,6 @@ class _PropertiesTableState extends State<PropertiesTable> {
           "published_rent_amount": double.tryParse(rentAmount) ?? 0.0,
         }),
       );
-      print(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Fluttertoast.showToast(
             msg: "Property availability updated successfully.");

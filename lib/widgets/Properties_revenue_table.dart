@@ -178,7 +178,6 @@ class _CustomAdminRevenueTableState extends State<CustomAdminRevenueTable> {
                 int index = entry.key;
                 bool isExpanded = expandedIndex == index;
                 Properties_Revenu_model lease = entry.value;
-                print("date ${lease.entry?.first.date}");
                 return Container(
                   margin:
                   EdgeInsets.symmetric(vertical: 6),

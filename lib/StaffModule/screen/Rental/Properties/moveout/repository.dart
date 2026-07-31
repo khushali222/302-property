@@ -38,8 +38,6 @@ class LeaseMoveoutRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print('$apiUrl$leaseId');
-   print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -64,7 +62,6 @@ class LeaseMoveoutRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString("staff_id");
 
-    print(data);
     final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/moveout/lease_movein/$leaseId'),
       headers: <String, String>{
@@ -75,8 +72,6 @@ class LeaseMoveoutRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print('$apiUrl$leaseId');
-    print(" move in body ${response.body}");
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

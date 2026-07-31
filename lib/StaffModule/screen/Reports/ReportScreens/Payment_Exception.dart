@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -72,7 +73,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -131,7 +131,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       try {
         return DateFormat('dd-MM-yyyy').parse(dateString);
       } catch (e) {
-        print('Error parsing date: $dateString');
+        logError('Error parsing date: $dateString');
         return null; // Return null if parsing fails
       }
     }
@@ -550,7 +550,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
 
   PdfDelinquentTenantsData? globalDelinquentTenantsData;
   Future<PdfDelinquentTenantsData?> fetchDelinquentTenantsGrandTotal() async {
-    print('Fetching delinquent tenants');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -576,7 +575,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return null;
     }
   }
@@ -594,7 +593,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     setState(() {
@@ -1133,7 +1132,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
 
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -1143,7 +1141,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
       "id": "CRM ${prefs.getString('staff_id') ?? id}",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (response.statusCode == 200) {
       // setState(() {
       //   rentalowners = (jsonDecode(response.body) as List)
@@ -1369,7 +1366,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                       bool isRowExpanded =
                                           expandedRowIndex == rowIndex;
                                       Data rental = entry.value;
-                                      print(rental.paymentType);
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
                                             vertical: 6),
@@ -2624,7 +2620,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
         return DateFormat('yyyy-MM-dd').format(parsedDate);
       }
     } catch (e) {
-      print('Error converting date format: $e');
+      logError('Error converting date format: $e');
     }
     return date; // Return the original date if conversion fails
   }
@@ -2969,7 +2965,6 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                             }
                           });
                           // Handle the selected charge type
-                          print(value);
                         },
                         buttonStyleData: ButtonStyleData(
                           height: 42,
@@ -3157,13 +3152,10 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                               Provider.of<DateProvider>(context, listen: false);
                           // Export logic
                           if (value == 'PDF' && data != null) {
-                            print('pdf');
                             generateAccountTotalReportPdf(data, dateProvider);
                           } else if (value == 'XLSX' && data != null) {
-                            print('XLSX');
                             generateAccountTotalReportExcel(data, dateProvider);
                           } else if (value == 'CSV' && data != null) {
-                            print('CSV');
                             generateAccountTotalReportCsv(data, dateProvider);
                           }
                         },

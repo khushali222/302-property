@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -13,7 +14,6 @@ Future<Data> fetchWorkOrderSetting() async {
   String? id = prefs.getString("adminId");
   String url = '${Api_url}/api/work-order/work-defaults/${id}';
 
-  print('Fetching work order setting: $url');
   try {
     final response = await apiGet(
       Uri.parse(url),
@@ -24,17 +24,15 @@ Future<Data> fetchWorkOrderSetting() async {
       },
     );
 
-    print('work order setting response: ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic>? jsonData = json.decode(response.body);
       return Data.fromJson(jsonData!["data"]);
 
     } else {
-      print('Failed to load work order setting. Status code: ${response.statusCode}');
       throw Exception('Failed to work order setting');
     }
   } catch (error) {
-    print('Error work order setting: $error');
+    logError('Error work order setting: $error');
     throw Exception('Error work order setting');
   }
 }
@@ -47,7 +45,6 @@ Future<Data> fetchWorkOrderSettingstaff() async {
   String? id = prefs.getString("staff_id");
   String url = '${Api_url}/api/work-order/work-defaults/${adminid}';
 
-  print('Fetching work order setting: $url');
   try {
     final response = await apiGet(
       Uri.parse(url),
@@ -58,17 +55,15 @@ Future<Data> fetchWorkOrderSettingstaff() async {
       },
     );
 
-    print('work order setting response: ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic>? jsonData = json.decode(response.body);
       return Data.fromJson(jsonData!["data"]);
 
     } else {
-      print('Failed to load work order setting. Status code: ${response.statusCode}');
       throw Exception('Failed to work order setting');
     }
   } catch (error) {
-    print('Error work order setting: $error');
+    logError('Error work order setting: $error');
     throw Exception('Error work order setting');
   }
 }

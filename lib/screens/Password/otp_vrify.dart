@@ -109,10 +109,8 @@ class _otp_verifyState extends State<otp_verify> {
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
-      print(jsonData);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,user_id: widget.userId,)),
@@ -166,7 +164,6 @@ class _otp_verifyState extends State<otp_verify> {
 
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
-        print(jsonData);
         Fluttertoast.showToast(msg: "OTP sent successfully");
         setState(() {
           // Fresh code: clear whatever was typed against the old one.

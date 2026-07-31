@@ -88,7 +88,6 @@ class EditData {
   });
 
   EditData.fromJson(Map<String, dynamic> json) {
-    print(json['vendor_id']);
     sId = json['_id'];
     workOrderId = json['workOrder_id'];
     adminId = json['admin_id'];

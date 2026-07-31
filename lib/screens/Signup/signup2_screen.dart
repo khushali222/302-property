@@ -972,7 +972,6 @@ class _Signup2State extends State<Signup2> {
       "phone_number": phonenumber.text.trim()
     });
     final jsonData = json.decode(response.body);
-    print("login ${response.body}");
     if (jsonData["statusCode"] == 200) {
       prefs.setString('first_name', jsonData['data']['first_name']);
       prefs.setString('last_name', jsonData['data']['last_name']);

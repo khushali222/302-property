@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -133,9 +134,6 @@ class _AddApplienceState extends State<AddApplience> {
 //make an funtion for load data from widget
   void loadDataFromWidget() {
     setState(() {
-      print("Loading data from widget...");
-      print("Appliance data: ${widget.appliance?.toJson()}");
-      print("Filters data: ${widget.appliance?.filters}");
 
       _name.text = widget.appliance?.applianceName ?? '';
       _description.text = widget.appliance?.applianceDescription ?? '';
@@ -199,13 +197,10 @@ class _AddApplienceState extends State<AddApplience> {
       if (_selectedDropdownCategory?.name == 'HVAC' &&
           widget.appliance?.filters != null &&
           widget.appliance!.filters!.isNotEmpty) {
-        print("Loading HVAC filters...");
-        print("Number of filters: ${widget.appliance!.filters!.length}");
 
         showFiltersSection = true;
         filterControllers.clear();
         for (var filter in widget.appliance!.filters!) {
-          print("Processing filter: $filter");
           Map<String, dynamic> filterMap = filter as Map<String, dynamic>;
           filterControllers.add({
             'name': TextEditingController(
@@ -213,15 +208,8 @@ class _AddApplienceState extends State<AddApplience> {
             'size': TextEditingController(
                 text: filterMap['filter_size']?.toString() ?? ''),
           });
-          print(
-              "Added filter - Name: ${filterMap['filter_name']}, Size: ${filterMap['filter_size']}");
         }
-        print("Filter controllers created: ${filterControllers.length}");
       } else {
-        print("No HVAC filters to load");
-        print("Category: ${_selectedDropdownCategory?.name}");
-        print("Has filters: ${widget.appliance?.filters != null}");
-        print("Filters not empty: ${widget.appliance?.filters?.isNotEmpty}");
       }
     });
   }
@@ -266,14 +254,13 @@ class _AddApplienceState extends State<AddApplience> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
       if (widget.appliance != null) loadDataFromWidget();
     } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
+      logError('Error fetching categories in AddWorkOrderForMobile: ' +
           e.toString());
       setState(() {
         _isLoadingCategories = false;
@@ -392,7 +379,6 @@ class _AddApplienceState extends State<AddApplience> {
   List<String> _uploadedFileNames = [];
   List<String> _imageUrls = [];
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -404,7 +390,6 @@ class _AddApplienceState extends State<AddApplience> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -437,7 +422,7 @@ class _AddApplienceState extends State<AddApplience> {
         _imageUrls.add(fileName!);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -626,8 +611,6 @@ class _AddApplienceState extends State<AddApplience> {
                             : (allcategories_model? newValue) {
                                 setState(() {
                                   _selectedDropdownCategory = newValue;
-                                  print(_selectedDropdownCategory?.name);
-                                  print(_selectedDropdownCategory?.brands);
                                   brandList =
                                       _selectedDropdownCategory?.brands ?? [];
                                   _selectedBrand = null;
@@ -1187,10 +1170,8 @@ class _AddApplienceState extends State<AddApplience> {
 
                                 // Create a single filters list
                                 List<Map<String, dynamic>> filters = [];
-                                print("calling save button");
                                 if (_selectedDropdownCategory?.name == 'HVAC' &&
                                     showFiltersSection) {
-                                  print('Creating filters for HVAC appliance');
                                   for (int i = 0;
                                       i < filterControllers.length;
                                       i++) {
@@ -1200,9 +1181,6 @@ class _AddApplienceState extends State<AddApplience> {
                                     final filterSize =
                                         controller['size']?.text.trim() ?? '';
 
-                                    print('Processing Filter ${i + 1}:');
-                                    print('  Name: $filterName');
-                                    print('  Size: $filterSize');
 
                                     // Only add filter if either name or size is not empty
                                     if (filterName.isNotEmpty ||
@@ -1217,8 +1195,6 @@ class _AddApplienceState extends State<AddApplience> {
                                         "filter_size": filterSize,
                                       };
                                       filters.add(filterData);
-                                      print(
-                                          'Added filter to list: $filterData');
 
                                       // Add a small delay to ensure unique timestamps for filter_ids
                                       await Future.delayed(
@@ -1226,8 +1202,6 @@ class _AddApplienceState extends State<AddApplience> {
                                     }
                                   }
 
-                                  print(
-                                      'Final filters list before API call: ${json.encode(filters)}');
                                 }
 
                                 // Get the base64 image if available
@@ -1326,7 +1300,6 @@ class _AddApplienceState extends State<AddApplience> {
                                             "", // Add the base64 image
                                       );
 
-                                print('API Response: $response');
 
                                 setState(() {
                                   isLoading = false;
@@ -1355,7 +1328,7 @@ class _AddApplienceState extends State<AddApplience> {
                                 Navigator.pop(context,
                                     true); // Return true to indicate success
                               } catch (e) {
-                                print('Error adding appliance: $e');
+                                logError('Error adding appliance: $e');
                                 setState(() => isLoading = false);
                                 final cleanMsg =
                                     e.toString().replaceFirst('Exception: ', '');

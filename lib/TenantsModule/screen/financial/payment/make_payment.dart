@@ -132,7 +132,7 @@ class _MakePaymentState extends State<MakePayment> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      Fluttertoast.showToast(msg: 'Could not load surcharge settings. Amounts may be incomplete.');
     }
   }
 
@@ -163,7 +163,6 @@ class _MakePaymentState extends State<MakePayment> {
       // String? adminId = jsonData['data']['admin_id'];
       // print('Admin ID: $adminId');
     } else {
-      print('Failed to check token');
     }
   }
 
@@ -180,7 +179,6 @@ class _MakePaymentState extends State<MakePayment> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }
@@ -207,8 +205,6 @@ class _MakePaymentState extends State<MakePayment> {
     DateTime today = DateTime.now();
 
     _startDate.text = DateFormat('yyyy-MM-dd').format(today);
-    print("id tenant ${widget.tenantId}");
-    print("id tenant ${widget.leaseId}");
     //  fetchSurcharge();
     //totalAmount = chargeAmount + surchargeIncluded;
     // amountController.addListener(_updateTotalAmount);
@@ -220,7 +216,6 @@ class _MakePaymentState extends State<MakePayment> {
     final dateProvider = Provider.of<DateProvider>(context);
     _startDate.text = dateProvider
         .formatCurrentDate(DateFormat('yyyy-MM-dd').format(DateTime.now()));
-    print("formatted date $_startDate.text");
   }
 
   void _updateTotalAmount() {
@@ -252,7 +247,6 @@ class _MakePaymentState extends State<MakePayment> {
     // print('$Api_url/api/leases/get_leases/${widget.tenantId}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, dynamic>> fetchedTenants = [];
 
       for (var tenant in data['data']['leases']) {
@@ -454,7 +448,7 @@ class _MakePaymentState extends State<MakePayment> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      Fluttertoast.showToast(msg: 'Failed to attach the file. Please try again.');
     }
   }
 
@@ -777,14 +771,9 @@ class _MakePaymentState extends State<MakePayment> {
     try {
       List<Entrycharge>? charges =
           await ChargeRepositorys().fetchChargesTable(widget.leaseId);
-      print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
-      print("charges length:- ${charges!.length}");
-      print('leaseid ${widget.leaseId}');
 
-      print('tenantid '
-          '$tenantId');
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
@@ -813,14 +802,12 @@ class _MakePaymentState extends State<MakePayment> {
             charges_balances.add(double.parse(formattedChargeAmount));
           }
         }
-        print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
@@ -916,7 +903,6 @@ class _MakePaymentState extends State<MakePayment> {
         await fetchSurcharge();
       }
     } catch (e) {
-      print(e);
       setState(() {
         hasError = true;
         isLoadingamount = false;
@@ -1023,8 +1009,6 @@ class _MakePaymentState extends State<MakePayment> {
   }
 
   Future<void> fetchcreditcard(String tenantId) async {
-    print("========== fetchcreditcard START ==========");
-    print("Tenant ID: $tenantId");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
@@ -1037,35 +1021,22 @@ class _MakePaymentState extends State<MakePayment> {
 
     try {
       final url = '$Api_url/api/creditcard/getCreditCards/$tenantId';
-      print('Credit Card API URL: $url');
-      print('Token: ${token != null ? "Present" : "Missing"}');
-      print('Tenant ID from prefs: $id');
 
       final response = await apiGet(
         Uri.parse(url),
         headers: {"id": "CRM $id", "authorization": "CRM $token"},
       );
 
-      print("Credit Card Response Status Code: ${response.statusCode}");
-      print("Credit Card Response body: ${response.body}");
-      print("Credit Card Response body type: ${response.body.runtimeType}");
 
       if (response.statusCode == 200) {
         try {
           var jsonResponse = json.decode(response.body);
-          print(
-              'Credit Card Decoded Response type: ${jsonResponse.runtimeType}');
-          print('Credit Card Decoded Response: $jsonResponse');
 
           if (jsonResponse is Map<String, dynamic>) {
-            print('Credit Card jsonResponse is Map');
-            print('Credit Card jsonResponse keys: ${jsonResponse.keys}');
 
             // Check customer_vault_id
             if (jsonResponse.containsKey('customer_vault_id')) {
               var vaultId = jsonResponse['customer_vault_id'];
-              print('customer_vault_id type: ${vaultId.runtimeType}');
-              print('customer_vault_id value: $vaultId');
               if (vaultId != null) {
                 if (vaultId is int) {
                   customervaultid = vaultId;
@@ -1077,9 +1048,7 @@ class _MakePaymentState extends State<MakePayment> {
               } else {
                 customervaultid = null;
               }
-              print('customervaultid set to: $customervaultid');
             } else {
-              print("WARNING: 'customer_vault_id' key not found");
             }
 
             // Load ACH accounts from billing vault when we have vault id (even if no cards)
@@ -1090,30 +1059,18 @@ class _MakePaymentState extends State<MakePayment> {
             // Check card_detail
             if (jsonResponse.containsKey('card_detail')) {
               var cardDetail = jsonResponse['card_detail'];
-              print('card_detail type: ${cardDetail.runtimeType}');
-              print('card_detail: $cardDetail');
 
               if (cardDetail is List) {
                 List<dynamic> cardDetailsList = cardDetail;
-                print('cardDetailsList length: ${cardDetailsList.length}');
 
                 for (int i = 0; i < cardDetailsList.length; i++) {
-                  print('Card Detail $i: ${cardDetailsList[i]}');
-                  print(
-                      'Card Detail $i type: ${cardDetailsList[i].runtimeType}');
                 }
 
                 if (customervaultid != null) {
-                  print(
-                      "Calling postBillingCustomerVault with vaultId: $customervaultid");
                   CustomerData? customerData = await postBillingCustomerVault(
                       customervaultid.toString(), cardDetailsList);
 
                   if (customerData != null) {
-                    print("postBillingCustomerVault returned data");
-                    print("Billing data count: ${customerData.billing.length}");
-                    print("Debit card is Accepted: $debitCardAccepted");
-                    print("Credit card is Accepted: $creditCardAccepted");
 
                     setState(() {
                       cardDetails = customerData.billing;
@@ -1133,70 +1090,42 @@ class _MakePaymentState extends State<MakePayment> {
                                 (loneType == 'DEBIT' && debitCardAccepted);
                         if (loneAccepted) {
                           selectedcardindex = 0;
-                          print("Auto-selected card index 0");
                           fetchSurcharge();
                         } else {
-                          print(
-                              "Card not auto-selected. type: $loneType, creditCardAccepted: $creditCardAccepted, debitCardAccepted: $debitCardAccepted");
                         }
                       } else {
                         selectedcardindex = null;
                       }
                     });
 
-                    print("cardDetails set. Count: ${cardDetails.length}");
                   } else {
-                    print("ERROR: postBillingCustomerVault returned null");
                   }
                 } else {
-                  print("ERROR: customervaultid is null");
                 }
               } else {
-                print(
-                    "ERROR: 'card_detail' is not a List. Type: ${cardDetail.runtimeType}");
               }
             } else {
-              print("WARNING: 'card_detail' key not found in response");
-              print("No cards available for this tenant");
             }
           } else {
-            print(
-                "ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}");
           }
         } catch (e, stackTrace) {
-          print("========== Error parsing credit card response ==========");
-          print("Error: $e");
-          print("Stack trace: $stackTrace");
-          print("========================================================");
+          Fluttertoast.showToast(msg: 'Could not load saved cards.');
         }
       } else if (response.statusCode == 404) {
-        print('customer_vault_id not found (404)');
-        print('No cards available for tenant: $tenantId');
       } else {
-        print(
-            'Failed to load credit card data. Status: ${response.statusCode}');
-        print('Response: ${response.body}');
       }
     } catch (e, stackTrace) {
-      print("========== Error in fetchcreditcard ==========");
-      print("Error: $e");
-      print("Stack trace: $stackTrace");
-      print("==============================================");
+      Fluttertoast.showToast(msg: 'Could not load saved cards.');
     } finally {
       setState(() {
         isLoading = false;
         isloading = false;
       });
-      print("cardDetails final count: ${cardDetails.length}");
-      print("========== fetchcreditcard END ==========");
     }
   }
 
   Future<CustomerData?> postBillingCustomerVault(
       String customerVaultId, List<dynamic> cardDetailsList) async {
-    print("========== postBillingCustomerVault START ==========");
-    print("customerVaultId: $customerVaultId");
-    print("cardDetailsList length: ${cardDetailsList.length}");
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
@@ -1208,8 +1137,6 @@ class _MakePaymentState extends State<MakePayment> {
       "admin_id": adminId.toString(),
     };
 
-    print("Request body: $requestBody");
-    print("API URL: $Api_url/api/nmipayment/get-billing-customer-vault");
 
     try {
       final response = await apiPost(
@@ -1222,81 +1149,54 @@ class _MakePaymentState extends State<MakePayment> {
         body: json.encode(requestBody),
       );
 
-      print("Billing Vault Response Status Code: ${response.statusCode}");
-      print("Billing Vault Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         try {
           var jsonResponse = json.decode(response.body);
-          print(
-              'Billing Vault Decoded Response type: ${jsonResponse.runtimeType}');
-          print('Billing Vault Decoded Response: $jsonResponse');
 
           if (jsonResponse is Map<String, dynamic>) {
             if (jsonResponse.containsKey('data')) {
               var data = jsonResponse['data'];
-              print('Data type: ${data.runtimeType}');
-              print('Data: $data');
 
               if (data is Map<String, dynamic>) {
                 if (data.containsKey('customer')) {
                   var customerJson = data['customer'];
-                  print('customerJson type: ${customerJson.runtimeType}');
-                  print('customerJson: $customerJson');
 
                   if (customerJson == null) {
-                    print('ERROR: customerJson is null');
                     return null;
                   }
 
                   CustomerData customerData =
                       CustomerData.fromJson(customerJson);
-                  print('CustomerData parsed successfully');
-                  print(
-                      'Billing count before filter: ${customerData.billing.length}');
 
                   customerData.billing.forEach((billing) {
-                    print(
-                        'CC Bin: ${billing.ccBin}, Billing ID: ${billing.billingId}');
                   });
 
-                  print('cardDetailsList: $cardDetailsList');
                   Set<String> cardBillingIds = cardDetailsList
                       .map((card) {
-                        print('Processing card: $card');
-                        print('Card type: ${card.runtimeType}');
                         if (card is Map) {
-                          print('Card keys: ${card.keys}');
                           if (card.containsKey('billing_id')) {
                             var billingId = card['billing_id'];
-                            print(
-                                'billing_id value: $billingId, type: ${billingId.runtimeType}');
                             return billingId.toString();
                           } else {
-                            print('WARNING: billing_id not found in card');
                             return '';
                           }
                         } else {
-                          print('WARNING: card is not a Map');
                           return '';
                         }
                       })
                       .where((id) => id.isNotEmpty)
                       .toSet();
 
-                  print('cardBillingIds: $cardBillingIds');
 
                   // Filter customerData.billing to only include matching billing IDs
                   List<BillingData> filteredCards =
                       customerData.billing.where((billing) {
                     bool matches = cardBillingIds.contains(billing.billingId);
-                    print('Billing ID ${billing.billingId} matches: $matches');
                     return matches;
                   }).toList();
 
                   customerData.billing = filteredCards;
-                  print(
-                      'Billing count after filter: ${customerData.billing.length}');
 
                   // Assign card types
                   for (int i = 0;
@@ -1307,54 +1207,32 @@ class _MakePaymentState extends State<MakePayment> {
                         cardDetailsList[i].containsKey("card_type")) {
                       customerData.billing[i].binResult =
                           cardDetailsList[i]["card_type"];
-                      print(
-                          'Assigned card_type ${cardDetailsList[i]["card_type"]} to billing[$i]');
                     } else {
-                      print(
-                          'WARNING: cardDetailsList[$i] does not have card_type');
                     }
                   }
 
-                  print(
-                      "========== postBillingCustomerVault SUCCESS ==========");
                   return customerData;
                 } else {
-                  print('ERROR: "customer" key not found in data');
                   return null;
                 }
               } else {
-                print('ERROR: data is not a Map. Type: ${data.runtimeType}');
                 return null;
               }
             } else {
-              print('ERROR: "data" key not found in response');
               return null;
             }
           } else {
-            print(
-                'ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}');
             return null;
           }
         } catch (e, stackTrace) {
-          print("========== Error parsing billing vault response ==========");
-          print("Error: $e");
-          print("Stack trace: $stackTrace");
-          print("==========================================================");
           return null;
         }
       } else {
-        print('ERROR: Failed to post data. Status: ${response.statusCode}');
-        print('Response: ${response.body}');
         return null;
       }
     } catch (e, stackTrace) {
-      print("========== Error in postBillingCustomerVault ==========");
-      print("Error: $e");
-      print("Stack trace: $stackTrace");
-      print("=======================================================");
       return null;
     } finally {
-      print("========== postBillingCustomerVault END ==========");
     }
   }
 
@@ -1370,7 +1248,6 @@ class _MakePaymentState extends State<MakePayment> {
   dynamic? surChargeAchflat;
   bool partialamount = false;
   Future<void> fetchSurcharge() async {
-    print("calling");
     //  try {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
@@ -1392,7 +1269,6 @@ class _MakePaymentState extends State<MakePayment> {
 
       // Accessing the first element in the 'data' list
       var surchargeData = jsonResponse['data'][0];
-      print(surchargeData);
       // Card type is chosen by explicit binResult, never inferred.
       // WEB parity: normalize case so a stored "Credit"/"credit" still matches.
       final String? cardType = (selectedcardindex != null &&
@@ -1448,7 +1324,6 @@ class _MakePaymentState extends State<MakePayment> {
       // print(surChargeAchper);
       // print(surChargeAchflat);
     } else {
-      print('Failed to fetch the surcharge: ${response}');
       var jsonResponse = jsonDecode(response.body);
       String message = jsonResponse['message'];
       throw Exception('Failed to fetch the surcharge $message');
@@ -1464,9 +1339,6 @@ class _MakePaymentState extends State<MakePayment> {
   bool isCardTwoEnabled = false;
 
   Future<void> fetchPaymentSettings(String tenantId, String leaseid) async {
-    print("========== fetchPaymentSettings START ==========");
-    print("Tenant ID: $tenantId");
-    print("Lease ID: $leaseid");
     setState(() {
       isloading = true;
     });
@@ -1475,9 +1347,6 @@ class _MakePaymentState extends State<MakePayment> {
     String? id = prefs.getString("tenant_id");
 
     final url = '${Api_url}/api/tenant/payment_settings/${tenantId}/${leaseid}';
-    print('API URL: $url');
-    print('Token: ${token != null ? "Present" : "Missing"}');
-    print('Tenant ID from prefs: $id');
 
     try {
       final response = await apiGet(
@@ -1488,29 +1357,18 @@ class _MakePaymentState extends State<MakePayment> {
         },
       );
 
-      print("Response Status Code: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      print("Response body type: ${response.body.runtimeType}");
 
       if (response.statusCode == 200) {
         try {
           var jsonResponse = json.decode(response.body);
-          print('Decoded Response type: ${jsonResponse.runtimeType}');
-          print('Decoded Response: $jsonResponse');
 
           // Check if data exists and is a Map
           if (jsonResponse is Map<String, dynamic>) {
-            print('jsonResponse is Map');
-            print('jsonResponse keys: ${jsonResponse.keys}');
 
             if (jsonResponse.containsKey('data')) {
               var data = jsonResponse['data'];
-              print('Data type: ${data.runtimeType}');
-              print('Data: $data');
 
               if (data is Map<String, dynamic>) {
-                print('Data is Map');
-                print('Data keys: ${data.keys}');
 
                 setState(() {
                   // WEB parity: fail-open — missing flag means accepted
@@ -1518,53 +1376,33 @@ class _MakePaymentState extends State<MakePayment> {
                   debitCardAccepted = data['debitCardAccepted'] ?? true;
 
                   // Print values to ensure state is being updated correctly
-                  print("creditCardAccepted: $creditCardAccepted");
-                  print("debitCardAccepted: $debitCardAccepted");
-                  print("isCardOneEnabled: $isCardOneEnabled");
-                  print("isCardTwoEnabled: $isCardTwoEnabled");
                 });
 
                 // Fetch the credit card details
-                print("Calling fetchcreditcard with tenantId: $tenantId");
                 await fetchcreditcard(tenantId);
               } else {
-                print("ERROR: 'data' is not a Map. Type: ${data.runtimeType}");
               }
             } else {
-              print("ERROR: 'data' key not found in response");
-              print("Available keys: ${jsonResponse.keys}");
             }
           } else {
-            print(
-                "ERROR: jsonResponse is not a Map. Type: ${jsonResponse.runtimeType}");
           }
         } catch (e, stackTrace) {
-          print("========== Error parsing response body ==========");
-          print("Error: $e");
-          print("Stack trace: $stackTrace");
-          print("================================================");
+          Fluttertoast.showToast(msg: 'Could not load payment settings.');
         } finally {
           setState(() {
             isloading = false;
           });
         }
       } else {
-        print('Failed to fetch payment settings');
-        print('Response Status Code: ${response.statusCode}');
         setState(() {
           isloading = false;
         });
       }
     } catch (e, stackTrace) {
-      print("========== Error in fetchPaymentSettings ==========");
-      print("Error: $e");
-      print("Stack trace: $stackTrace");
-      print("===================================================");
       setState(() {
         isloading = false;
       });
     }
-    print("========== fetchPaymentSettings END ==========");
   }
 
   String? _errorText;
@@ -1725,7 +1563,6 @@ class _MakePaymentState extends State<MakePayment> {
                                         await fetchPaymentSettings(
                                             widget.tenantId, value ?? "");
                                         // ACH list is loaded in fetchcreditcard via fetchAchFromBillingVault
-                                        print('leaseid by ${value ?? ""}');
                                         state.reset();
                                       },
                                       buttonStyleData: ButtonStyleData(
@@ -3079,7 +2916,6 @@ class _MakePaymentState extends State<MakePayment> {
                           if ((_formKey.currentState?.validate() ?? false) &&
                               (!partialamount || _amountLimitError == null)) {
                             if (totalpayamount > 0.0) {
-                              print("valid");
                               setState(() {
                                 iserror = false;
                                 IsLoading = true;
@@ -3117,9 +2953,6 @@ class _MakePaymentState extends State<MakePayment> {
                                       : "Payment",
                                 }
                               ];
-                              print('abc entries ${manualEntries}');
-                              print('abc id ${selectedTenantId!}');
-                              print('start date ${_startDate.text}');
                               if (_selectedPaymentMethod == 'ACH' &&
                                   selectedAchIndex != null &&
                                   selectedAchIndex! < achAccounts.length) {
@@ -3281,8 +3114,6 @@ class _MakePaymentState extends State<MakePayment> {
                                 });
                               } catch (e) {
                                 setState(() => IsLoading = false);
-                                print(
-                                    "[CARD PAYMENT] Sync error before API call: $e");
                                 Fluttertoast.showToast(
                                     msg: friendlyErrorMessage(e,
                                         networkMessage:
@@ -3292,7 +3123,6 @@ class _MakePaymentState extends State<MakePayment> {
                               setState(() {
                                 //iserror = totalpayamount < 0.0;
                                 iserror = true;
-                                print("iserror $iserror");
                                 isLoading = false;
                               });
                             }

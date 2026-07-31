@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -66,9 +67,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     // await _loadProperties();
     RentersEdit fetchedDetails = await RentersInsuranceService()
         .fetchRentersDetails(renters_insurance_id);
-    print(renters_insurance_id);
 
-    print('Address ${fetchedDetails.insurancePolicyDocument}');
 
     await Future.delayed(const Duration(seconds: 1));
     setState(() {
@@ -172,12 +171,11 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      logError('PDF upload failed: $e');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -187,7 +185,6 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     var responseData = await http.Response.fromStream(response);
 
     var responseBody = json.decode(responseData.body);
-    print(responseBody);
     if (responseBody['status'] == 'ok') {
       // Reflect the actual uploaded file type in the toast (was always "PDF",
       // so a JPEG/PNG wrongly said "PDF added successfully").
@@ -496,8 +493,6 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print("token $token");
-    print("Admin $id");
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_tenant/${widget.leaseId}'),
       headers: {"id": "CRM $id", "authorization": "CRM $token"},
@@ -505,7 +500,6 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
       //print(firstName.text = data['tenant_firstName'] ?? "");
       for (var tenant in data['data']['tenants']) {
@@ -1034,11 +1028,9 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
       isLoading = true; // Start loading
     });
     try {
-      print('entry');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      print('${adminId}  ${token}');
 
       // Convert selected tenants to a list of maps
       List<String> selectedTenantsList =
@@ -1059,7 +1051,6 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         "renters_insurance_id": widget.renters_insurance_id,
       };
 
-      print(jsonEncode(values)); // Debugging: Check final JSON format
 
       final http.Response response = await apiPut(
         Uri.parse(
@@ -1073,8 +1064,6 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
       );
 
       var responseData = json.decode(response.body);
-      print('response body ${response.body}');
-      print('$Api_url/api/renter-insurance/add-policy');
       if (responseData["statusCode"] == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         Navigator.pop(context, true);
@@ -1084,7 +1073,7 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         throw Exception('Failed to Insurance');
       }
     } catch (error) {
-      print('Error: $error');
+      logError('Error: $error');
       Fluttertoast.showToast(msg: 'Something went wrong');
     } finally {
       setState(() {

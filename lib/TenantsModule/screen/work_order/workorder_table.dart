@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
@@ -241,7 +242,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -261,7 +261,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
 
   void handleEdit(WorkOrder property) async {
     /* // Handle edit action
-    print('Edit ${property.sId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -707,7 +706,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
       // If none of the formats match, throw an error
       throw FormatException("Unsupported date format: $dateString");
     } catch (e) {
-      print("Error parsing date: $e");
+      logError("Error parsing date: $e");
       return DateTime.now(); // Fallback to current date if parsing fails
     }
   }
@@ -1052,7 +1051,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                           parseDate(element.date.toString());
                           bool isOverDue =
                           dueDate.isBefore(DateTime.now());
-                          print(element.status);
                           bool isNotCompleted =
                               element.status != "Completed" &&
                                   element.status != "Complete";

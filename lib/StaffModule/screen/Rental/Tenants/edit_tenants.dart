@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
@@ -262,7 +263,7 @@ class _EditTenantsState extends State<EditTenants> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
+        logError('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }
@@ -364,7 +365,6 @@ class _EditTenantsState extends State<EditTenants> {
         "id": "CRM $id",
       },
     );
-    print('get_tenant response ${response.body}');
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // get_tenant returns { "data": { ...tenant object } }, not an array
@@ -438,11 +438,6 @@ class _EditTenantsState extends State<EditTenants> {
 
         // [EC-DEBUG] Temporary diagnostic (remove after emergency-contact
         // reload issue is resolved). Prints contact_id presence only, no PII.
-        print('[EC-DEBUG] EDIT-OPEN get_tenant'
-            ' | legacyPresent=${legacyEc is Map && ['name', 'relation', 'email', 'phoneNumber'].any((k) => (legacyEc[k] ?? '').toString().trim().isNotEmpty)}'
-            ' | array=${ecArray is List ? (ecArray as List).length : 'none'}'
-            ' | ids=${ecArray is List ? (ecArray as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}'
-            ' | loadedRows=${emergencyContactsList.length}');
 
         isInitialLoading = false; // Mark initial loading as complete
       });
@@ -1031,9 +1026,6 @@ class _EditTenantsState extends State<EditTenants> {
     }).toList();
 
     // [EC-DEBUG] Temporary diagnostic (remove later) — emergency payload ids.
-    print('[EC-DEBUG] EDIT-SAVE payload'
-        ' | count=${emergencyContacts.length}'
-        ' | ids=${emergencyContacts.map((c) => (c['contact_id']?.toString() ?? '').isEmpty ? 'NEW(no id)' : c['contact_id']).toList()}');
 
     // Web-aligned Edit PUT body: no tenant_id / admin_id / company_name /
     // send_welcome_email; legacy emergency_contact cleared (moved to array);
@@ -1074,7 +1066,7 @@ class _EditTenantsState extends State<EditTenants> {
       }
     } catch (e) {
       if (mounted) setState(() => isLoading = false);
-      print(e.toString());
+      logError(e.toString());
     }
   }
 
@@ -1217,13 +1209,11 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   void _validatePhoneNumber(String value) {
     String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
-    print("for num ${formattedPhoneNumber}");
     // Check if phone number is exactly 10 digits
     if (formattedPhoneNumber.length != 10) {
       setState(() {
         _errorMessage = "Phone number must be 10 digits";
       });
-      print("step 1 ${formattedPhoneNumber}");
     } else {
       // Validate uniqueness across all phone number controllers
       if (widget.telephoneController != null &&
@@ -1231,19 +1221,16 @@ class CustomTextFieldState extends State<CustomTextField> {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 2 ${formattedPhoneNumber}");
       } else if (widget.otherController != null &&
           widget.otherController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 3 ${formattedPhoneNumber}");
       } else if (widget.businessController != null &&
           widget.businessController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 4 ${formattedPhoneNumber}");
       } else {
         setState(() {
           _errorMessage = null; // Clear error message when the number is valid
@@ -1292,19 +1279,16 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-                  print("work same callling  ${widget.samephonenumber}");
                   if (widget.controller!.text.trim().isEmpty) {
                     return null;
                   } else if (widget.phone != null) {
                     _validatePhoneNumber(widget.controller!.text.trim());
-                    print("erroe ${_errorMessage}");
                     if (_errorMessage == null) {
                       return null;
                     }
                     return '';
                   } else if (widget.email != null) {
                     _validateEmail(widget.controller!.text.trim());
-                    print("erroe2 ${_errorMessage}");
                     // Return an empty string or handle accordingly
                     if (_errorMessage == null) {
                       return null;
@@ -1316,7 +1300,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
-                  print("value ${value}");
                   return null;
                 }
               : (value) {

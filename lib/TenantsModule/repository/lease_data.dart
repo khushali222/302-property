@@ -19,7 +19,6 @@ class TenantleaseRepository {
       "authorization": "CRM $token",
       "Content-Type": "application/json"
     });
-    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body)['data'];
       return data.map((json) => tenant_lease.fromJson(json)).toList();

@@ -79,7 +79,6 @@ class _Profile_screenState extends State<Profile_screen> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -307,6 +306,22 @@ class _Profile_screenState extends State<Profile_screen> {
     );
   }
 
+  /// Avatar initials for the profile header.
+  ///
+  /// `firstName?[0]` throws a RangeError on an account saved with a blank
+  /// name (Dart indexing an empty string), so build the initials from
+  /// whichever names are actually present. Web's `?.slice(0, 1)` just yields
+  /// an empty string there; this keeps that no-error behaviour and adds a
+  /// neutral placeholder when neither name is available.
+  String get _avatarInitials {
+    final String first = (_profile?.firstName ?? '').trim();
+    final String last = (_profile?.lastName ?? '').trim();
+    final String initials =
+        '${first.isNotEmpty ? first[0].toUpperCase() : ''}'
+        '${last.isNotEmpty ? last[0].toUpperCase() : ''}';
+    return initials.isNotEmpty ? initials : '-';
+  }
+
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
@@ -435,7 +450,6 @@ class _Profile_screenState extends State<Profile_screen> {
       loading = true; // Set loading to true while changing password
     });
 
-    print(" userid ${userid}");
     final response = await apiPut(
       Uri.parse('${Api_url}/api/admin/app/reset_password'),
       headers: {
@@ -449,15 +463,12 @@ class _Profile_screenState extends State<Profile_screen> {
         'user_id': userid,
       }),
     );
-    print("${role}");
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
-    print(' change password ${response.body}');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
-        print(jsonData);
         // Navigator.push(
         //     context, MaterialPageRoute(builder: (context) => Login_Screen()));
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -489,7 +500,6 @@ class _Profile_screenState extends State<Profile_screen> {
       loading = true; // Set loading to true while fetching 2FA status
     });
 
-    print(" userid ${userid}");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/2fa/2fa-status/${id}'),
       headers: {
@@ -502,7 +512,6 @@ class _Profile_screenState extends State<Profile_screen> {
       loading = false; // Set loading to false after receiving response
     });
 
-    print('2FA status response: ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -529,8 +538,6 @@ class _Profile_screenState extends State<Profile_screen> {
           }
         });
 
-        print("2FA Status - Enabled: $enabled, Method: $method");
-        print("Email 2FA: $email2FA, SMS 2FA: $sms2FA");
       } else {
         // Handle case where data is null or statusCode is not 200
         setState(() {
@@ -538,7 +545,6 @@ class _Profile_screenState extends State<Profile_screen> {
           email2FA = false;
           sms2FA = false;
         });
-        print("2FA data not found or invalid response");
       }
     } else {
       // Handle HTTP error responses
@@ -547,7 +553,6 @@ class _Profile_screenState extends State<Profile_screen> {
         email2FA = false;
         sms2FA = false;
       });
-      print("Failed to fetch 2FA status: ${response.statusCode}");
       Fluttertoast.showToast(msg: 'Failed to fetch 2FA status');
     }
   }
@@ -568,19 +573,16 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       setState(() {
         backupCode = true;
         codes = List<Map<String, dynamic>>.from(jsonData["data"]["codes"]);
       });
-      print(jsonData);
     } else {
       setState(() {
         backupCode = false;
       });
-      print(jsonData);
     }
   }
 
@@ -652,7 +654,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         color: blueColor,
                                         child: Center(
                                           child: Text(
-                                            '${_profile?.firstName?[0].toUpperCase() ?? ''}${_profile?.lastName?[0].toUpperCase() ?? ''}',
+                                            _avatarInitials,
                                             style: const TextStyle(
                                               fontSize: 24.0,
                                               fontWeight: FontWeight.bold,
@@ -762,7 +764,6 @@ class _Profile_screenState extends State<Profile_screen> {
                                                   .externalApplication, // Ensures the system browser is used
                                             );
                                           } else {
-                                            print('Could not launch URL');
                                           }
                                         },
                                         child: Row(
@@ -940,8 +941,9 @@ class _Profile_screenState extends State<Profile_screen> {
                                       child: Text(
                                         "Turn on the toggle above to enable Two-Factor Authentication for enhanced security.",
                                         style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14,
+                                          color: const Color(0xFF8A93A3),
+                                          fontSize: 13,
+                                          height: 1.4,
                                         ),
                                       ),
                                     ),
@@ -2496,8 +2498,6 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     });
                                                   } else {
                                                     // Optionally, show a message that no changes were made
-                                                    print(
-                                                        "No changes detected. API call skipped.");
                                                   }
                                                 }
                                               },
@@ -3020,7 +3020,6 @@ class _Profile_screenState extends State<Profile_screen> {
                                                   .getInstance();
                                           String? pass =
                                               prefs.getString("password");
-                                          print(pass);
                                           // Validate the new password
                                           if (password.text.trim().isEmpty) {
                                             setState(() {
@@ -3376,7 +3375,6 @@ class _Profile_screenState extends State<Profile_screen> {
       // Close loading dialog
       Navigator.of(context).pop();
 
-      print('Deactivate account response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3491,7 +3489,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA setup response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3566,7 +3563,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA verification response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3645,7 +3641,6 @@ class _Profile_screenState extends State<Profile_screen> {
             jsonEncode({"admin_id": id, "method": email2FA ? "email" : "sms"}),
       );
 
-      print('Send disable 2FA code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3723,7 +3718,6 @@ class _Profile_screenState extends State<Profile_screen> {
             {"code": disableVerificationController.text, "admin_id": id}),
       );
 
-      print('Disable 2FA response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3796,7 +3790,6 @@ class _Profile_screenState extends State<Profile_screen> {
             jsonEncode({"admin_id": id, "method": email2FA ? "email" : "sms"}),
       );
 
-      print('Send regenerate backup codes code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -3870,7 +3863,6 @@ class _Profile_screenState extends State<Profile_screen> {
         body: jsonEncode({"user_id": id, "user_type": "admin"}),
       );
 
-      print('Regenerate backup codes response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);

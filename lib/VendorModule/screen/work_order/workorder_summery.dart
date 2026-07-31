@@ -90,11 +90,9 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
   @override
   void initState() {
-    print(widget.workorder_id);
     // TODO: implement initState
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -2983,7 +2981,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
   }
 
   Task(WorkOrderData_summery summery) {
-    print(summery.workOrderImages);
     final dateProvider = Provider.of<DateProvider>(context,listen: false);
 
     double grandTotal = 0;
@@ -3386,7 +3383,6 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                         child:
                                                         CircularProgressIndicator()),
                                                     errorWidget: (context, url, error) {
-                                                      print(error);
                                                       return Container();
                                                     },
                                                     fit: BoxFit.cover,

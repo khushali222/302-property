@@ -52,7 +52,6 @@ class _FlChartAppState extends State<FlChartApp> {
   ];
   bool loading = false;
   Future<void> fetchchartdata() async {
-    print("calling");
     setState(() {
       loading = true;
 
@@ -67,12 +66,10 @@ class _FlChartAppState extends State<FlChartApp> {
       "Content-Type": "application/json"
     });
     //  print('${Api_url}/api/payment/admin_balance/$id');
-    print(response.body);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         final dataaa= jsonData["data"];
-        print("dataaaaa ${dataaa.length}");
         setState(() {
           data = [];
           dataaa.forEach((element) {

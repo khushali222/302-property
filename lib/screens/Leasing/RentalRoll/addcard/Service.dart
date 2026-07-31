@@ -20,7 +20,6 @@ class AddCardService {
   }
 
   Future<CardResponse?> postCardDetails(CardModel card) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = _crmHeaderId(prefs);
     String? token = prefs.getString('token');
@@ -32,7 +31,7 @@ class AddCardService {
     };
 
     final body = jsonEncode(card.toJson());
-    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 1) create-customer-vault REQUEST: $body');
+    // PCI: this body carries the card number/CVV — never log its contents.
 
     try {
       final response = await apiPost(
@@ -40,8 +39,6 @@ class AddCardService {
         headers: headers,
         body: body,
       );
-      if (kDebugMode) print(
-          '🟪 [ADMIN ADD-CARD] 1) create-customer-vault RESPONSE ${response.statusCode}: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
@@ -50,11 +47,9 @@ class AddCardService {
         return CardResponse(
             customerVaultId: customvaultId, responseCode: responseCode);
       } else {
-        print('Failed to submit card details: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Exception during POST request: $e');
       return null;
     }
   }
@@ -70,7 +65,7 @@ class AddCardService {
       'id': 'CRM $id',
     };
     final body = jsonEncode(card.toJson());
-    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 1b) create-customer-billing REQUEST: $body');
+    // PCI: this body carries the card number/CVV — never log its contents.
 
     try {
       final response = await apiPost(
@@ -79,8 +74,6 @@ class AddCardService {
         body: body,
       );
 
-      if (kDebugMode) print(
-          '🟪 [ADMIN ADD-CARD] 1b) create-customer-billing RESPONSE ${response.statusCode}: ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonResponse = jsonDecode(response.body)['data'];
         String customvaultId = jsonResponse['customer_vault_id'];
@@ -89,11 +82,9 @@ class AddCardService {
         return CardResponse(
             customerVaultId: customvaultId, responseCode: responseCode);
       } else {
-        print('Failed to submit card details: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Exception during POST request: $e');
       // Handle exception scenario here
     }
   }
@@ -109,7 +100,6 @@ class AddCardService {
       'id': 'CRM $id',
     };
     final body = jsonEncode(addCard.toJson());
-    if (kDebugMode) print('🟪 [ADMIN ADD-CARD] 2) addCreditCard REQUEST: $body');
 
     try {
       final response = await apiPost(
@@ -118,20 +108,14 @@ class AddCardService {
         body: body,
       );
 
-      if (kDebugMode) print(
-          '🟪 [ADMIN ADD-CARD] 2) addCreditCard RESPONSE ${response.statusCode}: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle success scenario here
-        if (kDebugMode) print(
-            '✅ [ADMIN ADD-CARD] SUCCESS — card saved (status ${response.statusCode})');
       } else {
         // Handle error scenario here
-        if (kDebugMode) print('❌ [ADMIN ADD-CARD] FAILED addCreditCard: ${response.statusCode}');
       }
     } catch (e) {
       // Handle exception scenario here
-      print('Exception during POST request: $e');
     }
   }
 
@@ -160,11 +144,8 @@ class AddCardService {
         body: json.encode(body), // Encode the body to JSON
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('Delete credit card successfully from nmi');
         // Handle success scenario here
         return response.statusCode;
       } else {
@@ -173,7 +154,6 @@ class AddCardService {
       }
     } catch (e) {
       // Handle exception scenario here
-      print('Exception during POST request in only one card: $e');
     }
     return 0;
   }
@@ -200,19 +180,14 @@ class AddCardService {
           })
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Handle success scenario here
-        print('Delete credit card successfully from database');
       } else {
         // Handle error scenario here
-        print('Failed to submit add credit card: ${response.statusCode}');
       }
     } catch (e) {
       // Handle exception scenario here
-      print('Exception during POST request: $e');
     }
   }
 
@@ -235,11 +210,8 @@ class AddCardService {
         body: body,
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('Delete credit card successfully from nmi');
         // Handle success scenario here
         return response.statusCode;
       } else {
@@ -248,7 +220,6 @@ class AddCardService {
       }
     } catch (e) {
       // Handle exception scenario here
-      print('Exception during POST request: $e');
     }
     return 0;
   }
@@ -264,7 +235,6 @@ class AddCardService {
         if (key is String && key.isNotEmpty) return key;
       }
     } catch (e) {
-      if (kDebugMode) print('getTokenizationKeyByAdmin error: $e');
     }
     return null;
   }
@@ -320,8 +290,6 @@ class AddCardService {
         body: body,
       );
       if (kDebugMode) {
-        print('🟪 [ADMIN ADD-CARD] add-tenant-payment RESPONSE '
-            '${response.statusCode}');
       }
       Map<String, dynamic>? json;
       try {
@@ -343,7 +311,6 @@ class AddCardService {
             .toString(),
       );
     } catch (e) {
-      if (kDebugMode) print('saveTokenizedCard error: $e');
       return TokenizedSaveResult(
           success: false, message: 'Network error. Please try again.');
     }
@@ -359,7 +326,6 @@ class AddCardService {
       'authorization': 'CRM $token',
       'id': 'CRM $id',
     };
-    print(tenant_id);
     try {
       final response = await apiDelete(
         Uri.parse('$Api_url/api/creditcard/deleteCreditCard/$billingId'),
@@ -369,19 +335,14 @@ class AddCardService {
         })
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // Handle success scenario here
-        print('Delete credit card successfully from database');
       } else {
         // Handle error scenario here
-        print('Failed to submit add credit card: ${response.statusCode}');
       }
     } catch (e) {
       // Handle exception scenario here
-      print('Exception during POST request: $e');
     }
   }
 }

@@ -39,9 +39,6 @@ class WorkOrderRepository {
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
 
-    print('id: $id');
-    print('admin_id: $admin_id');
-    print('token: $token');
 
     final response = await apiGet(
       Uri.parse('${Api_url}/api/work-order/vendor_work/$id'),
@@ -50,7 +47,6 @@ class WorkOrderRepository {
         'id': 'CRM $id',
       },
     );
-    print('response: ${response.body}');
     // log(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
@@ -156,7 +152,6 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
 
     // Logging the request data
-    print('Request data: $data');
 
     // Sending the request
     final http.Response response = await apiPost(
@@ -170,8 +165,6 @@ class WorkOrderRepository {
     );
 
     // Logging the response status and body
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     // Handling the response
     var responseData = json.decode(response.body);
@@ -219,7 +212,6 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
 
     final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
     final response = await apiGet(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",}
@@ -241,9 +233,6 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
     //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
-    print('=== UpdateWorkOrder (VENDOR) PUT $url ===');
-    print('Request body: ${jsonEncode({"workOrder": workorder})}');
     final response = await apiPut(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id", 'Content-Type': 'application/json; charset=UTF-8',},

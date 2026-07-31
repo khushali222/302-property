@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -13,7 +14,6 @@ class PropertyRevenueReportService {
     required String previousStartDate,
     required String previousEndDate,
   }) async {
-    print('Fetching property revenue report (Staff)');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -33,7 +33,6 @@ class PropertyRevenueReportService {
           Uri.parse('$Api_url/api/rentals/property_revenue_report/$adminId')
               .replace(queryParameters: queryParams);
 
-      print('API URL (Staff): $uri');
 
       final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
@@ -41,32 +40,27 @@ class PropertyRevenueReportService {
         "Content-Type": "application/json",
       });
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final parsedJson = jsonDecode(response.body);
-        print('Parsed JSON: $parsedJson');
 
         final propertyRevenueReport =
             PropertyRevenueReportModel.fromJson(parsedJson);
         return propertyRevenueReport;
       } else if (response.statusCode == 401) {
-        print('Authentication failed: ${response.body}');
         return PropertyRevenueReportModel(
           statusCode: 401,
           message:
               'User session is expired or invalid, please login and try again.',
         );
       } else {
-        print('Failed to fetch property revenue report: ${response.body}');
         return PropertyRevenueReportModel(
           statusCode: response.statusCode,
           message: 'Failed to load property revenue report data',
         );
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return PropertyRevenueReportModel(
         statusCode: 0,
         message: 'Error fetching data: $e',

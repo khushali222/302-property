@@ -178,7 +178,6 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -356,7 +355,6 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      print("Error fetching profile data: $e");
       return;
     }
     final dateProvider = Provider.of<DateProvider>(context, listen: false);

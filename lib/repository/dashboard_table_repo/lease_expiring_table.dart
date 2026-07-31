@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -9,7 +10,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 class Lease_expiring_tableService {
   Future<List<LeaseDataExpiring>> fetchLease_expiring() async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -25,7 +25,6 @@ class Lease_expiring_tableService {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final InsuranceResponse = ExpiringLeasesResponse.fromJson(parsedJson);
         return InsuranceResponse.data ?? [];
       } else {
@@ -34,7 +33,7 @@ class Lease_expiring_tableService {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }

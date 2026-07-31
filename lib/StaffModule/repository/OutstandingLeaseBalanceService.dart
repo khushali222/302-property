@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -15,7 +16,6 @@ class OutstandingLeaseBalanceService {
     String sortBy = 'property_address',
     String sortOrder = 'asc',
   }) async {
-    print('Fetching outstanding lease balance (Staff)');
 
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -41,7 +41,6 @@ class OutstandingLeaseBalanceService {
       Uri uri = Uri.parse('$Api_url/api/leases/outstanding-balance/$adminId')
           .replace(queryParameters: queryParams);
 
-      print('API URL (Staff): $uri');
 
       final response = await apiGet(uri, headers: {
         "authorization": "CRM $token",
@@ -49,20 +48,16 @@ class OutstandingLeaseBalanceService {
         "Content-Type": "application/json",
       });
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
         final parsedJson = jsonDecode(response.body);
-        print('Parsed JSON: $parsedJson');
 
         final outstandingLeaseBalance =
             OutstandingLeaseBalanceModel.fromJson(parsedJson);
         return outstandingLeaseBalance;
       } else if (response.statusCode == 401) {
         // Handle authentication error
-        print('Authentication failed: ${response.body}');
         return OutstandingLeaseBalanceModel(
           success: false,
           statusCode: 401,
@@ -71,7 +66,6 @@ class OutstandingLeaseBalanceService {
         );
       } else {
         // If the server did not return a 200 OK response, throw an exception
-        print('Failed to fetch outstanding lease balance: ${response.body}');
         return OutstandingLeaseBalanceModel(
           success: false,
           statusCode: response.statusCode,
@@ -80,7 +74,7 @@ class OutstandingLeaseBalanceService {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return OutstandingLeaseBalanceModel(
         success: false,
         statusCode: 0,

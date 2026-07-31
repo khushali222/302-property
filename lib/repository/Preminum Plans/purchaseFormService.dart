@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -26,13 +27,11 @@ class purchaseFormService {
         body: body,
       );
       if (response.statusCode == 200) {
-        print('pusrchase status code ${response.statusCode}');
-        print('purchase reponse ${response.body}');
       }
 
       return response.statusCode;
     } catch (e) {
-      print('Exception during POST request: $e');
+      logError('Exception during POST request: $e');
       return null;
     }
   }

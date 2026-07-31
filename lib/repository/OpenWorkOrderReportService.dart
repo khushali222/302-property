@@ -36,11 +36,6 @@ class OpenWorkOrderService {
     }
 
     // Print the final API URL for debugging
-    print('=== API CALL DEBUG ===');
-    print('Final URL: $url');
-    print('Query Params: $queryParams');
-    print('Headers: authorization: CRM $token, id: CRM $adminId');
-    print('======================');
 
     try {
       final response = await apiGet(Uri.parse(url), headers: {

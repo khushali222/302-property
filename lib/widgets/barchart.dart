@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,14 +108,13 @@ class _BarchartState extends State<Barchart> {
         });
       } else {
         // Handle error response
-        print('Failed to load data');
         setState(() {
           isLoading = false;
         });
       }
     } catch (e) {
       // Handle exception
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       setState(() {
         isLoading = false;
       });

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -266,7 +267,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
     // Add property group based on selected subproperty type
     addPropertyGroup();
     fetchOwners();
-    print(selectedStaff);
     Ownersdetails = RentalOwner(
         rentalOwnerId: widget.properties.rentalOwnerId,
         rentalOwnerName: widget.properties.rentalOwnerData?.rentalOwnerName,
@@ -299,7 +299,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
         provider.setOwnerDetails(Ownersdetails!);
       }
     });
-    print(widget.rentalId);
     isEditable = false;
     // Show insured values from list immediately so they appear before fetch completes
     if (widget.properties.insuredValues != null &&
@@ -326,10 +325,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
   final Properies_summery_Repo unit1Repository = Properies_summery_Repo();
   Future<void> fetchunits1() async {
     try {
-      print('Fetching units...');
       final fetchedunit1 =
           await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
-      print('Fetched units: $fetchedunit1');
 
       setState(() {
         data = fetchedunit1;
@@ -342,16 +339,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
         propertyGroupImagenames.clear();
         originalValues.clear();
 
-        print('Creating property groups for ${data.length} units');
-        print('Property Type: ${selectedpropertytypedata?.propertyType}');
-        print('Is Multi Unit: ${selectedpropertytypedata?.isMultiunit}');
 
         // Create property groups for each unit
         for (var unit in data) {
-          print('Processing unit:');
-          print('- Unit name: ${unit.rentalunit}');
-          print('- Unit address: ${unit.rentalunitadress}');
-          print('- Unit sqft: ${unit.rentalsqft}');
 
           List<TextEditingController> controllers = [];
           List<Widget> fields = [];
@@ -359,7 +349,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
           if (selectedpropertytypedata?.propertyType == 'Commercial') {
             if (selectedpropertytypedata?.isMultiunit == true) {
               // Commercial multi-unit
-              print('Setting up Commercial multi-unit controllers');
               controllers = [
                 TextEditingController(text: unit.rentalunit ?? ''),
                 TextEditingController(text: unit.rentalunitadress ?? ''),
@@ -374,18 +363,12 @@ class _Edit_propertiesState extends State<Edit_properties> {
               ];
             } else {
               // Commercial single unit
-              print('Setting up Commercial single unit controllers');
-              print('Unit data:');
-              print('- sqft: "${unit.rentalsqft}"');
-              print('- unit: "${unit.rentalunit}"');
-              print('- address: "${unit.rentalunitadress}"');
 
               // For Commercial single unit, if sqft is empty but unit has a value, use that
               String sqftValue = unit.rentalsqft?.isNotEmpty == true
                   ? unit.rentalsqft!
                   : unit.rentalunit ?? '';
 
-              print('Using sqft value: "$sqftValue"');
 
               controllers = [
                 TextEditingController(
@@ -394,9 +377,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 TextEditingController(),
               ];
 
-              print('Initialized controllers:');
               for (int j = 0; j < controllers.length; j++) {
-                print('Controller $j: "${controllers[j].text}"');
               }
 
               fields = [
@@ -408,7 +389,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
           } else {
             // Residential properties
             if (selectedpropertytypedata?.isMultiunit == true) {
-              print('Setting up Residential multi-unit controllers');
               // Use original values directly for display
               controllers = [
                 TextEditingController(text: unit.rentalunit ?? ''),
@@ -432,14 +412,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
                 photo(propertyGroups.length),
               ];
             } else {
-              print('Setting up Residential single unit controllers');
               // Extract correct values from potentially corrupted data
               Map<String, String> correctValues = extractCorrectValues(unit);
 
-              print('Extracted correct values:');
-              print('- SQFT: "${correctValues['sqft']}"');
-              print('- Bath: "${correctValues['bath']}"');
-              print('- Bed: "${correctValues['bed']}"');
 
               controllers = [
                 TextEditingController(text: correctValues['sqft'] ?? ''),
@@ -461,9 +436,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
             }
           }
 
-          print('Adding controllers:');
           for (int i = 0; i < controllers.length; i++) {
-            print('Controller $i: "${controllers[i].text}"');
           }
 
           propertyGroups.add(fields);
@@ -472,34 +445,29 @@ class _Edit_propertiesState extends State<Edit_properties> {
           // Handle images - construct full URL for display
           if (unit.rentalImages != null && unit.rentalImages!.isNotEmpty) {
             String imageFilename = unit.rentalImages![0];
-            print('Processing image for unit: $imageFilename');
 
             // Check if it's already a full URL
             if (imageFilename.startsWith('http')) {
               propertyGroupImagenames.add(imageFilename);
-              print('Using full URL: $imageFilename');
             } else {
               // Construct full URL using the image_url constant
               String fullUrl = '$image_url$imageFilename';
               propertyGroupImagenames.add(fullUrl);
-              print('Constructed URL: $fullUrl');
             }
             propertyGroupImages.add(null);
           } else {
             propertyGroupImagenames.add(null);
             propertyGroupImages.add(null);
-            print('No images for this unit');
           }
         }
 
         selectedIsMultiUnit = data.length > 1;
-        print('Updated selectedIsMultiUnit: $selectedIsMultiUnit');
       });
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      print('Failed to load units: $e');
+      logError('Failed to load units: $e');
     }
   }
 
@@ -624,7 +592,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
             }
           }
         } catch (e) {
-          print('Error accessing placedInService: $e');
+          logError('Error accessing placedInService: $e');
         }
 
         // Load insured values from fetch response, or fallback to initial properties
@@ -798,18 +766,16 @@ class _Edit_propertiesState extends State<Edit_properties> {
     if (pickedFile != null) {
       try {
         String? filename = await uploadImage(File(pickedFile.path));
-        print('Uploaded filename: $filename');
         setState(() {
           // Store the full URL for the uploaded image
           if (filename != null && filename.isNotEmpty) {
             propertyGroupImagenames[index] = '$image_url$filename';
-            print('Stored full URL: ${propertyGroupImagenames[index]}');
           }
           // Store the local file for immediate display
           propertyGroupImages[index] = File(pickedFile.path);
         });
       } catch (e) {
-        print('Error uploading image: $e');
+        logError('Error uploading image: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to upload image: ${e.toString()}'),
@@ -826,7 +792,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
   List<String?> propertyGroupImagenames = [];
   File? _image;
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path!);
     // API URL
     //   final String uploadUrl = 'http://192.168.1.17:4000/api/images/upload';
     final String uploadUrl = '${image_upload_url}/api/images/upload';
@@ -853,14 +818,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
     var response = await apiSend(request);
     // Parse the response
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
     var responseBody = json.decode(responseData.body);
 
     // Extract the filename from the response
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
-      print(file.first["filename"]);
-      print(file.first.runtimeType);
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -1217,9 +1179,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           width: 50,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            print('Error loading image: $error');
-                            print(
-                                'Image URL: ${propertyGroupImagenames[index]}');
                             return Container(
                               height: 50,
                               width: 50,
@@ -1994,13 +1953,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           );
                                                         } else {
                                                           setState(() {
-                                                            print(snapshot.data!
-                                                                .where((element) =>
-                                                                    element
-                                                                        .propertysubType ==
-                                                                    newValue)
-                                                                .first
-                                                                .isMultiunit);
                                                             // selectedIsMultiUnit = snapshot.data!.where((element) => element.isMultiunit == newValue ).first;
                                                             selectedpropertytypedata = snapshot
                                                                 .data!
@@ -4590,7 +4542,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                 } else {
                                                   setState(() {
                                                     selectedStaff = newValue;
-                                                    print(selectedStaff);
                                                   });
                                                 }
                                               },
@@ -5731,7 +5682,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
 //                         print(selectedValue);
 //                       },
                       onTap: () async {
-                        print("calling");
 
                         // Validate selected property
                         if (selectedProperty == null) {
@@ -5819,31 +5769,18 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         }
 
                         // Check for unit changes
-                        print('=== STARTING CHANGE DETECTION ===');
-                        print('Property Type: $selectedpropertytype');
-                        print('Is Multi Unit: $selectedIsMultiUnit');
-                        print('Checking for unit changes...');
-                        print('Data length: ${data.length}');
-                        print(
-                            'Controllers length: ${propertyGroupControllers.length}');
 
                         bool hasUnitChanges = false;
-                        print('Checking unit changes...');
 
                         // Debug: Print controller structure
-                        print('=== CONTROLLER STRUCTURE DEBUG ===');
                         for (int i = 0;
                             i < propertyGroupControllers.length;
                             i++) {
-                          print('Unit $i controllers:');
                           for (int j = 0;
                               j < propertyGroupControllers[i].length;
                               j++) {
-                            print(
-                                '  Controller $j: "${propertyGroupControllers[i][j].text}"');
                           }
                         }
-                        print('=== END CONTROLLER STRUCTURE DEBUG ===');
 
                         if (data.length == propertyGroupControllers.length) {
                           for (int i = 0; i < data.length; i++) {
@@ -5851,15 +5788,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             var controllers = propertyGroupControllers[i];
 
                             // Add detailed debug prints
-                            print('Unit ${i + 1} Details:');
-                            print('Old sqft: "${oldUnit.rentalsqft}"');
-                            print(
-                                'New sqft: "${controllers[0].text}"'); // Fixed: sqft is in controller[0]
-                            print('Old unit: "${oldUnit.rentalunit}"');
-                            print(
-                                'New unit: "${controllers[0].text}"'); // For single unit, unit name is same as sqft
-                            print('Old address: "${oldUnit.rentalunitadress}"');
-                            print('New address: "${controllers[1].text}"');
 
                             // Compare values based on property type
                             bool sqftChanged = false;
@@ -5869,8 +5797,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             bool bedChanged = false;
                             bool imageChanged = false;
 
-                            print(
-                                'Comparing values for ${selectedpropertytype} ${selectedIsMultiUnit == true ? "multi-unit" : "single unit"}:');
 
                             // Fix property type detection - Single-Family should be Commercial
                             String actualPropertyType =
@@ -5893,13 +5819,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 unitChanged = oldUnitName != newUnitName;
                                 addressChanged = oldAddress != newAddress;
 
-                                print('Commercial multi-unit comparison:');
-                                print(
-                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
-                                print(
-                                    '- Unit: "$oldUnitName" -> "$newUnitName" = $unitChanged');
-                                print(
-                                    '- Address: "$oldAddress" -> "$newAddress" = $addressChanged');
                               } else {
                                 // Commercial single unit
                                 String oldSqft =
@@ -5908,19 +5827,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                                 sqftChanged = oldSqft != newSqft;
 
-                                print('Commercial single unit comparison:');
-                                print(
-                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
                               }
                             } else if (actualPropertyType == 'Residential') {
                               if (selectedIsMultiUnit == true) {
                                 // Residential multi-unit
-                                print('=== RESIDENTIAL MULTI-UNIT DEBUG ===');
-                                print(
-                                    'Controllers available: ${controllers.length}');
                                 for (int c = 0; c < controllers.length; c++) {
-                                  print(
-                                      'Controller $c: "${controllers[c].text}"');
                                 }
 
                                 String oldSqft =
@@ -5944,17 +5855,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 bathChanged = oldBath != newBath;
                                 bedChanged = oldBed != newBed;
 
-                                print('Residential multi-unit comparison:');
-                                print(
-                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
-                                print(
-                                    '- Unit: "$oldUnitName" -> "$newUnitName" = $unitChanged');
-                                print(
-                                    '- Address: "$oldAddress" -> "$newAddress" = $addressChanged');
-                                print(
-                                    '- Bath: "$oldBath" -> "$newBath" = $bathChanged');
-                                print(
-                                    '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
                               } else {
                                 // Residential single unit
                                 // Extract correct values from potentially corrupted data for comparison
@@ -5979,13 +5879,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         true;
 
                                 if (isDataCorrupted) {
-                                  print(
-                                      'Detected corrupted data - using extracted correct values for comparison');
-                                  print(
-                                      'Original corrupted sqft: "${oldUnit.rentalsqft}"');
-                                  print('Extracted correct sqft: "$oldSqft"');
-                                  print('Extracted correct bath: "$oldBath"');
-                                  print('Extracted correct bed: "$oldBed"');
                                 }
 
                                 // Compare using extracted correct values
@@ -5993,29 +5886,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 bathChanged = oldBath != newBath;
                                 bedChanged = oldBed != newBed;
 
-                                print('Residential single unit comparison:');
-                                print(
-                                    '- Sqft: "$oldSqft" -> "$newSqft" = $sqftChanged');
-                                print(
-                                    '- Bath: "$oldBath" -> "$newBath" = $bathChanged');
-                                print(
-                                    '- Bed: "$oldBed" -> "$newBed" = $bedChanged');
-                                print('- Data corrupted: $isDataCorrupted');
                               }
                             }
 
                             // Check for image changes
-                            print('Checking image changes for unit ${i + 1}:');
-                            print('Old images: ${oldUnit.rentalImages}');
-                            print(
-                                'New local image: ${propertyGroupImages[i]?.path}');
-                            print(
-                                'New network image: ${propertyGroupImagenames[i]}');
 
                             // Check if there's a new local image (user added a new image)
                             if (propertyGroupImages[i] != null) {
                               imageChanged = true;
-                              print('Image changed: New local image added');
                             }
                             // Check if network image was removed (user removed existing image)
                             else if (oldUnit.rentalImages != null &&
@@ -6023,7 +5901,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 (propertyGroupImagenames[i] == null ||
                                     propertyGroupImagenames[i]!.isEmpty)) {
                               imageChanged = true;
-                              print('Image changed: Existing image removed');
                             }
                             // Check if network image changed (different from original)
                             else if (oldUnit.rentalImages != null &&
@@ -6038,8 +5915,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               }
                               if (oldImage != newImage) {
                                 imageChanged = true;
-                                print(
-                                    'Image changed: Different image (old: $oldImage, new: $newImage)');
                               }
                             }
 
@@ -6050,23 +5925,14 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 bathChanged ||
                                 bedChanged ||
                                 imageChanged) {
-                              print('Changes detected in unit ${i + 1}:');
-                              print('- Sqft changed: $sqftChanged');
-                              print('- Unit changed: $unitChanged');
-                              print('- Address changed: $addressChanged');
-                              print('- Bath changed: $bathChanged');
-                              print('- Bed changed: $bedChanged');
-                              print('- Image changed: $imageChanged');
                               hasUnitChanges = true;
                               break; // Exit the loop once we find a change
                             } else {
-                              print('No changes detected in unit ${i + 1}');
                             }
                           }
                         }
 
                         // Check for changes
-                        print('Unit changes detected: $hasUnitChanges');
 
                         bool hasChanges = hasUnitChanges ||
                             address.text != initialAddress ||
@@ -6094,117 +5960,28 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             code2.text != Ownersdetails?.postalCode ||
                             selectedStaff != widget.properties.staffMemberId;
 
-                        print('=== CHANGE DETECTION DEBUG ===');
-                        print('Final hasChanges value: $hasChanges');
-                        print('Unit changes: $hasUnitChanges');
 
-                        print('--- Property Details ---');
-                        print('Current address: "${address.text}"');
-                        print('Initial address: "$initialAddress"');
-                        print(
-                            'Address changed: ${address.text != initialAddress}');
 
-                        print('Current city: "${city.text}"');
-                        print('Initial city: "$initialCity"');
-                        print('City changed: ${city.text != initialCity}');
 
-                        print('Current state: "${state.text}"');
-                        print('Initial state: "$initialState"');
-                        print('State changed: ${state.text != initialState}');
 
-                        print('Current country: "${country.text}"');
-                        print('Initial country: "$initialCountry"');
-                        print(
-                            'Country changed: ${country.text != initialCountry}');
 
-                        print('Current postal code: "${postalcode.text}"');
-                        print('Initial postal code: "$initialPostalCode"');
-                        print(
-                            'Postal code changed: ${postalcode.text != initialPostalCode}');
 
-                        print('--- Owner Details ---');
-                        print('Current first name: "${firstname.text}"');
-                        print(
-                            'Initial first name: "${Ownersdetails?.rentalOwnerName}"');
-                        print(
-                            'First name changed: ${firstname.text != Ownersdetails?.rentalOwnerName}');
 
-                        print('Current company name: "${comname.text}"');
-                        print(
-                            'Initial company name: "${Ownersdetails?.rentalOwnerCompanyName}"');
-                        print(
-                            'Company name changed: ${comname.text != Ownersdetails?.rentalOwnerCompanyName}');
 
-                        print('Current primary email: "${primaryemail.text}"');
-                        print(
-                            'Initial primary email: "${Ownersdetails?.rentalOwnerPrimaryEmail}"');
-                        print(
-                            'Primary email changed: ${primaryemail.text != Ownersdetails?.rentalOwnerPrimaryEmail}');
 
-                        print(
-                            'Current alternative email: "${alternativeemail.text}"');
-                        print(
-                            'Initial alternative email: "${Ownersdetails?.rentalOwnerAlternateEmail}"');
-                        print(
-                            'Alternative email changed: ${alternativeemail.text != Ownersdetails?.rentalOwnerAlternateEmail}');
 
-                        print('Current phone number: "${phonenum.text}"');
-                        print(
-                            'Initial phone number: "${Ownersdetails?.rentalOwnerPhoneNumber}"');
-                        print(
-                            'Phone number changed: ${phonenum.text != Ownersdetails?.rentalOwnerPhoneNumber}');
 
-                        print('Current home number: "${homenum.text}"');
-                        print(
-                            'Initial home number: "${Ownersdetails?.rentalOwnerHomeNumber}"');
-                        print(
-                            'Home number changed: ${homenum.text != Ownersdetails?.rentalOwnerHomeNumber}');
 
-                        print('Current business number: "${businessnum.text}"');
-                        print(
-                            'Initial business number: "${Ownersdetails?.rentalOwnerBusinessNumber}"');
-                        print(
-                            'Business number changed: ${businessnum.text != Ownersdetails?.rentalOwnerBusinessNumber}');
 
-                        print('Current street2: "${street2.text}"');
-                        print(
-                            'Initial street2: "${Ownersdetails?.streetAddress}"');
-                        print(
-                            'Street2 changed: ${street2.text != Ownersdetails?.streetAddress}');
 
-                        print('Current city2: "${city2.text}"');
-                        print('Initial city2: "${Ownersdetails?.city}"');
-                        print(
-                            'City2 changed: ${city2.text != Ownersdetails?.city}');
 
-                        print('Current state2: "${state2.text}"');
-                        print('Initial state2: "${Ownersdetails?.state}"');
-                        print(
-                            'State2 changed: ${state2.text != Ownersdetails?.state}');
 
-                        print('Current county2: "${county2.text}"');
-                        print('Initial county2: "${Ownersdetails?.country}"');
-                        print(
-                            'County2 changed: ${county2.text != Ownersdetails?.country}');
 
-                        print('Current code2: "${code2.text}"');
-                        print('Initial code2: "${Ownersdetails?.postalCode}"');
-                        print(
-                            'Code2 changed: ${code2.text != Ownersdetails?.postalCode}');
 
-                        print('Current staff: "$selectedStaff"');
-                        print(
-                            'Initial staff: "${widget.properties.staffMemberId}"');
-                        print(
-                            'Staff changed: ${selectedStaff != widget.properties.staffMemberId}');
-                        print('=== END CHANGE DETECTION DEBUG ===');
 
-                        print("=== TESTING CHANGE DETECTION ===");
-                        print("hasChanges value: $hasChanges");
 
                         if (!hasChanges) {
                           // Show message if no changes detected
-                          print("=== NO CHANGES DETECTED - EXITING EARLY ===");
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('No changes detected'),
@@ -6215,8 +5992,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           return; // Exit if no changes
                         }
 
-                        print(
-                            "=== CHANGES DETECTED - PROCEEDING WITH API CALL ===");
 
                         // Proceed with form submission
                         SharedPreferences prefs =
@@ -6264,11 +6039,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           };
 
                           // Handle images - prioritize new images over existing ones
-                          print('Handling images for unit $i:');
-                          print(
-                              '- Local image: ${propertyGroupImages[i]?.path}');
-                          print(
-                              '- Existing image: ${propertyGroupImagenames[i]}');
 
                           if (propertyGroupImages[i] != null) {
                             // If new image is selected, use the uploaded filename
@@ -6281,14 +6051,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                 imageValue = imageValue.split('/').last;
                               }
                               unitData["rental_images"] = [imageValue];
-                              print('- Using uploaded filename: $imageValue');
                             } else {
                               // If no filename yet, use the file path temporarily
                               unitData["rental_images"] = [
                                 propertyGroupImages[i]!.path
                               ];
-                              print(
-                                  '- Using file path: ${propertyGroupImages[i]!.path}');
                             }
                           } else if (propertyGroupImagenames[i] != null &&
                               propertyGroupImagenames[i]!.isNotEmpty) {
@@ -6300,9 +6067,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               imageValue = imageValue.split('/').last;
                             }
                             unitData["rental_images"] = [imageValue];
-                            print('- Using existing image: $imageValue');
                           } else {
-                            print('- No images for this unit');
                           }
 
                           String actualPropertyType =
@@ -6323,18 +6088,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             }
                           } else if (actualPropertyType == 'Residential' &&
                               selectedIsMultiUnit == true) {
-                            print(
-                                '=== PREPARING RESIDENTIAL MULTI-UNIT DATA ===');
-                            print(
-                                'Controller 0 (Unit): "${controllers[0].text.trim()}"');
-                            print(
-                                'Controller 1 (Address): "${controllers[1].text.trim()}"');
-                            print(
-                                'Controller 2 (SQft): "${controllers[2].text.trim()}"');
-                            print(
-                                'Controller 3 (Bath): "${controllers[3].text.trim()}"');
-                            print(
-                                'Controller 4 (Bed): "${controllers[4].text.trim()}"');
 
                             if (controllers[0].text.trim().isNotEmpty &&
                                 controllers[1].text.trim().isNotEmpty &&
@@ -6356,9 +6109,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     : controllers[4].text.trim(),
                               });
                               convertedUnits.add(unitData);
-                              print('Added unit data: $unitData');
                             } else {
-                              print('Skipping unit - some fields are empty');
                             }
                           } else if (actualPropertyType == 'Residential') {
                             if (controllers[0].text.trim().isNotEmpty &&
@@ -6389,7 +6140,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           }
                         }
 
-                        print("Converted Units: $convertedUnits");
 
                         RentalOwners owners = RentalOwners(
                           adminId: id,
@@ -6440,44 +6190,21 @@ class _Edit_propertiesState extends State<Edit_properties> {
                         // Convert List<Unit> to List<Map<String, dynamic>>
                         // convertedUnits is already prepared above
 
-                        print(
-                            "Number of units being sent: ${convertedUnits.length}");
 
                         // Prepare units data
                         List<Map<String, dynamic>> unitData = [];
-                        print('Preparing unit data...');
-                        print('Property Type: $selectedpropertytype');
-                        print('Is Multi Unit: $selectedIsMultiUnit');
-                        print(
-                            'Controllers length: ${propertyGroupControllers.length}');
-                        print('Current controllers values:');
                         for (var controllers in propertyGroupControllers) {
                           for (int i = 0; i < controllers.length; i++) {
-                            print('Controller $i: "${controllers[i].text}"');
                           }
                         }
-                        print('Data values:');
                         for (var unit in data) {
-                          print('Unit sqft: "${unit.rentalsqft}"');
-                          print('Unit name: "${unit.rentalunit}"');
-                          print('Unit address: "${unit.rentalunitadress}"');
                         }
-                        print('Has unit changes: $hasUnitChanges');
                         for (int i = 0;
                             i < propertyGroupControllers.length;
                             i++) {
                           var controllers = propertyGroupControllers[i];
-                          print('Preparing unit data for API:');
-                          print('Property type: $selectedpropertytype');
-                          print('Is multi unit: $selectedIsMultiUnit');
-                          print('Current controller values:');
                           for (int j = 0; j < controllers.length; j++) {
-                            print('Controller $j: "${controllers[j].text}"');
                           }
-                          print('Old unit data:');
-                          print('- sqft: "${data[i].rentalsqft}"');
-                          print('- unit: "${data[i].rentalunit}"');
-                          print('- address: "${data[i].rentalunitadress}"');
 
                           // For Commercial single unit, ensure sqft goes to rental_sqft
                           Map<String, dynamic> unit;
@@ -6486,7 +6213,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                           if (actualPropertyType == 'Commercial' &&
                               !selectedIsMultiUnit) {
-                            print('Preparing Commercial single unit data');
                             unit = {
                               'admin_id': id,
                               'unit_id': data[i].unitId ??
@@ -6507,7 +6233,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               'rental_bed': "", // Add empty bed for consistency
                             };
                           } else {
-                            print('Preparing multi-unit data');
                             unit = {
                               'admin_id': id,
                               'unit_id': data[i].unitId ??
@@ -6526,22 +6251,6 @@ class _Edit_propertiesState extends State<Edit_properties> {
                             };
                           }
 
-                          print('Prepared unit data:');
-                          print('- Unit ID: ${unit["unit_id"]}');
-                          print('- Unit Name: ${unit["rental_unit"]}');
-                          print(
-                              '- Unit Address: ${unit["rental_unit_adress"]}');
-                          print('- Unit Sqft: ${unit["rental_sqft"]}');
-                          print('Prepared unit data:');
-                          print('- Unit ID: ${unit["unit_id"]}');
-                          print('- Unit Name: ${unit["rental_unit"]}');
-                          print(
-                              '- Unit Address: ${unit["rental_unit_adress"]}');
-                          print('- Unit Sqft: ${unit["rental_sqft"]}');
-                          print('Preparing unit ${i + 1}:');
-                          print('Unit: ${controllers[0].text.trim()}');
-                          print('Address: ${controllers[1].text.trim()}');
-                          print('Sqft: ${controllers[2].text.trim()}');
                           if (selectedpropertytype == 'Residential') {
                             unit['rental_bath'] = i < originalValues.length
                                 ? originalValues[i]['bath'] ??
@@ -6554,12 +6263,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           }
                           unitData.add(unit);
                         }
-                        print('Prepared unit data: $unitData');
 
-                        print('Has unit changes: $hasUnitChanges');
-                        print('Final unit data: $unitData');
 
-                        print('Making API call with updated unit data...');
                         // Format placed_in_service date to yyyy-MM-dd
                         String? formattedPlacedInService;
                         if (datePlacedInService.text.isNotEmpty) {
@@ -6583,7 +6288,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   DateFormat('yyyy-MM-dd').format(parsedDate);
                             }
                           } catch (e) {
-                            print(
+                            logError(
                                 'Error formatting placed_in_service date: $e');
                           }
                         }
@@ -6641,21 +6346,11 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               : null,
                         );
 
-                        print('About to make API call');
-                        print('Has changes: $hasChanges');
-                        print('Has unit changes: $hasUnitChanges');
-                        print('Properties object:');
-                        print('- Units: ${properties.units}');
-                        print('- Rental ID: ${properties.rentalId}');
-                        print('- Property ID: ${properties.propertyId}');
 
                         try {
-                          print('Making API call to update rental...');
                           await PropertiesRepository()
                               .updateRental1(properties);
-                          print('API call successful');
 
-                          print('Update completed successfully');
                           // ScaffoldMessenger.of(context).showSnackBar(
                           //   const SnackBar(
                           //     content: Text('Property updated successfully'),
@@ -6665,7 +6360,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                           Navigator.of(context).pop(true);
                         } catch (e) {
-                          print('Error updating property: $e');
+                          logError('Error updating property: $e');
                           setState(() {
                             isLoading = false;
                           });

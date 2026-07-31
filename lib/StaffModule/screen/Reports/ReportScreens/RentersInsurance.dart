@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -63,7 +64,6 @@ class _RentersInsuranceState extends State<RentersInsurance> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -630,7 +630,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
 
@@ -1475,13 +1475,10 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                         onSelected: (value) async {
                                           // Export logic
                                           if (value == 'PDF') {
-                                            print('pdf');
                                             generaterentersInsurancePdf(data);
                                           } else if (value == 'XLSX') {
-                                            print('XLSX');
                                             generateRentersInsuranceExcel(data);
                                           } else if (value == 'CSV') {
-                                            print('CSV');
                                             generateRentersInsuranceCsv(data);
                                           }
                                         },

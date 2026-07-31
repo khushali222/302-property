@@ -98,7 +98,6 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
         tenants!.where((t) => t.moveoutDate == null).toList();
 
     for (var t in selectedTenants!) {
-      print(' firstname ${t.rentalUnitAddress}');
       if (!startDateControllers.containsKey(t.tenantId)) {
         startDateControllers[t.tenantId!.first] = TextEditingController();
       }
@@ -412,7 +411,6 @@ class _Moveout_propertiesState extends State<Moveout_properties> {
                           });
                         }
                       }
-                      print(multipletenant);
 
                       await LeaseMoveoutRepository()
                           .addMoveoutTenant(

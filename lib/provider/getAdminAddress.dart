@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 
@@ -18,7 +19,7 @@ class ProfileProvider with ChangeNotifier {
       _profileAddress = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print(e);
+      logError(e);
     }
     notifyListeners();
   }

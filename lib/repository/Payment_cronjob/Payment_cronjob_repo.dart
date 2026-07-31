@@ -39,7 +39,6 @@ class PaymentCronjobRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print('responce of crojob Acknowledgement ${response.body}');
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -98,7 +97,6 @@ class PaymentCronjobRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print('responce of crojob Retry ${response.body}');
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -159,7 +157,6 @@ class PaymentCronjobRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print('responce of crojob Retry ${response.body}');
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -220,7 +217,6 @@ class PaymentCronjobRepository {
     );
 
     var responseData = json.decode(response.body);
-    print(response.body);
 
     if (response.statusCode == 200) {
       Alert(
@@ -265,7 +261,6 @@ class PaymentCronjobRepository {
         },
       );
 
-      print('Response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -287,7 +282,6 @@ class PaymentCronjobRepository {
             'Failed to load payment refunds: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching payment refunds: $e');
       throw Exception('Error fetching payment refunds: $e');
     }
   }
@@ -353,9 +347,6 @@ class PaymentCronjobRepository {
       },
       body: jsonEncode({"refundDetails": commonData}),
     );
-    print("confirm refund ${response.body}");
-    print("confirm comm ${commonData}");
-    print("confirm url ${apiUrll}");
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -386,7 +377,6 @@ class PaymentCronjobRepository {
     );
 
     var responseData = json.decode(response.body);
-    print('Bulk retry response: ${response.body}');
 
     if (response.statusCode == 200) {
       return responseData;
@@ -419,7 +409,6 @@ class PaymentCronjobRepository {
     );
 
     var responseData = json.decode(response.body);
-    print('Bulk reschedule response: ${response.body}');
 
     if (response.statusCode == 200) {
       return responseData;
@@ -451,7 +440,6 @@ class PaymentCronjobRepository {
     );
 
     var responseData = json.decode(response.body);
-    print('Bulk acknowledge response: ${response.body}');
 
     if (response.statusCode == 200) {
       return responseData;

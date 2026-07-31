@@ -77,7 +77,6 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
       String? id = prefs.getString("staff_id");
 
       // Use property-specific API endpoint
-      print('Loading mortgages for property ID: ${widget.propertyId}');
       final response = await apiGet(
         Uri.parse('${Api_url}/api/mortgage/${widget.propertyId}'),
         headers: {
@@ -90,7 +89,6 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
-          print('Successfully loaded ${data['data'].length} mortgages');
           setState(() {
             _mortgages = List<Map<String, dynamic>>.from(data['data']);
             _filteredMortgages = List.from(_mortgages);

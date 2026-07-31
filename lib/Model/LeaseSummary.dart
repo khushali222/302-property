@@ -86,7 +86,6 @@ class Data {
       this.entry});
 
   Data.fromJson(Map<String, dynamic> json) {
-    print('tenant id ${json['tenant_id']}');
     leaseId = json['lease_id'];
     tenantId =
         json['tenant_id'] != null ? List<String>.from(json['tenant_id']) : [];
@@ -212,7 +211,6 @@ class LeaseTenant {
   });
 
   factory LeaseTenant.fromJson(Map<String, dynamic> json) {
-    print(json);
     log(json.toString());
     return LeaseTenant(
       leaseId: json['lease_id'],

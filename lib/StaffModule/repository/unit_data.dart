@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -20,22 +21,17 @@ class UnitData {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     final url = Uri.parse("${baseUrl}appliance/appliance/$unitId");
-    print(url);
 
     try {
       final response = await apiGet(url,headers: {"authorization" : "CRM $token","id":"CRM $id",},);
-      print("check for data of applience ${response.body}");
-      print("check for url ${url}");
-      print(["data"].first.length);
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body)["data"];
         return data.map((item) => unit_appliance.fromJson(item)).toList();
       } else {
-        print('Failed to fetch data: ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Error: $e');
+      logError('Error: $e');
       return [];
     }
   }

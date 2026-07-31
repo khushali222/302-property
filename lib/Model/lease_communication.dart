@@ -84,18 +84,13 @@ class Emails {
     leaseId = json['lease_id'];
     rentalAddress = json['rentalAddress'];
     from = json['from'];
-    print('DEBUG: Model parsing - json[to]: ${json['to']}');
-    print('DEBUG: Model parsing - json[to] type: ${json['to'].runtimeType}');
     if (json['to'] != null) {
-      print('DEBUG: Model parsing - json[to] is not null, processing...');
       to = json['to']
           .map<String?>((v) => v?.toString())
           .where((v) => v != null)
           .cast<String>()
           .toList();
-      print('DEBUG: Model parsing - final to: $to');
     } else {
-      print('DEBUG: Model parsing - json[to] is null');
     }
     if (json['accepted'] != null) {
       accepted = json['accepted']

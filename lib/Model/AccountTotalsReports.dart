@@ -121,8 +121,6 @@ class Payment {
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
-    print(json['account']);
-    print(json['amount']);
     return Payment(
       account: json['account'],
       amount: json['amount'].toDouble(),
@@ -157,7 +155,6 @@ class AccountTotalsReport {
 
     var paymentsFromJson = json['payments'] as List;
     List<Payment> paymentList = paymentsFromJson.map((i) => Payment.fromJson(i)).toList();
-    print(json['rentalOwner_name']);
     return AccountTotalsReport(
       id: json['_id']??"",
       rentalOwnerName: json['rentalOwner_name'],

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -55,33 +56,16 @@ class _AppliancesPartState extends State<AppliancesPart> {
   bool isLoading = false;
   Future<void> fetchLeases() async {
     try {
-      print('=== APPLIANCE DATA DEBUG ===');
-      print('Unit ID: ${widget.unit?.unitId}');
-      print('Unit Name: ${widget.unit?.rentalunit}');
-      print('Properties ID: ${widget.properties?.rentalId}');
 
       final fetchedLeases =
           await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
 
-      print('API Response - Total appliances: ${fetchedLeases.length}');
 
       if (fetchedLeases.isNotEmpty) {
-        print('Appliance Details:');
         for (int i = 0; i < fetchedLeases.length; i++) {
           final appliance = fetchedLeases[i];
-          print('  Appliance ${i + 1}:');
-          print('    ID: ${appliance.applianceId}');
-          print('    Name: ${appliance.applianceName}');
-          print('    Category: ${appliance.categoryName}');
-          print('    Brand: ${appliance.brand}');
-          print('    Model: ${appliance.model}');
-          print('    Status: ${appliance.status}');
-          print('    Install Date: ${appliance.installedDate}');
-          print('    Description: ${appliance.applianceDescription}');
-          print('    ---');
         }
       } else {
-        print('No appliances found for this unit');
       }
 
       setState(() {
@@ -89,11 +73,8 @@ class _AppliancesPartState extends State<AppliancesPart> {
         isLoading = false;
       });
 
-      print('State updated with ${leases.length} appliances');
-      print('=== END APPLIANCE DATA DEBUG ===');
     } catch (e) {
-      print('ERROR fetching appliances: $e');
-      print('Stack trace: ${StackTrace.current}');
+      logError('ERROR fetching appliances: $e');
       setState(() {
         isLoading = false;
       });
@@ -106,13 +87,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
     });
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
-      print('Fetched categories in AddWorkOrderForMobile: ' + cats.toString());
       setState(() {
         _dropdownCategories = cats;
         _isLoadingCategories = false;
       });
     } catch (e) {
-      print('Error fetching categories in AddWorkOrderForMobile: ' +
+      logError('Error fetching categories in AddWorkOrderForMobile: ' +
           e.toString());
       setState(() {
         _isLoadingCategories = false;
@@ -123,27 +103,18 @@ class _AppliancesPartState extends State<AppliancesPart> {
   @override
   void initState() {
     super.initState();
-    print('=== APPLIANCE PART INITIALIZATION ===');
-    print('Component initialized with:');
-    print('  Unit: ${widget.unit?.rentalunit} (ID: ${widget.unit?.unitId})');
-    print(
-        '  Properties: ${widget.properties?.rentalAddress} (ID: ${widget.properties?.rentalId})');
 
     _loadDropdownCategories();
     fetchLeases();
     futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
 
-    print('=== END INITIALIZATION ===');
   }
 
   reload_screen() {
-    print('=== RELOADING APPLIANCE DATA ===');
-    print('Reloading data for unit: ${widget.unit?.unitId}');
     setState(() {
       futureAppliences =
           UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
     });
-    print('=== RELOAD COMPLETE ===');
   }
 
   DateTime? _selectedDate;
@@ -427,14 +398,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
   void handleDelete(unit_appliance rental) {
     _showDeleteAlert(context, rental.applianceId!);
     // Handle delete action
-    print('Delete ${rental.applianceId}');
   }
 
   String? rentalOwnersid;
   int rentalownerCount = 0;
   int rentalOwnerCountLimit = 0;
   Future<void> fetchRentalOwneradded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -446,15 +415,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalownerCount);
-      print(rentalOwnerCountLimit);
       setState(() {
         rentalownerCount = jsonData['rentalownerCount'];
-        print(rentalownerCount);
         rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
-        print(rentalOwnerCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -1699,19 +1663,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 FutureBuilder<List<unit_appliance>>(
                   future: futureAppliences,
                   builder: (context, snapshot) {
-                    print('=== MOBILE FUTUREBUILDER DEBUG ===');
-                    print('Connection State: ${snapshot.connectionState}');
-                    print('Has Data: ${snapshot.hasData}');
-                    print('Has Error: ${snapshot.hasError}');
                     if (snapshot.hasData) {
-                      print('Data Length: ${snapshot.data!.length}');
-                      print(
-                          'Data Items: ${snapshot.data!.map((a) => '${a.applianceName} (${a.applianceId})').toList()}');
                     }
                     if (snapshot.hasError) {
-                      print('Error: ${snapshot.error}');
                     }
-                    print('=== END MOBILE FUTUREBUILDER DEBUG ===');
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -2286,19 +2241,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                 FutureBuilder<List<unit_appliance>>(
                   future: futureAppliences,
                   builder: (context, snapshot) {
-                    print('=== DESKTOP FUTUREBUILDER DEBUG ===');
-                    print('Connection State: ${snapshot.connectionState}');
-                    print('Has Data: ${snapshot.hasData}');
-                    print('Has Error: ${snapshot.hasError}');
                     if (snapshot.hasData) {
-                      print('Data Length: ${snapshot.data!.length}');
-                      print(
-                          'Data Items: ${snapshot.data!.map((a) => '${a.applianceName} (${a.applianceId})').toList()}');
                     }
                     if (snapshot.hasError) {
-                      print('Error: ${snapshot.error}');
                     }
-                    print('=== END DESKTOP FUTUREBUILDER DEBUG ===');
 
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -2570,7 +2516,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                     });
                                                                                     SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                     String? id = prefs.getString("adminId");
-                                                                                    print("calling");
                                                                                     Properies_summery_Repo()
                                                                                         .Editappliances(
                                                                                       applianceid: _tableData.first.applianceId,
@@ -2582,8 +2527,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       installeddate: reverseFormatDate(_installedDate.text),
                                                                                     )
                                                                                         .then((value) {
-                                                                                      print(widget.properties?.adminId);
-                                                                                      print(widget.unit?.unitId);
                                                                                       setState(() {
                                                                                         isLoading = false;
                                                                                       });

@@ -23,7 +23,6 @@ class WorkOrderRepository {
         'id': 'CRM $id',
       },
     );
-  print(response.body);
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
 
@@ -127,7 +126,6 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
 
     // Logging the request data
-    print('Request data: $data');
 
     // Sending the request
     final http.Response response = await apiPost(
@@ -144,8 +142,6 @@ class WorkOrderRepository {
     );
 
     // Logging the response status and body
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     // Handling the response
     var responseData = json.decode(response.body);
@@ -166,7 +162,6 @@ class WorkOrderRepository {
     String? token = prefs.getString('token');
 
     final url = Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
     final response = await apiGet(
         url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",}
@@ -202,8 +197,6 @@ class WorkOrderRepository {
     final body = <String, dynamic>{"workOrder": workorder};
     if (notificationTime != null) body['notificationTime'] = notificationTime;
     if (categoryId != null) body['category_id'] = categoryId;
-    print('=== UpdateWorkOrder (TENANT) PUT $url ===');
-    print('Request body: ${jsonEncode(body)}');
     final response = await apiPut(
       url,
       headers: {

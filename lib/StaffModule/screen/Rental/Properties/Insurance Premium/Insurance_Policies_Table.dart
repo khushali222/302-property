@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -48,13 +49,10 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   @override
   void initState() {
     super.initState();
-    print('=== Insurance_Policies_Table INITIALIZED ===');
-    print('Property ID: ${widget.propertyId}');
     _loadInsurancePolicies();
   }
 
   Future<void> _loadInsurancePolicies() async {
-    print('=== LOADING INSURANCE POLICIES ===');
     setState(() {
       _isLoading = true;
     });
@@ -64,8 +62,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      print('Loading insurance policies for property ID: ${widget.propertyId}');
-      print('API URL: ${Api_url}/api/property-insurance/${widget.propertyId}');
 
       final response = await apiGet(
         Uri.parse('${Api_url}/api/property-insurance/${widget.propertyId}'),
@@ -76,14 +72,10 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
         },
       ).timeout(const Duration(seconds: 30));
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
-          print(
-              'Successfully loaded ${data['data'].length} insurance policies');
           setState(() {
             _policies = (data['data'] as List)
                 .map((item) => PropertyInsuranceData.fromJson(item))
@@ -140,7 +132,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   }
 
   void _openAddPolicyForm() {
-    print('=== OPENING ADD INSURANCE POLICY FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -150,8 +141,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       ),
     ).then((result) {
       if (result == true) {
-        print('=== RETURNED FROM ADD POLICY FORM ===');
-        print('Refreshing policy list...');
         _loadInsurancePolicies();
       }
     });
@@ -233,10 +222,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
 
-      print('=== DELETING INSURANCE POLICY ===');
-      print('Policy ID: $id');
-      print('Admin ID: $adminId');
-      print('Reason: $reason');
 
       final response = await http
           .delete(
@@ -252,8 +237,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
           )
           .timeout(const Duration(seconds: 30));
 
-      print('Delete Response Status: ${response.statusCode}');
-      print('Delete Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -285,7 +268,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
         );
       }
     } catch (e) {
-      print('Error deleting insurance policy: $e');
+      logError('Error deleting insurance policy: $e');
       Fluttertoast.showToast(
         msg: 'Error deleting insurance policy: ${e.toString()}',
         backgroundColor: Colors.red,
@@ -299,7 +282,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   }
 
   void _editPolicy(PropertyInsuranceData policy) {
-    print('=== OPENING EDIT INSURANCE POLICY FORM ===');
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -311,8 +293,6 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       ),
     ).then((result) {
       if (result == true) {
-        print('=== RETURNED FROM EDIT POLICY FORM ===');
-        print('Refreshing policy list...');
         _loadInsurancePolicies();
       }
     });
@@ -387,7 +367,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
       return 'Active';
     } catch (e) {
       // If date parsing fails, return "Active"
-      print('Error parsing expiration date: $e');
+      logError('Error parsing expiration date: $e');
       return 'Active';
     }
   }

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:credit_card_type_detector/credit_card_type_detector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -117,7 +118,6 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
       finalStringCardType = cardTypeName.replaceAll('_', '');
 
       final logoUrl = 'https://logo.clearbit.com/$finalStringCardType.com';
-      print('https://logo.clearbit.com/$cardTypeName.com');
 
       try {
         final response = await apiGet(Uri.parse(logoUrl));
@@ -131,7 +131,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
           });
         }
       } catch (e) {
-        print('Error fetching logo: $e');
+        logError('Error fetching logo: $e');
         setState(() {
           cardLogo = '';
         });
@@ -201,8 +201,6 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
         DateFormat('dd MMMM yyyy').format(threeMonthsFromNow!);
     expiringPlanDate = DateFormat('yyyy-MM-dd').format(threeMonthsFromNow!);
 
-    print(formattedToday); // Print today's date
-    print(formattedThreeMonthsFromNow); // Print date three months from now
 
     // You can set these values to state variables if needed
     setState(() {
@@ -987,16 +985,8 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                           ElevatedButton(
                             onPressed: () async {
                               if (_PayMentformKey.currentState!.validate()) {
-                                print(widget.plan.planId);
-                                print(cardNumberController.text);
-                                print(
-                                    '${_selectedExpiringMonth}/${_selectedExpiringYear}');
-                                print(cardHolderName.text);
-
-                                print(streetaddress1.text);
-                                print(city.text);
-                                print(state.text);
-                                print(postalcode.text);
+                                // PCI: never log card number, expiry or
+                                // cardholder/billing details.
 
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
@@ -1043,7 +1033,6 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                 String subscriptionId =
                                     response!.subscriptionId!;
                                 String responseCode = response.responseCode!;
-                                print('subscriptionId $subscriptionId');
 
                                 purchaseFormModel purchaseformmodel =
                                     purchaseFormModel(
@@ -1070,8 +1059,8 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                   subscriptionId: subscriptionId,
                                 );
 
-                                print(
-                                    'json oooohhhhh :${jsonEncode(purchaseformmodel.toJson())}');
+                                // PCI: payload carries the card number and CVV
+                                // — never log it.
 
                                 purchaseFormService purchaseService =
                                     purchaseFormService();

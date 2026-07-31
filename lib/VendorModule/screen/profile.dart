@@ -277,8 +277,6 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print('hello$apiUrl');
-    print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
       setState(() {
@@ -535,7 +533,6 @@ class _Profile_screenState extends State<Profile_screen> {
       appBar: widget_302.App_Bar(
         context: context,
         onDrawerIconPressed: () {
-          print("calling appbar");
           key.currentState!.openDrawer();
         },
       ),

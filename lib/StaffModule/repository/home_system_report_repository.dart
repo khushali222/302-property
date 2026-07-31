@@ -1,5 +1,6 @@
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/services/api_helpers.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:three_zero_two_property/Model/RentarsInsuranceModel.dart';
@@ -50,7 +51,6 @@ class Home_system_reportService {
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     final url = Uri.parse("$Api_url/api/appliance/appliance-report/$rentalId");
-    print(url);
 
     try {
       final response = await apiGet(
@@ -60,7 +60,6 @@ class Home_system_reportService {
           "id": "CRM ${prefs.getString('staff_id') ?? id}",
         },
       );
-      print("check the home applience data ${response.body}");
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -70,11 +69,10 @@ class Home_system_reportService {
           throw Exception('Invalid response format');
         }
       } else {
-        print('Failed to fetch data: ${response.statusCode}');
         throw Exception('Failed to fetch data');
       }
     } catch (e) {
-      print('Error: $e');
+      logError('Error: $e');
       throw Exception('Error fetching data: $e');
     }
   }

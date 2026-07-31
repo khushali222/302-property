@@ -351,7 +351,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -418,7 +417,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
 
   void handleEdit(RentalOwnerData rentalOwner) async {
     // Handle edit action
-    print('Edit ${rentalOwner.rentalownerId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -499,13 +497,11 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   void handleDelete(RentalOwnerData rental) {
     _showDeleteAlert(context, rental.rentalownerId!);
     // Handle delete action
-    print('Delete ${rental.rentalownerId}');
   }
 
   final _scrollController = ScrollController();
   void handleTap(RentalOwnerData rental) async {
     // Handle edit action
-    print('Edit ${rental.rentalownerId}');
     final result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -524,7 +520,6 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   int rentalownerCount = 0;
   int rentalOwnerCountLimit = 0;
   Future<void> fetchRentalOwneradded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -537,15 +532,10 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalownerCount);
-      print(rentalOwnerCountLimit);
       setState(() {
         rentalownerCount = jsonData['rentalownerCount'];
-        print(rentalownerCount);
         rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
-        print(rentalOwnerCountLimit);
       });
     } else {
       throw Exception('Failed to load data');

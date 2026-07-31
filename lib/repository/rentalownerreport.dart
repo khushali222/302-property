@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
@@ -24,7 +25,6 @@ class RentalOwnerReportService {
     if(chargetype != null){
       url = '$url&selectedChargeType=$chargetype';
     }
-    print(url);
 
     try {
       final response = await apiGet(Uri.parse(url), headers: {
@@ -32,7 +32,6 @@ class RentalOwnerReportService {
         "authorization": "CRM $token",
         "id": "CRM $id",
       },);
-      print("report rentalowner ${response.body}");
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
@@ -41,12 +40,11 @@ class RentalOwnerReportService {
         return jsonData.map((data) => RentalOwnerReport.fromJson(data)).toList();
       } else {
         // Handle error response
-        print('Failed to load report. Status code: ${response.statusCode}');
         return [];
       }
     } catch (error) {
       // Handle error during fetch
-      print('Error fetching rental owner reportsd: $error');
+      logError('Error fetching rental owner reportsd: $error');
       return [];
     }
   }

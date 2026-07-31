@@ -53,16 +53,11 @@ class NmiKeysService {
       final merchantId = extractedData['merchant_id']?.toString();
 
       // Print NMI keys
-      print('\n[NMI KEYS] Merchant ID: ${merchantId ?? "Not found"}');
-      print('[NMI KEYS] Security Key: ${securityKey ?? "Not found"}');
       if (securityKey != null && securityKey.isNotEmpty) {
-        print(
-            '[NMI KEYS] Security Key Length: ${securityKey.length} characters');
       }
 
       return extractedData;
     } else {
-      print('NMI Keys API Error: ${response.statusCode} - ${response.body}');
       throw Exception(
           'Failed to load NMI keys: ${response.statusCode} - ${response.body}');
     }

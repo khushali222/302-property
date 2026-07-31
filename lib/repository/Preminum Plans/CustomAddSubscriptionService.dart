@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -27,25 +28,19 @@ class CustomAddSubscriptionService {
         body: body,
       );
 
-      print(response.body);
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body)['data'];
-        print('custom subsciption status code ${response.statusCode}');
-        print('custom subsciption ${response.body}');
         String subscriptionId = jsonResponse['transactionid'];
-        print(jsonResponse['transactionid']);
-        print('in reponsesubscriptionId $subscriptionId');
         String responseCode = jsonResponse['response_code'];
 
         return CustomAddSubscriptionResponse(
             subscriptionId: subscriptionId, responseCode: responseCode);
       } else {
-        print('Failed to submit subscription details: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Exception during POST request: $e');
+      logError('Exception during POST request: $e');
       return null;
     }
   }

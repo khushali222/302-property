@@ -45,7 +45,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         //  _connectivityResult = result;
       });
     });
@@ -84,7 +83,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
             .toList();
       });
     } else {
-      print('Failed to fetch settings: ${response.body}');
     }
   }
 
@@ -115,7 +113,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       },
     );
 
-    print(response.body);
     Map<String, dynamic> Response = json.decode(response.body);
 
     if (Response["statusCode"] == 200) {
@@ -159,7 +156,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       calculateTotal();
       checkFieldsFilled();
     } else {
-      print('Failed to fetch settings: ${response.body}');
     }
   }
 
@@ -197,7 +193,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
     bool allFieldsFilled = true;
 
     tenantDropdowns.forEach((index, tenantData) {
-      print(index);
       for (int i = 0; i < tenantData.length; i++) {
         if (tenantData[i]['selectedCard'] == null ||
             tenantData[i]['selectedAccount'] == null ||
@@ -1185,7 +1180,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
                                     try {
                                       await postLease(selectedTenantsData);
                                     } catch (e) {
-                                      print("Error: $e");
                                     } finally {
                                       setState(() {
                                         isloading = false;
@@ -1300,7 +1294,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         List<dynamic> cardDetailsList = jsonResponse['card_detail'];
 
         for (var cardDetail in cardDetailsList) {
-          print('Billing ID: ${cardDetail['billing_id']}');
         }
 
         CustomerData? customerData = await postBillingCustomerVault(
@@ -1312,18 +1305,15 @@ class _RecurringPaymentState extends State<RecurringPayment> {
           });
         }
       } else {
-        print('Customer vault ID not found for tenant: $tenantId');
         setState(() {
           customervaultid.add(0);
         });
       }
     } else if (response.statusCode == 404) {
-      print('Customer vault ID not found for tenant: $tenantId');
       setState(() {
         customervaultid.add(0);
       });
     } else {
-      print('Failed to load credit card data');
     }
 
     setState(() {
@@ -1341,7 +1331,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       "customer_vault_id": customerVaultId,
       "admin_id": adminId.toString(),
     };
-    print(requestBody);
     final response = await apiPost(
       Uri.parse('$Api_url/api/nmipayment/get-billing-customer-vault'),
       headers: {
@@ -1351,10 +1340,8 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       },
       body: json.encode(requestBody),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
-      print(jsonResponse['data'].toString() == "{}");
       if (jsonResponse['data'].toString() == "{}") {
         return null;
       } else {
@@ -1362,7 +1349,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         CustomerData customerData = CustomerData.fromJson(customerJson);
 
         customerData.billing.forEach((billing) {
-          print('CC Bin: ${billing.ccBin}');
         });
 
         for (int i = 0; i < cardDetailsList.length; i++) {
@@ -1372,14 +1358,12 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         return customerData;
       }
     } else {
-      print('Failed to post data: ${response.statusCode}');
       return null;
     }
   }
 
   postLease(List<Map<String, dynamic>> lease) async {
     final url = Uri.parse('${Api_url}/api/recurring-cards/add-cards');
-    print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -1395,24 +1379,20 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       );
 
       var responseData = jsonDecode(response.body);
-      print('Response body of the lease :${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
 
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added lease');
 
           return true;
         } else {
-          print('Failed to add lease: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
       } else {}
     } catch (error) {
-      print('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -1421,7 +1401,6 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   disablecards(String leaseid) async {
     final url =
         Uri.parse('${Api_url}/api/recurring-cards/disable-cards/${leaseid}');
-    print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
@@ -1436,24 +1415,20 @@ class _RecurringPaymentState extends State<RecurringPayment> {
       );
 
       var responseData = jsonDecode(response.body);
-      print('Response body of the lease :${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
 
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added lease');
 
           return true;
         } else {
-          print('Failed to add lease: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
       } else {}
     } catch (error) {
-      print('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }

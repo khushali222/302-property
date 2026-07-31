@@ -14,12 +14,13 @@
 // them later (see TenantData.toJson — no tenant_password/taxPayer_id, sends
 // send_welcome_email, matching web).
 
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:http/http.dart' as http;
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -237,11 +238,10 @@ class _AddTenantCosignerScreenState extends State<AddTenantCosignerScreen> {
       // at multi-co-admin companies); the URL path always uses adminId.
       final idHeader =
           widget.isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
-      final res = await http.get(
+      final res = await apiGet(
         Uri.parse('$Api_url/api/tenant/tenants/$adminId'),
         headers: {'authorization': 'CRM $token', 'id': 'CRM $idHeader'},
       );
-      print('[existing-tenants] status=${res.statusCode}');
       if (res.statusCode == 200) {
         final body = json.decode(res.body);
         final data = body is Map ? (body['data'] ?? body) : body;
@@ -272,14 +272,11 @@ class _AddTenantCosignerScreenState extends State<AddTenantCosignerScreen> {
             ));
           } catch (_) {}
         }
-        print('[existing-tenants] tenants=${tenants.length} '
-            'applicants=${applicants.length} parsed=${parsed.length}');
         if (mounted) setState(() => _allTenants = parsed);
       } else {
-        print('[existing-tenants] FAILED status=${res.statusCode}');
       }
     } catch (e) {
-      print('[existing-tenants] error=$e');
+      logError('[existing-tenants] error=$e');
     } finally {
       if (mounted) setState(() => _loadingTenants = false);
     }

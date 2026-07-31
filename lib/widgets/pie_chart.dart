@@ -50,7 +50,6 @@ class PieCharts extends StatelessWidget {
     Map<String, double> legendDataMap = dataMap
         .map((key, value) => MapEntry(key, key.contains('Gap') ? -1.0 : value))
         .cast<String, double>();
-    print(legendDataMap);
     legendDataMap.removeWhere((key, value) => value == -1.0);
 
     return LayoutBuilder(

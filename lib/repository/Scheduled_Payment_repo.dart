@@ -19,14 +19,12 @@ class Scheduled_Payment_repo {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
-    print('shcedule payment ${response.body}');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse
           .map((data) => Scheduled_Payment.fromJson(data))
           .toList();
     } else {
-      print('Failed to fetch renewal leases: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
@@ -49,7 +47,6 @@ class Scheduled_Payment_repo {
             },
             body: jsonEncode({"reason": reason}));
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

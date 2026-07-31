@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -238,7 +239,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
               directory = downloadsDir;
             } catch (e) {
               // If creating Downloads folder fails, use the main directory
-              print('Could not create Downloads folder: $e');
+              logError('Could not create Downloads folder: $e');
             }
           } else {
             directory = downloadsDir;
@@ -274,7 +275,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
           try {
             await Share.shareXFiles([XFile(file.path)], subject: fileName);
           } catch (shareError) {
-            print('Share error: $shareError');
+            logError('Share error: $shareError');
           }
         }
       } else {
@@ -286,7 +287,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         }
       }
     } catch (e) {
-      print('Download error: $e');
+      logError('Download error: $e');
       if (mounted) {
         String errorMsg = "Error downloading document";
         if (e.toString().contains('timeout')) {
@@ -335,7 +336,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         }
       }
     } catch (e) {
-      print('Error fetching signature tracking: $e');
+      logError('Error fetching signature tracking: $e');
     }
   }
 
@@ -536,7 +537,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
       // print(renters_insurance_id);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
@@ -1229,7 +1229,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
   }
 
   Future<List<Map<String, dynamic>>> fetchDocumentRental(String leaseid) async {
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -1246,7 +1245,6 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         // Check if 'data' exists and is a list
         if (parsedJson['documents'] != null &&
             parsedJson['documents'] is List) {
@@ -1284,7 +1282,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }

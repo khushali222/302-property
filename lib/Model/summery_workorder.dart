@@ -200,7 +200,6 @@ class WorkorderUpdates {
         this.id});
 
   WorkorderUpdates.fromJson(Map<String, dynamic> json) {
-    print(' image as ${ json['workOrderUpdate_images']}');
     status = json['status'];
     date = json['date'];
     reopenDate = json['reopen_date'];

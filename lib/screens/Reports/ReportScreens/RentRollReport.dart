@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -58,7 +59,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     _selectedOwnersNotifier.value = [];
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -624,7 +624,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -634,7 +633,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (response.statusCode == 200) {
       setState(() {
         rentalowners = (jsonDecode(response.body) as List)
@@ -667,7 +665,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       // Continue and still generate the PDF (header falls back to N/A)
     }
 
@@ -2054,7 +2052,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
 
   void handleDownload(String format) {
     // Replace with your download logic
-    print("Downloading as $format");
   }
 
   // Multi-select dropdown widget
@@ -2289,7 +2286,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                       ? null
                                                       : selectedOwners);
                                         });
-                                        print("Run Report");
                                       },
                                       tooltip: "Run Report",
                                     ),
@@ -2420,7 +2416,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                       ? null
                                                       : selectedOwners);
                                         });
-                                        print("Run Report");
                                       },
                                       tooltip: "Run Report",
                                     ),
@@ -4095,8 +4090,6 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                     }
                                   });
 
-                                  print(
-                                      "isRowPropertyExpanded $isRowPropertyExpanded");
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(left: 5),

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -749,7 +750,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _mortgageNumberController.text = mortgageData['mortgage_no'] ?? '';
         _loanAmountController.text =
             mortgageData['loan_amount']?.toString() ?? '';
-        print(mortgageData['interest_rate']);
         _interestRateController.text =
             mortgageData['interest_rate']?.toString() ?? '';
 
@@ -789,7 +789,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         }
 
         // mortgageData['status'] first letter make a so that.. because active is not match with Active
-        print("mortgageData['status'] ${mortgageData['status']}");
         // if mortgageData['status'] is I/flutter ( 4495): mortgageData['status'] paid_off then make it Paid Off detecct the "_" and make the first letter uppercase
         final status = mortgageData['status'].toString();
         final formattedStatus = status
@@ -907,15 +906,12 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         _borrowerPhoneController.text = mortgageData['borrower_phone'] ?? '';
         _borrowerEmailController.text = mortgageData['borrower_email'] ?? '';
 
-        print(mortgageData['properties']);
 
         // Handle properties selection
         if (mortgageData['properties'] != null &&
             mortgageData['properties'] is List) {
           _selectedProperties.clear();
           for (var propertyId in mortgageData['properties']) {
-            print(propertyId);
-            print(_propertyOptions);
             // Find the property in _propertyOptions by rental_id
             final property = _propertyOptions.firstWhere(
               (p) => p['rental_id'] == propertyId,
@@ -941,7 +937,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         }
       });
     } catch (e) {
-      print(e);
+      logError(e);
     }
   }
 
@@ -1170,7 +1166,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
 
       return false;
     } catch (e) {
-      print('Error comparing data: $e');
+      logError('Error comparing data: $e');
       // If comparison fails, assume there are changes to be safe
       return true;
     }
@@ -1369,7 +1365,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               .timeout(const Duration(seconds: 30));
         } else {
           // Create new mortgage (POST)
-          print("mortgage data $mortgageData");
           response = await http
               .post(
                 Uri.parse(apiUrl),
@@ -1382,7 +1377,6 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
               )
               .timeout(const Duration(seconds: 30));
         }
-        print("responce mortgage ${response.body}");
         if (response.statusCode == 200 || response.statusCode == 201) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

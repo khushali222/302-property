@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import '../../../../constant/constant.dart';
 import '../../../../repository/appliance_note_service.dart';
@@ -59,7 +60,7 @@ class _AddNoteDialogState extends State<AddNoteDialog> {
         ),    
       );
     } catch (e) {
-      print('Error updating note: $e');
+      logError('Error updating note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error updating note: ${e.toString()}'),    
@@ -240,7 +241,7 @@ class _AddNoteDialogState extends State<AddNoteDialog> {
         ),
       );
     } catch (e) {
-      print('Error adding note: $e');
+      logError('Error adding note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error adding note: ${e.toString()}'),

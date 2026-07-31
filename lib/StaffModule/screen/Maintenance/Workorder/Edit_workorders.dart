@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -316,7 +317,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
             fetchedDetails.unitId!.isNotEmpty) {
           _selectedUnitId = fetchedDetails.unitId;
           _selectedUnit = fetchedDetails.unitId;
-          print('Setting selected unit to: ${fetchedDetails.unitId}');
         }
       });
 
@@ -341,7 +341,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/rentals/rentals/$id');
       if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -393,7 +392,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('Loading units for rental: $rentalId');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -410,7 +408,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           }
         }
 
-        print('Found ${unitAddresses.length} valid units');
 
         setState(() {
           units = unitAddresses;
@@ -418,7 +415,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
           // Only keep the selected unit if it exists in the new units
           if (_selectedUnitId != null && !units.containsKey(_selectedUnitId)) {
-            print('Clearing invalid unit selection: $_selectedUnitId');
             _selectedUnitId = null;
           }
         });
@@ -428,7 +424,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           _loadTenant(rentalId, _selectedUnitId!);
         }
       } else {
-        print('Failed to load units: ${response.statusCode}');
         setState(() {
           units = {};
           _selectedUnitId = null;
@@ -436,7 +431,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         });
       }
     } catch (e) {
-      print('Error loading units: $e');
+      logError('Error loading units: $e');
       setState(() {
         units = {};
         _selectedUnitId = null;
@@ -460,7 +455,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
-      print('${Api_url}/api/vendor/vendors/$id');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -502,7 +496,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -544,8 +537,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
             "authorization": "CRM $token",
             "id": "CRM $id",
           });
-      print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
-      print(response.body);
       if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -560,7 +551,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           tenants = tenantsnames;
           _isLoadingtenant = false;
         });
-        print(tenants);
       } else {
         throw Exception('Failed to load data');
       }
@@ -772,8 +762,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 setState(() {
                   partsAndLabor[index]['selectedAccount'] = newValue;
                 });
-                print(
-                    'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
                 height: 45,
@@ -938,7 +926,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   }
 
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
@@ -951,7 +938,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -1200,7 +1186,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         _imageUrls.add(fileName!);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -1392,7 +1378,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               });
                             }
                           } catch (e) {
-                            print('Image upload failed: $e');
+                            logError('Image upload failed: $e');
                           }
                         }
                       },
@@ -1902,8 +1888,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   value]; // Store selected rental address
 
                                               renderId = value.toString();
-                                              print(
-                                                  'Selected Property: $_selectedProperty');
                                               if (value != null) {
                                                 _loadUnits(value);
                                               }
@@ -2060,8 +2044,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                     _loadTenant(
                                                         _selectedPropertyId!,
                                                         unitId);
-                                                    print(
-                                                        'Selected Unit: $_selectedUnit');
                                                     state.didChange(value);
                                                   });
                                                   state.reset();
@@ -2418,8 +2400,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                               _selectedStaffs = staffs[
                                                   value]; // Store selected staff
                                               StaffId = value.toString();
-                                              print(
-                                                  'Selected Staffs: $_selectedStaffs');
 
                                               if (value != null) {
                                                 _loadUnits(
@@ -2527,7 +2507,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                   // if(_selectedCategory == 'Other')
                                   // addRow();
                                 });
-                                print('Selected category: $_selectedEntry');
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
@@ -2652,8 +2631,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   value]; // Store selected vendor
 
                                               vendorId = value.toString();
-                                              print(
-                                                  'Selected Vendors: $_selectedVendors');
                                               _loadUnits(value!);
                                               state.didChange(
                                                   value); // Fetch units for the selected vendor
@@ -2973,8 +2950,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                       _selectedtenantId = value;
                                                       _selectedTenants = tenants[
                                                           value]; // Store selected tenant name
-                                                      print(
-                                                          'Selected Tenant: $_selectedTenants');
                                                     });
                                                   },
                                                   buttonStyleData:
@@ -3191,7 +3166,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 setState(() {
                                   _selectedStatus = newValue;
                                 });
-                                print('Selected category: $_selectedStatus');
                               },
                               buttonStyleData: ButtonStyleData(
                                 height: 45,
@@ -3441,7 +3415,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           _selectedtenantId != initialSelectedTenantId;
 
       if (!hasChanges) {
-        print("no changes");
 
         setState(() {
           isloading = false;
@@ -3529,7 +3502,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        print(e);
+        logError(e);
       } finally {
         // Final cleanup
         if (mounted) {
@@ -3542,7 +3515,6 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       setState(() {
         formValid = false;
       });
-      print('Form is invalid');
     }
   }
 }
@@ -3611,14 +3583,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     // await _loadProperties();
     EditData fetchedDetails =
         await WorkOrderRepository().fetchWorkordersDetails(workorderId);
-    print(workorderId);
 
-    print('Address ${fetchedDetails.propertyData?.address}');
-    print('rentalid ${fetchedDetails.rentalId}');
-    print('category ${fetchedDetails.workCategory}');
-    print('vendors ${fetchedDetails.vendorId}');
-    print('entry ${fetchedDetails.entryAllowed}');
-    print('entry ${fetchedDetails.staffmemberId}');
     // print('Fetched parts and charge data: ${fetchedDetails.partsandchargeData?.first.account}');
     String? entryAllowedString;
     if (fetchedDetails.entryAllowed != null) {
@@ -3674,7 +3639,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                   calculateTotal(qtyController, priceController,
                       totalController, subtotalcontroller);
                 });
-                print('part id ${data.partsQuantity}');
                 return {
                   "parts_id": data.partsId,
                   "qtyController": qtyController,
@@ -3692,7 +3656,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       // totalAmount = calculateTotalAmount(partsAndLabor);
     });
 
-    print(fetchedDetails.tenantId);
     _loadUnits(_selectedPropertyId!);
     if (_selectedUnitId != null) {
       _loadTenant(_selectedPropertyId!, _selectedUnitId!);
@@ -3722,7 +3685,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
-      print('${Api_url}/api/rentals/rentals/$id');
       if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -3767,7 +3729,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -3807,7 +3768,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
-      print('${Api_url}/api/vendor/vendors/$id');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -3848,7 +3808,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             "authorization": "CRM $token",
             "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
-      print('${Api_url}/api/staffmember/staff_member/$id');
 
       if (!mounted) return;
       if (response.statusCode == 200) {
@@ -3890,8 +3849,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             "authorization": "CRM $token",
             "id": "CRM ${prefs.getString('staff_id') ?? id}",
           });
-      print('${Api_url}/api/leases/get_tenants/$rentalId/$unitId');
-      print(response.body);
       if (!mounted) return;
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -3906,7 +3863,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
           tenants = tenantsnames;
           _isLoadingtenant = false;
         });
-        print(tenants);
       } else {
         throw Exception('Failed to load data');
       }
@@ -4116,8 +4072,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                 setState(() {
                   partsAndLabor[index]['selectedAccount'] = newValue;
                 });
-                print(
-                    'Selected account: ${partsAndLabor[index]['selectedAccount']}');
               },
               buttonStyleData: ButtonStyleData(
                 height: 50,
@@ -4280,7 +4234,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   }
 
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest(
@@ -4293,7 +4246,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -4538,7 +4490,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         _imageUrls.add(fileName!);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -4926,8 +4878,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                     renderId = value.toString();
 
-                                                    print(
-                                                        'Selected Property: $_selectedProperty');
                                                     // _loadUnits(
                                                     //     value!);
                                                     if (value != null) {
@@ -5091,8 +5041,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                           _loadTenant(
                                                               _selectedPropertyId!,
                                                               unitId);
-                                                          print(
-                                                              'Selected Unit: $_selectedUnit');
                                                         });
                                                       },
                                                       buttonStyleData:
@@ -5218,8 +5166,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                         _selectedCategory ==
                                                             'Other';
                                                   });
-                                                  print(
-                                                      'Selected category: $_selectedCategory');
                                                 },
                                                 buttonStyleData:
                                                     ButtonStyleData(
@@ -5317,8 +5263,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                     // if(_selectedCategory == 'Other')
                                                     // addRow();
                                                   });
-                                                  print(
-                                                      'Selected category: $_selectedEntry');
                                                 },
                                                 buttonStyleData:
                                                     ButtonStyleData(
@@ -5488,8 +5432,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                               StaffId = value
                                                                   .toString();
-                                                              print(
-                                                                  'Selected Staffs: $_selectedStaffs');
                                                               _loadUnits(
                                                                   value!); // Fetch units for the selected property
                                                             });
@@ -5683,8 +5625,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                                 vendorId = value
                                                                     .toString();
-                                                                print(
-                                                                    'Selected Vendors: $_selectedVendors');
                                                                 _loadUnits(
                                                                     value!); // Fetch units for the selected property
                                                               });
@@ -5994,8 +5934,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                             'selectedAccount'] =
                                                         newValue;
                                                   });
-                                                  print(
-                                                      'Selected account: ${partsAndLabor[index]['selectedAccount']}');
                                                 },
                                                 buttonStyleData:
                                                     ButtonStyleData(
@@ -6356,8 +6294,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                                       _selectedTenants =
                                                                           tenants[
                                                                               value]; // Store selected tenant name
-                                                                      print(
-                                                                          'Selected Tenant: $_selectedTenants');
                                                                     });
                                                                   },
                                                                   buttonStyleData:
@@ -6570,7 +6506,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                 tenantId = value.toString();
                                                 _selectedtenantId = value;
                                                 _selectedTenants = tenants[value]; // Store selected tenant name
-                                                print('Selected Tenant: $_selectedTenants');
                                               });
                                             },
                                             buttonStyleData: ButtonStyleData(
@@ -6714,8 +6649,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                                   setState(() {
                                                     _selectedStatus = newValue;
                                                   });
-                                                  print(
-                                                      'Selected category: $_selectedStatus');
                                                 },
                                                 buttonStyleData:
                                                     ButtonStyleData(
@@ -6998,7 +6931,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         };
       }).toList();
       log(parts.toString());
-      print('staff id:${_selectedstaffId}');
       WorkOrderRepository()
           .EditWorkOrder(
         adminId: id,
@@ -7052,7 +6984,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-        print(e);
       }).whenComplete(() {
         // Final cleanup
         if (mounted) {
@@ -7065,7 +6996,6 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       setState(() {
         formValid = false;
       });
-      print('Form is invalid');
     }
   }
 
@@ -7220,7 +7150,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                               });
                             }
                           } catch (e) {
-                            print('Image upload failed: $e');
+                            logError('Image upload failed: $e');
                           }
                         }
                       },

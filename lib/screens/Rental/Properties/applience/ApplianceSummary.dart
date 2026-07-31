@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -67,7 +68,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         setState(() {
           _isLoading = true;
         });
-        print("calling api load data api ");
         final appliance = await _applianceService.fetchApplianceDetails(
           widget.appliance.applianceId!,
         );
@@ -77,7 +77,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
           _isLoading = false;
         });
       } catch (e) {
-        print('Error loading appliance data: $e');
+        logError('Error loading appliance data: $e');
         setState(() {
           _isLoading = false;
         });
@@ -104,7 +104,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         _isRefreshing = false;
       });
     } catch (e) {
-      print('Error refreshing appliance data: $e');
+      logError('Error refreshing appliance data: $e');
       setState(() {
         _isRefreshing = false;
       });
@@ -373,8 +373,6 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
                                       .map((entry) {
                                       int index = entry.key;
                                       dynamic filter = entry.value;
-                                      print(
-                                          "filtter name ${filter['filter_name']}");
                                       return _buildDetailRowPair(
                                         'Filter Name',
                                         filter['filter_name'] ?? '',

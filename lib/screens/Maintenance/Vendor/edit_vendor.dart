@@ -1036,11 +1036,9 @@ class _edit_vendorState extends State<edit_vendor> {
     });
 
     if (success) {
-      print('Form is valid');
       Fluttertoast.showToast(msg: "Vendor Edited successfully");
       Navigator.of(context).pop(true);
     } else {
-      print('Form is invalid');
     }
   }
 }

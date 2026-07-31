@@ -38,7 +38,6 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -51,7 +50,6 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
-      print(connectiondata);
       _connectivityResult = connectiondata;
     });
 
@@ -124,7 +122,6 @@ class _RentalownersSummeryForMobileState
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -160,7 +157,6 @@ class _RentalownersSummeryForMobileState
   bool debitcard = true;
 
   Future<void> fetchPaymentSettings() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -172,11 +168,8 @@ class _RentalownersSummeryForMobileState
       },
     );
     final jsonData = json.decode(response.body);
-    print(' rental added ${jsonData}');
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
 
-      print(creditcard);
-      print(creditcard);
       setState(() {
         achaccepted = jsonData['data']['achAccepted'] ?? false;
         creditcard = jsonData['data']['creditCardAccepted'] ?? true;
@@ -1120,7 +1113,6 @@ class _RentalownersSummeryForTabletState
               if (rentalownersummery.isEmpty) {
                 return const Center(child: Text("No owner details found"));
               }
-              print(rentalownersummery.length);
               //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
               return ListView(
                 scrollDirection: Axis.vertical,

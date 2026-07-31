@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -736,7 +737,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   Future<void> _selectDatePlacedInService() async {
-    print(datePlacedInService.text);
 
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -4954,7 +4954,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                             .format(parsedDate);
                                   }
                                 } catch (e) {
-                                  print(
+                                  logError(
                                       'Error formatting placed_in_service date: $e');
                                 }
                               }
@@ -5094,19 +5094,15 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   DateFormat('yyyy-MM-dd HH:mm:ss');
                               String notificationTime =
                                   formatter.format(DateTime.now());
-                              print(notificationTime);
-                              print("rental unit ${units.length}");
                               RentalRequest rentalrequest = RentalRequest(
                                 rentalOwner: owners,
                                 rental: rentals,
                                 units: units,
                                 notificationTime: notificationTime,
                               );
-                              print("rental request ${rentalrequest}");
                               await Rental_PropertiesRepository()
                                   .createRental(rentalrequest)
                                   .then((value) {
-                                print("rental request ${rentalrequest}");
 
                                 setState(() {
                                   loading = false;
@@ -5423,7 +5419,6 @@ class _Add_new_propertyState extends State<Add_new_property> {
     };
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(jsonEncode(data));
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final http.Response response = await apiPost(
@@ -5449,9 +5444,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
   }
 
   void handleAddrentalOwner() {
-    print(rentalOwnerId);
     if (rentalOwnerId != null) {
-      print(rentalOwnerId);
       Fluttertoast.showToast(
           msg: "Rental Owner Added Successfully!",
           toastLength: Toast.LENGTH_SHORT,

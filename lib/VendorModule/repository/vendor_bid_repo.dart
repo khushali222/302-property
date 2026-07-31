@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -36,7 +37,6 @@ class VendorBidRepository {
           .replace(queryParameters: queryParams)
           .toString();
 
-      print('Fetching vendor bid requests from: $url');
 
       final response = await apiGet(
         Uri.parse(url),
@@ -47,7 +47,6 @@ class VendorBidRepository {
         },
       );
 
-      print('Vendor bid requests response status: ${response.statusCode}');
       // print('Vendor bid requests response body: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -60,7 +59,7 @@ class VendorBidRepository {
         throw Exception('Failed to fetch bid requests: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching vendor bid requests: $e');
+      logError('Error fetching vendor bid requests: $e');
       Fluttertoast.showToast(msg: 'Error fetching bid requests: $e');
       rethrow;
     }

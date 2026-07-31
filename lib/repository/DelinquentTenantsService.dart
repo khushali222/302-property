@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -9,7 +10,6 @@ class DelinquentTenantsSerivce {
 // Define your API URL here
 
   Future<List<DelinquentTenantsData>> fetchDelinquentTenants() async {
-    print('Fetching delinquent tenants');
 
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -27,18 +27,16 @@ class DelinquentTenantsSerivce {
         // If the server returns a 200 OK response, parse the JSON
 
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final delinquentTenants = DelinquentTenantsModel.fromJson(parsedJson);
         return delinquentTenants.data ?? [];
       } else {
         // If the server did not return a 200 OK response, throw an exception
-        print('Failed to fetch delinquent tenants: ${response.body}');
         return [];
         // throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }

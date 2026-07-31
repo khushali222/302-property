@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -117,9 +118,6 @@ class AdminBalanceRepository {
     String? staffId = prefs.getString("staff_id");
     String? headerId = staffId ?? adminId;
 
-    print('DEBUG: Admin ID: $adminId');
-    print('DEBUG: Staff ID: $staffId');
-    print('DEBUG: Header ID used: $headerId');
     
     // Build query parameters
     Map<String, String> queryParams = {
@@ -150,7 +148,6 @@ class AdminBalanceRepository {
     Uri uri = Uri.parse('$baseUrl/$adminId').replace(queryParameters: queryParams);
     String url = uri.toString();
 
-    print('Fetching Admin Balance from: $url');
     try {
       final response = await apiGet(
         uri,
@@ -161,39 +158,22 @@ class AdminBalanceRepository {
         },
       );
 
-      print('Admin Balance response: ${response.body}');
 
       if (response.statusCode == 200) {
         final dynamic jsonData = json.decode(response.body);
         //  print('=== DEBUG: API Response Structure ===');
-        print('Response type: ${jsonData.runtimeType}');
         if (jsonData is List && jsonData.isNotEmpty) {
-          print('Data is a List with ${jsonData.length} elements');
-          print(
-              'First element data structure: ${jsonData[0]["data"]?.keys.toList()}');
-          print(
-              'Last Month Data: ${jsonData[0]["data"]?["lastDueRentCharges"]}');
-          print(
-              'Current Month Data: ${jsonData[0]["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData[0]["data"] ?? {});
         } else if (jsonData is Map<String, dynamic>) {
-          print('Data is a Map with keys: ${jsonData.keys.toList()}');
-          print('Data field structure: ${jsonData["data"]?.keys.toList()}');
-          print('Last Month Data: ${jsonData["data"]?["lastDueRentCharges"]}');
-          print(
-              'Current Month Data: ${jsonData["data"]?["currentDueRentCharges"]}');
           return RentPastDue.fromJson(jsonData["data"] ?? {});
         } else {
-          print('Admin Balance: Unexpected response format.');
           throw Exception('Unexpected response format');
         }
       } else {
-        print(
-            'Failed to load Admin Balance. Status code: ${response.statusCode}');
         throw Exception('Failed to load Admin Balance');
       }
     } catch (error) {
-      print('Error fetching Admin Balance: $error');
+      logError('Error fetching Admin Balance: $error');
       throw Exception('Error fetching Admin Balance');
     }
   }

@@ -23,7 +23,6 @@ class SurchargeRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     final response = await apiGet(
         Uri.parse('$baseUrl/api/surcharge/surcharge/getadmin/$adminId'),
         headers: {
@@ -31,10 +30,7 @@ class SurchargeRepository {
           "id": "CRM $id",
           "Content-Type": "application/json"
         });
-    print("id of id 2 $id");
     final response_Data = jsonDecode(response.body);
-    print('surcharge check ${adminId}');
-    print('surcharge check responce  ${response.body}');
     if (response_Data["statusCode"] == 200) {
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse =
@@ -47,13 +43,11 @@ class SurchargeRepository {
 
   Future<List<Setting1>> fetchUpdat(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print(jsonEncode(data));
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     final response =
         await apiPut(Uri.parse('${Api_url}/api/surcharge/surcharge/$adminId'),
             headers: {
@@ -81,7 +75,6 @@ class SurchargeRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1  staff $id");
     final response = await apiPut(
       Uri.parse('$baseUrl/api/surcharge/surcharge/$surchargeId'),
       headers: {
@@ -92,7 +85,6 @@ class SurchargeRepository {
       body: jsonEncode(data),
     );
 
-    print(response.body);
 
     if (response.statusCode == 200) {
       return true;
@@ -103,14 +95,12 @@ class SurchargeRepository {
 
   Future<bool> AddSurgeData(
       String surchargeId, Map<String, dynamic> data) async {
-    print("$baseUrl/api/surcharge/surcharge");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminId = prefs.getString('adminId');
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminId;
-    print("id of id 1 $id");
     final response = await apiPost(
       Uri.parse('$baseUrl/api/surcharge/surcharge'),
       headers: {
@@ -120,7 +110,6 @@ class SurchargeRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -141,7 +130,6 @@ class latefeeRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
     final response = await apiGet(
       Uri.parse('$baseUrl/api/latefee/latefee/$adminId'),
       headers: {
@@ -150,10 +138,7 @@ class latefeeRepository {
       },
     );
     final response_Data = jsonDecode(response.body);
-    print(response_Data);
     if (response_Data["statusCode"] == 200) {
-      print("callling latefee");
-      print(jsonDecode(response.body)["data"]);
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse = Setting2.fromJson(jsonDecode(response.body)["data"]);
       return apiResponse;
@@ -170,7 +155,6 @@ class latefeeRepository {
     String? staffid = prefs.getString("staff_id");
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
 
-    print("id of id 1 $id");
     final response = await apiPut(
       Uri.parse('$baseUrl/api/latefee/latefee/$surchargeId'),
       headers: {
@@ -180,8 +164,6 @@ class latefeeRepository {
       },
       body: jsonEncode(data),
     );
-    print('$baseUrl/api/latefee/latefee/$surchargeId');
-    print(response.body);
 
     if (response.statusCode == 200) {
       return true;
@@ -198,10 +180,7 @@ class latefeeRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
 
-    print("$Api_url/api/latefee/latefee");
-    print(data);
     final response = await apiPost(
       Uri.parse('$Api_url/api/latefee/latefee'),
       headers: {
@@ -211,7 +190,6 @@ class latefeeRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -231,7 +209,6 @@ class mailserviceRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
     final response = await apiGet(
       Uri.parse('$baseUrl/api/mail_permission/$adminId'),
       headers: {
@@ -240,10 +217,7 @@ class mailserviceRepository {
       },
     );
     final response_Data = jsonDecode(response.body);
-    print('mail data $response_Data');
     if (response_Data["statusCode"] == 200) {
-      print("callling latefee");
-      print(jsonDecode(response.body)["data"]);
 
       // final apiResponse = ApiResponse.fromJson(jsonDecode(response.body));
       final apiResponse = Setting3.fromJson(jsonDecode(response.body)["data"]);
@@ -260,7 +234,6 @@ class mailserviceRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
     final response = await apiPut(
       Uri.parse('$Api_url/api/mail_permission/$adminid'),
       headers: {
@@ -270,7 +243,6 @@ class mailserviceRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -285,9 +257,6 @@ class mailserviceRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
-    print("$Api_url/api/mail_permission");
-    print(data);
     final response = await apiPost(
       Uri.parse('$Api_url/api/mail_permission'),
       headers: {
@@ -297,7 +266,6 @@ class mailserviceRepository {
       },
       body: jsonEncode(data),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -314,7 +282,6 @@ class accountRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/accounts/accounts/$adminid'),
       headers: {
@@ -327,7 +294,6 @@ class accountRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Setting4.fromJson(data)).toList();
     } else {
-      print('Failed to fetch settings: ${response.body}');
       return [];
     }
   }
@@ -353,7 +319,6 @@ class accountRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
 
     final http.Response response = await apiPost(
       Uri.parse('${Api_url}/api/accounts/accounts'),
@@ -366,7 +331,6 @@ class accountRepository {
     );
     var responseData = json.decode(response.body);
 
-    print('account ${response.body}');
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -397,7 +361,6 @@ class accountRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
 
     final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/accounts/accounts/$accountId'),
@@ -410,7 +373,6 @@ class accountRepository {
     );
     var responseData = json.decode(response.body);
 
-    print('update account ${response.body}');
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -429,7 +391,6 @@ class accountRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
 
     final http.Response response = await apiDelete(
       Uri.parse('${Api_url}/api/accounts/accounts/$account_id'),
@@ -440,7 +401,6 @@ class accountRepository {
       },
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -457,7 +417,6 @@ class accountRepository {
     String? staffid = prefs.getString("staff_id");
 
     String? id = (staffid != null && staffid.isNotEmpty) ? staffid : adminid;
-    print("id of id 1 $id");
     final response = await apiGet(
       Uri.parse('${Api_url}/api/settings/categories/$adminid'),
       headers: {
@@ -472,7 +431,6 @@ class accountRepository {
           .map((data) => categories_model.fromJson(data))
           .toList();
     } else {
-      print('Failed to fetch settings: ${response.body}');
       return [];
     }
   }
@@ -492,7 +450,6 @@ class accountRepository {
         },
         body: jsonEncode({"reason": reason}));
     var responseData = json.decode(response.body);
-    print(" check the  delete the ${response.body}");
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -525,7 +482,6 @@ class PropertyOwnerOverrideRepository {
           .map((data) => PropertyOwnerOverride.fromJson(data))
           .toList();
     } else {
-      print('Failed to fetch property owners: ${response.body}');
       return [];
     }
   }
@@ -546,7 +502,6 @@ class PropertyOwnerOverrideRepository {
       },
       body: jsonEncode(data),
     );
-    print('save property owner override: ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       return true;

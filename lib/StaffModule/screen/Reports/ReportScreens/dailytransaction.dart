@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -53,7 +54,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -469,7 +469,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       // Continue and still generate the PDF (header falls back to N/A)
     }
     setState(() {
@@ -621,7 +621,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
       );
     }
     } catch (e, st) {
-      print('▶▶ PDF EXPORT ERROR: $e\n$st');
       Fluttertoast.showToast(msg: 'Could not generate PDF: $e');
       if (mounted) setState(() => istenantDataLoading = false);
     }
@@ -719,7 +718,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
             ),
           ),
         ]);
-        print(property.response);
         if (property.response != "FAILURE" && !property.isDelete!)
           for (var payment in property.entry!) {
             tableData.add([
@@ -2872,7 +2870,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           setState(() {
                             chargeType = value;
                           });
-                          print(value);
                         },
                       ),
                     ),
@@ -3262,7 +3259,6 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                             // For other date ranges, user must click "Run" button
                           });
                           // Handle the selected charge type
-                          print(value);
                         },
                         buttonStyleData: ButtonStyleData(
                           height: 42,
@@ -3380,13 +3376,10 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                           onSelected: (value) async {
                             // Export logic
                             if (value == 'PDF' && data != null) {
-                              print('pdf');
                               generateDelinquentTenantsPdf(data);
                             } else if (value == 'XLSX' && data != null) {
-                              print('XLSX');
                               generateRentalOwnerReportExcel(data);
                             } else if (value == 'CSV' && data != null) {
-                              print('CSV');
                               generateRentalOwnerReportCsv(data);
                             }
                           },

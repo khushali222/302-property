@@ -68,14 +68,11 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
       _accountNumberController.text = _originalAccountNumber!;
       // Format phone number for display (handles both formatted and unformatted)
       String phoneToDisplay = _originalCustomerServicePhone!;
-      print('Original phone from API: $phoneToDisplay');
       if (phoneToDisplay.isNotEmpty) {
         // Remove any existing formatting first, then format it
         String digitsOnly = phoneToDisplay.replaceAll(RegExp(r'\D'), '');
-        print('Phone digits only: $digitsOnly');
         if (digitsOnly.length == 10) {
           String formatted = formatPhoneNumberedit(digitsOnly);
-          print('Formatted phone for display: $formatted');
           _customerServicePhoneController.text = formatted;
         } else {
           _customerServicePhoneController.text = phoneToDisplay;
@@ -196,8 +193,6 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
       // Prepare phone number (send formatted phone number to API)
       String formattedPhone = _customerServicePhoneController.text.trim();
 
-      print('Phone number from controller (formatted): $formattedPhone');
-      print('Phone number being sent to API: $formattedPhone');
 
       Map<String, dynamic> requestData = {
         'admin_id': adminId,

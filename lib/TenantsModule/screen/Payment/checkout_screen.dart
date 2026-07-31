@@ -1,5 +1,6 @@
 // lib/checkout_screen.dart
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pay/pay.dart';
@@ -113,7 +114,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // Step 3: Check plugin availability
       await _checkPayPluginAvailability();
     } catch (e) {
-      print('Error initializing payment: $e');
       setState(() {
         _isLoadingKeys = false;
         _currentError = PaymentErrorType.serverError;
@@ -146,33 +146,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           keysData['securitykey']?.toString();
 
       // Print merchant ID and security key with detailed validation
-      print('\n[NMI KEYS] Merchant ID: ${_merchantId ?? "Not found"}');
-      print('[NMI KEYS] Security Key: ${_securityKey ?? "Not found"}');
       if (_securityKey != null && _securityKey!.isNotEmpty) {
-        print(
-            '[NMI KEYS] Security Key Length: ${_securityKey!.length} characters');
 
         // Validate security key format
         if (_securityKey!.length < 20) {
-          print(
-              '[NMI KEYS] ⚠️ WARNING: Security key seems too short (should be 32+ chars)');
         }
         if (_securityKey!.contains(' ')) {
-          print(
-              '[NMI KEYS] ⚠️ WARNING: Security key contains spaces - may cause auth issues');
         }
         if (_securityKey!.contains('\n') || _securityKey!.contains('\r')) {
-          print(
-              '[NMI KEYS] ⚠️ WARNING: Security key contains newlines - may cause auth issues');
         }
 
         // Show first/last few characters for verification (don't log full key for security)
-        print(
-            '[NMI KEYS] Security Key Preview: ${_securityKey!.substring(0, _securityKey!.length > 10 ? 10 : _securityKey!.length)}...${_securityKey!.substring(_securityKey!.length > 10 ? _securityKey!.length - 5 : 0)}');
       } else {
-        print('[NMI KEYS] ❌ ERROR: Security key is missing or empty!');
-        print(
-            '[NMI KEYS] This will cause authentication failures with NMI API');
       }
 
       // Check if merchant_id exists, if not, show helpful error
@@ -185,7 +170,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _isLoadingKeys = false;
       });
     } catch (e) {
-      print('Error fetching NMI keys: $e');
       setState(() {
         _isLoadingKeys = false;
       });
@@ -223,7 +207,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     } catch (e) {
       // Silently handle error - don't prevent Google Pay from working
-      print('Apple Pay config generation error (non-blocking): $e');
       _applePayConfigString = null;
     }
   }
@@ -265,9 +248,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // 6. Your backend API decrypts the token and processes the payment
   //
   void onGooglePayResult(Map<String, dynamic> paymentResult) async {
-    print('[GOOGLE PAY] Token received successfully');
-    print('[GOOGLE PAY] Token structure:');
-    print('  - Keys: ${paymentResult.keys.toList()}');
 
     // Extract and print full token for Postman testing (even if backend is offline)
     if (paymentResult.containsKey('paymentMethodData')) {
@@ -277,19 +257,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         final tokenData = pmData!['tokenizationData'] as Map<String, dynamic>?;
         if (tokenData?.containsKey('token') == true) {
           final innerToken = tokenData!['token'] as String?;
-          print('  - Inner token found: ${innerToken != null}');
           if (innerToken != null) {
-            print('  - Inner token length: ${innerToken.length} chars');
-            print(
-                '  - Inner token preview: ${innerToken.substring(0, innerToken.length > 100 ? 100 : innerToken.length)}...');
 
             // Print token for Postman testing
-            print('\n[POSTMAN] Payment Token:');
-            print('────────────────────────────────────────────────────────');
-            print(innerToken);
-            print('────────────────────────────────────────────────────────');
-            print('[POSTMAN] Token Format: JSON String');
-            print('[POSTMAN] Token Length: ${innerToken.length} characters\n');
           }
         }
       }
@@ -339,12 +309,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _showErrorSnackBar(_currentError!, _errorMessage!);
       }
     } catch (e) {
-      print("Payment error: $e");
 
       // If backend is offline, token is still available for Postman testing
-      print('\n[BACKEND OFFLINE] Token was generated successfully!');
-      print(
-          '[BACKEND OFFLINE] Check logs above for full token to use in Postman');
 
       setState(() {
         _isProcessingPayment = false;
@@ -359,7 +325,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void onApplePayResult(Map<String, dynamic> paymentResult) async {
-    print('[APPLE PAY] Token received successfully');
 
     setState(() {
       _isProcessingPayment = true;
@@ -405,7 +370,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _showErrorSnackBar(_currentError!, _errorMessage!);
       }
     } catch (e) {
-      print("Payment error: $e");
       setState(() {
         _isProcessingPayment = false;
         _currentError = PaymentErrorType.unknownError;
@@ -527,8 +491,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           }
         }
       } catch (e) {
-        print(
-            '[PAYMENT] ⚠️ Lease data fetch failed: $e - continuing without it');
+        Fluttertoast.showToast(msg: 'Could not load lease details for this payment.');
       }
 
       dynamic paymentTokenForNmi = paymentData;
@@ -547,18 +510,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 paymentTokenForNmi = innerToken;
 
                 // Print token only
-                print('\n[PAYMENT TOKEN]');
-                print(
-                    '═══════════════════════════════════════════════════════════');
-                print(innerToken);
-                print(
-                    '═══════════════════════════════════════════════════════════\n');
               }
             }
           }
         } catch (e) {
-          print(
-              '[PAYMENT] ⚠️ Error extracting inner token: $e - using full token');
+          Fluttertoast.showToast(
+              msg: 'Could not read the wallet payment token. Please try again.');
         }
       }
 
@@ -583,18 +540,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'paymentDetails': paymentDetails,
       };
 
-      // Print complete data being sent from Flutter
-      print('\n[FLUTTER DATA SENT TO BACKEND]');
-      print('═══════════════════════════════════════════════════════════');
-      try {
-        final encoder = JsonEncoder.withIndent('  ');
-        final prettyJson = encoder.convert(requestBody);
-        print(prettyJson);
-      } catch (e) {
-        print(jsonEncode(requestBody));
-      }
-      print('═══════════════════════════════════════════════════════════\n');
-
       final apiStartTime = DateTime.now();
       final url = Uri.parse('$Api_url/api/nmipayment/wallet-payment');
       final response = await http
@@ -611,26 +556,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         const Duration(seconds: 30),
         onTimeout: () {
           final elapsed = DateTime.now().difference(apiStartTime);
-          print(
-              '[PAYMENT] ❌ TIMEOUT after ${elapsed.inSeconds}s - Backend did not respond');
           throw TimeoutException(
               'Wallet payment API request timed out after 30 seconds');
         },
       );
-
-      // Print NMI API response
-      print('\n[NMI API RESPONSE]');
-      print('═══════════════════════════════════════════════════════════');
-
-      try {
-        final encoder = JsonEncoder.withIndent('  ');
-        final responseJson = jsonDecode(response.body);
-        final prettyJson = encoder.convert(responseJson);
-        print(prettyJson);
-      } catch (e) {
-        print(response.body);
-      }
-      print('═══════════════════════════════════════════════════════════\n');
 
       // Parse response
       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -667,7 +596,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               // You can uncomment below to fetch actual company name
               // companyName = await TenantsRepository().fetchCompanyName(adminId);
             } catch (e) {
-              print('Error fetching company name: $e');
               companyName = _merchantName ?? 'Cloud Rental Manager';
             }
 
@@ -693,9 +621,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               notificationTime: null, // Add if needed
             );
 
-            print('Payment record stored successfully');
           } catch (e) {
-            print('Error storing payment: $e');
             // Continue even if storing fails - payment was successful
           }
 
@@ -738,7 +664,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               notificationTime: null,
             );
           } catch (e) {
-            print('Error storing payment: $e');
           }
 
           // Alternative success formats
@@ -759,12 +684,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           // Check if this is an NMI authentication error
           if (responseCode == '300' ||
               responseText.toLowerCase().contains('authentication failed')) {
-            print(
-                '\n[PAYMENT] ❌ NMI AUTHENTICATION ERROR (Response Code: $responseCode)');
-            print(
-                '[PAYMENT] This is an NMI-side authentication failure, not a card decline');
-            print(
-                '[PAYMENT] The security_key being used by backend is incorrect or invalid');
 
             return PaymentResponse(
               isSuccess: false,
@@ -804,14 +723,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
       } else if (response.statusCode == 401) {
         // Unauthorized - Authentication error
-        print('\n[PAYMENT] ❌ HTTP 401 Authentication Error');
-        print('[PAYMENT] This could be:');
-        print('  1. Your app token is invalid/expired (frontend issue)');
-        print('  2. Backend authentication failed (backend issue)');
-        print(
-            '  3. NMI security_key authentication failed (NMI/backend issue)');
-        print(
-            '[PAYMENT] Check backend logs to see which authentication layer failed');
 
         return PaymentResponse(
           isSuccess: false,
@@ -886,7 +797,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     } catch (e) {
       // Unknown error
-      print('Wallet Payment API Error: $e');
       return PaymentResponse(
         isSuccess: false,
         errorType: PaymentErrorType.unknownError,
@@ -1405,7 +1315,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   ),
                                 );
                               } catch (e) {
-                                print('Error creating Google Pay button: $e');
                                 return const SizedBox.shrink();
                               }
                             },
@@ -1468,8 +1377,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 } catch (e) {
                                   // Silently hide on error - don't show error message
                                   // This allows Google Pay to work independently
-                                  print(
-                                      "Apple Pay button error (silently handled): $e");
                                   return const SizedBox.shrink();
                                 }
                               },

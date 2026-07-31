@@ -93,13 +93,11 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString('adminId');
-      print(adminId);
 
       if (adminId != null) {
         PropertyInsuranceRepository repo = PropertyInsuranceRepository();
         PropertyInsuranceResponse response =
             await repo.fetchPropertyInsuranceSummary(adminId);
-        print(response.data);
         if (response.success == true && response.data != null) {
           setState(() {
             insuranceData = response.data!;

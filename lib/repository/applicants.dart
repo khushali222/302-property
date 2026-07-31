@@ -21,7 +21,6 @@ class ApplicantRepository {
     postData['user_active_recently'] = true;
 
     // Log the postData for debugging
-    print('Posting data: ${jsonEncode(postData)}');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -34,13 +33,11 @@ class ApplicantRepository {
       },
       body: jsonEncode(postData),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: 'Applicant Added Successfully');
       return jsonDecode(response.body);
     } else {
       // Log the response body for debugging
-      print('Failed to post data: ${response.body}');
       throw Exception('Failed to post applicant and lease data');
     }
   }
@@ -57,10 +54,8 @@ class ApplicantRepository {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final List<dynamic> applicantJson = data['data'];
-      print(applicantJson);
       return applicantJson.map((json) => Datum.fromJson(json)).toList();
     } else {
-      print('Failed to fetch applicant: ${response.body}');
       return [];
       //throw Exception('Failed to load applicants');
     }
@@ -90,20 +85,17 @@ class ApplicantRepository {
         "user_active_recently": true,
       }),
     );
-    print('abc app ${response.body}');
     if (response.statusCode == 200) {
       // Fluttertoast.showToast(msg: 'Applicant Updated Successfully');
       return jsonDecode(response.body);
     } else {
       // Log the response body for debugging
-      print('Failed to update data: ${response.body}');
       throw Exception('Failed to update applicant data');
     }
   }
 
   Future<Map<String, dynamic>> DeleteApplicant(
       {required String? Applicantid,String? reason}) async {
-    print('id is $Applicantid');
     // print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -117,7 +109,6 @@ class ApplicantRepository {
         body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

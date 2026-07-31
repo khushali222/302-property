@@ -84,7 +84,6 @@ class _send_emailState extends State<send_email> {
     _subjectFocusNode = FocusNode();
     _nameFocusNode = FocusNode();
     fetchTenant();
-    print("tenants ${widget.lease}");
    currentEventList =  (widget.lease != null ? eventTypes["lease"] :eventTypes["tenant"]!)!;
   }
   Future<void> fetchTenant() async {
@@ -127,7 +126,6 @@ class _send_emailState extends State<send_email> {
 
       });
     } else {
-      print("Failed to load templates");
     }
   }
   Future<void> fetchTemplatestype() async {
@@ -182,11 +180,9 @@ class _send_emailState extends State<send_email> {
         // });
       }
     } else {
-      print("Failed to load templates");
     }
   }
   String replaceSpanTags(String html) {
-    print("spn${html}");
     // Mapping class names to corresponding font sizes
     final Map<String, String> classToFontSizeMap = {
       'text-tiny': '1',
@@ -342,7 +338,6 @@ class _send_emailState extends State<send_email> {
         });
       }
     } else {
-      print("Failed to load templates");
     }
   }
   // void saveTemplate() async {
@@ -852,7 +847,6 @@ class _send_emailState extends State<send_email> {
                                           fetchTemplatestype();
                                           //  fetchTemplates();
                                         });
-                                        print('Selected Event: $_selectedEvent');
 
                                         // Notify FormField of value change
                                       },
@@ -1003,7 +997,6 @@ class _send_emailState extends State<send_email> {
                                           });
                                           //  fetchTemplates();
                                         });
-                                        print('Selected Event: $selectedTemplateId');
 
                                         // Notify FormField of value change
                                       },
@@ -1533,7 +1526,6 @@ class _send_emailState extends State<send_email> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          print(await _htmlEditorController.getText());
                           // Validate name
 
 

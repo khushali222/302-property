@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -54,10 +55,9 @@ class PermissionService {
         },
         body: json.encode(data.toJson()),
       );
-      print(response.body);
       return response.statusCode;
     } catch (e) {
-      print('Error: $e');
+      logError('Error: $e');
       return 500; // Return 500 as a fallback error code
     }
   }

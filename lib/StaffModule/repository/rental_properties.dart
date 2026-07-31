@@ -164,10 +164,8 @@ class Rental_PropertiesRepository{
       body: jsonEncode(requestData),
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
     //  Fluttertoast.showToast(msg: responseData["message"]);
-      print(responseData);
         if(responseData["statusCode"]== 200){
           return true;
         }
@@ -205,7 +203,6 @@ class Rental_PropertiesRepository{
       },
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -229,15 +226,12 @@ class Rental_PropertiesRepository{
         'Content-Type': 'application/json'},
       body: jsonEncode(rentalRequest.toJson()),
     );
-     print('create rental ${response.body}');
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: "Properties added successfully");
       // Handle success
-      print('Properties added successfully');
     } else {
       Fluttertoast.showToast(msg: "Failed to add properties");
       // Handle error
-      print('Failed to add properties: ${response.body}');
     }
   }
 

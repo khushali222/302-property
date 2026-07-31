@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -102,7 +103,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
 
       return null; // Return null if parsing fails
     } catch (e) {
-      print('Error parsing date: $e');
+      logError('Error parsing date: $e');
       return null;
     }
   }
@@ -280,17 +281,14 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             'receipt': _existingReceipt,
           };
 
-          print('=== INITIAL VALUES STORED ===');
-          print('Initial Values: $_initialValues');
         });
       });
     } catch (e) {
-      print('Error populating form: $e');
+      logError('Error populating form: $e');
     }
   }
 
   void _saveForm() async {
-    print('=== SAVE FORM STARTED ===');
 
     // Set validation flag to show error messages
     setState(() {
@@ -322,12 +320,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
     }
 
     if (!isValid) {
-      print('=== VALIDATION FAILED ===');
-      print('Required fields validation failed');
       return;
     }
 
-    print('=== VALIDATION PASSED ===');
 
     // Get DateProvider for date conversion
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -405,42 +400,34 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       String initialAuth = normalizeString(_initialValues!['tax_authority']);
       String currentAuth = normalizeString(currentValues['tax_authority']);
       if (initialAuth != currentAuth) {
-        print('Change detected: tax_authority ($initialAuth != $currentAuth)');
         hasChanges = true;
       }
 
       if (!compareAmounts(
           _initialValues!['tax_amount'], currentValues['tax_amount'])) {
-        print(
-            'Change detected: tax_amount (${_initialValues!['tax_amount']} != ${currentValues['tax_amount']})');
         hasChanges = true;
       }
 
       if (!compareAmounts(_initialValues!['assessment_value'],
           currentValues['assessment_value'])) {
-        print(
-            'Change detected: assessment_value (${_initialValues!['assessment_value']} != ${currentValues['assessment_value']})');
         hasChanges = true;
       }
 
       String initialYear = normalizeString(_initialValues!['tax_year']);
       String currentYear = normalizeString(currentValues['tax_year']);
       if (initialYear != currentYear) {
-        print('Change detected: tax_year ($initialYear != $currentYear)');
         hasChanges = true;
       }
 
       String initialStatus = normalizeString(_initialValues!['status']);
       String currentStatus = normalizeString(currentValues['status']);
       if (initialStatus != currentStatus) {
-        print('Change detected: status ($initialStatus != $currentStatus)');
         hasChanges = true;
       }
 
       String initialNotes = normalizeString(_initialValues!['notes']);
       String currentNotes = normalizeString(currentValues['notes']);
       if (initialNotes != currentNotes) {
-        print('Change detected: notes ($initialNotes != $currentNotes)');
         hasChanges = true;
       }
 
@@ -448,8 +435,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       String? currentDueDateNormalized =
           normalizeDate(currentValues['due_date']);
       if (initialDueDate != currentDueDateNormalized) {
-        print(
-            'Change detected: due_date ($initialDueDate != $currentDueDateNormalized)');
         hasChanges = true;
       }
 
@@ -457,8 +442,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       String? currentPaidDateNormalized =
           normalizeDate(currentValues['paid_date']);
       if (initialPaidDate != currentPaidDateNormalized) {
-        print(
-            'Change detected: paid_date ($initialPaidDate != $currentPaidDateNormalized)');
         hasChanges = true;
       }
 
@@ -466,19 +449,11 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       String currentReceiptNormalized =
           normalizeString(currentValues['receipt']);
       if (initialReceipt != currentReceiptNormalized) {
-        print(
-            'Change detected: receipt ($initialReceipt != $currentReceiptNormalized)');
         hasChanges = true;
       }
 
-      print('=== CHANGE DETECTION DEBUG ===');
-      print('Initial Values: $_initialValues');
-      print('Current Values: $currentValues');
-      print('Has Changes: $hasChanges');
 
       if (!hasChanges) {
-        print('=== NO CHANGES DETECTED - STOPPING HERE ===');
-        print('No changes made to the form. Skipping API call.');
         if (mounted) {
           Fluttertoast.showToast(
             msg: "No changes were made",
@@ -491,15 +466,12 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           );
         }
         // Explicitly return to prevent API call
-        print('=== RETURNING - API CALL WILL NOT BE MADE ===');
         return;
       } else {
-        print('=== CHANGES DETECTED - PROCEEDING WITH API CALL ===');
       }
     }
 
     // Only reach here if creating new record OR if changes were detected in edit mode
-    print('=== PROCEEDING TO API CALL ===');
     setState(() {
       _isLoading = true;
     });
@@ -509,8 +481,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       String? token = prefs.getString('token');
       String? id = prefs.getString('adminId');
 
-      print('Token: ${token != null ? "Present" : "Missing"}');
-      print('Admin ID: ${id != null ? "Present" : "Missing"}');
 
       // Prepare the tax data according to your API structure
       final taxData = {
@@ -534,31 +504,13 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : null,
       };
 
-      print('=== TAX DATA TO SEND ===');
-      print('Property ID: ${widget.propertyId}');
-      print('Admin ID: $id');
-      print('Tax Authority: ${_taxAuthorityController.text.trim()}');
-      print('Tax Amount: ${_taxAmountController.text}');
-      print('Assessment Value: ${_assessmentController.text}');
-      print('Tax Year: ${_taxYearController.text.trim()}');
-      print('Due Date: ${_dueDateController.text}');
-      print('Paid Date: ${_paidDateController.text}');
-      print('Status: ${_statusController.text.trim()}');
-      print('Notes: ${_notesController.text.trim()}');
-      print(
-          'Receipt: ${_uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "None"}');
-      print('Full Tax Data: $taxData');
 
       http.Response response;
       String apiUrl = '$Api_url/api/taxes';
 
-      print('=== API REQUEST ===');
-      print('API URL: $apiUrl');
-      print('Is Edit Mode: ${widget.taxId != null}');
 
       if (widget.taxId != null) {
         // Update existing tax (PUT)
-        print('Making PUT request to: $apiUrl/${widget.taxId}');
         response = await http
             .put(
               Uri.parse('$apiUrl/${widget.taxId}'),
@@ -572,8 +524,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             .timeout(const Duration(seconds: 30));
       } else {
         // Create new tax (POST)
-        print('Making POST request to: $apiUrl');
-        print('Making POST request to add tax : $taxData');
         response = await http
             .post(
               Uri.parse(apiUrl),
@@ -587,14 +537,8 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
             .timeout(const Duration(seconds: 30));
       }
 
-      print('=== API RESPONSE ===');
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('=== SUCCESS ===');
-        print(
-            'Tax record ${widget.taxId != null ? "updated" : "created"} successfully!');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -604,12 +548,9 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
               backgroundColor: Colors.green,
             ),
           );
-          print('=== NAVIGATING BACK ===');
           Navigator.pop(context);
         }
       } else {
-        print('=== ERROR ===');
-        print('Failed to save tax record. Status: ${response.statusCode}');
         // Reset validation flag if form submission fails
         setState(() {
           _hasValidated = false;
@@ -618,7 +559,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
           final errorData = json.decode(response.body);
           final errorMessage =
               errorData['message'] ?? 'Failed to save tax record';
-          print('Error Message: $errorMessage');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(errorMessage),
@@ -628,8 +568,8 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         }
       }
     } catch (e) {
-      print('=== EXCEPTION ===');
-      print('Exception occurred: $e');
+      logError('=== EXCEPTION ===');
+      logError('Exception occurred: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -639,14 +579,12 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         );
       }
     } finally {
-      print('=== FINALLY BLOCK ===');
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
     }
-    print('=== SAVE FORM ENDED ===');
   }
 
   //for image
@@ -662,7 +600,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
   Map<String, dynamic>? _initialValues;
 
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -674,7 +611,6 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -726,7 +662,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         _uploadImage(file);
       }
     } catch (e) {
-      print('Error picking file: $e');
+      logError('Error picking file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error selecting file: ${e.toString()}'),
@@ -775,7 +711,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
         });
       }
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('File upload failed: ${e.toString()}'),

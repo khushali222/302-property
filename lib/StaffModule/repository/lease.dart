@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:developer';
@@ -64,7 +65,6 @@ class LeaseRepository {
 
   Future<bool> postLease(Lease lease) async {
     final url = Uri.parse('${Api_url}/api/leases/leases');
-    print(url);
     log(jsonEncode(lease.toJson()));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -82,30 +82,26 @@ class LeaseRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print('Response body of the lease :${response.body}');
       log(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added lease');
 
           return true;
         } else {
-          print('Failed to add lease: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add lease');
           return false;
         }
       } else {
-        print('Failed to add lease: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to add lease');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -142,14 +138,12 @@ class LeaseRepository {
       );
 
       if (response.statusCode == 200) {
-        print('Applicant status updated successfully');
         return true;
       } else {
-        print('Failed to update applicant status: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('Error updating applicant status: $e');
+      logError('Error updating applicant status: $e');
       return false;
     }
   }
@@ -185,8 +179,6 @@ class LeaseRepository {
     }*/
   }
   Future<bool> updateLease(Lease lease, {bool? achAccepted}) async {
-    print(lease);
-    print('entry');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -201,14 +193,8 @@ class LeaseRepository {
     }
     final encodedBody = json.encode(payload);
 
-    print('Lease ID: ${lease.leaseData.leaseId}');
-    print('Token: $token');
-    print('Admin ID: $id');
-    print('API URL: $Api_url/api/leases/leases/${lease.leaseData.leaseId}');
-    print('Lease Data: $encodedBody');
 
     try {
-      print('Entering the try block');
       final response = await apiPut(
         Uri.parse('$Api_url/api/leases/leases/${lease.leaseData.leaseId}'),
         headers: {
@@ -218,32 +204,27 @@ class LeaseRepository {
         },
         body: encodedBody,
       );
-      print('Request complete');
 
       var responseData = jsonDecode(response.body);
-      print('Response Data for update : $responseData');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully updated lease');
 
           return true;
         } else {
-          print('Failed to add lease: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to update lease');
           return false;
         }
       } else {
-        print('Failed to add lease: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to update lease');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred: $error');
       return false;
     }
@@ -399,7 +380,6 @@ class LeaseRepository {
         '&search=${Uri.encodeQueryComponent(search)}'
         '&status=$status&sortBy=$sortBy&sortOrder=$sortOrder';
     final uri = Uri.parse('$Api_url/api/leases/leases/$adminId?$queryString');
-    print(uri);
     final response = await apiGet(
       uri,
       headers: {
@@ -410,7 +390,6 @@ class LeaseRepository {
 
     final empty = LeasesPageResult(items: [], pagination: null);
     if (response.statusCode != 200) {
-      print('Failed to fetch lease page: ${response.body}');
       return empty;
     }
     final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
@@ -480,8 +459,6 @@ class LeaseRepository {
       );
 
       var responseData = json.decode(response.body);
-      print(response.body);
-      print(leaseId);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -599,11 +576,6 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? id = prefs.getString('adminId');
 
-    print('Lease ID: ${lease.leaseData.leaseId}');
-    print('Token: $token');
-    print('Admin ID: $id');
-    print('API URL: $Api_url/api/leases/leases/${lease.leaseData.leaseId}');
-    print('Lease Data: ${json.encode(lease)}');
 
     try {
       print('Entering the try block');
@@ -619,11 +591,9 @@ class LeaseRepository {
       print('Request complete');
 
       var responseData = jsonDecode(response.body);
-      print('Response Data: $responseData');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully updated lease');
 
@@ -655,9 +625,6 @@ class LeaseRepository {
     final response = await apiGet(Uri.parse('${Api_url}/api/leases/get_lease/$leaseId'),
       headers: {"authorization" : "CRM $token",
         "id":"CRM ${prefs.getString('staff_id') ?? id}",},); // Update with your actual API URL
-    print('lease fetch edit ${response.body}');
-    print(leaseId);
-    print(leaseId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];
@@ -709,7 +676,6 @@ class LeaseRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    print('$Api_url/api/leases/lease_summary/$leaseId');
     final response = await apiGet(
       Uri.parse('$Api_url/api/leases/lease_summary/$leaseId'),
       headers: {
@@ -761,20 +727,15 @@ class LeaseRepository {
     if (fromDate != null && toDate != null) {
       url += '?from_date=$fromDate&to_date=$toDate';
     }
-    print(' lease url $url');
     try {
-      print('entry');
       final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
 
       if (response.statusCode == 200) {
-        print('response.body ${response.body}');
         final parsedJson = jsonDecode(response.body);
-        print('parsedJson: $parsedJson');
         final report = LeaseLedger.fromJson(parsedJson);
-        print('parsed ReportExpiringLeaseTable: ${report.data}');
         return report;
       } else {
         throw ServerException(response.statusCode,
@@ -802,14 +763,10 @@ class LeaseRepository {
       },
       body: jsonEncode(charge.toJson()),
     );
-     print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
-      print('Charge posted successfully');
     } else {
       // Handle error
-      print('Failed to post charge: ${response.statusCode}');
-      print('Response body: ${response.body}');
     }
 
     return response;
@@ -828,14 +785,10 @@ class LeaseRepository {
       },
       body: jsonEncode(charge.toJson()),
     );
-    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
-      print('Charge posted successfully');
     } else {
       // Handle error
-      print('Failed to post charge: ${response.statusCode}');
-      print('Response body: ${response.body}');
     }
 
     return response;
@@ -855,14 +808,10 @@ class LeaseRepository {
         body: jsonEncode({"reason":reason})
 
     );
-    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
-      print('Charge posted successfully');
     } else {
       // Handle error
-      print('Failed to post charge: ${response.statusCode}');
-      print('Response body: ${response.body}');
     }
 
     return response.statusCode;
@@ -883,14 +832,10 @@ class LeaseRepository {
         body: jsonEncode({"reason":reason})
 
     );
-    print('charge respo ${response.body}');
     if (response.statusCode == 200) {
       // Successfully posted
-      print('Charge posted successfully');
     } else {
       // Handle error
-      print('Failed to post charge: ${response.statusCode}');
-      print('Response body: ${response.body}');
     }
 
     return response.statusCode;
@@ -917,7 +862,7 @@ class LeaseRepository {
             'Failed to load lease charges. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching lease charges: $e');
+      logError('Error fetching lease charges: $e');
       throw Exception('Error fetching lease charges: $e');
     }
   }

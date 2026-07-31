@@ -65,7 +65,6 @@ class ContactRepository {
       body: jsonEncode(data),
     );
 
-    print('Response body add: ${response.body}');
 
     var responseData = json.decode(response.body);
 

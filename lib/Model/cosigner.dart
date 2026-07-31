@@ -32,9 +32,7 @@ class Cosigner {
   });
 
   factory Cosigner.fromJson(Map<String, dynamic> json) {
-    print('Consigner Data');
     json.forEach((key, value) {
-      print('$key: $value');
     });
     return Cosigner(
       c_id: json['_id'],

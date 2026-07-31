@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -63,11 +64,7 @@ class _Edit_applienceState extends State<Edit_applience> {
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
-    print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
-      print('hello');
       leases = fetchedLeases;
       isLoading = false;
     });
@@ -93,8 +90,6 @@ class _Edit_applienceState extends State<Edit_applience> {
   }
 
   Future<void> _loadInitialData() async {
-    print('Loading initial data...');
-    print('Appliance data: ${widget.appliance?.toJson()}');
 
     // Load the existing image if available
     if (widget.appliance?.applianceImage != null &&
@@ -119,12 +114,6 @@ class _Edit_applienceState extends State<Edit_applience> {
 
     try {
       final cats = await FetchAllcategories().fetchAllCategories();
-      print('Categories loaded: ${cats.length}');
-      print('Current appliance categoryId: ${widget.appliance?.categoryId}');
-      print(
-          'Current appliance categoryName: ${widget.appliance?.categoryName}');
-      print(
-          'Available categories: ${cats.map((c) => '${c.name}(${c.categoryId})').join(', ')}');
 
       if (!mounted) return;
 
@@ -133,8 +122,6 @@ class _Edit_applienceState extends State<Edit_applience> {
 
         // Try to find the matching category
         if (widget.appliance?.categoryId != null) {
-          print(
-              'Looking for category with ID: ${widget.appliance?.categoryId}');
 
           // First try exact match
           try {
@@ -143,7 +130,6 @@ class _Edit_applienceState extends State<Edit_applience> {
                   (cat.categoryId ?? "").trim() ==
                   (widget.appliance?.categoryId ?? "").trim(),
             );
-            print('Found exact matching category: ${matchingCategory.name}');
             _selectedDropdownCategory = matchingCategory;
           } catch (e) {
             // If no exact match, try case-insensitive match
@@ -153,7 +139,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                     (cat.categoryId ?? "").trim().toLowerCase() ==
                     (widget.appliance?.categoryId ?? "").trim().toLowerCase(),
               );
-              print(
+              logError(
                   'Found case-insensitive matching category: ${matchingCategory.name}');
               _selectedDropdownCategory = matchingCategory;
             } catch (e) {
@@ -163,7 +149,7 @@ class _Edit_applienceState extends State<Edit_applience> {
                   categoryId: widget.appliance?.categoryId ?? "",
                   name: widget.appliance?.categoryName ?? "",
                 );
-                print(
+                logError(
                     'Created temporary category: ${_selectedDropdownCategory?.name}');
               }
             }
@@ -177,12 +163,10 @@ class _Edit_applienceState extends State<Edit_applience> {
             ? 'Major System'
             : 'Appliance';
 
-        print(
-            'Final selected category: ${_selectedDropdownCategory?.name ?? "none"}');
         _isLoadingCategories = false;
       });
     } catch (e) {
-      print('Error loading categories: $e');
+      logError('Error loading categories: $e');
       if (!mounted) return;
       setState(() {
         _isLoadingCategories = false;
@@ -328,7 +312,6 @@ class _Edit_applienceState extends State<Edit_applience> {
   }
 
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -340,7 +323,6 @@ class _Edit_applienceState extends State<Edit_applience> {
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print(responseData.body);
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
@@ -405,7 +387,7 @@ class _Edit_applienceState extends State<Edit_applience> {
         _imageUrl = base64Image;
       });
     } catch (e) {
-      print('Image conversion failed: $e');
+      logError('Image conversion failed: $e');
     }
   }
 
@@ -578,8 +560,6 @@ class _Edit_applienceState extends State<Edit_applience> {
                             : (allcategories_model? newValue) {
                                 setState(() {
                                   _selectedDropdownCategory = newValue;
-                                  print(
-                                      'Category changed to: ${newValue?.name}');
 
                                   // Reset filters if changing from/to HVAC
                                   if (_selectedDropdownCategory?.name !=

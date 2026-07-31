@@ -71,10 +71,8 @@ class PaymentService {
       };
     }).toList();
 
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -108,13 +106,9 @@ class PaymentService {
           "paymentDetails": paymentDetails,
         }),
       );
-      print('card for real ${response.body}');
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
           await Future.wait([
             storePayment(
               companyName: company_name,
@@ -195,7 +189,6 @@ class PaymentService {
     String? staffId = prefs.getString('staff_id');
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    print(entries);
     final Map<String, dynamic> requestBody = {
       'company_name': companyName,
       'admin_id': id,
@@ -228,7 +221,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -299,10 +291,8 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -325,7 +315,6 @@ class PaymentService {
         'entry': updatedEntries,
         // 'entry': entries,
       };
-      print(paymentDetails);
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -341,11 +330,8 @@ class PaymentService {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
           await Future.wait([
             storePaymentAch(
                 companyName: company_name,
@@ -450,7 +436,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -524,11 +509,8 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print(updatedEntries);
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -551,7 +533,6 @@ class PaymentService {
         //'entry': entries,
         // 'notificationTime':notificationTime,
       };
-      print(paymentDetails);
 
       final response = await apiPost(
         Uri.parse(baseUrl),
@@ -567,11 +548,8 @@ class PaymentService {
         }),
       );
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
           storePaymentAch(
             companyName: company_name,
             adminId: adminId,
@@ -676,7 +654,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -732,7 +709,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(

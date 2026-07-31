@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,7 +119,7 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
         }
       }
     } catch (e) {
-      print('Error loading existing premiums: $e');
+      logError('Error loading existing premiums: $e');
     }
   }
 
@@ -139,7 +140,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
   }
 
   Future<void> _saveForm() async {
-    print('=== SAVE INSURANCE PREMIUM FORM STARTED ===');
 
     setState(() {
       _hasValidated = true;
@@ -172,9 +172,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
 
       if (widget.premiumId != null) {
         // Edit mode - PUT request
-        print('=== EDITING INSURANCE PREMIUM ===');
-        print('Premium ID: ${widget.premiumId}');
-        print('Property ID: ${widget.propertyId}');
 
         final response = await http
             .put(
@@ -193,8 +190,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
             )
             .timeout(const Duration(seconds: 30));
 
-        print('Edit Response Status: ${response.statusCode}');
-        print('Edit Response Body: ${response.body}');
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
@@ -215,8 +210,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
         }
       } else {
         // Add mode - POST request to /api/rentals/insurance-premiums/{propertyId}
-        print('=== CREATING INSURANCE PREMIUM ===');
-        print('Property ID: ${widget.propertyId}');
 
         final response = await http
             .post(
@@ -235,8 +228,6 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
             )
             .timeout(const Duration(seconds: 30));
 
-        print('Create Response Status: ${response.statusCode}');
-        print('Create Response Body: ${response.body}');
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           final data = json.decode(response.body);
@@ -257,8 +248,8 @@ class _AddEditInsurancePremiumState extends State<AddEditInsurancePremium> {
         }
       }
     } catch (e) {
-      print('=== EXCEPTION ===');
-      print('Exception occurred: $e');
+      logError('=== EXCEPTION ===');
+      logError('Exception occurred: $e');
       if (mounted) {
         _showFieldError('general', 'Error: ${e.toString()}');
       }

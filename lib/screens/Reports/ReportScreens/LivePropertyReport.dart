@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,9 +76,8 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
         taxYears = apiYears.map((year) => year.toString()).toList();
       });
 
-      print('Tax years fetched: $apiYears');
     } catch (e) {
-      print('Error fetching tax years: $e');
+      logError('Error fetching tax years: $e');
       setState(() {
         taxYears = [DateTime.now().year.toString()];
       });
@@ -139,9 +139,8 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
         insuredYears = apiYears.map((year) => year.toString()).toList();
       });
 
-      print('Insured years fetched: $apiYears');
     } catch (e) {
-      print('Error fetching insured years: $e');
+      logError('Error fetching insured years: $e');
       setState(() {
         insuredYears = [DateTime.now().year.toString()];
       });
@@ -225,13 +224,11 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString('adminId');
-      print(adminId);
 
       if (adminId != null) {
         LivePropertyRepository repo = LivePropertyRepository();
         LivePropertyResponse response =
             await repo.fetchLivePropertyReport(adminId);
-        print(response.data);
 
         if (response.statusCode == 200 && response.data != null) {
           setState(() {
@@ -247,9 +244,6 @@ class _LivePropertyReportState extends State<LivePropertyReport> {
           await _fetchTaxYears();
           await _fetchInsuredYears();
         } else {
-          print(response.message);
-          print(response.statusCode);
-          print(response.data);
           Fluttertoast.showToast(msg: 'Failed to load property data');
           setState(() {
             isDataLoading = false;

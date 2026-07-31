@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -127,7 +128,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     // Initialize moveOutDate with the end date or current date
     //  moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.enddate!));
 
-    print(' get moved out ${widget.enddate}');
     if (widget.isredirectpayment != null && widget.isredirectpayment!) {
       _tabController!.animateTo(1);
       _selectedIndex = 1;
@@ -171,7 +171,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         isLoading = false;
       });
     } catch (e) {
-      print('Error fetching tenants: $e');
+      logError('Error fetching tenants: $e');
       setState(() {
         isLoading = false;
       });
@@ -210,10 +210,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         }
       }
 
-      print('Late Fee Income Count from Financial table: ${lateFees.length}');
       return lateFees;
     } catch (e) {
-      print('Error fetching late fees: $e');
+      logError('Error fetching late fees: $e');
       throw Exception('Error fetching late fees: $e');
     }
   }
@@ -283,7 +282,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         throw Exception('Failed to load lease history: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching lease history: $e');
+      logError('Error fetching lease history: $e');
       throw Exception('Error fetching lease history: $e');
     }
   }
@@ -381,7 +380,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             }
           }
         } catch (e) {
-          print('Failed to parse verbose date format: $e');
+          logError('Failed to parse verbose date format: $e');
         }
       }
 
@@ -427,7 +426,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
       return formattedDateTime;
     } catch (e) {
-      print('Error formatting date: $e');
+      logError('Error formatting date: $e');
       return dateTimeString;
     }
   }
@@ -4262,9 +4261,6 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           // CustomHistoryTable commented out - using old implementation
                           Builder(
                             builder: (context) {
-                              print(
-                                  '🔵 Lease Summary - Rendering CustomHistoryTable');
-                              print('🔵 Lease ID: ${widget.leaseId}');
                               return CustomHistoryTable(
                                 historyType: HistoryType.lease,
                                 entityId: widget.leaseId,

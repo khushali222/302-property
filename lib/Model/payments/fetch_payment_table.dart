@@ -126,13 +126,6 @@ class ChargeResponses {
   });
 
   factory ChargeResponses.fromJson(Map<String, dynamic> json) {
-    print(json);
-    print(json['statusCode'].runtimeType);
-    print(json['charge_id'].runtimeType);
-    print(json['admin_id'].runtimeType);
-    print(json['tenant_id'].runtimeType);
-    print(json['lease_id'].runtimeType);
-    print(json['entry'].runtimeType);
 
     return ChargeResponses(
       statusCode: json['statusCode'] as int?,

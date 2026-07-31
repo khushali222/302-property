@@ -74,7 +74,6 @@ class _RentalownersSummeryForMobileState
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -88,7 +87,6 @@ class _RentalownersSummeryForMobileState
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
-      print(connectiondata);
       _connectivityResult = connectiondata;
     });
   }
@@ -99,7 +97,6 @@ class _RentalownersSummeryForMobileState
   bool debitcard = true;
 
   Future<void> fetchPaymentSettings() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -113,10 +110,7 @@ class _RentalownersSummeryForMobileState
       },
     );
     final jsonData = json.decode(response.body);
-    print(' rental added ${jsonData}');
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(creditcard);
-      print(creditcard);
       setState(() {
         creditcard = jsonData['data']['creditCardAccepted'] ?? true;
         achaccepted = jsonData['data']['achAccepted'] ?? false;
@@ -1084,7 +1078,6 @@ class _RentalownersSummeryForTabletState
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -1097,7 +1090,6 @@ class _RentalownersSummeryForTabletState
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
-      print(connectiondata);
       _connectivityResult = connectiondata;
     });
   }
@@ -1132,7 +1124,6 @@ class _RentalownersSummeryForTabletState
                   } else {
                     List<RentalOwnerData> rentalownersummery =
                         snapshot.data ?? [];
-                    print(snapshot.data!.length);
                     //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
                     return ListView(
                       scrollDirection: Axis.vertical,

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -68,7 +69,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
     _selectedOwnersNotifier.value = [];
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -79,7 +79,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
   }
 
   Future<void> fetchpdfrentalowner() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -90,7 +89,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
           "id": "CRM $id",
         });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (response.statusCode == 200) {
       setState(() {
         rentalowners = (jsonDecode(response.body) as List)
@@ -147,27 +145,19 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         int totalOwnersCount =
             rentalowners.where((o) => o['rentalowner_id'] != "all").length;
 
-        print(
-            "Selected owners count: ${rentalownerids.length}, Total owners: $totalOwnersCount");
-        print("Selected owner IDs: $rentalownerids");
 
         // If all owners are selected or list contains "all", use null to get all data
         if (rentalownerids.contains("all") ||
             rentalownerids.length >= totalOwnersCount) {
           ownerIdToUse = null; // Get all owners' data
-          print("Using null (all owners)");
         } else {
           // Use first selected owner ID (or modify service to accept multiple)
           ownerIdToUse = rentalownerids.first;
-          print("Using owner ID: $ownerIdToUse");
         }
       } else {
         ownerIdToUse = rentalownerid;
-        print("Using rentalownerid: $ownerIdToUse");
       }
 
-      print(
-          "Fetching data - From: $fromDate, To: $toDate, OwnerID: $ownerIdToUse");
 
       List<AccountTotalsReport> data =
           await AccountTotalsReportsServices().fetchAccountTotalsReports(
@@ -552,7 +542,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
 
   PdfDelinquentTenantsData? globalDelinquentTenantsData;
   Future<PdfDelinquentTenantsData?> fetchDelinquentTenantsGrandTotal() async {
-    print('Fetching delinquent tenants');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
@@ -578,7 +567,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return null;
     }
   }
@@ -596,7 +585,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     setState(() {
@@ -1089,7 +1078,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
 
   List<Map<String, dynamic>> rentalowners = [];
   Future<void> fetchRentalOwners() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -1099,7 +1087,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (response.statusCode == 200) {
       // setState(() {
       //   rentalowners = (jsonDecode(response.body) as List)
@@ -1230,7 +1217,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                             }
 
                             var data = snapshot.data!;
-                            print(data.first.rentalOwnerName);
                             // Pagination logic
                             final totalPages =
                                 (data.length / itemsPerPage).ceil();
@@ -3027,7 +3013,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                             // }
                           });
                           // Handle the selected charge type
-                          print(value);
                         },
                         buttonStyleData: ButtonStyleData(
                           height: 42,
@@ -3161,7 +3146,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                       onPressed: () {
                         // Validate dates before fetching
                         if (fromDate.text.isEmpty || toDate.text.isEmpty) {
-                          print("Error: Date fields are empty");
                           return;
                         }
 
@@ -3173,8 +3157,6 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                                   ? null
                                   : selectedOwners);
                         });
-                        print(
-                            "Run Report - From: ${fromDate.text}, To: ${toDate.text}, Owners: ${selectedOwners.length}");
                       },
                       tooltip: "Run Report",
                     ),
@@ -3195,13 +3177,10 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
                         onSelected: (value) async {
                           // Export logic
                           if (value == 'PDF' && data != null) {
-                            print('pdf');
                             generateAccountTotalReportPdf(data);
                           } else if (value == 'XLSX' && data != null) {
-                            print('XLSX');
                             generateAccountTotalReportExcel(data);
                           } else if (value == 'CSV' && data != null) {
-                            print('CSV');
                             generateAccountTotalReportCsv(data);
                           }
                         },

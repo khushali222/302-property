@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -140,11 +141,9 @@ List<Map<String, dynamic>> asObjectList(dynamic value) {
 // }
 
 formatDate(String dateTime) {
-  print("formatDate input: '$dateTime'");
 
   // If already in correct format, return as is
   if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(dateTime.trim())) {
-    print("formatDate output (already correct): '$dateTime'");
     return dateTime;
   }
 
@@ -172,21 +171,18 @@ formatDate(String dateTime) {
   for (String format in dateFormats) {
     try {
       parsedDate = DateFormat(format).parse(dateTime);
-      print("formatDate parsed with format '$format': $parsedDate");
       break;
     } catch (e) {
-      print("formatDate failed to parse '$dateTime' with format '$format': $e");
+      logError("formatDate failed to parse '$dateTime' with format '$format': $e");
       continue;
     }
   }
 
   if (parsedDate == null) {
-    print("formatDate failed to parse: '$dateTime'");
     return dateTime;
   }
 
   String result = DateFormat('yyyy-MM-dd').format(parsedDate);
-  print("formatDate output: '$result'");
   return result;
 }
 
@@ -216,29 +212,22 @@ String formatDate3(String dateStr) {
 String reverseFormatDate(String formattedDate) {
   // Check if the formattedDate is empty or invalid
   if (formattedDate.isEmpty) {
-    print("Empty date received, returning an empty string");
     return ""; // Return an empty string if the date is empty
   }
 
   try {
-    print("reverseFormatDate input: '$formattedDate'");
-    print("Input length: ${formattedDate.length}");
-    print("Input bytes: ${formattedDate.codeUnits}");
 
     // Clean the input string - remove any extra whitespace
     String cleanDate = formattedDate.trim();
 
     // If the date is already in yyyy-MM-dd format, return it as is
     if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
-      print("Date is already in yyyy-MM-dd format, returning as is");
       return cleanDate;
     }
 
     // Special handling for yyyy-MM-dd format that might have extra characters
     if (RegExp(r'^\d{4}-\d{2}-\d{2}').hasMatch(cleanDate)) {
-      print("Date appears to be in yyyy-MM-dd format with extra characters");
       String extractedDate = cleanDate.substring(0, 10);
-      print("Extracted date: $extractedDate");
       return extractedDate;
     }
 
@@ -269,18 +258,15 @@ String reverseFormatDate(String formattedDate) {
     for (String format in dateFormats) {
       try {
         parsedDate = DateFormat(format).parse(cleanDate);
-        print("Successfully parsed with format: $format");
-        print("Parsed date: $parsedDate");
         break;
       } catch (e) {
-        print("Failed to parse with format $format: $e");
+        logError("Failed to parse with format $format: $e");
         continue;
       }
     }
 
     // If parsing failed, try manual parsing for common formats
     if (parsedDate == null) {
-      print("Trying manual parsing...");
       if (RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(cleanDate)) {
         // yyyy-MM-dd format
         List<String> parts = cleanDate.split('-');
@@ -290,7 +276,6 @@ String reverseFormatDate(String formattedDate) {
           int day = int.tryParse(parts[2]) ?? 0;
           if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
             parsedDate = DateTime(year, month, day);
-            print("Manually parsed date: $parsedDate");
           }
         }
       } else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(cleanDate)) {
@@ -302,23 +287,20 @@ String reverseFormatDate(String formattedDate) {
           int year = int.tryParse(parts[2]) ?? 0;
           if (year > 0 && month > 0 && month <= 12 && day > 0 && day <= 31) {
             parsedDate = DateTime(year, month, day);
-            print("Manually parsed date: $parsedDate");
           }
         }
       }
     }
 
     if (parsedDate == null) {
-      print("Could not parse date: $formattedDate");
       return ""; // Return empty string if parsing fails
     }
 
     // Return the formatted date in 'yyyy-MM-dd' format for API
     String result = DateFormat('yyyy-MM-dd').format(parsedDate);
-    print("reverseFormatDate output: $result");
     return result;
   } catch (e) {
-    print("Error while formatting date: $e");
+    logError("Error while formatting date: $e");
     return ""; // Return an empty string if there is an error
   }
 }

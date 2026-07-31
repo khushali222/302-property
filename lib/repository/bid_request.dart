@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -26,7 +27,6 @@ class BidRequestRepository {
       final url =
           '${Api_url}/api/bid-request/bid-requests/$finalAdminId?limit=$limit&page=$page';
 
-      print('Fetching bid requests from: $url');
 
       final response = await apiGet(
         Uri.parse(url),
@@ -36,8 +36,6 @@ class BidRequestRepository {
         },
       );
 
-      print('Bid requests response status: ${response.statusCode}');
-      print('Bid requests response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -49,7 +47,7 @@ class BidRequestRepository {
         throw Exception(jsonData['message'] ?? 'Failed to fetch bid requests');
       }
     } catch (e) {
-      print('Error fetching bid requests: $e');
+      logError('Error fetching bid requests: $e');
       rethrow;
     }
   }
@@ -68,7 +66,6 @@ class BidRequestRepository {
 
       final url = '${Api_url}/api/bid-request/bid-request/$bidRequestId';
 
-      print('Fetching bid request details from: $url');
 
       final response = await apiGet(
         Uri.parse(url),
@@ -78,8 +75,6 @@ class BidRequestRepository {
         },
       );
 
-      print('Bid request details response status: ${response.statusCode}');
-      print('Bid request details response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -90,7 +85,7 @@ class BidRequestRepository {
             jsonData['message'] ?? 'Failed to fetch bid request details');
       }
     } catch (e) {
-      print('Error fetching bid request details: $e');
+      logError('Error fetching bid request details: $e');
       rethrow;
     }
   }

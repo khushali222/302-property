@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 class RentalOwnerReport {
   String rentalOwnerId;
   String rentalOwnerName;
@@ -33,16 +34,13 @@ class RentalOwnerReport {
     };
   }
   static double _parseSubTotal(dynamic subTotal) {
-    print(subTotal.runtimeType);
     if (subTotal is int) {
       return subTotal.toDouble();
     } else if (subTotal is double) {
       return subTotal;
     } else if (subTotal is String) {
-      print("String callling");
       // Try to parse the string to double
       final parsedValue = double.tryParse(subTotal) ?? 0.0;
-      print(parsedValue.runtimeType);
       return parsedValue ; // Return 0.0 if parsing fails
     }
     return 0.0; // Default case if it's null or an unexpected type
@@ -106,7 +104,6 @@ class Payment {
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     // Log the full JSON to see the structure
-    print('Full JSON: $json');
 
     try {
       // Print each field as we parse it to identify where the issue happens
@@ -153,7 +150,7 @@ class Payment {
       );
     } catch (e) {
       // Catch errors and log the issue
-      print('Error parsing Payment JSON: $e');
+      logError('Error parsing Payment JSON: $e');
       rethrow;
     }
   }

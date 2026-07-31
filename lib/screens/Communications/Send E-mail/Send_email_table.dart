@@ -324,9 +324,6 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                             .toList();
 
                                         // Debugging prints
-                                        print("Checking email: $email");
-                                        print("Accepted: ${data.accepted}");
-                                        print("Opened: $openedEmails");
 
                                         bool isAccepted =
                                             data.accepted!.contains(email);
@@ -843,7 +840,6 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                           );
                         } else {
                           var data = snapshot.data!.emails!;
-                          print("data send mail ${data.length}");
 
                           final totalPages =
                               (snapshot.data!.totalEmails! / itemsPerPage)

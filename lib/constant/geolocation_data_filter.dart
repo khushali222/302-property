@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,10 +39,8 @@ Future<Position> getCurrentLocation({bool autoRequest = true}) async {
   if (permission == LocationPermission.deniedForever) {
     throw Exception("Location permission permanently denied.");
   }
-  print('[LOCATION] permission ok ($permission) — checking device location service');
   // Then confirm the device location service is actually on.
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  print('[LOCATION] device location service enabled = $serviceEnabled');
   if (!serviceEnabled) {
     throw Exception("Location services are disabled.");
   }
@@ -67,7 +66,7 @@ Future<LatLng?> getCoordinatesFromAddress(Rentals rental) async {
       return coord;
     }
   } catch (e) {
-    print('Failed to geocode address: $address. Error: $e');
+    logError('Failed to geocode address: $address. Error: $e');
   }
   return null;
 }
@@ -83,7 +82,7 @@ Future<LatLng?> getCoordinatesFromAddressforvendor(RentalData rental) async {
       return coord;
     }
   } catch (e) {
-    print('Failed to geocode address: $address. Error: $e');
+    logError('Failed to geocode address: $address. Error: $e');
   }
   return null;
 }

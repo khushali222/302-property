@@ -44,7 +44,6 @@ class TeamRepository {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       return TeamData.fromJson(jsonResponse);
     } else {
-      print('Failed to fetch team: ${response.body}');
       return TeamData();
     }
   }
@@ -79,7 +78,6 @@ class TeamRepository {
       body: jsonEncode(data),
     );
 
-    print('invite-coadmin: ${response.body}');
     final responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(
@@ -125,7 +123,6 @@ class TeamRepository {
       body: jsonEncode(data),
     );
 
-    print('invite-staff: ${response.body}');
     final responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(
@@ -166,7 +163,6 @@ class TeamRepository {
       body: jsonEncode(data),
     );
 
-    print('send-reset-link: ${response.body}');
     final responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       // Success UI (the "Reset link sent" dialog) is handled by the caller.
@@ -204,7 +200,6 @@ class TeamRepository {
       body: jsonEncode(data),
     );
 
-    print('cancel-invite: ${response.body}');
     final responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(
@@ -244,7 +239,6 @@ class TeamRepository {
       body: jsonEncode(data),
     );
 
-    print('move-role: ${response.body}');
     final responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       // Success UI (the confirmation dialog) is handled by the caller.

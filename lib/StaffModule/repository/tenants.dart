@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:core';
 
@@ -125,8 +126,6 @@ class TenantsRepository {
         "id": "CRM $id",
       },
     );
-    print(response.body);
-    print('${Api_url}/api/tenant/tenants/$id');
     // if (response.statusCode == 200) {
     //   List jsonResponse = json.decode(response.body)['data'];
     //   return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
@@ -148,11 +147,9 @@ class TenantsRepository {
             .map((data) => Tenant.fromJson(data))
             .toList(); // Map to Tenant objects
       } else {
-        print('No tenants found in the response.');
         return [];
       }
     } else {
-      print('Failed to fetch tenants: ${response.body}');
       return [];
     }
   }
@@ -181,7 +178,6 @@ class TenantsRepository {
         'sortOrder': sortOrder,
       },
     );
-    debugPrint('[Tenants v2][Staff] REQUEST GET $uri');
     final response = await apiGet(
       uri,
       headers: {
@@ -189,7 +185,6 @@ class TenantsRepository {
         "id": "CRM $id",
       },
     );
-    debugPrint('[Tenants v2][Staff] HTTP status: ${response.statusCode}');
     final empty = TenantsV2ListResult(
       categorized: {
         'currentTenants': [],
@@ -200,7 +195,6 @@ class TenantsRepository {
       pagination: null,
     );
     if (response.statusCode != 200) {
-      debugPrint('[Tenants v2][Staff] Failed: ${response.body}');
       return empty;
     }
     final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
@@ -241,8 +235,6 @@ class TenantsRepository {
         "id": "CRM $id",
       },
     );
-    print(response.body);
-    print('${Api_url}/api/tenant_details/$id');
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
@@ -260,7 +252,6 @@ class TenantsRepository {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-    print(jsonEncode(body));
     try {
       final response = await apiPost(
         url,
@@ -273,13 +264,9 @@ class TenantsRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(" add tenant $responseData");
       // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
       // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
       final ecResp = responseData['data']?['emergency_contacts'];
-      print('[EC-DEBUG] ADD-SAVE response'
-          ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
-          ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
@@ -297,7 +284,7 @@ class TenantsRepository {
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -332,7 +319,7 @@ class TenantsRepository {
         return false;
       }
     } catch (error) {
-      print('sendSetupEmail error: $error');
+      logError('sendSetupEmail error: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -386,7 +373,7 @@ class TenantsRepository {
         return false;
       }
     } catch (error) {
-      print('setTenant2FA error: $error');
+      logError('setTenant2FA error: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -394,13 +381,11 @@ class TenantsRepository {
 
   Future<bool> addTenant(Tenant tenant) async {
     final url = Uri.parse('${Api_url}/api/tenant/tenants');
-    print(url);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
 
-    print(jsonEncode(tenant.toJson()));
     try {
       final response = await apiPost(
         url,
@@ -413,29 +398,25 @@ class TenantsRepository {
       );
 
       var responseData = jsonDecode(response.body);
-      print(responseData);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          print('Response successfully: ${responseData['data']}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Successfully added tenant');
 
           return true;
         } else {
-          print('Failed to add tenant: ${responseData}');
           Fluttertoast.showToast(
               msg: responseData['message'] ?? 'Failed to add tenant');
           return false;
         }
       } else {
-        print('Failed to add tenant: ${responseData}');
         Fluttertoast.showToast(
             msg: responseData['message'] ?? 'Failed to add tenant');
         return false;
       }
     } catch (error) {
-      print('Exception occurred: $error');
+      logError('Exception occurred: $error');
       Fluttertoast.showToast(msg: 'An error occurred');
       return false;
     }
@@ -587,7 +568,6 @@ class TenantsRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? id = prefs.getString('staff_id');
-    print('edit payload ${jsonEncode(body)}');
     final http.Response response = await apiPut(
       Uri.parse('$Api_url/api/tenant/tenants/$tenantId'),
       headers: <String, String>{
@@ -598,13 +578,9 @@ class TenantsRepository {
       body: jsonEncode(body),
     );
     var responseData = json.decode(response.body);
-    print('edit tenant ${response.body}');
     // [EC-DEBUG] Temporary diagnostic (remove later) — did the server stamp a
     // contact_id on each emergency contact? NO_ID => server did NOT stamp it.
     final ecResp = responseData['data']?['emergency_contacts'];
-    print('[EC-DEBUG] EDIT-SAVE response'
-        ' | array=${ecResp is List ? (ecResp as List).length : 'none'}'
-        ' | ids=${ecResp is List ? (ecResp as List).map((c) => c is Map ? ((c['contact_id']?.toString() ?? '').isEmpty ? 'NO_ID' : c['contact_id']) : '?').toList() : const []}');
     if (responseData["statusCode"] == 200) {
       return true;
     } else {
@@ -662,9 +638,7 @@ class TenantsRepository {
       'allow_ach': allowAch,
       'allow_card': allowCard,
     };
-    print('Data is :$data');
 
-    print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -679,8 +653,6 @@ class TenantsRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print(response.body);
-    print(responseData);
     if (responseData["statusCode"] == 200) {
       if (showSuccessToast) {
         Fluttertoast.showToast(msg: responseData["message"]);
@@ -756,9 +728,6 @@ class TenantsRepository {
           body: jsonEncode({"reason": reason}));
 
       var responseData = json.decode(response.body);
-      print(response.body);
-      print(tenantId);
-      print(tenantEmail);
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: responseData["message"]);
         return json.decode(response.body);
@@ -776,7 +745,6 @@ class TenantsRepository {
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
-    print(tenantId);
     final response = await apiGet(
       Uri.parse('$Api_url/api/tenant/tenant_details/$tenantId'),
       headers: {
@@ -787,7 +755,6 @@ class TenantsRepository {
 
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(response.body)["data"];
-      print(jsonResponse);
 
       return jsonResponse.map((data) => Tenant.fromJson(data)).toList();
     } else {

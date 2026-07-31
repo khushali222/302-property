@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -24,11 +25,10 @@ class getPlanDetailService {
         return getPlanDetailModel.fromJson(json.decode(response.body));
       } else {
         // Handle error
-        print('Failed to load plan purchase details');
         return null;
       }
     } catch (e) {
-      print('Error: $e');
+      logError('Error: $e');
       return null;
     }
   }

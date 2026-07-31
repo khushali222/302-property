@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -77,7 +78,7 @@ class _Recurring_Payments_Configuration_ReportState
         throw Exception('Failed to load recurring payments configuration');
       }
     } catch (e) {
-      print(e);
+      logError(e);
       setState(() {
         isLoading = false;
         errorMessage = 'Failed to load data. Please try again later.';
@@ -281,10 +282,8 @@ class _Recurring_Payments_Configuration_ReportState
                                           onSelected: (value) async {
                                             // Export logic
                                             if (value == 'PDF') {
-                                              print('pdf');
                                               generateAccountTotalReportPdf();
                                             } else if (value == 'XLSX') {
-                                              print('pdf');
                                               generateRecurringPaymentExcel(
                                                   recurringPaymentsConfiguration!
                                                       .data!);
@@ -769,7 +768,7 @@ class _Recurring_Payments_Configuration_ReportState
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
 
@@ -921,7 +920,6 @@ class _Recurring_Payments_Configuration_ReportState
             // For the first tenant in a lease, display the full address and end date
             isFirstTenant = tenantCount == 0;
             tenantCount = 1;
-            print("${lease.rentalAdress} ${k}");
             tableData.add([
               isFirstTenant
                   ? pw.Text(

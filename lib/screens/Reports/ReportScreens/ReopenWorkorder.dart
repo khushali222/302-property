@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -81,7 +82,6 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -774,13 +774,12 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
       });
 
       // Fluttertoast.showToast(msg: 'PDF exported successfully');
-      print('PDF exported successfully');
     } catch (e) {
       setState(() {
         isDataLoading = false;
       });
       // Fluttertoast.showToast(msg: 'Error exporting PDF: $e');
-      print('Error exporting PDF: $e');
+      logError('Error exporting PDF: $e');
     }
   }
 

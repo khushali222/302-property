@@ -87,7 +87,6 @@ class _Profile_screenState extends State<Profile_screen> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -259,11 +258,8 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print('hello$apiUrl');
-    print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print("hello");
       setState(() {
         profiledata = response_Data["data"];
         leaseData = response_Data["data"]["leaseData"] ?? [];
@@ -325,7 +321,6 @@ class _Profile_screenState extends State<Profile_screen> {
       _isLoading = false;
     });
 
-    print('2FA status response: ${response.body}');
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -350,15 +345,12 @@ class _Profile_screenState extends State<Profile_screen> {
           }
         });
 
-        print("2FA Status - Enabled: $enabled, Method: $method");
-        print("Email 2FA: $email2FA, SMS 2FA: $sms2FA");
       } else {
         setState(() {
           enble2FA = false;
           email2FA = false;
           sms2FA = false;
         });
-        print("2FA data not found or invalid response");
       }
     } else {
       setState(() {
@@ -366,7 +358,6 @@ class _Profile_screenState extends State<Profile_screen> {
         email2FA = false;
         sms2FA = false;
       });
-      print("Failed to fetch 2FA status: ${response.statusCode}");
     }
   }
 
@@ -385,7 +376,6 @@ class _Profile_screenState extends State<Profile_screen> {
         "id": "CRM $id",
       },
     );
-    print(response.body);
     final jsonData = json.decode(response.body);
     if (jsonData["statusCode"] == 200) {
       setState(() {
@@ -393,18 +383,15 @@ class _Profile_screenState extends State<Profile_screen> {
         codes = jsonData["data"]["codes"];
       });
 
-      print(jsonData);
     } else {
       setState(() {
         backupCode = false;
       });
-      print(jsonData);
     }
   }
 
   // Initiate 2FA setup - send verification code
   void _initiate2FASetup() async {
-    print("selected2FAMethod");
     if (selected2FAMethod.isEmpty) return;
 
     setState(() {
@@ -432,7 +419,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA setup response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -492,7 +478,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('2FA verification response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -567,7 +552,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('Send disable 2FA code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -632,7 +616,6 @@ class _Profile_screenState extends State<Profile_screen> {
         }),
       );
 
-      print('Disable 2FA response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -699,7 +682,6 @@ class _Profile_screenState extends State<Profile_screen> {
             jsonEncode({"tenant_id": id, "method": email2FA ? "email" : "sms"}),
       );
 
-      print('Send regenerate backup codes code response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -755,7 +737,6 @@ class _Profile_screenState extends State<Profile_screen> {
         body: jsonEncode({"user_id": id, "user_type": "tenant"}),
       );
 
-      print('Regenerate backup codes response: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -1070,7 +1051,6 @@ class _Profile_screenState extends State<Profile_screen> {
       appBar: widget_302.App_Bar(
         context: context,
         onDrawerIconPressed: () {
-          print("calling appbar");
           key.currentState!.openDrawer();
         },
       ),

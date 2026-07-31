@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -121,7 +122,7 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
         });
       }
     } catch (e) {
-      print('Error fetching revenue details: $e');
+      logError('Error fetching revenue details: $e');
       setState(() {
         isLoading = false;
       });

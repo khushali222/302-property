@@ -43,12 +43,9 @@ class GetCardDetailService {
     if (response.statusCode == 200) {
       // print(response.body);
       final parsedJson = jsonDecode(response.body);
-      print(parsedJson);
       final cardDetails = CardsDetailModel.fromJson(parsedJson);
-      print(cardDetails);
       return cardDetails.data ?? [];
     } else {
-      print('Failed to fetch vendors: ${response.body}');
       return [];
     }
   }

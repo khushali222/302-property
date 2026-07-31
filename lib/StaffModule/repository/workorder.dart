@@ -36,7 +36,6 @@ class WorkOrderRepository {
       return jsonResponse.map((data) => Data.fromJson(data)).toList();
     } else {
       // Throw an exception if the request failed
-      print('Failed to fetch workorders: ${response.body}');
       return [];
       //throw Exception('Failed to load work orders');
     }
@@ -91,7 +90,6 @@ class WorkOrderRepository {
       'notificationTime':notificationTime,
       // 'parts': parts,
     };
-    print("'status': $status");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -142,8 +140,6 @@ class WorkOrderRepository {
       },
     ); // Update with your actual API URL
     //print('hello${response.body}');
-    print(workorderId);
-    print(workorderId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];
@@ -224,7 +220,6 @@ class WorkOrderRepository {
       }),
     );
 
-    print('data length${data.length}');
     // print('Response body: ${response.body}');
     // print(workOrderid);
     var responseData = json.decode(response.body);
@@ -256,8 +251,6 @@ class WorkOrderRepository {
         })
     );
     var responseData = json.decode(response.body);
-    print('$Api_url/work-order/delete_workorder/$workOrderid');
-    print(workOrderid);
     //  print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -277,14 +270,12 @@ class WorkOrderRepository {
 
     final url =
         Uri.parse('$Api_url/api/work-order/workorder_details/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
 
     final response = await apiGet(url, headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
     });
 
-    print(' abc workorder summery ${response.body}');
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body)["data"];
@@ -303,7 +294,6 @@ class WorkOrderRepository {
     String? id = prefs.getString("staff_id");
     //http://localhost:4000/api/work-order/work-order/1721286680248
     final url = Uri.parse('$Api_url/api/work-order/work-order/$workorderId');
-    print('$Api_url/api/work-order/workorder_details/$workorderId');
     final response = await apiPut(url,
         headers: {
           "authorization": "CRM $token",

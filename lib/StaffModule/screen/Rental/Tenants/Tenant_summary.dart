@@ -132,7 +132,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         for (var tenant in tenantResponse.data!) {
           if (tenant.leaseData != null) {
             allLeaseData.addAll(tenant.leaseData!);
-            print(allLeaseData);
           }
         }
       }
@@ -364,7 +363,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     _tenantSummaryTabIndex = (widget.initialSummaryTabIndex ?? 0).clamp(0, 4);
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -1190,7 +1188,6 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         _achSettingsFetched = true;
       }
     } catch (e) {
-      print("Error fetching ACH settings: $e");
     } finally {
       _achFetchInFlight = false;
       // The ACH row's visibility depends on the answer, so repaint once it is
@@ -4278,7 +4275,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         for (var tenant in tenantResponse.data!) {
           if (tenant.leaseData != null) {
             allLeaseData.addAll(tenant.leaseData!);
-            print(allLeaseData);
           }
         }
       }
@@ -4478,7 +4474,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         repo.fetchTenantsummery(widget.tenantId) ?? Future.value([]);
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -4567,7 +4562,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
         _achSettingsFetched = true;
       }
     } catch (e) {
-      print("Error fetching ACH settings: $e");
     } finally {
       _achFetchInFlight = false;
       if (mounted) setState(() {});
@@ -5396,8 +5390,6 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     List<Tenant> tenantsummery = snapshot.data ?? [];
-                    print("tenant${tenantsummery}");
-                    print("Leangth of the tenant${snapshot.data!.length}");
                     if (widget.initialSummaryTabIndex == 1 &&
                         tenantsummery.isNotEmpty &&
                         !_scheduledLeaseSectionScroll) {

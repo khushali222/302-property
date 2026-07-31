@@ -57,15 +57,12 @@ class _ChangepasswordState extends State<Changepassword> {
         'user_id': widget.user_id
       }),
     );
-    print("${widget.role}");
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
-    print(response.body);
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       if (jsonData["message"] == "Password Updated Successfully") {
-        print(jsonData);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Login_Screen()));
         // ScaffoldMessenger.of(context).showSnackBar(

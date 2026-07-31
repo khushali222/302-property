@@ -44,7 +44,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -372,18 +371,14 @@ class _SplashScreenState extends State<SplashScreen> {
         expirationDate = DateFormat('yyyy-MM-dd').parse(expirationDateString);
       }
 
-      print('Expiration Date: $expirationDate');
 
       DateTime now = DateTime.now();
       String currentDate = DateFormat('yyyy-MM-dd').format(now);
-      print(currentDate);
 
       isPlanActive = expirationDate != null && expirationDate.isAfter(now);
 
       if (isPlanActive!) {
-        print('The plan is active.');
       } else {
-        print('The plan is not active.');
       }
 
       // Navigator.pushReplacement(
@@ -452,7 +447,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
 
-    print(isAuthenticated);
     /* Navigator.pushReplacement(
       context,
       MaterialPageRoute(

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
@@ -149,8 +150,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
       String? admin_id = prefs.getString("adminId");
       String? token = prefs.getString('token');
 
-      print('DEBUG [Dashboard Staff]: Staff ID: $id');
-      print('DEBUG [Dashboard Staff]: Admin ID: $admin_id');
 
       final response = await apiGet(
           Uri.parse('${Api_url}/api/staffmember/count/${id!}/${admin_id}'),
@@ -159,7 +158,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
             "authorization": "CRM $token",
             "Content-Type": "application/json"
           });
-      print(response.body);
       final jsonData = json.decode(response.body);
       if (jsonData["statusCode"] == 200) {
         setState(() {
@@ -198,7 +196,7 @@ class _Dashboard_staffState extends State<Dashboard_staff>
         throw Exception('Failed to load data');
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
     } finally {
       setState(() {
         loading = false;
@@ -253,7 +251,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
           Position userLocation =
               await getCurrentLocation().timeout(const Duration(seconds: 15));
           _locationWasUnavailable = false;
-          print('[LOCATION][Staff] location available → loading nearby properties');
           Rentals? nearestProperty;
           double minDistance = double.infinity;
           List<Rentals> nearbyProperties = [];
@@ -271,7 +268,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
               );
 
               double distanceInKm = distanceInMeters / 1000;
-              print("${rental.rentalAddress} $distanceInKm");
               if (distanceInKm <= 5) {
                 // Track nearest
                 if (distanceInMeters < minDistance) {
@@ -290,14 +286,13 @@ class _Dashboard_staffState extends State<Dashboard_staff>
                 .removeWhere((r) => r.rentalId == nearestProperty!.rentalId);
           }
 
-          print(nearbyProperties.length);
           return {
             "nearest": nearestProperty,
             "nearby": nearbyProperties,
           };
         } catch (e) {
           _locationWasUnavailable = true;
-          print('[LOCATION][Staff] location unavailable (off/denied/timeout) → nearby skipped: $e');
+          logError('[LOCATION][Staff] location unavailable (off/denied/timeout) → nearby skipped: $e');
           setState(() {
             loading = false;
           });
@@ -305,20 +300,17 @@ class _Dashboard_staffState extends State<Dashboard_staff>
         }
       } else if (responseData['statusCode'] == 201) {
         // No rentals found for the specified admin
-        print('No rentals found: ${responseData['message']}');
         setState(() {
           loading = false;
         });
         return {};
       } else {
-        print('API returned error: ${responseData['message']}');
         setState(() {
           loading = false;
         });
         return {};
       }
     } else {
-      print('Failed to fetch properties: ${response.body}');
       setState(() {
         loading = false;
       });
@@ -346,7 +338,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     final result = await fetchProperties(silent: silent);
     if (result.isNotEmpty) {
       List<Data> workOrders = await fetchWorkOrders("");
-      print(result);
       nearstProperty = result["nearest"];
       if (nearstProperty != null) {
         nearestPropertyWorkOrders = workOrders
@@ -392,12 +383,10 @@ class _Dashboard_staffState extends State<Dashboard_staff>
   }
 
   Future<void> fetchData() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
     String? admin_id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print(admin_id);
     final response = await apiGet(
         Uri.parse(
             '${Api_url}/api/staffmember/dashboard_workorder/$id/$admin_id'),
@@ -409,16 +398,13 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     //print('${Api_url}/api/payment/admin_balance/$id');
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      print(jsonData);
       if (jsonData["statusCode"] == 200) {
         final data = jsonData["data"];
         setState(() {
           List newwork = data["new_workorder"];
           List overdue = data["overdue_workorder"];
-          print(newwork.length);
           newworkorder = newwork.length;
           overdueworkorder = overdue.length;
-          print(data);
         });
       } else {
         throw Exception('Failed to load data');
@@ -434,7 +420,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print(rentalId);
     // Define the URL and headers for the request
     final response = await apiGet(
       Uri.parse('$Api_url/api/work-order/work-orders/$adminid'),
@@ -444,8 +429,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
       },
     );
     // Check the response status
-    print(response.body);
-    print(rentalId);
     if (response.statusCode == 200) {
       // Parse the JSON response
       List jsonResponse = json.decode(response.body)['data'];
@@ -468,7 +451,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     _listenForLocationServiceOn();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -488,11 +470,9 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     try {
       _serviceStatusSub = Geolocator.getServiceStatusStream().listen(
         (ServiceStatus status) {
-          print('[LOCATION][Staff] service status changed → $status');
           if (status == ServiceStatus.enabled &&
               _locationWasUnavailable &&
               mounted) {
-            print('[LOCATION][Staff] location re-enabled while app open → refreshing nearby');
             fetchNearbyProperties(silent: true, nearbyOnly: true);
           }
         },
@@ -519,7 +499,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     // unavailable last time — no full-screen spinner, no re-login, and no
     // needless API call when nearby already loaded.
     if (state == AppLifecycleState.resumed && _locationWasUnavailable) {
-      print('[LOCATION][Staff] app resumed & location was unavailable → refreshing nearby');
       fetchNearbyProperties(silent: true, nearbyOnly: true);
     }
   }
@@ -530,7 +509,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     connectiondata = await Connectivity().checkConnectivity();
     setState(() {
       _connectivityResult = connectiondata;
-      print(_connectivityResult);
     });
   }
 
@@ -1065,10 +1043,6 @@ class _Dashboard_staffState extends State<Dashboard_staff>
                             bool isExpanded =
                                 expandedIndex == index;
                             Data workOrder = entry.value;
-                            print(
-                                "data of status check ${workOrder.workOrderData?.status}");
-                            print(
-                                "data id 1 ${workOrder.workOrderData?.workOrderId}");
                             //return CustomExpansionTile(data: Data, index: index);
                             return Container(
                               margin: EdgeInsets.symmetric(
@@ -1859,8 +1833,6 @@ class _PropertyCardState extends State<PropertyCard> {
                             bool isExpanded = expandedIndexrow == index;
                             Data workOrder = entry.value;
                             //return CustomExpansionTile(data: Data, index: index);
-                            print(
-                                "workorder id ${workOrder.workOrderData?.workOrderId}");
                             return Container(
                               decoration: BoxDecoration(
                                 color: index % 2 != 0

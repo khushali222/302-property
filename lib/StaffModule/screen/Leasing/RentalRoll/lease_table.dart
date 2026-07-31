@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -2798,10 +2799,9 @@ class _Lease_tableState extends State<Lease_table> {
       );
     }
       //Fluttertoast.showToast(msg: 'PDF exported successfully');
-      print('PDF exported successfully');
     } catch (e) {
       //Fluttertoast.showToast(msg: 'Error generating PDF: $e');
-      print('Error generating PDF: $e');
+      logError('Error generating PDF: $e');
     }
   }
 

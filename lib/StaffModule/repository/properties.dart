@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:math';
 
@@ -65,10 +66,7 @@ class PropertiesRepository {
         "id": "CRM $id",
       },
     );
-    print(response.body);
-    print('$uri');
     if (response.statusCode != 200) {
-      print('Failed to fetch properties: ${response.body}');
       return RentalsPageResult(items: [], pagination: null);
     }
 
@@ -166,7 +164,6 @@ class PropertiesRepository {
       }
     };
 
-    print('$apiUrl/$tenantId');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? adminid = prefs.getString("adminId");
@@ -181,8 +178,6 @@ class PropertiesRepository {
       body: jsonEncode(data),
     );
     var responseData = json.decode(response.body);
-    print(response.body);
-    print(responseData);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);
@@ -207,8 +202,6 @@ class PropertiesRepository {
     };
     final List<Map<String, dynamic>> formattedUnits =
         rentalRequest.units?.map((unit) {
-          print('Processing unit for API request:');
-          print('Raw unit data: $unit');
 
           // For Commercial single unit, ensure sqft is in the correct field
           var formattedUnit = {
@@ -226,13 +219,6 @@ class PropertiesRepository {
             "rental_images": unit["rental_images"] ?? []
           };
 
-          print('Formatted unit data:');
-          print('- Unit ID: ${formattedUnit["unit_id"]}');
-          print('- Unit Name: ${formattedUnit["rental_unit"]}');
-          print('- Unit Address: ${formattedUnit["rental_unit_adress"]}');
-          print('- Unit Sqft: ${formattedUnit["rental_sqft"]}');
-          print('- Bath: ${formattedUnit["rental_bath"]}');
-          print('- Bed: ${formattedUnit["rental_bed"]}');
 
           return formattedUnit;
         }).toList() ??
@@ -283,7 +269,7 @@ class PropertiesRepository {
         }).toList();
       }
     } catch (e) {
-      print('Error accessing placedInService/insuredValues: $e');
+      logError('Error accessing placedInService/insuredValues: $e');
     }
     
     Map<String, dynamic> requestBody = {
@@ -295,28 +281,19 @@ class PropertiesRepository {
     // Add units data if available
     if (rentalRequest.units != null && rentalRequest.units!.isNotEmpty) {
       requestBody["units"] = rentalRequest.units;
-      print(
-          'Including units in API request: ${rentalRequest.units!.length} units');
     } else {
-      print('No units data to include in API request');
     }
 
     final body = jsonEncode(requestBody);
-    print('API Request Body: $body');
 
     final response = await apiPut(url, headers: headers, body: body);
     final responseBody = jsonDecode(response.body);
 
-    print('API Response Status: ${response.statusCode}');
-    print('API Response Body: $responseBody');
 
     if (response.statusCode == 200) {
       // Success - show toast here
-      print('Property updated successfully');
       Fluttertoast.showToast(msg: "Property updated successfully");
     } else {
-      print(
-          'Failed to update property. Status: ${response.statusCode}, Body: $responseBody');
       throw Exception(
           'Failed to update properties: ${responseBody['message'] ?? 'Unknown error'}');
     }
@@ -332,8 +309,6 @@ class PropertiesRepository {
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
     String? companyName = prefs.getString('companyName');
-    print('company name $companyName');
-    print(adminid);
     final http.Response response = await apiDelete(
         Uri.parse('${Api_url}/api/rentals/rental/$property_id')
             .replace(queryParameters: {
@@ -349,14 +324,8 @@ class PropertiesRepository {
         //   'company_name': companyName??"",
         // }),
         );
-    print(Uri.parse('${Api_url}/api/rentals/rental/$id')
-        .replace(queryParameters: {
-      'company_name': companyName,
-    }));
-    print('delete ${Api_url}/api/rentals/rental/$id');
 
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

@@ -43,17 +43,12 @@ class SelectedTenantsProvider extends ChangeNotifier {
   // }
 
   void addTenant(Tenant tenant) {
-    print("Add Tenant is calling ${tenant.tenantId} ${tenant.tenantFirstName}");
     for(var tenants  in _selectedTenants){
 
-      print(tenants.tenantFirstName);
-      print(tenants.tenantId);
-      print(tenants.tenantId);
     }
 
 //    Check if the tenant is already in the selected tenants
     if (_selectedTenants.any((existingTenant) => tenant.tenantId != null ?  existingTenant.tenantId == tenant.tenantId:existingTenant.applicantId == tenant.applicantId)) {
-      print("Tenant ${tenant.tenantFirstName} is already added.");
       return; // Exit the method if the tenant is already added
     }
 
@@ -62,21 +57,16 @@ class SelectedTenantsProvider extends ChangeNotifier {
     // Add a new controller for the tenant
     if (_selectedTenants.isEmpty || _selectedTenants.length == 0) {
       // Set rent share to 100 for the first tenant
-      print("calling");
       _rentShareControllers.add(TextEditingController(text: '100'));
     } else {
-      print("calling 2");
       _rentShareControllers.add(TextEditingController()); // Subsequent tenants get 0
     }
 
-    print("add before length ${_selectedTenants.length}");
     _selectedTenants.add(tenant);
-    print("add after length ${_selectedTenants.length}");
     notifyListeners();
   }
   void AddEditTenant(){
     for(var i=0;i< _selectedTenants.length;i++){
-      print("Tenants ${_selectedTenants[i].tenantFirstName} ${_selectedTenants[i].tenantLastName} ${_selectedTenants[i].tenantId}");
     }
   }
 
@@ -190,7 +180,6 @@ class SelectedCosignersProvider extends ChangeNotifier {
   }
 
   void updateCosigner(Cosigner updatedCosigner, int index) {
-    print("update calling");
     _cosigners[index] = updatedCosigner;
     notifyListeners();
     // for (int i = 0; i < _cosigners.length; i++) {
@@ -272,11 +261,9 @@ class SelectedApplicantProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
   void addApplicant(Datum applicant) {
-    print("Add Applicant is calling");
 
     // Check if the applicant is already in the selected applicants
     if (_selectedApplicant.any((existingApplicant) => existingApplicant.applicantId == applicant.applicantId)) {
-      print("Applicant ${applicant.applicantFirstName} is already added.");
       return; // Exit the method if the applicant is already added
     }
 
@@ -288,14 +275,11 @@ class SelectedApplicantProvider extends ChangeNotifier {
       _rentShareControllers.add(TextEditingController(text: '0')); // Subsequent applicants get 0
     }
 
-    print("add before length ${applicant.applicantLastName}");
     _selectedApplicant.add(applicant);
-    print("add after length ${_selectedApplicant.length}");
     notifyListeners();
   }
   void AddEditApplicant(){
     for(var i=0;i< _selectedApplicant.length;i++){
-      print("Applicant ${_selectedApplicant[i].applicantFirstName} ${_selectedApplicant[i].applicantLastName} ${_selectedApplicant[i].applicantId}");
     }
   }
 

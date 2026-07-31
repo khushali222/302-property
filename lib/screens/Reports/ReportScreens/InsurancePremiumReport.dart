@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -634,7 +635,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
     try {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
     }
 
     final pdf = pw.Document();
@@ -857,7 +858,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating Excel: $e');
+      logError('Error generating Excel: $e');
       Fluttertoast.showToast(
         msg: 'Error generating Excel',
         toastLength: Toast.LENGTH_SHORT,
@@ -921,7 +922,7 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
         toastLength: Toast.LENGTH_SHORT,
       );
     } catch (e) {
-      print('Error generating CSV: $e');
+      logError('Error generating CSV: $e');
       Fluttertoast.showToast(
         msg: 'Error generating CSV',
         toastLength: Toast.LENGTH_SHORT,

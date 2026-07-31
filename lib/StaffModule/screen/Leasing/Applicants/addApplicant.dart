@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/services.dart';
@@ -71,7 +72,6 @@ class _AddApplicantState extends State<AddApplicant> {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
       });
-      print('${Api_url}/api/rentals/rentals/$id');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -112,7 +112,6 @@ class _AddApplicantState extends State<AddApplicant> {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
       });
-      print('$Api_url/api/unit/rental_unit/$rentalId');
 
       if (response.statusCode == 200) {
         List jsonResponse = json.decode(response.body)['data'];
@@ -456,8 +455,6 @@ class _AddApplicantState extends State<AddApplicant> {
                                             value]; // Store selected property
 
                                             renderId = value.toString();
-                                            print(
-                                                'Selected Property: $_selectedProperty');
                                             _loadUnits(value!);
                                             state.didChange(
                                                 value); // Fetch units for the selected property
@@ -596,8 +593,6 @@ class _AddApplicantState extends State<AddApplicant> {
                                             _selectedUnit = units[
                                             value]; // Store selected unit
                                             state.didChange(value);
-                                            print(
-                                                'Selected Unit: $_selectedUnit');
                                           });
                                           state.reset();
                                         },
@@ -691,12 +686,10 @@ class _AddApplicantState extends State<AddApplicant> {
                                     borderRadius: BorderRadius.circular(10.0))),
                             onPressed: () async {
                               if (_formkey.currentState?.validate() ?? false) {
-                                print('valid');
 
                                 _submitApplicantAndLease();
                                 //charges
                               } else {
-                                print('invalid');
                               }
                             },
                             child: const Text(
@@ -762,15 +755,6 @@ class _AddApplicantState extends State<AddApplicant> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String adminId = prefs.getString('adminId').toString();
 
-      print(firstName.text);
-      print(lastName.text);
-      print(email.text);
-      print(mobileNumber.text);
-      print(homeNumber.text);
-      print(telePhoneNumber.text);
-      print(bussinessNumber.text);
-      print(_selectedProperty.toString());
-      print(_selectedUnit.toString());
 
       // Create the ApplicantDetails object
       ApplicantDetails applicantData = ApplicantDetails(
@@ -791,8 +775,6 @@ class _AddApplicantState extends State<AddApplicant> {
         rentalUnit: _selectedUnitId.toString(),
       );
 
-      print(_selectedProperty);
-      print(_selectedUnit);
       // Create the ApplicantData object
       Datum applicantDataObj = Datum(
         applicant: applicantData,
@@ -815,7 +797,7 @@ class _AddApplicantState extends State<AddApplicant> {
       // print('Response: $response');
     } catch (e) {
       // Handle error
-      print('Error posting applicant and lease: $e');
+      logError('Error posting applicant and lease: $e');
     } finally {
       setState(() {
         _Loading = false;

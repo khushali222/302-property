@@ -131,8 +131,6 @@ class WorkOrderRepository {
       headers: {"authorization" : "CRM $token",
         "id":"CRM $id",},); // Update with your actual API URL
     //print('hello${response.body}');
-    print(workorderId);
-    print(workorderId);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       // List leasesJson = jsonResponse['data'];
@@ -166,7 +164,6 @@ class WorkOrderRepository {
     List<Map<String, dynamic>>? parts,
     String? notificationTime,
   }) async {
-    print(parts!.length);
     // Constructing the request data
     final Map<String, dynamic> data = {
       'admin_id': adminId,
@@ -197,7 +194,6 @@ class WorkOrderRepository {
     String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
 
-    print(" workorder data $data");
 
     final http.Response response = await apiPut(
       Uri.parse('${Api_url}/api/work-order/work-order/$workOrderid'),
@@ -215,7 +211,6 @@ class WorkOrderRepository {
       }),
     );
 
-    print('data length${data.length}');
     // print('Response body: ${response.body}');
     // print(workOrderid);
     var responseData = json.decode(response.body);
@@ -246,8 +241,6 @@ class WorkOrderRepository {
       },
     );
     var responseData = json.decode(response.body);
-    print('$Api_url/work-order/delete_workorder/$workOrderid');
-    print(workOrderid);
     //  print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -752,7 +753,7 @@ class _EditDocumentState extends State<EditDocument> {
         });
       }
     } catch (e) {
-      print('Error picking file: $e');
+      logError('Error picking file: $e');
       Fluttertoast.showToast(
         msg: 'Error selecting file: ${e.toString()}',
         toastLength: Toast.LENGTH_SHORT,
@@ -822,10 +823,9 @@ class _EditDocumentState extends State<EditDocument> {
           });
         }
       } else {
-        print('Failed to fetch tenants: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching tenants: $error');
+      logError('Error fetching tenants: $error');
     } finally {
       setState(() {
         isLoadingTenants = false;
@@ -838,11 +838,9 @@ class _EditDocumentState extends State<EditDocument> {
       isLoading = true; // Start loading
     });
     try {
-      print('Updating document');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminId = prefs.getString("adminId");
       String? token = prefs.getString('token');
-      print('${adminId}  ${token}');
 
       // Prepare the request body
       Map<String, dynamic> requestBody = {
@@ -856,7 +854,6 @@ class _EditDocumentState extends State<EditDocument> {
         requestBody["tenant_id"] = selectedTenantId;
       }
 
-      print('Request body: ${jsonEncode(requestBody)}');
 
       // Create multipart request for file upload
       var request = http.MultipartRequest(
@@ -908,13 +905,9 @@ class _EditDocumentState extends State<EditDocument> {
         request.fields['original_filename'] = originalFilename;
       }
 
-      print(
-          'Sending PUT request to: $Api_url/api/lease-document/update-document');
       var streamedResponse = await apiSend(request);
       var response = await http.Response.fromStream(streamedResponse);
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       var responseData = json.decode(response.body);
 
@@ -934,7 +927,7 @@ class _EditDocumentState extends State<EditDocument> {
         return null; // Return null on failure
       }
     } catch (e) {
-      print('Error updating document: $e');
+      logError('Error updating document: $e');
       Fluttertoast.showToast(msg: "Error updating document: ${e.toString()}");
       setState(() {
         isLoading = false;

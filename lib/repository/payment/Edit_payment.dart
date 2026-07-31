@@ -71,7 +71,6 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print("callog");
     // print("surcharge ${surcharge}");
     // if (future_Date == false) {
     //   final String baseUrl = '$Api_url/api/nmipayment/sale';
@@ -195,13 +194,10 @@ class PaymentService {
     String? actualTenantId,
     String? tenantName,
   }) async {
-    print("caaaalied");
     final String baseUrl = '$Api_url/api/payment/payment/$tenantId';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString('adminId');
     String? token = prefs.getString('token');
-    print(entries);
-    print(baseUrl);
     final Map<String, dynamic> requestBody = {
       'company_name': companyName,
       'admin_id': id,
@@ -229,9 +225,7 @@ class PaymentService {
       },
       body: jsonEncode(requestBody),
     );
-    print(response.body);
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -303,7 +297,6 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print("surcharge ${surcharge}");
     try {
       await Future.wait([
         storePaymentAch(
@@ -379,7 +372,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -453,11 +445,8 @@ class PaymentService {
         'charge_type': chargeType, // Set the dynamically calculated charge_type
       };
     }).toList();
-    print(updatedEntries);
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -480,7 +469,6 @@ class PaymentService {
         //'entry': entries,
         // 'notificationTime':notificationTime,
       };
-      print(paymentDetails);
 
       final response = await apiPost(
         Uri.parse(baseUrl),
@@ -496,11 +484,8 @@ class PaymentService {
         }),
       );
       if (response.statusCode == 200) {
-        print(response.body);
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print(jsonData["data"]["responsetext"]);
-          print(jsonData["data"]["transactionid"]);
           storePaymentAch(
             companyName: company_name,
             adminId: adminId,
@@ -603,7 +588,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -659,7 +643,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(

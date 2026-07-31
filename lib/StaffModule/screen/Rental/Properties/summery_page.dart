@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -228,7 +229,6 @@ class _Summery_pageState extends State<Summery_page>
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
     String? token = prefs.getString('token');
-    print("Rental ID ${rentalId}");
     final response = await apiGet(
         Uri.parse('$Api_url/api/rentals/rental_summary/$rentalId'),
         headers: {
@@ -257,7 +257,6 @@ class _Summery_pageState extends State<Summery_page>
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -291,7 +290,6 @@ class _Summery_pageState extends State<Summery_page>
           _summaryLeasesFuture =
               Properies_summery_Repo().fetchrLeaseDetails(unitId);
         });
-        print("unit id with new $unitId");
       }
     });
     futureUnitsummery.then((units) {
@@ -300,7 +298,6 @@ class _Summery_pageState extends State<Summery_page>
         String unitId = units.first.unitId!;
         futureLeaseRevenueDetails =
             Properies_summery_Repo().fetchrRevenueDetails(unitId);
-        print("unit id with new $unitId");
       }
     });
     _fetchData();
@@ -374,7 +371,7 @@ class _Summery_pageState extends State<Summery_page>
       }
       return [];
     } catch (e) {
-      print('Error loading property taxes: $e');
+      logError('Error loading property taxes: $e');
       return [];
     }
   }
@@ -401,7 +398,7 @@ class _Summery_pageState extends State<Summery_page>
       }
       return null;
     } catch (e) {
-      print('Error loading financial summary: $e');
+      logError('Error loading financial summary: $e');
       return null;
     }
   }
@@ -1221,14 +1218,12 @@ class _Summery_pageState extends State<Summery_page>
       final data = await fetchDataOfCountWork(widget.properties.rentalId!);
       int newCount = data['count'] ?? 0;
       int newCompleteCount = data['complete_count'] ?? 0;
-      print(newCompleteCount);
-      print(newCount);
       final provider =
           Provider.of<WorkOrderCountProvider>(context, listen: false);
       provider.updateCount(newCount);
       provider.updateCompleteCount(newCompleteCount);
     } catch (error) {
-      print('Error fetching counts: $error');
+      logError('Error fetching counts: $error');
     }
   }
 
@@ -1237,7 +1232,6 @@ class _Summery_pageState extends State<Summery_page>
   String? _uploadedFileName;
   List<String> _uploadedFileNames = [];
   Future<String?> uploadImage(File imageFile) async {
-    print(imageFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
     var request = http.MultipartRequest(
         'POST',
@@ -1249,13 +1243,10 @@ class _Summery_pageState extends State<Summery_page>
 
     var response = await apiSend(request);
     var responseData = await http.Response.fromStream(response);
-    print('response in upload image ${responseData.body}');
-    print('response in upload image ${responseData.statusCode}');
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
       List file = responseBody['files'];
-      print('file in upload image ${file.first["filename"]}');
       return file.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -1271,7 +1262,6 @@ class _Summery_pageState extends State<Summery_page>
         _images.add(File(image.path));
       });
       String? fileName = await uploadImage(_image!);
-      print('fileName in  ${fileName}');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? adminid = prefs.getString("adminId");
       String? id = prefs.getString("staff_id");
@@ -1294,10 +1284,7 @@ class _Summery_pageState extends State<Summery_page>
               fileName, // Remove the image by setting it to an empty string
         }),
       );
-      print('response in update image ${response.body}');
-      print('response in update image ${response.statusCode}');
       if (response.statusCode == 200) {
-        print('Image updated successfullyyyyyyyyy');
         Fluttertoast.showToast(
           msg: 'Image updated successfully',
           toastLength: Toast.LENGTH_SHORT,
@@ -1328,10 +1315,9 @@ class _Summery_pageState extends State<Summery_page>
         // _imageUrls.add(fileName!);
         // _updateRentalImage(fileName!);
         _editimageUrls.add(fileName);
-        print(fileName);
       });
     } catch (e) {
-      print('Image upload failed: $e');
+      logError('Image upload failed: $e');
     }
   }
 
@@ -1356,20 +1342,17 @@ class _Summery_pageState extends State<Summery_page>
           'rental_image': fileName, // Use the uploaded file name
         }),
       );
-      print(' image put ${response.body}');
       if (response.statusCode == 200) {
-        print('Image updated successfully');
         var responseBody = json.decode(response.body);
         setState(() {
           widget.properties.rentalImage =
               fileName; // Update the rental image URL
         });
-        print(responseBody['message']);
       } else {
         throw Exception('Failed to update rental image');
       }
     } catch (e) {
-      print('Failed to update image: $e');
+      logError('Failed to update image: $e');
     }
   }
 
@@ -1400,7 +1383,6 @@ class _Summery_pageState extends State<Summery_page>
       );
 
       if (response.statusCode == 200) {
-        print('Image deleted successfully from the API');
         Fluttertoast.showToast(
           msg: 'Image deleted successfully',
           toastLength: Toast.LENGTH_SHORT,
@@ -1409,7 +1391,6 @@ class _Summery_pageState extends State<Summery_page>
         //after this i want refreasyh the page
         reload_Screen();
         var responseBody = json.decode(response.body);
-        print(responseBody['message']);
 
         // Clear local image data and update UI
         setState(() {
@@ -1421,7 +1402,7 @@ class _Summery_pageState extends State<Summery_page>
         throw Exception('Failed to delete image from API');
       }
     } catch (e) {
-      print('Failed to remove image: $e');
+      logError('Failed to remove image: $e');
     }
   }
 
@@ -1506,7 +1487,7 @@ class _Summery_pageState extends State<Summery_page>
       });
     } catch (e) {
       // Handle error for fetching unit count
-      print('Error fetching unit data: $e');
+      logError('Error fetching unit data: $e');
     }
 
     try {
@@ -1518,7 +1499,7 @@ class _Summery_pageState extends State<Summery_page>
       });
     } catch (e) {
       // Handle error for fetching tenant data
-      print('Error fetching tenant data: $e');
+      logError('Error fetching tenant data: $e');
     }
 
     try {
@@ -1531,7 +1512,7 @@ class _Summery_pageState extends State<Summery_page>
       });
     } catch (e) {
       // Handle error for fetching work orders
-      print('Error fetching work order data: $e');
+      logError('Error fetching work order data: $e');
     }
   }
 
@@ -1541,11 +1522,7 @@ class _Summery_pageState extends State<Summery_page>
     //  try {
     final fetchedunit1 =
         await unit1Repository.fetchunit(widget.properties.rentalId ?? "");
-    print(widget.properties.rentalId ?? "");
-    print('hello');
     setState(() {
-      print(widget.unit?.unitId ?? "");
-      print('hello');
       data = fetchedunit1;
 
       // Calculate tenant count from unit API response
@@ -1555,7 +1532,6 @@ class _Summery_pageState extends State<Summery_page>
           unitTenantCount += unit.tenantCount!;
         }
       }
-      print('Unit Tenant Count: $unitTenantCount');
 
       isLoading = false;
     });
@@ -1579,11 +1555,7 @@ class _Summery_pageState extends State<Summery_page>
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchUnitLeases(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
-    print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
-      print('hello');
       leases = fetchedLeases;
       isloading = false;
     });
@@ -4218,7 +4190,6 @@ class _Summery_pageState extends State<Summery_page>
     100,
   ]; //
   Lease_page() {
-    print("calling lease page from my screen");
     return Container(
       child: Column(
         children: [
@@ -4493,7 +4464,6 @@ class _Summery_pageState extends State<Summery_page>
   ];
   Revenue_page() {
     final dateProvider = Provider.of<DateProvider>(context);
-    print("calling revenue page from my screen");
     return Container(
       child: Column(
         children: [
@@ -4556,8 +4526,6 @@ class _Summery_pageState extends State<Summery_page>
                       .skip(currentPagerevenue * itemsPerPagerevenue)
                       .take(itemsPerPagerevenue)
                       .toList();
-                  print("check data of revenue ${data.first.paymentType}");
-                  print("check data of date  ${data.first.entry?.first.date}");
                   return SingleChildScrollView(
                     child: Column(
                       children: [
@@ -4695,7 +4663,6 @@ class _Summery_pageState extends State<Summery_page>
   DateTime? selectedDate;
   bool is_Loading = true;
   Summary_page() {
-    print("$image_url${widget.properties.rentalImage}");
     final dateProvider = Provider.of<DateProvider>(context);
     return FutureBuilder<(Rentals, Map<String, dynamic>?)>(
       key: ValueKey(futureSummaryWithFinancial.hashCode),
@@ -4734,7 +4701,6 @@ class _Summery_pageState extends State<Summery_page>
         final purchaseRental = _purchaseInfoRentalOverride ?? rentalDetails;
         final financialData = pair.$2;
         currentImage = "${rentalDetails.rentalImage}";
-        print("property data summery with api ${rentalDetails.rentalAddress}");
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
@@ -5038,7 +5004,6 @@ class _Summery_pageState extends State<Summery_page>
                                 .take(itemsPerPagerent)
                                 .toList();
 
-                            print("currentpage data ${currentPageData.length}");
                             return SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -5872,7 +5837,7 @@ class _Summery_pageState extends State<Summery_page>
                                                   );
                                                 }
                                               } catch (e) {
-                                                print(
+                                                logError(
                                                     'Error updating purchase info: $e');
                                                 Fluttertoast.showToast(
                                                   msg:
@@ -7912,12 +7877,10 @@ class _Summery_pageState extends State<Summery_page>
             if (tenant.moveoutDate != null)
               InkWell(
                 onTap: () async {
-                  print("calling movein");
                   String? tenantId =
                       tenant.tenantId != null && tenant.tenantId!.isNotEmpty
                           ? tenant.tenantId?.first
                           : null;
-                  print(tenantId);
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   String? id = prefs.getString("adminId");
@@ -8083,7 +8046,6 @@ class _Summery_pageState extends State<Summery_page>
 
   Widget buildMoveout(TenantData tenant) {
     moveOutDate = formatDate(tenant.endDate!);
-    print(' before moved out ${formatDate(tenant.endDate!)}');
     // displayDate = DateFormat('dd-MM-yyyy').format(DateTime.parse(moveOutDate));
     // startdateController.text = displayDate;
     startdateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
@@ -8376,7 +8338,6 @@ class _Summery_pageState extends State<Summery_page>
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   String? id = prefs.getString("adminId");
-                  print(moveOutDate);
                   LeaseMoveoutRepository()
                       .addMoveoutTenant(
                     adminId: id!,
@@ -8616,7 +8577,6 @@ class _Summery_pageState extends State<Summery_page>
                     return const Center(child: Text('No data available'));
                   }
                   final data = snapshot.data!;
-                  print('unit images ${widget.unit?.rentalImages!.first}');
                   String? imageUrl = widget.unit?.rentalImages?.isNotEmpty ??
                           false
                       ? "$image_url${widget.unit!.rentalImages!.first}"
@@ -11185,7 +11145,6 @@ class _Summery_pageState extends State<Summery_page>
                                                     iserror = true;
                                                   });
                                                 } else {
-                                                  print("unit calling");
                                                   setState(() {
                                                     isLoading = true;
                                                     iserror = false;
@@ -11213,8 +11172,6 @@ class _Summery_pageState extends State<Summery_page>
                                                           rentalImages:
                                                               _uploadedFileNames!)
                                                       .then((value) {
-                                                    print(
-                                                        "valuesss....${value}");
                                                     setState(() {
                                                       isLoading = false;
                                                       data.add(unit_properties(
@@ -11241,7 +11198,6 @@ class _Summery_pageState extends State<Summery_page>
                                                     });
                                                   });
                                                 }
-                                                print("calling.............");
                                               },
                                               child: Material(
                                                 elevation: 3,
@@ -12438,7 +12394,6 @@ class _Summery_pageState extends State<Summery_page>
                           ),
                         );
                       } else {
-                        print("data update...");
                         var data = snapshot.data!;
                         if (selectedValue == null && searchvalue!.isEmpty) {
                           data = snapshot.data!;
@@ -19356,11 +19311,7 @@ class _LeasesTableState extends State<LeasesTable> {
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchUnitLeases(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
-    print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
-      print('hello');
       leases = fetchedLeases;
       isLoading = false;
     });
@@ -19654,7 +19605,6 @@ class _LeasesTableState extends State<LeasesTable> {
   void handleDelete(unit_lease rental) {
     _showDeleteAlert(context, rental.leaseId!);
     // Handle delete action
-    print('Delete ${rental.leaseId}');
   }
 
   late Future<List<unit_lease>> futureLease;
@@ -20504,11 +20454,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
     //  try {
     final fetchedLeases =
         await leaseRepository.fetchApplianceData(widget.unit!.unitId!);
-    print(widget.unit!.unitId!);
-    print('hello');
     setState(() {
-      print(widget.unit!.unitId!);
-      print('hello');
       leases = fetchedLeases;
       isLoading = false;
     });
@@ -20815,14 +20761,12 @@ class _AppliancesPartState extends State<AppliancesPart> {
   void handleDelete(unit_appliance rental) {
     _showDeleteAlert(context, rental.applianceId!);
     // Handle delete action
-    print('Delete ${rental.applianceId}');
   }
 
   String? rentalOwnersid;
   int rentalownerCount = 0;
   int rentalOwnerCountLimit = 0;
   Future<void> fetchRentalOwneradded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -20834,15 +20778,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print(rentalownerCount);
-      print(rentalOwnerCountLimit);
       setState(() {
         rentalownerCount = jsonData['rentalownerCount'];
-        print(rentalownerCount);
         rentalOwnerCountLimit = jsonData['rentalOwnerCountLimit'];
-        print(rentalOwnerCountLimit);
       });
     } else {
       throw Exception('Failed to load data');
@@ -21232,7 +21171,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                         String? id =
                                                             prefs.getString(
                                                                 "adminId");
-                                                        print("calling");
                                                         Properies_summery_Repo()
                                                             .addappliances(
                                                           adminId: id,
@@ -21247,11 +21185,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                   .text,
                                                         )
                                                             .then((value) {
-                                                          print(widget
-                                                              .properties
-                                                              ?.adminId);
-                                                          print(widget
-                                                              .unit?.unitId);
                                                           setState(() {
                                                             isLoading = false;
 
@@ -21695,7 +21628,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                           });
                                                                                           SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                           String? id = prefs.getString("adminId");
-                                                                                          print("calling");
                                                                                           Properies_summery_Repo()
                                                                                               .Editappliances(
                                                                                             applianceid: rentals.applianceId,
@@ -21706,8 +21638,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                             installeddate: _installedDate.text,
                                                                                           )
                                                                                               .then((value) {
-                                                                                            print(widget.properties?.adminId);
-                                                                                            print(widget.unit?.unitId);
                                                                                             setState(() {
                                                                                               isLoading = false;
                                                                                             });
@@ -22253,7 +22183,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                       });
                                                                                       SharedPreferences prefs = await SharedPreferences.getInstance();
                                                                                       String? id = prefs.getString("adminId");
-                                                                                      print("calling");
                                                                                       Properies_summery_Repo()
                                                                                           .Editappliances(
                                                                                         applianceid: _tableData.first.applianceId,
@@ -22264,8 +22193,6 @@ class _AppliancesPartState extends State<AppliancesPart> {
                                                                                         installeddate: _installedDate.text,
                                                                                       )
                                                                                           .then((value) {
-                                                                                        print(widget.properties?.adminId);
-                                                                                        print(widget.unit?.unitId);
                                                                                         setState(() {
                                                                                           isLoading = false;
                                                                                         });

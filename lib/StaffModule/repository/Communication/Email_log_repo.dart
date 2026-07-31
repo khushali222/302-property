@@ -41,7 +41,6 @@ class EmailLogRepository {
 
     // Check if required data is available
     if (id == null || token == null) {
-      print('Missing adminId or token in SharedPreferences');
       return [];
     }
 
@@ -52,10 +51,8 @@ class EmailLogRepository {
         "id": "CRM ${staffid ?? id}",
       },
     );
-    print("fetch mail ${response.body}");
 
     if (response.statusCode == 200) {
-      print("fetch mailin email log repo ${response.body}");
       //show consolle like this fetch mailin email log repo {"statusCode":204,"message":"Mails not available"}
       if (response.body ==
           "{\"statusCode\":204,\"message\":\"Mails not available\"}") {
@@ -64,10 +61,8 @@ class EmailLogRepository {
       List jsonResponse = json.decode(response.body)['emails'];
       return jsonResponse.map((data) => Emails.fromJson(data)).toList();
     } else if (response.statusCode == 204) {
-      print('No emails available: ${response.body}');
       return [];
     } else {
-      print('Failed to fetch emails: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }

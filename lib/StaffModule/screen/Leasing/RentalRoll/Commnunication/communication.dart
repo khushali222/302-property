@@ -1261,29 +1261,21 @@ class _lease_communicationState extends State<lease_communication> {
   }
 
   String _getSafeEmail(List<String?>? emailList) {
-    print('DEBUG: _getSafeEmail called with emailList: $emailList');
-    print('DEBUG: emailList type: ${emailList.runtimeType}');
 
     if (emailList == null || emailList.isEmpty) {
-      print('DEBUG: emailList is null or empty, returning N/A');
       return 'N/A';
     }
 
-    print('DEBUG: emailList length: ${emailList.length}');
     for (int i = 0; i < emailList.length; i++) {
-      print(
-          'DEBUG: emailList[$i]: ${emailList[i]} (type: ${emailList[i].runtimeType})');
     }
 
     // Find the first non-null email
     for (String? email in emailList) {
       if (email != null && email.isNotEmpty) {
-        print('DEBUG: Found valid email: $email');
         return email;
       }
     }
 
-    print('DEBUG: No valid email found, returning N/A');
     return 'N/A';
   }
 }

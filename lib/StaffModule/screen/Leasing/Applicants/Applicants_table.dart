@@ -179,7 +179,6 @@ class _Applicants_tableState extends State<Applicants_table>
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -226,7 +225,6 @@ class _Applicants_tableState extends State<Applicants_table>
 
   void handleEdit(Datum applicant) async {
     // Handle edit action
-    print('Edit ${applicant.applicantId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -356,7 +354,6 @@ class _Applicants_tableState extends State<Applicants_table>
     }
     // _showAlert(context, applicant.applicantId!);
     // Handle delete action
-    print('Delete ${applicant.applicantId}');
   }
 
   Widget _buildHeader<T>(
@@ -538,7 +535,6 @@ class _Applicants_tableState extends State<Applicants_table>
   int applicantCountLimit = 0;
   int applicantCount = 0;
   Future<void> fetchapplicantadded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -550,16 +546,11 @@ class _Applicants_tableState extends State<Applicants_table>
           "id": "CRM $id",
         });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print("error ${applicantCount}");
-      print("error ${applicantCountLimit}");
       setState(() {
         applicantCount = jsonData['applicantCount'];
 
-        print(applicantCount);
         applicantCountLimit = jsonData['applicantCountLimit'];
-        print(applicantCountLimit);
       });
     } else {
       throw Exception('Failed to load data the count');
@@ -862,8 +853,6 @@ class _Applicants_tableState extends State<Applicants_table>
         body: jsonEncode({'reason': reason, 'email': email, 'applicant_id': inviteId}),
       );
       final jsonData = json.decode(response.body);
-      print('deletePendingInvite → status: ${response.statusCode}');
-      print('deletePendingInvite → body: ${response.body}');
       final bool ok = response.statusCode == 200 ||
           response.statusCode == 201 ||
           (jsonData is Map &&
@@ -1923,12 +1912,6 @@ class _Applicants_tableState extends State<Applicants_table>
                           }).toList();
 
                           // Print filtered applicant count
-                          print("Filtered Applicant Count: ${data.length}");
-                          print(
-                              "Total Applicants (before filters): ${snapshot.data!.length}");
-                          print("Date Filter: $selectedDateFilter");
-                          print("Status Filter: $selectedValue");
-                          print("Search Value: $searchvalue");
 
                           if (data.isEmpty) {
                             return Center(
@@ -2767,7 +2750,6 @@ class _Applicants_tableState extends State<Applicants_table>
         return StatefulBuilder(
           builder: (context, setState) {
             void addEmail(String email) {
-              print(email);
               email = email.trim().replaceAll(",", "");
               if (email.isEmpty) {
                 setState(() {
@@ -2811,8 +2793,6 @@ class _Applicants_tableState extends State<Applicants_table>
                   }),
                 );
                 final jsonData = json.decode(response.body);
-                print('sendInvites → status: ${response.statusCode}');
-                print('sendInvites → body: ${response.body}');
                 final bool ok = response.statusCode == 200 ||
                     response.statusCode == 201 ||
                     (jsonData is Map &&

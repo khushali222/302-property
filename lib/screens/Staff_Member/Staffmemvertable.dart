@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -514,7 +515,7 @@ class _StaffTableState extends State<StaffTable> {
                             toastLength: Toast.LENGTH_LONG,
                           );
                         } catch (e) {
-                          print('Error updating staff member: $e');
+                          logError('Error updating staff member: $e');
                           Fluttertoast.showToast(
                             msg: "Failed to update staff member",
                             toastLength: Toast.LENGTH_LONG,

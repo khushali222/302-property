@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -44,7 +45,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -107,13 +107,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
     }
 
     // Print API parameters for debugging
-    print('=== API DEBUG INFO (OPEN WORK ORDERS) ===');
-    print('From Date (Display): ${_fromDateController.text}');
-    print('To Date (Display): ${_toDateController.text}');
-    print('From Date (API): $fromDateParam');
-    print('To Date (API): $toDateParam');
-    print('Status: $statusParam');
-    print('========================================');
 
     // Fetch data with filters
     _fetchOpenWorkOrders(
@@ -595,10 +588,9 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       }
 
       // If all parsing attempts failed, return original (shouldn't happen)
-      print('Warning: Could not parse date: $displayDate');
       return displayDate;
     } catch (e) {
-      print('Error converting display date to API format: $e');
+      logError('Error converting display date to API format: $e');
       return displayDate;
     }
   }
@@ -613,7 +605,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
       profileData = await service.fetchAdminAddress();
     } catch (e) {
       // Handle error
-      print("Error fetching profile data: $e");
+      logError("Error fetching profile data: $e");
       return;
     }
     final pdf = pw.Document();

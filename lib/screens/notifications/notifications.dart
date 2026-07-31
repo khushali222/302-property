@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -153,7 +154,6 @@ class _notificationsState extends State<notifications> {
     String? token = prefs.getString('token');
     String apiUrl = '${Api_url}/api/notification/admin_notification/$notificationId';
 
-    print("Notification ID: $notificationId");
 
     try {
       // Make the PUT request to the API
@@ -169,7 +169,6 @@ class _notificationsState extends State<notifications> {
       final jsonData = json.decode(response.body);
 
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-        print("API call successful");
 
         final responseData = jsonData['data'];
 
@@ -179,7 +178,6 @@ class _notificationsState extends State<notifications> {
           // (web routes to /workorderdetails/{id}). Tapping a passive
           // notification should never drop the user into an editable form.
           // Staff/Tenant/Vendor already open Workorder_summery here.
-          print("Navigating to Work Order details...");
           String workOrderId = responseData['notification_type']['workorder_id'];
           Navigator.push(
             context,
@@ -199,9 +197,6 @@ class _notificationsState extends State<notifications> {
           };
           final bool openLeaseTab =
               leaseTabNotifications.contains(notificationType);
-          print(openLeaseTab
-              ? "Navigating to Lease documents..."
-              : "Navigating to Payment...");
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -216,10 +211,9 @@ class _notificationsState extends State<notifications> {
 
         }
       } else {
-        print("Failed to update notification. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error: $e");
+      logError("Error: $e");
     }
   }
 
@@ -319,9 +313,7 @@ class _notificationsState extends State<notifications> {
                                       Spacer(),
                                       GestureDetector(
                                         onTap: (){
-                                          print("calling");
                                           handleNotificationTap(context, notification['is_workorder'], notification['notification_id']);
-                                          print("noti id gest ${notification['notification_id']}");
                                         },
                                         child: Container(
                                             height: 40,

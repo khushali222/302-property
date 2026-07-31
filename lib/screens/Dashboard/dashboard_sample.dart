@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -1007,13 +1008,6 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
           final totalRentalPropertyForChart = totalActiveLeases;
 
           // Summary for logs
-          debugPrint('[UnpaidRentChart] --- Summary ---');
-          debugPrint(
-              '[UnpaidRentChart] Balance API: totalRentPastDue=$totalRentPastDue, totalUnpaidRentLeases=$totalUnpaidRentLeases, totalActiveLeases=$totalActiveLeases');
-          debugPrint(
-              '[UnpaidRentChart] Preview-late-letters: total_past_due_amount → Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}');
-          debugPrint(
-              '[UnpaidRentChart] Chart: Total Unpaid=\$${totalUnpaidAmount.toStringAsFixed(2)}, Total Active Leases=$totalRentalPropertyForChart, Total with Unpaid=$totalUnpaidRentLeases, percentage=${percentage.toStringAsFixed(1)}%');
 
           if (mounted) {
             setState(() {
@@ -1028,7 +1022,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
         }
       }
     } catch (e) {
-      debugPrint('Error fetching unpaid rent data: $e');
+      logError('Error fetching unpaid rent data: $e');
     }
     if (mounted) {
       setState(() {

@@ -32,8 +32,6 @@ class LeaseDetails {
   });
 
   factory LeaseDetails.fromJson(Map<String, dynamic> json) {
-    print(json['tenant'] != null);
-    print(json['cosigner'] != null);
 
     return LeaseDetails(
 
@@ -108,9 +106,7 @@ class EditRental {
   });
 
   factory EditRental.fromJson(Map<String, dynamic> json) {
-    print('\n\nrental detail');
     json.forEach((key, value) {
-      print('$key: $value');
     });
     return EditRental(
       id: json['_id'],
@@ -202,10 +198,8 @@ class EditLease {
   });
 
   factory EditLease.fromJson(Map<String, dynamic> json) {
-    print('\n\nlease data ${json}');
 
     json.forEach((key, value) {
-      print('$key: $value');
     });
 
 

@@ -26,8 +26,6 @@ class SendemailRepository {
         "id": "CRM $staffid",
       },
     );
-    print("fetch send mail ${response.body}");
-    print("fetch url ${'$apiUrl/$id?page=$page&limit=$limit'}");
     //
     // if (response.statusCode == 200) {
     //  // List jsonResponse = json.decode(response.body)['emails'];
@@ -51,20 +49,17 @@ class SendemailRepository {
           jsonResponse['emails'].isNotEmpty) {
         return Send_email_table.fromJson(jsonResponse);
       } else {
-        print("No emails found in response");
         return Send_email_table(
             emails: [],
             totalEmails:
                 0); // Return an empty object instead of throwing an error
       }
     } else if (response.statusCode == 204) {
-      print("No emails available (204 No Content)");
       return Send_email_table(
           emails: [], totalEmails: 0); // Return an empty object
     } else {
       final jsonResponse = json.decode(response.body);
       String errorMessage = jsonResponse['message'] ?? 'Failed to load data';
-      print('Failed to fetch emails: $errorMessage');
       throw Exception(errorMessage);
     }
   }
@@ -91,7 +86,6 @@ class SendemailRepository {
         })
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

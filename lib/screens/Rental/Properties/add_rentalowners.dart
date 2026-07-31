@@ -2115,7 +2115,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                         } else if (formattedhomeNumber ==
                             formattedPhoneNumber) {
                           setState(() {
-                            print("phone number and home number are the same.");
                             homenumerror = true;
                             homenummessage = " number cannot be the same";
                           });
@@ -2157,7 +2156,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             isSubmitting = true;
                           });
                           try {
-                          print('hello');
                           var ownerSaved = false;
                           if (widget.isEdit == true || isChecked2) {
                             /* Fluttertoast.showToast(
@@ -2180,7 +2178,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             fontSize:
                             16.0,
                           );*/
-                            print("callllllllling");
                             List<ProcessorList> selectedProcessors =
                                 _processorGroups
                                     .map((group) => ProcessorList(
@@ -2189,7 +2186,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                     .where((processor) => processor.processorId!
                                         .isNotEmpty) // Filter out empty IDs
                                     .toList();
-                            print(selectedProcessors.length);
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             var adminId = prefs.getString("adminId");
@@ -2211,7 +2207,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                               postalCode: code2.text.trim(),
                               processorList: selectedProcessors,
                             );
-                            print(Ownersdetails!.toJson());
                             if (!mounted) return;
                             context
                                 .read<OwnerDetailsProvider>()
@@ -2273,7 +2268,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                                 postalCode: code2.text,
                                 processorList: selectedProcessors,
                               );
-                              print(selectedProcessors.length);
                               if (!mounted) return;
                               context
                                   .read<OwnerDetailsProvider>()
@@ -2326,7 +2320,6 @@ class _AddRentalownersState extends State<AddRentalowners> {
                             }
                           }
                         }
-                        print("form is invalid");
                       },
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),

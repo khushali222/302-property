@@ -22,20 +22,15 @@ class TenantLeaseRepository {
     if (fromDate != null && toDate != null) {
       url += '?from_date=$fromDate&to_date=$toDate';
     }
-    print(' lease url $url');
     try {
-      print('entry');
       final response = await apiGet(Uri.parse(url), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
 
       if (response.statusCode == 200) {
-        print('response.body ${response.body}');
         final parsedJson = jsonDecode(response.body);
-        print('parsedJson: $parsedJson');
         final report = LeaseLedger.fromJson(parsedJson);
-        print('parsed ReportExpiringLeaseTable: ${report.data}');
         return report;
       } else {
 

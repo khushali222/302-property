@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -626,7 +627,7 @@ class _AddDocumentState extends State<AddDocument> {
         });
       }
     } catch (e) {
-      print('Error picking file: $e');
+      logError('Error picking file: $e');
       Fluttertoast.showToast(
         msg: 'Error selecting file: ${e.toString()}',
         toastLength: Toast.LENGTH_SHORT,
@@ -696,10 +697,9 @@ class _AddDocumentState extends State<AddDocument> {
           });
         }
       } else {
-        print('Failed to fetch tenants: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching tenants: $error');
+      logError('Error fetching tenants: $error');
     } finally {
       setState(() {
         isLoadingTenants = false;
@@ -712,11 +712,9 @@ class _AddDocumentState extends State<AddDocument> {
       isLoading = true; // Start loading
     });
     try {
-      print('entry');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("staff_id");
       String? token = prefs.getString('token');
-      print('${id}  ${token}');
 
       // Validate file is selected
       if (_selectedFile == null) {
@@ -788,22 +786,11 @@ class _AddDocumentState extends State<AddDocument> {
         ),
       );
 
-      print('=== API REQUEST ===');
-      print('URL: $Api_url/api/lease-document/add-document');
-      print('Document ID: $documentId');
-      print('Lease ID: ${widget.leaseId}');
-      print('File Name: $fileName');
-      print('File Type: ${selectedValue}');
-      print('MIME Type: $mimeType');
-      print('Original Filename: $originalFilename');
 
       // Send request
       var streamedResponse = await apiSend(request);
       var response = await http.Response.fromStream(streamedResponse);
 
-      print('=== API RESPONSE ===');
-      print('Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
 
       var responseData = json.decode(response.body);
 
@@ -824,7 +811,7 @@ class _AddDocumentState extends State<AddDocument> {
         return null;
       }
     } catch (error) {
-      print('Error: $error');
+      logError('Error: $error');
       Fluttertoast.showToast(msg: 'Something went wrong: ${error.toString()}');
       setState(() {
         isLoading = false;

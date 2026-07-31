@@ -40,7 +40,6 @@ class StaffMemberRepository {
       body: jsonEncode(data),
     );
 
-    print(response.body);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -62,7 +61,6 @@ class StaffMemberRepository {
       List jsonResponse = json.decode(response.body)['data'];
       return jsonResponse.map((data) => Staffmembers.fromJson(data)).toList();
     } else {
-      print('Failed to fetch staffmember: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
@@ -86,9 +84,7 @@ class StaffMemberRepository {
     //  "staffmember_password": staffmemberPassword,
 
     };
-    print(data);
     String apiUrl = "${Api_url}/api/staffmember/staff_member/$Sid";
-    print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
@@ -101,7 +97,6 @@ class StaffMemberRepository {
       },
       body: jsonEncode(data),
     );
-    print('edit responce ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -130,7 +125,6 @@ class StaffMemberRepository {
       body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

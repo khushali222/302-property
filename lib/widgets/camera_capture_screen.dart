@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -44,7 +45,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
       _cameras = await availableCameras();
       if (_cameras == null || _cameras!.isEmpty) {
-        print('No cameras available');
         if (mounted) {
           setState(() {
             _isInitialized = false;
@@ -74,7 +74,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         });
       }
     } catch (e) {
-      print('Error initializing camera: $e');
+      logError('Error initializing camera: $e');
       if (mounted) {
         setState(() {
           _isInitialized = false;
@@ -121,7 +121,6 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   Future<void> _capturePhoto() async {
     if (_controller == null || !_isInitialized) {
-      print('Camera not initialized');
       return;
     }
 
@@ -130,13 +129,12 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       widget.onImageCaptured(File(photo.path));
       Navigator.pop(context);
     } catch (e) {
-      print('Error capturing photo: $e');
+      logError('Error capturing photo: $e');
     }
   }
 
   Future<void> _startVideoRecording() async {
     if (_controller == null || !_isInitialized) {
-      print('Camera not initialized');
       return;
     }
 
@@ -153,13 +151,12 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
         });
       });
     } catch (e) {
-      print('Error starting video recording: $e');
+      logError('Error starting video recording: $e');
     }
   }
 
   Future<void> _stopVideoRecording() async {
     if (_controller == null || !_isInitialized) {
-      print('Camera not initialized');
       return;
     }
 
@@ -174,7 +171,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
       widget.onVideoCaptured(File(video.path));
       Navigator.pop(context);
     } catch (e) {
-      print('Error stopping video recording: $e');
+      logError('Error stopping video recording: $e');
     }
   }
 

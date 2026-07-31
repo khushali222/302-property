@@ -18,19 +18,15 @@ class VendorRepository {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final url = Uri.parse('$Api_url/api/vendor/vendor');
-    print("$Api_url/api/vendor/vendor");
-    print(vendor.toJson());
     final response = await apiPost(
       url,
         headers: {"authorization" : "CRM $token","id":"CRM $id",},
 
       body: vendor.toJson(),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Failed to add vendor: ${response.body}');
       return false;
     }
   }
@@ -38,9 +34,6 @@ class VendorRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print("$Api_url/api/vendor/vendors/$id");
-    print("CRM $token");
-    print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/vendors/$id');
     final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
@@ -48,7 +41,6 @@ class VendorRepository {
       final List<dynamic> data = jsonDecode(response.body)["data"];
       return data.map((json) => Vendor.fromJson(json)).toList();
     } else {
-      print('Failed to fetch vendors: ${response.body}');
       return [];
     }
   }
@@ -56,9 +48,6 @@ class VendorRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print("$Api_url/api/vendor/vendors/$vender_id");
-    print("CRM $token");
-    print("CRM $id");
     final url = Uri.parse('$Api_url/api/vendor/get_vendor/$vender_id');
     final response = await apiGet(url,  headers: {"authorization" : "CRM $token","id":"CRM $id",},);
 
@@ -66,7 +55,6 @@ class VendorRepository {
       final Map<String,dynamic> data = jsonDecode(response.body)["data"];
       return  Vendor.fromJson(data);
     } else {
-      print('Failed to fetch vendors: ${response.body}');
       return Vendor();
     }
   }
@@ -75,19 +63,15 @@ class VendorRepository {
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
     final url = Uri.parse('$Api_url/api/vendor/update_vendor/${vender_id}');
-    print('$Api_url/api/vendor/update_vendor/${vender_id}');
-    print(vendor.toJson());
     final response = await apiPut(
       url,
       headers: {"authorization" : "CRM $token","id":"CRM $id",},
 
       body: vendor.toJson(),
     );
-    print(response.body);
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('Failed to edit vendor: ${response.body}');
       return false;
     }
   }
@@ -98,7 +82,6 @@ class VendorRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    print('$Api_url/api/vendor/update_vendor/${vender_id}');
 
     final http.Response response = await apiDelete(
       Uri.parse('$Api_url/api/vendor/delete_vendor/${vender_id}'),
@@ -106,7 +89,6 @@ class VendorRepository {
         body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return true;

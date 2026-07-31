@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -8,7 +9,6 @@ import 'package:three_zero_two_property/constant/constant.dart';
 
 class PastPlansHistoryService {
   Future<List<pastPlanData>> fetchPastPlans() async {
-    print('Fetching past plans');
 
     // Get SharedPreferences instance and retrieve token
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -26,7 +26,6 @@ class PastPlansHistoryService {
       if (response.statusCode == 200) {
         // If the server returns a 200 OK response, parse the JSON
         final parsedJson = jsonDecode(response.body);
-        print(parsedJson);
         final pastPlansHistory = pastPlansHistoryModel.fromJson(parsedJson);
         return pastPlansHistory.data ?? [];
       } else {
@@ -35,7 +34,7 @@ class PastPlansHistoryService {
       }
     } catch (e) {
       // Handle any other exceptions
-      print('Error fetching data: $e');
+      logError('Error fetching data: $e');
       return [];
     }
   }

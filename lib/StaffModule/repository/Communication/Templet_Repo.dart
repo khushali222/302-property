@@ -43,7 +43,6 @@ class TempletRepository {
       body: jsonEncode(data),
     );
 
-    print(' templet add ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 201) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -66,7 +65,6 @@ class TempletRepository {
       List jsonResponse = json.decode(response.body)['templates'];
       return jsonResponse.map((data) => EmailTemplate.fromJson(data)).toList();
     } else {
-      print('Failed to fetch templet: ${response.body}');
       return [];
       // throw Exception('Failed to load data');
     }
@@ -89,8 +87,6 @@ class TempletRepository {
       "type": type,
       "mail_type": mail_type,
     };
-    print(data);
-    print(apiUrl);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String?  id = prefs.getString('adminId');
@@ -104,7 +100,6 @@ class TempletRepository {
       },
       body: jsonEncode(data),
     );
-    print('edit responce ${response.body}');
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
@@ -134,7 +129,6 @@ class TempletRepository {
         body: jsonEncode({"reason":reason})
     );
     var responseData = json.decode(response.body);
-    print(response.body);
     if (responseData["statusCode"] == 200) {
       Fluttertoast.showToast(msg: responseData["message"]);
       return json.decode(response.body);

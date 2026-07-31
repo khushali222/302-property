@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -177,7 +178,7 @@ class _AddTenantState extends State<AddTenant> {
             fee == fee.roundToDouble() ? fee.toInt().toString() : fee.toString();
       });
     } catch (e) {
-      print('global debit fee fetch failed: $e');
+      logError('global debit fee fetch failed: $e');
     }
   }
 
@@ -948,9 +949,6 @@ class _AddTenantState extends State<AddTenant> {
     };
 
     // [EC-DEBUG] Temporary diagnostic (remove later) — emergency payload ids.
-    print('[EC-DEBUG] ADD-SAVE payload'
-        ' | count=${(body['emergency_contacts'] as List?)?.length ?? 0}'
-        ' | ids=${(body['emergency_contacts'] as List?)?.map((c) => (c is Map && (c['contact_id']?.toString() ?? '').isNotEmpty) ? c['contact_id'] : 'NEW(no id)').toList() ?? const []}');
     bool success = await TenantsRepository().addTenantPayload(body);
 
     setState(() {
@@ -1227,13 +1225,11 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   void _validatePhoneNumber(String value) {
     String formattedPhoneNumber = value.replaceAll(RegExp(r'\D'), '');
-    print("for num ${formattedPhoneNumber}");
     // Check if phone number is exactly 10 digits
     if (formattedPhoneNumber.length != 10) {
       setState(() {
         _errorMessage = "Phone number must be 10 digits";
       });
-      print("step 1 ${formattedPhoneNumber}");
     } else {
       // Validate uniqueness across all phone number controllers
       if (widget.telephoneController != null &&
@@ -1241,19 +1237,16 @@ class CustomTextFieldState extends State<CustomTextField> {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 2 ${formattedPhoneNumber}");
       } else if (widget.otherController != null &&
           widget.otherController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 3 ${formattedPhoneNumber}");
       } else if (widget.businessController != null &&
           widget.businessController?.text == value) {
         setState(() {
           _errorMessage = 'Number cannot be the same as another';
         });
-        print("step 4 ${formattedPhoneNumber}");
       } else {
         setState(() {
           _errorMessage = null; // Clear error message when the number is valid
@@ -1302,19 +1295,16 @@ class CustomTextFieldState extends State<CustomTextField> {
         FormField<String>(
           validator: widget.optional!
               ? (value) {
-                  print("work same callling  ${widget.samephonenumber}");
                   if (widget.controller!.text.trim().isEmpty) {
                     return null;
                   } else if (widget.phone != null) {
                     _validatePhoneNumber(widget.controller!.text.trim());
-                    print("erroe ${_errorMessage}");
                     if (_errorMessage == null) {
                       return null;
                     }
                     return '';
                   } else if (widget.email != null) {
                     _validateEmail(widget.controller!.text.trim());
-                    print("erroe2 ${_errorMessage}");
                     // Return an empty string or handle accordingly
                     if (_errorMessage == null) {
                       return null;
@@ -1326,7 +1316,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                     setState(() {
                       _errorMessage = '${widget.error_mess}';
                     });
-                  print("value ${value}");
                   return null;
                 }
               : (value) {

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -256,7 +257,6 @@ class _Vendor_tableState extends State<Vendor_table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -285,7 +285,7 @@ class _Vendor_tableState extends State<Vendor_table> {
         _isLoadingCategories = false;
       });
     } catch (e) {
-      print('Error fetching categories: $e');
+      logError('Error fetching categories: $e');
       setState(() {
         _isLoadingCategories = false;
       });
@@ -479,7 +479,6 @@ class _Vendor_tableState extends State<Vendor_table> {
   void handleDelete(Vendor property) {
     _showAlert(context, property.vendorId!);
     // Handle delete action
-    print('Delete ${property.vendorId}');
   }
 
   Widget _buildActionsCell(Vendor data) {
@@ -608,7 +607,6 @@ class _Vendor_tableState extends State<Vendor_table> {
   int vendorCount = 0;
 
   Future<void> fetchvendoradded() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminid = prefs.getString("adminId");
     String? id = prefs.getString("staff_id");
@@ -619,15 +617,10 @@ class _Vendor_tableState extends State<Vendor_table> {
       "id": "CRM $id",
     });
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      print("error ${vendorCount}");
-      print("error ${vendorCountLimit}");
       setState(() {
         vendorCount = jsonData['vendorCount'];
-        print(vendorCount);
         vendorCountLimit = jsonData['vendorCountLimit'];
-        print(vendorCountLimit);
       });
     } else {
       throw Exception('Failed to load data the count');

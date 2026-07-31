@@ -88,7 +88,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         });
       }
     } catch (e) {
-      print('Failed to load surcharge data: $e');
+      Fluttertoast.showToast(msg: 'Could not load surcharge settings. Amounts may be incomplete.');
     }
   }
 
@@ -105,7 +105,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           companyName = fetchedCompanyName;
         });
       } catch (e) {
-        print('Failed to fetch company name: $e');
         // Handle error state, e.g., show error message to user
       }
     }
@@ -150,7 +149,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
       billingID = c_data.billing_id ?? "";
-      print('charge details ${charges!.length}');
       rows = c_data.entry?.map((entry) {
             String? chargeType = (entry.account == "Late Fee Income" ||
                     entry.account == "Pre-payments" ||
@@ -177,7 +175,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                           },
                         )
                         .key;
-            print(entry.chargeType);
             return {
               'entry_id': entry.entryId,
               'account': entry.account,
@@ -198,14 +195,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           charges_balances.add((c_data.entry![i].amount ?? 0).toDouble());
         }
       }
-      print("rows length:- ${rows!.length}");
       /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
       controllers = rows.map((row) {
         return TextEditingController(text: row["charge_amount"].toString());
       }).toList();
-      print(rows);
       totalAmount = c_data.totalAmount ?? 0.0;
       isLoading = false;
     });
@@ -232,7 +227,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
 
       for (var tenant in data['data']['tenants']) {
@@ -281,7 +275,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       String adminId = prefs.getString('adminId') ?? '';
       String? token = prefs.getString('token');
       // print(token); // removed: do not log auth token
-      print('lease ${widget.leaseId}');
       String? id = prefs.getString("adminId");
       final response = await apiGet(
         Uri.parse('$Api_url/api/accounts/accounts/$adminId'),
@@ -353,7 +346,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         validationMessage = null;
       });
     }
-    print(totalAmount);
     surge_count();
   }
 
@@ -398,12 +390,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         }
       });
     } catch (e) {
-      print('PDF upload failed: $e');
+      Fluttertoast.showToast(msg: 'Failed to attach the file. Please try again.');
     }
   }
 
   Future<String?> uploadPdf(File pdfFile) async {
-    print(pdfFile.path);
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
@@ -451,7 +442,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   int? customervaultid;
 
   void AddFields() {
-    print("selected method $_selectedPaymentMethod");
     setState(() {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
@@ -549,7 +539,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 //     }
 //   }
   Future<void> fetchChargesForSelectedTenant(String tenantId) async {
-    print('fetch tenant charges calling');
     setState(() {
       isLoading = true;
       hasError = false;
@@ -557,14 +546,9 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     try {
       List<Entrycharge>? charges =
           await ChargeRepositorys().fetchChargesTable(widget.leaseId);
-      print('charge details ${charges!.length}');
       List<Entrycharge> filteredCharges =
           charges?.where((entry) => entry.chargeAmount! > 0).toList() ?? [];
-      print("charges length:- ${charges!.length}");
-      print('leaseid ${widget.leaseId}');
 
-      print('tenantid '
-          '$tenantId');
 
       setState(() {
         rows = charges?.where((entry) => entry.chargeAmount! > 0).map((entry) {
@@ -590,7 +574,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             return MapEntry(entry.chargeType!, []);
                           },
                         ).key;
-              print(chargeType);
               return {
                 'entry_id': entry.entryId,
                 'account': entry.account,
@@ -619,15 +602,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             charges_balances.add(double.parse(formattedChargeAmount));
           }
         }
-        print("charges length ${charges_balances.length}");
-        print("rows length:- ${rows!.length}");
         /*  print(rows.first['account']);
         print(rows.first['charge_amount']);
         print(rows.first['charge_amount']);*/
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        print(rows);
         totalAmount = rows.fold(
             0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
         isLoading = false;
@@ -697,8 +677,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         if (rows[index]["newfield"] == true) {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() + amount).toDouble();
           totalAmount += amount;
@@ -706,15 +684,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
         } else {
           double amount = double.tryParse(value) ?? 0.0;
           double charge = rows[index]["charge_amount"];
-          print(charge);
-          print(amount);
           rows[index]['amount'] = amount;
           charges_balances[index] = (charge.toDouble() - amount).toDouble();
           totalAmount += amount;
@@ -722,7 +697,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           totalAmount = 0.0;
 
           for (var i = 0; i < rows.length; i++) {
-            print(rows[i]["amount"]);
             if (rows[i]["amount"] != 0.0)
               totalAmount = totalAmount + rows[i]["amount"];
           }
@@ -759,17 +733,14 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       List<dynamic> cardDetailsList = jsonResponse['card_detail'];
 
       // Debug print to check the response structure
-      print('JSON Response: $jsonResponse');
 
       for (var cardDetail in cardDetailsList) {
         // Debug print to check each card detail
-        print('Card Detail: $cardDetail');
 
         //  BillingData billingData = BillingData.fromJson(cardDetail);
         // print('Parsed Billing ID: ${billingData.billingId}');
 
         // Assuming this is part of the logic to print billing_id
-        print('Billing ID: ${cardDetail['billing_id']}');
       }
 
       CustomerData? customerData = await postBillingCustomerVault(
@@ -781,7 +752,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         });
       }
     } else if (response.statusCode == 404) {
-      print('customer_vault_id not found');
     } else {
       throw Exception('Failed to load credit card data');
     }
@@ -816,13 +786,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       var jsonResponse = json.decode(response.body);
       var customerJson = jsonResponse['data']['customer'];
       if (customerJson == null) {
-        print('Failed to post data: ${response.statusCode}');
         return null;
       }
       CustomerData customerData = CustomerData.fromJson(customerJson);
 
       customerData.billing.forEach((billing) {
-        print('CC Bin: ${billing.ccBin}');
       });
       for (int i = 0; i < customerData.billing.length; i++) {
         if (i < cardDetailsList.length) {
@@ -832,7 +800,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
       return customerData;
     } else {
-      print('Failed to post data: ${response.statusCode}');
       return null;
     }
   }
@@ -851,7 +818,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String adminId = prefs.getString('adminId') ?? '';
     String? token = prefs.getString('token');
-    print(adminId);
 
     final response = await apiGet(
       Uri.parse('$Api_url/api/surcharge/surcharge/getadmin/$adminId'),
@@ -862,7 +828,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     );
 
     if (response.statusCode == 200) {
-      print('Response: ${response.body}');
       var jsonResponse = jsonDecode(response.body);
 
       // Accessing the first element in the 'data' list
@@ -894,7 +859,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
           setState(() {
             String? overrideFee = getOverrideFee(selectedTenantId!);
             bool enableOverrideFee = getEnableOverrideFee(selectedTenantId!);
-            print("overrideFee   ${overrideFee}");
             final num debitPercent =
                 num.tryParse('${surchargeData['surcharge_percent_debit']}') ??
                     0.0;
@@ -921,10 +885,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         surChargeAchflat = surchargeData['surcharge_flat_ACH'];
       });
 
-      print(surChargeAchper);
-      print(surChargeAchflat);
     } else {
-      print('Failed to fetch the surcharge: ${response}');
       var jsonResponse = jsonDecode(response.body);
       String message = jsonResponse['message'];
       throw Exception('Failed to fetch the surcharge $message');
@@ -1296,8 +1257,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                       });
                                                       await fetchcreditcard(
                                                           value!);
-                                                      print(
-                                                          'Selected tenant_id: $selectedTenantId');
                                                     },
                                                     buttonStyleData:
                                                         ButtonStyleData(
@@ -2542,7 +2501,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                         .toSet()
                                                         .toList();
                                               }
-                                              print(row);
                                               if (row['charge_type'] ==
                                                   "Rent") {}
                                               List<String> liabilityAccounts = [
@@ -2551,12 +2509,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                 "Security Deposit",
                                                 'Rent Income'
                                               ];
-                                              print(
-                                                  "${row['account']}_${row['charge_type']}");
-                                              print(categorizedDataCopy.values
-                                                  .expand((v) => v)
-                                                  .contains(row['account']));
-                                              print(categorizedDataCopy.values);
                                               return Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
@@ -2634,8 +2586,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                                 rows.indexOf(
                                                                         row) !=
                                                                     index);
-                                                        print(
-                                                            "Duplicate Entry $isDuplicate");
                                                         if (isDuplicate) {
                                                           validationMessage =
                                                               "**Each account must be unique";
@@ -2935,7 +2885,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               break;
                                             }
                                           }
-                                          print(value);
                                           setState(() {
                                             rows[index]['account'] = value;
                                             rows[index]['charge_type'] =
@@ -3373,7 +3322,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   });
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });
@@ -3506,8 +3454,6 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   });
                                   Navigator.pop(context, true);
                                 }).catchError((e) {
-                                  print(e);
-                                  print(e.toString());
                                   setState(() {
                                     _isLoading = false;
                                   });

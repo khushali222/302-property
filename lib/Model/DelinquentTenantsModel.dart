@@ -13,7 +13,6 @@ class DelinquentTenantsModel {
 
   DelinquentTenantsModel.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     if (json['data'] != null) {
       data = <DelinquentTenantsData>[];
@@ -57,7 +56,6 @@ class DelinquentTenantsData {
 
   DelinquentTenantsData.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     leaseId = json['lease_id'];
     rentalAddress = json['rental_address'];
@@ -103,7 +101,6 @@ class Tenants {
 
   Tenants.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     unitDetails = json['unit_details'];
     tenantId = json['tenant_id'];
@@ -169,7 +166,6 @@ class Charges {
 
   Charges.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     sId = json['_id'];
     chargeId = json['charge_id'];
@@ -249,7 +245,6 @@ class Entry {
 
   Entry.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     entryId = json['entry_id'];
     memo = json['memo'];
@@ -300,7 +295,6 @@ class PdfDelinquentTenantsData {
 
   PdfDelinquentTenantsData.fromJson(Map<String, dynamic> json) {
     json.forEach((key, value) {
-      print('Key: $key, Value: $value');
     });
     last30Days = json['last_30_days'].toString();
     last31To60Days = json['last_31_to_60_days'].toString();

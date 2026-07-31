@@ -168,11 +168,8 @@ class _AddCardState extends State<AddCard> {
         "id": "CRM $id",
       },
     );
-    print('hello$apiUrl');
-    print(response.body);
     final response_Data = jsonDecode(response.body);
     if (response_Data["statusCode"] == 200) {
-      print("hello");
       setState(() {
         profiledata = response_Data["data"];
         firstName.text = "${profiledata["tenant_firstName"]}";
@@ -211,7 +208,6 @@ class _AddCardState extends State<AddCard> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      print(data);
       final List<Map<String, String>> fetchedTenants = [];
 
       for (var tenant in data['data']['tenants']) {
@@ -284,8 +280,6 @@ class _AddCardState extends State<AddCard> {
       );
 
       if (response.statusCode == 200) {
-        if (kDebugMode) print(
-            '🟧 [TENANT ADD-CARD] READ getCreditCards RESPONSE: ${response.body}');
         var jsonResponse = json.decode(response.body);
         customervaultid = jsonResponse['customer_vault_id'];
         List<dynamic> cardDetailsList = jsonResponse['card_detail'] ?? [];
@@ -303,8 +297,6 @@ class _AddCardState extends State<AddCard> {
             customervaultid.toString(), cardDetailsList);
 
         if (customerData != null) {
-          if (kDebugMode) print(
-              '🟧 [TENANT ADD-CARD] READ → cards to display: ${customerData.billing.length}');
           setState(() {
             customervaultid = jsonResponse['customer_vault_id'];
             cardDetails = customerData.billing;
@@ -503,12 +495,10 @@ class _AddCardState extends State<AddCard> {
   }
 
   String generateRandomNumber(int length) {
-    print(10);
     String randomNumber = "";
     for (int i = 0; i < length; i++) {
       randomNumber += (Random().nextInt(9) + 1).toString();
     }
-    print(randomNumber);
     return randomNumber;
   }
 
@@ -1113,7 +1103,6 @@ class _AddCardState extends State<AddCard> {
   }
 
   Widget _buildCreditCard(BillingData billingData, String customervaultid) {
-    print("billingData.billingId: ${billingData.billingId}");
     String _formatCardNumber(String cardNumber) {
       // Strip any grouping spaces so the input can be already-masked or raw.
       final String raw = cardNumber.replaceAll(' ', '');
@@ -1165,7 +1154,6 @@ class _AddCardState extends State<AddCard> {
       }
     }
 
-    print('card type :' + billingData.ccType.toString());
     return Slidable(
       endActionPane: ActionPane(
         motion: ScrollMotion(),
@@ -1320,7 +1308,6 @@ Widget _buildDetailsBlock({required String label, required String value}) {
 }
 
 LinearGradient _getCardGradient(String cardType) {
-  print(cardType);
   if (cardType.toLowerCase() == "mastercard" ||
       cardType.toLowerCase() == "discover") {
     return LinearGradient(
@@ -1621,7 +1608,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                           }
 
                         }
-                        print(value);
                         widget.onChanged2;
                       },*/
                       inputFormatters: widget.formatter ?? [],
@@ -1640,7 +1626,6 @@ class CustomTextFieldState extends State<CustomTextField> {
                                 value); // Assuming ValidateExpirationDate() checks for expiration date format
                           }
 
-                          print(validationMessage);
 
                           setState(() {
                             if (validationMessage != null) {

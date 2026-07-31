@@ -174,7 +174,6 @@ class _Lease_TableState extends State<Lease_Table> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        print(result);
         _connectivityResult = result;
       });
     });
@@ -228,7 +227,6 @@ class _Lease_TableState extends State<Lease_Table> {
 
   void handleEdit(tenant_property property) async {
     /* // Handle edit action
-    print('Edit ${property.sId}');
     var check = await Navigator.push(
         context,
         MaterialPageRoute(

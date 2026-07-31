@@ -39,11 +39,9 @@ class PaymentService {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
-    print("surcharge $surcharge");
 
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -74,7 +72,6 @@ class PaymentService {
         }).toList(),
         'scheduledPayment': scheduledPayment,
       };
-      print(paymentDetails);
 
 
       final response = await apiPost(
@@ -89,13 +86,10 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
-      print("[CARD PAYMENT] /api/nmipayment/sale status: ${response.statusCode}");
-      print("[CARD PAYMENT] /api/nmipayment/sale response: ${response.body}");
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
-          print("[CARD PAYMENT] SUCCESS — transactionId: ${jsonData["data"]["transactionid"]}, responseText: ${jsonData["data"]["responsetext"]}");
 
           // NOTE: /api/nmipayment/sale now saves payment to DB internally (backend change by Neil).
           // storePayment() call removed to prevent duplicate transaction entries.
@@ -123,11 +117,9 @@ class PaymentService {
 
           return "Payment Success";
         } else {
-          print("[CARD PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
-        print("[CARD PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         String serverMessage = '';
         try {
           serverMessage =
@@ -198,8 +190,6 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    print(totalAmount);
-    print(((double.tryParse(totalAmount) ?? 0.0) - (double.tryParse(surcharge) ?? 0.0)).toString());
     log(jsonEncode(<String, dynamic>{
       'company_name': companyName,
       'admin_id': adminId,
@@ -252,9 +242,7 @@ class PaymentService {
       }),
     );
 
-    print(response);
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -291,10 +279,8 @@ class PaymentService {
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
 
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -332,7 +318,6 @@ class PaymentService {
         paymentDetails['checkaba'] = checkaba;
         paymentDetails['account_holder_type'] = account_holder_type;
       }
-      print(paymentDetails);
 
 
       final response = await apiPost(
@@ -347,8 +332,6 @@ class PaymentService {
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
 
-      print("[ACH PAYMENT] /api/nmipayment/ACH_sale status: ${response.statusCode}");
-      print("[ACH PAYMENT] /api/nmipayment/ACH_sale response: ${response.body}");
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
@@ -356,7 +339,6 @@ class PaymentService {
           final data = jsonData["data"];
           final transactionId = data["transactionid"]?.toString() ?? "";
           final responseText = data["responsetext"]?.toString() ?? "SUCCESS";
-          print("[ACH PAYMENT] SUCCESS — transactionId: $transactionId, responseText: $responseText");
 
           // NOTE: /api/nmipayment/ACH_sale now saves payment to DB internally (backend change by Neil).
           // storePaymentAch() call removed to prevent duplicate transaction entries.
@@ -380,11 +362,9 @@ class PaymentService {
 
           return "Payment Success";
         } else {
-          print("[ACH PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
-        print("[ACH PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         String serverMessage = '';
         try {
           serverMessage =
@@ -480,7 +460,6 @@ class PaymentService {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(
@@ -518,10 +497,8 @@ class PaymentService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("tenant_id");
     String? token = prefs.getString('token');
-    print("surcharge ${surcharge}");
     if (future_Date == false) {
       final String baseUrl = '$Api_url/api/nmipayment/ACH_sale';
-      print(baseUrl);
       Map<String, dynamic> paymentDetails = {
         'admin_id': adminId,
         'first_name': firstName,
@@ -541,7 +518,6 @@ class PaymentService {
         'address1': address1,
         'processor_id': processorId,
       };
-      print(paymentDetails);
       final response = await apiPost(
         Uri.parse(baseUrl),
         headers: {
@@ -553,14 +529,11 @@ class PaymentService {
         },
         body: jsonEncode({"paymentDetails": paymentDetails, "is_web": true}),
       );
-      print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale status: ${response.statusCode}");
-      print("[NORMAL/CHECK PAYMENT] /api/nmipayment/ACH_sale response: ${response.body}");
 
       if (response.statusCode == 200) {
         var jsonData = jsonDecode(response.body);
         if (jsonData["statusCode"] == 100) {
           final data = jsonData["data"];
-          print("[NORMAL/CHECK PAYMENT] SUCCESS — transactionId: ${data["transactionid"]}, responseText: ${data["responsetext"]}");
 
           // NOTE: /api/nmipayment/ACH_sale now saves payment to DB internally (backend change by Neil).
           // storePaymentAch() call removed to prevent duplicate transaction entries.
@@ -582,11 +555,9 @@ class PaymentService {
 
           return "Payment Success";
         } else {
-          print("[NORMAL/CHECK PAYMENT] FAILED — ${jsonData["message"]}");
           throw Exception('Failed payment ${jsonData["message"]}');
         }
       } else {
-        print("[NORMAL/CHECK PAYMENT] HTTP ERROR — status: ${response.statusCode}, body: ${response.body}");
         String serverMessage = '';
         try {
           serverMessage =
@@ -668,9 +639,7 @@ class PaymentService {
         'response': "SUCCESS",
       }),
     );
-    print("payment ${response.body}");
     if (response.statusCode == 200) {
-      print(response.body);
       return jsonDecode(response.body);
     } else {
       throw Exception(

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
@@ -24,7 +25,6 @@ class ApplianceNoteService {
         'admin_id': adminId,
       };
 
-      print('Request body: ${json.encode(requestBody)}');
 
       final response = await apiPost(
         Uri.parse('$Api_url/api/appliance/add_note'),
@@ -36,8 +36,6 @@ class ApplianceNoteService {
         body: json.encode(requestBody),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       final responseData = json.decode(response.body);
 
@@ -47,7 +45,7 @@ class ApplianceNoteService {
         throw Exception(responseData['message'] ?? 'Failed to add note');
       }
     } catch (e) {
-      print('Error adding note: $e');
+      logError('Error adding note: $e');
       throw Exception('Failed to add note: $e');
     }
   }
@@ -73,8 +71,6 @@ class ApplianceNoteService {
         },
       );
 
-      print('Delete response status: ${response.statusCode}');
-      print('Delete response body: ${response.body}');
 
       final responseData = json.decode(response.body);
 
@@ -84,7 +80,7 @@ class ApplianceNoteService {
         throw Exception(responseData['message'] ?? 'Failed to delete note');
       }
     } catch (e) {
-      print('Error deleting note: $e');
+      logError('Error deleting note: $e');
       throw Exception('Failed to delete note: $e');
     }
   }
@@ -108,7 +104,6 @@ class ApplianceNoteService {
         'appliance_id': applianceId,
         'note_id': noteId,
       };
-      print('Request body: ${json.encode(requestBody)}');
 
       final response = await apiPut(
         Uri.parse('$Api_url/api/appliance/update_note'),
@@ -120,8 +115,6 @@ class ApplianceNoteService {
         body: json.encode(requestBody),
       );
 
-      print('Update response status: ${response.statusCode}');
-      print('Update response body: ${response.body}');
 
       final responseData = json.decode(response.body);
 
@@ -131,7 +124,7 @@ class ApplianceNoteService {
         throw Exception(responseData['message'] ?? 'Failed to update note');
       }
     } catch (e) {
-      print('Error updating note: $e');
+      logError('Error updating note: $e');
       throw Exception('Failed to update note: $e');
     }
   }

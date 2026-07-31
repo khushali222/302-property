@@ -192,7 +192,6 @@ class Entry {
       this.status});
 
   Entry.fromJson(Map<String, dynamic> json) {
-    print('Parsing date: ${json['date']}');
     entryId = json['entry_id'];
     account = json['account'];
     amount = json['amount'] != null

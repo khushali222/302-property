@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -54,7 +55,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error fetching appliances for unit $unitId: $e');
+      logError('Error fetching appliances for unit $unitId: $e');
       setState(() {
         isLoading = false;
       });
@@ -74,7 +75,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
         await fetchLeasesForUnit(unit.unitId!);
       }
     } catch (e) {
-      print('Error fetching all appliances: $e');
+      logError('Error fetching all appliances: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -354,7 +355,6 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
 
   void handleEdit(unit_appliance rentalOwner) async {
     // Handle edit action for infrastructure
-    print('Edit ${rentalOwner.applianceId}');
   }
 
   void _showDeleteAlert(BuildContext context, String id) {
@@ -402,7 +402,6 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
 
   void handleDelete(unit_appliance rental) {
     _showDeleteAlert(context, rental.applianceId!);
-    print('Delete ${rental.applianceId}');
   }
 
   // Mobile view variables
@@ -975,7 +974,6 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                   int index = entry.key;
                                   bool isExpanded = expandedIndex == index;
                                   unit_appliance rentals = entry.value;
-                                  print("Brand name  ${rentals.brand} ");
                                   return Container(
                                     margin: const EdgeInsets.only(bottom: 16),
                                     decoration: BoxDecoration(
@@ -1303,8 +1301,6 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                                                     // Delete button
                                                     GestureDetector(
                                                       onTap: () {
-                                                        print(
-                                                            "Appliance ID ${rentals.applianceId}");
                                                         _showDeleteAlert(
                                                             context,
                                                             rentals

@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -29,7 +30,6 @@ class _notificationsState extends State<notifications> {
 
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
-    print("calling");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("vendor_id");
     String? token = prefs.getString('token');
@@ -41,7 +41,6 @@ class _notificationsState extends State<notifications> {
       },
     );
     final jsonData = json.decode(response.body);
-    print(jsonData);
     if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
       List<Map<String, dynamic>> notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       return notifications;
@@ -87,7 +86,6 @@ class _notificationsState extends State<notifications> {
     String apiUrl =
         '${Api_url}/api/notification/vendor_notification/$notificationId';
 
-    print("Notification ID: $notificationId");
 
     try {
       // Make the PUT request to the API
@@ -103,13 +101,11 @@ class _notificationsState extends State<notifications> {
       final jsonData = json.decode(response.body);
 
       if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-        print("API call successful");
 
         final responseData = jsonData['data'];
 
         // Check if it's a work order or payment
         if (responseData['is_workorder'] == true) {
-          print("Navigating to Edit Work Order...");
           String workOrderId =
           responseData['notification_type']['workorder_id'];
           Navigator.push(
@@ -120,11 +116,9 @@ class _notificationsState extends State<notifications> {
         }
 
       } else {
-        print(
-            "Failed to update notification. Status code: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error: $e");
+      logError("Error: $e");
     }
   }
   String formatDateTime(String dateTime) {
@@ -138,7 +132,6 @@ class _notificationsState extends State<notifications> {
     return Scaffold(
       key:key,
       appBar: widget_302.App_Bar(context: context,onDrawerIconPressed: () {
-        print("calling appbar");
         key.currentState!.openDrawer();
         // Scaffold.of(context).openDrawer();
       }),
@@ -233,13 +226,10 @@ class _notificationsState extends State<notifications> {
                                       Spacer(),
                                       GestureDetector(
                                         onTap: () {
-                                          print("calling");
                                           handleNotificationTap(
                                               context,
                                               notification['is_workorder'],
                                               notification['notification_id']);
-                                          print(
-                                              "noti id gest ${notification['notification_id']}");
                                         },
                                         child: Container(
                                             height: 40,

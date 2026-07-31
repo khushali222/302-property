@@ -53,7 +53,6 @@ class SelectedCosignersProvider extends ChangeNotifier {
     notifyListeners();
   }
   void updateCosigner(Cosigner updatedCosigner,int index) {
-    print("update calling");
     _cosigners[index] = updatedCosigner;
         notifyListeners();
     // for (int i = 0; i < _cosigners.length; i++) {
