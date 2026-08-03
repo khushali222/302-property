@@ -1148,7 +1148,10 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           staffMemberName: "",
           workCategory: _selectedCategory!,
           workPerformed: perform.text.trim(),
-          status: 'Pending',
+          // Web parity (Workorder.js typeOptions): "Pending" is not a status
+          // the system recognises, and it cannot be rendered by the edit
+          // dropdown. New orders start as "New".
+          status: 'New',
           rentalAddress: properties[_selectedPropertyId]!,
           rentalUnit: units[_selectedUnitId]!,
           tenant: "${firstName} ${lastName}(Tenant)",

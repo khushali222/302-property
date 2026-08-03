@@ -2401,10 +2401,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   value]; // Store selected staff
                                               StaffId = value.toString();
 
-                                              if (value != null) {
-                                                _loadUnits(
-                                                    value); // Fetch units for the selected staff
-                                              }
+                                              // Units belong to the property, not the staff
+                                              // member — reloading here cleared the unit.
                                               state.didChange(value);
                                             });
                                             state.reset();
@@ -2631,9 +2629,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                                   value]; // Store selected vendor
 
                                               vendorId = value.toString();
-                                              _loadUnits(value!);
-                                              state.didChange(
-                                                  value); // Fetch units for the selected vendor
+                                              // Units belong to the property, not the vendor —
+                                              // reloading here cleared the selected unit.
+                                              state.didChange(value);
                                             });
                                             state.reset();
                                           },
@@ -3425,6 +3423,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
       // Proceed with API call
       String? finalVendorId = _selectedvendorsId ?? vendorId;
+      // Fall back to the tenant loaded with the work order when the dropdown
+      // was never re-picked, so saving does not clear the existing tenant.
+      String? finalTenantId = _selectedtenantId ?? tenantId;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
       String? token = prefs.getString('token');
@@ -3463,7 +3464,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           status: _selectedStatus,
           rentalAddress: properties[_selectedPropertyId],
           rentalUnit: units[_selectedUnitId],
-          tenant: tenantId,
+          tenant: finalTenantId,
           rentalid: rentalId,
           unitid: unitId,
           workOrderImages: _imageUrls,
@@ -5432,8 +5433,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                               StaffId = value
                                                                   .toString();
-                                                              _loadUnits(
-                                                                  value!); // Fetch units for the selected property
+                                                              // Units belong to the property,
+                                                              // not the staff member.
                                                             });
                                                           },
                                                           buttonStyleData:
@@ -5625,8 +5626,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                                                                 vendorId = value
                                                                     .toString();
-                                                                _loadUnits(
-                                                                    value!); // Fetch units for the selected property
+                                                                // Units belong to the property,
+                                                                // not the vendor.
                                                               });
                                                             },
                                                             buttonStyleData:
@@ -6917,6 +6918,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       String? rentalId = _selectedPropertyId;
       String? unitId = _selectedUnitId;
       String? finalVendorId = _selectedvendorsId ?? vendorId;
+      // Fall back to the tenant loaded with the work order when the dropdown
+      // was never re-picked, so saving does not clear the existing tenant.
+      String? finalTenantId = _selectedtenantId ?? tenantId;
       List<Map<String, dynamic>> parts = partsAndLabor.map((part) {
         return {
           'parts_id': part['parts_id'],
@@ -6942,7 +6946,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         status: _selectedStatus,
         rentalAddress: properties[_selectedPropertyId],
         rentalUnit: units[_selectedUnitId],
-        tenant: tenantId,
+        tenant: finalTenantId,
         rentalid: rentalId,
         unitid: unitId,
         workOrderImages: _imageUrls,

@@ -1,3 +1,6 @@
+import 'package:three_zero_two_property/services/app_log.dart';
+import 'package:three_zero_two_property/services/api_client.dart';
+import 'package:three_zero_two_property/services/payment_reconciliation.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -90,6 +93,146 @@ class _MakePaymentState extends State<MakePayment> {
       _saleIdempotencyKey = null;
       _saleKeyScope = null;
     }
+  }
+
+  // ---- Reconciliation (CRM-4660) -------------------------------------------
+  // When the connection drops mid-request the server may still have taken the
+  // payment. Rather than telling the user "check the ledger yourself", read the
+  // ledger and answer the question for them.
+  final PaymentReconciliationService _reconciliation =
+      PaymentReconciliationService();
+
+  /// Payment ids present before we submit, so a payment that appears afterwards
+  /// can be told apart from an identical earlier one.
+  Set<String>? _preSaleLedgerIds;
+
+  Future<void> _snapshotLedgerBeforeSale(String tenantId) async {
+    _preSaleLedgerIds = await _reconciliation.snapshot(
+      leaseId: widget.leaseId,
+      tenantId: tenantId,
+    );
+  }
+
+  /// Guard against charging twice. If the previous attempt on this lease ended
+  /// with an unknown outcome, check the ledger before sending anything.
+  ///
+  /// Returns true when the caller must ABORT — the earlier payment already
+  /// posted. Returns false in every other case, including any failure to check,
+  /// so this can never block a legitimate payment.
+  Future<bool> _alreadyPaid(String tenantId) async {
+    try {
+      final posted = await _reconciliation.blockingDuplicate(
+        leaseId: widget.leaseId,
+        tenantId: tenantId,
+      );
+      if (posted == null) return false;
+
+      final amount = posted.totalAmount?.toStringAsFixed(2) ?? '';
+      final when = (posted.createdAt ?? '').split(' ').first;
+      _showSaleAlert(
+        'Already Paid',
+        'This payment of \$$amount${when.isEmpty ? '' : ' on $when'} already went '
+            'through — the earlier attempt succeeded even though the connection '
+            'dropped. It has NOT been charged again.',
+      );
+      return true;
+    } catch (e) {
+      logError('duplicate guard failed, allowing payment: $e');
+      return false; // never block a payment because the check itself broke
+    }
+  }
+
+  /// Shows the outcome of a failed sale. For an unknown outcome it first checks
+  /// the ledger, so the dialog can state what actually happened.
+  Future<void> _handleSaleFailure(
+    Object e, {
+    required String tenantId,
+    required double amount,
+  }) async {
+    if (!isOutcomeUnknown(e)) {
+      _showSaleAlert(
+        paymentAlertTitle(e),
+        friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
+      );
+      return;
+    }
+
+    final result = await _reconciliation.verify(
+      leaseId: widget.leaseId,
+      tenantId: tenantId,
+      amount: amount,
+      before: _preSaleLedgerIds,
+      backoff: const [
+        Duration(seconds: 2),
+        Duration(seconds: 4),
+        Duration(seconds: 6),
+      ],
+    );
+    // NOTE: deliberately NOT guarded by `mounted` — the whole point is that the
+    // screen may be gone by now. _showSaleAlert uses the root navigator.
+
+    switch (result.verdict) {
+      case PaymentVerdict.completed:
+        // It went through. Clear the key so a later payment gets a fresh one,
+        // and drop any pending record — there is nothing left to resolve.
+        _saleIdempotencyKey = null;
+        _saleKeyScope = null;
+        await _reconciliation.clearPending();
+        _showSaleAlert(
+          'Payment Completed',
+          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+              'was processed successfully. Do not pay again.',
+        );
+        break;
+      case PaymentVerdict.notFound:
+        await _reconciliation.clearPending();
+        _showSaleAlert(
+          'Payment Not Processed',
+          'The connection dropped and no payment was recorded on the ledger. '
+              'You can safely try again.',
+        );
+        break;
+      case PaymentVerdict.unknown:
+        // Still can't tell. Remember it so the NEXT submit on this lease is
+        // checked before it is allowed to charge again.
+        await _reconciliation.rememberPending(PendingPaymentAttempt(
+          leaseId: widget.leaseId,
+          tenantId: tenantId,
+          amount: amount,
+          idempotencyKey: _saleIdempotencyKey,
+          before: _preSaleLedgerIds,
+          attemptedAt: DateTime.now(),
+        ));
+        _showSaleAlert(
+          paymentAlertTitle(e),
+          friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
+        );
+        break;
+    }
+  }
+
+  void _showSaleAlert(String title, String desc) {
+    // The host screen can be destroyed mid-request — several screens swap their
+    // entire body to a "No Internet" widget the moment connectivity drops, which
+    // disposes this one. The verdict must still reach the user, so the dialog is
+    // shown on the app's ROOT navigator rather than this widget's context.
+    final ctx = ApiClient.navigatorKey.currentContext ?? (mounted ? context : null);
+    if (ctx == null) return;
+    Alert(
+      context: ctx,
+      type: AlertType.warning,
+      title: title,
+      desc: desc,
+      style: const AlertStyle(backgroundColor: Colors.white),
+      buttons: [
+        DialogButton(
+          child: const Text('Ok',
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () => Navigator.pop(ctx),
+          color: blueColor,
+        ),
+      ],
+    ).show();
   }
   final TextEditingController _startDate = TextEditingController();
   final TextEditingController amountController = TextEditingController();
@@ -3965,6 +4108,13 @@ class _MakePaymentState extends State<MakePayment> {
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
                                   String notificationTime =
                                       formatter.format(DateTime.now());
+                                  if (await _alreadyPaid(
+                                      selectedTenantId!)) {
+                                    setState(() => _isLoading = false);
+                                    return;
+                                  }
+                                  await _snapshotLedgerBeforeSale(
+                                      selectedTenantId!);
                                   _beginSale();
                                   await PaymentService()
                                       .makePaymentforcard(
@@ -3999,35 +4149,20 @@ class _MakePaymentState extends State<MakePayment> {
                                       _isLoading = false;
                                     });
                                     // Navigator.pop(context, true);
-                                  }).catchError((e) {
+                                  }).catchError((e) async {
                                     _settleSaleKey(e);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Alert(
-                                      context: context,
-                                      type: AlertType.warning,
-                                      title: "Payment Failed!",
-                                      desc:
-                                          friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
-                                      style: const AlertStyle(
-                                        backgroundColor: Colors.white,
-                                        //  overlayColor: Colors.black.withOpacity(.8)
-                                      ),
-                                      buttons: [
-                                        DialogButton(
-                                          child: const Text(
-                                            "Ok",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          color: blueColor,
-                                        ),
-                                      ],
-                                    ).show();
+                                    // Spinner stays up while we ask the ledger
+                                    // what actually happened.
+                                    await _handleSaleFailure(
+                                      e,
+                                      tenantId: selectedTenantId!,
+                                      amount: _safeParseAmountText(),
+                                    );
+                                    if (mounted) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
                                   });
                                 }
                               } else if (_selectedPaymentMethod == "ACH") {
@@ -4062,6 +4197,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 final double achPrincipal = _achPrincipalForSale();
                                 final Map<String, dynamic> vaultAch =
                                     achAccounts[selectedAchIndex!];
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentforach(
@@ -4122,34 +4258,18 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   // Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Alert(
-                                    context: context,
-                                    type: AlertType.warning,
-                                    title: "Payment Failed!",
-                                    desc:
-                                        friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
-                                    style: const AlertStyle(
-                                      backgroundColor: Colors.white,
-                                      //  overlayColor: Colors.black.withOpacity(.8)
-                                    ),
-                                    buttons: [
-                                      DialogButton(
-                                        child: const Text(
-                                          "Ok",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18),
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                        color: blueColor,
-                                      ),
-                                    ],
-                                  ).show();
+                                                                    await _handleSaleFailure(
+                                    e,
+                                    tenantId: selectedTenantId!,
+                                    amount: achPrincipal,
+                                  );
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
                                 });
                               } else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
@@ -4166,6 +4286,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
@@ -4198,7 +4319,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   // Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
                                   setState(() {
                                     _isLoading = false;
@@ -4221,6 +4342,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
@@ -4253,7 +4375,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   // Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
                                   setState(() {
                                     _isLoading = false;
@@ -4310,6 +4432,7 @@ class _MakePaymentState extends State<MakePayment> {
                                       DateFormat('yyyy-MM-dd HH:mm:ss');
                                   String notificationTime =
                                       formatter.format(DateTime.now());
+                                  await _snapshotLedgerBeforeSale(selectedTenantId!);
                                   _beginSale();
                                   await PaymentService()
                                       .makePaymentforcard(
@@ -4365,35 +4488,18 @@ class _MakePaymentState extends State<MakePayment> {
                                       _isLoading = false;
                                     });
                                     Navigator.pop(context, true);
-                                  }).catchError((e) {
+                                  }).catchError((e) async {
                                     _settleSaleKey(e);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Alert(
-                                      context: context,
-                                      type: AlertType.warning,
-                                      title: "Payment Failed!",
-                                      desc:
-                                          friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
-                                      style: const AlertStyle(
-                                        backgroundColor: Colors.white,
-                                        //  overlayColor: Colors.black.withOpacity(.8)
-                                      ),
-                                      buttons: [
-                                        DialogButton(
-                                          child: const Text(
-                                            "Ok",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          color: blueColor,
-                                        ),
-                                      ],
-                                    ).show();
+                                                                        await _handleSaleFailure(
+                                      e,
+                                      tenantId: selectedTenantId!,
+                                      amount: _safeParseAmountText(),
+                                    );
+                                    if (mounted) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    }
                                   });
                                 }
                               } else if (_selectedPaymentMethod == "ACH") {
@@ -4428,6 +4534,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 final double achPrincipal = _achPrincipalForSale();
                                 final Map<String, dynamic> vaultAch =
                                     achAccounts[selectedAchIndex!];
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentforach(
@@ -4488,34 +4595,18 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Alert(
-                                    context: context,
-                                    type: AlertType.warning,
-                                    title: "Payment Failed!",
-                                    desc:
-                                        friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
-                                    style: const AlertStyle(
-                                      backgroundColor: Colors.white,
-                                      //  overlayColor: Colors.black.withOpacity(.8)
-                                    ),
-                                    buttons: [
-                                      DialogButton(
-                                        child: const Text(
-                                          "Ok",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18),
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
-                                        color: blueColor,
-                                      ),
-                                    ],
-                                  ).show();
+                                                                    await _handleSaleFailure(
+                                    e,
+                                    tenantId: selectedTenantId!,
+                                    amount: achPrincipal,
+                                  );
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
                                 });
                               } else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
@@ -4536,6 +4627,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                await _snapshotLedgerBeforeSale(selectedTenant != null ? selectedTenantId! : "");
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
@@ -4574,7 +4666,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
                                   setState(() {
                                     _isLoading = false;
@@ -4602,6 +4694,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     DateFormat('yyyy-MM-dd HH:mm:ss');
                                 String notificationTime =
                                     formatter.format(DateTime.now());
+                                await _snapshotLedgerBeforeSale(selectedTenant != null ? selectedTenantId! : "");
                                 _beginSale();
                                 await PaymentService()
                                     .makePaymentfornormal(
@@ -4642,7 +4735,7 @@ class _MakePaymentState extends State<MakePayment> {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
-                                }).catchError((e) {
+                                }).catchError((e) async {
                                   _settleSaleKey(e);
                                   setState(() {
                                     _isLoading = false;

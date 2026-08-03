@@ -134,6 +134,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         }
       }
       perform.text = fetchedDetails.workPerformed ?? '';
+      // Keep the status exactly as stored. Legacy orders carry values outside
+      // the canonical list (e.g. "Pending"); _statusOptions widens the dropdown
+      // to include it so the screen opens AND saving does not clear it.
       _selectedStatus = fetchedDetails.status;
       vendornote.text = fetchedDetails.vendorNotes ?? '';
       _dateController.text = fetchedDetails.date ?? '';
@@ -414,6 +417,16 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   ];
   String? _selectedStatus;
   final List<String> _status = ['New', 'In Progress', 'On Hold', 'Completed', 'Closed'];
+
+  /// The canonical statuses, widened to include whatever the work order is
+  /// currently set to. A DropdownButton throws when its `value` is absent from
+  /// `items`, so legacy statuses (e.g. "Pending") must be represented here or
+  /// the screen cannot open.
+  List<String> get _statusOptions => <String>{
+        ..._status,
+        if (_selectedStatus != null && _selectedStatus!.isNotEmpty)
+          _selectedStatus!,
+      }.toList();
   final List<String> _account = [
     'Advertising',
     'Association Fees',
@@ -2328,7 +2341,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                                   isExpanded: true,
                                                   hint: const Text('New'),
                                                   value: _selectedStatus,
-                                                  items: _status.map((method) {
+                                                  items:
+                                                      _statusOptions.map((method) {
                                                     return DropdownMenuItem<
                                                         String>(
                                                       value: method,
@@ -3820,7 +3834,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                       isExpanded: true,
                                       hint: const Text('New'),
                                       value: _selectedStatus,
-                                      items: _status.map((method) {
+                                      items: _statusOptions.map((method) {
                                         return DropdownMenuItem<String>(
                                           value: method,
                                           child: Text(method),

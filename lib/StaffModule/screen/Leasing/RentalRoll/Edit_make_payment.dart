@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/services/api_client.dart';
+import 'package:three_zero_two_property/services/payment_reconciliation.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -60,6 +62,120 @@ class _EditMakePaymentState extends State<EditMakePayment> {
   List<Map<String, dynamic>> charges = [];
   String? validationMessage;
   bool _saleInFlight = false;
+
+  // ---- Idempotency for the immediate-charge (ACH_sale) paths ---------------
+  // Same attempt must reuse the same key so a retry after an unknown outcome
+  // can be deduped server-side. A new attempt (different amount/tenant/method)
+  // gets a fresh one.
+  String? _editIdempotencyKey;
+  String? _editKeyScope;
+
+  void _beginEditSale(String scope) {
+    if (_editKeyScope != scope) {
+      _editIdempotencyKey = null;
+      _editKeyScope = scope;
+    }
+    _editIdempotencyKey ??= newIdempotencyKey();
+  }
+
+  void _settleEditKey([Object? error]) {
+    if (error == null || !isOutcomeUnknown(error)) {
+      _editIdempotencyKey = null;
+      _editKeyScope = null;
+    }
+  }
+
+
+  // ---- Reconciliation for the immediate-charge paths (CRM-4660) ------------
+  // Only the ACH_sale POST paths below take money. The storePaymentForEdit path
+  // is a PUT that updates an existing record — no new ledger row appears, so a
+  // "did a new payment show up?" check would wrongly report "not processed"
+  // there. It deliberately keeps the plain unknown-outcome dialog.
+  final PaymentReconciliationService _reconciliation =
+      PaymentReconciliationService();
+  Set<String>? _preSaleLedgerIds;
+
+  Future<void> _snapshotLedgerBeforeSale(String tenantId) async {
+    _preSaleLedgerIds = await _reconciliation.snapshot(
+      leaseId: widget.leaseId,
+      tenantId: tenantId,
+    );
+  }
+
+  Future<void> _handleSaleFailure(
+    Object e, {
+    required String tenantId,
+    required double amount,
+  }) async {
+    if (!isOutcomeUnknown(e)) {
+      Fluttertoast.showToast(
+          msg: friendlyErrorMessage(e,
+              networkMessage: paymentNetworkErrorMessage));
+      return;
+    }
+
+    final result = await _reconciliation.verify(
+      leaseId: widget.leaseId,
+      tenantId: tenantId,
+      amount: amount,
+      before: _preSaleLedgerIds,
+      backoff: const [
+        Duration(seconds: 2),
+        Duration(seconds: 4),
+        Duration(seconds: 6),
+      ],
+    );
+    // NOTE: deliberately NOT guarded by `mounted` — the whole point is that the
+    // screen may be gone by now. _showSaleAlert uses the root navigator.
+
+    switch (result.verdict) {
+      case PaymentVerdict.completed:
+        _showSaleAlert(
+          'Payment Completed',
+          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+              'was processed successfully. Do not pay again.',
+        );
+        break;
+      case PaymentVerdict.notFound:
+        _showSaleAlert(
+          'Payment Not Processed',
+          'The connection dropped and no payment was recorded on the ledger. '
+              'You can safely try again.',
+        );
+        break;
+      case PaymentVerdict.unknown:
+        _showSaleAlert(
+          paymentAlertTitle(e),
+          friendlyErrorMessage(e, networkMessage: paymentNetworkErrorMessage),
+        );
+        break;
+    }
+  }
+
+  void _showSaleAlert(String title, String desc) {
+    // The host screen can be destroyed mid-request — several screens swap their
+    // entire body to a "No Internet" widget the moment connectivity drops, which
+    // disposes this one. The verdict must still reach the user, so the dialog is
+    // shown on the app's ROOT navigator rather than this widget's context.
+    final ctx = ApiClient.navigatorKey.currentContext ?? (mounted ? context : null);
+    if (ctx == null) return;
+    Alert(
+      context: ctx,
+      type: AlertType.warning,
+      title: title,
+      desc: desc,
+      style: const AlertStyle(backgroundColor: Colors.white),
+      buttons: [
+        DialogButton(
+          child: const Text('Ok',
+              style: TextStyle(color: Colors.white, fontSize: 18)),
+          onPressed: () => Navigator.pop(ctx),
+          color: blueColor,
+        ),
+      ],
+    ).show();
+  }
+
   Map<String, List<String>> categorizedData = {};
   String? selectedAccount;
   bool isLoading = true;
@@ -3522,7 +3638,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   Alert(
                                     context: context,
                                     type: AlertType.warning,
-                                    title: "Payment Failed!",
+                                    title: paymentAlertTitle(e),
                                     desc: friendlyErrorMessage(e,
                                         networkMessage:
                                             paymentNetworkErrorMessage),
@@ -3563,8 +3679,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
+                                _beginEditSale(
+                                    '${selectedTenantId}|${amountController.text.trim()}|$_selectedPaymentMethod');
                                 await PaymentService()
                                     .makePaymentfornormal(
+                                  idempotencyKey: _editIdempotencyKey,
                                   adminId: id ?? "",
                                   firstName: selectedTenant["first_name"]!,
                                   lastName: selectedTenant["last_name"]!,
@@ -3588,19 +3708,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   payment_method: _selectedPaymentMethod!,
                                 )
                                     .then((value) {
+                                  _settleEditKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
-                                }).catchError((e) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: friendlyErrorMessage(e,
-                                          networkMessage:
-                                              paymentNetworkErrorMessage));
+                                }).catchError((e) async {
+                                  _settleEditKey(e);
+                                  await _handleSaleFailure(
+                                    e,
+                                    tenantId: selectedTenantId!,
+                                    amount: double.tryParse(
+                                            amountController.text.trim()) ??
+                                        0.0,
+                                  );
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
                                 });
                               } else if (_selectedPaymentMethod == "Cash" ||
                                   _selectedPaymentMethod == "Manual") {
@@ -3619,8 +3746,12 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 }
                                 Map<String, String> selectedTenant =
                                     filteredTenants.first;
+                                await _snapshotLedgerBeforeSale(selectedTenantId!);
+                                _beginEditSale(
+                                    '${selectedTenantId}|${amountController.text.trim()}|$_selectedPaymentMethod');
                                 await PaymentService()
                                     .makePaymentfornormal(
+                                  idempotencyKey: _editIdempotencyKey,
                                   adminId: id ?? "",
                                   paymentId: widget.data?.paymentId ?? "",
                                   firstName: selectedTenant["first_name"]!,
@@ -3644,19 +3775,26 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   uploadedFile: _uploadedFileNames,
                                 )
                                     .then((value) {
+                                  _settleEditKey();
                                   Fluttertoast.showToast(msg: "$value");
                                   setState(() {
                                     _isLoading = false;
                                   });
                                   Navigator.pop(context, true);
-                                }).catchError((e) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: friendlyErrorMessage(e,
-                                          networkMessage:
-                                              paymentNetworkErrorMessage));
+                                }).catchError((e) async {
+                                  _settleEditKey(e);
+                                  await _handleSaleFailure(
+                                    e,
+                                    tenantId: selectedTenantId!,
+                                    amount: double.tryParse(
+                                            amountController.text.trim()) ??
+                                        0.0,
+                                  );
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
                                 });
                               }
 

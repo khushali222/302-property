@@ -453,6 +453,14 @@ bool isOutcomeUnknown(Object? error) {
 
 String newIdempotencyKey() => const Uuid().v4();
 
+/// Title for the dialog shown when a payment attempt throws.
+///
+/// When the outcome is unknown — the connection dropped mid-request — the
+/// payment may well have completed server-side, so the title must not assert
+/// failure. Saying "Failed" there is what makes users retry and double-pay.
+String paymentAlertTitle(Object? error) =>
+    isOutcomeUnknown(error) ? 'Payment Status Unknown' : 'Payment Failed!';
+
 // Anything that would expose internals rather than inform the user: a URI or
 // hostname, a parser/programming-error dump, or an absent server message.
 const List<String> _unsafeMessageMarkers = [

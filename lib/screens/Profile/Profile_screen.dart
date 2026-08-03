@@ -457,7 +457,11 @@ class _Profile_screenState extends State<Profile_screen> {
       },
       body: jsonEncode(<String, dynamic>{
         'email': email,
-        'password': password.text,
+        // Trim to match how login submits the password
+        // (login_screen.dart: `password.text.trim()`) and to match the
+        // trimmed value cached locally by _savePassword below — sending an
+        // untrimmed value here stored a password that login could never match.
+        'password': password.text.trim(),
         'admin_id': id,
         'role': "admin",
         'user_id': userid,

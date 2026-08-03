@@ -153,6 +153,107 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   final TenantsRepository _tenantService = TenantsRepository();
   final TenantsRepository repo = TenantsRepository();
 
+  // Web parity: "Show Deleted Policies" on the Renter's Insurance section,
+  // persisted under the same key the web app uses in localStorage.
+  static const String _showDeletedPrefKey =
+      'rentersInsurance:embedded:showDeleted';
+  bool _showDeleted = false;
+
+  Future<List<lease_renter_insurance>> _fetchRenterPolicies() =>
+      RentersInsuranceService()
+          .fetchPoliciesByTenant(widget.tenantId, includeDeleted: _showDeleted);
+
+  /// Read the persisted preference first so the initial fetch already includes
+  /// deleted policies when the toggle was left on.
+  Future<List<lease_renter_insurance>> _loadShowDeletedPrefAndFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final restored = prefs.getBool(_showDeletedPrefKey) ?? false;
+    if (restored != _showDeleted) {
+      _showDeleted = restored;
+      // The checkbox sits outside this FutureBuilder, so completing the future
+      // alone would not repaint it — it would read unchecked while deleted
+      // rows were in the list. Rebuild explicitly.
+      if (mounted) setState(() {});
+    }
+    return _fetchRenterPolicies();
+  }
+
+  Future<void> _onShowDeletedChanged(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showDeletedPrefKey, value);
+    if (!mounted) return;
+    setState(() {
+      _showDeleted = value;
+      currentPage = 0;
+      _currentPage = 0;
+      futurePropertyTypes = _fetchRenterPolicies();
+    });
+  }
+
+  /// Rows shown in the Renter's Insurance section.
+  ///
+  /// Web parity: the tenant-scoped list renders every policy the endpoint
+  /// returns — expired and future included, not just ACTIVE (see web
+  /// 681b5d751). Only soft-deleted rows are gated, on the toggle.
+  bool _isPolicyVisible(lease_renter_insurance p) =>
+      _showDeleted || p.isDelete != true;
+
+  /// Web parity: the "Show Deleted Policies" checkbox above the policy list.
+  Widget _buildShowDeletedToggle() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 24,
+          width: 24,
+          child: Checkbox(
+            value: _showDeleted,
+            activeColor: blueColor,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onChanged: (value) {
+              if (value != null) {
+                _onShowDeletedChanged(value);
+              }
+            },
+          ),
+        ),
+        const SizedBox(width: 8),
+        InkWell(
+          onTap: () => _onShowDeletedChanged(!_showDeleted),
+          child: Text(
+            'Show Deleted Policies',
+            style: TextStyle(
+              color: blueColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Web parity: small grey DELETED badge next to a soft-deleted policy.
+  Widget _buildDeletedBadge() {
+    return Container(
+      margin: const EdgeInsets.only(left: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.grey.shade400),
+      ),
+      child: Text(
+        'DELETED',
+        style: TextStyle(
+          color: Colors.grey.shade700,
+          fontWeight: FontWeight.bold,
+          fontSize: 9,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
   int totalrecords = 0;
   late Future<List<lease_renter_insurance>> futurePropertyTypes;
   int rowsPerPage = 5;
@@ -340,8 +441,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
       });
     });
     checkInternet();
-    futurePropertyTypes =
-        RentersInsuranceService().fetchPoliciesByTenant(widget.tenantId);
+    futurePropertyTypes = _loadShowDeletedPrefAndFetch();
     futurePropertyLease = fetchLeaseData();
   }
 
@@ -577,8 +677,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
               await RentersInsuranceService()
                   .deleteInsurance(renters_insurance_id: id);
               setState(() {
-                futurePropertyTypes = RentersInsuranceService()
-                    .fetchPoliciesByTenant(widget.tenantId);
+                futurePropertyTypes = _fetchRenterPolicies();
               });
               Navigator.pop(context);
             }
@@ -692,17 +791,25 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     );
   }
 
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text, {bool isDeleted = false}) {
     return TableCell(
       child: Container(
         height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
-        child: Text(text, style: const TextStyle(fontSize: 18)),
+        child: Text(text,
+            style: TextStyle(
+              fontSize: 18,
+              // Web parity: soft-deleted policies read greyed + struck through.
+              color: isDeleted ? Colors.grey : null,
+              decoration: isDeleted ? TextDecoration.lineThrough : null,
+            )),
       ),
     );
   }
 
   Widget _buildActionsCell(lease_renter_insurance data) {
+    // Web parity: a soft-deleted policy is read-only — no Edit/Delete.
+    final bool isDeleted = data.isDelete == true;
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -714,27 +821,30 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
-                onTap: () {
-                  handleEdit(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.edit,
-                  size: 30,
+              if (!isDeleted)
+                InkWell(
+                  onTap: () {
+                    handleEdit(data);
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.edit,
+                    size: 30,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-              InkWell(
-                onTap: () {
-                  handleDelete(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  size: 30,
+              if (!isDeleted)
+                const SizedBox(
+                  width: 15,
                 ),
-              ),
+              if (!isDeleted)
+                InkWell(
+                  onTap: () {
+                    handleDelete(data);
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.trashCan,
+                    size: 30,
+                  ),
+                ),
             ],
           ),
         ),
@@ -2017,9 +2127,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                               if (result == true) {
                                                 setState(() {
                                                   futurePropertyTypes =
-                                                      RentersInsuranceService()
-                                                          .fetchPoliciesByTenant(
-                                                              widget.tenantId);
+                                                      _fetchRenterPolicies();
                                                 });
                                               }
                                             },
@@ -2044,6 +2152,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                           ),
                                         ],
                                       ),
+                                      const SizedBox(height: 4),
+                                      _buildShowDeletedToggle(),
                                       // if (MediaQuery.of(context).size.width < 500)
                                       //   const SizedBox(height: 5),
                                       if (MediaQuery.of(context).size.width >
@@ -2103,7 +2213,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                 );
                                               } else {
                                                 var data = snapshot.data!
-                                                    .where((p) => p.policyStatus?.toUpperCase() == 'ACTIVE')
+                                                    .where(_isPolicyVisible)
                                                     .toList();
                                                 if (searchvalue!.isNotEmpty) {
                                                   data = data
@@ -2168,6 +2278,19 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                             lease_renter_insurance
                                                                 Propertytype =
                                                                 entry.value;
+                                                            // Web parity: soft-deleted policies are greyed + struck through,
+                                                            // and their Edit/Delete actions are hidden.
+                                                            final bool
+                                                                isDeleted =
+                                                                Propertytype
+                                                                        .isDelete ==
+                                                                    true;
+                                                            final TextDecoration?
+                                                                rowDecoration =
+                                                                isDeleted
+                                                                    ? TextDecoration
+                                                                        .lineThrough
+                                                                    : null;
                                                             //return CustomExpansionTile(data: Propertytype, index: index);
                                                             return Container(
                                                               margin:
@@ -2256,13 +2379,21 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                               },
                                                                               child: Padding(
                                                                                 padding: const EdgeInsets.only(left: 5.0),
-                                                                                child: Text(
-                                                                                  '${Propertytype.insuranceCompany ?? ''}',
-                                                                                  style: TextStyle(
-                                                                                    color: blueColor,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    fontSize: 13,
-                                                                                  ),
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    Flexible(
+                                                                                      child: Text(
+                                                                                        '${Propertytype.insuranceCompany ?? ''}',
+                                                                                        style: TextStyle(
+                                                                                          color: isDeleted ? Colors.grey : blueColor,
+                                                                                          decoration: rowDecoration,
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          fontSize: 13,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    if (isDeleted) _buildDeletedBadge(),
+                                                                                  ],
                                                                                 ),
                                                                               ),
                                                                             ),
@@ -2276,7 +2407,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                 Text(
                                                                               '${Propertytype.policyId ?? ''}',
                                                                               style: TextStyle(
-                                                                                color: blueColor,
+                                                                                color: isDeleted ? Colors.grey : blueColor,
+                                                                                decoration: rowDecoration,
                                                                                 fontWeight: FontWeight.bold,
                                                                                 fontSize: 12,
                                                                               ),
@@ -2439,6 +2571,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             Row(
                                                                               mainAxisAlignment: MainAxisAlignment.end,
                                                                               children: [
+                                                                                // Web parity: a deleted policy is read-only — no Edit/Delete.
+                                                                                if (!isDeleted)
                                                                                 GestureDetector(
                                                                                   onTap: () async {
                                                                                     // handleEdit(Propertytype);
@@ -2464,7 +2598,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                 )));
                                                                                     if (check == true) {
                                                                                       setState(() {
-                                                                                        futurePropertyTypes = RentersInsuranceService().fetchPoliciesByTenant(widget.tenantId);
+                                                                                        futurePropertyTypes = _fetchRenterPolicies();
                                                                                       });
                                                                                     }
                                                                                   },
@@ -2485,9 +2619,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                     ),
                                                                                   ),
                                                                                 ),
+                                                                                if (!isDeleted)
                                                                                 const SizedBox(
                                                                                   width: 10,
                                                                                 ),
+                                                                                if (!isDeleted)
                                                                                 GestureDetector(
                                                                                   onTap: () {
                                                                                     _showAlert(context, Propertytype.sId ?? '');
@@ -2672,7 +2808,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                       'No Data Available'));
                                             } else {
                                               _tableData = snapshot.data!
-                                                  .where((p) => p.policyStatus?.toUpperCase() == 'ACTIVE')
+                                                  .where(_isPolicyVisible)
                                                   .toList();
 
                                               totalrecords = _tableData.length;
@@ -2777,24 +2913,32 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                           ),
                                                                         ),
                                                                         children: [
-                                                                          _buildDataCell(_pagedData[i].insuranceCompany ??
-                                                                              ''),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].policyId!,
+                                                                              '${_pagedData[i].insuranceCompany ?? ''}${_pagedData[i].isDelete == true ? '  (DELETED)' : ''}',
+                                                                              isDeleted: _pagedData[i].isDelete == true),
+                                                                          _buildDataCell(
+                                                                            _pagedData[i].policyId ?? '',
+                                                                            isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
                                                                             '\$${_pagedData[i].liabilityCoverage ?? ''}',
+                                                                            isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
                                                                             _pagedData[i].active == true
                                                                                 ? 'Active'
                                                                                 : 'Inactive',
+                                                                            isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].effectiveDate!,
+                                                                            // Web parity: web formats these before rendering, so show the
+                                                                            // display date, not the raw ISO timestamp from the API.
+                                                                            Provider.of<DateProvider>(context, listen: false).formatCurrentDate(_pagedData[i].effectiveDate ?? ''),
+                                                                            isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            _pagedData[i].expirationDate!,
+                                                                            Provider.of<DateProvider>(context, listen: false).formatCurrentDate(_pagedData[i].expirationDate ?? ''),
+                                                                            isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildActionsCell(
                                                                               _pagedData[i]),
@@ -4381,6 +4525,85 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
 
   final TenantsRepository repo = TenantsRepository();
 
+  // Web parity: "Show Deleted Policies" on the Renter's Insurance section,
+  // persisted under the same key the web app uses in localStorage.
+  static const String _showDeletedPrefKey =
+      'rentersInsurance:embedded:showDeleted';
+  bool _showDeleted = false;
+
+  Future<List<lease_renter_insurance>> _fetchRenterPolicies() =>
+      RentersInsuranceService()
+          .fetchPoliciesByTenant(widget.tenantId, includeDeleted: _showDeleted);
+
+  /// Read the persisted preference first so the initial fetch already includes
+  /// deleted policies when the toggle was left on.
+  Future<List<lease_renter_insurance>> _loadShowDeletedPrefAndFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final restored = prefs.getBool(_showDeletedPrefKey) ?? false;
+    if (restored != _showDeleted) {
+      _showDeleted = restored;
+      // The checkbox sits outside this FutureBuilder, so completing the future
+      // alone would not repaint it — it would read unchecked while deleted
+      // rows were in the list. Rebuild explicitly.
+      if (mounted) setState(() {});
+    }
+    return _fetchRenterPolicies();
+  }
+
+  Future<void> _onShowDeletedChanged(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showDeletedPrefKey, value);
+    if (!mounted) return;
+    setState(() {
+      _showDeleted = value;
+      currentPage = 0;
+      _currentPage = 0;
+      futurePropertyTypes = _fetchRenterPolicies();
+    });
+  }
+
+  /// Rows shown in the Renter's Insurance section.
+  ///
+  /// Web parity: the tenant-scoped list renders every policy the endpoint
+  /// returns — expired and future included, not just ACTIVE (see web
+  /// 681b5d751). Only soft-deleted rows are gated, on the toggle.
+  bool _isPolicyVisible(lease_renter_insurance p) =>
+      _showDeleted || p.isDelete != true;
+
+  /// Web parity: the "Show Deleted Policies" checkbox above the policy list.
+  Widget _buildShowDeletedToggle() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 24,
+          width: 24,
+          child: Checkbox(
+            value: _showDeleted,
+            activeColor: blueColor,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            onChanged: (value) {
+              if (value != null) {
+                _onShowDeletedChanged(value);
+              }
+            },
+          ),
+        ),
+        const SizedBox(width: 8),
+        InkWell(
+          onTap: () => _onShowDeletedChanged(!_showDeleted),
+          child: Text(
+            'Show Deleted Policies',
+            style: TextStyle(
+              color: blueColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   int totalrecords = 0;
   late Future<List<lease_renter_insurance>> futurePropertyTypes;
   int rowsPerPage = 5;
@@ -4566,8 +4789,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     super.initState();
     _futureTenantSummary =
         repo.fetchTenantsummery(widget.tenantId) ?? Future.value([]);
-    futurePropertyTypes =
-        RentersInsuranceService().fetchPoliciesByTenant(widget.tenantId);
+    futurePropertyTypes = _loadShowDeletedPrefAndFetch();
   }
 
   void _refreshTabletTenantSummary() {
@@ -5145,8 +5367,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
             await RentersInsuranceService()
                 .deleteInsurance(renters_insurance_id: id);
             setState(() {
-              futurePropertyTypes = RentersInsuranceService()
-                  .fetchPoliciesByTenant(widget.tenantId);
+              futurePropertyTypes = _fetchRenterPolicies();
             });
             Navigator.pop(context);
           },
@@ -5221,21 +5442,25 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
     );
   }
 
-  Widget _buildDataCell(String text) {
+  Widget _buildDataCell(String text, {bool isDeleted = false}) {
     return TableCell(
       child: Container(
         height: 60,
         padding: const EdgeInsets.only(top: 20.0, left: 16),
         child: Text(text,
-            style: const TextStyle(
+            style: TextStyle(
                 fontSize: 18,
-                color: Color(0xFF8A95A8),
+                // Web parity: soft-deleted policies read greyed + struck through.
+                color: isDeleted ? Colors.grey : const Color(0xFF8A95A8),
+                decoration: isDeleted ? TextDecoration.lineThrough : null,
                 fontWeight: FontWeight.w500)),
       ),
     );
   }
 
   Widget _buildActionsCell(lease_renter_insurance data) {
+    // Web parity: a soft-deleted policy is read-only — no Edit/Delete.
+    final bool isDeleted = data.isDelete == true;
     return TableCell(
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -5247,27 +5472,30 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
               const SizedBox(
                 width: 20,
               ),
-              InkWell(
-                onTap: () {
-                  handleEdit(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.edit,
-                  size: 30,
+              if (!isDeleted)
+                InkWell(
+                  onTap: () {
+                    handleEdit(data);
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.edit,
+                    size: 30,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-              InkWell(
-                onTap: () {
-                  handleDelete(data);
-                },
-                child: const FaIcon(
-                  FontAwesomeIcons.trashCan,
-                  size: 30,
+              if (!isDeleted)
+                const SizedBox(
+                  width: 15,
                 ),
-              ),
+              if (!isDeleted)
+                InkWell(
+                  onTap: () {
+                    handleDelete(data);
+                  },
+                  child: const FaIcon(
+                    FontAwesomeIcons.trashCan,
+                    size: 30,
+                  ),
+                ),
             ],
           ),
         ),
@@ -5984,9 +6212,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                             if (result == true) {
                                               setState(() {
                                                 futurePropertyTypes =
-                                                    RentersInsuranceService()
-                                                        .fetchPoliciesByTenant(
-                                                            widget.tenantId);
+                                                    _fetchRenterPolicies();
                                               });
                                             }
                                           },
@@ -6028,6 +6254,10 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                 ),
                               ),
                               const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: _buildShowDeletedToggle(),
+                              ),
 
                               // const SizedBox(height: 10),
                               const SizedBox(height: 10),
@@ -6068,7 +6298,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                       return const Center(
                                           child: Text('No Data Available'));
                                     } else {
-                                      _tableData = snapshot.data!;
+                                      _tableData = snapshot.data!
+                                          .where(_isPolicyVisible)
+                                          .toList();
 
                                       totalrecords = _tableData.length;
                                       return SingleChildScrollView(
@@ -6184,35 +6416,52 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                 ),
                                                                 children: [
                                                                   _buildDataCell(
-                                                                      _pagedData[i]
-                                                                              .insuranceCompany ??
-                                                                          ''),
+                                                                      '${_pagedData[i].insuranceCompany ?? ''}${_pagedData[i].isDelete == true ? '  (DELETED)' : ''}',
+                                                                      isDeleted:
+                                                                          _pagedData[i].isDelete ==
+                                                                              true),
                                                                   _buildDataCell(
                                                                     _pagedData[
                                                                             i]
-                                                                        .policyId!,
+                                                                        .policyId ??
+                                                                        '',
+                                                                    isDeleted: _pagedData[i]
+                                                                            .isDelete ==
+                                                                        true,
                                                                   ),
                                                                   _buildDataCell(
                                                                     _pagedData[
                                                                             i]
                                                                         .liabilityCoverage
                                                                         .toString()!,
+                                                                    isDeleted: _pagedData[i]
+                                                                            .isDelete ==
+                                                                        true,
                                                                   ),
                                                                   _buildDataCell(
                                                                     _pagedData[i].active ==
                                                                             true
                                                                         ? 'Active'
                                                                         : 'Inactive',
+                                                                    isDeleted: _pagedData[i]
+                                                                            .isDelete ==
+                                                                        true,
                                                                   ),
                                                                   _buildDataCell(
-                                                                    _pagedData[
-                                                                            i]
-                                                                        .effectiveDate!,
+                                                                    // Web parity: show the formatted display date, not the raw
+                                                                    // ISO timestamp the API returns.
+                                                                    Provider.of<DateProvider>(context, listen: false)
+                                                                        .formatCurrentDate(_pagedData[i].effectiveDate ?? ''),
+                                                                    isDeleted: _pagedData[i]
+                                                                            .isDelete ==
+                                                                        true,
                                                                   ),
                                                                   _buildDataCell(
-                                                                    _pagedData[
-                                                                            i]
-                                                                        .expirationDate!,
+                                                                    Provider.of<DateProvider>(context, listen: false)
+                                                                        .formatCurrentDate(_pagedData[i].expirationDate ?? ''),
+                                                                    isDeleted: _pagedData[i]
+                                                                            .isDelete ==
+                                                                        true,
                                                                   ),
                                                                   _buildActionsCell(
                                                                       _pagedData[
@@ -6224,7 +6473,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                       ),
                                                     ),
                                                     // const SizedBox(height: 25),
-                                                    // _buildPaginationControls(),
+                                                    _buildPaginationControls(),
                                                   ],
                                                 ),
                                               ),

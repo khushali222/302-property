@@ -13,6 +13,7 @@ String get _clientSource => Platform.isIOS ? 'mobile-ios' : 'mobile-android';
 
 class PaymentService {
   Future<String> makePaymentforcard({
+    String? idempotencyKey,
     required String adminId,
     // required String firstName,
     // required String lastName,
@@ -176,6 +177,7 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> storePayment({
+    String? idempotencyKey,
     required String companyName,
     required String adminId,
     required String tenantId,
@@ -220,7 +222,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-        "X-Idempotency-Key": Uuid().v4(),
+        "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
         "X-Client-Source": _clientSource,
       },
       body: jsonEncode(requestBody),
@@ -234,6 +236,7 @@ class PaymentService {
   }
 
   Future<String> makePaymentforach({
+    String? idempotencyKey,
     required String adminId,
     // required String firstName,
     // required String lastName,
@@ -324,6 +327,7 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> storePaymentAch({
+    String? idempotencyKey,
     required String companyName,
     required String adminId,
     required String tenantId,
@@ -365,7 +369,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-        "X-Idempotency-Key": Uuid().v4(),
+        "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
         "X-Client-Source": _clientSource,
       },
       body: jsonEncode(requestBody),
@@ -380,6 +384,7 @@ class PaymentService {
   }
 
   Future<String> makePaymentfornormal({
+    String? idempotencyKey,
     required String adminId,
     required String firstName,
     required String lastName,
@@ -476,7 +481,7 @@ class PaymentService {
           "authorization": "CRM $token",
           "id": "CRM $id",
           "Content-Type": "application/json",
-          "X-Idempotency-Key": Uuid().v4(),
+          "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
           "X-Client-Source": _clientSource,
         },
         body: jsonEncode({
@@ -539,6 +544,7 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> storePaymentfornormal({
+    String? idempotencyKey,
     required String companyName,
     required String adminId,
     required String tenantId,
@@ -581,7 +587,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-        "X-Idempotency-Key": Uuid().v4(),
+        "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
         "X-Client-Source": _clientSource,
       },
       body: jsonEncode(requestBody),
@@ -596,6 +602,7 @@ class PaymentService {
   }
 
   Future<Map<String, dynamic>> storePaymentForEdit({
+    String? idempotencyKey,
     required String companyName,
     required String adminId,
     required String tenantId,
@@ -636,7 +643,7 @@ class PaymentService {
         "authorization": "CRM $token",
         "id": "CRM $id",
         "Content-Type": "application/json",
-        "X-Idempotency-Key": Uuid().v4(),
+        "X-Idempotency-Key": idempotencyKey ?? Uuid().v4(),
         "X-Client-Source": _clientSource,
       },
       body: jsonEncode(requestBody),

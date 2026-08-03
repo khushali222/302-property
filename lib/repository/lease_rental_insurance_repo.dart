@@ -13,8 +13,14 @@ import '../Model/lease_renter_insurance.dart';
 class RentersInsuranceService {
   /// Fetch renter insurance policies by tenant ID (GET /api/renter-insurance/policies-by-tenant/{tenantId}).
   /// Each policy gets computed [policyStatus]: FUTURE, ACTIVE, or EXPIRED.
-  Future<List<lease_renter_insurance>> fetchPoliciesByTenant(
-      String tenantId) async {
+  ///
+  /// [includeDeleted] backs the tenant-detail "Show Deleted Policies" toggle.
+  /// policies-by-tenant always filters is_delete:false server-side and takes no
+  /// include_deleted query param, so soft-deleted policies are read from
+  /// /report/{adminId}?include_deleted=1 instead (see
+  /// [fetchPoliciesByTenantIncludingDeleted]) and merged in here.
+  Future<List<lease_renter_insurance>> fetchPoliciesByTenant(String tenantId,
+      {bool includeDeleted = false}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -27,12 +33,12 @@ class RentersInsuranceService {
           "id": "CRM $adminId",
         },
       );
+      final List<lease_renter_insurance> list = [];
       if (response.statusCode == 200) {
         final parsed = jsonDecode(response.body);
         if (parsed['statusCode'] == 200 &&
             parsed['data'] != null &&
             parsed['data'] is List) {
-          final List<lease_renter_insurance> list = [];
           for (var e in parsed['data'] as List) {
             final p = lease_renter_insurance.fromJson(
                 Map<String, dynamic>.from(e as Map));
@@ -40,15 +46,84 @@ class RentersInsuranceService {
                 p.effectiveDate, p.expirationDate);
             list.add(p);
           }
-          return list;
         }
-        return [];
       }
-      return [];
+      if (!includeDeleted) return list;
+      return _mergeDeletedPolicies(
+          list, await fetchPoliciesByTenantIncludingDeleted(tenantId));
     } catch (e) {
       logError('Error fetching policies by tenant: $e');
       return [];
     }
+  }
+
+  /// Soft-deleted policies for a tenant, read from the report endpoint — the
+  /// only staging route that honours ?include_deleted=1 and can be scoped back
+  /// to a single tenant (each row carries tenant_id plus the full
+  /// renters-insurance document).
+  Future<List<lease_renter_insurance>> fetchPoliciesByTenantIncludingDeleted(
+      String tenantId,
+      {bool isStaff = false}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? adminId = prefs.getString("adminId");
+    String? token = prefs.getString('token');
+    final headerId =
+        isStaff ? (prefs.getString('staff_id') ?? adminId) : adminId;
+    try {
+      final response = await apiGet(
+        Uri.parse(
+            '$Api_url/api/renter-insurance/report/$adminId?include_deleted=1'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $headerId",
+        },
+      );
+      // The report endpoint answers 404 when the admin has no matching rows.
+      if (response.statusCode != 200) return [];
+      final parsed = jsonDecode(response.body);
+      if (parsed['data'] == null || parsed['data'] is! List) return [];
+      final List<lease_renter_insurance> deleted = [];
+      for (var row in parsed['data'] as List) {
+        if (row is! Map) continue;
+        if (row['tenant_id']?.toString() != tenantId) continue;
+        final policy = row['rentersInsurance'];
+        if (policy is! Map) continue;
+        if (policy['is_delete'] != true) continue;
+        final p = lease_renter_insurance
+            .fromJson(Map<String, dynamic>.from(policy));
+        p.policyStatus = lease_renter_insurance.computeStatus(
+            p.effectiveDate, p.expirationDate);
+        deleted.add(p);
+      }
+      return deleted;
+    } catch (e) {
+      logError('Error fetching deleted policies by tenant: $e');
+      return [];
+    }
+  }
+
+  /// Append [deleted] to [live], skipping any policy already present, and keep
+  /// the newest-first ordering policies-by-tenant returns (date_modified desc).
+  List<lease_renter_insurance> _mergeDeletedPolicies(
+      List<lease_renter_insurance> live, List<lease_renter_insurance> deleted) {
+    String keyOf(lease_renter_insurance p) =>
+        p.rentersInsuranceId ?? p.sId ?? '';
+    final seen = live.map(keyOf).where((k) => k.isNotEmpty).toSet();
+    final merged = <lease_renter_insurance>[...live];
+    for (final p in deleted) {
+      final key = keyOf(p);
+      if (key.isNotEmpty && !seen.add(key)) continue;
+      merged.add(p);
+    }
+    merged.sort((a, b) {
+      final da = DateTime.tryParse(a.dateModified ?? '');
+      final db = DateTime.tryParse(b.dateModified ?? '');
+      if (da == null && db == null) return 0;
+      if (da == null) return 1;
+      if (db == null) return -1;
+      return db.compareTo(da);
+    });
+    return merged;
   }
 
   Future<List<lease_renter_insurance>> fetchRentersInsurance(

@@ -6042,6 +6042,23 @@ class _Login_ScreenState extends State<Login_Screen> {
     );
   }
 
+  /// Web parity (Functions.js `alertAndLogin`): when session verification
+  /// fails, web removes the token/ID cookies so the user lands back on login.
+  /// Mobile must do the same — the caller persists `token` + `isAuthenticated`
+  /// BEFORE verification runs, so without this a rejected session stays on the
+  /// device and the next launch walks into the dashboard with a token the
+  /// server already refused.
+  ///
+  /// Remember-Me credentials (`savedEmail`/`savedPassword`) are deliberately
+  /// left alone — web keeps those too; they only prefill the login form.
+  Future<void> _clearFailedSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isAuthenticated');
+    await prefs.remove('token');
+    await prefs.remove('checkedToken');
+    await prefs.remove('userId');
+  }
+
   Future<void> checkToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // String? token = prefs.getString('token');
@@ -6055,24 +6072,50 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    final jsonData = json.decode(response.body);
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      // Non-JSON body (e.g. an HTML 502 page) — fail with a message instead
+      // of throwing and leaving the login button spinning forever.
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(msg: "Login failed. Please try again.");
+      }
+      return;
+    }
 
-    if (jsonData['id'] != "") {
+    // Web parity (Client Functions.js verifyToken): the server reports an
+    // invalid session as HTTP 200 with statusCode 401 in the BODY (e.g.
+    // "Password has been changed. Please login again.").
+    if (jsonData is Map && jsonData['statusCode'] == 401) {
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: jsonData['message']?.toString() ??
+                "Session expired. Please login again.");
+      }
+      return;
+    }
+
+    // Web parity: success is judged by the presence of `role` on the
+    // response (`response.data?.role`). The /api/auth payload is the user
+    // document spread — it has `_id`/`admin_id`/`role`, never a bare `id`.
+    if (response.statusCode == 200 &&
+        jsonData is Map &&
+        jsonData['role'] != null) {
       //prefs.setString('checkedToken',jsonData["token"]);
       String? adminId = jsonData['admin_id'];
       String? companyName = jsonData['company_name'];
 
       prefs.setString('checkedToken', token);
-      prefs.setString('adminId', adminId!);
+      prefs.setString('adminId', adminId ?? "");
 
-      prefs.setString('companyName', companyName!);
+      prefs.setString('companyName', companyName ?? "");
       prefs.setString("role", "Admin");
-      prefs.setString('first_name', jsonData['first_name']);
-      prefs.setString('last_name', jsonData['last_name']);
-      prefs.setString('first_name', jsonData['first_name']);
-
-      prefs.setString('last_name', jsonData['last_name']);
-      prefs.setString('email', jsonData['email']);
+      prefs.setString('first_name', jsonData['first_name'] ?? "");
+      prefs.setString('last_name', jsonData['last_name'] ?? "");
+      prefs.setString('email', jsonData['email'] ?? "");
       // prefs.setString('brand_logo', jsonData['brand_logo']);
       // print("Saved brand logo: ${jsonData['brand_logo']}");
       // prefs.setString('userid', jsonData['user_id'] ?? "");
@@ -6128,6 +6171,14 @@ class _Login_ScreenState extends State<Login_Screen> {
               builder: (context) =>
                   isPlanActive ? Dashboard() : PlanPurchaseCard()));
     } else {
+      // Web parity: web surfaces a message and returns to login instead of
+      // failing silently ("User Not Found" arrives as HTTP 201).
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: (jsonData is Map ? jsonData['message']?.toString() : null) ??
+                "Login failed. Please try again.");
+      }
     }
   }
 
@@ -6147,7 +6198,30 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    final jsonData = json.decode(response.body);
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      // Non-JSON body (e.g. an HTML 502 page) — fail with a message instead of
+      // throwing and leaving the login button spinning forever.
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(msg: "Login failed. Please try again.");
+      }
+      return;
+    }
+    // Web parity (Functions.js verifyToken): an invalid session arrives as
+    // HTTP 200 with statusCode 401 in the BODY (e.g. "Password has been
+    // changed. Please login again.").
+    if (jsonData is Map && jsonData['statusCode'] == 401) {
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: jsonData['message']?.toString() ??
+                "Session expired. Please login again.");
+      }
+      return;
+    }
     if (jsonData["staffmember_id"] != null) {
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -6173,6 +6247,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => Dashboard_staff()));
     } else {
+      // Web parity: web clears the session and returns the user to login.
+      await _clearFailedSession();
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));
@@ -6196,7 +6272,29 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    final jsonData = json.decode(response.body);
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      // Non-JSON body (e.g. an HTML 502 page) — fail with a message instead of
+      // throwing and leaving the login button spinning forever.
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(msg: "Login failed. Please try again.");
+      }
+      return;
+    }
+    // Web parity (Functions.js verifyToken): an invalid session arrives as
+    // HTTP 200 with statusCode 401 in the BODY.
+    if (jsonData is Map && jsonData['statusCode'] == 401) {
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: jsonData['message']?.toString() ??
+                "Session expired. Please login again.");
+      }
+      return;
+    }
     if (jsonData["tenant_id"] != null) {
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -6219,6 +6317,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => Dashboard_tenants()));
     } else {
+      // Web parity: web clears the session and returns the user to login.
+      await _clearFailedSession();
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));
@@ -6242,7 +6342,29 @@ class _Login_ScreenState extends State<Login_Screen> {
       },
       body: json.encode({"token": token}),
     );
-    final jsonData = json.decode(response.body);
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      // Non-JSON body (e.g. an HTML 502 page) — fail with a message instead of
+      // throwing and leaving the login button spinning forever.
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(msg: "Login failed. Please try again.");
+      }
+      return;
+    }
+    // Web parity (Functions.js verifyToken): an invalid session arrives as
+    // HTTP 200 with statusCode 401 in the BODY.
+    if (jsonData is Map && jsonData['statusCode'] == 401) {
+      await _clearFailedSession();
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: jsonData['message']?.toString() ??
+                "Session expired. Please login again.");
+      }
+      return;
+    }
     if (jsonData["vendor_id"] != null) {
       //prefs.setString('checkedToken',jsonData["token"]);
       // String? adminId = jsonData['data']['admin_id'];
@@ -6274,6 +6396,8 @@ class _Login_ScreenState extends State<Login_Screen> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
+      // Web parity: web clears the session and returns the user to login.
+      await _clearFailedSession();
       Fluttertoast.showToast(
           msg: _formatErrorMessage(
               jsonData["message"] ?? "Login failed. Please try again."));

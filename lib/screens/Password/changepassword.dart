@@ -51,7 +51,11 @@ class _ChangepasswordState extends State<Changepassword> {
       },
       body: jsonEncode(<String, dynamic>{
         'email': widget.email,
-        'password': password.text,
+        // Trim to match how login submits the password
+        // (login_screen.dart: `password.text.trim()`). The server hashes
+        // whatever string it receives, so saving an untrimmed value here would
+        // store a password that the trimmed login value can never match.
+        'password': password.text.trim(),
         'admin_id': widget.admin_id,
         'role': widget.role,
         'user_id': widget.user_id

@@ -26,10 +26,10 @@ class otp_verify extends StatefulWidget {
 class _otp_verifyState extends State<otp_verify> {
   final formKey = GlobalKey<FormState>();
   bool loading = false;
-  int otp = 0;
 
   // Full code currently shown in the boxes. Kept as a String so a partially
-  // filled code can be detected before submitting.
+  // filled code can be detected before submitting, and so it is the single
+  // source of truth for what gets posted.
   String otpCode = '';
 
   // ── Resend cooldown + code validity ─────────────────────────────────────
@@ -86,12 +86,21 @@ class _otp_verifyState extends State<otp_verify> {
       setState(() {
         _expired = true;
         otpCode = '';
-        otp = 0;
         _boxesGeneration++; // clears the six boxes
       });
     });
   }
-  void verifyOTP(int otp) async {
+  void verifyOTP(String code) async {
+    // Take the digits the user actually typed. The server stores the OTP as a
+    // NUMBER and compares with strict equality (Admin_Register.js:
+    // `otp === storedOTP`), so posting a string would never match. Generated
+    // codes are always 6 digits in 100000-999999, so converting cannot drop a
+    // leading zero — but guard rather than posting a wrong value if it ever does.
+    final int? parsed = int.tryParse(code);
+    if (parsed == null) {
+      Fluttertoast.showToast(msg: "Please enter the complete 6-digit OTP");
+      return;
+    }
     setState(() {
       loading = true; // Set loading to true while verifying OTP
     });
@@ -103,7 +112,7 @@ class _otp_verifyState extends State<otp_verify> {
     },// Your OTP verification API endpoint
       body: jsonEncode(<String, dynamic>{
         'email': widget.email,
-        'otp': otp,
+        'otp': parsed,
       })
     );
     setState(() {
@@ -168,7 +177,6 @@ class _otp_verifyState extends State<otp_verify> {
         setState(() {
           // Fresh code: clear whatever was typed against the old one.
           otpCode = '';
-          otp = 0;
           _boxesGeneration++;
         });
         _startTimers();
@@ -238,15 +246,15 @@ class _otp_verifyState extends State<otp_verify> {
                   fieldHeight: 50,
                   fieldWidth: 50,
                   numberOfFields: 6,
-                  // Both callbacks hand back the FULL joined code, so `otp`
-                  // always mirrors what the user can see in the boxes.
+                  // Both callbacks hand back the FULL joined code, so `otpCode`
+                  // always mirrors what the user can see in the boxes. It is the
+                  // only value submitted — verifyOTP converts it at the boundary.
                   onChanged: (String code) {
                     otpCode = code;
-                    otp = int.tryParse(code) ?? 0;
                   },
                   onCompleted: (String code) {
                     otpCode = code;
-                    otp = int.tryParse(code) ?? 0;
+                    // Ready to submit — otpCode retains all digits
                   },
                 ),
               ),
@@ -334,8 +342,9 @@ class _otp_verifyState extends State<otp_verify> {
                     return;
                   }
                   if (formKey.currentState!.validate()) {
-                    // All fields are valid, proceed with OTP verification
-                    verifyOTP(otp);
+                    // All fields are valid, proceed with OTP verification.
+                    // Pass otpCode — the joined digits from the boxes.
+                    verifyOTP(otpCode);
                   }
                 },
                 child: Center(
