@@ -46,6 +46,11 @@ class Data {
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerPhoneNumber;
   int? amount;
+  // Web parity (FinancialSummaryCard): the rent row label is driven by
+  // rent_cycle ("Weekly Rent", "Monthly Rent"), and Due Date reads N/A
+  // when rentDueDate is absent — common on At-will leases.
+  String? rentCycle;
+  String? rentDueDate;
   String? date;
 
   Data({
@@ -104,6 +109,8 @@ class Data {
     rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail'];
     rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
     amount = json['amount'];
+    rentCycle = json['rent_cycle'];
+    rentDueDate = json['rentDueDate']?.toString();
     date = json['date'];
   }
 
@@ -135,6 +142,8 @@ class Data {
     data['rentalOwner_primaryEmail'] = rentalOwnerPrimaryEmail;
     data['rentalOwner_phoneNumber'] = rentalOwnerPhoneNumber;
     data['amount'] = amount;
+    data['rent_cycle'] = rentCycle;
+    data['rentDueDate'] = rentDueDate;
     data['date'] = date;
     return data;
   }

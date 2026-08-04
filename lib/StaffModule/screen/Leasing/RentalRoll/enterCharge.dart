@@ -504,6 +504,32 @@ class _enterChargeState extends State<enterCharge> {
     });
   }
 
+  // Web parity: MAX_CHARGE_AMOUNT = 999999.99, and each amount must be
+  // between $0.01 and that max (server rejects amt <= 0 || amt > max).
+  static const num _minChargeAmount = 0.01;
+  static const num _maxChargeAmount = 999999.99;
+
+  // Returns an error message if any row amount (or the total) is out of the
+  // web-allowed bounds, otherwise null. Matches AddCharge.jsx validation and
+  // the Admin Enter Charge implementation.
+  String? _validateChargeBounds(List<num> amounts, num total) {
+    for (final amt in amounts) {
+      if (amt < _minChargeAmount) {
+        return 'Amount must be greater than zero.';
+      }
+      if (amt > _maxChargeAmount) {
+        return 'Each charge amount must be between \$0.01 and \$999,999.99.';
+      }
+    }
+    if (total < _minChargeAmount) {
+      return 'Amount must be greater than zero.';
+    }
+    if (total > _maxChargeAmount) {
+      return 'Amount must be between \$0.01 and \$999,999.99.';
+    }
+    return null;
+  }
+
   void deleteRow(int index) {
     setState(() {
       totalAmount -= rows[index]['amount'];
@@ -1508,20 +1534,24 @@ class _enterChargeState extends State<enterCharge> {
 
 
                       if (validationMessage == null) {
-                        // Amount bounds guard (web parity): at
-                        // least $0.01 and at most $999,999.99.
-                        // Note $0.01 itself is valid, so the lower
-                        // bound is "<", not "<=".
+                        // Web parity: enforce per-row AND total amount
+                        // bounds before submit (AddCharge.jsx rejects any
+                        // item amount or total outside $0.01–$999,999.99).
+                        // Matches the Admin Enter Charge implementation.
+                        final List<num> rowAmounts = rows
+                            .map((row) =>
+                                num.tryParse('${row['amount'] ?? 0}') ?? 0)
+                            .toList();
                         num enteredAmount =
                             num.tryParse(Amount.text.trim()) ?? 0;
-                        if (enteredAmount < 0.01 || enteredAmount > 999999.99) {
+                        final String? boundsError =
+                            _validateChargeBounds(rowAmounts, enteredAmount);
+                        if (boundsError != null) {
                           // Web parity: explain WHY the submit was
                           // blocked instead of failing silently.
                           setState(() {
                             _isLoading = false;
-                            validationMessage = enteredAmount < 0.01
-                                ? 'Amount must be greater than zero.'
-                                : 'Amount must be between \$0.01 and \$999,999.99.';
+                            validationMessage = boundsError;
                           });
                           return;
                         }

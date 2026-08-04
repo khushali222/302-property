@@ -17,6 +17,7 @@ import '../../model/edit_lease.dart';
 import '../../model/get_lease.dart';
 import '../../model/lease.dart';
 import '../../repository/ExpiringLeaseTable.dart';
+import '../../Model/lease_term.dart';
 
 class LeasesPagination {
   final int currentPage;
@@ -715,6 +716,36 @@ class LeaseRepository {
   //     throw Exception('Failed to load lease ledger');
   //   }
   // }
+
+  /// Lease term history for the Lease Details view.
+  /// GET /api/leases/{lease_id}/terms
+  ///
+  /// Returns terms newest-first; entry 0 is the current term. Terms the server
+  /// reconstructed from rent charges carry source:"inferred". Returns an empty
+  /// list on any failure so callers fall back to the lease's own fields rather
+  /// than showing an error in place of the lease details.
+  Future<List<LeaseTerm>> fetchLeaseTerms(String leaseId) async {
+    if (leaseId.isEmpty) return const [];
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    // Staff sends its OWN id in the `id` header, matching web.
+    final staffId = prefs.getString('staff_id');
+    try {
+      final response = await apiGet(
+        Uri.parse('$Api_url/api/leases/$leaseId/terms'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $staffId",
+        },
+      );
+      if (response.statusCode == 200) {
+        return LeaseTerm.listFromResponse(jsonDecode(response.body));
+      }
+    } catch (_) {
+      // Fall through to the empty list — Lease Details must still render.
+    }
+    return const [];
+  }
 
   Future<LeaseLedger?> fetchLeaseLedger(
       {String? fromDate, String? toDate,String? leaseId}) async {

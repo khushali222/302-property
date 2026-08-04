@@ -122,7 +122,9 @@ class Data {
     type = json['type'];
     uploadedFile = json['uploaded_file'] ?? [];
     createdAt = json['createdAt'];
-    surcharge = json['surcharge'] != null ? double.parse(json['surcharge'].toString()) : 0.0;
+    surcharge = json['surcharge'] != null
+        ? (double.tryParse(json['surcharge'].toString()) ?? 0.0)
+        : 0.0; // tryParse: a non-numeric surcharge must not crash ledger rendering
 
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];

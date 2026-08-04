@@ -52,6 +52,11 @@ class Data {
   String? rentalOwnerPhoneNumber;
   List<RecurringEntry>? entry;
   int? amount;
+  // Web parity (FinancialSummaryCard): the rent row label is driven by
+  // rent_cycle ("Weekly Rent", "Monthly Rent"), and Due Date reads N/A
+  // when rentDueDate is absent — common on At-will leases.
+  String? rentCycle;
+  String? rentDueDate;
   String? date;
   List<RenewLeases>? renewLeases;
   Data(
@@ -124,6 +129,8 @@ class Data {
     }
 
     amount = json['amount'];
+    rentCycle = json['rent_cycle'];
+    rentDueDate = json['rentDueDate']?.toString();
     date = json['date'];
     if (json['renewLeases'] != null) {
       renewLeases = <RenewLeases>[];
@@ -161,6 +168,8 @@ class Data {
     data['rentalOwner_primaryEmail'] = rentalOwnerPrimaryEmail;
     data['rentalOwner_phoneNumber'] = rentalOwnerPhoneNumber;
     data['amount'] = amount;
+    data['rent_cycle'] = rentCycle;
+    data['rentDueDate'] = rentDueDate;
     data['date'] = date;
     if (this.renewLeases != null) {
       data['renewLeases'] = this.renewLeases!.map((v) => v.toJson()).toList();

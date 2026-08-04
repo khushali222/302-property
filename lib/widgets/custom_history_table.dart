@@ -15,6 +15,10 @@ class CustomHistoryTable extends StatefulWidget {
   final Color blueColor;
   final int itemsPerPage;
 
+  /// Heading size. Defaults to 16 so existing screens are unchanged;
+  /// Lease Summary passes 18 to match its "Lease Details" heading.
+  final double titleFontSize;
+
   const CustomHistoryTable({
     Key? key,
     required this.historyType,
@@ -22,6 +26,7 @@ class CustomHistoryTable extends StatefulWidget {
     this.title = 'History',
     required this.blueColor,
     this.itemsPerPage = 10,
+    this.titleFontSize = 16,
   }) : super(key: key);
 
   @override
@@ -2753,7 +2758,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                       style: TextStyle(
                         color: widget.blueColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: widget.titleFontSize,
                       ),
                     ),
                   ],
@@ -2879,7 +2884,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                       style: TextStyle(
                         color: widget.blueColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: widget.titleFontSize,
                       ),
                     ),
                   ],
@@ -3041,7 +3046,7 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
                       style: TextStyle(
                         color: widget.blueColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: widget.titleFontSize,
                       ),
                     ),
                   ],

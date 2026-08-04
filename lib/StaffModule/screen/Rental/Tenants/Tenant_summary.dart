@@ -51,6 +51,8 @@ import 'package:three_zero_two_property/StaffModule/screen/Maintenance/Workorder
     as staff_workorder;
 import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAccount/AddAchAccount.dart';
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/addcard/AddCard.dart';
+import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
+import 'package:three_zero_two_property/Model/lease_term.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
@@ -148,6 +150,13 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         // Lease data is in, so the lease id is now resolvable — load the
         // rental-owner acceptance that decides whether the ACH row exists.
         _ensureAchSettings();
+        // Same reason: the balance is keyed on the lease id, which only becomes
+        // resolvable here. Fetching it in initState used the tenant id fallback
+        // and returned nothing, so the badge only appeared on a second visit.
+        _fetchTenantBalance();
+        // Term history per lease, for the Lease Details "inferred" marker and
+        // the real current-term dates.
+        _fetchLeaseTerms(allLeaseData);
       }
       return allLeaseData;
     } else {
@@ -469,7 +478,136 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     });
     checkInternet();
     futureRenterPolicies = _loadShowDeletedPrefAndFetch();
+    // Balance is fetched from inside fetchLeaseData(), once the lease id is
+    // actually known — see the note there.
     futurePropertyLease = fetchLeaseData();
+  }
+
+  // ── Balance badge (web parity: "Balance: $X Balance Due" on the tenant
+  // details header). The figure comes straight from the lease ledger endpoint
+  // — the server already computes it (LeaseController.CalculateBalanceForLease),
+  // so nothing is recalculated here.
+  double? _tenantBalance;
+
+  /// Pale-blue pill under the Summary header, mirroring the web badge.
+  /// Hidden until the figure is known so no placeholder amount is ever shown.
+  Widget _buildBalanceBadge() {
+    final balance = _tenantBalance;
+    // Hidden while unknown, and when the lease is square — web only shows the
+    // badge when there is something to report, which is why it is absent on
+    // some tenants.
+    if (balance == null || balance == 0) return const SizedBox.shrink();
+
+    // Same credit/due convention and colours as the lease Financial tab, so
+    // the two screens never disagree about the same lease.
+    final isCredit = balance < 0;
+    final formatted = NumberFormat.currency(
+      locale: 'en_US',
+      symbol: '\$',
+      decimalDigits: 2,
+    ).format(balance.abs());
+    final label = isCredit
+        ? 'Balance: ($formatted) Credit'
+        : 'Balance: $formatted Balance Due';
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color:
+                isCredit ? const Color(0xFFD1FAE5) : const Color(0xFFEBF5FF),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: isCredit
+                    ? const Color(0xFF6EE7B7)
+                    : const Color(0xFF8AAEE0)),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isCredit ? const Color(0xFF065F46) : blueColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ── Lease term history (web parity: LeaseTermsTable) ──────────────────────
+  // Terms per lease id, from GET /api/leases/{id}/terms. Entry 0 is the current
+  // term. Terms the server rebuilt from rent charges are flagged "inferred".
+  // Empty/missing means "fall back to the lease's own fields", which is exactly
+  // what web does when the terms array is empty.
+  final Map<String, List<LeaseTerm>> _leaseTerms = {};
+
+  Future<void> _fetchLeaseTerms(List<TenantLeaseData> leases) async {
+    final ids = leases
+        .map((l) => l.leaseId)
+        .whereType<String>()
+        .where((id) => id.isNotEmpty)
+        .toSet();
+    if (ids.isEmpty) return;
+    await Future.wait(ids.map((id) async {
+      final terms = await LeaseRepository().fetchLeaseTerms(id);
+      if (terms.isNotEmpty) _leaseTerms[id] = terms;
+    }));
+    if (mounted) setState(() {});
+  }
+
+  /// Current term for a lease, or null to fall back to the lease's own fields.
+  LeaseTerm? _currentTerm(String? leaseId) {
+    if (leaseId == null || leaseId.isEmpty) return null;
+    final terms = _leaseTerms[leaseId];
+    return (terms == null || terms.isEmpty) ? null : terms.first;
+  }
+
+  /// Amber "inferred" pill — same palette as web (#FCF3D6 / #8A6D3B), shown
+  /// when the term was estimated from rent history rather than recorded.
+  Widget _inferredBadge() {
+    return Container(
+      margin: const EdgeInsets.only(left: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFCF3D6),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: const Text(
+        'inferred',
+        style: TextStyle(
+          fontSize: 11,
+          color: Color(0xFF8A6D3B),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  /// End date for display: month-to-month leases carry a far-future sentinel
+  /// (year >= 2049), which web renders as "ongoing" rather than a 2050 date.
+  String _displayEndDate(String? endDate, DateProvider dateProvider) {
+    if (endDate == null || endDate.isEmpty) return 'N/A';
+    final year =
+        endDate.length >= 4 ? int.tryParse(endDate.substring(0, 4)) : null;
+    if (year != null && year >= 2049) return 'ongoing';
+    return dateProvider.formatCurrentDate(normalizeDateForDisplay(endDate));
+  }
+
+  Future<void> _fetchTenantBalance() async {
+    try {
+      // Staff repository — sends the staff_id header, matching web.
+      final ledger =
+          await LeaseRepository().fetchLeaseLedger(leaseId: _effectiveLeaseId);
+      if (!mounted) return;
+      setState(() => _tenantBalance = ledger?.totalBalance);
+    } catch (_) {
+      // Badge simply stays hidden if the balance can't be read — it must never
+      // block the rest of the summary from rendering.
+    }
   }
 
   ConnectivityResult? _connectivityResult;
@@ -2681,6 +2819,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       ),
                     ),
                   ),
+                  _buildBalanceBadge(),
                   const SizedBox(height: 5),
                   _buildTenantSummaryTabDropdown(context),
                   // const SizedBox(
@@ -3383,26 +3522,39 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                             style: TextStyle(fontWeight: FontWeight.bold, color: blueColor),
                                                                                           ),
                                                                                           TextSpan(
-                                                                                            text: dateProvider.formatCurrentDate(normalizeDateForDisplay(Propertytype.endDate)),
+                                                                                            // Web parity: month-to-month leases carry a
+                                                                                            // far-future sentinel end date — show "ongoing".
+                                                                                            text: _displayEndDate(_currentTerm(Propertytype.leaseId)?.endDate ?? Propertytype.endDate, dateProvider),
                                                                                             style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey),
                                                                                           ),
                                                                                         ],
                                                                                       ),
                                                                                     ),
                                                                                     const SizedBox(height: 10),
-                                                                                    Text.rich(
-                                                                                      TextSpan(
-                                                                                        children: [
-                                                                                          TextSpan(
-                                                                                            text: 'Type : ',
-                                                                                            style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                                    Row(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Flexible(
+                                                                                          child: Text.rich(
+                                                                                            TextSpan(
+                                                                                              children: [
+                                                                                                TextSpan(
+                                                                                                  text: 'Type : ',
+                                                                                                  style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
+                                                                                                ),
+                                                                                                TextSpan(
+                                                                                                  text: _currentTerm(Propertytype.leaseId)?.leaseType ?? '${Propertytype.leaseType}',
+                                                                                                  style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
                                                                                           ),
-                                                                                          TextSpan(
-                                                                                            text: '${Propertytype.leaseType}',
-                                                                                            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
+                                                                                        ),
+                                                                                        // Web parity: mark a term the server estimated from rent
+                                                                                        // history rather than one it has on record.
+                                                                                        if (_currentTerm(Propertytype.leaseId)?.isInferred == true)
+                                                                                          _inferredBadge(),
+                                                                                      ],
                                                                                     ),
                                                                                     const SizedBox(
                                                                                       height: 10,

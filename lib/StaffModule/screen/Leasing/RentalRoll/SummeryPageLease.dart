@@ -1,4 +1,5 @@
 import 'package:three_zero_two_property/services/app_log.dart';
+import 'package:three_zero_two_property/Model/lease_term.dart';
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -100,6 +101,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       });
     });
     checkInternet();
+    // Term history for the Lease Details row — supplies the "inferred" marker
+    // and the current term's real dates (web: RentRollDetail/LeaseTermsTable).
+    _loadLeaseTerms();
     // TODO: implement initState
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     // Cache the lease's property address for screens (Scheduled Charges) whose
@@ -939,6 +943,248 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   // Web parity: an At-will (month-to-month) lease has no fixed expiry, so web
   // shows its end as "At Will" and always treats it as Active — it never reads
   // "Expired" by date (RentRoll.js: lease_type === "At-will(month to month)").
+  // ── Lease term history (web: RentRollDetail/LeaseTermsTable) ──────────────
+  // GET /api/leases/{id}/terms returns the term history newest-first. Terms the
+  // server reconstructed from rent charges come back source:"inferred" so an
+  // estimate is never mistaken for a recorded renewal. Empty means "fall back
+  // to the lease's own fields", exactly as web does.
+  List<LeaseTerm> _leaseTerms = const [];
+
+  LeaseTerm? get _currentTerm =>
+      _leaseTerms.isEmpty ? null : _leaseTerms.first;
+
+  Future<void> _loadLeaseTerms() async {
+    final terms = await LeaseRepository().fetchLeaseTerms(widget.leaseId);
+    if (!mounted || terms.isEmpty) return;
+    setState(() => _leaseTerms = terms);
+  }
+
+  // ── Balance Overview (web: RentRollDetail/FinancialSummaryCard) ───────────
+  // Five rows from three sources the page already fetches: charges_payments
+  // (balance), lease_summary (rent + due date), lease-charges (deposit + late
+  // payments). Nothing is recalculated here.
+  //
+  // Web gates the whole card on getStatus(...) == "Active" on the Summary tab
+  // (LeaseSummaryTab.jsx) — and getStatus treats an At-will lease as Active
+  // regardless of its end date, which _leaseStatusWithType already mirrors.
+
+  Widget _balanceRow(String label, String value,
+      {Color? valueColor, VoidCallback? onTap}) {
+    final row = Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF495160),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: valueColor ?? blueColor,
+            ),
+          ),
+        ],
+      ),
+    );
+    return onTap == null ? row : InkWell(onTap: onTap, child: row);
+  }
+
+  /// Accounting-style currency, matching web's `currencySign: "accounting"` —
+  /// negatives render as ($1,234.56) and zero always as $0.00.
+  String _accountingCurrency(num? amount) {
+    final value = (amount ?? 0).toDouble();
+    final formatted =
+        NumberFormat('#,##0.00', 'en_US').format(value.abs());
+    return value < 0 ? '(\$$formatted)' : '\$$formatted';
+  }
+
+  Widget _balanceOverviewCard(dynamic lease) {
+    // Web parity: hidden unless the lease reads Active (At-will counts as
+    // Active). On a genuinely expired lease web shows no finance card at all.
+    final status = _leaseStatusWithType(
+        lease.startDate, lease.endDate, lease.leaseType, lease.isEvicted);
+    if (status != 'Active') return const SizedBox.shrink();
+
+    final rentLabel = '${(lease.rentCycle?.trim().isNotEmpty == true) ? lease.rentCycle!.trim() : 'Monthly'} Rent';
+    final dueDate = (lease.rentDueDate?.trim().isNotEmpty == true)
+        ? Provider.of<DateProvider>(context, listen: false)
+            .formatCurrentDate(lease.rentDueDate!)
+        : 'N/A';
+
+    return Container(
+      // No horizontal margin: this subtree is already inset 15pt by its
+      // outer Padding plus 2pt by the Column, which matches the Property
+      // Details card above. Adding more here pushed it 15pt too far in.
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFFDBE0E5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.attach_money, color: blueColor, size: 24),
+              const SizedBox(width: 6),
+              Text(
+                'Balance Overview',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: blueColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          FutureBuilder<LeaseLedger?>(
+            future: _leaseLedgerFuture,
+            builder: (context, snap) => _balanceRow(
+              'Current Balance',
+              _accountingCurrency(snap.data?.totalBalance),
+            ),
+          ),
+          _balanceRow(rentLabel, _accountingCurrency(lease.amount)),
+          FutureBuilder<LeaseCharges?>(
+            future: _leaseChargesFuture,
+            builder: (context, snap) => Column(
+              children: [
+                _balanceRow(
+                  'Security Deposit',
+                  _accountingCurrency(
+                      snap.data?.data?.securityDeposits?.totalAmount),
+                ),
+                _balanceRow(
+                  'Late Payments (Last 12 Months)',
+                  '${snap.data?.data?.lateRentPayments?.totalEntries ?? 0}',
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Color(0xFFCED4DA)),
+          const SizedBox(height: 12),
+          _balanceRow('Due Date', dueDate,
+              valueColor: const Color(0xFFC25B33)),
+        ],
+      ),
+    );
+  }
+
+  // ── Lease Details card: stacked label/value layout ────────────────────────
+  // The old three-column row (Property | Status | Type) squeezed a long lease
+  // type such as "At-will(month to month)" into a narrow cell, where it broke
+  // mid-word. Labels now sit above their values so each value gets the width
+  // it needs — and the "inferred" pill has room beside the type.
+
+  /// Small grey uppercase field label.
+  Widget _leaseFieldLabel(String text) => Text(
+        text.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF8A95A8),
+          letterSpacing: 0.6,
+        ),
+      );
+
+  /// Label above value, optionally with a trailing widget (the inferred pill).
+  Widget _leaseField(String label, String value, {Widget? trailing}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _leaseFieldLabel(label),
+        const SizedBox(height: 4),
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: blueColor,
+              ),
+            ),
+            if (trailing != null) trailing,
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Status with a coloured dot — red when the lease has ended, green while it
+  /// is running, amber for anything upcoming.
+  Widget _leaseStatusField(String status) {
+    final s = status.toLowerCase();
+    final Color dot = s.contains('expired') || s.contains('evict')
+        ? const Color(0xFFDC2626)
+        : s.contains('upcoming')
+            ? const Color(0xFFD97706)
+            : const Color(0xFF16A34A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _leaseFieldLabel('Status'),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                status,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: dot,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Amber "inferred" pill — same palette as web (#FCF3D6 / #8A6D3B).
+  Widget _inferredBadge() {
+    return Container(
+      margin: const EdgeInsets.only(left: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFCF3D6),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: const Text(
+        'inferred',
+        style: TextStyle(
+          fontSize: 11,
+          color: Color(0xFF8A6D3B),
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   bool _isAtWill(String? leaseType) =>
       (leaseType ?? '').toLowerCase().trim() == 'at-will(month to month)';
 
@@ -1095,7 +1341,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade500),
+                      border: Border.all(color: const Color(0xFFDBE0E5)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -2925,6 +3171,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Balance Overview — web renders this above Lease
+                          // Details and only while the lease reads Active.
+                          FutureBuilder<LeaseSummary>(
+                            future: futureLeaseSummary,
+                            builder: (context, snap) {
+                              final lease = snap.data?.data;
+                              if (lease == null) return const SizedBox.shrink();
+                              return _balanceOverviewCard(lease);
+                            },
+                          ),
                           if (MediaQuery.of(context).size.width < 500)
                             Row(
                               children: [
@@ -3108,100 +3364,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                           if (MediaQuery.of(context).size.width < 500)
                             Column(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: const Color(0xFFF4F8FF),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: const Color(0xFFDBE0E5))),
-                                  child: ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    title: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        Expanded(
-                                          flex: 3,
-                                          child: InkWell(
-                                            onTap: () {},
-                                            child: Row(
-                                              children: [
-                                                width < 400
-                                                    ? Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 20.0),
-                                                        child: Text(
-                                                          "Property",
-                                                          style: TextStyle(
-                                                              color: blueColor,
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        ),
-                                                      )
-                                                    : Text("     Property",
-                                                        style: TextStyle(
-                                                            color: blueColor,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                // Text("Property", style: TextStyle(color: Colors.white)),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: InkWell(
-                                            onTap: () {},
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 0.0),
-                                                  child: Text("Status",
-                                                      style: TextStyle(
-                                                          color: blueColor,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14)),
-                                                ),
-                                                SizedBox(width: 5),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: InkWell(
-                                            onTap: () {},
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  "Type",
-                                                  style: TextStyle(
-                                                      color: blueColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                SizedBox(width: 5),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                // Column-header strip removed: each field now
+                                // carries its own label inside the expanded
+                                // panel, so a shared header no longer applies.
                                 StatefulBuilder(
                                   builder: (context, setRowState) {
                                     return Container(
@@ -3261,64 +3426,23 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                       ),
                                                     ),
                                                   ),
+                                                  // Collapsed row shows only the
+                                                  // address; status/type/dates
+                                                  // move into the expanded panel
+                                                  // where they have full width.
                                                   Expanded(
-                                                    flex: 5,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        // Handle navigation or other actions if needed
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 5.0),
-                                                        child: Text(
-                                                          '${snapshot.data!.data!.rentalAddress}',
-                                                          style: TextStyle(
-                                                            color: blueColor,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 5.0),
+                                                      child: Text(
+                                                        '${snapshot.data!.data!.rentalAddress}',
+                                                        style: TextStyle(
+                                                          color: blueColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 15,
                                                         ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .06,
-                                                  ),
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Text(
-                                                      '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .06,
-                                                  ),
-                                                  Expanded(
-                                                    flex: 4,
-                                                    child: Text(
-                                                      '${snapshot.data!.data!.leaseType}',
-                                                      style: TextStyle(
-                                                        color: blueColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
                                                       ),
                                                     ),
                                                   ),
@@ -3361,56 +3485,45 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: <Widget>[
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Start - End   ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor),
+                                                              // STATUS + TYPE side by side
+                                                              Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: _leaseStatusField(
+                                                                        '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}'),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 12),
+                                                                  Expanded(
+                                                                    child: _leaseField(
+                                                                      'Type',
+                                                                      '${snapshot.data!.data!.leaseType}',
+                                                                      // Web parity: flag a term the
+                                                                      // server estimated from rent
+                                                                      // history rather than recorded.
+                                                                      trailing: _currentTerm
+                                                                                  ?.isInferred ==
+                                                                              true
+                                                                          ? _inferredBadge()
+                                                                          : null,
                                                                     ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${dateProvider.formatCurrentDate('${snapshot.data!.data!.startDate}')} to ${dateProvider.formatCurrentDate('${snapshot.data!.data!.endDate}')}',
-                                                                      style: const TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              Colors.grey),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                               const SizedBox(
-                                                                height: 4,
+                                                                  height: 14),
+                                                              _leaseField(
+                                                                'Start – End',
+                                                                '${dateProvider.formatCurrentDate('${snapshot.data!.data!.startDate}')} – ${dateProvider.formatCurrentDate('${snapshot.data!.data!.endDate}')}',
                                                               ),
-                                                              Text.rich(
-                                                                TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          'Rent : ',
-                                                                      style: TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .bold,
-                                                                          color:
-                                                                              blueColor),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}',
-                                                                      style: const TextStyle(
-                                                                          fontWeight: FontWeight
-                                                                              .w700,
-                                                                          color:
-                                                                              Colors.grey),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                              const SizedBox(
+                                                                  height: 14),
+                                                              _leaseField(
+                                                                'Rent',
+                                                                '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}',
                                                               ),
                                                             ],
                                                           ),
@@ -4297,237 +4410,242 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ],
                               ),
                           SizedBox(
-                            height: 10,
+                            height: 0,
                           ),
-                          // Late Fees Table
-                          FutureBuilder<List<Map<String, dynamic>>>(
-                            future: _lateFeesFuture,
-                            builder: (context, lateFeeSnapshot) {
-                              if (lateFeeSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox(
-                                  height: 50,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              } else if (lateFeeSnapshot.hasError) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Error loading late fees: ${lateFeeSnapshot.error}',
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
-                                );
-                              } else if (!lateFeeSnapshot.hasData ||
-                                  lateFeeSnapshot.data!.isEmpty) {
-                                return const SizedBox.shrink();
-                              } else {
-                                final lateFees = lateFeeSnapshot.data!;
-                                return RepaintBoundary(
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 2,
-                                          ),
-                                          Text(
-                                            "Late Fees",
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                            "Late Fee Count: ${lateFees.length}",
-                                            style: TextStyle(
-                                                color: blueColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: const Color(0xFFF4F8FF),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color:
-                                                    const Color(0xFFDBE0E5))),
-                                        child: ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              Expanded(
-                                                flex: 3,
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      width < 400
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left:
-                                                                          20.0),
-                                                              child: Text(
-                                                                "Date",
-                                                                style: TextStyle(
-                                                                    color:
-                                                                        blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        14),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            )
-                                                          : Text("     Date",
-                                                              style: TextStyle(
-                                                                  color:
-                                                                      blueColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 14),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 0.0),
-                                                        child: Text("Amount",
-                                                            style: TextStyle(
-                                                                color:
-                                                                    blueColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14)),
-                                                      ),
-                                                      SizedBox(width: 5),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Column(
-                                          children: lateFees
-                                              .asMap()
-                                              .entries
-                                              .map((entry) {
-                                            int index = entry.key;
-                                            Map<String, dynamic> lateFee =
-                                                entry.value;
-                                            return Container(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 6),
-                                              decoration: BoxDecoration(
-                                                color: index % 2 != 0
-                                                    ? const Color(0xFFF4F8FF)
-                                                    : Colors.white,
-                                                border: Border.all(
-                                                    color: const Color(
-                                                        0xFFDBE0E5)),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                title: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(2.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 20.0),
-                                                          child: Text(
-                                                            lateFee['date'] !=
-                                                                        null &&
-                                                                    lateFee['date']
-                                                                        .toString()
-                                                                        .isNotEmpty
-                                                                ? dateProvider
-                                                                    .formatCurrentDate(
-                                                                        lateFee['date']
-                                                                            .toString())
-                                                                : '',
-                                                            style: TextStyle(
-                                                              color: blueColor,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 13,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex: 2,
-                                                        child: Text(
-                                                          formatCurrency(lateFee[
-                                                                  'amount'] ??
-                                                              0.0),
-                                                          style: TextStyle(
-                                                            color:
-                                                                Colors.orange,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                          ),
+                          // Late Fees Table — commented out for web parity.
+                          // Web's lease detail page has no late-fee list: it shows a
+                          // single "Late Payments (Last 12 Months)" count in the
+                          // Financial Summary card and nothing more. Restore this block
+                          // if the itemised fees are wanted back on mobile.
+//                          // Late Fees Table
+//                          FutureBuilder<List<Map<String, dynamic>>>(
+//                            future: _lateFeesFuture,
+//                            builder: (context, lateFeeSnapshot) {
+//                              if (lateFeeSnapshot.connectionState ==
+//                                  ConnectionState.waiting) {
+//                                return const SizedBox(
+//                                  height: 50,
+//                                  child: Center(
+//                                    child: CircularProgressIndicator(),
+//                                  ),
+//                                );
+//                              } else if (lateFeeSnapshot.hasError) {
+//                                return Padding(
+//                                  padding: const EdgeInsets.all(8.0),
+//                                  child: Text(
+//                                    'Error loading late fees: ${lateFeeSnapshot.error}',
+//                                    style: const TextStyle(color: Colors.red),
+//                                  ),
+//                                );
+//                              } else if (!lateFeeSnapshot.hasData ||
+//                                  lateFeeSnapshot.data!.isEmpty) {
+//                                return const SizedBox.shrink();
+//                              } else {
+//                                final lateFees = lateFeeSnapshot.data!;
+//                                return RepaintBoundary(
+//                                  child: Column(
+//                                    children: [
+//                                      Row(
+//                                        children: [
+//                                          const SizedBox(
+//                                            width: 2,
+//                                          ),
+//                                          Text(
+//                                            "Late Fees",
+//                                            style: TextStyle(
+//                                                color: blueColor,
+//                                                fontWeight: FontWeight.bold,
+//                                                fontSize: 16),
+//                                          ),
+//                                          Spacer(),
+//                                          Text(
+//                                            "Late Fee Count: ${lateFees.length}",
+//                                            style: TextStyle(
+//                                                color: blueColor,
+//                                                fontWeight: FontWeight.bold,
+//                                                fontSize: 13),
+//                                          ),
+//                                        ],
+//                                      ),
+//                                      const SizedBox(
+//                                        height: 10,
+//                                      ),
+//                                      Container(
+//                                        decoration: BoxDecoration(
+//                                            color: const Color(0xFFF4F8FF),
+//                                            borderRadius:
+//                                                BorderRadius.circular(10),
+//                                            border: Border.all(
+//                                                color:
+//                                                    const Color(0xFFDBE0E5))),
+//                                        child: ListTile(
+//                                          contentPadding: EdgeInsets.zero,
+//                                          title: Row(
+//                                            mainAxisAlignment:
+//                                                MainAxisAlignment.start,
+//                                            children: <Widget>[
+//                                              Expanded(
+//                                                flex: 3,
+//                                                child: InkWell(
+//                                                  onTap: () {},
+//                                                  child: Row(
+//                                                    children: [
+//                                                      width < 400
+//                                                          ? Padding(
+//                                                              padding: EdgeInsets
+//                                                                  .only(
+//                                                                      left:
+//                                                                          20.0),
+//                                                              child: Text(
+//                                                                "Date",
+//                                                                style: TextStyle(
+//                                                                    color:
+//                                                                        blueColor,
+//                                                                    fontWeight:
+//                                                                        FontWeight
+//                                                                            .bold,
+//                                                                    fontSize:
+//                                                                        14),
+//                                                                textAlign:
+//                                                                    TextAlign
+//                                                                        .center,
+//                                                              ),
+//                                                            )
+//                                                          : Text("     Date",
+//                                                              style: TextStyle(
+//                                                                  color:
+//                                                                      blueColor,
+//                                                                  fontWeight:
+//                                                                      FontWeight
+//                                                                          .bold,
+//                                                                  fontSize: 14),
+//                                                              textAlign:
+//                                                                  TextAlign
+//                                                                      .center),
+//                                                    ],
+//                                                  ),
+//                                                ),
+//                                              ),
+//                                              Expanded(
+//                                                flex: 2,
+//                                                child: InkWell(
+//                                                  onTap: () {},
+//                                                  child: Row(
+//                                                    children: [
+//                                                      Padding(
+//                                                        padding:
+//                                                            EdgeInsets.only(
+//                                                                left: 0.0),
+//                                                        child: Text("Amount",
+//                                                            style: TextStyle(
+//                                                                color:
+//                                                                    blueColor,
+//                                                                fontWeight:
+//                                                                    FontWeight
+//                                                                        .bold,
+//                                                                fontSize: 14)),
+//                                                      ),
+//                                                      SizedBox(width: 5),
+//                                                    ],
+//                                                  ),
+//                                                ),
+//                                              ),
+//                                            ],
+//                                          ),
+//                                        ),
+//                                      ),
+//                                      Container(
+//                                        child: Column(
+//                                          children: lateFees
+//                                              .asMap()
+//                                              .entries
+//                                              .map((entry) {
+//                                            int index = entry.key;
+//                                            Map<String, dynamic> lateFee =
+//                                                entry.value;
+//                                            return Container(
+//                                              margin:
+//                                                  const EdgeInsets.symmetric(
+//                                                      vertical: 6),
+//                                              decoration: BoxDecoration(
+//                                                color: index % 2 != 0
+//                                                    ? const Color(0xFFF4F8FF)
+//                                                    : Colors.white,
+//                                                border: Border.all(
+//                                                    color: const Color(
+//                                                        0xFFDBE0E5)),
+//                                                borderRadius:
+//                                                    BorderRadius.circular(10),
+//                                              ),
+//                                              child: ListTile(
+//                                                contentPadding: EdgeInsets.zero,
+//                                                title: Padding(
+//                                                  padding:
+//                                                      const EdgeInsets.all(2.0),
+//                                                  child: Row(
+//                                                    mainAxisAlignment:
+//                                                        MainAxisAlignment.start,
+//                                                    crossAxisAlignment:
+//                                                        CrossAxisAlignment
+//                                                            .center,
+//                                                    children: <Widget>[
+//                                                      Expanded(
+//                                                        flex: 3,
+//                                                        child: Padding(
+//                                                          padding:
+//                                                              const EdgeInsets
+//                                                                  .only(
+//                                                                  left: 20.0),
+//                                                          child: Text(
+//                                                            lateFee['date'] !=
+//                                                                        null &&
+//                                                                    lateFee['date']
+//                                                                        .toString()
+//                                                                        .isNotEmpty
+//                                                                ? dateProvider
+//                                                                    .formatCurrentDate(
+//                                                                        lateFee['date']
+//                                                                            .toString())
+//                                                                : '',
+//                                                            style: TextStyle(
+//                                                              color: blueColor,
+//                                                              fontWeight:
+//                                                                  FontWeight
+//                                                                      .bold,
+//                                                              fontSize: 13,
+//                                                            ),
+//                                                          ),
+//                                                        ),
+//                                                      ),
+//                                                      Expanded(
+//                                                        flex: 2,
+//                                                        child: Text(
+//                                                          formatCurrency(lateFee[
+//                                                                  'amount'] ??
+//                                                              0.0),
+//                                                          style: TextStyle(
+//                                                            color:
+//                                                                Colors.orange,
+//                                                            fontWeight:
+//                                                                FontWeight.bold,
+//                                                            fontSize: 13,
+//                                                          ),
+//                                                        ),
+//                                                      ),
+//                                                    ],
+//                                                  ),
+//                                                ),
+//                                              ),
+//                                            );
+//                                          }).toList(),
+//                                        ),
+//                                      ),
+//                                    ],
+//                                  ),
+//                                );
+//                              }
+//                            },
+//                          ),
                           SizedBox(
                             height: 10,
                           ),
@@ -4536,6 +4654,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             historyType: HistoryType.lease,
                             entityId: widget.leaseId,
                             title: 'Lease History',
+                            // Match the "Lease Details" heading above.
+                            titleFontSize: 18,
                             blueColor: blueColor,
                             itemsPerPage: 10,
                           ),
