@@ -118,8 +118,21 @@ class _otp_verifyState extends State<otp_verify> {
     setState(() {
       loading = false; // Set loading to false after receiving response
     });
-    final jsonData = json.decode(response.body);
-    if (jsonData["statusCode"] == 200) {
+    // A non-JSON body (e.g. an HTML 502 page) used to throw FormatException
+    // here with nothing catching it, so the method died mid-way: no dialog, no
+    // message, and the user was stranded on the OTP screen. This is the
+    // password-reset path, so silence is the worst outcome.
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      if (mounted) {
+        Fluttertoast.showToast(
+            msg: "Something went wrong. Please try again.");
+      }
+      return;
+    }
+    if (jsonData is Map && jsonData["statusCode"] == 200) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Changepassword(email: widget.email,admin_id: widget.admin_id,role: widget.role,user_id: widget.userId,)),
@@ -131,7 +144,12 @@ class _otp_verifyState extends State<otp_verify> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text(jsonData["message"]),
+          // Falls back when the body carries no message — Text cannot take
+          // null, so a message-less error response used to throw here.
+          content: Text((jsonData is Map
+                  ? jsonData["message"]?.toString()
+                  : null) ??
+              "Invalid or expired code. Please try again."),
           actions: [
             TextButton(
               onPressed: () {

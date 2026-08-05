@@ -904,3 +904,102 @@ class CustomTableView extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// User-facing error text (CRM-4661 and the stale-notification follow-up).
+//
+// Raw exceptions must never reach the screen: they leak hostnames, URIs,
+// exception class names, OS errno values and whole JSON response bodies.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const String kGenericErrorMessage =
+    'Something went wrong. Please try again.';
+const String kWorkOrderNotFoundMessage =
+    'This work order could not be found. It may have been deleted.';
+
+/// Message to throw when a work-order fetch fails.
+///
+/// The backend answers a missing work order with `statusCode: 201` and
+/// `message: "Work Order Not Found"` — 201 means "Created", so the HTTP status
+/// cannot be used to detect it. The not-found case is recognised from the
+/// response body instead, and the body itself is never surfaced.
+String workOrderFetchErrorMessage(String responseBody) {
+  final String body = responseBody.toLowerCase();
+  if (body.contains('not found') || body.contains('notfound')) {
+    return kWorkOrderNotFoundMessage;
+  }
+  return kGenericErrorMessage;
+}
+
+/// Sanitises whatever a `FutureBuilder`/catch block hands us before it is
+/// rendered. Already-friendly messages pass through; anything carrying a JSON
+/// payload, URI, exception class name or errno is replaced with [fallback].
+String friendlyErrorText(Object? error,
+    {String fallback = kGenericErrorMessage}) {
+  if (error == null) return fallback;
+  String message = error.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+  message = message.trim();
+  if (message.isEmpty) return fallback;
+  const List<String> leaks = [
+    '{',
+    '}',
+    'uri=',
+    'http://',
+    'https://',
+    'SocketException',
+    'ClientException',
+    'HandshakeException',
+    'TimeoutException',
+    'FormatException',
+    'errno',
+    'OS Error',
+    'statusCode',
+  ];
+  for (final String leak in leaks) {
+    if (message.contains(leak)) return fallback;
+  }
+  return message;
+}
+
+/// Centered empty/error state for a failed fetch.
+///
+/// Replaces a bare left-aligned `Text(...)` floating in dead space: shows a
+/// muted icon above the sanitised message, centred and padded so a
+/// "record not found" reads as a designed state rather than a glitch.
+Widget friendlyErrorState(
+  Object? error, {
+  String fallback = kGenericErrorMessage,
+  IconData icon = Icons.search_off_rounded,
+}) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 64,
+            width: 64,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF1F4F8),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 30, color: const Color(0xFF8A93A3)),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            friendlyErrorText(error, fallback: fallback),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14.5,
+              height: 1.45,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF6B7280),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}

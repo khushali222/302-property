@@ -790,7 +790,9 @@ class _FinancialTableState extends State<FinancialTable> {
     final next = _nextScheduledLabel();
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(11, 10, 11, 0),
+      // Tighter above, real gap below — the banner used to sit far from
+      // the section header yet flush against the card beneath it.
+      margin: const EdgeInsets.fromLTRB(11, 2, 11, 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xFFFEF7E0),
@@ -1815,7 +1817,10 @@ class _FinancialTableState extends State<FinancialTable> {
   List<Data> _cachedLedgerData = [];
 
   static const double _financeQuickActionHeight = 42;
-  static const Color _financeBorderGray = Color(0xFFD1D5DB);
+  // Matches the light border used by the Lease Summary cards and the
+  // Lease Details / History tables (#DBE0E5). The old #D1D5DB read darker
+  // and made the Financial cards mismatch the rest of the lease screens.
+  static const Color _financeBorderGray = Color(0xFFDBE0E5);
 
   InputDecoration _financeSheetFieldDecoration({String? hint}) {
     return InputDecoration(
@@ -2093,9 +2098,6 @@ class _FinancialTableState extends State<FinancialTable> {
         child: Column(
           children: [
             _buildScheduledChargeBanner(),
-            const SizedBox(
-              height: 5,
-            ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 11),
               decoration: BoxDecoration(
@@ -2227,6 +2229,9 @@ class _FinancialTableState extends State<FinancialTable> {
                   ),
                   const SizedBox(height: 12),
                   const Divider(height: 1, thickness: 1, color: Color(0xFFE5E7EB)),
+                  // Breathing room under the divider so Quick Actions no
+                  // longer butts straight into the search/filter row above.
+                  const SizedBox(height: 4),
                   InkWell(
                     onTap: () => setState(() => _quickActionsExpanded = !_quickActionsExpanded),
                     child: Padding(

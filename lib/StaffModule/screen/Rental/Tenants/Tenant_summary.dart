@@ -53,6 +53,8 @@ import 'package:three_zero_two_property/TenantsModule/screen/financial/AddAchAcc
 import 'package:three_zero_two_property/screens/Leasing/RentalRoll/addcard/AddCard.dart';
 import 'package:three_zero_two_property/StaffModule/repository/lease.dart';
 import 'package:three_zero_two_property/Model/lease_term.dart';
+// TENANT NOTES TAB — TEMPORARILY DISABLED (uncomment all 5 blocks to re-enable)
+//import '../../Leasing/RentalRoll/Notes/Notes_table.dart';
 
 class ResponsiveTenantSummary extends StatefulWidget {
   Tenant? tenants;
@@ -625,6 +627,8 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
     'Communications',
     'Payments',
     'Work Orders',
+    // TENANT NOTES TAB — TEMPORARILY DISABLED (uncomment all 5 blocks to re-enable)
+    // 'Notes',
   ];
 
   String _tenantSummaryTabIconAsset(String title) {
@@ -639,6 +643,9 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
         return 'assets/icons/financial.png';
       case 'Work Orders':
         return 'assets/icons/maintence.png';
+      // TENANT NOTES TAB — TEMPORARILY DISABLED (uncomment all 5 blocks to re-enable)
+//      case 'Notes':
+//        return 'assets/icons/document.png';
       default:
         return 'assets/icons/summery.png';
     }
@@ -4498,6 +4505,46 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                       leaseId: widget.tenantId,
                     ),
                   if (_tenantSummaryTabIndex == 4) _buildTenantWorkOrdersTab(),
+                  // Web parity: tenant-scoped notes (LeaseNote scope="tenant").
+                  // Merges the tenant's own notes with those of every lease
+                  // they are on; new notes attach to the tenant, so a tenant
+                  // with no lease can still have notes.
+                  // TENANT NOTES TAB — TEMPORARILY DISABLED (uncomment all 5 blocks to re-enable)
+//                  if (_tenantSummaryTabIndex == 5)
+//                    FutureBuilder<List<TenantLeaseData>>(
+//                      future: futurePropertyLease,
+//                      builder: (context, snap) {
+                        // Web parity: the Notes tab is gated on the tenant
+                        // having lease data; without it web shows this message
+                        // instead of the notes list.
+//                        if (snap.connectionState ==
+//                            ConnectionState.waiting) {
+//                          return const SizedBox.shrink();
+//                        }
+//                        final hasLease = (snap.data?.isNotEmpty ?? false);
+//                        if (!hasLease) {
+//                          return Container(
+//                            padding: const EdgeInsets.symmetric(
+//                                vertical: 32, horizontal: 16),
+//                            alignment: Alignment.center,
+//                            child: const Text(
+//                              'No lease data available for this tenant.',
+//                              textAlign: TextAlign.center,
+//                              style: TextStyle(
+//                                  color: Color(0xFF6C757D), fontSize: 14),
+//                            ),
+//                          );
+//                        }
+                        // NotesTable's own content starts at 7pt (a leading
+                        // SizedBox), while the section dropdown above sits at
+                        // 14pt. The extra 7 here lines the two edges up.
+//                        return Padding(
+//                          padding:
+//                              const EdgeInsets.symmetric(horizontal: 7),
+//                          child: NotesTable(tenantId: widget.tenantId),
+//                        );
+//                      },
+//                    ),
                 ],
               ),
             )

@@ -926,7 +926,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: Colors.grey.shade500!,
+                                      color: const Color(0xFFDBE0E5)!,
                                       width: 1,
                                     ),
                                     color: Colors.white,
@@ -947,7 +947,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.white,
                                     border: Border.all(
-                                      color: Colors.grey.shade500!,
+                                      color: const Color(0xFFDBE0E5)!,
                                       width: 1,
                                     ),
                                     boxShadow: [
@@ -1705,7 +1705,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                          color: Colors.grey.shade500),
+                                          color: const Color(0xFFDBE0E5)),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -2255,7 +2255,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                          color: Colors.grey.shade500),
+                                          color: const Color(0xFFDBE0E5)),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.only(

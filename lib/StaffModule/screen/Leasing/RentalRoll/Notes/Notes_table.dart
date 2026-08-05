@@ -20,7 +20,14 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 
 class NotesTable extends StatefulWidget {
   String? leaseid;
-  NotesTable({super.key, this.leaseid});
+  /// When set, the table is TENANT-scoped (web: LeaseNote scope="tenant"):
+  /// it reads /lease-notes/tenant/{id} — tenant notes merged with the notes
+  /// of every lease that tenant is on — and new notes attach to the tenant.
+  /// Leave null for the existing lease-scoped behaviour.
+  final String? tenantId;
+  NotesTable({super.key, this.leaseid, this.tenantId});
+
+  bool get isTenantScope => (tenantId ?? '').isNotEmpty;
 
   @override
   State<NotesTable> createState() => _NotesTableState();
@@ -65,7 +72,9 @@ class _NotesTableState extends State<NotesTable> {
   Future<List<lease_notes>> fetchleasenotedata() async {
     // RentersInsuranceService service = RentersInsuranceService();
     try {
-      List<lease_notes> data = await fetchleaseNote(widget.leaseid!);
+      // In tenant scope leaseid is null by design — the id is not used to
+      // build the URL there, so it must not be force-unwrapped.
+      List<lease_notes> data = await fetchleaseNote(widget.leaseid ?? '');
       setState(() {
         // rentersInsuranceModel = data;
         isLoading = false;
@@ -88,8 +97,11 @@ class _NotesTableState extends State<NotesTable> {
     String? token = prefs.getString('token');
     String? staffid = prefs.getString("staff_id");
     try {
-      final response = await http
-          .get(Uri.parse('$Api_url/api/lease-notes/$leaseid'), headers: {
+      // Web parity: tenant scope reads a different path.
+      final uri = widget.isTenantScope
+          ? Uri.parse('$Api_url/api/lease-notes/tenant/${widget.tenantId}')
+          : Uri.parse('$Api_url/api/lease-notes/$leaseid');
+      final response = await http.get(uri, headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
       });
@@ -179,11 +191,16 @@ class _NotesTableState extends State<NotesTable> {
         ? Uri.parse("$Api_url/api/lease-notes/add_note")
         : Uri.parse("$Api_url/api/lease-notes/update_note/${noteId}");
 
+    // Web parity: an EDIT never moves a note between owners, so the owner
+    // keys are only sent when creating.
     final body = {
-      "lease_id": leaseId,
       "admin_id": Id,
       "note_type": noteType!,
       "content": content,
+      if (noteId == null)
+        ...(widget.isTenantScope
+            ? {"scope": "tenant", "tenant_id": widget.tenantId}
+            : {"scope": "lease", "lease_id": leaseId}),
     };
 
     final response = noteId == null
@@ -865,6 +882,9 @@ class _NotesTableState extends State<NotesTable> {
                   onTap: () async {
                     final shouldRefresh =
                         await showNoteDialog(context, leaseId: widget.leaseid);
+                    // showNoteDialog builds the payload via the scope getter,
+                    // so a tenant-scoped note attaches to the tenant even when
+                    // there is no lease.
                     if (shouldRefresh == true) {
                       setState(() {
                         _futureleasenotes =

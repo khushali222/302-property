@@ -1565,7 +1565,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: friendlyErrorState(snapshot.error));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -2220,7 +2220,7 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                   //         return ShimmerTabletTable();
                   //       } else if (snapshot.hasError) {
                   //         return Center(
-                  //             child: Text('Error: ${snapshot.error}'));
+                  //             child: friendlyErrorState(snapshot.error));
                   //       } else if (!snapshot.hasData ||
                   //           snapshot.data!.isEmpty) {
                   //         return Container(

@@ -1726,7 +1726,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: friendlyErrorState(snapshot.error));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -2559,7 +2559,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders> {
 //                   if (snapshot.connectionState == ConnectionState.waiting) {
 //                     return ShimmerTabletTable();
 //                   } else if (snapshot.hasError) {
-//                     return Center(child: Text('Error: ${snapshot.error}'));
+//                     return friendlyErrorState(snapshot.error);
 //                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
 //                    return Container(
 //                         height: MediaQuery.of(context).size.height * .5,

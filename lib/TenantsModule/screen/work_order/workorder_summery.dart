@@ -251,7 +251,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                       );
                     } else if (snapshot.hasError) {
                       return Center(
-                          child: Text('Error: ${snapshot.error}'));
+                          child: friendlyErrorState(snapshot.error));
                     } else if (!snapshot.hasData ||
                         snapshot.data == null) {
                       return const Center(child: Text('No data found.'));

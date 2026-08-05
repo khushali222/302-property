@@ -40,8 +40,17 @@ class _notificationsState extends State<notifications> {
         "id": "CRM $id",
       },
     );
-    final jsonData = json.decode(response.body);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
+    // A non-JSON body (e.g. an HTML 502 page) threw FormatException out of here.
+    // FutureBuilder catches it, but with no hasError branch a failure rendered
+    // the "No Notifications Yet" empty state instead of an error.
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      throw Exception('Could not load notifications. Please try again.');
+    }
+    if (jsonData is Map &&
+        (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201)) {
       List<Map<String, dynamic>> notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
       return notifications;
     } else {
@@ -161,6 +170,24 @@ class _notificationsState extends State<notifications> {
                       ),
                     );
                     // return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    // Distinguish a failed fetch from a genuinely empty list.
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .6,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            "Could not load notifications. Please try again.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .6,

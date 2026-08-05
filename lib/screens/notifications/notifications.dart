@@ -44,14 +44,26 @@ class _notificationsState extends State<notifications> {
         "id": "CRM $id",
       },
     );
-    final jsonData = json.decode(response.body);
-   // print(jsonData);
-    if (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201) {
-      List<Map<String, dynamic>> notifications = List<Map<String, dynamic>>.from(jsonData["data"]);
-      return notifications;
+    // A non-JSON body (e.g. an HTML 502 page) threw FormatException straight out
+    // of here. FutureBuilder catches it, but the builder had no hasError branch,
+    // so a failure rendered the "No Notifications Yet" empty state — telling the
+    // user there is nothing rather than that the fetch failed.
+    final dynamic jsonData;
+    try {
+      jsonData = json.decode(response.body);
+    } on FormatException {
+      throw Exception('Could not load notifications. Please try again.');
+    }
+    if (jsonData is Map &&
+        (jsonData["statusCode"] == 200 || jsonData["statusCode"] == 201)) {
+      final rows = jsonData["data"];
+      if (rows is! List) return <Map<String, dynamic>>[];
+      return rows
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
     } else {
-
-      throw Exception('Failed to load data');
+      throw Exception('Could not load notifications. Please try again.');
     }
   }
   String formatNotificationDateTime(DateTime dateTime) {
@@ -249,6 +261,25 @@ class _notificationsState extends State<notifications> {
                       ),
                     );
                     // return ColabShimmerLoadingWidget();
+                  } else if (snapshot.hasError) {
+                    // Distinguish a failed fetch from a genuinely empty list —
+                    // previously both fell through to "No Notifications Yet".
+                    return Container(
+                      height: MediaQuery.of(context).size.height * .6,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            "Could not load notifications. Please try again.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blueColor,
+                                fontSize: 15),
+                          ),
+                        ),
+                      ),
+                    );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .6,

@@ -846,7 +846,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         child: ColabShimmerLoadingWidget(),
                       );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return friendlyErrorState(snapshot.error);
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return SingleChildScrollView(
                         child: Column(

@@ -978,7 +978,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     );
                   } else if (snapshot.hasError) {
                     return Center(
-                        child: Text('Error: ${snapshot.error}'));
+                        child: friendlyErrorState(snapshot.error));
                   } else if (!snapshot.hasData ||
                       snapshot.data!.isEmpty) {
                     return Container(
@@ -1627,7 +1627,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                     );
                   } else if (snapshot.hasError) {
                     return Center(
-                        child: Text('Error: ${snapshot.error}'));
+                        child: friendlyErrorState(snapshot.error));
                   } else if (!snapshot.hasData ||
                       snapshot.data!.isEmpty) {
                     return Container(

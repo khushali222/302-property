@@ -733,7 +733,13 @@ class PaymentService {
         'lease_id': leaseId,
         'payment_type': paymentType,
         'entry': entries,
-        'total_amount': totalAmount,
+        // Sent as a NUMBER, not a String. The server does
+        // `req.body.total_amount += Number(req.body.surcharge)` — with a
+        // string that CONCATENATES ("150.00"+5 -> "150.005") instead of
+        // adding, corrupting the stored total. Web sends a number, which is
+        // why only mobile was affected. Falls back to the original value if
+        // it somehow will not parse, so a total is never invented as 0.
+        'total_amount': num.tryParse(totalAmount) ?? totalAmount,
         'surcharge': surcharge,
         'is_leaseAdded': isLeaseAdded,
         'uploaded_file': uploadedFile,

@@ -3345,6 +3345,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   bool formValid = true;
 
   void _submitForm() async {
+    // Reentrancy lock: the button stays tappable while the request
+    // runs, and a retry after a slow/failed response created REAL
+    // duplicate work orders (the server saves before it responds).
+    if (isloading) return;
     if (_formkey.currentState!.validate()) {
       setState(() {
         isloading = true;
@@ -3413,7 +3417,8 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
         // );
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Failed to add work order: ${friendlyErrorMessage(e)}",
+            msg: friendlyErrorMessage(e,
+                fallbackMessage: 'Failed to add work order. Please try again.'),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -6457,6 +6462,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
   bool formValid = true;
 
   void _submitForm() async {
+    // Reentrancy lock: the button stays tappable while the request
+    // runs, and a retry after a slow/failed response created REAL
+    // duplicate work orders (the server saves before it responds).
+    if (isLoading) return;
     if (_formkey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -6513,7 +6522,8 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
         if (mounted) Navigator.pop(context, true);
       } catch (e) {
         Fluttertoast.showToast(
-            msg: "Failed to add work order: ${friendlyErrorMessage(e)}",
+            msg: friendlyErrorMessage(e,
+                fallbackMessage: 'Failed to add work order. Please try again.'),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

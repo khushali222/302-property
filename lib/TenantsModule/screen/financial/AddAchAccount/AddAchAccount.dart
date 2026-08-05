@@ -109,6 +109,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
     _firstName.addListener(_onRequiredChanged);
     _lastName.addListener(_onRequiredChanged);
     _loadProfile();
+    _loadLeaseResidents();
     _fetchTokenizationKey();
     _resolvedVaultId = widget.customerVaultId;
     if (_resolvedVaultId != null && _resolvedVaultId!.isNotEmpty) {
@@ -116,6 +117,90 @@ class _AddAchAccountState extends State<AddAchAccount> {
     } else {
       _fetchVaultIdThenLoadAccounts();
     }
+  }
+
+  // ── Resident picker (web parity: AddACHDetailsForm staffResidentPicker) ────
+  // Web shows a "Select A Resident" dropdown when an Admin/Staff user adds an
+  // ACH account, so on a multi-tenant lease they choose WHICH resident the
+  // account belongs to. Without it every account was filed against whichever
+  // tenant the screen was opened from. Tenants adding their own account never
+  // see the picker — it is theirs by definition.
+  List<_AchResident> _leaseResidents = const [];
+  String? _selectedResidentId;
+
+  /// Only Admin/Staff, and only when a lease is known to read residents from.
+  bool get _showResidentPicker =>
+      (widget.authAsStaff || widget.authAsAdmin) &&
+      (widget.leaseId ?? '').isNotEmpty;
+
+  /// The resident the ACH account is saved against — the picked one when the
+  /// picker is in use, otherwise the tenant the screen was opened for.
+  String get _effectiveTenantId =>
+      (_showResidentPicker && (_selectedResidentId ?? '').isNotEmpty)
+          ? _selectedResidentId!
+          : widget.tenantId;
+
+  Future<void> _loadLeaseResidents() async {
+    if (!_showResidentPicker) return;
+    try {
+      // Fetched here rather than via LeaseRepository.fetchLeaseTenants, which
+      // always sends the adminId header — Staff must send staff_id, so that
+      // call returned nothing for Staff and the picker never appeared.
+      final prefs = await SharedPreferences.getInstance();
+      final headerId = _headerIdForRequest(prefs);
+      final token = prefs.getString('token');
+      if (headerId == null || token == null) return;
+      final response = await apiGet(
+        Uri.parse('$Api_url/api/tenant/leases/${widget.leaseId}'),
+        headers: {
+          'authorization': 'CRM $token',
+          'id': 'CRM $headerId',
+        },
+      );
+      if (response.statusCode != 200) return;
+      final decoded = json.decode(response.body);
+      final rows = (decoded is Map ? decoded['data'] : null);
+      if (rows is! List) return;
+      // Only three fields are needed, read defensively — LeaseTenant.fromJson
+      // assigns non-nullable fields straight from JSON and throws on a single
+      // missing key, which would silently hide the picker.
+      final residents = rows
+          .whereType<Map>()
+          .map((e) => _AchResident(
+                tenantId: e['tenant_id']?.toString() ?? '',
+                firstName: e['tenant_firstName']?.toString() ?? '',
+                lastName: e['tenant_lastName']?.toString() ?? '',
+              ))
+          .where((r) => r.tenantId.isNotEmpty)
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _leaseResidents = residents;
+        // Default to the tenant the screen was opened for, as web does.
+        final match = residents
+            .where((r) => r.tenantId == widget.tenantId)
+            .toList();
+        _selectedResidentId =
+            match.isNotEmpty ? match.first.tenantId : widget.tenantId;
+      });
+    } catch (_) {
+      // Picker simply stays hidden if residents cannot be read — the form must
+      // still work for the tenant it was opened for.
+    }
+  }
+
+  /// Swap the prefilled names when a different resident is chosen.
+  void _onResidentSelected(String? tenantId) {
+    if (tenantId == null || tenantId == _selectedResidentId) return;
+    final match = _leaseResidents.where((r) => r.tenantId == tenantId).toList();
+    setState(() {
+      _selectedResidentId = tenantId;
+      if (match.isNotEmpty) {
+        _firstName.text = match.first.firstName;
+        _lastName.text = match.first.lastName;
+      }
+    });
+    _onRequiredChanged();
   }
 
   Future<void> _fetchVaultIdThenLoadAccounts() async {
@@ -521,7 +606,9 @@ class _AddAchAccountState extends State<AddAchAccount> {
       'payment_token': token.token,
       'routing_number': token.routingNumber ?? '',
       'account_number': token.accountNumber ?? '', // already masked by Collect.js
-      'tenant_id': widget.tenantId,
+      // The resident chosen in the picker (web parity), falling back to the
+      // tenant this screen was opened for.
+      'tenant_id': _effectiveTenantId,
       'admin_id': adminId ?? '',
       'user_active_recently': true,
       'is_web': false,
@@ -611,6 +698,40 @@ class _AddAchAccountState extends State<AddAchAccount> {
                   width: MediaQuery.of(context).size.width * .91,
                   title: 'Add a new ACH account'),
               const SizedBox(height: 20),
+              // Web parity (AddACHDetailsForm): Admin/Staff pick which resident
+              // on the lease the ACH account belongs to. Sits above the name
+              // fields and defaults to the tenant the screen was opened for.
+              if (_showResidentPicker && _leaseResidents.isNotEmpty) ...[
+                _buildLabel('Select A Resident'),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFDBE0E5)),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: _selectedResidentId,
+                      hint: const Text('Select A Resident'),
+                      items: _leaseResidents
+                          .map((r) => DropdownMenuItem<String>(
+                                value: r.tenantId,
+                                child: Text(
+                                  '${r.firstName} ${r.lastName}'.trim(),
+                                  style: TextStyle(
+                                      color: blueColor, fontSize: 14),
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: _onResidentSelected,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               _buildLabel('First Name'),
               const SizedBox(height: 6),
               _cardField(
@@ -1098,4 +1219,18 @@ class _AddAchAccountState extends State<AddAchAccount> {
       ),
     );
   }
+}
+
+/// Minimal resident row for the ACH "Select A Resident" picker. Deliberately
+/// not LeaseTenant: that model assigns non-nullable fields directly from JSON
+/// and throws if any key is absent.
+class _AchResident {
+  final String tenantId;
+  final String firstName;
+  final String lastName;
+  const _AchResident({
+    required this.tenantId,
+    required this.firstName,
+    required this.lastName,
+  });
 }

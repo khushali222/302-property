@@ -150,8 +150,11 @@ class WorkOrderRepository {
       Fluttertoast.showToast(msg: responseData["message"]);
       return responseData;
     } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to add work order');
+      // One message only - the screen's catch renders it. Toasting here too
+      // meant the screen's toast instantly overwrote the server's real reason.
+      final String serverMessage = '${responseData["message"] ?? ''}'.trim();
+      throw Exception(
+          serverMessage.isNotEmpty ? serverMessage : 'Failed to add work order');
     }
   }
 
@@ -181,7 +184,8 @@ class WorkOrderRepository {
       }
       return WorkOrderData_summery.fromJson(data);
     } else {
-      throw Exception('Failed to fetch workorder summary: ${response.body}');
+      // Never surface the raw body - it leaks the JSON payload to the UI.
+      throw Exception(workOrderFetchErrorMessage(response.body));
     }
   }
   static Future<bool> updateworkorderSummary(
