@@ -226,6 +226,14 @@ class _addLease3State extends State<addLease3>
         // Calculate days left, including the current day
         int daysLeft = nextDueDate.difference(currentDate).inDays;
 
+        // WEB PARITY (RentRollLeasing.jsx): for every NON-monthly cycle web
+        // counts the move-in day itself — `endDate.diff(startDate,'days') + 1`.
+        // Monthly deliberately keeps the exclusive count: web computes Monthly
+        // by a different route (computeProratedFirstMonth = days remaining in
+        // the start month, inclusive), which already equals this exclusive
+        // difference, so adding a day there would overcharge the first month.
+        final int inclusiveDays = daysLeft + 1;
+
         // Calculate pro-rated rent
         double proRatedRent = 0.0;
 
@@ -240,13 +248,13 @@ class _addLease3State extends State<addLease3>
 
         switch (frequency) {
           case 'Daily':
-            proRatedRent = (totalRent / 1) * daysLeft;
+            proRatedRent = (totalRent / 1) * inclusiveDays;
             break;
           case 'Weekly':
-            proRatedRent = (totalRent / 7) * daysLeft;
+            proRatedRent = (totalRent / 7) * inclusiveDays;
             break;
           case 'Every two weeks':
-            proRatedRent = (totalRent / 14) * daysLeft;
+            proRatedRent = (totalRent / 14) * inclusiveDays;
             break;
           // case 'Monthly':
           //   proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
@@ -257,26 +265,39 @@ class _addLease3State extends State<addLease3>
             proRatedRent = (totalRent / totalDaysInMonth) * daysLeft;
             break;
           case 'Every two months':
-            // Calculate total days in the 2-month period
+            // WEB PARITY (RentRollLeasing.jsx): period length is the current
+            // month plus the next one, and the rent IS prorated across it. The
+            // day count was previously computed and then discarded, charging a
+            // full two-month rent whatever the move-in date.
+            // DateTime(year, month + n, 1) rolls a December start into January
+            // of the next year, the same way web's `new Date(y, m + n, 0)` does.
+            final DateTime secondMonth =
+                DateTime(currentDate.year, currentDate.month + 1, 1);
             int totalDaysInTwoMonths =
                 _getDaysInMonth(currentDate.year, currentDate.month) +
-                    _getDaysInMonth(nextDueDate.year, nextDueDate.month);
-
-            // Adjust the calculation to ensure rent remains at totalRent
-            proRatedRent = totalRent;
+                    _getDaysInMonth(secondMonth.year, secondMonth.month);
+            proRatedRent = totalDaysInTwoMonths > 0
+                ? (totalRent / totalDaysInTwoMonths) * inclusiveDays
+                : 0.0;
             break;
           case 'Quarterly':
-            // Calculate total days in the quarter (3 months)
+            // WEB PARITY: count the current month and the next two, FORWARD
+            // from the move-in month. This previously counted backwards from
+            // the next due date, so `month - 1` / `month - 2` became 0 and -1
+            // in January and February with no year rollover.
+            final DateTime quarterMonth2 =
+                DateTime(currentDate.year, currentDate.month + 1, 1);
+            final DateTime quarterMonth3 =
+                DateTime(currentDate.year, currentDate.month + 2, 1);
             int totalDaysInQuarter =
-                _getDaysInMonth(nextDueDate.year, nextDueDate.month) +
-                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 1) +
-                    _getDaysInMonth(nextDueDate.year, nextDueDate.month - 2);
+                _getDaysInMonth(currentDate.year, currentDate.month) +
+                    _getDaysInMonth(quarterMonth2.year, quarterMonth2.month) +
+                    _getDaysInMonth(quarterMonth3.year, quarterMonth3.month);
 
-            // Calculate pro-rated rent
             if (totalDaysInQuarter > 0) {
-              proRatedRent = (totalRent / totalDaysInQuarter) * daysLeft;
-              proRatedRent =
-                  proRatedRent.roundToDouble(); // Round to nearest whole number
+              // Cents are kept, matching web's `.toFixed(2)`; the previous
+              // roundToDouble() snapped the quarterly figure to whole dollars.
+              proRatedRent = (totalRent / totalDaysInQuarter) * inclusiveDays;
             } else {
               proRatedRent = 0.0; // Fallback in case of an error
             }
@@ -291,17 +312,17 @@ class _addLease3State extends State<addLease3>
             // If today is before or on the mid-month date, calculate for the first half
             if (currentDate.day <= midMonth) {
               // First half of the month (1st to mid-month)
-              proRatedRent = (totalRent / midMonth) * daysLeft;
+              proRatedRent = (totalRent / midMonth) * inclusiveDays;
             } else {
               // Second half of the month (after mid-month)
               int remainingDays =
                   _getDaysInMonth(currentDate.year, currentDate.month) -
                       midMonth;
-              proRatedRent = (totalRent / remainingDays) * daysLeft;
+              proRatedRent = (totalRent / remainingDays) * inclusiveDays;
             }
             break;
           case 'Yearly':
-            proRatedRent = (totalRent / totalDaysInYear) * daysLeft;
+            proRatedRent = (totalRent / totalDaysInYear) * inclusiveDays;
             break;
           default:
             proRatedRent = 0.0;

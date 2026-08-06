@@ -1023,7 +1023,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                             ),
                                                             // SizedBox(height: 8), // Space between the text
                                                             Text(
-                                                              "\$${data.planDetail?.planPrice}",
+                                                              formatMoney(data.planDetail?.planPrice),
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   color:
@@ -1163,7 +1163,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                             ),
                                                             // SizedBox(height: 8), // Space between the text
                                                             Text(
-                                                              "\$${data.planDetail?.billingInterval}",
+                                                              formatMoney(data.planDetail?.billingInterval),
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   color:
@@ -1481,7 +1481,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       FontWeight.bold,
                                                       color: Color.fromRGBO(
                                                           138, 149, 168, 1)),),
-                                                  Expanded(child: Text( "\$${data.planDetail?.planPrice}",style: TextStyle(
+                                                  Expanded(child: Text( formatMoney(data.planDetail?.planPrice),style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1492,7 +1492,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                       FontWeight.bold,
                                                       color: Color.fromRGBO(
                                                           138, 149, 168, 1)),),
-                                                  Expanded(child: Text("\$${data.planDetail?.billingInterval}",style: TextStyle(
+                                                  Expanded(child: Text(formatMoney(data.planDetail?.billingInterval),style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                       FontWeight.bold,
@@ -1873,7 +1873,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                 ),
                                                                 // SizedBox(height: 8), // Space between the text
                                                                 Text(
-                                                                  "\$${data.planDetail?.planPrice}",
+                                                                  formatMoney(data.planDetail?.planPrice),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           16,
@@ -2020,7 +2020,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                                                 ),
                                                                 // SizedBox(height: 8), // Spce between the text
                                                                 Text(
-                                                                  "\$${data.planDetail?.billingInterval}",
+                                                                  formatMoney(data.planDetail?.billingInterval),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           13,

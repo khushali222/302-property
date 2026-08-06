@@ -776,7 +776,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      '\$${Propertytype.liabilityCoverage ?? ''}',
+                                                                      formatMoney(Propertytype.liabilityCoverage ?? ''),
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -1029,7 +1029,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
                                                 _pagedData[i].policyId!,
                                               ),
                                               _buildDataCell(
-                                                '\$${_pagedData[i].liabilityCoverage ?? ''}',
+                                                formatMoney(_pagedData[i].liabilityCoverage ?? ''),
                                               ),
                                               _buildDataCell(
                                                 _pagedData[i].status!,

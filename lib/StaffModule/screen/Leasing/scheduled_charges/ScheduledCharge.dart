@@ -271,7 +271,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                   color: blueColor)),
                           const TextSpan(text: " in the amount of "),
                           TextSpan(
-                              text: '\$${payment.amount.toStringAsFixed(2)}',
+                              text: formatMoney(payment.amount),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor)),
@@ -282,7 +282,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                               text:
                                   "You want to delete this scheduled charge for the amount of "),
                           TextSpan(
-                              text: '\$${payment.amount.toStringAsFixed(2)}',
+                              text: formatMoney(payment.amount),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: blueColor)),
@@ -907,7 +907,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                             child: pw.Align(
                               alignment: pw.Alignment.centerRight,
                               child: pw.Text(charge.amount != null
-                                  ? '\$${charge.amount.toStringAsFixed(2)}'
+                                  ? formatMoney(charge.amount)
                                   : ''),
                             ),
                           ),
@@ -946,7 +946,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
         charge.rentalAddress ?? '',
         _displayOrNA(charge.description),
         _displayOrNA(charge.account),
-        "\$${charge.amount.toStringAsFixed(2)}"
+        formatMoney(charge.amount)
       ].map((e) => '"${e.replaceAll('"', '""')}"').join(','));
     }
 
@@ -1567,7 +1567,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                                               ),
                                                               TextSpan(
                                                                 text:
-                                                                    '\$${Propertytype.amount.toStringAsFixed(2)}',
+                                                                    formatMoney(Propertytype.amount),
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight

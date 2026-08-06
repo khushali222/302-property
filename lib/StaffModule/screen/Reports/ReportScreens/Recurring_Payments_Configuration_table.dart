@@ -340,7 +340,7 @@ class _Recurring_Payments_Configuration_ReportState
                                         color: greyColor),
                                   ),
                                   Text(
-                                    "\$${(recurringPaymentsConfiguration!.grandTotal ?? 0).toStringAsFixed(2)}",
+                                    formatMoney(recurringPaymentsConfiguration!.grandTotal ?? 0),
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -732,7 +732,7 @@ class _Recurring_Payments_Configuration_ReportState
                                                                           width:
                                                                               84,
                                                                           child: Text(
-                                                                              '\$${(recurring.amount ?? 0).toStringAsFixed(2)}',
+                                                                              formatMoney(recurring.amount ?? 0),
                                                                               textAlign: TextAlign.right,
                                                                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: blueColor))),
                                                                     ],
@@ -881,7 +881,7 @@ class _Recurring_Payments_Configuration_ReportState
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       pw.Text(
-                          '\$${recurringPaymentsConfiguration!.grandTotal!.toStringAsFixed(2)}',
+                          formatMoney(recurringPaymentsConfiguration!.grandTotal!),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];
@@ -948,7 +948,7 @@ class _Recurring_Payments_Configuration_ReportState
               pw.Align(
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(
-                      "\$${(tenant.recurrings![0].amount ?? 0).toStringAsFixed(2)}",
+                      formatMoney(tenant.recurrings![0].amount ?? 0),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 10))),
             ]);
@@ -970,7 +970,7 @@ class _Recurring_Payments_Configuration_ReportState
                         fontWeight: pw.FontWeight.bold, fontSize: 10)),
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
-                  child: pw.Text("\$${(recurring.amount ?? 0).toStringAsFixed(2)}",
+                  child: pw.Text(formatMoney(recurring.amount ?? 0),
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, fontSize: 10)),
                 )
@@ -1113,7 +1113,7 @@ class _Recurring_Payments_Configuration_ReportState
 // Set Grand Total amount
     sheet
         .getRangeByIndex(rowIndex, 6)
-        .setText("\$${(recurringPaymentsConfiguration!.grandTotal ?? 0).toStringAsFixed(2)}");
+        .setText(formatMoney(recurringPaymentsConfiguration!.grandTotal ?? 0));
     sheet.getRangeByIndex(rowIndex, 6).cellStyle = currencyCellStyle;
     // sheet.getRangeByIndex(rowIndex, 6).cellStyle = boldAmountStyle; // Apply bold amount style
     final List<int> bytes = workbook.saveAsStream();
@@ -1178,7 +1178,7 @@ class _Recurring_Payments_Configuration_ReportState
               tenant.tenantName ?? '',
               '${tenant.recurrings![0].date ?? ''}',
               tenant.recurrings![0].account ?? "",
-              "\$${(tenant.recurrings![0].amount ?? 0).toStringAsFixed(2)}"
+              formatMoney(tenant.recurrings![0].amount ?? 0)
             ].map((e) => '"$e"').join(
                 ',')); // Wrap each value in quotes to handle special characters
 
@@ -1194,7 +1194,7 @@ class _Recurring_Payments_Configuration_ReportState
                 '',
                 '${recurring.date ?? ''}',
                 recurring.account ?? "",
-                "\$${(recurring.amount ?? 0).toStringAsFixed(2)}"
+                formatMoney(recurring.amount ?? 0)
               ].map((e) => '"$e"').join(','));
 
               grandTotal += recurring.amount ?? 0.0;
@@ -1227,7 +1227,7 @@ class _Recurring_Payments_Configuration_ReportState
       '',
       '',
       '',
-      "\$${grandTotal.toStringAsFixed(2)}"
+      formatMoney(grandTotal)
     ].map((e) => '"$e"').join(','));
 
     // Convert buffer to list of bytes for CSV file

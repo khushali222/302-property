@@ -301,7 +301,7 @@ class _Insurance_Policies_TableState extends State<Insurance_Policies_Table> {
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    return formatMoney(numValue);
   }
 
   String _formatDate(String? dateValue) {

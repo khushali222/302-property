@@ -292,7 +292,7 @@ class _buildPlanCardsState extends State<buildPlanCards> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      "\$${widget.plan.planPrice} / ${widget.plan.billingInterval}",
+                      "${formatMoney(widget.plan.planPrice)} / ${widget.plan.billingInterval}",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +13,28 @@ import '../../../constant/constant.dart';
 
 class PaymentCronjobRepository {
   final String apiUrl = '${Api_url}/api/payment/payment_acknowledge';
+
+  /// Decodes a payment-action response, tolerating non-JSON bodies.
+  ///
+  /// WEB PARITY (FailedPaymentsTable.jsx / CronPaymentTable.jsx): web always
+  /// surfaces a dialog when one of these actions fails, whatever the server
+  /// sends back. Here a non-JSON body (proxy timeout page, 502/504 gateway
+  /// page, expired-session HTML) used to throw a FormatException out of
+  /// json.decode before any status check ran — swallowed by the app's empty
+  /// zone handler, so the user saw nothing at all. Now it shows a toast and
+  /// throws the same way the existing failure branches already do. JSON
+  /// responses (success or error) are returned unchanged, so the normal
+  /// statusCode/message handling in each action is untouched.
+  dynamic _decodeBody(http.Response response) {
+    try {
+      return json.decode(response.body);
+    } on FormatException {
+      Fluttertoast.showToast(
+          msg: 'Unexpected server response. Please try again.');
+      throw Exception(
+          'Non-JSON payment response (HTTP ${response.statusCode})');
+    }
+  }
 
   Future<Map<String, dynamic>> Paymentacknowledge({
     required BuildContext context,
@@ -37,7 +60,7 @@ class PaymentCronjobRepository {
       },
       body: jsonEncode(data),
     );
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -95,7 +118,7 @@ class PaymentCronjobRepository {
       },
       body: jsonEncode(data),
     );
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -155,7 +178,7 @@ class PaymentCronjobRepository {
       },
       body: jsonEncode(data),
     );
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (responseData["statusCode"] == 200) {
       // Fluttertoast.showToast(
@@ -205,6 +228,10 @@ class PaymentCronjobRepository {
         "authorization": "CRM $token",
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
+        // Matches the Admin copy: a fresh key per attempt lets the server
+        // recognise a retry of THIS void and return the original result rather
+        // than voiding twice on a double-tap.
+        "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode({
         "voidDetails": {
@@ -214,7 +241,7 @@ class PaymentCronjobRepository {
       }),
     );
 
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (response.statusCode == 200) {
       Alert(
@@ -356,6 +383,9 @@ class PaymentCronjobRepository {
         "authorization": "CRM $token",
         "id": "CRM $id",
         'Content-Type': 'application/json; charset=UTF-8',
+        // Matches the Admin copy: without this a double-tap on Confirm could
+        // post the refund twice.
+        "X-Idempotency-Key": Uuid().v4(),
       },
       body: jsonEncode({"refundDetails": commonData}),
     );
@@ -389,7 +419,7 @@ class PaymentCronjobRepository {
       }),
     );
 
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (response.statusCode == 200) {
       return responseData;
@@ -422,7 +452,7 @@ class PaymentCronjobRepository {
       }),
     );
 
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (response.statusCode == 200) {
       return responseData;
@@ -454,7 +484,7 @@ class PaymentCronjobRepository {
       }),
     );
 
-    var responseData = json.decode(response.body);
+    var responseData = _decodeBody(response);
 
     if (response.statusCode == 200) {
       return responseData;

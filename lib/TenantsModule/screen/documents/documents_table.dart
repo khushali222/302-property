@@ -1261,7 +1261,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                                         ),
                                                                         TextSpan(
                                                                           text:
-                                                                              '\$${Propertytype.liabilityCoverage}',
+                                                                              formatMoney(Propertytype.liabilityCoverage),
                                                                           style: TextStyle(
                                                                               fontWeight: FontWeight.w700,
                                                                               color: grey), // Light and grey

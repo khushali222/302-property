@@ -703,7 +703,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                      pw.Text(formatMoney(grandtotal),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];
@@ -1339,7 +1339,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports> {
                                               ),
                                             ),
                                             Text(
-                                              '\$${grandTotal.toStringAsFixed(2)}',
+                                              formatMoney(grandTotal),
                                               style: TextStyle(
                                                 color: blueColor,
                                                 fontWeight: FontWeight.bold,

@@ -2331,7 +2331,7 @@ class _RenewleaseState extends State<Renewlease> {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
-                                                          '\$${totalAmount.toStringAsFixed(2)}'),
+                                                          formatMoney(totalAmount)),
                                                     ),
                                                     const SizedBox.shrink(),
                                                   ]),

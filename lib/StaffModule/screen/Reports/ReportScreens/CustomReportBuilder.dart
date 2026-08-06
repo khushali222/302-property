@@ -457,7 +457,7 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
     final n = value.toDouble();
     final absStr = NumberFormat('#,##0.00').format(n.abs());
     if (n < 0) return '\$-$absStr';
-    return '\$$absStr';
+    return formatMoney(absStr);
   }
 
   String _formatCellValue(String key, dynamic value,

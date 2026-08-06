@@ -290,7 +290,7 @@ class _RevenueDetailsScreenState extends State<RevenueDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    '\$${data.currentAmount.toStringAsFixed(2)}',
+                                    formatMoney(data.currentAmount),
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

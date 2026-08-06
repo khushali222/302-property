@@ -336,7 +336,7 @@ class _FinancialTableState extends State<FinancialTable> {
   }
 
   String _formatAmount(double? amt) =>
-      '\$${(amt?.abs() ?? 0).toStringAsFixed(2)}';
+      formatMoney((amt?.abs() ?? 0));
 
   /// Empty-field hint: format pattern only (not a real date — avoids looking “prefilled”).
   String _datePlaceholderHint(BuildContext context) {

@@ -306,7 +306,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    return formatMoney(numValue);
   }
 
   Widget _buildHeaders() {

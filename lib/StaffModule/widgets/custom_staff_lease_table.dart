@@ -335,8 +335,8 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                                                   text:
                                                   lease.totalBalance != null
                                                       ? (lease.totalBalance! < 0
-                                                      ? '-\$${lease.totalBalance!.abs().toStringAsFixed(2)}'
-                                                      : '\$${lease.totalBalance!.toStringAsFixed(2)}')
+                                                      ? '-${formatMoney(lease.totalBalance!.abs())}'
+                                                      : formatMoney(lease.totalBalance!))
                                                       : '\$0.00',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
@@ -363,7 +363,7 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                                                 ),
                                                 TextSpan(
                                                   text:
-                                                      "\$${(lease.amount ?? 0).toStringAsFixed(2)}",
+                                                      formatMoney(lease.amount ?? 0),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,

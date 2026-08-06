@@ -985,7 +985,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                   pw.Align(
                     alignment: pw.Alignment.centerRight,
                     child: pw.Text(
-                      '\$${leasedata.creditAmount?.toStringAsFixed(2) ?? '0.00'}',
+                      formatMoney(leasedata.creditAmount?.toStringAsFixed(2) ?? '0.00'),
                       style: const pw.TextStyle(fontSize: 7),
                     ),
                   ),
@@ -1174,7 +1174,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${'0.00'}',
+                          formatMoney('0.00'),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1184,7 +1184,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalRent!.toStringAsFixed(2) ?? '0.00'}',
+                          formatMoney(data.grandTotal!.totalRent!.toStringAsFixed(2) ?? '0.00'),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1195,7 +1195,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"}',
+                          formatMoney(data.grandTotal!.totalCharges!.toStringAsFixed(2) ?? "0.0"),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1206,7 +1206,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalCredits!.toStringAsFixed(2) ?? "0.0"}',
+                          formatMoney(data.grandTotal!.totalCredits!.toStringAsFixed(2) ?? "0.0"),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1217,7 +1217,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalDeposits!.toStringAsFixed(2) ?? "0.0"}',
+                          formatMoney(data.grandTotal!.totalDeposits!.toStringAsFixed(2) ?? "0.0"),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -1228,7 +1228,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                       pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '\$${data.grandTotal!.totalBalanceDue!.toStringAsFixed(2) ?? "0.0"}',
+                          formatMoney(data.grandTotal!.totalBalanceDue!.toStringAsFixed(2) ?? "0.0"),
                           style: const pw.TextStyle(fontSize: 10),
                         ),
                       ),
@@ -2921,7 +2921,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                           lease.rentCycle),
                                                       'Credits',
                                                       getDisplayValue(
-                                                          "\$${lease.creditAmount!.toStringAsFixed(2)}"),
+                                                          formatMoney(lease.creditAmount!)),
                                                     ),
                                                     buildTableRows(
                                                       'Bed/Bath',
@@ -3063,29 +3063,29 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                                                     buildTableRows(
                                                       'Credits',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalCredits!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalCredits!)),
                                                       'Prepayments',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalPrepayments!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalPrepayments!)),
                                                       'Charges',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalCharges!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalCharges!)),
                                                     ),
                                                     buildTableRows(
                                                       'Total',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalAmount!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalAmount!)),
                                                       'Balance Due',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalBalanceDue!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalBalanceDue!)),
                                                       'Rent',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalRent!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalRent!)),
                                                     ),
                                                     buildTableRows(
                                                       'Deposit Held',
                                                       getDisplayValue(
-                                                          "\$${item.totals!.totalDeposits!.toStringAsFixed(2)}"),
+                                                          formatMoney(item.totals!.totalDeposits!)),
                                                       '',
                                                       "",
                                                       '',
@@ -3157,15 +3157,15 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               ),
               _buildSummaryRow("Market Rent", "\$0.00"),
               _buildSummaryRow(
-                  "Rent", "\$${totals!.totalRent!.toStringAsFixed(2)}"),
+                  "Rent", formatMoney(totals!.totalRent!)),
               _buildSummaryRow("Recurring Charges",
-                  "\$${totals!.totalCharges!.toStringAsFixed(2)}"),
+                  formatMoney(totals!.totalCharges!)),
               _buildSummaryRow("Recurring Credits",
-                  "\$${totals!.totalCredits!.toStringAsFixed(2)}"),
+                  formatMoney(totals!.totalCredits!)),
               _buildSummaryRow("Deposits Held",
-                  "\$${totals!.totalDeposits!.toStringAsFixed(2)}"),
+                  formatMoney(totals!.totalDeposits!)),
               _buildSummaryRow("Balance Due",
-                  "\$${totals!.totalBalanceDue!.toStringAsFixed(2)}"),
+                  formatMoney(totals!.totalBalanceDue!)),
             ],
           ),
         ),

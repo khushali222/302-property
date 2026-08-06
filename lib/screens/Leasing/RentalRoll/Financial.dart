@@ -1360,8 +1360,8 @@ class _FinancialTableState extends State<FinancialTable> {
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(
                     ledger.type == "Refund" || ledger.type == "Charge"
-                        ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
-                        : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
+                        ? formatMoney(ledger.totalAmount ?? 0)
+                        : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
                   ),
                 ),
                 ledger.balance! < 0
@@ -1369,14 +1369,14 @@ class _FinancialTableState extends State<FinancialTable> {
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
                           ''
-                          ' - \$${ledger.balance!.abs().toStringAsFixed(2)}',
+                          ' - ${formatMoney(ledger.balance!.abs())}',
                         ),
                       )
                     : pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
                           ''
-                          ' \$${ledger.balance!.abs().toStringAsFixed(2)}',
+                          ' ${formatMoney(ledger.balance!.abs())}',
                         ),
                       ),
               ];
@@ -1421,7 +1421,7 @@ class _FinancialTableState extends State<FinancialTable> {
               pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                    '\$${ledgerdata.first.balance?.toStringAsFixed(2)}',
+                    formatMoney(ledgerdata.first.balance),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
             ],
@@ -1507,17 +1507,17 @@ class _FinancialTableState extends State<FinancialTable> {
 
       sheet.getRangeByIndex(2 + i, 5).setText(
             ledger.type == "Refund" || ledger.type == "Charge"
-                ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
-                : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
+                ? formatMoney(ledger.totalAmount ?? 0)
+                : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
           );
 
 
       ledger.balance! < 0
           ? sheet.getRangeByIndex(2 + i, 6).setText(
-                '-\$${ledger.balance!.abs().toStringAsFixed(2)}',
+                '-${formatMoney(ledger.balance!.abs())}',
               )
           : sheet.getRangeByIndex(2 + i, 6).setText(
-                '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+                formatMoney(ledger.balance!.abs()),
               );
     }
 
@@ -1581,11 +1581,11 @@ class _FinancialTableState extends State<FinancialTable> {
             ? "${ledger.entry?.first.memo}"
             : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
         ledger.type == "Refund" || ledger.type == "Charge"
-            ? '\$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}'
-            : ' - \$${(ledger.totalAmount ?? 0).toStringAsFixed(2)}',
+            ? formatMoney(ledger.totalAmount ?? 0)
+            : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
         ledger.balance! < 0
-            ? ' - \$${ledger.balance!.abs().toStringAsFixed(2)}'
-            : '\$${ledger.balance!.abs().toStringAsFixed(2)}',
+            ? ' - ${formatMoney(ledger.balance!.abs())}'
+            : formatMoney(ledger.balance!.abs()),
       ];
       csvData.add(rowData);
     }
@@ -2759,8 +2759,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                               8.0),
                                                       child: Text(
                                                         data.balance! >= 0
-                                                            ? ' \$${data.balance!.abs().toStringAsFixed(2)}'
-                                                            : ' -\$${data.balance!.abs().toStringAsFixed(2)}',
+                                                            ? ' ${formatMoney(data.balance!.abs())}'
+                                                            : ' -${formatMoney(data.balance!.abs())}',
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -2903,8 +2903,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                                 "Refund" ||
                                                                             data.type ==
                                                                                 "Charge"
-                                                                        ? '\$${data.totalAmount!.toStringAsFixed(2)}'
-                                                                        : ' - \$${data.totalAmount!.toStringAsFixed(2)}',
+                                                                        ? formatMoney(data.totalAmount!)
+                                                                        : ' - ${formatMoney(data.totalAmount!)}',
                                                                     style:
                                                                         TextStyle(
                                                                       fontWeight:
@@ -3102,7 +3102,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                         children: [
                                                                           TextSpan(
                                                                             text:
-                                                                                ' \$ ${entry.amount ?? "N/A"}',
+                                                                                ' ${formatMoney(entry.amount ?? "N/A")}',
                                                                             style:
                                                                                 TextStyle(
                                                                               fontWeight: FontWeight.w700,
@@ -3187,7 +3187,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                       children: [
                                                                         TextSpan(
                                                                           text:
-                                                                              ' \$ ${data.surcharge ?? "N/A"}',
+                                                                              ' ${formatMoney(data.surcharge ?? "N/A")}',
                                                                           style:
                                                                               TextStyle(
                                                                             fontWeight:

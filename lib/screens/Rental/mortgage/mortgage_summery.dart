@@ -747,7 +747,7 @@ class _MortgageSummaryState extends State<MortgageSummary> {
         'eventKind': 'payoff',
         'eventType': 'Payoff',
         'date': p['date'] ?? p['created_at'] ?? '',
-        'details': '\$${p['amount']}${byName.isNotEmpty ? ' ($byName)' : ''}',
+        'details': '${formatMoney(p['amount'])}${byName.isNotEmpty ? ' ($byName)' : ''}',
       });
     }
 

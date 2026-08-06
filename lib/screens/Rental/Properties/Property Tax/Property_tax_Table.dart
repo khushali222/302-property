@@ -403,7 +403,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    return formatMoney(numValue);
   }
 
   Widget _buildHeaders() {

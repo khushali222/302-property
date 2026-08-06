@@ -707,7 +707,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                      pw.Text(formatMoney(grandtotal),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];
@@ -752,7 +752,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
         ),
         pw.Align(
           alignment: pw.Alignment.centerRight,
-          child: pw.Text('\$${owner.total?.toStringAsFixed(2) ?? "0.00"}',
+          child: pw.Text(formatMoney(owner.total?.toStringAsFixed(2) ?? "0.00"),
               style: pw.TextStyle(fontSize: 12)),
         ),
       ]);
@@ -1003,7 +1003,7 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
       csvData.add([
         tenant.rentalData?.address ?? 'N/A',
         '${tenant.tenantData?.tenantFirstName ?? 'N / A'} ${tenant.tenantData?.tenantLastName ?? 'N / A'}',
-        "\$${tenant.total?.toStringAsFixed(2)}" ?? '0.00',
+        formatMoney(tenant.total) ?? '0.00',
       ]);
 
       grandTotal += tenant.total?.toDouble() ?? 0.0;

@@ -255,7 +255,7 @@ class _FinancialTableState extends State<FinancialTable> {
                             color: blueColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15)),
-                            
+
                     // SizedBox(width: 5),
                     /*ascending3
                         ? Padding(
@@ -289,10 +289,12 @@ class _FinancialTableState extends State<FinancialTable> {
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
 
-  // Add Card / Add ACH button visibility, driven by tenant payment settings
-  // (get_tenant: allow_card, allow_ach) — same source the Make Payment screen uses.
-  bool _allowCard = true;
-  bool _allowAch = false;
+  // WEB PARITY (TenantFinancial.jsx): the Ledger's Add Card / Add ACH buttons
+  // render for every tenant — web gates them only on the financial_add
+  // permission and a non-Free plan (done in build()), never on the tenant's
+  // allow_card / allow_ach flags. Those flags belong to payment-method
+  // SELECTION, which Make Payment still honours (make_payment.dart
+  // tenantAllowAch / tenantAllowCard, matching AddPaymentByTenant.jsx).
 
   @override
   void initState() {
@@ -305,33 +307,6 @@ class _FinancialTableState extends State<FinancialTable> {
     });
     checkInternet();
     futureFinancial = TenantFinancialRepository().fetchTenantFinancial();
-    _fetchPaymentOptions();
-  }
-
-  Future<void> _fetchPaymentOptions() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString("tenant_id");
-      String? token = prefs.getString('token');
-      if (id == null || token == null) return;
-      final response = await apiGet(
-        Uri.parse('$Api_url/api/tenant/get_tenant/$id'),
-        headers: {
-          'authorization': 'CRM $token',
-          'id': 'CRM $id',
-        },
-      );
-      if (response.statusCode == 200 && mounted) {
-        final data = json.decode(response.body);
-        final d = data is Map ? data['data'] : null;
-        if (d is Map<String, dynamic>) {
-          setState(() {
-            _allowCard = d['allow_card'] == true;
-            _allowAch = d['allow_ach'] == true;
-          });
-        }
-      }
-    } catch (_) {}
   }
 
   void checkInternet() async {
@@ -852,37 +827,35 @@ class _FinancialTableState extends State<FinancialTable> {
   Widget _buildFinancialActionsRow(BuildContext context) {
     final gap = MediaQuery.of(context).size.width < 500 ? 6.0 : 22.0;
     final buttons = <Widget>[
-      if (_allowAch)
-        _financialActionButton(
-          label: "Add ACH",
-          onTap: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            String? id = prefs.getString("tenant_id");
-            if (id == null) return;
-            final result = await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => AddAchAccount(tenantId: id)));
-            if (result == true) {
-              setState(() {
-                futureFinancial =
-                    TenantFinancialRepository().fetchTenantFinancial();
-              });
-            }
-          },
-        ),
-      if (_allowCard)
-        _financialActionButton(
-          label: "Add Card",
-          onTap: () async {
-            final result = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AddCard()));
-            if (result == true) {
-              setState(() {
-                futureFinancial =
-                    TenantFinancialRepository().fetchTenantFinancial();
-              });
-            }
-          },
-        ),
+      _financialActionButton(
+        label: "Add ACH",
+        onTap: () async {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? id = prefs.getString("tenant_id");
+          if (id == null) return;
+          final result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddAchAccount(tenantId: id)));
+          if (result == true) {
+            setState(() {
+              futureFinancial =
+                  TenantFinancialRepository().fetchTenantFinancial();
+            });
+          }
+        },
+      ),
+      _financialActionButton(
+        label: "Add Card",
+        onTap: () async {
+          final result = await Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => AddCard()));
+          if (result == true) {
+            setState(() {
+              futureFinancial =
+                  TenantFinancialRepository().fetchTenantFinancial();
+            });
+          }
+        },
+      ),
       _financialActionButton(
         label: "Make Payment",
         onTap: () async {
@@ -1168,11 +1141,20 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             alignment: Alignment
                                                                 .centerRight,
                                                             child: Text(
+                                                              // Shared helper
+                                                              // (constant.dart
+                                                              // formatMoney):
+                                                              // grouped en-US
+                                                              // currency, with
+                                                              // a credit shown
+                                                              // as -$1,234.56.
                                                               Tenant_financial
                                                                           .balance! <
                                                                       0
-                                                                  ? '-\$${Tenant_financial.balance!.abs().toStringAsFixed(2)}'
-                                                                  : '\$${Tenant_financial.balance!.toStringAsFixed(2)}',
+                                                                  ? '-${formatMoney(Tenant_financial.balance!.abs())}'
+                                                                  : formatMoney(
+                                                                      Tenant_financial
+                                                                          .balance!),
                                                               style: TextStyle(
                                                                 color:
                                                                     blueColor,
@@ -1299,7 +1281,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                                 style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                               ),
                                                                               TextSpan(
-                                                                                text: Tenant_financial.type == 'Refund' || Tenant_financial.type == 'Charge' ? '\$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}' : ' - \$${Tenant_financial.totalAmount!.abs().toStringAsFixed(2)}',
+                                                                                text: Tenant_financial.type == 'Refund' || Tenant_financial.type == 'Charge' ? formatMoney(Tenant_financial.totalAmount!.abs()) : ' - ${formatMoney(Tenant_financial.totalAmount!.abs())}',
                                                                                 style: TextStyle(fontWeight: FontWeight.w700, color: grey), // Light and grey
                                                                               ),
                                                                             ],
@@ -2019,10 +2001,10 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   child: Text(
                                                                     _pagedData[i].balance !=
                                                                             null
-                                                                        ? _pagedData[i]
-                                                                            .balance!
-                                                                            .abs()
-                                                                            .toString()
+                                                                        ? (_pagedData[i].balance! <
+                                                                                0
+                                                                            ? '-${formatMoney(_pagedData[i].balance!.abs())}'
+                                                                            : formatMoney(_pagedData[i].balance!))
                                                                         : 'N/A',
                                                                     style:
                                                                         TextStyle(

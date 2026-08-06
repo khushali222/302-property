@@ -636,7 +636,7 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
                                     ),
                                     const Spacer(),
                                     Text(
-                                      "\$${widget.plan.planPrice}",
+                                      formatMoney(widget.plan.planPrice),
                                       style:  TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: blueColor,

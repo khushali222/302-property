@@ -144,7 +144,7 @@ class _MakePaymentState extends State<MakePayment> {
         _saleKeyScope = null;
         _showSaleAlert(
           'Payment Completed',
-          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+          'The connection dropped, but the payment of ${formatMoney(amount)} '
               'was processed successfully. Do not pay again.',
         );
         break;
@@ -717,7 +717,7 @@ class _MakePaymentState extends State<MakePayment> {
     'Check',
     'Cash',
     'ACH',
-    'Cashier \'s Check',
+    'Cashier\'s Check',
     'Money Order',
     'Manual'
   ];
@@ -732,7 +732,7 @@ class _MakePaymentState extends State<MakePayment> {
         'Check',
         'Cash',
         'ACH',
-        'Cashier \'s Check',
+        'Cashier\'s Check',
         'Money Order',
         'Manual'
       ].map((method) {
@@ -851,7 +851,7 @@ class _MakePaymentState extends State<MakePayment> {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
       showACHFields = _selectedPaymentMethod == 'ACH' && achaccepted;
-      showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
+      showCashiersFields = _selectedPaymentMethod == 'Cashier\'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
 
@@ -1325,9 +1325,12 @@ class _MakePaymentState extends State<MakePayment> {
           setState(() {
             String? overrideFee = getOverrideFee(selectedTenantId!);
             bool enableOverrideFee = getEnableOverrideFee(selectedTenantId!);
+            // WEB PARITY (AddPayment.jsx): a BLANK override is accepted by web
+            // and coerces to 0 (no debit fee). Rejecting blank here charged the
+            // tenant a fee web wouldn't. A missing value ("null") still falls
+            // through to the company debit % on both sides.
             if (enableOverrideFee &&
                 overrideFee != null &&
-                overrideFee.isNotEmpty &&
                 overrideFee != "null")
               surCharge = double.tryParse(overrideFee) ?? 0.0;
             else
@@ -3547,11 +3550,11 @@ class _MakePaymentState extends State<MakePayment> {
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice ?? 0)),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice! * row.partsQuantity!)),
                                               ),
                                             ]);
                                           }).toList(),*/
@@ -3751,7 +3754,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                      formatMoney(totalAmount)),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3761,7 +3764,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                    formatMoney(totalAmount)),
                                                               ),*/
                               ]),
                             ],
@@ -3780,7 +3783,7 @@ class _MakePaymentState extends State<MakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                  Text(formatMoney(totalAmount)),
                             ),
                           ],
                         ),
@@ -4260,7 +4263,7 @@ class _MakePaymentState extends State<MakePayment> {
                               } else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
                                   _selectedPaymentMethod ==
-                                      "Cashier 's Check") {
+                                      "Cashier's Check") {
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -4514,7 +4517,7 @@ class _MakePaymentState extends State<MakePayment> {
               ),
             ),
             Text(
-              '\$${amount.toStringAsFixed(2)}',
+              formatMoney(amount),
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

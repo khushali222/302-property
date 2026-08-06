@@ -622,10 +622,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
         '',
         formatCurrency(
             double.tryParse(item.alltotalamount!.totalDaysAmount ?? '0')),
-        '\$${item.alltotalamount!.last30Days}',
-        '\$${item.alltotalamount!.last31To60Days}',
-        '\$${item.alltotalamount!.last61To90Days}',
-        '\$${item.alltotalamount!.last91PlusDays}',
+        formatMoney(item.alltotalamount!.last30Days),
+        formatMoney(item.alltotalamount!.last31To60Days),
+        formatMoney(item.alltotalamount!.last61To90Days),
+        formatMoney(item.alltotalamount!.last91PlusDays),
       ]);
     }
     tableData.add([
@@ -633,10 +633,10 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
       '',
       formatCurrency(
           double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')),
-      '\$${globalDelinquentTenantsData!.last30Days}',
-      '\$${globalDelinquentTenantsData!.last31To60Days}',
-      '\$${globalDelinquentTenantsData!.last61To90Days}',
-      '\$${globalDelinquentTenantsData!.last91PlusDays}',
+      formatMoney(globalDelinquentTenantsData!.last30Days),
+      formatMoney(globalDelinquentTenantsData!.last31To60Days),
+      formatMoney(globalDelinquentTenantsData!.last61To90Days),
+      formatMoney(globalDelinquentTenantsData!.last91PlusDays),
     ]);
 
     return tableData;
@@ -727,16 +727,16 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
           double.tryParse(item.alltotalamount!.totalDaysAmount ?? '0')));
       sheet
           .getRangeByIndex(rowIndex, 4)
-          .setText('\$${item.alltotalamount!.last30Days}');
+          .setText(formatMoney(item.alltotalamount!.last30Days));
       sheet
           .getRangeByIndex(rowIndex, 5)
-          .setText('\$${item.alltotalamount!.last31To60Days}');
+          .setText(formatMoney(item.alltotalamount!.last31To60Days));
       sheet
           .getRangeByIndex(rowIndex, 6)
-          .setText('\$${item.alltotalamount!.last61To90Days}');
+          .setText(formatMoney(item.alltotalamount!.last61To90Days));
       sheet
           .getRangeByIndex(rowIndex, 7)
-          .setText('\$${item.alltotalamount!.last91PlusDays}');
+          .setText(formatMoney(item.alltotalamount!.last91PlusDays));
       rowIndex++; // Move to the next row
     }
 
@@ -747,16 +747,16 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
         double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')));
     sheet
         .getRangeByIndex(rowIndex, 4)
-        .setText('\$${globalDelinquentTenantsData!.last30Days}');
+        .setText(formatMoney(globalDelinquentTenantsData!.last30Days));
     sheet
         .getRangeByIndex(rowIndex, 5)
-        .setText('\$${globalDelinquentTenantsData!.last31To60Days}');
+        .setText(formatMoney(globalDelinquentTenantsData!.last31To60Days));
     sheet
         .getRangeByIndex(rowIndex, 6)
-        .setText('\$${globalDelinquentTenantsData!.last61To90Days}');
+        .setText(formatMoney(globalDelinquentTenantsData!.last61To90Days));
     sheet
         .getRangeByIndex(rowIndex, 7)
-        .setText('\$${globalDelinquentTenantsData!.last91PlusDays}');
+        .setText(formatMoney(globalDelinquentTenantsData!.last91PlusDays));
 
     // Save workbook as a byte stream
     final List<int> bytes = workbook.saveAsStream();

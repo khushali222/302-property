@@ -1088,7 +1088,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                     Text(
-                      '\$${widget.amount.toStringAsFixed(2)}',
+                      formatMoney(widget.amount),
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

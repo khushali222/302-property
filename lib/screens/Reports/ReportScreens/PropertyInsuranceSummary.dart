@@ -309,7 +309,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
                             _buildDetailRow(
                                 'Premium Amount',
                                 insurance.premiumAmount != null
-                                    ? '\$${insurance.premiumAmount}'
+                                    ? formatMoney(insurance.premiumAmount)
                                     : 'N/A'),
                           ],
                         ),
@@ -332,7 +332,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
                             _buildDetailRow(
                                 'Deductible',
                                 insurance.deductible != null
-                                    ? '\$${insurance.deductible}'
+                                    ? formatMoney(insurance.deductible)
                                     : 'N/A'),
                             SizedBox(height: 12),
                             _buildDetailRow(

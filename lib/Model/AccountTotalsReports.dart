@@ -1,5 +1,9 @@
 
 
+// Safe money parsing only — `show` keeps the rest of constant.dart out of
+// this model's namespace.
+import 'package:three_zero_two_property/constant/constant.dart' show asDouble;
+
 // class AccountTotalsReport {
 //   String? _sId;
 //   String? _rentalOwnerName;
@@ -122,8 +126,8 @@ class Payment {
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
-      account: json['account'],
-      amount: json['amount'].toDouble(),
+      account: json['account'] ?? '',
+      amount: asDouble(json['amount']),
       id: json['_id'], // Optional, may be null
     );
   }
@@ -153,12 +157,16 @@ class AccountTotalsReport {
 
   factory AccountTotalsReport.fromJson(Map<String, dynamic> json) {
 
-    var paymentsFromJson = json['payments'] as List;
+    // Null-tolerant: a report row without a payments array renders with an
+    // empty list instead of failing the whole report.
+    var paymentsFromJson = json['payments'] as List? ?? [];
     List<Payment> paymentList = paymentsFromJson.map((i) => Payment.fromJson(i)).toList();
     return AccountTotalsReport(
       id: json['_id']??"",
       rentalOwnerName: json['rentalOwner_name'],
-      subTotal:  json['sub_total'] is String ? double.parse(json['sub_total']) : (json['sub_total'] is int) ? (json['sub_total'] as int).toDouble():(json['sub_total'] ?? 0.0) as double,
+      // asDouble (constant.dart): a malformed value becomes 0.0 instead of
+      // throwing and blanking the whole report via the repo's catch.
+      subTotal: asDouble(json['sub_total']),
       payments: paymentList,
     );
   }

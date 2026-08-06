@@ -11,19 +11,19 @@ import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
-String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
+//String image_url = "https://staging.cloudrentalmanager.com/api/images/get-file/";
 //String image_url = "http://192.168.1.37:4000/api/images/get-file/";
-//String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
+String image_url = "https://saas.cloudrentalmanager.com/api/images/get-file/";
 
 //String Api_url = "http://192.168.39.1:4000";
 //String Api_url = "http://192.168.1.33:4000";
 
-//String Api_url = "https://saas.cloudrentalmanager.com";
-String Api_url = "https://staging.cloudrentalmanager.com";
+String Api_url = "https://saas.cloudrentalmanager.com";
+//String Api_url = "https://staging.cloudrentalmanager.com";
 //String Api_url = "https://development.cloudrentalmanager.com";
 
-//String image_upload_url = "https://saas.cloudrentalmanager.com";
-String image_upload_url = "https://staging.cloudrentalmanager.com";
+String image_upload_url = "https://saas.cloudrentalmanager.com";
+//String image_upload_url = "https://staging.cloudrentalmanager.com";
 
 // ===================== Safe JSON coercion helpers =====================
 // The backend is loosely typed — the same field can arrive as a String on one
@@ -515,6 +515,37 @@ String formatCurrency(double? amount) {
   );
 
   return formatter.format(amount);
+}
+
+/// Display formatter for any money value, wherever it comes from.
+///
+/// Accepts a number, a numeric string, or an already-decorated string such as
+/// "\$1,200.50", and always returns grouped en-US currency — "\$1,200.50",
+/// "-\$45.00", and "\$0.00" for null/unparsable input. Mirrors the web app's
+/// `formatUSD` helper (TenantDashBoard.jsx), which coerces the same shapes so a
+/// figure can never surface as a bare number.
+///
+/// Use for every on-screen amount; API payloads keep their raw values.
+String formatMoney(dynamic amount) {
+  if (amount is num) return formatCurrency(amount.toDouble());
+  final cleaned = amount?.toString().replaceAll(RegExp(r'[^0-9.-]'), '') ?? '';
+  return formatCurrency(double.tryParse(cleaned) ?? 0.0);
+}
+
+/// Whole-dollar variant of [formatMoney] — grouped thousands, no cents
+/// ("\$250,000"). Use only where the design deliberately omits cents, such as a
+/// purchase price, an insured value or an estimated valuation.
+String formatMoneyWhole(dynamic amount) {
+  final value = amount is num
+      ? amount.toDouble()
+      : double.tryParse(
+              amount?.toString().replaceAll(RegExp(r'[^0-9.-]'), '') ?? '') ??
+          0.0;
+  return NumberFormat.currency(
+    locale: 'en_US',
+    symbol: '\$',
+    decimalDigits: 0,
+  ).format(value);
 }
 //Color grey = Color.fromRGBO(21, 43, 83, .5);
 //Color grey = Color.fromRGBO(21, 43, 83, .5);

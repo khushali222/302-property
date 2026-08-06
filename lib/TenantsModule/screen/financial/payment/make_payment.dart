@@ -160,7 +160,7 @@ class _MakePaymentState extends State<MakePayment> {
         _saleKeyScope = null;
         _showSaleAlert(
           'Payment Completed',
-          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+          'The connection dropped, but the payment of ${formatMoney(amount)} '
               'was processed successfully. Do not pay again.',
         );
         break;
@@ -588,7 +588,7 @@ class _MakePaymentState extends State<MakePayment> {
     'Check',
     'Cash',
     'ACH',
-    'Cashier \'s Check',
+    'Cashier\'s Check',
     'Money Order',
     'Manual'
   ];
@@ -619,7 +619,7 @@ class _MakePaymentState extends State<MakePayment> {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
       showACHFields = _selectedPaymentMethod == 'ACH';
-      showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
+      showCashiersFields = _selectedPaymentMethod == 'Cashier\'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
     });
@@ -1386,10 +1386,13 @@ class _MakePaymentState extends State<MakePayment> {
               selectedcardindex! < _cardOnlyList.length)
           ? _cardOnlyList[selectedcardindex!].binResult?.toUpperCase()
           : null;
-      // override_fee is valid only when present, non-"null", non-empty.
+      // WEB PARITY (AddPaymentByTenant.jsx / AddPayment.jsx): web takes the
+      // override whenever the flag is on and the value isn't null/undefined. A
+      // BLANK value is accepted there and coerces to 0 — no debit fee. Only a
+      // missing value ("null") falls through to the company debit %. Treating
+      // blank as "no override" charged the tenant a fee web wouldn't.
       final bool hasOverrideFee = override_fee != "null" &&
-          override_fee.isNotEmpty &&
-          num.tryParse(override_fee) != null;
+          (override_fee.isEmpty || num.tryParse(override_fee) != null);
       if (cardType == "CREDIT") {
         // CREDIT ALWAYS uses surcharge_percent and NEVER consults override_fee.
         setState(() {
@@ -2619,7 +2622,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '\$${lease_data != null ? (double.tryParse(lease_data!["total_due_amount"].toString()) ?? 0.0).toStringAsFixed(2) : "0.00"}',
+                            formatMoney(lease_data != null ? lease_data!["total_due_amount"] : 0),
                             style: TextStyle(
                                 color: Color.fromRGBO(73, 81, 96, 1),
                                 fontSize: 15),
@@ -2639,7 +2642,7 @@ class _MakePaymentState extends State<MakePayment> {
                           ),
                           if (lease_data != null && tenants.isNotEmpty)
                             Text(
-                              "\$${selectedTenantRent.toString()}",
+                              formatMoney(selectedTenantRent),
                               style: TextStyle(
                                   color: Color.fromRGBO(73, 81, 96, 1),
                                   fontSize: 15),
@@ -2841,7 +2844,7 @@ class _MakePaymentState extends State<MakePayment> {
                       _buildPaymentAmountRadio(
                         value: "rent",
                         label:
-                            'Pay Rent Amount${lease_data != null && tenants.isNotEmpty ? " \$${selectedTenantRent.toString()}" : ""}',
+                            'Pay Rent Amount${lease_data != null && tenants.isNotEmpty ? " ${formatMoney(selectedTenantRent)}" : ""}',
                         selected: selected_account == "rent",
                         onChanged: () {
                           setState(() {
@@ -2887,7 +2890,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '\$${totalamount < 0 ? "0.00" : totalamount.toStringAsFixed(2)}',
+                            formatMoney(totalamount < 0 ? 0 : totalamount),
                             style: TextStyle(
                                 color: Color.fromRGBO(73, 81, 96, 1),
                                 fontSize: 15),
@@ -2906,7 +2909,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.w600),
                           ),
                           Text(
-                            '\$${surchargeamount < 0 ? "0.00" : surchargeamount.toStringAsFixed(2)}',
+                            formatMoney(surchargeamount < 0 ? 0 : surchargeamount),
                             style: TextStyle(
                                 color: Color.fromRGBO(73, 81, 96, 1),
                                 fontSize: 15),
@@ -2928,7 +2931,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            '\$${totalpayamount < 0 ? "0.00" : totalpayamount.toStringAsFixed(2)}',
+                            formatMoney(totalpayamount < 0 ? 0 : totalpayamount),
                             style: TextStyle(
                                 color: blueColor,
                                 fontSize: 16,
@@ -3392,7 +3395,7 @@ class _MakePaymentState extends State<MakePayment> {
               ),
             ),
             Text(
-              '\$$amount',
+              formatMoney(amount),
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

@@ -2804,7 +2804,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '\$${payoff['amount']}',
+                                    formatMoney(payoff['amount']),
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: Colors.grey[900],

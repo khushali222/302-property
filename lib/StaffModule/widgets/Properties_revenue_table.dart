@@ -309,7 +309,7 @@ class _CustomAdminRevenueTableState extends State<CustomStaffRevenueTable> {
                                                 TextSpan(
                                                   text: lease.totalAmount !=
                                                           null
-                                                      ? "\$${lease.formattedTotalAmount}"
+                                                      ? formatMoney(lease.formattedTotalAmount)
                                                       : 'N/A',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,

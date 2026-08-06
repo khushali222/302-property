@@ -268,7 +268,7 @@ class _Additional_Stats_tableState extends State<Additional_Stats_table> {
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '\$0.00';
     final numValue = amount is String ? double.tryParse(amount) ?? 0 : amount;
-    return '\$${numValue.toStringAsFixed(2)}';
+    return formatMoney(numValue);
   }
 
   Widget _buildHeaders() {

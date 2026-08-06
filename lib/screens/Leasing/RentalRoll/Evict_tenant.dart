@@ -88,8 +88,20 @@ class _Evict_tenantState extends State<Evict_tenant> {
   void initState() {
     futureLeaseSummary = LeaseRepository.fetchLeaseSummary(widget.leaseId);
     _selectedLeaseType = widget.leasetype;
-    startDateController.text = formatDate(widget.enddate!) ?? "";
-    DateTime endDate = formatDates(widget.enddate!);
+    // Month-to-month / at-will leases have no end date, so enddate arrives
+    // null (or as the string "null" after callers stringify it). Forcing it
+    // crashed initState before the screen could open. Fall back to today: the
+    // eviction window then defaults to today → +1 month, and both fields stay
+    // editable via their pickers.
+    final String? leaseEnd = widget.enddate;
+    final bool hasLeaseEnd = leaseEnd != null &&
+        leaseEnd.trim().isNotEmpty &&
+        leaseEnd.trim().toLowerCase() != 'null';
+    final String effectiveEnd = hasLeaseEnd
+        ? leaseEnd
+        : DateFormat('yyyy-MM-dd').format(DateTime.now());
+    startDateController.text = formatDate(effectiveEnd) ?? "";
+    DateTime endDate = formatDates(effectiveEnd);
     DateTime startDate = endDate;
     DateTime newEndDate =
         DateTime(endDate.year, endDate.month + 1, endDate.day);
@@ -574,7 +586,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                                         ),
                                         SizedBox(width: 6),
                                         Text(
-                                          '\$${(leasesummery.data?.amount ?? 0).toStringAsFixed(2)}',
+                                          formatMoney(leasesummery.data?.amount ?? 0),
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.bold,

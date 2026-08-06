@@ -491,7 +491,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases> {
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
             )),
-        pw.Text("\$${owner.recurring.toString()!}",
+        pw.Text(formatMoney(owner.recurring.toString()!),
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,

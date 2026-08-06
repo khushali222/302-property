@@ -132,7 +132,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       case PaymentVerdict.completed:
         _showSaleAlert(
           'Payment Completed',
-          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+          'The connection dropped, but the payment of ${formatMoney(amount)} '
               'was processed successfully. Do not pay again.',
         );
         break;
@@ -258,7 +258,13 @@ class _EditMakePaymentState extends State<EditMakePayment> {
             .formatCurrentDate(formatDate(c_data.entry!.first.date!));
       }
       amountController.text = c_data.totalAmount.toString();
-      _selectedPaymentMethod = c_data.paymenttype;
+      // Records saved before the spelling fix hold "Cashier 's Check" (stray
+      // space). Map the legacy value onto the current dropdown entry, otherwise
+      // the method would not match any item and would show as unselected when
+      // editing an older payment.
+      _selectedPaymentMethod = c_data.paymenttype == "Cashier 's Check"
+          ? "Cashier's Check"
+          : c_data.paymenttype;
       customerVaultId = c_data.customer_vault_id ?? "";
       billingId = c_data.billing_id ?? "";
       if ((c_data.entry?.isNotEmpty ?? false) &&
@@ -553,7 +559,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
     'Check',
     'Cash',
     'ACH',
-    'Cashier \'s Check',
+    'Cashier\'s Check',
     'Money Order',
     'Manual'
   ];
@@ -575,7 +581,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
       showACHFields = _selectedPaymentMethod == 'ACH';
-      showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
+      showCashiersFields = _selectedPaymentMethod == 'Cashier\'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
     });
@@ -3106,11 +3112,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice ?? 0)),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice! * row.partsQuantity!)),
                                               ),
                                             ]);
                                           }).toList(),*/
@@ -3298,7 +3304,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                      formatMoney(totalAmount)),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3308,7 +3314,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                    formatMoney(totalAmount)),
                                                               ),*/
                               ]),
                             ],
@@ -3327,7 +3333,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                  Text(formatMoney(totalAmount)),
                             ),
                           ],
                         ),
@@ -3663,7 +3669,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                               else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
                                   _selectedPaymentMethod ==
-                                      "Cashier 's Check") {
+                                      "Cashier's Check") {
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -3879,7 +3885,7 @@ class _EditMakePaymentState extends State<EditMakePayment> {
               ),
             ),
             Text(
-              '\$$amount',
+              formatMoney(amount),
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

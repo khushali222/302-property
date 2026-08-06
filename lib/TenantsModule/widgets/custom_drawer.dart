@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import '../../constant/constant.dart';
 import '../repository/permission_provider.dart';
 import 'drawer_tiles.dart';
-import '../model/permission.dart';
-import '../repository/permission_repo.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String currentpage;
@@ -19,41 +17,12 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  UserPermissions? permissions;
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    // _loadPermissions();
-  }
-
-  Future<void> _loadPermissions() async {
-    try {
-      UserPermissions fetchedPermissions =
-      await PermissionService.fetchPermissions();
-      setState(() {
-        permissions = fetchedPermissions;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      // Handle error
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    /*   if (isLoading) {
-      return Center(child: Text(""));
-    }
-
-    if (permissions == null) {
-      return Center(child: Text('Failed to load permissions'));
-    }
-*/
+    // Permissions come from the provider and are null until the fetch resolves.
+    // Watching (no listen: false) rebuilds this drawer once they arrive, so the
+    // menu fills itself in; every entry below reads them null-safely and simply
+    // stays hidden in the meantime.
     final permissionProvider = Provider.of<PermissionProvider>(context);
     final permissions = permissionProvider.permissions;
     return ClipRRect(
@@ -103,7 +72,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 "Profile",
                 widget.currentpage == "Profile",
               ),
-              if (permissions!.propertyView)
+              if (permissions?.propertyView == true)
                 buildListTile(
                   context,
                   FaIcon(
@@ -116,7 +85,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Property",
                   widget.currentpage == "Property",
                 ),
-              if (permissions!.financialView)
+              if (permissions?.financialView == true)
                 buildListTile(
                   context,
                   FaIcon(
@@ -129,7 +98,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Ledger",
                   widget.currentpage == "Ledger",
                 ),
-              if (permissions!.workorderView)
+              if (permissions?.workorderView == true)
                 buildListTile(
                   context,
                   widget.currentpage == "Work Orders"
@@ -148,7 +117,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   "Work Orders",
                   widget.currentpage == "Work Orders",
                 ),
-              if (permissions!.documentsView)
+              if (permissions?.documentsView == true)
                 buildListTile(
                   context,
                   FaIcon(

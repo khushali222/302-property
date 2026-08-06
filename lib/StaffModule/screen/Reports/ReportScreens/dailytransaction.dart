@@ -600,7 +600,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                      pw.Text(formatMoney(grandtotal),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];

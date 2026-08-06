@@ -2450,7 +2450,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                           _buildDataCell(
                                               pagedData[i].effectiveDate!),
                                           _buildDataCell(
-                                              '\$${pagedData[i].expirationDate!}'),
+                                              formatMoney(pagedData[i].expirationDate!)),
                                           _buildDataCell(pagedData[i]
                                               .liabilityCoverage
                                               .toString()),

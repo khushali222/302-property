@@ -369,7 +369,7 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '\$${tax['taxAmount']?.toString() ?? '0.00'}',
+                      formatMoney(tax['taxAmount']?.toString() ?? '0.00'),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -393,7 +393,7 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      '\$${tax['assessmentValue']?.toString() ?? '0.00'}',
+                      formatMoney(tax['assessmentValue']?.toString() ?? '0.00'),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -580,11 +580,11 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
             children: [
               Expanded(
                 child: _buildDetailRow('Total Tax Amount',
-                    '\$${property['totalTaxAmount']?.toString() ?? '0.00'}'),
+                    formatMoney(property['totalTaxAmount']?.toString() ?? '0.00')),
               ),
               Expanded(
                 child: _buildDetailRow('Total Assessment Value',
-                    '\$${property['totalAssessmentValue']?.toString() ?? '0.00'}'),
+                    formatMoney(property['totalAssessmentValue']?.toString() ?? '0.00')),
               ),
             ],
           ),
@@ -898,12 +898,12 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
                         pw.Padding(
                           padding: pw.EdgeInsets.all(8),
                           child: pw.Text(
-                              '\$${property['totalTaxAmount']?.toString() ?? '0'}'),
+                              formatMoney(property['totalTaxAmount']?.toString() ?? '0')),
                         ),
                         pw.Padding(
                           padding: pw.EdgeInsets.all(8),
                           child: pw.Text(
-                              '\$${property['totalAssessmentValue']?.toString() ?? '0'}'),
+                              formatMoney(property['totalAssessmentValue']?.toString() ?? '0')),
                         ),
                         pw.Padding(
                           padding: pw.EdgeInsets.all(8),
@@ -927,12 +927,12 @@ class _PropertyTaxReportState extends State<PropertyTaxReport> {
                       pw.Padding(
                         padding: pw.EdgeInsets.all(8),
                         child: pw.Text(
-                            '\$${property['totalTaxAmount']?.toString() ?? '0'}'),
+                            formatMoney(property['totalTaxAmount']?.toString() ?? '0')),
                       ),
                       pw.Padding(
                         padding: pw.EdgeInsets.all(8),
                         child: pw.Text(
-                            '\$${property['totalAssessmentValue']?.toString() ?? '0'}'),
+                            formatMoney(property['totalAssessmentValue']?.toString() ?? '0')),
                       ),
                       pw.Padding(
                         padding: pw.EdgeInsets.all(8),

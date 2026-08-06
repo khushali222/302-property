@@ -1386,7 +1386,7 @@ class _Lease_tableState extends State<Lease_table> {
                                       final balance = lease.totalBalance ?? 0.0;
                                       final isNegative = balance < 0;
                                       final formattedBalance =
-                                          "${isNegative ? '-' : ''}\$${balance.abs().toStringAsFixed(2)}";
+                                          "${isNegative ? '-' : ''}${formatMoney(balance.abs())}";
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return GestureDetector(
                                         onTap: () {
@@ -2649,8 +2649,8 @@ class _Lease_tableState extends State<Lease_table> {
   /// Format as -$X.XX for negative, $X.XX for positive.
   String _formatCurrencyForExport(double? value) {
     if (value == null) return '-';
-    if (value < 0) return '-\$${value.abs().toStringAsFixed(2)}';
-    return '\$${value.toStringAsFixed(2)}';
+    if (value < 0) return '-${formatMoney(value.abs())}';
+    return formatMoney(value);
   }
 
   Future<void> _generatePdf(

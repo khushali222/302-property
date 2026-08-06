@@ -654,7 +654,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                     children: [
                       pw.Text('Grand Total',
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                      pw.Text('\$${grandtotal.toStringAsFixed(2)}',
+                      pw.Text(formatMoney(grandtotal),
                           style: pw.TextStyle(fontWeight: pw.FontWeight.bold))
                     ])),
           ];
@@ -797,7 +797,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                    '\$${(property.surcharge ?? 0.0).toStringAsFixed(2)}', // Surcharge formatted to 2 decimal places
+                    formatMoney(property.surcharge ?? 0.0), // Surcharge formatted to 2 decimal places
                     style: pw.TextStyle(fontSize: 10),
                     textAlign: pw.TextAlign.right // Align text to the right
                     ))
@@ -815,7 +815,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
                 left: 15)), // Label for rental owner subtotal
         '', '', '', '', '', '', '',
         pw.Text(
-            '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}', // Subtotal formatted to 2 decimal places
+            formatMoney(owner.subTotal ?? 0.0), // Subtotal formatted to 2 decimal places
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             textAlign: pw.TextAlign.right // Align text to the right
             )
@@ -1041,7 +1041,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
             '',
             '',
             '',
-            '\$${property.surcharge.toStringAsFixed(2)}'
+            formatMoney(property.surcharge)
           ].join(','));
         }
       }
@@ -1056,7 +1056,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
         '',
         '',
         '',
-        '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}'
+        formatMoney(owner.subTotal ?? 0.0)
       ].join(','));
 
       // Accumulate grand total
@@ -1073,7 +1073,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports> {
       '',
       '',
       '',
-      '\$${grandTotal.toStringAsFixed(2)}'
+      formatMoney(grandTotal)
     ].join(','));
 
     // Convert buffer to list of bytes for CSV file

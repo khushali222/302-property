@@ -2739,7 +2739,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                            '\$${totalAmount.toStringAsFixed(2)}'),
+                                            formatMoney(totalAmount)),
                                       ),
                                     ],
                                   ),
@@ -5659,11 +5659,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
+                                            child:Text(formatMoney(row.partsPrice ?? 0)),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
+                                            child:Text(formatMoney(row.partsPrice! * row.partsQuantity!)),
                                           ),
                                         ]);
                                       }).toList(),*/
@@ -5805,14 +5805,14 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                     ),
                                     /* Padding(
                                           padding: EdgeInsets.all(8.0),
-                                          child: Text("\$${grandTotal.toStringAsFixed(2)}",style: TextStyle(
+                                          child: Text(formatMoney(grandTotal),style: TextStyle(
                                               fontWeight: FontWeight.bold)),
                                         ),*/
 
                                     /* Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                                '\$${totalAmount.toStringAsFixed(2)}'),
+                                formatMoney(totalAmount)),
                           ),*/
                                   ]);
                                 }).toList(),
@@ -5850,7 +5850,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        '\$${totalAmount.toStringAsFixed(2)}'),
+                                        formatMoney(totalAmount)),
                                   ),
                                   const Padding(
                                     padding: EdgeInsets.all(8.0),
@@ -5860,7 +5860,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                   /* Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                                '\$${totalAmount.toStringAsFixed(2)}'),
+                                formatMoney(totalAmount)),
                           ),*/
                                 ]),
                                 /*TableRow(children: [

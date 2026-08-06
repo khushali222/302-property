@@ -1334,21 +1334,21 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           Expanded(
             child: _buildSummaryCard(
               'Total Current Revenue',
-              '\$${NumberFormat('#,##0.00').format(summary.totalCurrentRevenue ?? 0)}',
+              formatMoney(summary.totalCurrentRevenue ?? 0),
             ),
           ),
           SizedBox(width: 10),
           Expanded(
             child: _buildSummaryCard(
               'Total Previous Revenue',
-              '\$${NumberFormat('#,##0.00').format(summary.totalPreviousRevenue ?? 0)}',
+              formatMoney(summary.totalPreviousRevenue ?? 0),
             ),
           ),
           SizedBox(width: 10),
           Expanded(
             child: _buildSummaryCard(
               'Change',
-              '\$${NumberFormat('#,##0.00').format(summary.totalRevenueChangeAmount ?? 0)}\n(${NumberFormat('#,##0.00').format(summary.totalRevenueChangePercentage ?? 0)}%)',
+              '${formatMoney(summary.totalRevenueChangeAmount ?? 0)}\n(${NumberFormat('#,##0.00').format(summary.totalRevenueChangePercentage ?? 0)}%)',
             ),
           ),
         ],
@@ -1536,7 +1536,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
           ),
         ),
         Text(
-          '\$${NumberFormat('#,##0.00').format(revenue)}',
+          formatMoney(revenue),
           style: TextStyle(
             fontSize: 14,
             color: blueColor,
@@ -1657,7 +1657,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '\$${NumberFormat('#,##0.00').format(changeAmount.abs())}',
+                formatMoney(changeAmount.abs()),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1909,8 +1909,8 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
 
               tableData.add([
                 property.rentalAddress ?? 'N/A',
-                '\$${NumberFormat('#,##0.00').format(currentRev)}',
-                '\$${NumberFormat('#,##0.00').format(previousRev)}',
+                formatMoney(currentRev),
+                formatMoney(previousRev),
               ]);
             }
 
@@ -1934,7 +1934,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
                 pw.Padding(
                   padding: pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    '\$${NumberFormat('#,##0.00').format(summary?.totalCurrentRevenue ?? 0)}',
+                    formatMoney(summary?.totalCurrentRevenue ?? 0),
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
@@ -1946,7 +1946,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
                 pw.Padding(
                   padding: pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    '\$${NumberFormat('#,##0.00').format(summary?.totalPreviousRevenue ?? 0)}',
+                    formatMoney(summary?.totalPreviousRevenue ?? 0),
                     textAlign: pw.TextAlign.right,
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,

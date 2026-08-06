@@ -1668,7 +1668,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                                               const SizedBox(
                                                                   height: 4),
                                                               Text(
-                                                                '\$${leaseData[0]['amount']?.toString() ?? 'N/A'}',
+                                                                leaseData[0]['amount'] != null ? formatMoney(leaseData[0]['amount']) : 'N/A',
                                                                 style:
                                                                     const TextStyle(
                                                                   fontWeight:

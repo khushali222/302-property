@@ -704,7 +704,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Text(
-            '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+            formatMoney(owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'),
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
           ),
           pw.Text('', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
@@ -866,7 +866,7 @@ class _Rent_collectionState extends State<Rent_collection> {
           '',
           '',
           '',
-          '\$${owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'}',
+          formatMoney(owner.deadBeatsSummary?.totalBalance?.toStringAsFixed(2) ?? 'N/A'),
           '',
           '',
         ]);

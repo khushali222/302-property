@@ -1214,7 +1214,7 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
                     subTextStyle),
                 _legendRow(
                     const Color.fromRGBO(40, 60, 95, 1),
-                    'Total Unpaid: \$${NumberFormat('#,##0.00').format(_totalUnpaidAmount)}',
+                    'Total Unpaid: ${formatMoney(_totalUnpaidAmount)}',
                     subTextStyle),
                 _legendRow(
                     Colors.grey.shade700,

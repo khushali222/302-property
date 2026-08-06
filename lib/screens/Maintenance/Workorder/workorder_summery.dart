@@ -1583,7 +1583,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                               fontSize: 16),
                                         ),
                                         Text(
-                                          '\$${grandTotal.toStringAsFixed(2)}',
+                                          formatMoney(grandTotal),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
@@ -1665,12 +1665,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
+                                    child: Text(formatMoney(row.partsPrice ?? 0)),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                        "\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
+                                        formatMoney(row.partsPrice! * row.partsQuantity!)),
                                   ),
                                 ]);
                               }).toList(),
@@ -1701,7 +1701,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text("\$${grandTotal.toStringAsFixed(2)}",
+                                  child: Text(formatMoney(grandTotal),
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold)),
                                 ),
@@ -2427,14 +2427,14 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                       Text('${item.partsQuantity ?? 0}', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 12)),
                                                       const SizedBox(width: 14),
                                                       const Text('Price ', style: TextStyle(color: Color(0xFF6B7A90), fontSize: 12)),
-                                                      Text('\$${(item.partsPrice ?? 0).toStringAsFixed(2)}', style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                                                      Text(formatMoney(item.partsPrice ?? 0), style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 12)),
                                                     ],
                                                   ),
                                                 ],
                                               ),
                                             ),
                                             Text(
-                                              '\$${(item.amount ?? ((item.partsPrice ?? 0) * (item.partsQuantity ?? 0))).toStringAsFixed(2)}',
+                                              formatMoney((item.amount ?? ((item.partsPrice ?? 0) * (item.partsQuantity ?? 0)))),
                                               style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 14),
                                             ),
                                           ],
@@ -2486,7 +2486,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         const Text('Total', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-                                        Text('\$${getTotalPrice(summery.partsandchargeData).toStringAsFixed(2)}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                                        Text(formatMoney(getTotalPrice(summery.partsandchargeData)), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
                                       ],
                                     ),
                                   ),
@@ -5424,11 +5424,11 @@ class PartWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '\$${(part.partsPrice ?? 0).toStringAsFixed(2)} x ${part.partsQuantity}',
+                '${formatMoney(part.partsPrice ?? 0)} x ${part.partsQuantity}',
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
               Text(
-                '\$${(part.partsPrice! * part.partsQuantity!).toStringAsFixed(2)}',
+                formatMoney(part.partsPrice! * part.partsQuantity!),
                 style: const TextStyle(fontSize: 16, color: Colors.black87),
               ),
             ],
@@ -5447,7 +5447,7 @@ class PartWidget extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               Text(
-                '\$${(part.partsPrice! * part.partsQuantity!).toStringAsFixed(2)}',
+                formatMoney(part.partsPrice! * part.partsQuantity!),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,

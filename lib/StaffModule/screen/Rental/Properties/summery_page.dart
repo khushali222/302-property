@@ -5994,7 +5994,7 @@ class _Summery_pageState extends State<Summery_page>
                                     (purchaseRental.purchasePrice == null ||
                                             purchaseRental.purchasePrice == 0)
                                         ? "N/A"
-                                        : "\$${purchaseRental.purchasePrice!.toStringAsFixed(0)}",
+                                        : formatMoneyWhole(purchaseRental.purchasePrice!),
                                     textAlign: TextAlign.right,
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.black),
@@ -6258,7 +6258,7 @@ class _Summery_pageState extends State<Summery_page>
                                                                 .insuredValue ==
                                                             0)
                                                     ? "N/A"
-                                                    : "\$${insuredValue.insuredValue!.toStringAsFixed(0)}",
+                                                    : formatMoneyWhole(insuredValue.insuredValue!),
                                                 textAlign: TextAlign.right,
                                                 style: const TextStyle(
                                                     fontSize: 14,
@@ -6424,7 +6424,7 @@ class _Summery_pageState extends State<Summery_page>
                                                             tax['tax_amount'] ==
                                                                 0)
                                                         ? "N/A"
-                                                        : "\$${tax['tax_amount'].toStringAsFixed(0)}",
+                                                        : formatMoneyWhole(tax['tax_amount']),
                                                     textAlign: TextAlign.right,
                                                     style: const TextStyle(
                                                         fontSize: 14,
@@ -18554,7 +18554,7 @@ class _Summery_pageState extends State<Summery_page>
                                                         color: blueColor)),
                                                 TextSpan(
                                                     text:
-                                                        '\$${pv.estimatedValue?.toStringAsFixed(0) ?? '—'}',
+                                                        pv.estimatedValue != null ? formatMoneyWhole(pv.estimatedValue) : '—',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w700,
@@ -22407,7 +22407,7 @@ class _SummaryLeaseInfoExpandableState
           final days = rawDays.clamp(0, 999999);
 
           final amt = l.amount != null
-              ? '\$${l.amount!.toStringAsFixed(2)}'
+              ? formatMoney(l.amount!)
               : 'N/A';
           final formattedEnd = dateProvider.formatCurrentDate(l.endDate ?? '');
 

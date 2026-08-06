@@ -246,7 +246,7 @@ class _MaintenanceTableState extends State<MaintenanceTable>
   String _formatAmount(dynamic amount) {
     if (amount == null) return '\$0.00';
     final n = amount is num ? amount.toDouble() : double.tryParse(amount.toString()) ?? 0;
-    return '\$${n.toStringAsFixed(2)}';
+    return formatMoney(n);
   }
 
   Future<void> _openAdd() async {

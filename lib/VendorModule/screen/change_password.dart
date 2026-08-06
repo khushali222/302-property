@@ -1424,6 +1424,16 @@ class _Change_passwordState extends State<Change_password> {
 
     if (responseData["statusCode"] == 200) {
       await _savePassword(password.text.trim());
+
+      // The server issues a fresh token with the password change and the old
+      // one stops working. Web stores it the same way, and StaffModule's copy
+      // of this screen already does. Without it every later request keeps
+      // using the stale token until the user logs out and back in. Guarded, so
+      // a response without the field changes nothing.
+      if (responseData["newToken"] != null) {
+        await prefs.setString('token', responseData["newToken"]);
+      }
+
       Fluttertoast.showToast(msg: responseData["message"]);
       return responseData;
     } else {

@@ -5523,10 +5523,19 @@ class _OneTimeChargePopUpState extends State<OneTimeChargePopUp> {
       setState(() {
         _isInvalid = true;
       });
+      // Carry the existing charge's entry_id so an edit UPDATES that charge
+      // instead of being saved as an additional one. This map REPLACES the
+      // loaded record in formDataOneTimeList, so leaving the key out dropped
+      // the id the save path reads (`Entry(entry_id: data['entry_id'] ?? "")`).
+      // Same shape as the recurring popup and as web, which sends
+      // `entry_id: item.entry_id || ""` for one-time and recurring alike.
+      String? id =
+          widget.initialData != null ? widget.initialData!['entry_id'] : "";
       final formData = {
         'account': _selectedProperty ?? '',
         'amount': _amountController.text.trim(),
         'memo': _memoController.text.trim(),
+        'entry_id': id ?? "",
         'charge_type': 'One Time Charge',
         'date': _chargeDateToApi(context, startDateController.text),
       };

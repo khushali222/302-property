@@ -56,11 +56,11 @@ class _PortfolioOverviewReportState extends State<PortfolioOverviewReport> {
 
   String _formatCurrency(double value) {
     if (value >= 1000000) {
-      return '\$${(value / 1000000).toStringAsFixed(2)}M';
+      return '${formatMoney(value / 1000000)}M';
     } else if (value >= 1000) {
-      return '\$${value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
+      return formatMoneyWhole(value);
     }
-    return '\$${value.toStringAsFixed(0)}';
+    return formatMoneyWhole(value);
   }
 
   String _formatPercent(double value) => '${value.toStringAsFixed(1)}%';

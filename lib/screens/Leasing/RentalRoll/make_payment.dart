@@ -131,7 +131,7 @@ class _MakePaymentState extends State<MakePayment> {
       final when = (posted.createdAt ?? '').split(' ').first;
       _showSaleAlert(
         'Already Paid',
-        'This payment of \$$amount${when.isEmpty ? '' : ' on $when'} already went '
+        'This payment of ${formatMoney(amount)}${when.isEmpty ? '' : ' on $when'} already went '
             'through — the earlier attempt succeeded even though the connection '
             'dropped. It has NOT been charged again.',
       );
@@ -180,7 +180,7 @@ class _MakePaymentState extends State<MakePayment> {
         await _reconciliation.clearPending();
         _showSaleAlert(
           'Payment Completed',
-          'The connection dropped, but the payment of \$${amount.toStringAsFixed(2)} '
+          'The connection dropped, but the payment of ${formatMoney(amount)} '
               'was processed successfully. Do not pay again.',
         );
         break;
@@ -771,7 +771,7 @@ class _MakePaymentState extends State<MakePayment> {
     'Check',
     'Cash',
     'ACH',
-    'Cashier \'s Check',
+    'Cashier\'s Check',
     'Money Order',
     'Manual'
   ];
@@ -783,7 +783,7 @@ class _MakePaymentState extends State<MakePayment> {
       'Check',
       'Cash',
       achaccepted ? 'ACH' : 'ACH (not available)',
-      'Cashier \'s Check',
+      'Cashier\'s Check',
       'Money Order',
       'Manual'
     ];
@@ -797,7 +797,7 @@ class _MakePaymentState extends State<MakePayment> {
   final List<String> _paymentMethodsforfree = [
     'Check',
     'Cash',
-    'Cashier \'s Check',
+    'Cashier\'s Check',
     'Money Order',
     'Manual'
   ];
@@ -828,7 +828,7 @@ class _MakePaymentState extends State<MakePayment> {
       showCardNumberField = _selectedPaymentMethod == 'Card';
       showCheckNumberField = _selectedPaymentMethod == 'Check';
       showACHFields = _selectedPaymentMethod == 'ACH' && achaccepted;
-      showCashiersFields = _selectedPaymentMethod == 'Cashier \'s Check';
+      showCashiersFields = _selectedPaymentMethod == 'Cashier\'s Check';
       showMoneyorderFields = _selectedPaymentMethod == 'Money Order';
       showMenualFields = _selectedPaymentMethod == 'Manual';
 
@@ -1266,10 +1266,15 @@ class _MakePaymentState extends State<MakePayment> {
             final String? overrideFee = getOverrideFee(selectedTenantId!);
             final bool enableOverrideFee =
                 getEnableOverrideFee(selectedTenantId!);
+            // WEB PARITY (AddPayment.jsx): web accepts the override whenever the
+            // flag is on and the value isn't null/undefined — a BLANK value is
+            // accepted and coerces to 0, i.e. no debit fee. Mobile used to
+            // reject blank and fall back to the company debit %, which charged
+            // the tenant a fee web wouldn't. A missing value ("null") still
+            // falls through to the debit % on both sides.
             if (enableOverrideFee &&
                 overrideFee != null &&
-                overrideFee != "null" &&
-                overrideFee.trim().isNotEmpty) {
+                overrideFee != "null") {
               surCharge = double.tryParse(overrideFee) ?? 0.0;
             } else {
               surCharge = surchargeData['surcharge_percent_debit'] != null
@@ -3120,7 +3125,7 @@ class _MakePaymentState extends State<MakePayment> {
                       Padding(
                         padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Text(
-                            'Current Balance : \$${balance.toStringAsFixed(2)}',
+                            'Current Balance : ${formatMoney(balance)}',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -3580,11 +3585,11 @@ class _MakePaymentState extends State<MakePayment> {
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice ?? 0).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice ?? 0)),
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child:Text("\$${(row.partsPrice! * row.partsQuantity!).toStringAsFixed(2)}"),
+                                                child:Text(formatMoney(row.partsPrice! * row.partsQuantity!)),
                                               ),
                                             ]);
                                           }).toList(),*/
@@ -3783,7 +3788,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                      '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                      formatMoney(totalAmount)),
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
@@ -3793,7 +3798,7 @@ class _MakePaymentState extends State<MakePayment> {
                                 /* Padding(
                                                                 padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
-                                    '\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                    formatMoney(totalAmount)),
                                                               ),*/
                               ]),
                             ],
@@ -3812,7 +3817,7 @@ class _MakePaymentState extends State<MakePayment> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child:
-                                  Text('\$${NumberFormat('#,##0.00', 'en_US').format(totalAmount)}'),
+                                  Text(formatMoney(totalAmount)),
                             ),
                           ],
                         ),
@@ -4274,7 +4279,7 @@ class _MakePaymentState extends State<MakePayment> {
                               } else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
                                   _selectedPaymentMethod ==
-                                      "Cashier 's Check") {
+                                      "Cashier's Check") {
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -4611,7 +4616,7 @@ class _MakePaymentState extends State<MakePayment> {
                               } else if (_selectedPaymentMethod == "Check" ||
                                   _selectedPaymentMethod == "Money Order" ||
                                   _selectedPaymentMethod ==
-                                      "Cashier 's Check") {
+                                      "Cashier's Check") {
                                 List<Map<String, String>> filteredTenants =
                                     tenants.where((tenant) {
                                   return tenant['tenant_id'] ==
@@ -4869,7 +4874,7 @@ class _MakePaymentState extends State<MakePayment> {
               ),
             ),
             Text(
-              '\$${amount.toStringAsFixed(2)}',
+              formatMoney(amount),
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

@@ -122,12 +122,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
               convertDateFormat(jsonData["data"]['end_date'].toString());
           countList[5] =
               convertDateFormat(jsonData["data"]['start_date'].toString());
-          countList[1] =
-              (double.tryParse(jsonData["data"]['balance'].toString()) ?? 0.0)
-                  .toStringAsFixed(2);
-          countList[1] = (double.tryParse(countList[1]) ?? 0.0) < 0
-              ? "-\$${(double.tryParse(countList[1]) ?? 0.0).abs()}"
-              : "\$${countList[1]}";
+          countList[1] = formatMoney(jsonData["data"]['balance']);
           rentCycle = jsonData["data"]['rentCycle'] ??
               'Monthly'; // Store rent cycle from API
           lease_id = jsonData["data"]['lease_id'];
@@ -471,7 +466,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           iconColor: const Color(0xFF8B4513),
           title: "Monthly Rent",
           leftLabel: "Rent Amount",
-          leftValue: "\$${countList[2]}",
+          leftValue: formatMoney(countList[2]),
           rightLabel: "Next Due Date",
           rightValue: countList[3].toString(),
           onTap: () {},
@@ -503,7 +498,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           rightLabel: "",
           rightValue: "",
           onTap: () {
-            if (permissions!.financialView) {
+            if (permissions?.financialView == true) {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => FinancialTable()),
               );
@@ -523,7 +518,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
           rightLabel: "",
           rightValue: "",
           onTap: () {
-            if (permissions!.workorderView) {
+            if (permissions?.workorderView == true) {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => WorkOrderTable()),
               );
@@ -647,36 +642,12 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
   }
 
   String _formatPaymentAmount(dynamic amount) {
-    if (amount == null) {
-      return "\$0.00";
-    }
-
-    // Handle List type - amount is already in dollars
+    // Upcoming-payment amounts arrive either as a plain value or wrapped in a
+    // single-element list; both render through the shared currency helper.
     if (amount is List) {
-      if (amount.isEmpty) {
-        return "\$0.00";
-      }
-      final value = amount[0];
-      if (value is num) {
-        return "\$${value.toStringAsFixed(2)}";
-      }
-      return "\$${double.tryParse(value.toString())?.toStringAsFixed(2) ?? '0.00'}";
+      return amount.isEmpty ? formatMoney(0) : formatMoney(amount.first);
     }
-
-    // Handle numeric types (int, double) - amount is already in dollars
-    if (amount is num) {
-      return "\$${amount.toStringAsFixed(2)}";
-    }
-
-    // Handle string type
-    if (amount is String) {
-      final parsed = double.tryParse(amount);
-      if (parsed != null) {
-        return "\$${parsed.toStringAsFixed(2)}";
-      }
-    }
-
-    return "\$0.00";
+    return formatMoney(amount);
   }
 
   Widget _buildRecentTransactions(DateProvider dateProvider) {
@@ -797,7 +768,7 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants> {
                           ),
                         ),
                         Text(
-                          "\$${(transaction['total_amount'] ?? 0).toStringAsFixed(2)}",
+                          formatMoney(transaction['total_amount']),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

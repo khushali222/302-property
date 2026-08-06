@@ -988,7 +988,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
           pw.Align(
               alignment: pw.Alignment.centerRight,
               child: pw.Text(
-                  '\$${(owner.subTotal ?? 0.0).toStringAsFixed(2)}', // Subtotal formatted to 2 decimal places
+                  formatMoney(owner.subTotal ?? 0.0), // Subtotal formatted to 2 decimal places
                   style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold, fontSize: 10),
                   textAlign: pw.TextAlign.right // Align text to the right

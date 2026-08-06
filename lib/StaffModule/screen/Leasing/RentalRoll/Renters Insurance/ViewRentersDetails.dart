@@ -126,7 +126,7 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                     : 'N/A';
                 final liability = (rentersData.liabilityCoverage != null &&
                         rentersData.liabilityCoverage! > 0)
-                    ? '\$${rentersData.liabilityCoverage!.toStringAsFixed(2)}'
+                    ? formatMoney(rentersData.liabilityCoverage!)
                     : 'N/A';
                 final hasDoc =
                     rentersData.insurancePolicyDocument?.isNotEmpty == true;

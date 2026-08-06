@@ -443,7 +443,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                   ],
                 ),
               ),
-              Text('\$$amount', style: cardTextStyle)
+              Text(formatMoney(amount), style: cardTextStyle)
             ],
           ),
           if (isExpanded)
@@ -1295,7 +1295,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
             if (originalAmount != null && parsedAmount > originalAmount) {
               Fluttertoast.showToast(
                   msg:
-                      "Refund amount cannot exceed the original payment amount of \$${originalAmount.toStringAsFixed(2)}");
+                      "Refund amount cannot exceed the original payment amount of ${formatMoney(originalAmount)}");
               return;
             }
 

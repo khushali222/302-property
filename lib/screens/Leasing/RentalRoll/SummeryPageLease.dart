@@ -1121,7 +1121,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     final value = (amount ?? 0).toDouble();
     final formatted =
         NumberFormat('#,##0.00', 'en_US').format(value.abs());
-    return value < 0 ? '(\$$formatted)' : '\$$formatted';
+    return value < 0 ? '(${formatMoney(formatted)})' : formatMoney(formatted);
   }
 
   Widget _balanceOverviewCard(dynamic lease) {

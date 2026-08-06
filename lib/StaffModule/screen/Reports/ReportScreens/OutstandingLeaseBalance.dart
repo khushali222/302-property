@@ -1029,7 +1029,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '\$${NumberFormat('#,##0.00').format(balance)}',
+                    formatMoney(balance),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -1111,7 +1111,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
 
                   // Total Balance
                   Text(
-                    '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
+                    formatMoney(item.outstandingBalance ?? 0),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -1273,7 +1273,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
+                      formatMoney(item.balance030 ?? 0),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 12,
@@ -1293,7 +1293,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
+                      formatMoney(item.balance3160 ?? 0),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 12,
@@ -1313,7 +1313,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
+                      formatMoney(item.balance6190 ?? 0),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 12,
@@ -1333,7 +1333,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerRight,
                     child: Text(
-                      '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
+                      formatMoney(item.balance90Plus ?? 0),
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 12,
@@ -1421,7 +1421,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     Text('Balance :', style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),),
                     Spacer(),
                     Text(
-                      '\$${NumberFormat('#,##0.00').format(account.amount ?? 0)}',
+                      formatMoney(account.amount ?? 0),
                       style: TextStyle(fontSize: 13, color: blueColor, fontWeight: FontWeight.bold,),
                       textAlign: TextAlign.right,
                     ),
@@ -1703,11 +1703,11 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
-                '\$${NumberFormat('#,##0.00').format(item.balance030 ?? 0)}',
-                '\$${NumberFormat('#,##0.00').format(item.balance3160 ?? 0)}',
-                '\$${NumberFormat('#,##0.00').format(item.balance6190 ?? 0)}',
-                '\$${NumberFormat('#,##0.00').format(item.balance90Plus ?? 0)}',
-                '\$${NumberFormat('#,##0.00').format(item.outstandingBalance ?? 0)}',
+                formatMoney(item.balance030 ?? 0),
+                formatMoney(item.balance3160 ?? 0),
+                formatMoney(item.balance6190 ?? 0),
+                formatMoney(item.balance90Plus ?? 0),
+                formatMoney(item.outstandingBalance ?? 0),
               ]);
 
               grandTotal030 += item.balance030 ?? 0.0;
@@ -1730,7 +1730,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                     '',
                     '',
                     '',
-                    '\$${NumberFormat('#,##0.00').format(account.amount ?? 0)}',
+                    formatMoney(account.amount ?? 0),
                   ]);
                 }
               }
@@ -1743,11 +1743,11 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
                   fontWeight: pw.FontWeight.bold,
                 ),
               ),
-              '\$${NumberFormat('#,##0.00').format(grandTotal030)}',
-              '\$${NumberFormat('#,##0.00').format(grandTotal3160)}',
-              '\$${NumberFormat('#,##0.00').format(grandTotal6190)}',
-              '\$${NumberFormat('#,##0.00').format(grandTotal90Plus)}',
-              '\$${NumberFormat('#,##0.00').format(grandTotalBalance)}',
+              formatMoney(grandTotal030),
+              formatMoney(grandTotal3160),
+              formatMoney(grandTotal6190),
+              formatMoney(grandTotal90Plus),
+              formatMoney(grandTotalBalance),
             ];
 
             return [

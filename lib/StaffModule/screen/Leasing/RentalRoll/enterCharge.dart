@@ -1002,7 +1002,7 @@ class _enterChargeState extends State<enterCharge> {
                 Text(
                   // NumberFormat never falls back to scientific
                   // notation (toStringAsFixed does for >= 1e21).
-                  '\$${intl.NumberFormat('#,##0.00', 'en_US').format(totalAmount)}',
+                  formatMoney(totalAmount),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
