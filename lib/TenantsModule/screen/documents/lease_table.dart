@@ -95,6 +95,19 @@ class _Lease_TableState extends State<Lease_Table> {
   bool ascending2 = false;
   bool ascending3 = false;
 
+  /// Money cell for the lease-documents list, mirroring DocLeases.jsx:
+  /// `value ? "$" + value : "N/A"`. JavaScript treats 0 as falsy, so a missing
+  /// value AND a zero both read as "N/A" here. Scoped to this screen — every
+  /// other screen still shows $0.00 for a genuine zero.
+  String _moneyOrNA(dynamic value) {
+    final double amount = value is num
+        ? value.toDouble()
+        : double.tryParse(
+                value?.toString().replaceAll(RegExp(r'[^0-9.-]'), '') ?? '') ??
+            0.0;
+    return amount == 0 ? 'N/A' : formatMoney(amount);
+  }
+
   // Change 1: Clean _buildHeaders() replacing the ListTile-based version
   Widget _detailRow(String label, String value, {bool isLast = false}) {
     return Padding(
@@ -154,7 +167,7 @@ class _Lease_TableState extends State<Lease_Table> {
             Expanded(
               flex: 3,
               child: Text(
-                "   Lease End",
+                " Lease End",
                 style: TextStyle(color: blueColor, fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ),
@@ -756,10 +769,15 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     child: Column(
                                                       children: [
                                                         _detailRow('Rent Cycle', '${Propertytype.rentCycle ?? 'N/A'}'),
+                                                        // WEB PARITY (DocLeases.jsx): this list shows "N/A" when a
+                                                        // figure is missing OR zero — web builds each cell as
+                                                        // `value ? "$" + value : "N/A"`, and JavaScript treats 0 as
+                                                        // falsy. Only this lease-documents list behaves that way;
+                                                        // other screens keep showing $0.00 for a genuine zero.
                                                         _detailRow('Rent',
-                                                            formatMoney(Propertytype.leaseAmount ?? 0)),
-                                                        _detailRow('Deposits Held', formatMoney(Propertytype.deposite ?? 0)),
-                                                        _detailRow('Charges', formatMoney(Propertytype.recurringCharge ?? 0)),
+                                                            _moneyOrNA(Propertytype.leaseAmount)),
+                                                        _detailRow('Deposits Held', _moneyOrNA(Propertytype.deposite)),
+                                                        _detailRow('Charges', _moneyOrNA(Propertytype.recurringCharge)),
                                                         _detailRow('Created At', Propertytype.createdAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('${Propertytype.createdAt}') : 'N/A'),
                                                         _detailRow('Updated At', Propertytype.updatedAt?.isNotEmpty == true ? dateProvider.formatCurrentDate('$formattedDate') : 'N/A', isLast: true),
                                                       ],
