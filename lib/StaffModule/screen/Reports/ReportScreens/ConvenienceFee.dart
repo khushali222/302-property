@@ -156,11 +156,66 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Failed to load payment exception data. Please try again later.';
+        errorMessage = friendlyErrorMessage(e,
+            fallbackMessage:
+                'Failed to load convenience fee data. Please try again later.');
       });
-      return [];
+      // Rethrow so the FutureBuilder reports hasError: a failed fetch must not
+      // be presented as a report that legitimately has no rows.
+      rethrow;
     }
+  }
+
+  // A fetch failure is not an empty report: show why it failed and offer a
+  // retry, instead of leaving "No Data Available" on screen.
+  Widget _reportErrorState({required VoidCallback onRetry}) {
+    return Container(
+      height: MediaQuery.of(context).size.height * .5,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.cloud_off_rounded, size: 64, color: blueColor),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                errorMessage ?? 'Something went wrong. Please try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                    fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh, size: 18, color: Colors.white),
+              label: const Text('Retry',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _retryFetch() {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+      _futureConvenienceFee = fetchConvenienceFeeReportsData();
+    });
   }
 
   double grandtotal = 0.0;
@@ -1174,6 +1229,17 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                   height: 10,
                                 ),
                                 ColabShimmerLoadingWidget(),
+                              ],
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Column(
+                              children: [
+                                filters(),
+                                _reportErrorState(onRetry: _retryFetch),
                               ],
                             ),
                           );

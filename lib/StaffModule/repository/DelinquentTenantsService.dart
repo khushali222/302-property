@@ -30,15 +30,21 @@ class DelinquentTenantsSerivce {
         final parsedJson = jsonDecode(response.body);
         final delinquentTenants = DelinquentTenantsModel.fromJson(parsedJson);
         return delinquentTenants.data ?? [];
-      } else {
-        // If the server did not return a 200 OK response, throw an exception
+      } else if (response.statusCode == 404) {
+        // The server reports an empty result set for this endpoint as a 404
+        // ("No leases found for this admin") — that is a legitimate empty
+        // report, not a failure.
         return [];
-        // throw Exception('Failed to load delinquent tenants');
+      } else {
+        // A failed request is not an empty report. Throwing lets the caller
+        // tell a real error apart from a legitimately empty result, so it can
+        // offer a retry instead of showing "No Data Available".
+        throw Exception('Failed to load delinquent tenants');
       }
     } catch (e) {
       // Handle any other exceptions
       logError('Error fetching data: $e');
-      return [];
+      rethrow;
     }
   }
 }

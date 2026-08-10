@@ -49,11 +49,14 @@ class ConvenienceFeeReportsServices {
         // return filteredData;
         return jsonData.map((data) => Data.fromJson(data)).toList();
       } else {
-        return [];
+        // A failed request is not an empty report. Throwing lets the caller
+        // tell a real error apart from a legitimately empty result, so it can
+        // offer a retry instead of showing "No Data Available".
+        throw Exception('Failed to load convenience fee reports');
       }
     } catch (error) {
       logError('Error fetching ConvenienceFee reports: $error');
-      return [];
+      rethrow;
     }
   }
 }

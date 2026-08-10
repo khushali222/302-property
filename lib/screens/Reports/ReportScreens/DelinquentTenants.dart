@@ -83,11 +83,66 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        errorMessage =
-            'Failed to load renters insurance data. Please try again later.';
+        errorMessage = friendlyErrorMessage(e,
+            fallbackMessage:
+                'Failed to load delinquent tenants data. Please try again later.');
       });
-      return [];
+      // Rethrow so the FutureBuilder reports hasError: a failed fetch must not
+      // be presented as a report that legitimately has no rows.
+      rethrow;
     }
+  }
+
+  // A fetch failure is not an empty report: show why it failed and offer a
+  // retry, instead of leaving "No Data Available" on screen.
+  Widget _reportErrorState({required VoidCallback onRetry}) {
+    return Container(
+      height: MediaQuery.of(context).size.height * .5,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.cloud_off_rounded, size: 64, color: blueColor),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                errorMessage ?? 'Something went wrong. Please try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: blueColor,
+                    fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh, size: 18, color: Colors.white),
+              label: const Text('Retry',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: blueColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _retryFetch() {
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+      _futureRentersInsurance = fetchDelinquentTenantsData();
+    });
   }
 
   List<DelinquentTenantsData> _tableData = [];
@@ -906,6 +961,8 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                           padding: const EdgeInsets.all(16.0),
                           child: ColabShimmerLoadingWidget(),
                         );
+                      } else if (snapshot.hasError) {
+                        return _reportErrorState(onRetry: _retryFetch);
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Container(
                           height: MediaQuery.of(context).size.height * .5,

@@ -31,6 +31,11 @@ class RentersInsuranceService {
         final parsedJson = jsonDecode(response.body);
         final completedWorkOrders = RentersInsuranceModel.fromJson(parsedJson);
         return completedWorkOrders.data ?? [];
+      } else if (response.statusCode == 404) {
+        // The server reports an empty result set for this endpoint as a 404
+        // ("No leases found for this admin") — that is a legitimate empty
+        // report, not a failure.
+        return [];
       } else {
         // If the server did not return a 200 OK response, throw an exception
         throw Exception('Failed to load renters insurance');
@@ -38,7 +43,9 @@ class RentersInsuranceService {
     } catch (e) {
       // Handle any other exceptions
       logError('Error fetching data: $e');
-      return [];
+      // Rethrow: swallowing here made the throw above unreachable, so a failed
+      // fetch was indistinguishable from a report with no policies.
+      rethrow;
     }
   }
 }
