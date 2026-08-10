@@ -541,196 +541,95 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             const SizedBox(
                               height: 20,
                             ),
-                            Row(
-                              children: [
-                                if (MediaQuery.of(context).size.width < 500)
-                                  const SizedBox(
-                                    width: 18,
-                                  ),
-                                if (MediaQuery.of(context).size.width > 500)
-                                  const SizedBox(
-                                    width: 25,
-                                  ),
-                                // Lease title above Summary — hidden for now, kept for future
-                                /*
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 500
-                                      ? 200
-                                      : 250,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 1),
-                                    child: Text(
-                                      '${lease.data?.rentalAddress}',
-                                      maxLines: 5,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              MediaQuery.of(context).size.width <
-                                                      500
-                                                  ? 13
-                                                  : 18,
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Icon(
+                                      Icons.arrow_back_ios_new_sharp,
+                                      size: 24,
+                                      color: blueColor,
                                     ),
                                   ),
-                                ),
-                                */
-
-                                // Container(
-                              //   width: 30,
-                              //   height: 30,
-                              //   decoration: BoxDecoration(
-                              //     color: Color(0xFFe9e9e9),
-                              //     borderRadius: BorderRadius.circular(5),
-                              //   ),
-                              //   child: PopupMenuButton(
-                              //     onSelected: (value) async {
-                              //       if (value == 'Edit') {
-                              //         final result = await Navigator.of(context)
-                              //             .push(MaterialPageRoute(
-                              //                 builder: (context) => Edit_lease(
-                              //                       leaseId: snapshot
-                              //                           .data!.data!.leaseId!,
-                              //                     )));
-                              //       }
-                              //       if (value == 'Send Mail') {
-                              //         final result = await Navigator.of(context)
-                              //             .push(MaterialPageRoute(
-                              //                 builder: (context) => send_email(
-                              //                       lease: snapshot
-                              //                           .data!.data!.tenantId!,
-                              //                       leaseID: snapshot
-                              //                           .data!.data!.leaseId!,
-                              //                     )));
-                              //       }
-                              //     },
-                              //     // horizontal three dot icon
-                              //     icon: Icon(Icons.more_horiz),
-                              //     itemBuilder: (context) => [
-                              //       PopupMenuItem(
-                              //         value: 'Edit',
-                              //         child: Text('Edit'),
-                              //       ),
-                              //       PopupMenuItem(
-                              //         value: 'Send Mail',
-                              //         child: Text('Send Mail'),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // )
-                              // Text('${snapshot.data!.data!.rentalAddress}',
-                              //     style: TextStyle(
-                              //         color: blueColor,
-                              //         fontWeight: FontWeight.bold,
-                              //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
-                            ],
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Row(
-                              children: [
-                                // Status above Summary — hidden for now, kept for future
-                                /*
-                                Text(
-                                  '${determineStatus(lease.data?.startDate, lease.data?.endDate)} ${lease.data?.renewLeases != null && lease.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
-                                  style: TextStyle(
-                                    color: _getStatusColor(determineStatus(
-                                        lease.data?.startDate,
-                                        lease.data?.endDate)),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 16,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Lease',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                                */
-                                const Spacer(),
-                                PopupMenuButton<String>(
-                                  offset: const Offset(5, 40),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => send_email(
+                                                    lease: lease.data!.tenantId!,
+                                                    leaseID: lease.data!.leaseId!,
+                                                  )));
+                                    },
+                                    child: Container(
+                                      height: 38,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
+                                        "Send Mail",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  color: Colors.white,
-                                  elevation: 8,
-                                  onSelected: (String value) async {
-                                    if (value == 'edit') {
-                                      // Provider.of<SelectedTenantsProvider>(context,
-                                      //     listen: false)
-                                      //     .clearTenant();
-                                      // Provider.of<SelectedCosignersProvider>(context,
-                                      //     listen: false)
-                                      //     .clearCosigner();
-                                      // Provider.of<SelectedApplicantProvider>(context,
-                                      //     listen: false)
-                                      //     .clearApplicant();
-                                      final result = await Navigator.push(
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => Edit_lease(
-                                                    //lease: lease,
-                                                    leaseId: lease
-                                                        .data!.leaseId!,
+                                                    leaseId: lease.data!.leaseId!,
                                                   )));
-                                    } else if (value == 'send_mail') {
-                                      final result = await Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => send_email(
-                                                    lease: lease
-                                                        .data!.tenantId!,
-                                                    leaseID: lease
-                                                        .data!.leaseId!,
-                                                  )));
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) => [
-                                    PopupMenuItem<String>(
-                                      value: 'edit',
-                                      height: 40,
-                                      child: const Text(
-                                        'Edit',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    PopupMenuItem<String>(
-                                      value: 'send_mail',
-                                      height: 40,
-                                      child: const Text(
-                                        'Send Mail',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                  child:
-                                      // transform the icon to 90 degree to the below container
-
-                                      Container(
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.24),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Transform.rotate(
-                                      angle: 3.14 / 2,
-                                      child: Icon(
-                                        Icons.more_vert,
+                                    },
+                                    child: Container(
+                                      height: 38,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
                                         color: blueColor,
-                                        size: 23,
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
+                                        "Edit",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
                           const SizedBox(
                             height: 10,
                           ),

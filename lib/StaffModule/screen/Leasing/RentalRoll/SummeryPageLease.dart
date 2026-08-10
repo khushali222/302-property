@@ -422,172 +422,95 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             const SizedBox(
                               height: 20,
                             ),
-                            Row(
-                              children: [
-                                if (MediaQuery.of(context).size.width < 500)
-                                  const SizedBox(
-                                    width: 18,
-                                  ),
-                                if (MediaQuery.of(context).size.width > 500)
-                                  const SizedBox(
-                                    width: 25,
-                                  ),
-                                // Lease title above Summary — hidden for now, kept for future
-                                /*
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width > 500
-                                      ? 200
-                                      : 180,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 1),
-                                    child: Text(
-                                      '${snapshot.data?.data?.rentalAddress}',
-                                      maxLines: 5,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize:
-                                              MediaQuery.of(context).size.width <
-                                                      500
-                                                  ? 13
-                                                  : 18,
-                                          color: blueColor,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                */
-                                // Text('${snapshot.data!.data!.rentalAddress}',
-                              //     style: TextStyle(
-                              //         color: blueColor,
-                              //         fontWeight: FontWeight.bold,
-                              //       fontSize:   MediaQuery.of(context).size.width < 500 ? 15 :18)),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18.0),
-                            child: Row(
-                              children: [
-                                // Status above Summary — hidden for now, kept for future
-                                /*
-                                Text(
-                                  '${determineStatus(snapshot.data?.data?.startDate, snapshot.data?.data?.endDate)} ${snapshot.data?.data?.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty ? " - Renewed" : ""}',
-                                  style: TextStyle(
-                                    color: _getStatusColor(determineStatus(
-                                        snapshot.data?.data?.startDate,
-                                        snapshot.data?.data?.endDate)),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width < 500
-                                            ? 13
-                                            : 16,
-                                  ),
-                                ),
-                                */
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () async {
-                                    // Provider.of<SelectedTenantsProvider>(context,
-                                    //     listen: false)
-                                    //     .clearTenant();
-                                    // Provider.of<SelectedCosignersProvider>(context,
-                                    //     listen: false)
-                                    //     .clearCosigner();
-                                    // Provider.of<SelectedApplicantProvider>(context,
-                                    //     listen: false)
-                                    //     .clearApplicant();
-                                    final result = await Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (context) => send_email(
-                                                lease: snapshot
-                                                    .data!.data!.tenantId!)));
-                                  },
-                                  child: Container(
-                                    height: (MediaQuery.of(context).size.width <
-                                            500)
-                                        ? 35
-                                        : MediaQuery.of(context).size.width *
-                                            0.063,
-                                    width: 100,
-                                    decoration: BoxDecoration(
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0),
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Icon(
+                                      Icons.arrow_back_ios_new_sharp,
+                                      size: 24,
                                       color: blueColor,
-                                      borderRadius: BorderRadius.circular(5),
                                     ),
-                                    child: Center(
-                                      child: Text(
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Lease',
+                                      style: TextStyle(
+                                        color: blueColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => send_email(
+                                                  lease: snapshot
+                                                      .data!.data!.tenantId!)));
+                                    },
+                                    child: Container(
+                                      height: 38,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
                                         "Send Mail",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 22,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    // Provider.of<SelectedTenantsProvider>(context,
-                                    //     listen: false)
-                                    //     .clearTenant();
-                                    // Provider.of<SelectedCosignersProvider>(context,
-                                    //     listen: false)
-                                    //     .clearCosigner();
-                                    // Provider.of<SelectedApplicantProvider>(context,
-                                    //     listen: false)
-                                    //     .clearApplicant();
-                                    final result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Edit_lease(
-                                                  //lease: lease,
-                                                  leaseId: snapshot
-                                                      .data!.data!.leaseId!,
-                                                )));
-                                    ;
-                                  },
-                                  child: Container(
-                                    height: (MediaQuery.of(context).size.width <
-                                            500)
-                                        ? 35
-                                        : MediaQuery.of(context).size.width *
-                                            0.063,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                      color: blueColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text(
+                                  const SizedBox(width: 8),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Edit_lease(
+                                                    leaseId: snapshot
+                                                        .data!.data!.leaseId!,
+                                                  )));
+                                    },
+                                    child: Container(
+                                      height: 38,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        color: blueColor,
+                                        borderRadius:
+                                            BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
                                         "Edit",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width <
-                                                  500
-                                              ? 14
-                                              : 22,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
                           const SizedBox(
                             height: 10,
                           ),

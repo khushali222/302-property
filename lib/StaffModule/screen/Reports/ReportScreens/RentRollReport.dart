@@ -827,9 +827,15 @@ class _RentersInsurancesState extends State<RentersInsurances> {
     if (selectedOwners.isEmpty || selectedOwners.contains("all")) {
       rentalOwer = "All";
     } else if (selectedOwners.length == 1) {
-      var Ower = rentalowners
-          .firstWhere((test) => test["rentalowner_id"] == selectedOwners.first);
-      rentalOwer = Ower["rentalOwner_name"];
+      // Mirrors the multi-owner branch below: the owner list may not contain
+      // the selected id (list still loading, owner deleted or reassigned), and
+      // an unguarded firstWhere threw out of the PDF build, leaving the export
+      // to end with no file and no message. Fall back to the id, as below.
+      var Ower = rentalowners.firstWhere(
+        (test) => test["rentalowner_id"] == selectedOwners.first,
+        orElse: () => <String, dynamic>{},
+      );
+      rentalOwer = Ower["rentalOwner_name"] ?? selectedOwners.first;
     } else {
       // Multiple owners selected - show comma-separated list
       rentalOwer = selectedOwners.map((id) {
