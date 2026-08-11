@@ -36,14 +36,20 @@ class RentalOwnerReportService {
 
         // If the response is a list of RentalOwnerReport objects, map them to the model class
         return jsonData.map((data) => RentalOwnerReport.fromJson(data)).toList();
-      } else {
-        // Handle error response
+      } else if (response.statusCode == 202) {
+        // The server answers 202 ("No Rental Owner Selected") when no owner is
+        // chosen yet — that is an empty report to show, not a failure.
         return [];
+      } else {
+        // A failed request is not an empty report. Throwing lets the caller
+        // tell a real error apart from a legitimately empty result, so it can
+        // offer a retry instead of showing "No Data Available".
+        throw Exception('Failed to load rental owner report');
       }
     } catch (error) {
       // Handle error during fetch
       logError('Error fetching rental owner reports: $error');
-      return [];
+      rethrow;
     }
   }
 }

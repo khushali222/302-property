@@ -55,6 +55,14 @@ import 'Notes/Notes_table.dart';
 import 'edit_lease.dart';
 import 'make_payment.dart';
 import 'RecurringChargeDialog.dart';
+// Lease → Tenants card actions (View Details / Edit / 2FA / setup email).
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:three_zero_two_property/repository/tenants.dart';
+// Prefixed: this screen declares a section-builder METHOD named Tenant(...)
+// which shadows the model class inside the State.
+import 'package:three_zero_two_property/Model/tenants.dart' as tenant_model;
+import 'package:three_zero_two_property/screens/Rental/Tenants/Tenant_summary.dart'
+    show ResponsiveTenantSummary;
 
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
@@ -66,6 +74,7 @@ class SummeryPageLease extends StatefulWidget {
   /// A title is used rather than an index so the deep link keeps working if the
   /// tab order ever changes.
   final String? initialTabTitle;
+
   SummeryPageLease(
       {super.key,
       required this.leaseId,
@@ -165,6 +174,188 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   List<LeaseTenant> leaseTenants = [];
+
+
+  // ── Lease → Tenants card actions ──────────────────────────────────────────
+  // WEB PARITY (LeaseTenantsTab.jsx renders TenantCardWithActions): each tenant
+  // card carries a kebab menu beside Move out with View Details / Edit /
+  // Enable-Disable 2FA / Send account setup email.
+  // 2FA state is cached per tenant so the label reflects reality once known;
+  // before that it reads "Enable 2FA", matching web's default prior to its own
+  // lazy status fetch.
+  final Map<String, bool> _leaseTenant2Fa = {};
+  final Set<String> _leaseTenantBusy = {};
+
+
+  // Admins always hold the tenant-edit right (web: canEdit = admin || ...).
+  bool get _canEditLeaseTenant => true;
+
+  Future<void> _viewLeaseTenantDetails(String tenantId) async {
+    if (tenantId.isEmpty || _leaseTenantBusy.contains(tenantId)) return;
+    // The summary's header renders from the passed record
+    // (`widget.tenants?.tenantFirstName ?? 'Loading...'`), so opening it with
+    // only an id leaves the name stuck on "Loading...". Load the full record
+    // first, exactly as the Edit action does.
+    setState(() => _leaseTenantBusy.add(tenantId));
+    final List<tenant_model.Tenant> data =
+        await TenantsRepository().fetchTenantsummery(tenantId) ?? [];
+    if (!mounted) return;
+    setState(() => _leaseTenantBusy.remove(tenantId));
+    // Web keeps this sub-tab inside the tenant page, so switching tenants there
+    // never leaves the lease behind. Mobile's lease is its own screen, so we
+    // PUSH rather than replace: back returns to the lease with every tenant
+    // card still there, which is what makes viewing a second tenant practical.
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ResponsiveTenantSummary(
+              tenantId: tenantId,
+              tenants: data.isNotEmpty ? data.first : null,
+            )));
+  }
+
+  // Web's Edit opens the tenant's own page (in edit mode) rather than a
+  // separate form, so mobile lands on the same tenant screen and the user
+  // edits from there. Opening the edit form directly from here is deliberately
+  // avoided — it would bypass the tenant page the web flow goes through.
+  Future<void> _editLeaseTenant(String tenantId) async {
+    await _viewLeaseTenantDetails(tenantId);
+  }
+
+  Future<void> _sendLeaseTenantSetupEmail(LeaseTenant t) async {
+    if (t.tenantId.isEmpty || _leaseTenantBusy.contains(t.tenantId)) return;
+    if (t.tenantEmail.trim().isEmpty) {
+      Fluttertoast.showToast(msg: 'Tenant has no email on file.');
+      return;
+    }
+    setState(() => _leaseTenantBusy.add(t.tenantId));
+    final ok = await TenantsRepository().sendSetupEmail(t.tenantId);
+    if (!mounted) return;
+    setState(() => _leaseTenantBusy.remove(t.tenantId));
+    Fluttertoast.showToast(
+        msg: ok ? 'Account setup email sent.' : 'Could not send the email.');
+  }
+
+  Future<void> _toggleLeaseTenant2Fa(LeaseTenant t) async {
+    if (t.tenantId.isEmpty || _leaseTenantBusy.contains(t.tenantId)) return;
+    final bool enable = !(_leaseTenant2Fa[t.tenantId] ?? false);
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        title: Text(enable ? 'Enable 2FA' : 'Disable 2FA',
+            style: TextStyle(color: blueColor, fontWeight: FontWeight.bold)),
+        content: Text(
+            '${enable ? 'Enable' : 'Disable'} two-factor authentication for '
+            '${t.tenantFirstName} ${t.tenantLastName}?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text('Cancel', style: TextStyle(color: blueColor))),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(enable ? 'Enable' : 'Disable',
+                  style: TextStyle(
+                      color: blueColor, fontWeight: FontWeight.bold))),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    setState(() => _leaseTenantBusy.add(t.tenantId));
+    final ok = await TenantsRepository().setTenant2FA(
+      tenantId: t.tenantId,
+      enable: enable,
+      email: t.tenantEmail,
+      phoneNumber: t.tenantPhoneNumber,
+    );
+    if (!mounted) return;
+    setState(() {
+      _leaseTenantBusy.remove(t.tenantId);
+      if (ok) _leaseTenant2Fa[t.tenantId] = enable;
+    });
+    Fluttertoast.showToast(
+        msg: ok
+            ? (enable ? '2FA enabled.' : '2FA disabled.')
+            : 'Could not update 2FA.');
+  }
+
+  // Lazily learn the tenant's current 2FA state so the menu label is truthful,
+  // the same way web's card fetches the status per tenant. Cached per id; the
+  // first open may briefly show the default "Enable 2FA", correcting itself.
+  Future<void> _loadLeaseTenant2Fa(String tenantId) async {
+    if (tenantId.isEmpty || _leaseTenant2Fa.containsKey(tenantId)) return;
+    final List<tenant_model.Tenant> data =
+        await TenantsRepository().fetchTenantsummery(tenantId) ?? [];
+    if (!mounted || data.isEmpty) return;
+    setState(() => _leaseTenant2Fa[tenantId] = data.first.twoFactorEnabled);
+  }
+
+  Widget _leaseTenantActionsMenu(LeaseTenant t) {
+    final bool twoFaOn = _leaseTenant2Fa[t.tenantId] ?? false;
+    // WEB PARITY (useTenantActions.jsx): Edit needs the edit permission
+    // (admins always have it), 2FA and the setup email are hidden on trial
+    // accounts, and the setup email needs an email on file. Delete is hidden
+    // on this screen because the lease tab passes no delete handler on web.
+    final bool isTrial = t.adminId == "is_trial";
+    final bool hasEmail = (t.tenantEmail).trim().isNotEmpty;
+    return PopupMenuButton<String>(
+      tooltip: 'Actions',
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      padding: EdgeInsets.zero,
+      icon: Icon(Icons.more_vert, size: 20, color: blueColor),
+      onSelected: (value) {
+        switch (value) {
+          case 'view':
+            _viewLeaseTenantDetails(t.tenantId);
+            break;
+          case 'edit':
+            _editLeaseTenant(t.tenantId);
+            break;
+          case '2fa':
+            _toggleLeaseTenant2Fa(t);
+            break;
+          case 'setup':
+            _sendLeaseTenantSetupEmail(t);
+            break;
+        }
+      },
+      itemBuilder: (_) {
+        _loadLeaseTenant2Fa(t.tenantId);
+        return [
+          _leaseTenantMenuItem('view', Icons.remove_red_eye_outlined,
+              'View Details', const Color(0xFF152B51)),
+          if (_canEditLeaseTenant)
+            _leaseTenantMenuItem(
+                'edit', Icons.edit_outlined, 'Edit', const Color(0xFF2E7D32)),
+          if (!isTrial)
+            _leaseTenantMenuItem('2fa', Icons.shield_outlined,
+                twoFaOn ? 'Disable 2FA' : 'Enable 2FA', const Color(0xFF152B51)),
+          if (!isTrial && hasEmail)
+            _leaseTenantMenuItem('setup', Icons.mail_outline,
+                'Send account setup email', const Color(0xFF152B51)),
+        ];
+      },
+    );
+  }
+
+  PopupMenuItem<String> _leaseTenantMenuItem(
+      String value, IconData icon, String label, Color iconColor) {
+    return PopupMenuItem<String>(
+      value: value,
+      height: 42,
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: iconColor),
+          const SizedBox(width: 10),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 14,
+                  color: blueColor,
+                  fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
 
   void fetchLeaseTenants() async {
     try {
@@ -4469,6 +4660,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                               ],
                                             ),
                                           ),
+                                          _leaseTenantActionsMenu(
+                                              snapshot.data![index]),
                                         ],
                                       ),
                                       const SizedBox(height: 20),
@@ -4728,6 +4921,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                     ],
                                                   ),
                                                 ),
+                                              _leaseTenantActionsMenu(
+                                                  snapshot.data![index]),
                                               //   if(isMovedOut || status == 'Expired')
                                               if (snapshot.data![index]
                                                       .moveoutDate !=

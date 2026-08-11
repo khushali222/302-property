@@ -87,11 +87,14 @@ class PaymentExceptionReportsServices {
         final List<dynamic> jsonData = json.decode(response.body)["data"];
         return jsonData.map((data) => Data.fromJson(data)).toList();
       } else {
-        return [];
+        // A failed request is not an empty report. Throwing lets the caller
+        // tell a real error apart from a legitimately empty result, so it can
+        // offer a retry instead of showing "No Data Available".
+        throw Exception('Failed to load payment exception report');
       }
     } catch (error) {
       logError('Error fetching Payment Exception reports: $error');
-      return [];
+      rethrow;
     }
   }
 }

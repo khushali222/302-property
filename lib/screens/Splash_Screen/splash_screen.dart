@@ -16,6 +16,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:three_zero_two_property/StaffModule/repository/staffpermission_provider.dart';
 import 'package:three_zero_two_property/StaffModule/screen/dashboard.dart';
 import 'package:three_zero_two_property/TenantsModule/screen/dashboard.dart';
+import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/screens/Dashboard/dashboard_one.dart';
 import '../../TenantsModule/repository/permission_provider.dart';
@@ -349,9 +352,103 @@ class _SplashScreenState extends State<SplashScreen> {
     // }
     // ──────────────────────────────────────────────────────────
 
+
+  /// Re-verify the stored session with the server before routing.
+  ///
+  /// WEB PARITY (Functions.js `verifyToken` → `alertAndLogin`): web re-checks
+  /// the session on load and, when the server rejects it, clears that role's
+  /// cookies and returns the user to login. Mobile only read the local
+  /// `isAuthenticated` flag, so a session the server had ALREADY refused — for
+  /// example after the password was changed on web — still opened the dashboard
+  /// (CRM-4675, reproduced on all four roles).
+  ///
+  /// The server answers such a rejection as **HTTP 200 with statusCode 401 in
+  /// the BODY** (`Login.js`: "Password has been changed. Please login again."),
+  /// so the body has to be read — the HTTP status on its own looks like success.
+  ///
+  /// Returns the server's message when the session is rejected, otherwise null.
+  /// Only an explicit rejection counts: a network failure, a timeout or an
+  /// unreadable reply returns null and the launch continues as before, so poor
+  /// connectivity can never lock a signed-in user out of the app.
+  Future<String?> _rejectedSessionMessage(String role) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('token');
+      debugPrint('CRM4675: role=$role token=${token == null ? "NULL" : "present(${token.length} chars)"}');
+      if (token == null || token.isEmpty) return null;
+
+      // /api/auth expects the caller's OWN id in the `id` header — adminId
+      // resolves the wrong user branch for non-admin roles (same contract the
+      // login screen follows per role).
+      final String? ownId = role == "Admin"
+          ? prefs.getString('adminId')
+          : role == "Staffmember"
+              ? prefs.getString('staff_id')
+              : role == "Tenant"
+                  ? prefs.getString('tenant_id')
+                  : role == "Vendor"
+                      ? prefs.getString('vendor_id')
+                      : null;
+      debugPrint('CRM4675: ownId=$ownId');
+      if (ownId == null || ownId.isEmpty) return null;
+
+      debugPrint('CRM4675: calling ${Api_url}/api/auth');
+      final response = await apiPost(
+        Uri.parse('${Api_url}/api/auth'),
+        headers: {
+          "authorization": "CRM $token",
+          "id": "CRM $ownId",
+          "Content-Type": "application/json"
+        },
+        body: json.encode({"token": token}),
+      ).timeout(const Duration(seconds: 12));
+
+      debugPrint('CRM4675: response status=${response.statusCode} body=${response.body}');
+      final dynamic body = json.decode(response.body);
+      if (body is Map && body['statusCode'] == 401) {
+        return body['message']?.toString() ??
+            "Session expired. Please login again.";
+      }
+      return null;
+    } catch (e, st) {
+      // Unreachable server / non-JSON reply / timeout — keep the session.
+      debugPrint('CRM4675: exception $e');
+      return null;
+    }
+  }
+
+  /// Mirrors the login screen's `_clearFailedSession`: drop the session keys so
+  /// the next launch cannot walk back into the dashboard. Remember-Me values
+  /// (`savedEmail`/`savedPassword`) are deliberately kept, as web keeps them.
+  Future<void> _clearRejectedSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isAuthenticated');
+    await prefs.remove('token');
+    await prefs.remove('checkedToken');
+    await prefs.remove('userId');
+  }
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
     String role = prefs.getString("role") ??"";
+
+    // CRM-4675: ask the server whether this session is still valid before any
+    // role branch routes to a dashboard. One check covers all four roles.
+    debugPrint('CRM4675: isAuthenticated=$isAuthenticated role=$role');
+    if (isAuthenticated && role.isNotEmpty) {
+      final String? rejection = await _rejectedSessionMessage(role);
+      debugPrint('CRM4675: rejection=$rejection');
+      if (rejection != null) {
+        await _clearRejectedSession();
+        if (!mounted) return;
+        Fluttertoast.showToast(msg: rejection);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login_Screen()),
+        );
+        return;
+      }
+    }
     if(role != ""){
       final dateProvider = Provider.of<DateProvider>(context,listen: false);
 

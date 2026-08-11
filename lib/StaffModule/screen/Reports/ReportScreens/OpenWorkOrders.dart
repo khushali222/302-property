@@ -1598,13 +1598,19 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
 
                         var data = snapshot.data!;
 
-                        // Apply filtering based on selectedValue and searchvalue
-                        if (selectedValue == null && searchvalue.isEmpty) {
-                          data = snapshot.data!;
-                        } else if (selectedValue == "All") {
-                          data = snapshot.data!;
-                        } else if (searchvalue.isNotEmpty) {
-                          data = snapshot.data!
+                        // Filter CUMULATIVELY: narrow by the selected value
+                        // first (when one is chosen and it isn't "All"), then
+                        // search what remains. These used to be exclusive
+                        // else-if branches, so a search silently discarded the
+                        // selection (and "All" discarded the search).
+                        if (selectedValue != null && selectedValue != "All") {
+                          data = data
+                              .where((workOrder) =>
+                                  workOrder.workSubject == selectedValue)
+                              .toList();
+                        }
+                        if (searchvalue.isNotEmpty) {
+                          data = data
                               .where((workOrder) =>
                                   (workOrder.workSubject ?? '')
                                       .toLowerCase()
@@ -1612,11 +1618,6 @@ class _OpenWorkOrdersState extends State<OpenWorkOrders> {
                                   (workOrder.rentalAddress ?? '')
                                       .toLowerCase()
                                       .contains(searchvalue.toLowerCase()))
-                              .toList();
-                        } else {
-                          data = snapshot.data!
-                              .where((workOrder) =>
-                                  workOrder.workSubject == selectedValue)
                               .toList();
                         }
 

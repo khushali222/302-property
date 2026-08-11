@@ -38,13 +38,15 @@ class AccountTotalsReportsServices {
         return jsonData.map((data) => AccountTotalsReport.fromJson(data)).toList();
 
       } else {
-        // Handle error response
-        return [];
+        // A failed request is not an empty report. Throwing lets the caller
+        // tell a real error apart from a legitimately empty result, so it can
+        // offer a retry instead of showing "No Data Available".
+        throw Exception('Failed to load account totals report');
       }
     } catch (error) {
       // Handle error during fetch
       logError('Error fetching rental owner reports: $error');
-      return [];
+      rethrow;
     }
   }
 }

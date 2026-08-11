@@ -163,7 +163,7 @@ class AccountTotalsReport {
     List<Payment> paymentList = paymentsFromJson.map((i) => Payment.fromJson(i)).toList();
     return AccountTotalsReport(
       id: json['_id']??"",
-      rentalOwnerName: json['rentalOwner_name'],
+      rentalOwnerName: json['rentalOwner_name'] ?? '',
       // asDouble (constant.dart): a malformed value becomes 0.0 instead of
       // throwing and blanking the whole report via the repo's catch.
       subTotal: asDouble(json['sub_total']),

@@ -883,24 +883,15 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         ),
                       );
                     } else {
+                      // Status and search are CUMULATIVE: status narrows the
+                      // list first, then the search runs over what remains.
+                      // These used to be exclusive else-if branches, so a search
+                      // silently discarded the selected status (and "All"
+                      // discarded the search).
                       var data = snapshot.data!;
-                      if (selectedValue == null && searchvalue!.isEmpty) {
-                        data = snapshot.data!;
-                      } else if (selectedValue == "All") {
-                        data = snapshot.data!;
-                      } else if (searchvalue!.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((property) =>
-                                (property.workSubject ?? '')
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()) ||
-                                (property.rentalData?.rentalAddress ?? '')
-                                    .toLowerCase()
-                                    .contains(searchvalue!.toLowerCase()))
-                            .toList();
-                      } else {
+                      if (selectedValue != null && selectedValue != "All") {
                         if (selectedValue == "Over Due") {
-                          data = snapshot.data!.where((element) {
+                          data = data.where((element) {
                             try {
                               if (element.date == null ||
                                   element.date!.isEmpty) {
@@ -918,11 +909,22 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                             }
                           }).toList();
                         } else {
-                          data = snapshot.data!
-                              .where((property) =>
-                                  property.status == selectedValue)
+                          data = data
+                              .where(
+                                  (property) => property.status == selectedValue)
                               .toList();
                         }
+                      }
+                      if (searchvalue!.isNotEmpty) {
+                        data = data
+                            .where((property) =>
+                                (property.workSubject ?? '')
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()) ||
+                                (property.rentalData?.rentalAddress ?? '')
+                                    .toLowerCase()
+                                    .contains(searchvalue!.toLowerCase()))
+                            .toList();
                       }
                       if (data.length == 0) {
                         return SingleChildScrollView(

@@ -1008,14 +1008,33 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       ),
                     );
                   } else {
+                    // Status and search are CUMULATIVE: status narrows the
+                    // list first, then the search runs over what remains. These
+                    // used to be exclusive else-if branches, so a search silently
+                    // discarded the selected status (and "All" discarded the
+                    // search).
                     var data = snapshot.data!;
-                    if (selectedValue == null && searchvalue!.isEmpty) {
-                      data = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      data = snapshot.data!;
-                    } else if (searchvalue!.isNotEmpty) {
-                      //    print(snapshot.data!.length);
-                      data = snapshot.data!
+                    if (selectedValue != null && selectedValue != "All") {
+                      if (selectedValue == "Over Due") {
+                        data = data.where((element) {
+                          if (element.date == null) return false;
+                          final DateTime dueDate =
+                              parseDate(element.date.toString());
+                          final bool isOverDue =
+                              dueDate.isBefore(DateTime.now());
+                          final bool isNotCompleted =
+                              element.status != "Completed" &&
+                                  element.status != "Complete";
+                          return isOverDue && isNotCompleted;
+                        }).toList();
+                      } else {
+                        data = data
+                            .where((property) => property.status == selectedValue)
+                            .toList();
+                      }
+                    }
+                    if (searchvalue!.isNotEmpty) {
+                      data = data
                           .where((workorder) =>
                       (workorder.workSubject?.toLowerCase() ?? '')
                           .contains(searchvalue!.toLowerCase()) ||
@@ -1037,30 +1056,6 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                           (workorder.staffMemberName?.toLowerCase() ?? '')
                               .contains(searchvalue.toLowerCase()))
                           .toList();
-                    } else {
-                      if (selectedValue == "Over Due") {
-                        data = snapshot.data!.where((element) {
-                          // Check if date is null
-                          if (element.date == null) {
-                            return false; // Include this element without filtering by date
-                          }
-
-                          DateTime dueDate =
-                          parseDate(element.date.toString());
-                          bool isOverDue =
-                          dueDate.isBefore(DateTime.now());
-                          bool isNotCompleted =
-                              element.status != "Completed" &&
-                                  element.status != "Complete";
-
-                          return isOverDue && isNotCompleted;
-                        }).toList();
-                      } else {
-                        data = snapshot.data!
-                            .where((property) =>
-                        property.status == selectedValue)
-                            .toList();
-                      }
                     }
 
                     data = data.reversed.toList();
@@ -1657,25 +1652,25 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                       ),
                     );
                   } else {
+                    // Status and search are CUMULATIVE: narrow by status first
+                    // (when one is chosen and it isn't "All"), then search what
+                    // remains. They used to sit in exclusive else-if branches,
+                    // so typing a search silently dropped the chosen status.
                     _tableData = snapshot.data!;
-                    if (selectedValue == null && searchvalue.isEmpty) {
-                      _tableData = snapshot.data!;
-                    } else if (selectedValue == "All") {
-                      _tableData = snapshot.data!;
-                    } else if (searchvalue.isNotEmpty) {
-                      _tableData = snapshot.data!
-                          .where((property) =>
-                      property.workSubject!
-                          .toLowerCase()
-                          .contains(searchvalue.toLowerCase()) ||
-                          property.rentalAddress!
-                              .toLowerCase()
-                              .contains(searchvalue.toLowerCase()))
+                    if (selectedValue != null && selectedValue != "All") {
+                      _tableData = _tableData
+                          .where((property) => property.status == selectedValue)
                           .toList();
-                    } else {
-                      _tableData = snapshot.data!
+                    }
+                    if (searchvalue.isNotEmpty) {
+                      _tableData = _tableData
                           .where((property) =>
-                      property.status == selectedValue)
+                              (property.workSubject ?? '')
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()) ||
+                              (property.rentalAddress ?? '')
+                                  .toLowerCase()
+                                  .contains(searchvalue.toLowerCase()))
                           .toList();
                     }
                     totalrecords = _tableData.length;

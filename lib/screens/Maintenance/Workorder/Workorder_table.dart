@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import '../../../widgets/no_internet_view.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
@@ -891,29 +892,19 @@ class _Workorder_tableState extends State<Workorder_table> {
   final _scrollController = ScrollController();
 
   Widget _noInternetBody() {
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Lottie.asset(
-            'assets/no_internet.json',
-            width: 200,
-            height: 200,
-            fit: BoxFit.fill,
-          ),
-          const Text(
-            'No Internet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const Text(
-            'Check your internet connection',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-        ],
-      ),
-    );
+    return NoInternetView(onRetry: _retryAfterOffline);
+  }
+
+  // Swipe-down on the offline state: re-check the connection first, then let
+  // the screen load itself again. Nothing to load while still offline.
+  Future<void> _retryAfterOffline() async {
+    var connectiondata = await Connectivity().checkConnectivity();
+    if (!mounted) return;
+    setState(() {
+      _connectivityResult = connectiondata;
+    });
+    if (connectiondata == ConnectivityResult.none) return;
+    await _loadWorkOrders();
   }
 
   Widget build(BuildContext context) {
