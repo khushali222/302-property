@@ -1143,18 +1143,15 @@ class _FinancialTableState extends State<FinancialTable> {
                                                             child: Text(
                                                               // Shared helper
                                                               // (constant.dart
-                                                              // formatMoney):
+                                                              // formatMoney-
+                                                              // Accounting):
                                                               // grouped en-US
                                                               // currency, with
                                                               // a credit shown
-                                                              // as -$1,234.56.
-                                                              Tenant_financial
-                                                                          .balance! <
-                                                                      0
-                                                                  ? '-${formatMoney(Tenant_financial.balance!.abs())}'
-                                                                  : formatMoney(
-                                                                      Tenant_financial
-                                                                          .balance!),
+                                                              // as ($1,234.56).
+                                                              formatMoneyAccounting(
+                                                                  Tenant_financial
+                                                                      .balance!),
                                                               style: TextStyle(
                                                                 color:
                                                                     blueColor,
@@ -2001,10 +1998,9 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                   child: Text(
                                                                     _pagedData[i].balance !=
                                                                             null
-                                                                        ? (_pagedData[i].balance! <
-                                                                                0
-                                                                            ? '-${formatMoney(_pagedData[i].balance!.abs())}'
-                                                                            : formatMoney(_pagedData[i].balance!))
+                                                                        ? formatMoneyAccounting(
+                                                                            _pagedData[i]
+                                                                                .balance!)
                                                                         : 'N/A',
                                                                     style:
                                                                         TextStyle(

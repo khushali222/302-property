@@ -532,6 +532,55 @@ String formatMoney(dynamic amount) {
   return formatCurrency(double.tryParse(cleaned) ?? 0.0);
 }
 
+/// Accounting-style variant of [formatMoney] — a negative renders in
+/// parentheses ("(\$110.00)") instead of with a minus sign ("-\$110.00").
+///
+/// Mirrors the web app's shared `currencyFormatter` (plugins/helpers.jsx),
+/// which is built with `currencySign: "accounting"`. Web uses it for every
+/// money cell in a table, list or export, so use this wherever a figure sits
+/// in a column.
+///
+/// The two balance *badges* — Tenant Summary and the lease Financial tab —
+/// deliberately append the word "Credit" on top of this shape
+/// ("(\$110.00) Credit"), matching web's LeaseBalanceDisplay.jsx and
+/// TenantDetailPage.jsx. Tables never carry that word.
+String formatMoneyAccounting(dynamic amount) {
+  if (_isZeroMoney(amount)) return formatCurrency(0);
+  final formatted = formatMoney(amount);
+  return formatted.startsWith('-') ? '(${formatted.substring(1)})' : formatted;
+}
+
+/// Numeric value behind any of the shapes [formatMoney] accepts.
+double _moneyValue(dynamic amount) {
+  if (amount is num) return amount.toDouble();
+  final cleaned = amount?.toString().replaceAll(RegExp(r'[^0-9.-]'), '') ?? '';
+  return double.tryParse(cleaned) ?? 0.0;
+}
+
+/// True when a value is zero for display purposes.
+///
+/// Web applies the same guard before its accounting formatter
+/// (`Math.abs(value) < 1e-10`, RentRoll.jsx). A ledger balance is a running
+/// sum of charges and payments, so a settled row often lands on negative zero
+/// or a speck of floating-point dust — which the accounting shape would
+/// otherwise render as "(\$0.00)". Zero is neither a debit nor a credit and
+/// must always read "\$0.00".
+bool _isZeroMoney(dynamic amount) => _moneyValue(amount).abs() < 1e-10;
+
+/// Accounting shape for a figure whose credit-ness is decided by its row type
+/// rather than carried in the value itself — a ledger Amount column, where a
+/// payment entry reduces the balance and so reads as a credit even though the
+/// stored amount is positive.
+///
+/// Always renders the magnitude, parenthesised when [isCredit].
+String formatMoneyAccountingCredit(dynamic amount, {required bool isCredit}) {
+  if (_isZeroMoney(amount)) return formatCurrency(0);
+  final formatted = formatMoney(amount);
+  final magnitude =
+      formatted.startsWith('-') ? formatted.substring(1) : formatted;
+  return isCredit ? '($magnitude)' : magnitude;
+}
+
 /// Whole-dollar variant of [formatMoney] — grouped thousands, no cents
 /// ("\$250,000"). Use only where the design deliberately omits cents, such as a
 /// purchase price, an insured value or an estimated valuation.

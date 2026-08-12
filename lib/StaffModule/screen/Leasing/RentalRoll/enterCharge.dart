@@ -1158,8 +1158,11 @@ class _enterChargeState extends State<enterCharge> {
                               return DropdownMenuItem<String>(
                                 value: "${item}_${entry.key}",
                                 child: Padding(
+                                  // Open-list spacing only — the closed button is
+                                  // drawn by selectedItemBuilder, so this cannot
+                                  // shift the button's text.
                                   padding: const EdgeInsets.only(
-                                      left: 10, bottom: 1),
+                                      left: 14, bottom: 1),
                                   child: Text(
                                     item,
                                     style: const TextStyle(
@@ -1242,6 +1245,27 @@ class _enterChargeState extends State<enterCharge> {
                             //  "${row['account']}_$surchargetype" :  "${row['account']}_${row['charge_type']}":null,
                             value: currentValue,
                             items: dropdownItems,
+                            // The closed button otherwise inherits the package's
+                            // default 16pt menu-item padding on top of the
+                            // button's own 14pt, starting the account text ~30pt
+                            // in while the Amount field beside it starts at 14pt.
+                            // Rendering the selected value here keeps the button
+                            // at 14pt and leaves the open list's spacing alone.
+                            selectedItemBuilder: (context) => dropdownItems
+                                .map(
+                                  (_) => Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      row['account'] ?? '',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
                               dynamic? chargeType;
                               for (var entry in categorizedData.entries) {
@@ -1264,8 +1288,11 @@ class _enterChargeState extends State<enterCharge> {
                             },
                             buttonStyleData: ButtonStyleData(
                               height: 50,
+                              // 14pt both sides, matching the Amount field's
+                              // contentPadding (horizontal: 14) so the two
+                              // controls align on the right as well as the left.
                               padding:
-                                  const EdgeInsets.only(left: 14, right: 10),
+                                  const EdgeInsets.symmetric(horizontal: 14),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
@@ -1281,6 +1308,13 @@ class _enterChargeState extends State<enterCharge> {
                               iconSize: 22,
                               iconEnabledColor: mutedClr,
                               iconDisabledColor: Colors.grey,
+                            ),
+                            // Zero here so the closed button cannot inherit the
+                            // package's default 16pt menu-item padding on top of
+                            // buttonStyleData's 14pt. The open list gets its own
+                            // inset from each item's Padding instead.
+                            menuItemStyleData: const MenuItemStyleData(
+                              padding: EdgeInsets.zero,
                             ),
                             dropdownStyleData: DropdownStyleData(
                               maxHeight: 350,

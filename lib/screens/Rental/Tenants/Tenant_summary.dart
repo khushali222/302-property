@@ -457,6 +457,39 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
     futurePropertyLease = fetchLeaseData();
   }
 
+  /// Drives the transition while another route sits on top of this one.
+  /// Watching it is how the badge notices the user coming back.
+  Animation<double>? _coveringRouteAnimation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // A charge or payment is never recorded from this screen — it happens
+    // further down the stack — so awaiting our own pushes cannot catch it.
+    // Web stays correct because returning there is a route change that
+    // remounts the page and refetches; here the State survives, so the badge
+    // would keep its first-load value. `secondaryAnimation` returning to
+    // dismissed means the route covering us has finished popping, i.e. the
+    // user is looking at this screen again — the local equivalent of
+    // RouteAware.didPopNext(), with no app-wide observer to register.
+    final animation = ModalRoute.of(context)?.secondaryAnimation;
+    if (!identical(animation, _coveringRouteAnimation)) {
+      _coveringRouteAnimation?.removeStatusListener(_onCoveringRouteChanged);
+      _coveringRouteAnimation = animation;
+      _coveringRouteAnimation?.addStatusListener(_onCoveringRouteChanged);
+    }
+  }
+
+  void _onCoveringRouteChanged(AnimationStatus status) {
+    if (status == AnimationStatus.dismissed) _fetchTenantBalance();
+  }
+
+  @override
+  void dispose() {
+    _coveringRouteAnimation?.removeStatusListener(_onCoveringRouteChanged);
+    super.dispose();
+  }
+
   // ── Balance badge (web parity: "Balance: $X Balance Due" on the tenant
   // details header). The figure comes straight from the lease ledger endpoint
   // — the server already computes it (LeaseController.CalculateBalanceForLease),
@@ -468,21 +501,27 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   /// no placeholder amount is ever shown.
   Widget _buildBalanceBadge() {
     final balance = _tenantBalance;
-    // Hidden while unknown, and when the lease is square — web only shows the
-    // badge when there is something to report, which is why it is absent on
-    // some tenants.
-    if (balance == null || balance == 0) return const SizedBox.shrink();
+    // Hidden ONLY when the figure cannot be read — no active lease, or the
+    // request failed. Web gates on `detailsBalance !== null` alone
+    // (TenantDetailPage.jsx), so a settled lease still shows the badge.
+    if (balance == null) return const SizedBox.shrink();
 
     // Same credit/due convention and colours as the lease Financial tab, so
-    // the two screens never disagree about the same lease.
-    final isCredit = balance < 0;
+    // the two screens never disagree about the same lease. A settled lease
+    // carries no suffix — zero is neither owed nor credited — which is what
+    // web renders too ("Balance: $0.00").
+    final isSettled = balance.abs() < 1e-10;
+    final isCredit = !isSettled && balance < 0;
     final formatted = NumberFormat.currency(
       locale: 'en_US',
       symbol: '\$',
       decimalDigits: 2,
     ).format(balance.abs());
-    final label =
-        isCredit ? 'Balance: ($formatted) Credit' : 'Balance: $formatted Balance Due';
+    final label = isSettled
+        ? 'Balance: \$0.00'
+        : isCredit
+            ? 'Balance: ($formatted) Credit'
+            : 'Balance: $formatted Balance Due';
 
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, top: 8),
@@ -702,6 +741,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
             final idx = tabTitles.indexOf(value);
             if (idx >= 0) {
               setState(() => _tenantSummaryTabIndex = idx);
+              // The Payments/Lease tabs read the ledger the badge is drawn
+              // from, so re-read it on every tab change and the header can
+              // never disagree with the tab the user just looked at.
+              _fetchTenantBalance();
             }
           }
         },

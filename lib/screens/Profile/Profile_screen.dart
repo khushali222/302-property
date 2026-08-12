@@ -347,8 +347,11 @@ class _Profile_screenState extends State<Profile_screen> {
         _createdDate.text = profileData.createdAt ?? "";
         _companyStateController.text = profileData.companyState ?? '';
         _companyCountryController.text = profileData.companyCountry ?? '';
-        password.text = profileData.password ?? "";
-        confirmpassword.text = profileData.password ?? "";
+        // Change Password starts empty, matching the Staff/Vendor/Tenant
+        // screens, which never populate these fields. Seeding them from the
+        // profile response put the account's password on screen in plaintext
+        // on every load — and made "Change Password" submittable without the
+        // user typing anything.
 
         // Store original values
         originalFirstName = profileData.firstName ?? '';
@@ -480,6 +483,23 @@ class _Profile_screenState extends State<Profile_screen> {
         // );
         await _savePassword(password.text.trim());
         Fluttertoast.showToast(msg: 'Password updated successfully');
+        // Both fields are emptied so the new password is not left sitting on
+        // screen in plaintext once it has been saved. The Staff/Vendor/Tenant
+        // flows reach the same end state by popping their dedicated Change
+        // Password screen; this section lives inline on the profile, so it has
+        // to clear itself. Validation state is reset too, or a stale message
+        // would sit under a now-empty field.
+        if (mounted) {
+          setState(() {
+            password.clear();
+            confirmpassword.clear();
+            passworderror = false;
+            passwordsameerror = false;
+            confirmpassworderror = false;
+            passwordmessage = "";
+            confirmpasswordmessage = "";
+          });
+        }
       } else {
         // Handle other successful responses or display an error message
       }

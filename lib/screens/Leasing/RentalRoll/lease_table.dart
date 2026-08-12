@@ -1405,9 +1405,10 @@ class _Lease_tableState extends State<Lease_table> {
                                       bool isExpanded = expandedIndex == index;
                                       Lease1 lease = entry.value;
                                       final balance = lease.totalBalance ?? 0.0;
-                                      final isNegative = balance < 0;
+                                      // Accounting shape, as web: a credit
+                                      // shows as "($110.00)".
                                       final formattedBalance =
-                                          "${isNegative ? '-' : ''}${formatMoney(balance.abs())}";
+                                          formatMoneyAccounting(balance);
                                       //return CustomExpansionTile(data: Propertytype, index: index);
                                       return GestureDetector(
                                         onTap: () {
@@ -2795,11 +2796,11 @@ class _Lease_tableState extends State<Lease_table> {
     );
   }
 
-  /// Format as -$X.XX for negative, $X.XX for positive.
+  /// Accounting shape for exported money, matching the on-screen column and
+  /// web's exports: "($X.XX)" for a credit, "$X.XX" otherwise.
   String _formatCurrencyForExport(double? value) {
     if (value == null) return '-';
-    if (value < 0) return '-${formatMoney(value.abs())}';
-    return formatMoney(value);
+    return formatMoneyAccounting(value);
   }
 
   Future<void> _generatePdf(
@@ -2889,9 +2890,7 @@ class _Lease_tableState extends State<Lease_table> {
                   ),
                   ...leases.map((lease) {
                     final balance = lease.totalBalance ?? 0.0;
-                    final isNegative = balance < 0;
-                    final balanceStr =
-                        '${isNegative ? '-' : ''}${formatMoney(balance.abs())}';
+                    final balanceStr = _formatCurrencyForExport(balance);
                     final rentStr = _formatCurrencyForExport(lease.amount);
                     final endDateStr =
                         _formatDateSafely(lease.endDate, dateProvider);

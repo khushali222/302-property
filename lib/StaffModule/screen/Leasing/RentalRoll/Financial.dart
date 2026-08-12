@@ -1438,26 +1438,15 @@ class _FinancialTableState extends State<FinancialTable> {
                 pw.Align(
                   alignment: pw.Alignment.centerRight,
                   child: pw.Text(
-                    ledger.type == "Refund" || ledger.type == "Charge"
-                        ? formatMoney(ledger.totalAmount ?? 0)
-                        : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
+                    formatMoneyAccountingCredit(ledger.totalAmount ?? 0,
+                        isCredit: !(ledger.type == "Refund" ||
+                            ledger.type == "Charge")),
                   ),
                 ),
-                ledger.balance! < 0
-                    ? pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(
-                          ''
-                          ' - ${formatMoney(ledger.balance!.abs())}',
-                        ),
-                      )
-                    : pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(
-                          ''
-                          ' ${formatMoney(ledger.balance!.abs())}',
-                        ),
-                      ),
+                pw.Align(
+                  alignment: pw.Alignment.centerRight,
+                  child: pw.Text(formatMoneyAccounting(ledger.balance)),
+                ),
               ];
             }).toList(),
             border: pw.TableBorder.all(
@@ -1500,7 +1489,7 @@ class _FinancialTableState extends State<FinancialTable> {
               pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                    formatMoney(ledgerdata.first.balance),
+                    formatMoneyAccounting(ledgerdata.first.balance),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
               ),
             ],
@@ -1585,19 +1574,14 @@ class _FinancialTableState extends State<FinancialTable> {
               '');
 
       sheet.getRangeByIndex(2 + i, 5).setText(
-            ledger.type == "Refund" || ledger.type == "Charge"
-                ? formatMoney(ledger.totalAmount ?? 0)
-                : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
+            formatMoneyAccountingCredit(ledger.totalAmount ?? 0,
+                isCredit:
+                    !(ledger.type == "Refund" || ledger.type == "Charge")),
           );
 
-
-      ledger.balance! < 0
-          ? sheet.getRangeByIndex(2 + i, 6).setText(
-                '-${formatMoney(ledger.balance!.abs())}',
-              )
-          : sheet.getRangeByIndex(2 + i, 6).setText(
-                formatMoney(ledger.balance!.abs()),
-              );
+      sheet
+          .getRangeByIndex(2 + i, 6)
+          .setText(formatMoneyAccounting(ledger.balance));
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -1659,12 +1643,9 @@ class _FinancialTableState extends State<FinancialTable> {
         ledger.type == "Charge"
             ? "${ledger.entry?.first.memo}"
             : 'Manual ${ledger.type} ${ledger.response} For ${ledger.paymenttype}',
-        ledger.type == "Refund" || ledger.type == "Charge"
-            ? formatMoney(ledger.totalAmount ?? 0)
-            : ' - ${formatMoney(ledger.totalAmount ?? 0)}',
-        ledger.balance! < 0
-            ? ' - ${formatMoney(ledger.balance!.abs())}'
-            : formatMoney(ledger.balance!.abs()),
+        formatMoneyAccountingCredit(ledger.totalAmount ?? 0,
+            isCredit: !(ledger.type == "Refund" || ledger.type == "Charge")),
+        formatMoneyAccounting(ledger.balance),
       ];
       csvData.add(rowData);
     }
@@ -2789,9 +2770,8 @@ class _FinancialTableState extends State<FinancialTable> {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child: Text(
-                                                        data.balance! >= 0
-                                                            ? ' ${formatMoney(data.balance!.abs())}'
-                                                            : ' -${formatMoney(data.balance!.abs())}',
+                                                        formatMoneyAccounting(
+                                                            data.balance),
                                                         style: TextStyle(
                                                           color: blueColor,
                                                           fontWeight:
@@ -2900,12 +2880,11 @@ class _FinancialTableState extends State<FinancialTable> {
                                                                     ),
                                                                   ),
                                                                   TextSpan(
-                                                                    text: data.type ==
-                                                                                "Refund" ||
+                                                                    text: formatMoneyAccountingCredit(
+                                                                        data.totalAmount,
+                                                                        isCredit: !(data.type == "Refund" ||
                                                                             data.type ==
-                                                                                "Charge"
-                                                                        ? formatMoney(data.totalAmount!)
-                                                                        : ' - ${formatMoney(data.totalAmount!)}',
+                                                                                "Charge")),
                                                                     style:
                                                                         TextStyle(
                                                                       fontWeight:

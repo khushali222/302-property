@@ -1164,6 +1164,21 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     setState(() => _leaseTerms = terms);
   }
 
+  /// The "Renewable History" table below has no counterpart on web: web's
+  /// Summary tab surfaces renewals inside the Lease History audit trail, and
+  /// the current term (with its inferred badge) in Lease Details. Suppressed
+  /// for parity and to stop the same renewal data appearing twice; the block is
+  /// kept in the tree so it can be restored by flipping this flag.
+  static const bool _showRenewableHistory = false;
+
+  /// WEB PARITY (LeaseSummaryTab.jsx): web renders FinancialSummaryCard ONCE
+  /// near the top of the Summary tab, then passes `showSummaryCard={false}` to
+  /// the finance block below so a second copy is never drawn. The older inline
+  /// balance section on this screen is that second copy — kept in the tree
+  /// (it is a 500+ line nested block) but suppressed by this flag, exactly as
+  /// web suppresses its own.
+  static const bool _showLegacyBalanceSection = false;
+
   // ── Balance Overview (web: RentRollDetail/FinancialSummaryCard) ───────────
   // Five rows from three sources the page already fetches: charges_payments
   // (balance), lease_summary (rent + due date), lease-charges (deposit + late
@@ -1228,9 +1243,9 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         : 'N/A';
 
     return Container(
-      // No horizontal margin: this subtree is already inset 15pt by its
-      // outer Padding plus 2pt by the Column, which matches the Property
-      // Details card above. Adding more here pushed it 15pt too far in.
+      // No horizontal margin: the caller wraps this card in the same 15pt
+      // side Padding the Property Details card uses, so the two line up.
+      // Adding margin here would inset it twice.
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -1295,6 +1310,40 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   // mid-word. Labels now sit above their values so each value gets the width
   // it needs — and the "inferred" pill has room beside the type.
 
+  /// Start–End for the Lease Details card, matching web's LeaseTermsTable.
+  ///
+  /// Two rules copied from `fmtRange`/`isOngoingEnd` there:
+  ///  * dates come from the CURRENT TERM when term history is available, and
+  ///    fall back to the lease record itself when it is not;
+  ///  * a month-to-month / open-ended term stores a far-future sentinel end
+  ///    (year >= 2049), which reads as "ongoing" rather than a confusing 2060
+  ///    date. Judged per term, so a prior FIXED term still shows its real end.
+  String _leaseTermRange(
+      String? leaseStart, String? leaseEnd, DateProvider dateProvider) {
+    // Web picks the term WHOLESALE (`current ? fmtRange(current) : lease dates`)
+    // rather than per field. Falling back field-by-field would mix a term's
+    // start with the lease record's end and show a figure web never shows.
+    final LeaseTerm? term = _currentTerm;
+    final String? start = term != null ? term.startDate : leaseStart;
+    final String? end = term != null ? term.endDate : leaseEnd;
+
+    final String startText = (start == null || start.isEmpty)
+        ? 'N/A'
+        : dateProvider.formatCurrentDate('$start');
+
+    String endText;
+    if (end == null || end.isEmpty) {
+      endText = 'N/A';
+    } else {
+      final int? year =
+          end.length >= 4 ? int.tryParse(end.substring(0, 4)) : null;
+      endText = (year != null && year >= 2049)
+          ? 'ongoing'
+          : dateProvider.formatCurrentDate('$end');
+    }
+    return '$startText – $endText';
+  }
+
   /// Small grey uppercase field label.
   Widget _leaseFieldLabel(String text) => Text(
         text.toUpperCase(),
@@ -1335,9 +1384,13 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   /// is running, amber for anything upcoming.
   Widget _leaseStatusField(String status) {
     final s = status.toLowerCase();
+    // A lease that has not started yet reports its status as "Future" (see
+    // the status helper below); "upcoming" is accepted as an alias so a
+    // reworded status still lands on amber rather than silently reading as
+    // running.
     final Color dot = s.contains('expired') || s.contains('evict')
         ? const Color(0xFFDC2626)
-        : s.contains('upcoming')
+        : s.contains('future') || s.contains('upcoming')
             ? const Color(0xFFD97706)
             : const Color(0xFF16A34A);
     return Column(
@@ -1756,6 +1809,19 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               const SizedBox(
                 height: 10,
               ),
+              // WEB PARITY (LeaseSummaryTab.jsx): Balance Overview sits with
+              // Property Details — side by side on a wide screen, stacked
+              // underneath on a phone — and only while the lease reads Active.
+              if (determineStatus(snapshot.data?.data?.startDate,
+                      snapshot.data?.data?.endDate) ==
+                  'Active')
+                // Same 15pt side inset as the Property Details card above, so
+                // the two cards line up rather than this one running edge to
+                // edge.
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  child: _balanceOverviewCard(snapshot.data?.data),
+                ),
               if (determineStatus(snapshot.data?.data?.startDate,
                       snapshot.data?.data?.endDate) ==
                   'Active')
@@ -1785,6 +1851,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         return SingleChildScrollView(
                           child: Column(
                             children: [
+                              // Legacy duplicate of Balance Overview — see _showLegacyBalanceSection.
+                              if (_showLegacyBalanceSection)
                               Padding(
                                 padding:
                                     const EdgeInsets.only(left: 15, right: 15),
@@ -3023,16 +3091,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Balance Overview — web renders this above Lease
-                          // Details and only while the lease reads Active.
-                          FutureBuilder<LeaseSummary>(
-                            future: futureLeaseSummary,
-                            builder: (context, snap) {
-                              final lease = snap.data?.data;
-                              if (lease == null) return const SizedBox.shrink();
-                              return _balanceOverviewCard(lease);
-                            },
-                          ),
+                          // Balance Overview now renders with Property Details
+                          // above (web parity), so it is not repeated here.
                           if (MediaQuery.of(context).size.width < 500)
                             Row(
                               children: [
@@ -3369,13 +3429,28 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                   height: 14),
                                                               _leaseField(
                                                                 'Start – End',
-                                                                '${dateProvider.formatCurrentDate('${snapshot.data!.data!.startDate}')} – ${dateProvider.formatCurrentDate('${snapshot.data!.data!.endDate}')}',
+                                                                _leaseTermRange(
+                                                                  snapshot.data!.data!.startDate,
+                                                                  snapshot.data!.data!.endDate,
+                                                                  dateProvider,
+                                                                ),
                                                               ),
                                                               const SizedBox(
                                                                   height: 14),
                                                               _leaseField(
                                                                 'Rent',
-                                                                '${formatCurrency(snapshot.data!.data!.amount?.toDouble() ?? 0.0)}',
+                                                                // WEB PARITY (LeaseTermsTable.jsx): rent comes from the
+                                                                // CURRENT TERM, falling back to the lease record — an
+                                                                // inferred term carries the real rent where the lease
+                                                                // row itself may hold none.
+                                                                formatCurrency(
+                                                                  (_currentTerm != null
+                                                                          ? _currentTerm!.rent
+                                                                          : snapshot
+                                                                              .data!.data!.amount)
+                                                                      ?.toDouble() ??
+                                                                      0.0,
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
@@ -3841,7 +3916,8 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                             height: 10,
                           ),
                           if (MediaQuery.of(context).size.width < 500)
-                            if (leasesummery.data?.renewLeases != null &&
+                            if (_showRenewableHistory &&
+                                leasesummery.data?.renewLeases != null &&
                                 leasesummery.data!.renewLeases!.length > 0)
                               Column(
                                 children: [

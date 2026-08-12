@@ -338,12 +338,11 @@ class _CustomAdminLeaseTableState extends State<CustomAdminLeaseTable> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                  lease.totalBalance != null
-                                                      ? (lease.totalBalance! < 0
-                                                      ? '-\$${lease.totalBalance!.abs().toStringAsFixed(2)}'
-                                                      : '\$${lease.totalBalance!.toStringAsFixed(2)}')
-                                                      : '\$0.00',
+                                                  // Accounting shape, as web:
+                                                  // a credit shows as
+                                                  // "(\$110.00)".
+                                                  text: formatMoneyAccounting(
+                                                      lease.totalBalance ?? 0),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,

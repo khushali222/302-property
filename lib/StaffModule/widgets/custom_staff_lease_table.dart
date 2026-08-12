@@ -332,12 +332,11 @@ class _CustomStaffLeaseTableState extends State<CustomStaffLeaseTable> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text:
-                                                  lease.totalBalance != null
-                                                      ? (lease.totalBalance! < 0
-                                                      ? '-${formatMoney(lease.totalBalance!.abs())}'
-                                                      : formatMoney(lease.totalBalance!))
-                                                      : '\$0.00',
+                                                  // Accounting shape, as web:
+                                                  // a credit shows as
+                                                  // "(\$110.00)".
+                                                  text: formatMoneyAccounting(
+                                                      lease.totalBalance ?? 0),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.grey,
