@@ -3674,15 +3674,28 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                         .start,
                                                                 children: [
                                                                   Expanded(
+                                                                    // WEB PARITY (LeaseTermsTable.jsx):
+                                                                    // `currentStatus = current?.status
+                                                                    // || fallbackStatus` — the status
+                                                                    // describes the TERM shown in this
+                                                                    // row, not the lease overall. A
+                                                                    // renewed at-will lease reads
+                                                                    // Active at lease level while the
+                                                                    // term listed here has ended.
                                                                     child: _leaseStatusField(
-                                                                        '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}'),
+                                                                        _currentTerm?.status ??
+                                                                            '${determineStatus(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate)}'),
                                                                   ),
                                                                   const SizedBox(
                                                                       width: 12),
                                                                   Expanded(
                                                                     child: _leaseField(
                                                                       'Type',
-                                                                      '${snapshot.data!.data!.leaseType}',
+                                                                      // Same source as the rest of the
+                                                                      // row: the term's own type when
+                                                                      // history exists.
+                                                                      _currentTerm?.leaseType ??
+                                                                          '${snapshot.data!.data!.leaseType}',
                                                                       // Web parity: flag a term the
                                                                       // server estimated from rent
                                                                       // history rather than recorded.

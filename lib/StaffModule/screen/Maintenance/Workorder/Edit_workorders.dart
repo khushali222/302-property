@@ -6956,7 +6956,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         isBillable: isChecked,
         workChargeTo: isChecked == 'Tenants',
         date: reverseFormatDate(_dateController.text.trim()),
-        entry: _selectedEntry == 'Yes',
+        entry: _selectedEntry == 'true',
         parts: parts,
         notificationTime:
             DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),

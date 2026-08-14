@@ -500,14 +500,18 @@ class _Change_passwordState extends State<Change_password> {
                         //  size: 18,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        // Breathing room on the sides, and the card carries the
+                        // same soft hairline shell as the Admin profile cards
+                        // instead of a hard black outline.
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 15.0),
                         child: Container(
-                          // height: 220,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
+                            border:
+                                Border.all(color: const Color(0xFFE5E9F0)),
                             color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: Form(
                             key: formKey,
@@ -552,22 +556,21 @@ class _Change_passwordState extends State<Change_password> {
                                     children: [
                                       Expanded(
                                         child: Material(
-                                          elevation: 3,
-                                          borderRadius: BorderRadius.circular(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.013),
+                                          // Flat field, matching the house form
+                                          // style: soft tinted fill with a
+                                          // hairline outline, no drop shadow.
+                                          elevation: 0,
+                                          color: Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                           child: Container(
-                                            height: 50,
+                                            height: 54,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.013),
-                                              color: Colors.white,
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: outlineClr),
+                                              color: const Color(0xFFF7F9FC),
                                             ),
                                             child: Stack(
                                               children: [
@@ -671,7 +674,12 @@ class _Change_passwordState extends State<Change_password> {
                                   Row(
                                     children: [
                                       Text(
-                                        'Enter your current password',
+                                        // This field is bound to `password` —
+                                        // the NEW password. The label said
+                                        // "current password", contradicting the
+                                        // field's own "New Password" hint and
+                                        // asking for the current one twice.
+                                        'New Password',
                                         style: TextStyle(
                                             color: Color(0xFF8A95A8),
                                             fontWeight: FontWeight.bold),
@@ -685,22 +693,21 @@ class _Change_passwordState extends State<Change_password> {
                                     children: [
                                       Expanded(
                                         child: Material(
-                                          elevation: 3,
-                                          borderRadius: BorderRadius.circular(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.013),
+                                          // Flat field, matching the house form
+                                          // style: soft tinted fill with a
+                                          // hairline outline, no drop shadow.
+                                          elevation: 0,
+                                          color: Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                           child: Container(
-                                            height: 50,
+                                            height: 54,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.013),
-                                              color: Colors.white,
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: outlineClr),
+                                              color: const Color(0xFFF7F9FC),
                                             ),
                                             child: Stack(
                                               children: [
@@ -820,22 +827,21 @@ class _Change_passwordState extends State<Change_password> {
                                       // ),
                                       Expanded(
                                         child: Material(
-                                          elevation: 3,
-                                          borderRadius: BorderRadius.circular(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.013),
+                                          // Flat field, matching the house form
+                                          // style: soft tinted fill with a
+                                          // hairline outline, no drop shadow.
+                                          elevation: 0,
+                                          color: Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                           child: Container(
-                                            height: 50,
+                                            height: 54,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.013),
-                                              color: Colors.white,
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: outlineClr),
+                                              color: const Color(0xFFF7F9FC),
                                             ),
                                             child: Stack(
                                               children: [
@@ -1035,16 +1041,15 @@ class _Change_passwordState extends State<Change_password> {
                                     },
                                     child: Row(
                                       children: [
-                                        Container(
-                                          height: 40,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.45,
+                                        // Full-width primary action, matching
+                                        // the house button style.
+                                        Expanded(
+                                            child: Container(
+                                          height: 54,
                                           decoration: BoxDecoration(
-                                            color: blueColor,
+                                            color: navyClr,
                                             borderRadius:
-                                                BorderRadius.circular(5),
+                                                BorderRadius.circular(12),
                                           ),
                                           child: Center(
                                             child: loading
@@ -1075,7 +1080,7 @@ class _Change_passwordState extends State<Change_password> {
                                                     ],
                                                   ),
                                           ),
-                                        ),
+                                        )),
                                       ],
                                     ),
                                   ),
@@ -1409,8 +1414,14 @@ class _Change_passwordState extends State<Change_password> {
       "currentPassword": currentpassword.text.trim()
     };
 
+    // v2 identifies the vendor from the JWT instead of an email in the URL.
+    // The legacy `/reset_password/$email` route resolves the account BY EMAIL
+    // and picks the wrong record when two accounts share one — which rejected a
+    // correct current password — and it runs with no auth check at all. Web
+    // moved to v2 for both reasons (VendorPassChange.jsx); the server keeps v1
+    // alive only for older clients.
     final http.Response response = await apiPut(
-      Uri.parse('$Api_url/api/vendor/reset_password/$email'),
+      Uri.parse('$Api_url/api/vendor/reset_password_v2'),
       headers: <String, String>{
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('vendor_id') ?? id}",
@@ -1422,7 +1433,12 @@ class _Change_passwordState extends State<Change_password> {
     log(response.body);
     var responseData = json.decode(response.body);
 
-    if (responseData["statusCode"] == 200) {
+    // The server reports success in the HTTP status; its body carries only
+    // `message` and `newToken`. Reading a `statusCode` field out of the body
+    // never matched, so every response — including a successful one — fell to
+    // the else branch and printed its message, leaving the form untouched.
+    // StaffModule's copy already checks the HTTP status.
+    if (response.statusCode == 200) {
       await _savePassword(password.text.trim());
 
       // The server issues a fresh token with the password change and the old
@@ -1435,6 +1451,32 @@ class _Change_passwordState extends State<Change_password> {
       }
 
       Fluttertoast.showToast(msg: responseData["message"]);
+      // Both fields are emptied so the new password is not left sitting on
+      // screen in plaintext once it has been saved. StaffModule's copy of this
+      // screen reaches the same end state by popping straight after the toast;
+      // this one stays put, so it has to clear itself. Validation state is
+      // reset too, or a stale message would sit under a now-empty field.
+      if (mounted) {
+        setState(() {
+          // All THREE fields, not just the two new-password ones — this screen
+          // also asks for the current password, and leaving that populated
+          // keeps a live credential on screen just the same.
+          currentpassword.clear();
+          password.clear();
+          confirmpassword.clear();
+          passworderror = false;
+          confirmpassworderror = false;
+          passwordmessage = "";
+          confirmpasswordmessage = "";
+        });
+      }
+      // Leave the screen once the change is saved, as web does
+      // (VendorPassChange.jsx routes to the dashboard on success) and as
+      // StaffModule's copy of this screen already does. The clear above still
+      // runs first, so nothing is on screen during the short delay.
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) Navigator.pop(context);
+      });
       return responseData;
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);

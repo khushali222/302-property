@@ -2934,7 +2934,11 @@ class _TabBarExampleState extends State<TabBarExample> {
     final body = json.encode({
       "admin_id": adminId,
       "category": _selectedDropdownCategory?.categoryId, // Send category_id
-      "entry_allowed": _selectedEntry == 'yes',
+      // The dropdown and the server read-back both produce 'Yes'/'No'
+      // capitalised (_entry above, entryAllowedString below), so the comparison
+      // has to match that casing — a lowercase 'yes' never matches and would
+      // send false however the admin set the field.
+      "entry_allowed": _selectedEntry == 'Yes',
       "staffmember_id": _selectedstaffId,
       "vendor_id": _selectedvendorsId,
     });

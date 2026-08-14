@@ -19,6 +19,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../repository/lease_rental_insurance_repo.dart';
 import 'Edit_Renters_insurance.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Renters_Insurance_table extends StatefulWidget {
   final String leaseId;
@@ -47,6 +48,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
   ConnectivityResult? _connectivityResult;
   // Web parity: "Show Deleted Policies" toggle (RenterInsurance tab). When on,
   // the list is re-fetched with ?include_deleted=1 so soft-deleted policies show.
+  // Persisted under the same localStorage key web's list view uses, and read
+  // back before the first fetch so the list opens already honouring it.
+  static const String _showDeletedPrefKey = 'rentersInsurance:list:showDeleted';
   bool _showDeleted = false;
   @override
   void initState() {
@@ -57,7 +61,34 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
       });
     });
     checkInternet();
-    _futureRentersInsurance = fetchRentersInsuranceData();
+    _futureRentersInsurance = _loadShowDeletedPrefAndFetch();
+  }
+
+  Future<List<lease_renter_insurance>> _loadShowDeletedPrefAndFetch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final restored = prefs.getBool(_showDeletedPrefKey) ?? false;
+    if (restored != _showDeleted) {
+      _showDeleted = restored;
+      // The checkbox sits outside this FutureBuilder; repaint it so it reads
+      // checked while the restored fetch is in flight.
+      if (mounted) setState(() {});
+    }
+    return fetchRentersInsuranceData();
+  }
+
+  Future<void> _onShowDeletedChanged(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_showDeletedPrefKey, value);
+    if (!mounted) return;
+    setState(() {
+      _showDeleted = value;
+      // Land on the first page of the new result set — the old page index can
+      // exceed the filtered list's page count.
+      _currentPage = 0;
+      currentPage = 0;
+      isLoading = true;
+      _futureRentersInsurance = fetchRentersInsuranceData();
+    });
   }
 
   void checkInternet() async {
@@ -519,14 +550,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                       Checkbox(
                         value: _showDeleted,
                         activeColor: blueColor,
-                        onChanged: (v) {
-                          setState(() {
-                            _showDeleted = v ?? false;
-                            isLoading = true;
-                            _futureRentersInsurance =
-                                fetchRentersInsuranceData();
-                          });
-                        },
+                        onChanged: (v) => _onShowDeletedChanged(v ?? false),
                       ),
                       const Text('Show Deleted Policies',
                           style: TextStyle(fontSize: 14)),
@@ -707,12 +731,30 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                             TextSpan(
                                                               children: [
                                                                 TextSpan(
+                                                                  // Web parity:
+                                                                  // a soft-
+                                                                  // deleted row
+                                                                  // reads
+                                                                  // archived —
+                                                                  // greyed,
+                                                                  // struck
+                                                                  // through,
+                                                                  // DELETED
+                                                                  // marker.
                                                                   text:
-                                                                      '${item.insuranceCompany ?? '-'}',
+                                                                      '${item.insuranceCompany ?? '-'}${item.isDelete == true ? '  (DELETED)' : ''}',
                                                                   style:
                                                                       TextStyle(
-                                                                    color:
-                                                                        blueColor,
+                                                                    color: item.isDelete ==
+                                                                            true
+                                                                        ? Colors
+                                                                            .grey
+                                                                        : blueColor,
+                                                                    decoration: item.isDelete ==
+                                                                            true
+                                                                        ? TextDecoration
+                                                                            .lineThrough
+                                                                        : null,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold,
@@ -1325,10 +1367,23 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                                                 .width *
                                                             .04),
                                                     Expanded(
+                                                      // Web parity: archived
+                                                      // rows grey out, strike
+                                                      // through and carry a
+                                                      // DELETED marker.
                                                       child: Text(
-                                                        '${item.insuranceCompany ?? '-'}',
+                                                        '${item.insuranceCompany ?? '-'}${item.isDelete == true ? '  (DELETED)' : ''}',
                                                         style: TextStyle(
-                                                          color: blueColor,
+                                                          color: item.isDelete ==
+                                                                  true
+                                                              ? Colors.grey
+                                                              : blueColor,
+                                                          decoration: item
+                                                                      .isDelete ==
+                                                                  true
+                                                              ? TextDecoration
+                                                                  .lineThrough
+                                                              : null,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           fontSize: 14,

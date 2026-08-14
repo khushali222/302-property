@@ -3398,7 +3398,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           isBillable: isChecked,
           workChargeTo: isChecked == 'Tenants',
           date: reverseFormatDate(_dateController.text),
-          entry: _selectedEntry == 'yes',
+          entry: _selectedEntry == 'Yes',
           parts: parts,
           notificationTime:
               DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
@@ -6507,7 +6507,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
           workChargeTo: isChecked == 'Tenants',
           //  workChargeTo: "isbillable true hoy to static tenant mokli devanu",
           date: reverseFormatDate(_dateController.text),
-          entry: _selectedEntry == 'yes',
+          entry: _selectedEntry == 'Yes',
           parts: parts,
         );
         // Fluttertoast.showToast(

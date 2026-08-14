@@ -2146,57 +2146,30 @@ class _Profile_screenState extends State<Profile_screen> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Material(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
+                            // White card with a hairline border, matching the
+                            // house form shell (add_tenants.dart `_sectionCard`).
+                            Container(
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFE5E9F0)),
-                                  borderRadius: BorderRadius.circular(10),
+                                  // Same shell as the Change Password card
+                                  // below, so the two sections read as one
+                                  // consistent page.
+                                  color: Colors.grey.shade100,
+                                  border: Border.all(
+                                      color: const Color(0xFFE5E9F0)),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(20.0),
                                   child: Form(
                                     key: _formKey,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          child: Container(
-                                            height: 50.0,
-                                            padding: const EdgeInsets.only(
-                                                top: 8, left: 10),
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            margin: const EdgeInsets.only(
-                                                bottom:
-                                                    6.0), //Same as `blurRadius` i guess
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5.0),
-                                              color: blueColor,
-                                              boxShadow: [
-                                                const BoxShadow(
-                                                  color: Colors.grey,
-                                                  offset:
-                                                      Offset(0.0, 1.0), //(x,y)
-                                                  blurRadius: 6.0,
-                                                ),
-                                              ],
-                                            ),
-                                            child: const Text(
-                                              "My Account",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 22),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16.0),
+                                        // "My Account" banner removed — the card
+                                        // leads with its own section heading,
+                                        // so the extra bar was a second title
+                                        // for the same block.
                                         Text(
                                           "User information",
                                           style: TextStyle(
@@ -2399,8 +2372,15 @@ class _Profile_screenState extends State<Profile_screen> {
                                         //   child: Text('Update'),
                                         // ),
                                         Row(
-                                          children: [
-                                            GestureDetector(
+                                          // Reversed so Back sits on the left
+                                          // and Update on the right, matching
+                                          // the agreed layout. The two button
+                                          // blocks are left in place rather
+                                          // than moved, so their handlers stay
+                                          // untouched.
+                                          children: <Widget>[
+                                            Expanded(
+                                                child: GestureDetector(
                                               // onTap: () {
                                               //   if (_formKey.currentState!
                                               //       .validate()) {
@@ -2526,98 +2506,60 @@ class _Profile_screenState extends State<Profile_screen> {
                                                 }
                                               },
                                               child: Container(
-                                                height: 40,
-                                                //width: 160,
+                                                height: 48,
                                                 decoration: BoxDecoration(
-                                                  color: blueColor,
+                                                  color: navyClr,
                                                   borderRadius:
-                                                      BorderRadius.circular(5),
+                                                      BorderRadius.circular(10),
                                                 ),
-                                                child: Center(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                      Text(
-                                                        "Update",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 15
-                                                                : 20),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                    ],
+                                                child: const Center(
+                                                  child: Text(
+                                                    "Update",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
                                                   ),
                                                 ),
                                               ),
-                                            ),
+                                            )),
                                             const SizedBox(
-                                              width: 10,
+                                              width: 12,
                                             ),
-                                            GestureDetector(
+                                            Expanded(
+                                                child: GestureDetector(
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                               child: Container(
-                                                height: 40,
-                                                //width: 160,
+                                                height: 48,
                                                 decoration: BoxDecoration(
-                                                  color: blueColor,
+                                                  color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(5),
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: outlineClr),
                                                 ),
-                                                child: Center(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                      Text(
-                                                        "  Back  ",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width <
-                                                                    500
-                                                                ? 15
-                                                                : 20),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 8,
-                                                      ),
-                                                    ],
+                                                child: const Center(
+                                                  child: Text(
+                                                    "Back",
+                                                    style: TextStyle(
+                                                        color: navyClr,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                            )),
+                                          ].reversed.toList(),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
                             const SizedBox(height: 20),
                             Container(
                               // height: 220,
@@ -2625,7 +2567,7 @@ class _Profile_screenState extends State<Profile_screen> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: const Color(0xFFE5E9F0)),
                                 color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(16),
                               ),
                               child: Form(
                                 key: formKey,
@@ -2674,22 +2616,20 @@ class _Profile_screenState extends State<Profile_screen> {
                                         children: [
                                           Expanded(
                                             child: Material(
-                                              elevation: 3,
+                                              // Flat, matching the form fields
+                                              // above: hairline outline, no
+                                              // drop shadow.
+                                              elevation: 0,
+                                              color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.013),
+                                                  BorderRadius.circular(10),
                                               child: Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.013),
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: outlineClr),
                                                   color: Colors.white,
                                                 ),
                                                 child: Stack(
@@ -2810,22 +2750,20 @@ class _Profile_screenState extends State<Profile_screen> {
                                           // ),
                                           Expanded(
                                             child: Material(
-                                              elevation: 3,
+                                              // Flat, matching the form fields
+                                              // above: hairline outline, no
+                                              // drop shadow.
+                                              elevation: 0,
+                                              color: Colors.white,
                                               borderRadius:
-                                                  BorderRadius.circular(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.013),
+                                                  BorderRadius.circular(10),
                                               child: Container(
                                                 height: 50,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.013),
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      color: outlineClr),
                                                   color: Colors.white,
                                                 ),
                                                 child: Stack(
@@ -3116,16 +3054,16 @@ class _Profile_screenState extends State<Profile_screen> {
                                         child: 
                                         Row(
                                           children: [
-                                            Container(
-                                              height: 40,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.45,
+                                            // Full-width primary action, same
+                                            // as the Staff/Tenant/Vendor
+                                            // Change Password screens.
+                                            Expanded(
+                                                child: Container(
+                                              height: 54,
                                               decoration: BoxDecoration(
-                                                color: blueColor,
+                                                color: navyClr,
                                                 borderRadius:
-                                                    BorderRadius.circular(5),
+                                                    BorderRadius.circular(12),
                                               ),
                                               child: Center(
                                                 child: loading
@@ -3158,10 +3096,10 @@ class _Profile_screenState extends State<Profile_screen> {
                                                         ],
                                                       ),
                                               ),
-                                            ),
+                                            )),
                                           ],
                                         ),
-                                     
+
                                       ),
                                       SizedBox(
                                         height:
@@ -3179,25 +3117,43 @@ class _Profile_screenState extends State<Profile_screen> {
                                 _deactivateAccount(context);
                               },
                               child: Container(
-                                // button for deactivate Account
-                                alignment: Alignment.centerLeft,
-                                height: 40,
-                                width: MediaQuery.of(context).size.width * 0.6,
+                                // Destructive action, styled as a soft tinted
+                                // panel rather than a solid red block: full
+                                // width, pale red fill, red outline, and a
+                                // trash icon beside the label.
+                                height: 56,
+                                width: double.infinity,
                                 decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(5),
+                                  color: const Color(0xFFFDECEC),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border:
+                                      Border.all(color: const Color(0xFFF5C2C2)),
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    "Delete Account",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
+                                child: const Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.delete_outline,
+                                        color: Color(0xFFDC2626),
+                                        size: 22,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Delete Account",
+                                        style: TextStyle(
+                                            color: Color(0xFFDC2626),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
+                            // Bottom breathing room so the destructive button
+                            // does not sit flush against the page edge.
+                            const SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -3448,15 +3404,16 @@ class _Profile_screenState extends State<Profile_screen> {
     bool isEnabled = true,
     bool isRequired = false,
   }) {
-    return Material(
-      elevation: 3,
-      borderRadius: BorderRadius.circular(5),
-      child: Container(
-        padding: const EdgeInsets.only(left: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
-        ),
+    // Flat field, matching the house form style (add_tenants.dart `_input`):
+    // a hairline outline instead of a drop shadow.
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: outlineClr, width: 1),
+      ),
+      child: Center(
         child: TextFormField(
           controller: controller,
           // validator: validator,
@@ -3470,8 +3427,12 @@ class _Profile_screenState extends State<Profile_screen> {
           enabled: isEnabled,
           decoration: InputDecoration(
             border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
             hintText: label,
-            // hintStyle: TextStyle(color: Color(0xFF8A95A8)),
+            hintStyle: const TextStyle(color: mutedClr),
           ),
         ),
       ),
@@ -4384,27 +4345,37 @@ class _ProfileShimmerState extends State<ProfileShimmer> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: blueColor,
-                    borderRadius: BorderRadius.circular(10.0)),
-                height: 220,
-                width: double.infinity,
+            // Skeleton cards carry the same shell as the loaded page —
+            // hairline grey border, radius 16 — so nothing flashes from a
+            // borderless/blue frame to the real card once data lands.
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  border: Border.all(color: const Color(0xFFE5E9F0)),
+                  borderRadius: BorderRadius.circular(16.0)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: blueColor,
+                        borderRadius: BorderRadius.circular(10.0)),
+                    height: 190,
+                    width: double.infinity,
+                  ),
+                ),
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                  border: Border.all(
-                    color: blueColor,
-                  ),
-                  borderRadius: BorderRadius.circular(10.0)),
+                  border: Border.all(color: const Color(0xFFE5E9F0)),
+                  borderRadius: BorderRadius.circular(16.0)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
