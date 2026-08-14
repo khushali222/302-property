@@ -4330,7 +4330,7 @@ class _Summery_pageState extends State<Summery_page>
                   }).toList();
 
                   // Pagination
-                  final totalPages = (data.length / itemsPerPagelease).ceil();
+                  final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPagelease).ceil());
                   final currentPageData = data
                       .skip(currentPagelease * itemsPerPagelease)
                       .take(itemsPerPagelease)
@@ -4521,7 +4521,7 @@ class _Summery_pageState extends State<Summery_page>
                   //     .toList();
 
                   // Pagination
-                  final totalPages = (data.length / itemsPerPagerevenue).ceil();
+                  final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPagerevenue).ceil());
                   final currentPageData = data
                       .skip(currentPagerevenue * itemsPerPagerevenue)
                       .take(itemsPerPagerevenue)
@@ -4998,7 +4998,7 @@ class _Summery_pageState extends State<Summery_page>
                                     e.rentalId == widget.properties.rentalId)
                                 .toList();
                             final totalPages =
-                                (data.length / itemsPerPagerent).ceil();
+                                (data.isEmpty ? 1 : (data.length / itemsPerPagerent).ceil());
                             final currentPageData = data
                                 .skip(currentPagerent * itemsPerPagerent)
                                 .take(itemsPerPagerent)
@@ -5012,7 +5012,9 @@ class _Summery_pageState extends State<Summery_page>
                                   // SizedBox(height: 20),
                                   Container(
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {
@@ -12418,7 +12420,7 @@ class _Summery_pageState extends State<Summery_page>
                         // sortData(data);
                         //countupdateunit(data.length);
                         final totalPages =
-                            (data.length / itemsPerPagemulti).ceil();
+                            (data.isEmpty ? 1 : (data.length / itemsPerPagemulti).ceil());
                         final currentPageData = data
                             .skip(currentPagemulti * itemsPerPagemulti)
                             .take(itemsPerPagemulti)
@@ -12431,7 +12433,9 @@ class _Summery_pageState extends State<Summery_page>
                               const SizedBox(height: 10),
                               Container(
                                 child: Column(
-                                  children: currentPageData
+                                  children: currentPageData.isEmpty
+                                      ? [kNoSearchResults(context)]
+                                      : currentPageData
                                       .asMap()
                                       .entries
                                       .map((entry) {
@@ -17245,6 +17249,7 @@ class _Summery_pageState extends State<Summery_page>
                               onChanged: (value) {
                                 setState(() {
                                   searchvalue = value;
+                                  currentPage = 0; // reset to first page on search change
                                 });
                               },
                               cursorColor: blueColor,
@@ -17560,7 +17565,7 @@ class _Summery_pageState extends State<Summery_page>
                           .updateCount(data.length);*/
                       }
                       sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -17574,7 +17579,9 @@ class _Summery_pageState extends State<Summery_page>
                             if (data.isNotEmpty)
                               Container(
                                 child: Column(
-                                  children: currentPageData
+                                  children: currentPageData.isEmpty
+                                      ? [kNoSearchResults(context)]
+                                      : currentPageData
                                       .asMap()
                                       .entries
                                       .map((entry) {
@@ -19904,7 +19911,7 @@ class _LeasesTableState extends State<LeasesTable> {
                     //       .toList();
                     // }
                     // sortData(data);
-                    final totalPages = (data.length / itemsPerPage).ceil();
+                    final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                     final currentPageData = data
                         .skip(currentPage * itemsPerPage)
                         .take(itemsPerPage)
@@ -21347,7 +21354,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                             .toList();
                       }
                       sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -21364,7 +21371,9 @@ class _AppliancesPartState extends State<AppliancesPart> {
                               // decoration: BoxDecoration(
                               //     border: Border.all(color: blueColor)),
                               child: Column(
-                                children: currentPageData
+                                children: currentPageData.isEmpty
+                                    ? [kNoSearchResults(context)]
+                                    : currentPageData
                                     .asMap()
                                     .entries
                                     .map((entry) {

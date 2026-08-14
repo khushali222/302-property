@@ -959,6 +959,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                         onChanged: (value) {
                           setState(() {
                             searchvalue = value;
+                            currentPage = 0; // reset to first page on search change
                           });
                         },
                         cursorColor: blueColor,
@@ -1050,7 +1051,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             }
                             sortData(data);
                             final totalPages =
-                                (data.length / itemsPerPage).ceil();
+                                (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                             final currentPageData = data
                                 .skip(currentPage * itemsPerPage)
                                 .take(itemsPerPage)
@@ -1063,7 +1064,9 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                   SizedBox(height: 10),
                                   Container(
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {

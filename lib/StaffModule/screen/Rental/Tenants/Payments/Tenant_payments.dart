@@ -1527,7 +1527,7 @@ class _FinancialTableState extends State<FinancialTable> {
                           leaseLedger.data!.toList());
 
                       sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -1569,6 +1569,7 @@ class _FinancialTableState extends State<FinancialTable> {
                                             onChanged: (value) {
                                               setState(() {
                                                 searchvalue = value;
+                                                currentPage = 0; // reset to first page on search change
                                               });
                                             },
                                             decoration: const InputDecoration(
@@ -1883,7 +1884,9 @@ class _FinancialTableState extends State<FinancialTable> {
                             const SizedBox(height: 10),
                             Container(
                               child: Column(
-                                children: currentPageData
+                                children: currentPageData.isEmpty
+                                    ? [kNoSearchResults(context)]
+                                    : currentPageData
                                     .asMap()
                                     .entries
                                     .map((entry) {

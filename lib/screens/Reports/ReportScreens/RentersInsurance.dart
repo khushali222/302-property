@@ -1159,7 +1159,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                       // Apply sorting
                       sortData(data);
                       // Pagination logic
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -1208,6 +1208,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                             onChanged: (value) {
                                               setState(() {
                                                 searchvalue = value;
+                                                currentPage = 0; // reset to first page on search change
                                               });
                                             },
                                             decoration: const InputDecoration(
@@ -1297,7 +1298,9 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

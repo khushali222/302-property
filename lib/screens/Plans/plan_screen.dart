@@ -2108,7 +2108,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
                             // Pagination logic
                             final totalPages =
-                                (data.length / itemsPerPage).ceil();
+                                (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                             final currentPageData = data
                                 .skip(currentPage * itemsPerPage)
                                 .take(itemsPerPage)
@@ -2176,7 +2176,9 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                             color: const Color.fromRGBO(
                                                 152, 162, 179, .5))),
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {
@@ -2526,6 +2528,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        currentPage = 0; // reset to first page on search change
                                       });
                                     },
                                     decoration: const InputDecoration(
@@ -2589,7 +2592,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                           // Apply pagination
                           final int itemsPerPage = 10;
                           final int totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                           final int currentPage =
                               1; // Update this with your pagination logic
                           final List<pastPlanData> pagedData = data

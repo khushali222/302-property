@@ -56,59 +56,8 @@ import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart'
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 
-/// Full state names for company profile address dropdowns (matches web UI).
-const List<String> kUsStateNames = [
-  'Alabama',
-  'Alaska',
-  'Arizona',
-  'Arkansas',
-  'California',
-  'Colorado',
-  'Connecticut',
-  'Delaware',
-  'Florida',
-  'Georgia',
-  'Hawaii',
-  'Idaho',
-  'Illinois',
-  'Indiana',
-  'Iowa',
-  'Kansas',
-  'Kentucky',
-  'Louisiana',
-  'Maine',
-  'Maryland',
-  'Massachusetts',
-  'Michigan',
-  'Minnesota',
-  'Mississippi',
-  'Missouri',
-  'Montana',
-  'Nebraska',
-  'Nevada',
-  'New Hampshire',
-  'New Jersey',
-  'New Mexico',
-  'New York',
-  'North Carolina',
-  'North Dakota',
-  'Ohio',
-  'Oklahoma',
-  'Oregon',
-  'Pennsylvania',
-  'Rhode Island',
-  'South Carolina',
-  'South Dakota',
-  'Tennessee',
-  'Texas',
-  'Utah',
-  'Vermont',
-  'Virginia',
-  'Washington',
-  'West Virginia',
-  'Wisconsin',
-  'Wyoming',
-];
+// `kUsStateNames` now lives in constant/constant.dart (imported above) so the
+// Profile screen's State dropdown shares the exact same 50-entry web list.
 
 /// One tappable row in the redesigned settings menu.
 /// [title] must match the value used by [_onSettingsTabChanged].
@@ -1516,11 +1465,32 @@ class _TabBarExampleState extends State<TabBarExample> {
           hint,
           style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
+        // The popup rows carry their own inset (see menuItemStyleData below
+        // for why it can't come from the package's own padding).
         items: kUsStateNames
             .map((s) => DropdownMenuItem<String>(
                   value: s,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      s,
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                  ),
+                ))
+            .toList(),
+        // Without this the closed button would reuse the padded item widgets
+        // above and sit 12px further right than the neighbouring inputs. The
+        // Align is required: the package stretches each entry to
+        // `menuItemStyleData.height`, and a bare Text would paint at the top of
+        // that box instead of centred like DropdownMenuItem's own child.
+        selectedItemBuilder: (context) => kUsStateNames
+            .map((s) => Align(
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     s,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                 ))
@@ -1548,9 +1518,14 @@ class _TabBarExampleState extends State<TabBarExample> {
             border: Border.all(color: Colors.grey.shade300),
           ),
         ),
+        // Must stay zero. DropdownButton2 pads the closed button's text by
+        // `menuItemStyleData.padding.horizontal / 2` whenever no explicit
+        // button/dropdown width is set, so a padding of 12 here pushed the
+        // State value 12px right of the sibling _cpTextField inputs. The rows
+        // get their inset from the Padding inside each item instead.
         menuItemStyleData: const MenuItemStyleData(
           height: 42,
-          padding: EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.zero,
         ),
       ),
     );

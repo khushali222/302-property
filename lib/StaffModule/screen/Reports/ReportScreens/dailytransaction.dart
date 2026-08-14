@@ -1324,7 +1324,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                       var data = snapshot.data!.data;
 
                       // Pagination logic
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -1391,7 +1391,9 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                     //         color: const Color.fromRGBO(
                                     //             152, 162, 179, .5))),
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {
@@ -2052,7 +2054,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                   }
 
                   // Pagination logic
-                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                   final currentPageData = data
                       .skip(currentPage * itemsPerPage)
                       .take(itemsPerPage)
@@ -2091,6 +2093,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                                         onChanged: (value) {
                                           setState(() {
                                             searchvalue = value;
+                                            currentPage = 0; // reset to first page on search change
                                           });
                                         },
                                         decoration: const InputDecoration(

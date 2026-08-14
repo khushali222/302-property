@@ -629,6 +629,171 @@ String formatPhoneNumberedit(String phoneNumber) {
   }
 }
 
+/// Digits-only form of a phone number, mirroring web's `phoneNorm`
+/// (`Client/src/views/source/Profile.jsx`). Use it for the value sent to the
+/// API and for change-detection, so a display-formatted "(555) 123-4567" is
+/// never mistaken for a different number than the stored "5551234567".
+String phoneDigitsOnly(String? phoneNumber) =>
+    (phoneNumber ?? '').replaceAll(RegExp(r'\D'), '');
+
+/// Empty-state row for a table whose visible page has no records — normally
+/// because a search or filter matched nothing. The screens' own "No Data
+/// Available" branch only tests the list the server returned, so it never fires
+/// for a narrowed-down result; without this the table area just renders blank.
+/// Mirrors that branch's presentation so both empty states look the same.
+Widget kNoSearchResults(BuildContext context) {
+  return Container(
+    height: MediaQuery.of(context).size.height * .35,
+    alignment: Alignment.center,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset(
+          "assets/images/no_data.jpg",
+          height: 160,
+          width: 160,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          "No Data Available",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: blueColor,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Full state names for address dropdowns. Same 50 entries, same order, as
+/// web's `US_STATES_LIST` (Client/src/utils/usStates.js) — web stores the full
+/// name as the field value, so these strings are what the API receives.
+const List<String> kUsStateNames = [
+  'Alabama',
+  'Alaska',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'Florida',
+  'Georgia',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Pennsylvania',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
+];
+
+/// ISO code -> full state name, matching web's `US_STATES_LIST`.
+const Map<String, String> kUsStateIsoToName = {
+  'AL': 'Alabama',
+  'AK': 'Alaska',
+  'AZ': 'Arizona',
+  'AR': 'Arkansas',
+  'CA': 'California',
+  'CO': 'Colorado',
+  'CT': 'Connecticut',
+  'DE': 'Delaware',
+  'FL': 'Florida',
+  'GA': 'Georgia',
+  'HI': 'Hawaii',
+  'ID': 'Idaho',
+  'IL': 'Illinois',
+  'IN': 'Indiana',
+  'IA': 'Iowa',
+  'KS': 'Kansas',
+  'KY': 'Kentucky',
+  'LA': 'Louisiana',
+  'ME': 'Maine',
+  'MD': 'Maryland',
+  'MA': 'Massachusetts',
+  'MI': 'Michigan',
+  'MN': 'Minnesota',
+  'MS': 'Mississippi',
+  'MO': 'Missouri',
+  'MT': 'Montana',
+  'NE': 'Nebraska',
+  'NV': 'Nevada',
+  'NH': 'New Hampshire',
+  'NJ': 'New Jersey',
+  'NM': 'New Mexico',
+  'NY': 'New York',
+  'NC': 'North Carolina',
+  'ND': 'North Dakota',
+  'OH': 'Ohio',
+  'OK': 'Oklahoma',
+  'OR': 'Oregon',
+  'PA': 'Pennsylvania',
+  'RI': 'Rhode Island',
+  'SC': 'South Carolina',
+  'SD': 'South Dakota',
+  'TN': 'Tennessee',
+  'TX': 'Texas',
+  'UT': 'Utah',
+  'VT': 'Vermont',
+  'VA': 'Virginia',
+  'WA': 'Washington',
+  'WV': 'West Virginia',
+  'WI': 'Wisconsin',
+  'WY': 'Wyoming',
+};
+
+/// Canonical dropdown label for a stored state value, mirroring web's
+/// `getStateLabelByIsoCode`: an ISO code ("CA") becomes the full name
+/// ("California") so the saved value matches a dropdown option. A value that is
+/// already a full name is matched case-insensitively; anything unrecognised is
+/// returned unchanged (web does the same rather than discarding it).
+String canonicalUsStateName(String? stored) {
+  final raw = (stored ?? '').trim();
+  if (raw.isEmpty) return '';
+  final byIso = kUsStateIsoToName[raw.toUpperCase()];
+  if (byIso != null) return byIso;
+  for (final name in kUsStateNames) {
+    if (name.toLowerCase() == raw.toLowerCase()) return name;
+  }
+  return raw;
+}
+
 // void _checkPasswordStrength(String password) {
 //   final result = Zxcvbn().evaluate(password);
 //   setState(() {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -74,6 +75,10 @@ class _Profile_screenState extends State<Profile_screen> {
   String originalCompanyCity = '';
   String originalCompanyState = '';
   String originalCompanyCountry = '';
+
+  /// Guards the Update button while a save is in flight — the handler awaits
+  /// the API now, so without it a double tap would fire two writes.
+  bool _isSavingProfile = false;
   @override
   void initState() {
     super.initState();
@@ -333,6 +338,11 @@ class _Profile_screenState extends State<Profile_screen> {
   Future<void> _fetchProfile() async {
     try {
       final profileData = await ProfileRepository().fetchProfile();
+      // Web normalises the stored state once, on load, before it ever reaches
+      // the form ("CA" -> "California") so the value matches a dropdown option.
+      // Both the field and its original-value snapshot get the normalised form,
+      // or the normalisation alone would register as an unsaved change.
+      final normalizedState = canonicalUsStateName(profileData.companyState);
       setState(() {
         _profile = profileData;
         _firstNameController.text = profileData.firstName ?? '';
@@ -345,7 +355,7 @@ class _Profile_screenState extends State<Profile_screen> {
         _companyPostalCodeController.text = profileData.companyPostalCode ?? '';
         _companyCityController.text = profileData.companyCity ?? '';
         _createdDate.text = profileData.createdAt ?? "";
-        _companyStateController.text = profileData.companyState ?? '';
+        _companyStateController.text = normalizedState;
         _companyCountryController.text = profileData.companyCountry ?? '';
         // Change Password starts empty, matching the Staff/Vendor/Tenant
         // screens, which never populate these fields. Seeding them from the
@@ -362,7 +372,7 @@ class _Profile_screenState extends State<Profile_screen> {
         originalCompanyAddress = profileData.companyAddress ?? '';
         originalCompanyPostalCode = profileData.companyPostalCode ?? '';
         originalCompanyCity = profileData.companyCity ?? '';
-        originalCompanyState = profileData.companyState ?? '';
+        originalCompanyState = normalizedState;
         originalCompanyCountry = profileData.companyCountry ?? '';
         originalDate = profileData.createdAt ?? "";
         _isLoading = false;
@@ -714,19 +724,25 @@ class _Profile_screenState extends State<Profile_screen> {
                                         color: blueColor,
                                       ),
                                     ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      '${_profile?.adminId}',
-                                      style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width <
-                                                    500
-                                                ? 16
-                                                : 18,
-                                        fontWeight: FontWeight.w400,
-                                        color: blueColor,
+                                    // Web's profile card shows the phone number
+                                    // here, never the admin id. Dropped when
+                                    // the account has no phone on file, so the
+                                    // card doesn't render an empty line.
+                                    if (_phone2FA.isNotEmpty) ...[
+                                      const SizedBox(height: 8.0),
+                                      Text(
+                                        formatPhoneNumberedit(_phone2FA),
+                                        style: TextStyle(
+                                          fontSize:
+                                              MediaQuery.of(context).size.width <
+                                                      500
+                                                  ? 16
+                                                  : 18,
+                                          fontWeight: FontWeight.w400,
+                                          color: blueColor,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -2334,10 +2350,7 @@ class _Profile_screenState extends State<Profile_screen> {
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        buildTextField(
-                                            'State',
-                                            _companyStateController,
-                                            _validateFirstName),
+                                        buildStateDropdown(),
                                         const SizedBox(height: 16.0),
                                         const Text(
                                           'Country',
@@ -2421,7 +2434,8 @@ class _Profile_screenState extends State<Profile_screen> {
                                               //     });
                                               //   }
                                               // },
-                                              onTap: () {
+                                              onTap: () async {
+                                                if (_isSavingProfile) return;
                                                 if (_formKey.currentState!
                                                     .validate()) {
                                                   // Check if any field has changed
@@ -2437,9 +2451,20 @@ class _Profile_screenState extends State<Profile_screen> {
                                                       _companyNameController
                                                               .text !=
                                                           originalCompanyName ||
-                                                      _phoneNumberController
-                                                              .text !=
-                                                          originalPhoneNumber ||
+                                                      // Compared digits-only,
+                                                      // like web's `phoneNorm`:
+                                                      // the field displays
+                                                      // "(555) 123-4567" while
+                                                      // the API returns
+                                                      // "5551234567", so a raw
+                                                      // string compare marked
+                                                      // the phone changed on
+                                                      // every load.
+                                                      phoneDigitsOnly(
+                                                              _phoneNumberController
+                                                                  .text) !=
+                                                          phoneDigitsOnly(
+                                                              originalPhoneNumber) ||
                                                       _companyAddressController
                                                               .text !=
                                                           originalCompanyAddress ||
@@ -2458,8 +2483,12 @@ class _Profile_screenState extends State<Profile_screen> {
                                                     // If any field has changed, call the API
                                                     _formKey.currentState!
                                                         .save();
-                                                    ProfileRepository()
-                                                        .Edit_profile({
+                                                    setState(() =>
+                                                        _isSavingProfile =
+                                                            true);
+                                                    try {
+                                                      await ProfileRepository()
+                                                          .Edit_profile({
                                                       "first_name":
                                                           _firstNameController
                                                               .text
@@ -2475,10 +2504,18 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           _companyNameController
                                                               .text
                                                               .trim(),
+                                                      // Digits only. The field
+                                                      // holds the display form
+                                                      // "(555) 123-4567", and
+                                                      // saving that back made
+                                                      // the stored number stop
+                                                      // matching what the API
+                                                      // had returned (and what
+                                                      // 2FA texts).
                                                       "phone_number":
-                                                          _phoneNumberController
-                                                              .text
-                                                              .trim(),
+                                                          phoneDigitsOnly(
+                                                              _phoneNumberController
+                                                                  .text),
                                                       "company_address":
                                                           _companyAddressController
                                                               .text
@@ -2499,7 +2536,27 @@ class _Profile_screenState extends State<Profile_screen> {
                                                           _companyCountryController
                                                               .text
                                                               .trim(),
-                                                    });
+                                                      });
+                                                      if (!mounted) return;
+                                                      // Re-read the saved
+                                                      // record: the header now
+                                                      // renders the phone
+                                                      // number, and the
+                                                      // original* snapshots
+                                                      // behind the no-changes
+                                                      // guard must match what
+                                                      // was actually stored.
+                                                      await _fetchProfile();
+                                                    } catch (_) {
+                                                      // Edit_profile already
+                                                      // toasts the failure.
+                                                    } finally {
+                                                      if (mounted) {
+                                                        setState(() =>
+                                                            _isSavingProfile =
+                                                                false);
+                                                      }
+                                                    }
                                                   } else {
                                                     // Optionally, show a message that no changes were made
                                                   }
@@ -3395,6 +3452,106 @@ class _Profile_screenState extends State<Profile_screen> {
         backgroundColor: Colors.red,
       );
     }
+  }
+
+  /// State picker for the company address — web renders this field as a select
+  /// over the 50 US states (`US_STATES_OPTIONS`), not a free-text input, and
+  /// stores the full state name. The chosen value is written straight back into
+  /// [_companyStateController] so the save payload and the change-detection
+  /// comparison below keep reading the same field they always did.
+  Widget buildStateDropdown() {
+    final current = _companyStateController.text.trim();
+    final isKnown = kUsStateNames.contains(current);
+
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: outlineClr, width: 1),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          isExpanded: true,
+          value: isKnown ? current : null,
+          // A value that doesn't match any option — free text typed before this
+          // was a dropdown — is still shown rather than blanked, matching web's
+          // `renderValue`. Picking from the list then replaces it.
+          hint: Text(
+            current.isEmpty ? 'Select State' : current,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 15,
+              color: current.isEmpty ? mutedClr : Colors.black87,
+            ),
+          ),
+          // The popup rows carry their own inset (see menuItemStyleData below
+          // for why it can't come from the package's own padding).
+          items: kUsStateNames
+              .map((state) => DropdownMenuItem<String>(
+                    value: state,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Text(
+                        state,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 15, color: Colors.black87),
+                      ),
+                    ),
+                  ))
+              .toList(),
+          // Without this the closed button would reuse the padded item widgets
+          // above and sit 14px further right than the neighbouring inputs.
+          // The Align is required: the package stretches each entry to
+          // `menuItemStyleData.height`, and a bare Text would paint at the top
+          // of that box instead of centred like DropdownMenuItem's own child.
+          selectedItemBuilder: (context) => kUsStateNames
+              .map((state) => Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      state,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            if (value == null) return;
+            setState(() => _companyStateController.text = value);
+          },
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.zero,
+            height: 50,
+          ),
+          iconStyleData: IconStyleData(
+            icon: Icon(Icons.keyboard_arrow_down_rounded,
+                color: blueColor, size: 22),
+          ),
+          dropdownStyleData: DropdownStyleData(
+            maxHeight: (MediaQuery.sizeOf(context).height * 0.35)
+                .clamp(200.0, 320.0),
+            elevation: 3,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: outlineClr),
+            ),
+          ),
+          // Must stay zero. DropdownButton2 pads the closed button's text by
+          // `menuItemStyleData.padding.horizontal / 2` whenever no explicit
+          // button/dropdown width is set, so a padding of 12 here pushed
+          // "Select State" 12px right of City and Country. The rows get their
+          // inset from the Padding inside each item instead.
+          menuItemStyleData: const MenuItemStyleData(
+            height: 42,
+            padding: EdgeInsets.zero,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildTextField(

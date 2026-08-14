@@ -1916,7 +1916,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
 
                           // Pagination logic
                           final totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                           final currentPageData = data
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
@@ -1930,7 +1930,9 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                 SizedBox(height: 10),
                                 Container(
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {
@@ -2248,6 +2250,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                                     onChanged: (value) {
                                       setState(() {
                                         searchvalue = value;
+                                        currentPage = 0; // reset to first page on search change
                                       });
                                     },
                                     decoration: const InputDecoration(
@@ -2372,7 +2375,7 @@ class _ExpiringInsuranceState extends State<ExpiringInsurance> {
                         // Apply pagination
                         final int itemsPerPage = 10;
                         final int totalPages =
-                            (data.length / itemsPerPage).ceil();
+                            (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                         final int currentPage =
                             1; // Update this with your pagination logic
                         final List<RentersInsuranceData> pagedData = data

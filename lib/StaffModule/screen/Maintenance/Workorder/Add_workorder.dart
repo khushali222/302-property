@@ -3197,9 +3197,11 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             height: 10,
                           ),
                           Container(
-                            height: 46,
+                            // Match the "Enter here" fields (CustomTextField in
+                            // add_tenants.dart): 50 high, 16 horizontal inset.
+                            height: 50,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 0),
+                                horizontal: 16.0, vertical: 0),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 // boxShadow: [
@@ -3213,11 +3215,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                 //     0.0, // How much the shadow should spread
                                 //   ),
                                 // ],
+                                // Match the other fields on this form: the
+                                // Status dropdown and its siblings use a 1.5px
+                                // #CED4DA outline with an 8px radius. width: 0
+                                // rendered a hairline that read as "no border".
                                 border: Border.all(
-                                  width: 0,
-                                  color: Color(0xFFCED4DA),
+                                  width: 1.5,
+                                  color: const Color(0xFFCED4DA),
                                 ),
-                                borderRadius: BorderRadius.circular(6.0)),
+                                borderRadius: BorderRadius.circular(8.0)),
                             child: TextFormField(
                               style: const TextStyle(
                                 color: Color(0xFF8898aa), // Text color
@@ -3226,10 +3232,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                               ),
                               controller: _dateController,
                               decoration: InputDecoration(
+                                // Same hint styling as the "Enter here" fields,
+                                // and no contentPadding/isDense override — the
+                                // Material default is what centres the text in
+                                // those fields, so overriding it is what made
+                                // this one sit differently.
                                 hintStyle: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
-                                    color: Color(0xFFb0b6c3)),
+                                    fontSize: 13, color: Color(0xFFb0b6c3)),
                                 border: InputBorder.none,
                                 // labelText: 'Select Date',
                                 hintText: Provider.of<DateProvider>(context)
@@ -3255,6 +3264,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     ),
                   ),
                 ),
+                _buildAddAnotherWorkOrder(),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
@@ -3426,7 +3436,15 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           notificationTime:
               DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
-        if (mounted) Navigator.pop(context, true);
+        if (!mounted) return;
+        // Web parity (AddWorkorder.jsx): with "Add Another Work Order" ticked,
+        // stay on the form and blank it for the next entry instead of
+        // navigating back to the list.
+        if (_addAnotherWorkOrder) {
+          _resetWorkOrderForm();
+        } else {
+          Navigator.pop(context, true);
+        }
       } catch (e) {
         Fluttertoast.showToast(
             msg: friendlyErrorMessage(e,
@@ -3451,6 +3469,115 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       });
     }
   }
+
+  // ── "Add Another Work Order" (web parity: AddWorkorder.jsx).
+  //
+  // Web shows this only in Add mode and lets it decide what happens AFTER a
+  // successful save: ticked resets the form and stays put, unticked navigates
+  // back. The mobile and tablet forms are separate State classes with their own
+  // copies of every field, so each needs its own reset.
+  bool _addAnotherWorkOrder = false;
+
+  Widget _buildAddAnotherWorkOrder() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: _addAnotherWorkOrder,
+              onChanged: (v) =>
+                  setState(() => _addAnotherWorkOrder = v ?? false),
+              activeColor: navyClr,
+              checkColor: Colors.white,
+              side: BorderSide(color: checkOffClr, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Add Another Work Order',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: navyClr,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Blank the form for the next entry, mirroring web's `resetWorkForm()`.
+  ///
+  /// Clears the text fields AND every selection behind them — leaving the
+  /// previous property, unit, vendor or category selected would give a form
+  /// that looks empty but posts the wrong record. The checkbox unticks itself,
+  /// so the behaviour is one-shot as it is on web.
+  ///
+  /// Re-seeds the Work Order defaults at the end, as web does with
+  /// fetchWorkDefaults(), so the blank form looks like a fresh Add screen.
+  void _resetWorkOrderForm() {
+    setState(() {
+      subject.clear();
+      other.clear();
+      perform.clear();
+      vendornote.clear();
+
+      _selectedPropertyId = null;
+      _selectedProperty = null;
+      _selectedUnitId = null;
+      _selectedUnit = null;
+      _selectedvendorsId = null;
+      _selectedVendors = null;
+      _selectedstaffId = null;
+      _selectedStaffs = null;
+      _selectedtenantId = null;
+      _selectedTenants = null;
+      _selectedCategory = null;
+      _selectedEntry = null;
+      _selectedStatus = "New";
+      // The Priority radios use 'High'/'Normal'/'Low'. The field's declared
+      // initial value ('button 1') matches none of them, so resetting to it
+      // left Priority with nothing selected — a fresh Add screen shows Normal,
+      // and web's form initial value is priority: "Normal" too.
+      _selectedOption = 'Normal';
+
+      renderId = '';
+      unitId = '';
+      vendorId = '';
+      StaffId = '';
+      tenantId = '';
+
+      isChecked = false;
+      _showTextField = false;
+      form_valid = false;
+
+      // Web parity gaps closed: web clears the unit option list
+      // (setUnitData([])), puts the due date back to its initial value via
+      // resetForm(), and clears the category selection object
+      // (setSelectedCategoryId("")). Leaving these would show the previous
+      // property's units, its due date, and its category on the "blank" form.
+      units.clear();
+      _dateController.clear();
+      _selectedDropdownCategory = null;
+
+      _uploadedFileNames.clear();
+      partsAndLabor.clear();
+
+      _addAnotherWorkOrder = false;
+    });
+    fetchWorkData();
+  }
+
+
+
 }
 
 class AddWorkOrderForTablet extends StatefulWidget {
@@ -6250,9 +6377,13 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                           0.0, // How much the shadow should spread
                                     ),
                                   ],
-                                  border:
-                                      Border.all(width: 0, color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0)),
+                                  // Match the other fields on this form — a
+                                  // white 0-width border rendered as no border
+                                  // at all.
+                                  border: Border.all(
+                                      width: 1.5,
+                                      color: const Color(0xFFCED4DA)),
+                                  borderRadius: BorderRadius.circular(8.0)),
                               child: TextFormField(
                                 style: const TextStyle(
                                   color: Color(0xFF8898aa), // Text color
@@ -6290,6 +6421,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                       ),
                     ),
                   ),
+                  _buildAddAnotherWorkOrder(),
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 35, right: 35, top: 15),
@@ -6454,7 +6586,15 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
         //     textColor: Colors.white,
         //     fontSize: 16.0
         // );
-        if (mounted) Navigator.pop(context, true);
+        if (!mounted) return;
+        // Web parity (AddWorkorder.jsx): with "Add Another Work Order" ticked,
+        // stay on the form and blank it for the next entry instead of
+        // navigating back to the list.
+        if (_addAnotherWorkOrder) {
+          _resetWorkOrderForm();
+        } else {
+          Navigator.pop(context, true);
+        }
       } catch (e) {
         Fluttertoast.showToast(
             msg: friendlyErrorMessage(e,
@@ -6652,4 +6792,112 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
       },
     );
   }
+
+  // ── "Add Another Work Order" (web parity: AddWorkorder.jsx).
+  //
+  // Web shows this only in Add mode and lets it decide what happens AFTER a
+  // successful save: ticked resets the form and stays put, unticked navigates
+  // back. The mobile and tablet forms are separate State classes with their own
+  // copies of every field, so each needs its own reset.
+  bool _addAnotherWorkOrder = false;
+
+  Widget _buildAddAnotherWorkOrder() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: _addAnotherWorkOrder,
+              onChanged: (v) =>
+                  setState(() => _addAnotherWorkOrder = v ?? false),
+              activeColor: navyClr,
+              checkColor: Colors.white,
+              side: BorderSide(color: checkOffClr, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Add Another Work Order',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: navyClr,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Blank the form for the next entry, mirroring web's `resetWorkForm()`.
+  ///
+  /// Clears the text fields AND every selection behind them — leaving the
+  /// previous property, unit, vendor or category selected would give a form
+  /// that looks empty but posts the wrong record. The checkbox unticks itself,
+  /// so the behaviour is one-shot as it is on web.
+  ///
+  /// No work-defaults re-fetch here: unlike the mobile form, this tablet form
+  /// never loads the Work Order defaults on open, so there is nothing to re-seed.
+  void _resetWorkOrderForm() {
+    setState(() {
+      subject.clear();
+      other.clear();
+      perform.clear();
+      vendornote.clear();
+
+      _selectedPropertyId = null;
+      _selectedProperty = null;
+      _selectedUnitId = null;
+      _selectedUnit = null;
+      _selectedvendorsId = null;
+      _selectedVendors = null;
+      _selectedstaffId = null;
+      _selectedStaffs = null;
+      _selectedtenantId = null;
+      _selectedTenants = null;
+      _selectedCategory = null;
+      _selectedEntry = null;
+      _selectedStatus = "New";
+      // The Priority radios use 'High'/'Normal'/'Low'. The field's declared
+      // initial value ('button 1') matches none of them, so resetting to it
+      // left Priority with nothing selected — a fresh Add screen shows Normal,
+      // and web's form initial value is priority: "Normal" too.
+      _selectedOption = 'Normal';
+
+      renderId = '';
+      unitId = '';
+      vendorId = '';
+      StaffId = '';
+      tenantId = '';
+
+      isChecked = false;
+      _showTextField = false;
+      form_valid = false;
+
+      // Web parity gaps closed: web clears the unit option list
+      // (setUnitData([])), puts the due date back to its initial value via
+      // resetForm(), and clears the category selection object
+      // (setSelectedCategoryId("")). Leaving these would show the previous
+      // property's units, its due date, and its category on the "blank" form.
+      units.clear();
+      _dateController.clear();
+      _selectedDropdownCategory = null;
+
+      _uploadedFileNames.clear();
+      partsAndLabor.clear();
+
+      _addAnotherWorkOrder = false;
+    });
+  }
+
+
+
 }

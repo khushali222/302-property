@@ -3318,9 +3318,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                             height: 10,
                           ),
                           Container(
-                            height: 46,
+                            // Match the "Enter here" fields (CustomTextField in
+                            // add_tenants.dart): 50 high, 16 horizontal inset.
+                            height: 50,
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 0),
+                                horizontal: 16.0, vertical: 0),
                             decoration: BoxDecoration(
                                 color: Colors.white,
                                 // boxShadow: [
@@ -3334,11 +3336,14 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                 //     0.0, // How much the shadow should spread
                                 //   ),
                                 // ],
+                                // Match the other fields on this form: 1.5px
+                                // #CED4DA outline, 8px radius. width: 0 drew a
+                                // hairline that read as no border at all.
                                 border: Border.all(
-                                  width: 0,
-                                  color: Color(0xFFCED4DA),
+                                  width: 1.5,
+                                  color: const Color(0xFFCED4DA),
                                 ),
-                                borderRadius: BorderRadius.circular(6.0)),
+                                borderRadius: BorderRadius.circular(8.0)),
                             child: TextFormField(
                               style: const TextStyle(
                                 color: Color(0xFF8898aa), // Text color
@@ -3347,10 +3352,13 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                               ),
                               controller: _dateController,
                               decoration: InputDecoration(
+                                // Same hint styling as the "Enter here" fields,
+                                // and no contentPadding/isDense override — the
+                                // Material default is what centres the text in
+                                // those fields, so overriding it is what made
+                                // this one sit differently.
                                 hintStyle: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
-                                    color: Color(0xFFb0b6c3)),
+                                    fontSize: 13, color: Color(0xFFb0b6c3)),
                                 border: InputBorder.none,
                                 // labelText: 'Select Date',
                                 hintText: Provider.of<DateProvider>(context)

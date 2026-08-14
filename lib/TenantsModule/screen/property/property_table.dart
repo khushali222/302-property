@@ -384,6 +384,7 @@ class _PropertyTableState extends State<PropertyTable> {
                         onChanged: (value) {
                           setState(() {
                             searchvalue = value;
+                            currentPage = 0; // reset to first page on search change
                           });
                         },
                         cursorColor: blueColor,
@@ -477,7 +478,7 @@ class _PropertyTableState extends State<PropertyTable> {
                               );
                             }
                             sortData(data);
-                            final totalPages = (data.length / itemsPerPage).ceil();
+                            final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                             final currentPageData = data
                                 .skip(currentPage * itemsPerPage)
                                 .take(itemsPerPage)
@@ -489,7 +490,9 @@ class _PropertyTableState extends State<PropertyTable> {
                                   _buildHeaders(),
                                   SizedBox(height: 8),
                                   Column(
-                                    children: currentPageData.asMap().entries.map((entry) {
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData.asMap().entries.map((entry) {
                                       int index = entry.key;
                                       tenant_property Propertytype = entry.value;
                                       return GestureDetector(

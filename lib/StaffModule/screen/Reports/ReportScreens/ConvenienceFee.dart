@@ -1312,7 +1312,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                         }
 
                         // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
@@ -1334,7 +1334,9 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                 // if (snapshot.data?.first.tenantData != null && snapshot.data!.first.tenantData!.isNotEmpty)
                                 Container(
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {
@@ -1709,7 +1711,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                   }
 
                   // Pagination logic
-                  final totalPages = (data.length / itemsPerPage).ceil();
+                  final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                   final currentPageData = data
                       .skip(currentPage * itemsPerPage)
                       .take(itemsPerPage)
@@ -1745,6 +1747,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                                       onChanged: (value) {
                                         setState(() {
                                           searchvalue = value;
+                                          currentPage = 0; // reset to first page on search change
                                         });
                                       },
                                       decoration: const InputDecoration(
@@ -2501,6 +2504,7 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports> {
                         onChanged: (value) {
                           setState(() {
                             searchvalue = value;
+                            currentPage = 0; // reset to first page on search change
                           });
                         },
                         decoration: const InputDecoration(
