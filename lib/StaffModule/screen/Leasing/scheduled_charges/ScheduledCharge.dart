@@ -1340,7 +1340,7 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                           }
 
                           final totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                           final currentPageData = data
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
@@ -1355,7 +1355,9 @@ class _ScheduledChargeTableState extends State<ScheduledChargeTable> {
                                   const SizedBox(height: 10),
                                   Container(
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {

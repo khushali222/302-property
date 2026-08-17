@@ -1080,7 +1080,16 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                       ),
                                     ),
                                     const SizedBox(width: 16),
-                                    ElevatedButton(
+                                    SizedBox(
+                                      // Same height as the search field beside
+                                      // it (48 narrow / 50 wide).
+                                      height: MediaQuery.of(context)
+                                                  .size
+                                                  .width <
+                                              500
+                                          ? 48
+                                          : 50,
+                                      child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: blueColor,
                                       ),
@@ -1121,6 +1130,7 @@ class _DelinquentTenantsState extends State<DelinquentTenants> {
                                             Icon(Icons.arrow_drop_down),
                                           ],
                                         ),
+                                      ),
                                       ),
                                     )
                                   ],

@@ -620,7 +620,16 @@ class _NotesTableState extends State<NotesTable> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await deleteNote(noteid: id);
+            // deleteNote rethrows on a failed delete, and reloadScreen() is
+            // the only thing that pops this dialog — so without this catch a
+            // failure left the confirmation dialog stuck on screen. The repo
+            // has already toasted the reason, so just close and stand down.
+            try {
+              await deleteNote(noteid: id);
+            } catch (_) {
+              if (mounted) Navigator.pop(context);
+              return;
+            }
             reloadScreen();
           },
           color: blueColor,

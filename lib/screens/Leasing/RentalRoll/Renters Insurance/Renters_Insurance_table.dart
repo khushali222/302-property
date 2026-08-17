@@ -624,7 +624,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                         }
 
                         // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
@@ -639,7 +639,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                 const SizedBox(height: 10),
                                 Container(
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {
@@ -1284,7 +1286,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                         }
 
                         // Pagination logic
-                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
@@ -1301,7 +1303,9 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
                                   decoration: BoxDecoration(
                                       border: Border.all(color: blueColor)),
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

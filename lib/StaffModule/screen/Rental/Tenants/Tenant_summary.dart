@@ -4013,7 +4013,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                                               style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                             ),
                                                                                             TextSpan(
-                                                                                              text: '\$${policy.liabilityCoverage ?? ''}',
+                                                                                              text: formatMoney(policy.liabilityCoverage),
                                                                                               style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                             ),
                                                                                           ],
@@ -4471,7 +4471,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile> {
                                                                             isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            '\$${_pagedData[i].liabilityCoverage ?? ''}',
+                                                                            formatMoney(_pagedData[i].liabilityCoverage),
                                                                             isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
@@ -6747,7 +6747,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                           isDeleted: _pagedData[i].isDelete == true,
                                                                         ),
                                                                         _buildDataCell(
-                                                                          '\$${_pagedData[i].liabilityCoverage ?? ''}',
+                                                                          formatMoney(_pagedData[i].liabilityCoverage),
                                                                           isDeleted: _pagedData[i].isDelete == true,
                                                                         ),
                                                                         _buildDataCell(

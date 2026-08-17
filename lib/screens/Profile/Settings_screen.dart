@@ -5454,7 +5454,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                         }
                                         sortData(data);
                                         final totalPages =
-                                            (data.length / itemsPerPage).ceil();
+                                            (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                                         final currentPageData = data
                                             .skip(currentPage * itemsPerPage)
                                             .take(itemsPerPage)
@@ -5474,7 +5474,9 @@ class _TabBarExampleState extends State<TabBarExample> {
                                                 // decoration: BoxDecoration(
                                                 //     border: Border.all(color: blueColor)),
                                                 child: Column(
-                                                  children: currentPageData
+                                                  children: currentPageData.isEmpty
+                                                      ? [kNoSearchResults(context)]
+                                                      : currentPageData
                                                       .asMap()
                                                       .entries
                                                       .map((entry) {

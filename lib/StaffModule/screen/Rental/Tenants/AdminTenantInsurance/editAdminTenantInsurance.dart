@@ -383,7 +383,10 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     });
 
     liablity.text = (widget.data.liabilityCoverage ?? 0).toString();
-    if (widget.data.policy!.isNotEmpty)
+    // `policy` is nullable (the model reads json['Policy'] with no fallback),
+    // so force-unwrapping it threw whenever a record had no document attached.
+    // Same guard the Admin copy uses.
+    if (widget.data.policy != null && widget.data.policy!.isNotEmpty)
       _uploadedFileNames.add(widget.data.policy!);
     super.initState();
   }

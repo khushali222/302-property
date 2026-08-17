@@ -431,6 +431,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
           const SizedBox(height: 4),
           _buildHeaderRow(),
           const SizedBox(height: 8),
+          if (_filteredItems.isEmpty) kNoSearchResults(context),
           ..._filteredItems.asMap().entries.map((e) =>
               _buildDataRow(e.value, e.key)),
           const SizedBox(height: 24),

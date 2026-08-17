@@ -861,7 +861,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                   // decoration: BoxDecoration(
                                   //     border: Border.all(color: blueColor)),
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

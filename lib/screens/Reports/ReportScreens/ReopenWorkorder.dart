@@ -145,7 +145,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
             }
           }
 
-          totalPages = (reopenWorkOrders.length / itemsPerPage).ceil();
+          totalPages = (reopenWorkOrders.isEmpty ? 1 : (reopenWorkOrders.length / itemsPerPage).ceil());
         });
       } else {
         setState(() {
@@ -537,7 +537,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
 
   Widget _buildPagination() {
     int totalFilteredItems = filteredData.length;
-    int totalPages = (totalFilteredItems / itemsPerPage).ceil();
+    int totalPages = (totalFilteredItems == 0 ? 1 : (totalFilteredItems / itemsPerPage).ceil());
 
     if (totalPages <= 1) return SizedBox.shrink();
 
@@ -998,7 +998,9 @@ class _ReopenWorkorderState extends State<ReopenWorkorder> {
                                 _buildHeaders(),
                                 const SizedBox(height: 10),
                                 Column(
-                                  children: currentPageData
+                                  children: currentPageData.isEmpty
+                                      ? [kNoSearchResults(context)]
+                                      : currentPageData
                                       .asMap()
                                       .entries
                                       .map((entry) {

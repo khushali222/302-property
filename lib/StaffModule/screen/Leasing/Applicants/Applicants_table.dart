@@ -1944,7 +1944,7 @@ class _Applicants_tableState extends State<Applicants_table>
                           // data = data.reversed.toList();
                           sortData(data);
                           final totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                           final currentPageData = data
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
@@ -1963,7 +1963,9 @@ class _Applicants_tableState extends State<Applicants_table>
                                   // ),
 
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

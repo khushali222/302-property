@@ -983,6 +983,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         Column(
           children: [
             // Data Rows
+            if (filteredData.isEmpty) kNoSearchResults(context),
             ...filteredData.asMap().entries.map((entry) {
               int index = entry.key;
               OutstandingLeaseBalanceData item = entry.value;

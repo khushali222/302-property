@@ -1008,7 +1008,7 @@ class _PropertyTableState extends State<PropertyTable> {
                 }
                 //  data = data.reversed.toList();
                 sortData(data);
-                final totalPages = (data.length / itemsPerPage).ceil();
+                final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                 final currentPageData = data
                     .skip(currentPage * itemsPerPage)
                     .take(itemsPerPage)
@@ -1046,7 +1046,9 @@ class _PropertyTableState extends State<PropertyTable> {
                       // decoration: BoxDecoration(
                       //     border: Border.all(color: blueColor)),
                       child: Column(
-                        children: currentPageData.asMap().entries.map((entry) {
+                        children: currentPageData.isEmpty
+                            ? [kNoSearchResults(context)]
+                            : currentPageData.asMap().entries.map((entry) {
                           int index = entry.key;
                           bool isExpanded = expandedIndex == index;
                           propertytype Propertytype = entry.value;

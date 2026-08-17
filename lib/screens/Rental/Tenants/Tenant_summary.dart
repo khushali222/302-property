@@ -2656,7 +2656,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                               style: TextStyle(fontWeight: FontWeight.bold, color: blueColor), // Bold and black
                                                                                             ),
                                                                                             TextSpan(
-                                                                                              text: '\$${Propertytype.liabilityCoverage ?? ''}',
+                                                                                              // Same currency helper as the other
+                                                                                              // insurance views: grouped amount, and
+                                                                                              // $0.00 rather than a bare "$" when no
+                                                                                              // coverage is recorded.
+                                                                                              text: formatMoney(Propertytype.liabilityCoverage),
                                                                                               style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.grey), // Light and grey
                                                                                             ),
                                                                                           ],
@@ -3122,7 +3126,10 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                             isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
-                                                                            '\$${_pagedData[i].liabilityCoverage ?? ''}',
+                                                                            // Same currency helper as the other insurance
+                                                                            // views: grouped amount, and $0.00 rather than a
+                                                                            // bare "$" when no coverage is recorded.
+                                                                            formatMoney(_pagedData[i].liabilityCoverage),
                                                                             isDeleted: _pagedData[i].isDelete == true,
                                                                           ),
                                                                           _buildDataCell(
@@ -6670,10 +6677,13 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                                                         true,
                                                                   ),
                                                                   _buildDataCell(
-                                                                    _pagedData[
-                                                                            i]
-                                                                        .liabilityCoverage
-                                                                        .toString()!,
+                                                                    // liabilityCoverage is `dynamic` and often null;
+                                                                    // `null.toString()` renders the literal word "null"
+                                                                    // in the cell. formatMoney gives $0.00 for null and
+                                                                    // grouped currency otherwise — the same helper the
+                                                                    // other insurance tables use for this field.
+                                                                    formatMoney(_pagedData[i]
+                                                                        .liabilityCoverage),
                                                                     isDeleted: _pagedData[i]
                                                                             .isDelete ==
                                                                         true,

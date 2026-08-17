@@ -1600,7 +1600,9 @@ class _PropertiesTableState extends State<PropertiesTable> {
                                     // decoration: BoxDecoration(
                                     //     border: Border.all(color: blueColor)),
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {
@@ -2544,7 +2546,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   Widget _buildPaginationControls() {
-    int totalPages = (_tableData.length / _rowsPerPage).ceil();
+    int totalPages = (_tableData.isEmpty ? 1 : (_tableData.length / _rowsPerPage).ceil());
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

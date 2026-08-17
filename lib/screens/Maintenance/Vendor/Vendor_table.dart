@@ -1013,7 +1013,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                       .toList();
                 }
                 sortData(data);
-                final totalPages = (data.length / itemsPerPage).ceil();
+                final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                 final currentPageData = data
                     .skip(currentPage * itemsPerPage)
                     .take(itemsPerPage)
@@ -1055,7 +1055,9 @@ class _Vendor_tableState extends State<Vendor_table> {
                       // decoration: BoxDecoration(
                       //     border: Border.all(color: blueColor)),
                       child: Column(
-                        children: currentPageData.asMap().entries.map((entry) {
+                        children: currentPageData.isEmpty
+                            ? [kNoSearchResults(context)]
+                            : currentPageData.asMap().entries.map((entry) {
                           int index = entry.key;
                           bool isExpanded = expandedIndex == index;
                           Vendor Propertytype = entry.value;

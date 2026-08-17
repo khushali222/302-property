@@ -854,7 +854,9 @@ class _Send_Email_tableState extends State<Send_Email_table> {
                                   const SizedBox(height: 10),
                                   Container(
                                     child: Column(
-                                      children: currentPageData
+                                      children: currentPageData.isEmpty
+                                          ? [kNoSearchResults(context)]
+                                          : currentPageData
                                           .asMap()
                                           .entries
                                           .map((entry) {

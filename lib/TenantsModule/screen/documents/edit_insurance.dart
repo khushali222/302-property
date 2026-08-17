@@ -344,7 +344,12 @@ class _edit_insuranceState extends State<edit_insurance> {
     });
 
     liablity.text = widget.data.liabilityCoverage.toString();
-    if (widget.data.policy != "") _uploadedFileNames.add(widget.data.policy!);
+    // `policy` is nullable (model reads json['Policy'] with no fallback), and
+    // `null != ""` is true — so the old check fell through to the force-unwrap
+    // and threw whenever a record had no document attached. Same guard the
+    // Admin copy uses (editAdminTenantInsurance.dart).
+    if (widget.data.policy != null && widget.data.policy!.isNotEmpty)
+      _uploadedFileNames.add(widget.data.policy!);
 
     initialProvider = provider.text;
     initialPolicy = policy.text;

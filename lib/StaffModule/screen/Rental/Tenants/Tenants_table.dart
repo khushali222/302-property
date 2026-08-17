@@ -1223,7 +1223,9 @@ class _Tenants_tableState extends State<Tenants_table> {
                                 const SizedBox(height: 10),
                                 Container(
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

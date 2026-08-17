@@ -1364,7 +1364,9 @@ class _RentPastDueReportsState extends State<RentPastDueReports> {
                 //     border:
                 //         Border.all(color: Color.fromRGBO(152, 162, 179, .5))),
                 child: Column(
-                  children: currentPageData.asMap().entries.where((entry) {
+                  children: currentPageData.isEmpty
+                      ? [kNoSearchResults(context)]
+                      : currentPageData.asMap().entries.where((entry) {
                     // Filter the data based on the search input
                     Transaction item = entry.value;
                     String address =

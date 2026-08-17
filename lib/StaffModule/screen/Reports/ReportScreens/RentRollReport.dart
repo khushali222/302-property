@@ -2386,7 +2386,7 @@ class _RentersInsurancesState extends State<RentersInsurances> {
                           .toList();
 
                       // Pagination logic
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -2734,7 +2734,9 @@ class _RentersInsurancesState extends State<RentersInsurances> {
               //       Border.all(color: const Color.fromRGBO(152, 162, 179, .5)),
               // ),
               child: Column(
-                children: currentPageData.asMap().entries.map((entry) {
+                children: currentPageData.isEmpty
+                    ? [kNoSearchResults(context)]
+                    : currentPageData.asMap().entries.map((entry) {
                   int rowIndex = entry.key;
                   var item = entry.value;
                   bool isRowExpanded = expandedRowIndex == rowIndex;

@@ -799,7 +799,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         }
                         sortData(data);
 
-                        final totalPages = (data.length / itemsPerPage).ceil();
+                        final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                         final currentPageData = data
                             .skip(currentPage * itemsPerPage)
                             .take(itemsPerPage)
@@ -810,7 +810,9 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                             children: [
                               const SizedBox(height: 10),
                               Column(
-                                children: currentPageData
+                                children: currentPageData.isEmpty
+                                    ? [kNoSearchResults(context)]
+                                    : currentPageData
                                     .asMap()
                                     .entries
                                     .map((entry) {

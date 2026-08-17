@@ -800,7 +800,7 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       .toList();
                 }
                 sortData(data);
-                final totalPages = (data.length / itemsPerPage).ceil();
+                final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                 final currentPageData = data
                     .skip(currentPage * itemsPerPage)
                     .take(itemsPerPage)
@@ -845,7 +845,9 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
                       // decoration: BoxDecoration(
                       //     border: Border.all(color: blueColor)),
                       child: Column(
-                        children: currentPageData.asMap().entries.map((entry) {
+                        children: currentPageData.isEmpty
+                            ? [kNoSearchResults(context)]
+                            : currentPageData.asMap().entries.map((entry) {
                           int index = entry.key;
                           bool isExpanded = expandedIndex == index;
                           RentalOwnerData rentals = entry.value;

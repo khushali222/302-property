@@ -1981,7 +1981,7 @@ class _Applicants_tableState extends State<Applicants_table>
                           // data = data.reversed.toList();
                           sortData(data);
                           final totalPages =
-                              (data.length / itemsPerPage).ceil();
+                              (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                           final currentPageData = data
                               .skip(currentPage * itemsPerPage)
                               .take(itemsPerPage)
@@ -2003,7 +2003,9 @@ class _Applicants_tableState extends State<Applicants_table>
                                   //         color: Color.fromRGBO(
                                   //             152, 162, 179, .5))),
                                   child: Column(
-                                    children: currentPageData
+                                    children: currentPageData.isEmpty
+                                        ? [kNoSearchResults(context)]
+                                        : currentPageData
                                         .asMap()
                                         .entries
                                         .map((entry) {

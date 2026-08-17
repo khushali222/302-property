@@ -525,7 +525,7 @@ class _TempletTableState extends State<TempletTable> {
                             .toList();
                       }
                       sortData(data);
-                      final totalPages = (data.length / itemsPerPage).ceil();
+                      final totalPages = (data.isEmpty ? 1 : (data.length / itemsPerPage).ceil());
                       final currentPageData = data
                           .skip(currentPage * itemsPerPage)
                           .take(itemsPerPage)
@@ -538,7 +538,9 @@ class _TempletTableState extends State<TempletTable> {
                             const SizedBox(height: 10),
                             Container(
                               child: Column(
-                                children: currentPageData
+                                children: currentPageData.isEmpty
+                                    ? [kNoSearchResults(context)]
+                                    : currentPageData
                                     .asMap()
                                     .entries
                                     .map((entry) {

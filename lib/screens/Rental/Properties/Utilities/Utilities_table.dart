@@ -727,6 +727,7 @@ class _Utilities_tableState extends State<Utilities_table> {
                               _buildUnitHeader(unitName, selectedUnit?.unitId),
                             _buildHeaders(),
                             SizedBox(height: 10),
+                            if (filteredUtilities.isEmpty) kNoSearchResults(context),
                             ...filteredUtilities.asMap().entries.map((entry) {
                               return _buildUtilityRow(
                                   entry.value, entry.key, currentUnitKey);
@@ -870,8 +871,17 @@ class _Utilities_tableState extends State<Utilities_table> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await deleteUtility(utilityId: utilityId);
-            Navigator.pop(context);
+            // deleteUtility rethrows on a failed delete, which skipped the
+            // pop below and left this dialog stuck — and its barrier is not
+            // dismissible, so Cancel was the only way out. The repo has
+            // already toasted the reason; close either way.
+            try {
+              await deleteUtility(utilityId: utilityId);
+            } catch (_) {
+              // reason already surfaced by deleteUtility
+            } finally {
+              if (mounted) Navigator.pop(context);
+            }
           },
           color: blueColor,
         ),

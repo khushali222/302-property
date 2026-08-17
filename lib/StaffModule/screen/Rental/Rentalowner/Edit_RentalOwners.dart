@@ -403,8 +403,12 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
         // Check if the new start date is later than the current end date
         if (enddateController.text.isNotEmpty) {
           try {
+            // The field text is written using the provider's format (see
+            // above), not a fixed 'MM-dd-yyyy' — parsing with a hardcoded
+            // format silently failed (caught below) whenever the account uses
+            // a different one, which skipped this validation entirely.
             DateTime currentEndDate =
-                DateFormat('MM-dd-yyyy').parse(enddateController.text);
+                DateFormat(dateProvider.dateFormat).parse(enddateController.text);
             if (picked.isAfter(currentEndDate)) {
               // Clear the end date if start date is after end date
               enddateController.clear();

@@ -572,7 +572,7 @@ class _MortgageTableState extends State<MortgageTable> {
   Widget build(BuildContext context) {
     // Apply sorting to filtered mortgages
     sortData(_filteredMortgages);
-    final totalPages = (_filteredMortgages.length / itemsPerPage).ceil();
+    final totalPages = (_filteredMortgages.isEmpty ? 1 : (_filteredMortgages.length / itemsPerPage).ceil());
     final currentPageData = _filteredMortgages
         .skip(currentPage * itemsPerPage)
         .take(itemsPerPage)
@@ -754,7 +754,9 @@ class _MortgageTableState extends State<MortgageTable> {
                             const SizedBox(height: 10),
                             Container(
                               child: Column(
-                                children: currentPageData
+                                children: currentPageData.isEmpty
+                                    ? [kNoSearchResults(context)]
+                                    : currentPageData
                                     .asMap()
                                     .entries
                                     .map((entry) {
