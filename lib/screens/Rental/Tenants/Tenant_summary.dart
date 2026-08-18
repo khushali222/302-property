@@ -2798,6 +2798,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                     phoneNumber: Propertytype.insuranceCompanyPhoneNumber,
                                                                                                     rentersInsuranceId: Propertytype.rentersInsuranceId,
                                                                                                     leaseId: Propertytype.leaseId,
+                                                                                                    tenants: Propertytype.tenants,
                                                                                                   ),
                                                                                                   tenantName: '${widget.tenants?.tenantFirstName ?? ''} ${widget.tenants?.tenantLastName ?? ''}'.trim(),
                                                                                                 )));

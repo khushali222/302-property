@@ -3410,38 +3410,47 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Widget _achOptionCard({required int value, required String label}) {
     final bool selected = _selectedRadio == value;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRadio = value;
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFFEAF1FB) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected ? blueColor : Colors.grey.shade300,
-            width: selected ? 2 : 1,
+    // Unlike the surcharge number fields (readOnly:) and the account dropdown
+    // (onChanged: null), this option card is a plain GestureDetector — it had
+    // no _canEditSettings check at all, so Staff could change the ACH option
+    // even though the fields below it were already locked.
+    return Opacity(
+      opacity: _canEditSettings ? 1.0 : 0.5,
+      child: GestureDetector(
+        onTap: !_canEditSettings
+            ? null
+            : () {
+                setState(() {
+                  _selectedRadio = value;
+                });
+              },
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? blueColor : Colors.grey.shade300,
+              width: selected ? 2 : 1,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            _dtRadioCircle(selected),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: blueColor,
+          child: Row(
+            children: [
+              _dtRadioCircle(selected),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: blueColor,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -3502,8 +3511,9 @@ class _TabBarExampleState extends State<TabBarExample> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-            color: Colors.grey.shade400,
-            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
           ),
           border: InputBorder.none,
           contentPadding:
@@ -3540,36 +3550,44 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   Widget _lateFeeCalcOption(String value, String label) {
     final bool selected = calculationType == value;
+    // Same gap as _achOptionCard: a plain GestureDetector with no
+    // _canEditSettings check, so Staff could change Fixed/Percent even though
+    // the amount field below it was already locked.
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            calculationType = value;
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          decoration: BoxDecoration(
-            color: selected ? const Color(0xFFEAF1FB) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected ? blueColor : Colors.grey.shade300,
-              width: selected ? 2 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              _dtRadioCircle(selected),
-              const SizedBox(width: 12),
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: blueColor,
-                ),
+      child: Opacity(
+        opacity: _canEditSettings ? 1.0 : 0.5,
+        child: GestureDetector(
+          onTap: !_canEditSettings
+              ? null
+              : () {
+                  setState(() {
+                    calculationType = value;
+                  });
+                },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              color: selected ? const Color(0xFFEAF1FB) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: selected ? blueColor : Colors.grey.shade300,
+                width: selected ? 2 : 1,
               ),
-            ],
+            ),
+            child: Row(
+              children: [
+                _dtRadioCircle(selected),
+                const SizedBox(width: 12),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: blueColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -3644,18 +3662,33 @@ class _TabBarExampleState extends State<TabBarExample> {
           ],
         ),
         const SizedBox(height: 8),
-        Container(
-          height: 54,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: DropdownButtonHideUnderline(
+        // dropdown_button2 recolors its text to Theme.disabledColor whenever
+        // onChanged is null (see below), which gave Staff a generic Material
+        // grey instead of the brand navy Admin sees for the same value.
+        // Overriding disabledColor keeps the text the same colour/weight as
+        // the (also-disabled-but-undimmed) fields around it — no Opacity
+        // wrap, since _lateFeeField doesn't dim either.
+        Theme(
+            data: Theme.of(context).copyWith(disabledColor: blueColor),
+            child: Container(
+            height: 54,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: DropdownButtonHideUnderline(
             child: DropdownButton2<String>(
               isExpanded: true,
-              buttonStyleData: ButtonStyleData(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: AlignmentDirectional.centerStart,
+              // dropdown_button2 only adds its own extra closed-state sizing
+              // padding when width is left unset on both the button and the
+              // dropdown menu — width: double.infinity turns that off, so this
+              // padding (matching the TextField's contentPadding exactly) is
+              // the only thing governing the text's start position.
+              buttonStyleData: const ButtonStyleData(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16),
               ),
               value: (selectedPropertyOwnerId.isEmpty ||
                       propertyOwners.any(
@@ -3723,6 +3756,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             ),
           ),
         ),
+          ),
         const SizedBox(height: 20),
         _lateFeeLabel("Number of Grace Period Days"),
         const SizedBox(height: 8),
@@ -3779,18 +3813,33 @@ class _TabBarExampleState extends State<TabBarExample> {
         const SizedBox(height: 20),
         _lateFeeLabel("Charge Account"),
         const SizedBox(height: 8),
-        Container(
-          height: 54,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: DropdownButtonHideUnderline(
+        // dropdown_button2 recolors its text to Theme.disabledColor whenever
+        // onChanged is null (see below), which gave Staff a generic Material
+        // grey instead of the brand navy Admin sees for the same value.
+        // Overriding disabledColor keeps the text the same colour/weight as
+        // the (also-disabled-but-undimmed) fields around it — no Opacity
+        // wrap, since _lateFeeField doesn't dim either.
+        Theme(
+            data: Theme.of(context).copyWith(disabledColor: blueColor),
+            child: Container(
+            height: 54,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: DropdownButtonHideUnderline(
             child: DropdownButton2<String>(
               isExpanded: true,
-              buttonStyleData: ButtonStyleData(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: AlignmentDirectional.centerStart,
+              // dropdown_button2 only adds its own extra closed-state sizing
+              // padding when width is left unset on both the button and the
+              // dropdown menu — width: double.infinity turns that off, so this
+              // padding (matching the TextField's contentPadding exactly) is
+              // the only thing governing the text's start position.
+              buttonStyleData: const ButtonStyleData(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16),
               ),
               value: accountOptions.contains(selectedAccountName)
                   ? selectedAccountName
@@ -3852,6 +3901,7 @@ class _TabBarExampleState extends State<TabBarExample> {
             ),
           ),
         ),
+          ),
         const SizedBox(height: 20),
         _lateFeeLabel("Description"),
         const SizedBox(height: 8),
@@ -3865,24 +3915,33 @@ class _TabBarExampleState extends State<TabBarExample> {
             Expanded(
               flex: 2,
               child: GestureDetector(
-                onTap: () {
-                  duration.clear();
-                  late_fee.clear();
-                },
-                child: Container(
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: blueColor, width: 1.5),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Reset",
-                      style: TextStyle(
-                        color: blueColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                // Reset can't save (the Save button next to it is separately
+                // gated by _canSaveLateFee()), but readOnly on a TextField only
+                // blocks typing — .clear() still blanks it visibly. Staff could
+                // wipe the on-screen amount even though nothing persists.
+                onTap: !_canEditSettings
+                    ? null
+                    : () {
+                        duration.clear();
+                        late_fee.clear();
+                      },
+                child: Opacity(
+                  opacity: _canEditSettings ? 1.0 : 0.5,
+                  child: Container(
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: blueColor, width: 1.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Reset",
+                        style: TextStyle(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
@@ -4961,6 +5020,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton2<String?>(
                                     isExpanded: true,
+                                    alignment: AlignmentDirectional.centerStart,
                                     value: selectedAccount != null &&
                                             accounts.any((account) =>
                                                 account.accountId ==
@@ -4980,7 +5040,16 @@ class _TabBarExampleState extends State<TabBarExample> {
                                       color: blueColor,
                                       fontWeight: FontWeight.w600,
                                     ),
+                                    // dropdown_button2 only adds its own extra
+                                    // closed-state sizing padding when width is
+                                    // left unset on both the button and the
+                                    // dropdown menu — width: double.infinity
+                                    // turns that off, so this padding (matching
+                                    // the TextField's contentPadding exactly)
+                                    // is the only thing governing where the
+                                    // text starts.
                                     buttonStyleData: const ButtonStyleData(
+                                      width: double.infinity,
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 16),
                                     ),
@@ -5205,16 +5274,27 @@ class _TabBarExampleState extends State<TabBarExample> {
                                   Expanded(
                                     flex: 2,
                                     child: GestureDetector(
-                                      onTap: () {
-                                        debit.clear();
-                                        credit.clear();
-                                        flat.clear();
-                                        percent.clear();
-                                        setState(() {
-                                          selectedAccount = null;
-                                        });
-                                      },
-                                      child: Container(
+                                      // Same gap as the Late Fee Reset button:
+                                      // this can't save (gated separately by
+                                      // _canEditSettings on the Save/Update
+                                      // action), but .clear() still blanks the
+                                      // readOnly fields visibly. Staff could
+                                      // wipe every surcharge value and the
+                                      // selected account on screen.
+                                      onTap: !_canEditSettings
+                                          ? null
+                                          : () {
+                                              debit.clear();
+                                              credit.clear();
+                                              flat.clear();
+                                              percent.clear();
+                                              setState(() {
+                                                selectedAccount = null;
+                                              });
+                                            },
+                                      child: Opacity(
+                                        opacity: _canEditSettings ? 1.0 : 0.5,
+                                        child: Container(
                                         height: 54,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
@@ -5232,6 +5312,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                                               fontSize: 16,
                                             ),
                                           ),
+                                        ),
                                         ),
                                       ),
                                     ),
@@ -9049,9 +9130,13 @@ class _TabBarExampleState extends State<TabBarExample> {
           ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
           : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
     } else if (vendorSorting2) {
+      // Was previously safe only because vendorPhoneNumber could never be
+      // null (a missing phone came through as the literal string "null").
+      // Now that the model yields a real null for a missing phone, sorting
+      // a list with any such vendor by phone would throw on the `!`.
       data.sort((a, b) => vendorAscending2
-          ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
-          : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
+          ? (a.vendorPhoneNumber ?? '').compareTo(b.vendorPhoneNumber ?? '')
+          : (b.vendorPhoneNumber ?? '').compareTo(a.vendorPhoneNumber ?? ''));
     }
   }
 

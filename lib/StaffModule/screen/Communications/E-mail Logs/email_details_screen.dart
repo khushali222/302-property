@@ -140,6 +140,26 @@ class EmailDetailsScreen extends StatelessWidget {
                         data: (email.body ?? '').trim().isNotEmpty
                             ? email.body!
                             : "<p style='color:#999;font-style:italic;'>No content available</p>",
+                        // The 2FA/login-code email template sizes its navy
+                        // title band for a 600px desktop inbox (24px h1, 30px
+                        // padding); on a phone-width screen "Two-Factor
+                        // Authentication" wraps to two lines and the band
+                        // reads as oversized. This only touches how this
+                        // preview renders it — the selector targets the white
+                        // title text specifically (its style attribute has
+                        // color: #ffffff), not the navy verification-code h1
+                        // in the box below it (color: #152B51), which stays
+                        // full size. The email actually sent/stored is
+                        // untouched.
+                        style: {
+                          "h1[style*=\"ffffff\"]": Style(
+                            fontSize: FontSize(18),
+                            margin: Margins.zero,
+                          ),
+                          "div[style*=\"152B51\"]": Style(
+                            padding: HtmlPaddings.symmetric(vertical: 16),
+                          ),
+                        },
                       ),
                     ),
                   ),

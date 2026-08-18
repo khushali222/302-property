@@ -761,31 +761,46 @@ class _edit_insuranceState extends State<edit_insurance> {
                               //     editinsurance(widget.data.tenantInsuranceId!);
                               //   }
                               // },
-                              onPressed: () {
-                                if (_formkey.currentState!.validate()) {
-                                  if (_validateDates()) {
-                                    // Check if any field has changed
-                                    if (provider.text != initialProvider ||
-                                        policy.text != initialPolicy ||
-                                        _convertToApiFormat(
-                                                effective.text.trim()) !=
-                                            _convertToApiFormat(
-                                                initialEffective.trim()) ||
-                                        _convertToApiFormat(
-                                                expiration.text.trim()) !=
-                                            _convertToApiFormat(
-                                                initialExpiration.trim()) ||
-                                        liablity.text != initialLiability ||
-                                        !listEquals(_uploadedFileNames,
-                                            initialUploadedFileNames)) {
-                                      editinsurance(
-                                          widget.data.tenantInsuranceId!);
-                                    } else {
-                                      Navigator.of(context).pop(true);
-                                    }
-                                  }
-                                }
-                              },
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (!_formkey.currentState!
+                                          .validate()) return;
+                                      if (!_validateDates()) return;
+
+                                      // Check if any field has changed
+                                      final hasChanges = provider.text !=
+                                              initialProvider ||
+                                          policy.text != initialPolicy ||
+                                          _convertToApiFormat(
+                                                  effective.text.trim()) !=
+                                              _convertToApiFormat(
+                                                  initialEffective.trim()) ||
+                                          _convertToApiFormat(
+                                                  expiration.text.trim()) !=
+                                              _convertToApiFormat(
+                                                  initialExpiration.trim()) ||
+                                          liablity.text != initialLiability ||
+                                          !listEquals(_uploadedFileNames,
+                                              initialUploadedFileNames);
+
+                                      if (!hasChanges) {
+                                        Navigator.of(context).pop(true);
+                                        return;
+                                      }
+
+                                      setState(() => isLoading = true);
+                                      try {
+                                        await editinsurance(
+                                            widget.data.tenantInsuranceId!);
+                                      } catch (_) {
+                                        // editinsurance already toasts the reason
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() => isLoading = false);
+                                        }
+                                      }
+                                    },
                               child: isLoading
                                   ? Center(
                                       child: SpinKitFadingCircle(

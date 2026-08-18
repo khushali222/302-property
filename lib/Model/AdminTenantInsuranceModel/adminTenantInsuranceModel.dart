@@ -17,6 +17,10 @@ class AdminTenantInsuranceModel {
   String? leaseId;
   String? phoneNumber;
   String? rentersInsuranceId;
+  // Full covered-tenants list (renters insurance can cover more than one
+  // tenant). Web always resends this list as-is on edit; tenantId alone
+  // isn't enough to round-trip a save without silently dropping tenants.
+  List<String>? tenants;
 
   AdminTenantInsuranceModel(
       {this.tenantInsuranceId,
@@ -35,7 +39,8 @@ class AdminTenantInsuranceModel {
       this.iV,
       this.leaseId,
       this.phoneNumber,
-      this.rentersInsuranceId});
+      this.rentersInsuranceId,
+      this.tenants});
 
   AdminTenantInsuranceModel.fromJson(Map<String, dynamic> json) {
     tenantInsuranceId = json['TenantInsurance_id'];
@@ -61,6 +66,9 @@ class AdminTenantInsuranceModel {
     leaseId = json['lease_id'];
     phoneNumber = json['insurance_company_phone_number'];
     rentersInsuranceId = json['renters_insurance_id'];
+    tenants = json['tenants'] is List
+        ? (json['tenants'] as List).map((e) => e.toString()).toList()
+        : null;
   }
 
   Map<String, dynamic> toJson() {

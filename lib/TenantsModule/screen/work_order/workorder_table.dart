@@ -918,6 +918,7 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
                         onChanged: (value) {
                           setState(() {
                             selectedValue = value;
+                            currentPage = 0; // reset to first page on status change
                           });
                         },
                         buttonStyleData: ButtonStyleData(

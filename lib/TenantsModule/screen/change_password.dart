@@ -441,13 +441,14 @@ class _Change_passwordState extends State<Change_password> {
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                onPressed: () {
-                                  //print("calling 111");
-                                  if (_formkey.currentState!.validate()) {
-                                    //  print("calling 22");
-                                    addinsurance();
-                                  }
-                                },
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        if (_formkey.currentState!
+                                            .validate()) {
+                                          addinsurance();
+                                        }
+                                      },
                                 child: isLoading
                                     ? const Center(
                                         child: SpinKitFadingCircle(
@@ -954,7 +955,9 @@ class _Change_passwordState extends State<Change_password> {
                                         0.04,
                                   ),
                                   GestureDetector(
-                                    onTap: () async {
+                                    onTap: loading
+                                        ? null
+                                        : () async {
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
                                       String? pass =
@@ -1409,83 +1412,105 @@ class _Change_passwordState extends State<Change_password> {
   }
 
   addinsurance() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? id = prefs.getString("tenant_id");
-    String? admin_id = prefs.getString("adminId");
-    String? token = prefs.getString('token');
-    String? email = prefs.getString('email');
-    Map<String, dynamic> values = {
-      'password': password.text.trim(),
-      "currentPassword": currentpassword.text.trim()
-    };
+    // The tablet layout's button reads isLoading, the phone layout's reads
+    // loading — both are driven from here so either button shows the
+    // spinner, disables itself, and can't fire a second overlapping
+    // reset_password request (each success rotates the auth token, so an
+    // overlapping request can leave the client holding a token the server
+    // has already superseded).
+    if (isLoading || loading) return;
+    setState(() {
+      isLoading = true;
+      loading = true;
+    });
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString("tenant_id");
+      String? admin_id = prefs.getString("adminId");
+      String? token = prefs.getString('token');
+      String? email = prefs.getString('email');
+      Map<String, dynamic> values = {
+        'password': password.text.trim(),
+        "currentPassword": currentpassword.text.trim()
+      };
 
-    // v2 identifies the tenant from the JWT instead of an email in the URL.
-    // The legacy `/reset_password/$email` route resolves the account BY EMAIL
-    // and picks the wrong record when two tenants share one — which rejected a
-    // correct current password — and it runs with no auth check at all. Web
-    // moved to v2 for both reasons (TenantPassChange.jsx); the server keeps v1
-    // alive only for older clients.
-    final http.Response response = await apiPut(
-      Uri.parse('$Api_url/api/tenant/reset_password_v2'),
-      headers: <String, String>{
-        "authorization": "CRM $token",
-        "id": "CRM $id",
-        //'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: values,
-    );
+      // v2 identifies the tenant from the JWT instead of an email in the URL.
+      // The legacy `/reset_password/$email` route resolves the account BY EMAIL
+      // and picks the wrong record when two tenants share one — which rejected a
+      // correct current password — and it runs with no auth check at all. Web
+      // moved to v2 for both reasons (TenantPassChange.jsx); the server keeps v1
+      // alive only for older clients.
+      final http.Response response = await apiPut(
+        Uri.parse('$Api_url/api/tenant/reset_password_v2'),
+        headers: <String, String>{
+          "authorization": "CRM $token",
+          "id": "CRM $id",
+          //'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: values,
+      );
 
-    log(response.body);
-    var responseData = json.decode(response.body);
+      log(response.body);
+      var responseData = json.decode(response.body);
 
-    // The server reports success in the HTTP status; its body carries only
-    // `message` and `newToken`. Reading a `statusCode` field out of the body
-    // never matched, so every response — including a successful one — fell to
-    // the else branch and printed its message, leaving the form untouched.
-    // StaffModule's copy already checks the HTTP status.
-    if (response.statusCode == 200) {
-      await _savePassword(password.text.trim());
+      // The server reports success in the HTTP status; its body carries only
+      // `message` and `newToken`. Reading a `statusCode` field out of the body
+      // never matched, so every response — including a successful one — fell to
+      // the else branch and printed its message, leaving the form untouched.
+      // StaffModule's copy already checks the HTTP status.
+      if (response.statusCode == 200) {
+        await _savePassword(password.text.trim());
 
-      // The server issues a fresh token with the password change and the old
-      // one stops working. Web stores it the same way (TenantPassChange.jsx),
-      // and StaffModule's copy of this screen already does. Without it every
-      // later request keeps using the stale token until the user logs out and
-      // back in. Guarded, so a response without the field changes nothing.
-      if (responseData["newToken"] != null) {
-        await prefs.setString('token', responseData["newToken"]);
+        // The server issues a fresh token with the password change and the old
+        // one stops working. Web stores it the same way (TenantPassChange.jsx),
+        // and StaffModule's copy of this screen already does. Without it every
+        // later request keeps using the stale token until the user logs out and
+        // back in. Guarded, so a response without the field changes nothing.
+        if (responseData["newToken"] != null) {
+          await prefs.setString('token', responseData["newToken"]);
+        }
+
+        Fluttertoast.showToast(msg: responseData["message"]);
+        // Both fields are emptied so the new password is not left sitting on
+        // screen in plaintext once it has been saved. StaffModule's copy of this
+        // screen reaches the same end state by popping straight after the toast;
+        // this one stays put, so it has to clear itself. Validation state is
+        // reset too, or a stale message would sit under a now-empty field.
+        if (mounted) {
+          setState(() {
+            // All THREE fields, not just the two new-password ones — this screen
+            // also asks for the current password, and leaving that populated
+            // keeps a live credential on screen just the same.
+            currentpassword.clear();
+            password.clear();
+            confirmpassword.clear();
+            passworderror = false;
+            confirmpassworderror = false;
+            passwordmessage = "";
+            confirmpasswordmessage = "";
+          });
+        }
+        // Leave the screen once the change is saved, as web does
+        // (TenantPassChange.jsx routes to the dashboard on success) and as
+        // StaffModule's copy of this screen already does. The clear above still
+        // runs first, so nothing is on screen during the short delay.
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) Navigator.pop(context);
+        });
+        return responseData;
+      } else {
+        Fluttertoast.showToast(msg: responseData["message"]);
+        return;
       }
-
-      Fluttertoast.showToast(msg: responseData["message"]);
-      // Both fields are emptied so the new password is not left sitting on
-      // screen in plaintext once it has been saved. StaffModule's copy of this
-      // screen reaches the same end state by popping straight after the toast;
-      // this one stays put, so it has to clear itself. Validation state is
-      // reset too, or a stale message would sit under a now-empty field.
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'An error occurred. Please try again.');
+    } finally {
       if (mounted) {
         setState(() {
-          // All THREE fields, not just the two new-password ones — this screen
-          // also asks for the current password, and leaving that populated
-          // keeps a live credential on screen just the same.
-          currentpassword.clear();
-          password.clear();
-          confirmpassword.clear();
-          passworderror = false;
-          confirmpassworderror = false;
-          passwordmessage = "";
-          confirmpasswordmessage = "";
+          isLoading = false;
+          loading = false;
         });
       }
-      // Leave the screen once the change is saved, as web does
-      // (TenantPassChange.jsx routes to the dashboard on success) and as
-      // StaffModule's copy of this screen already does. The clear above still
-      // runs first, so nothing is on screen during the short delay.
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) Navigator.pop(context);
-      });
-      return responseData;
-    } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to Insurance');
     }
   }
 }

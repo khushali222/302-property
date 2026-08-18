@@ -24,7 +24,7 @@ class Vendor {
       adminId: json['admin_id'],
       vendorId: json['vendor_id'],
       vendorName: json['vendor_name'],
-      vendorPhoneNumber: json['vendor_phoneNumber'].toString(),
+      vendorPhoneNumber: json['vendor_phoneNumber']?.toString(),
       vendorEmail: json['vendor_email'],
       vendorPassword: json['vendor_password'],
       trade: json['trade'],

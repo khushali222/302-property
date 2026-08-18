@@ -826,16 +826,26 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              onPressed: () {
-                                if (_formkey.currentState!.validate()) {
-                                  if (_validateDates()) {
-                                    editinsurance(
-                                        widget.data.rentersInsuranceId ??
-                                            widget.data.tenantInsuranceId ??
-                                            '');
-                                  }
-                                }
-                              },
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      if (!_formkey.currentState!
+                                          .validate()) return;
+                                      if (!_validateDates()) return;
+                                      setState(() => isLoading = true);
+                                      try {
+                                        await editinsurance(
+                                            widget.data.rentersInsuranceId ??
+                                                widget.data.tenantInsuranceId ??
+                                                '');
+                                      } catch (_) {
+                                        // editinsurance already toasts the reason
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() => isLoading = false);
+                                        }
+                                      }
+                                    },
                               child: isLoading
                                   ? const Center(
                                       child: SpinKitFadingCircle(
@@ -885,6 +895,25 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
+
+    // Web parity (UpdateInsuranceDialog.jsx): always resend the policy's own
+    // covered-tenants list — never a single "current tenant" id, which this
+    // screen is sometimes opened without. Sending that unset id silently
+    // wiped the real tenant(s) off the policy, orphaning it from every
+    // tenant-scoped fetch (it would vanish from the list entirely, even
+    // under "Show Deleted"). Web also refuses to save with no tenant left.
+    final effectiveTenants = (widget.data.tenants ?? const [])
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toList();
+    if (effectiveTenants.isEmpty && (widget.data.tenantId ?? '').isNotEmpty) {
+      effectiveTenants.add(widget.data.tenantId!.trim());
+    }
+    if (effectiveTenants.isEmpty) {
+      Fluttertoast.showToast(msg: 'Select at least one tenant');
+      return;
+    }
+
     Map<String, dynamic> values = {
       "lease_id": widget.data.leaseId ?? '',
       "insurance_company": provider.text.trim(),
@@ -896,7 +925,7 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
           num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
       "insurance_policy_document":
           _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
-      "tenants": [widget.data.tenantId ?? ''],
+      "tenants": effectiveTenants,
     };
 
     final http.Response response = await apiPut(

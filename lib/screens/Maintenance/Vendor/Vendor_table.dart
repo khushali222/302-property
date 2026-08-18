@@ -61,9 +61,13 @@ class _Vendor_tableState extends State<Vendor_table> {
           ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
           : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
     } else if (sorting2) {
+      // Was previously safe only because vendorPhoneNumber could never be
+      // null (a missing phone came through as the literal string "null").
+      // Now that the model yields a real null for a missing phone, sorting
+      // a list with any such vendor by phone would throw on the `!`.
       data.sort((a, b) => ascending2
-          ? a.vendorPhoneNumber!.compareTo(b.vendorPhoneNumber!)
-          : b.vendorPhoneNumber!.compareTo(a.vendorPhoneNumber!));
+          ? (a.vendorPhoneNumber ?? '').compareTo(b.vendorPhoneNumber ?? '')
+          : (b.vendorPhoneNumber ?? '').compareTo(a.vendorPhoneNumber ?? ''));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
           ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
@@ -997,7 +1001,7 @@ class _Vendor_tableState extends State<Vendor_table> {
                           property.vendorName!
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()) ||
-                          property.vendorPhoneNumber!
+                          (property.vendorPhoneNumber ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()) ||
                           property.vendorEmail!
@@ -1177,8 +1181,17 @@ class _Vendor_tableState extends State<Vendor_table> {
                                                   .08),
                                           Expanded(
                                             child: Text(
+                                              // Interpolating a null value here
+                                              // directly reproduces the same
+                                              // "null"-as-text bug this file's
+                                              // vendorPhoneNumber sort/search
+                                              // sites were just fixed for — an
+                                              // empty string lets
+                                              // formatPhoneNumber's own isEmpty
+                                              // check return "N/A" instead.
                                               formatPhoneNumber(
-                                                  '${Propertytype.vendorPhoneNumber}'),
+                                                  Propertytype.vendorPhoneNumber ??
+                                                      ''),
                                               //'${Propertytype.vendorPhoneNumber}',
                                               style: TextStyle(
                                                 color: blueColor,
