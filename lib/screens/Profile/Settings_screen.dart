@@ -1,4 +1,5 @@
 import 'package:three_zero_two_property/services/app_log.dart';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -216,6 +217,7 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool vendorAscending1 = true;
   bool vendorAscending2 = false;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   String? selectedAccount;
   String? _accountError;
   // 1. Add state variables
@@ -248,7 +250,10 @@ class _TabBarExampleState extends State<TabBarExample> {
       _showSettingsMenu = false;
     }
     _checkUserType();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
       });
@@ -261,8 +266,6 @@ class _TabBarExampleState extends State<TabBarExample> {
     fetchlatefeeData();
     fetchPropertyOwners();
     fetchMailData();
-    accountname = TextEditingController();
-    note = TextEditingController();
     // _loadColorPreference();
     loadChargeSetting();
     _loadVendor();
@@ -409,8 +412,31 @@ class _TabBarExampleState extends State<TabBarExample> {
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     accountname.dispose();
     note.dispose();
+    // Surcharge tab
+    credit.dispose();
+    debit.dispose();
+    percent.dispose();
+    flat.dispose();
+    // Late Fee Charge tab
+    late_fee.dispose();
+    duration.dispose();
+    grace_balance.dispose();
+    description.dispose();
+    // Mail service tab
+    durationmail.dispose();
+    replyToEmail.dispose();
+    // Categories tab
+    categories.dispose();
+    other.dispose();
+    // SMS (Twilio) tab
+    twilioAccountSid.dispose();
+    twilioAuthToken.dispose();
+    twilioPhoneNumber.dispose();
+    // Date format tab
+    _customDateController.dispose();
     _cpCompanyName.dispose();
     _cpMailingStreet.dispose();
     _cpMailingCity.dispose();

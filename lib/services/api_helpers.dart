@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_client.dart';
 import 'app_headers.dart';
@@ -154,11 +155,51 @@ Future<http.Response> apiPatch(
   return response;
 }
 
+/// The `id` header the upload endpoint expects is the caller's OWN id, which
+/// differs per role — an admin id resolves the wrong user branch for the other
+/// roles. Mirrors the mapping in splash_screen's session check and the login
+/// screen, keyed off the same stored `role`.
+Future<Map<String, String>> _authHeaders() async {
+  final prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('token');
+  final String role = prefs.getString('role') ?? '';
+
+  final String? ownId = role == 'Admin'
+      ? prefs.getString('adminId')
+      : role == 'Staffmember'
+          ? prefs.getString('staff_id')
+          : role == 'Tenant'
+              ? prefs.getString('tenant_id')
+              : role == 'Vendor'
+                  ? prefs.getString('vendor_id')
+                  : null;
+
+  if (token == null || token.isEmpty || ownId == null || ownId.isEmpty) {
+    return const {};
+  }
+  return {
+    'authorization': 'CRM $token',
+    'id': 'CRM $ownId',
+  };
+}
+
 /// For `http.MultipartRequest` / file-upload flows. Attach app headers to
 /// the request before sending. Status 426 is detected from the streamed
 /// response by peeking the status code; the body stream is left intact for
 /// the caller (we can't easily re-read it without buffering).
+///
+/// Auth headers are filled in here because every multipart upload in the app
+/// targets the same authenticated endpoint, and none of the ~50 call sites
+/// were sending them — the server rejected each one with a 401 and stored
+/// nothing, which screens that preview the local file made look successful.
+/// Doing it centrally means new upload screens inherit it. A call site that
+/// sets `authorization` itself still wins, so explicit per-screen headers are
+/// left untouched.
 Future<http.StreamedResponse> apiSend(http.BaseRequest request) async {
+  if (!request.headers.keys
+      .any((k) => k.toLowerCase() == 'authorization')) {
+    request.headers.addAll(await _authHeaders());
+  }
   request.headers.addAll(AppHeaders.headers);
   _logOutgoing(request.method, request.url);
   final response = await request.send();

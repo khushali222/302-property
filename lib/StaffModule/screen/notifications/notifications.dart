@@ -42,6 +42,20 @@ class _notificationsState extends State<notifications> {
     });
   }
 
+  /// The list endpoint returns only UNREAD notifications, so once one is opened
+  /// (which marks it read) the cached future is stale and still shows it. The
+  /// handler's Navigator.push calls are awaited, so this resolves only after the
+  /// user pops back — reloading then drops the notification they just read.
+  Future<void> _onNotificationTap(Map<String, dynamic> notification) async {
+    await handleNotificationTap(
+      context,
+      notification['is_workorder'],
+      notification['notification_id'],
+    );
+    if (!mounted) return;
+    loadNotifications();
+  }
+
   Future<List<Map<String, dynamic>>>? fetchNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("staff_id");
@@ -159,7 +173,8 @@ class _notificationsState extends State<notifications> {
         if (responseData['is_workorder'] == true) {
           String workOrderId =
               responseData['notification_type']['workorder_id'];
-          Navigator.push(
+          // Awaited so the caller can refresh the list once the user pops back.
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
@@ -170,7 +185,8 @@ class _notificationsState extends State<notifications> {
           // Fetch rental details to determine if it's multi-unit
           bool isMultiUnit = await fetchRentalDetails(rentalId);
 
-          Navigator.push(
+          // Awaited so the caller can refresh the list once the user pops back.
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => Summery_page(
@@ -272,7 +288,13 @@ class _notificationsState extends State<notifications> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: notifications.map((notification) {
                             // print(formatNotificationDateTime(DateTime.parse(notification['createdAt'])));
-                            return Padding(
+                            // The whole notification is tappable, not just the
+                            // eye icon — the title, date and detail text were
+                            // dead space before.
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _onNotificationTap(notification),
+                              child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Column(
@@ -320,13 +342,13 @@ class _notificationsState extends State<notifications> {
                                       ),
                                       Spacer(),
                                       GestureDetector(
-                                        onTap: () {
-                                          handleNotificationTap(
-                                              context,
-                                              notification['is_workorder'],
-                                              notification['notification_id']);
-                                          loadNotifications();
-                                        },
+                                        // loadNotifications() used to run here
+                                        // without awaiting the tap handler, so
+                                        // it refreshed before the mark-as-read
+                                        // had even been sent and the list came
+                                        // back unchanged.
+                                        onTap: () =>
+                                            _onNotificationTap(notification),
                                         child: Container(
                                             height: 40,
                                             width: 40,
@@ -385,6 +407,7 @@ class _notificationsState extends State<notifications> {
                                   Divider(thickness: 1.0),
                                 ],
                               ),
+                            ),
                             );
                           }).toList(),
                         ),

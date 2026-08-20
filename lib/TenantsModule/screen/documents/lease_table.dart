@@ -627,10 +627,15 @@ class _Lease_TableState extends State<Lease_Table> {
                             } else if (selectedValue == "All") {
                               data = snapshot.data!;
                             } else if (searchvalue!.isNotEmpty) {
+                              // rentalAdress is nullable; force-unwrapping it
+                              // threw inside build for any lease saved without
+                              // an address, breaking the list as soon as a
+                              // character was typed.
                               data = snapshot.data!
-                                  .where((property) => property.rentalAdress!
-                                      .toLowerCase()
-                                      .contains(searchvalue!.toLowerCase()))
+                                  .where((property) =>
+                                      (property.rentalAdress?.toLowerCase() ??
+                                              '')
+                                          .contains(searchvalue!.toLowerCase()))
                                   .toList();
                             }
                             // Change 4: No data found state with header + image
@@ -943,10 +948,14 @@ class _Lease_TableState extends State<Lease_Table> {
 
                           // Apply search filter if needed
                           if (searchvalue.isNotEmpty) {
+                            // rentalAdress is nullable; force-unwrapping it
+                            // threw inside build for any lease saved without an
+                            // address, breaking the list as soon as a character
+                            // was typed.
                             _tableData = _tableData
-                                .where((property) => property.rentalAdress!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()))
+                                .where((property) =>
+                                    (property.rentalAdress?.toLowerCase() ?? '')
+                                        .contains(searchvalue.toLowerCase()))
                                 .toList();
                           }
 
@@ -982,8 +991,9 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     _buildHeader(
                                                         'Lease',
                                                         0,
-                                                        (property) => property
-                                                            .rentalAdress!),
+                                                        (property) =>
+                                                            property.rentalAdress ??
+                                                                ''),
 
                                                     _buildHeader(
                                                         'Lease Start', 2, null),
@@ -1047,7 +1057,8 @@ class _Lease_TableState extends State<Lease_Table> {
                                                     children: [
                                                       _buildDataCell(
                                                           _pagedData[i]
-                                                              .rentalAdress!),
+                                                                  .rentalAdress ??
+                                                              ''),
 
                                                       _buildDataCell(
                                                         _pagedData[i]

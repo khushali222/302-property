@@ -262,8 +262,12 @@ class _editAdminInsuranceState extends State<editAdminInsurance> {
 
   @override
   initState() {
-    provider.text = widget.data.provider!;
-    policy.text = widget.data.policyId!;
+    // Both are nullable on the model, and force-unwrapping them here threw
+    // during initState — so the screen failed to open at all for a policy
+    // saved without a company or policy id. Matches the phone line below and
+    // the Staff copy of this screen, which already guard all three.
+    provider.text = widget.data.provider ?? '';
+    policy.text = widget.data.policyId ?? '';
     phone.text = formatPhoneNumberedit(widget.data.phoneNumber ?? '');
 
     // Parse and set DateTime variables from existing data

@@ -28,6 +28,22 @@ class _notificationsState extends State<notifications> {
     fetchnoti = fetchNotifications()!;
   }
 
+  /// The list endpoint returns only UNREAD notifications, so once one is opened
+  /// (which marks it read) the cached future is stale and still shows it. The
+  /// handler's Navigator.push is awaited, so this resolves only after the user
+  /// pops back — refreshing then drops the notification they just read.
+  Future<void> _onNotificationTap(Map<String, dynamic> notification) async {
+    await handleNotificationTap(
+      context,
+      notification['is_workorder'],
+      notification['notification_id'],
+    );
+    if (!mounted) return;
+    setState(() {
+      fetchnoti = fetchNotifications()!;
+    });
+  }
+
 
   Future<List<Map<String,dynamic>>>? fetchNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -117,7 +133,8 @@ class _notificationsState extends State<notifications> {
         if (responseData['is_workorder'] == true) {
           String workOrderId =
           responseData['notification_type']['workorder_id'];
-          Navigator.push(
+          // Awaited so the caller can refresh the list once the user pops back.
+          await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
@@ -213,7 +230,13 @@ class _notificationsState extends State<notifications> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: notifications.map((notification) {
-                            return Padding(
+                            // The whole notification is tappable, not just the
+                            // eye icon — the title, date and detail text were
+                            // dead space before.
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => _onNotificationTap(notification),
+                              child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,12 +275,8 @@ class _notificationsState extends State<notifications> {
                                       ),
                                       Spacer(),
                                       GestureDetector(
-                                        onTap: () {
-                                          handleNotificationTap(
-                                              context,
-                                              notification['is_workorder'],
-                                              notification['notification_id']);
-                                        },
+                                        onTap: () =>
+                                            _onNotificationTap(notification),
                                         child: Container(
                                             height: 40,
                                             width: 40,
@@ -312,6 +331,7 @@ class _notificationsState extends State<notifications> {
                                   Divider(thickness: 1.0),
                                 ],
                               ),
+                            ),
                             );
                           }).toList(),
                         ),

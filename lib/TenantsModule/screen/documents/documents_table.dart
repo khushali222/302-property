@@ -1029,10 +1029,16 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                             } else if (selectedValue == "All") {
                               data = snapshot.data!;
                             } else if (searchvalue!.isNotEmpty) {
+                              // provider is nullable in the model (parsed from
+                              // json['Provider']); force-unwrapping it threw
+                              // inside build for any record saved without one,
+                              // breaking the whole list as soon as a character
+                              // was typed. A missing provider simply doesn't
+                              // match the search now.
                               data = snapshot.data!
-                                  .where((property) => property.provider!
-                                      .toLowerCase()
-                                      .contains(searchvalue!.toLowerCase()))
+                                  .where((property) =>
+                                      (property.provider?.toLowerCase() ?? '')
+                                          .contains(searchvalue!.toLowerCase()))
                                   .toList();
                             }
                             if (data.length == 0) {
@@ -1674,7 +1680,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                         'Insurance Company',
                                                         0,
                                                         (property) =>
-                                                            property.provider!),
+                                                            property.provider ??
+                                                                ''),
 
                                                     _buildHeader(
                                                         'Policy Id', 2, null),
@@ -1742,7 +1749,8 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable> {
                                                       //     '${formatDate(_pagedData[i].updatedAt!)}'),
                                                       _buildDataCell(
                                                           _pagedData[i]
-                                                              .provider!),
+                                                                  .provider ??
+                                                              ''),
 
                                                       _buildDataCell(
                                                         _pagedData[i].policyId!,
