@@ -264,6 +264,17 @@ class _Add_WorkorderState extends State<Add_Workorder> {
   Future<String?> uploadImage(File imageFile) async {
     final String uploadUrl = '$image_upload_url/api/images/upload';
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    // Every other authenticated call in this file sends these headers; this
+    // upload never did. The server has since started requiring them here
+    // (confirmed via a live 401 "session expired" — the token/id were never
+    // actually being sent, not actually expired).
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _tenantId = prefs.getString('tenant_id');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_tenantId",
+    });
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
@@ -271,8 +282,15 @@ class _Add_WorkorderState extends State<Add_Workorder> {
     var responseData = await http.Response.fromStream(response);
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
-      List file = responseBody['files'];
-      return file.first["filename"];
+      // A success status with no file entries would otherwise crash on
+      // .first (or on the null list itself). This loop uploads multiple
+      // images in sequence, so an unguarded crash here would also abort
+      // every remaining image in the batch.
+      final List files = responseBody['files'] ?? [];
+      if (files.isEmpty) {
+        throw Exception('Upload succeeded but no file was returned');
+      }
+      return files.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }

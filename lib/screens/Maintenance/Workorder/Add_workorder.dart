@@ -820,6 +820,17 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
         Uri.parse(
           uploadUrl,
         ));
+    // The upload endpoint requires the same auth headers every other call in
+    // this file sends; this request never included them, so the server
+    // rejected it with a 401 and no file was ever stored — masked here by the
+    // local file preview, which made it look like the upload had worked.
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _adminId = prefs.getString('adminId');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_adminId",
+    });
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
@@ -4174,6 +4185,17 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet> {
         Uri.parse(
           uploadUrl,
         ));
+    // The upload endpoint requires the same auth headers every other call in
+    // this file sends; this request never included them, so the server
+    // rejected it with a 401 and no file was ever stored — masked here by the
+    // local file preview, which made it look like the upload had worked.
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _adminId = prefs.getString('adminId');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_adminId",
+    });
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 

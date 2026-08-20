@@ -136,8 +136,13 @@ class Data {
     state = json["state"]?? "";
     responseText = json["responseText"]??"";
     balance = (json['balance'] as num?)?.toDouble()??0.0; // Parse as double
-    customer_vault_id = json['customer_vault_id'].toString() ?? "";
-    billing_id = json['billing_id'].toString() ??"";
+    // ?.toString() — a record with no saved card must keep these null, not
+    // become the literal string "null": every consumer null-checks (?? ""),
+    // but "null" passes those checks and gets sent to the payment API as if
+    // it were a real gateway vault/billing id (Edit Payment, refund flows).
+    // (.toString() never returns null, so the old `?? ""` was dead code.)
+    customer_vault_id = json['customer_vault_id']?.toString();
+    billing_id = json['billing_id']?.toString();
   }
 
   Map<String, dynamic> toJson() {

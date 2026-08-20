@@ -41,7 +41,10 @@ class Cosigner {
       tenantId: json['tenant_id'],
       firstName: json['cosigner_firstName'],
       lastName: json['cosigner_lastName'],
-      phoneNumber: json['cosigner_phoneNumber'].toString(),
+      // ?.toString() ?? '' — a missing phone otherwise becomes the literal
+      // text "null" on the lease cosigner cards (postalCode below already
+      // does this correctly).
+      phoneNumber: json['cosigner_phoneNumber']?.toString() ?? '',
       workNumber: json['cosigner_alternativeNumber'] ?? '',
       email: json['cosigner_email'],
       alterEmail: json['cosigner_alternativeEmail'] ?? '',

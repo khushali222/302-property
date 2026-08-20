@@ -131,12 +131,26 @@ class _UpdateWorkOrderTenantState extends State<UpdateWorkOrderTenant> {
   Future<String?> _uploadImage(File file) async {
     final uploadUrl = '${image_upload_url}/api/images/upload';
     final request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    // Every other authenticated call in this file sends these headers; this
+    // upload never did. The server has since started requiring them here
+    // (confirmed via a live 401 "session expired" — the token/id were never
+    // actually being sent, not actually expired).
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _tenantId = prefs.getString('tenant_id');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_tenantId",
+    });
     request.files.add(await http.MultipartFile.fromPath('files', file.path));
     final streamed = await apiSend(request);
     final resp = await http.Response.fromStream(streamed);
     final body = json.decode(resp.body);
     if (body['status'] == 'ok') {
-      final List files = body['files'];
+      // A success status with no file entries would otherwise crash on
+      // .first (or on the null list itself).
+      final List files = body['files'] ?? [];
+      if (files.isEmpty) return null;
       return files.first['filename'];
     }
     return null;

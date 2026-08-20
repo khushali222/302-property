@@ -84,6 +84,14 @@ class _UpdateWorkOrderVendorState extends State<UpdateWorkOrderVendor> {
     _loadStaff();
   }
 
+  @override
+  void dispose() {
+    _publicNotes.dispose();
+    _privateNotes.dispose();
+    _dueDate.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadStaff() async {
     setState(() => _loadingStaff = true);
     try {

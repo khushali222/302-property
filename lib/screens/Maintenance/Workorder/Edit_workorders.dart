@@ -914,6 +914,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
         Uri.parse(
           uploadUrl,
         ));
+    // The upload endpoint requires the same auth headers every other call in
+    // this file sends; this request never included them, so the server
+    // rejected it with a 401 and no file was ever stored. The Add screen hid
+    // this by previewing the local file, so it looked like it worked.
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _adminId = prefs.getString('adminId');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_adminId",
+    });
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
@@ -1138,12 +1149,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Future<void> _uploadImage(File imageFile) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (fileName == null) {
+        Fluttertoast.showToast(msg: 'Failed to upload image');
+        return;
+      }
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames.add(fileName);
         _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
+        _imageUrls.add(fileName);
       });
     } catch (e) {
+      // Surface the failure — this used to fail silently, leaving the upload
+      // box unchanged with no indication anything went wrong.
+      Fluttertoast.showToast(msg: 'Failed to upload image');
       logError('Image upload failed: $e');
     }
   }
@@ -4311,6 +4329,17 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         Uri.parse(
           uploadUrl,
         ));
+    // The upload endpoint requires the same auth headers every other call in
+    // this file sends; this request never included them, so the server
+    // rejected it with a 401 and no file was ever stored. The Add screen hid
+    // this by previewing the local file, so it looked like it worked.
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _adminId = prefs.getString('adminId');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_adminId",
+    });
     request.files
         .add(await http.MultipartFile.fromPath('files', imageFile.path));
 
@@ -4536,12 +4565,19 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   Future<void> _uploadImage(File imageFile) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (fileName == null) {
+        Fluttertoast.showToast(msg: 'Failed to upload image');
+        return;
+      }
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames.add(fileName);
         _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
+        _imageUrls.add(fileName);
       });
     } catch (e) {
+      // Surface the failure — this used to fail silently, leaving the upload
+      // box unchanged with no indication anything went wrong.
+      Fluttertoast.showToast(msg: 'Failed to upload image');
       logError('Image upload failed: $e');
     }
   }

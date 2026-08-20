@@ -4410,8 +4410,14 @@ class _Edit_leaseState extends State<Edit_lease>
                                               tenantMap['alterEmail'] ?? '',
                                           tenantAlternativeNumber:
                                               tenantMap['workNumber'] ?? '',
+                                          // ?. before .toString(): a tenant with
+                                          // no DOB otherwise becomes the literal
+                                          // text "null", which is saved back as
+                                          // their date of birth. (.toString()
+                                          // never returns null, so the ?? '' was
+                                          // dead code.)
                                           tenantBirthDate:
-                                              tenantMap['dob'].toString() ?? '',
+                                              tenantMap['dob']?.toString() ?? '',
                                           tenantEmail: tenantMap['email'] ?? '',
                                           tenantFirstName:
                                               tenantMap['firstName'] ?? '',

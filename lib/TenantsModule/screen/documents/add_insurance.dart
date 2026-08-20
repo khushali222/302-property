@@ -252,6 +252,17 @@ class _add_insuranceState extends State<add_insurance> {
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    // Every other authenticated call in this file sends these headers; this
+    // upload never did. The server has since started requiring them here
+    // (confirmed via a live 401 "session expired" — the token/id were never
+    // actually being sent, not actually expired).
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _tenantId = prefs.getString('tenant_id');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_tenantId",
+    });
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
     var response = await apiSend(request);
@@ -259,9 +270,14 @@ class _add_insuranceState extends State<add_insurance> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
+      // A success status with no file entries would otherwise crash on
+      // .first (or on the null list itself) after the toast already fired.
+      final List files = responseBody['files'] ?? [];
+      if (files.isEmpty) {
+        throw Exception('Upload succeeded but no file was returned');
+      }
       Fluttertoast.showToast(msg: 'PDF added successfully');
-      List file = responseBody['files'];
-      return file.first["filename"];
+      return files.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }
@@ -314,10 +330,20 @@ class _add_insuranceState extends State<add_insurance> {
 
   Future<void> _selectDateexpiration(BuildContext context) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    // Floor the picker at the day AFTER the effective date, matching the Admin
+    // insurance screens. `firstDate: effectiveDate` let the user select the
+    // effective date itself, which the strictly-after rule then rejected — so
+    // the invalid pick was offered and only warned about afterwards.
+    DateTime minExpirationDate = effectiveDate != null
+        ? effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate ?? DateTime.now(),
+      initialDate: (expirationDate != null &&
+              !expirationDate!.isBefore(minExpirationDate))
+          ? expirationDate!
+          : minExpirationDate,
+      firstDate: minExpirationDate,
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -357,21 +383,13 @@ class _add_insuranceState extends State<add_insurance> {
   }
 
   bool _validateDates() {
-    // Check if both dates are selected
-    if (effectiveDate == null || expirationDate == null) {
-      Fluttertoast.showToast(
-          msg: "Please select both Effective Date and Expiration Date");
+    // Shared rule from constant.dart, same as the Admin/Staff insurance
+    // screens — replaces this screen's hand-rolled copy of it.
+    final error = validateInsuranceDateRange(effectiveDate, expirationDate);
+    if (error != null) {
+      Fluttertoast.showToast(msg: error);
       return false;
     }
-
-    // Check if expiration date is after effective date
-    if (expirationDate!.isBefore(effectiveDate!) ||
-        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
-      Fluttertoast.showToast(
-          msg: "Expiration Date must be after Effective Date");
-      return false;
-    }
-
     return true;
   }
 

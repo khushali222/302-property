@@ -363,10 +363,20 @@ class _edit_insuranceState extends State<edit_insurance> {
 
   Future<void> _selectDateexpiration(BuildContext context) async {
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    // Floor the picker at the day AFTER the effective date, matching the Admin
+    // insurance screens. `firstDate: effectiveDate` let the user select the
+    // effective date itself, which the strictly-after rule then rejected — so
+    // the invalid pick was offered and only warned about afterwards.
+    DateTime minExpirationDate = effectiveDate != null
+        ? effectiveDate!.add(const Duration(days: 1))
+        : DateTime.now();
     DateTime? selectedDate = await showDatePicker(
       context: context,
-      initialDate: expirationDate ?? DateTime.now(),
-      firstDate: effectiveDate ?? DateTime.now(),
+      initialDate: (expirationDate != null &&
+              !expirationDate!.isBefore(minExpirationDate))
+          ? expirationDate!
+          : minExpirationDate,
+      firstDate: minExpirationDate,
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -406,21 +416,13 @@ class _edit_insuranceState extends State<edit_insurance> {
   }
 
   bool _validateDates() {
-    // Check if both dates are selected
-    if (effectiveDate == null || expirationDate == null) {
-      Fluttertoast.showToast(
-          msg: "Please select both Effective Date and Expiration Date");
+    // Shared rule from constant.dart, same as the Admin/Staff insurance
+    // screens — replaces this screen's hand-rolled copy of it.
+    final error = validateInsuranceDateRange(effectiveDate, expirationDate);
+    if (error != null) {
+      Fluttertoast.showToast(msg: error);
       return false;
     }
-
-    // Check if expiration date is after effective date
-    if (expirationDate!.isBefore(effectiveDate!) ||
-        expirationDate!.isAtSameMomentAs(effectiveDate!)) {
-      Fluttertoast.showToast(
-          msg: "Expiration Date must be after Effective Date");
-      return false;
-    }
-
     return true;
   }
 

@@ -896,7 +896,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         setState(() {
           id = latefee.adminId;
           mailupdate = true;
-          durationmail.text = latefee.duration.toString();
+          durationmail.text = latefee.duration ?? "";
           replyToEmail.text = latefee.replyTo ?? "";
           //  rentDueReminderEmail = true;
           if (latefee.remindermail != null) {

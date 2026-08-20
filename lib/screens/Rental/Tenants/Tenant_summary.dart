@@ -6206,13 +6206,22 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                             padding:
                                                 const EdgeInsets.only(top: 12),
                                             child: Text(
-                                              dateProvider
-                                                      .formatCurrentDate(
-                                                          '${tenantsummery.first.tenantBirthDate}')
+                                              // Checking the raw value's
+                                              // emptiness BEFORE formatting —
+                                              // formatCurrentDate returns its
+                                              // input unchanged when it can't
+                                              // parse it, so running a null
+                                              // (interpolated as "null")
+                                              // through it first made the
+                                              // .isEmpty check useless.
+                                              (tenantsummery.first
+                                                              .tenantBirthDate ??
+                                                          '')
                                                       .isEmpty
                                                   ? 'N/A'
                                                   : dateProvider.formatCurrentDate(
-                                                      '${tenantsummery.first.tenantBirthDate}'),
+                                                      tenantsummery.first
+                                                          .tenantBirthDate!),
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.bold,

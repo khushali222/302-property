@@ -95,6 +95,17 @@ class _Change_passwordState extends State<Change_password> {
     final String uploadUrl = '${image_upload_url}/api/images/upload';
 
     var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+    // Every other authenticated call in this file sends these headers; this
+    // upload never did. The server has since started requiring them here
+    // (confirmed via a live 401 "session expired" — the token/id were never
+    // actually being sent, not actually expired).
+    final prefs = await SharedPreferences.getInstance();
+    final _token = prefs.getString('token');
+    final _tenantId = prefs.getString('tenant_id');
+    request.headers.addAll({
+      "authorization": "CRM $_token",
+      "id": "CRM $_tenantId",
+    });
     request.files.add(await http.MultipartFile.fromPath('files', pdfFile.path));
 
     var response = await apiSend(request);
@@ -102,9 +113,14 @@ class _Change_passwordState extends State<Change_password> {
 
     var responseBody = json.decode(responseData.body);
     if (responseBody['status'] == 'ok') {
+      // A success status with no file entries would otherwise crash on
+      // .first (or on the null list itself) after the toast already fired.
+      final List files = responseBody['files'] ?? [];
+      if (files.isEmpty) {
+        throw Exception('Upload succeeded but no file was returned');
+      }
       Fluttertoast.showToast(msg: 'PDF added successfully');
-      List file = responseBody['files'];
-      return file.first["filename"];
+      return files.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
     }

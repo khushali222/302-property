@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -84,6 +85,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
   late Future<WorkOrderData_summery> futureworkorderSummary;
   String? _selectedValue;
   TabController? _tabController;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   List<String> items = ["Approved", "Rejected"];
 
   ConnectivityResult? _connectivityResult;
@@ -91,7 +93,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
   @override
   void initState() {
     // TODO: implement initState
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    // Subscription is held so dispose() can cancel it. Left uncancelled it
+    // outlives the screen and keeps calling setState() on a disposed State.
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
       });
@@ -102,6 +109,16 @@ class _Workorder_summeryState extends State<Workorder_summery>
 
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    _tabController?.dispose();
+    startdateController.dispose();
+    enddateController.dispose();
+    checkvalue.dispose();
+    super.dispose();
   }
 
   void checkInternet() async {

@@ -90,6 +90,25 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     partsAndLabor.clear();
   }
 
+  @override
+  void dispose() {
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    vendornote.dispose();
+    _dateController.dispose();
+    // Each parts-and-labour row owns its own controllers (addRow creates six,
+    // the API mapping in fetchWorkordersDetails creates four), and the qty /
+    // price ones carry listeners. They live in this list, so they have to be
+    // released here too, not just the fields above.
+    for (final row in partsAndLabor) {
+      for (final value in row.values) {
+        if (value is TextEditingController) value.dispose();
+      }
+    }
+    super.dispose();
+  }
+
   Future<void> fetchWorkordersDetails(String workorderId) async {
     //try {
     // await _loadProperties();
@@ -154,6 +173,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       fetchedDetails.tenantId == null ? null : fetchedDetails.tenantId;
       _selectedEntry = entryAllowedString;
 
+      // Whatever rows were on screen are about to be replaced wholesale; keep
+      // them so their controllers get released instead of orphaned.
+      final replacedRows = List<Map<String, dynamic>>.from(partsAndLabor);
       partsAndLabor =
           fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
             return {
@@ -171,6 +193,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           }).toList() ??
               [];
       //partsAndLabor.clear();
+      _disposeRowsAfterFrame(replacedRows);
       updateTotalAmount();
 
       // totalAmount = calculateTotalAmount(partsAndLabor);
@@ -485,11 +508,30 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     });
   }
 
+  /// Releases every controller held by [rows], after the current frame.
+  /// Deferring matters: the row's TextFields are still mounted during the
+  /// frame that drops them, and disposing a controller they still reference
+  /// throws "used after being disposed". By the next frame they are gone.
+  void _disposeRowsAfterFrame(List<Map<String, dynamic>> rows) {
+    if (rows.isEmpty) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (final row in rows) {
+        for (final value in row.values) {
+          if (value is TextEditingController) value.dispose();
+        }
+      }
+    });
+  }
+
   void deleteRow(int index) {
+    // Held before the removal so its controllers can be released — removeAt
+    // alone orphaned them, listeners and all.
+    final removed = partsAndLabor[index];
     setState(() {
       partsAndLabor.removeAt(index);
       updateTotalAmount();
     });
+    _disposeRowsAfterFrame([removed]);
   }
 
   void calculateTotal(

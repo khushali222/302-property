@@ -106,8 +106,11 @@ class Setting2 {
       id: json['_id'],
       adminId: json['admin_id'],
       latefeeId: json['latefee_id'],
-      duration: json['duration'].toString(),
-      late_fee: json['late_fee'].toString(),
+      // ?.toString() ?? '' — a null from the server otherwise becomes the
+      // literal text "null", which these fields feed straight into the Late
+      // Fee inputs on the Settings screen.
+      duration: json['duration']?.toString() ?? '',
+      late_fee: json['late_fee']?.toString() ?? '',
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
       isDelete: json['is_delete'],
@@ -154,7 +157,8 @@ class Setting3 {
     id = json['_id'];
     adminId = json['admin_id'];
     remindermail = json['remindermail'];
-    duration = json['duration'].toString();
+    // null must stay null, not become the literal text "null".
+    duration = json['duration']?.toString();
     replyTo = json['reply_to'];
 
   }
