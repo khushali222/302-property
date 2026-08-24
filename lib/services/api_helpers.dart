@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dart:io';
+
+import 'package:three_zero_two_property/provider/NetworkProvider.dart';
+
 import 'api_client.dart';
 import 'app_headers.dart';
 import 'force_update_helper.dart';
@@ -75,9 +79,34 @@ void _checkSoftUpdate(http.Response response) {
   }
 }
 
+/// Runs one HTTP call and reports socket-level failures to the app-wide
+/// connection state before rethrowing. A failed request is the most reliable
+/// offline signal available — connectivity events can be missing entirely
+/// (host wifi toggles on the iOS simulator produce none), in which case this
+/// is what makes the offline overlay appear.
+Future<http.Response> _reportingNetworkFailures(
+    Future<http.Response> Function() send) async {
+  try {
+    final response = await send();
+    // A reply arrived, so the network carries traffic again. Announced only
+    // when something had failed since the last announcement, which is what
+    // lets stale screens reload themselves the next time they are visited.
+    // Any status counts: we are testing the connection, not the endpoint.
+    CheckConnection.instance?.noteRequestSucceeded();
+    return response;
+  } on SocketException {
+    CheckConnection.instance?.reportNetworkFailure();
+    rethrow;
+  } on http.ClientException {
+    CheckConnection.instance?.reportNetworkFailure();
+    rethrow;
+  }
+}
+
 Future<http.Response> apiGet(Uri url, {Map<String, String>? headers}) async {
   _logOutgoing('GET', url);
-  final response = await http.get(url, headers: _mergeHeaders(headers)).timeout(Duration(seconds: 30));
+  final response = await _reportingNetworkFailures(() =>
+      http.get(url, headers: _mergeHeaders(headers)).timeout(Duration(seconds: 30)));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -90,12 +119,12 @@ Future<http.Response> apiPost(
   Encoding? encoding,
 }) async {
   _logOutgoing('POST', url);
-  final response = await http.post(
+  final response = await _reportingNetworkFailures(() => http.post(
     url,
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  ).timeout(Duration(seconds: 30));
+  ).timeout(Duration(seconds: 30)));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -108,12 +137,12 @@ Future<http.Response> apiPut(
   Encoding? encoding,
 }) async {
   _logOutgoing('PUT', url);
-  final response = await http.put(
+  final response = await _reportingNetworkFailures(() => http.put(
     url,
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  ).timeout(Duration(seconds: 30));
+  ).timeout(Duration(seconds: 30)));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -126,12 +155,12 @@ Future<http.Response> apiDelete(
   Encoding? encoding,
 }) async {
   _logOutgoing('DELETE', url);
-  final response = await http.delete(
+  final response = await _reportingNetworkFailures(() => http.delete(
     url,
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  ).timeout(Duration(seconds: 30));
+  ).timeout(Duration(seconds: 30)));
   _check426(response);
   _checkSoftUpdate(response);
   return response;
@@ -144,12 +173,12 @@ Future<http.Response> apiPatch(
   Encoding? encoding,
 }) async {
   _logOutgoing('PATCH', url);
-  final response = await http.patch(
+  final response = await _reportingNetworkFailures(() => http.patch(
     url,
     headers: _mergeHeaders(headers),
     body: body,
     encoding: encoding,
-  ).timeout(Duration(seconds: 30));
+  ).timeout(Duration(seconds: 30)));
   _check426(response);
   _checkSoftUpdate(response);
   return response;

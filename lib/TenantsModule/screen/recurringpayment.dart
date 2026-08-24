@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -40,10 +41,26 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   Map<int, List<Map<String?, dynamic?>>> tenantDropdowns = {};
   double totalAmount = 0.0;
   List<Setting4> accounts = [];
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger — a stale `none` from the
+      // plugin would strand this screen offline while requests
+      // succeed, so verify against the network first.
+      if (result == ConnectivityResult.none &&
+          await hasNetworkNow()) {
+        result = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
         //  _connectivityResult = result;
       });

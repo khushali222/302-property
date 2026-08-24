@@ -29,6 +29,13 @@ class Changepassword extends StatefulWidget {
 class _ChangepasswordState extends State<Changepassword> {
   TextEditingController password = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
+
+  @override
+  void dispose() {
+    password.dispose();
+    confirmpassword.dispose();
+    super.dispose();
+  }
   bool passworderror = false;
   bool confirmpassworderror = false;
   bool loading = false;

@@ -778,7 +778,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                           size: 40.0,
                         ));
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
+                        return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Center(
                             child: Padding(
@@ -1279,7 +1279,7 @@ class _InfrastructurePartState extends State<InfrastructurePart> {
                         size: 40.0,
                       ));
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
                           child: Text(

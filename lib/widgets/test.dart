@@ -167,6 +167,14 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController company = TextEditingController();
   TextEditingController email = TextEditingController();
 
+  @override
+  void dispose() {
+    password.dispose();
+    company.dispose();
+    email.dispose();
+    super.dispose();
+  }
+
   bool passworderror = false;
   bool visiable_password = true;
   bool emailerror = false;

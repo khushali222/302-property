@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -35,13 +36,16 @@ import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as syncXlsx;
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class RentersInsurance extends StatefulWidget {
   @override
   State<RentersInsurance> createState() => _RentersInsuranceState();
 }
 
-class _RentersInsuranceState extends State<RentersInsurance> {
+class _RentersInsuranceState extends State<RentersInsurance>
+    with NetworkRetryState {
   late Future<List<RentersInsuranceData>> _futureRentersInsurance;
   List<RentersInsuranceData> rentersInsuranceModel = [];
   bool isLoading = true;
@@ -49,19 +53,37 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
 
   // Web parity: "Show Deleted Policies" checkbox state, persisted like the
   // web app's localStorage key "rentersInsurance:list:showDeleted".
   static const String _showDeletedPrefKey = 'rentersInsurance:list:showDeleted';
   bool _showDeleted = false;
 
+  /// Required by [NetworkRetryState]: re-issue this report's own load.
+  /// Lifted from the hand-written Retry this replaces, so it fetches
+  /// exactly what that button already fetched.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    _retryFetch();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _futureRentersInsurance = _loadShowDeletedPrefAndFetch();
@@ -88,8 +110,15 @@ class _RentersInsuranceState extends State<RentersInsurance> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that can
+    // stay `none` after the connection is back (reliably so on the iOS
+    // simulator), which made every freshly-opened report declare itself
+    // offline. Confirm with a real lookup before believing `none`.
+    if (connectiondata == ConnectivityResult.none && await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1042,7 +1071,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -2942,29 +2971,7 @@ class _RentersInsuranceState extends State<RentersInsurance> {
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

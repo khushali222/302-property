@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -69,6 +70,8 @@ import '../../../StaffModule/screen/Rental/Properties/gallery/edit_photo_screen.
 import '../../../StaffModule/screen/Rental/Properties/gallery/photo_preview_screen.dart';
 import '../../../Model/gallery_photo_model.dart';
 import '../../../services/gallery_service.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Summery_page extends StatefulWidget {
   Rentals properties;
@@ -82,7 +85,7 @@ class Summery_page extends StatefulWidget {
 }
 
 class _Summery_pageState extends State<Summery_page>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, NetworkRetryState {
   // Arrays for bed and bath dropdowns
   static const List<String> roomsArray = [
     "1 Bed",
@@ -232,14 +235,35 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — the tab controllers and
+  /// scroll listener it also sets up must not be rebuilt on a reload.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    _fetchData();
+    setState(() {
+      futureUnitsummery =
+          Properies_summery_Repo().fetchunit(widget.properties.rentalId ?? "");
+      futurePropertysummery = Properies_summery_Repo()
+          .fetchPropertiessummery(widget.properties.rentalId!);
+      futureworkordersummery =
+          Properies_summery_Repo().fetchWorkOrders(widget.properties.rentalId!);
+    });
+    fetchunits1();
+  }
 
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
 
     // Add scroll listener to update UI when scrolling
@@ -311,8 +335,16 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1450,6 +1482,7 @@ class _Summery_pageState extends State<Summery_page>
   bool showdetails = false;
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _tabController?.dispose();
     _taxInsuranceTabController?.dispose();
     _additionalStatsTabController?.dispose();
@@ -2745,7 +2778,7 @@ class _Summery_pageState extends State<Summery_page>
         currentpage: "Properties",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: <Widget>[
@@ -3150,29 +3183,7 @@ class _Summery_pageState extends State<Summery_page>
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

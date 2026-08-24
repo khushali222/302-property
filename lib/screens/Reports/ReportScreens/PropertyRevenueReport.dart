@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -25,19 +26,31 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:three_zero_two_property/repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class PropertyRevenueReport extends StatefulWidget {
   @override
   State<PropertyRevenueReport> createState() => _PropertyRevenueReportState();
 }
 
-class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
+class _PropertyRevenueReportState extends State<PropertyRevenueReport>
+    with NetworkRetryState {
   late Future<PropertyRevenueReportModel> _futurePropertyRevenueReport =
       Future.value(PropertyRevenueReportModel());
   PropertyRevenueReportModel? propertyRevenueReportModel;
   bool isLoading = false;
   String? errorMessage;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    fromDateController.dispose();
+    toDateController.dispose();
+    super.dispose();
+  }
   bool filtersApplied = false; // Track if filters have been applied
 
   // Track which property is expanded
@@ -57,13 +70,28 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   String _previousStartDate = '';
   String _previousEndDate = '';
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load,
+  /// called by the Retry button and when the connection comes back.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    // Only re-run the report if the user had actually run it; the date
+    // fields are left alone so a reload cannot reset their filter.
+    if (!filtersApplied) return;
+    setState(() {
+      _futurePropertyRevenueReport = fetchPropertyRevenueReportData();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _initializeDates();
@@ -346,8 +374,14 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -486,7 +520,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: _connectivityResult == ConnectivityResult.none
+      body: isOffline
           ? _buildNoInternetWidget()
           : Column(
               children: [
@@ -512,42 +546,7 @@ class _PropertyRevenueReportState extends State<PropertyRevenueReport> {
   }
 
   Widget _buildNoInternetWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset(
-            'assets/no_internet.json',
-            width: 200,
-            height: 200,
-          ),
-          Text(
-            'No Internet Connection',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Please check your internet connection and try again',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              checkInternet();
-              _refreshData();
-            },
-            child: Text('Retry'),
-          ),
-        ],
-      ),
-    );
+    return NoInternetView(onRetry: retryNow);
   }
 
   Widget _buildReportContent() {

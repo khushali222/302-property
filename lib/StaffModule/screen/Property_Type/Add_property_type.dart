@@ -33,6 +33,12 @@ class _Add_propertyState extends State<Add_property> {
   bool isChecked = false;
   String selectedMonth = 'Residential';
   TextEditingController subtype = TextEditingController();
+
+  @override
+  void dispose() {
+    subtype.dispose();
+    super.dispose();
+  }
   bool iserror = false;
 
   // Helper method to detect if device is tablet

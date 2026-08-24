@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 /// The app's standard offline state, in one place.
 ///
@@ -38,18 +39,31 @@ class NoInternetView extends StatelessWidget {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         if (onRetry != null) ...[
-          const SizedBox(height: 22),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.arrow_downward,
-                  size: 14, color: Colors.grey.shade500),
-              const SizedBox(width: 6),
-              Text(
-                'Swipe down to try again',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+          const SizedBox(height: 20),
+          // Same navy refresh button the report screens already use for their
+          // request-failure state, so the offline state now offers the visible
+          // control QA asked for rather than only the swipe gesture.
+          ElevatedButton.icon(
+            onPressed: () => onRetry!(),
+            icon: const Icon(Icons.refresh, size: 18, color: Colors.white),
+            label: const Text(
+              'Retry',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: navyClr,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-            ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'or swipe down',
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
           ),
         ],
       ],

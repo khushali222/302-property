@@ -30,6 +30,8 @@ import '../../repository/profile_repository.dart';
 import '../../widgets/drawer_tiles.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_switch.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Profile_screen extends StatefulWidget {
   // final String email;
@@ -42,7 +44,8 @@ class Profile_screen extends StatefulWidget {
   State<Profile_screen> createState() => _Profile_screenState();
 }
 
-class _Profile_screenState extends State<Profile_screen> {
+class _Profile_screenState extends State<Profile_screen>
+    with NetworkRetryState {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _createdDate = TextEditingController();
@@ -64,6 +67,7 @@ class _Profile_screenState extends State<Profile_screen> {
   String _errorMessage = '';
   profile? _profile;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   String originalFirstName = '';
   String originalLastName = '';
   String originalEmail = '';
@@ -79,13 +83,30 @@ class _Profile_screenState extends State<Profile_screen> {
   /// Guards the Update button while a save is in flight — the handler awaits
   /// the API now, so without it a double tap would fire two writes.
   bool _isSavingProfile = false;
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _fetchProfile();;
+      _loadOldPassword();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _fetchProfile();
@@ -96,7 +117,30 @@ class _Profile_screenState extends State<Profile_screen> {
 
   @override
   void dispose() {
+    // Timer first: its periodic callback writes `seconds`, so it must stop
+    // before that notifier is disposed.
     _timer?.cancel();
+    _connectivitySub?.cancel();
+    seconds.dispose();
+    // Profile fields
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _createdDate.dispose();
+    _emailController.dispose();
+    _phoneNumberController.dispose();
+    _companyNameController.dispose();
+    _companyAddressController.dispose();
+    _companyPostalCodeController.dispose();
+    _companyCityController.dispose();
+    _companyStateController.dispose();
+    _companyCountryController.dispose();
+    // Change password
+    password.dispose();
+    confirmpassword.dispose();
+    // 2FA
+    verificationCodeController.dispose();
+    disableVerificationController.dispose();
+    regenerateVerificationController.dispose();
     super.dispose();
   }
 
@@ -328,8 +372,16 @@ class _Profile_screenState extends State<Profile_screen> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -653,7 +705,7 @@ class _Profile_screenState extends State<Profile_screen> {
         currentpage: "Profile",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? _isLoading
               ? const ProfileShimmer()
               : _hasError
@@ -3215,29 +3267,7 @@ class _Profile_screenState extends State<Profile_screen> {
                         ),
                       ),
                     )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

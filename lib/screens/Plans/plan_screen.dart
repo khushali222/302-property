@@ -282,6 +282,7 @@
 //     ),
 //   );
 // }
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:lottie/lottie.dart';
 
@@ -306,13 +307,16 @@ import 'package:three_zero_two_property/screens/Plans/PlansPurcharCard.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/drawer_tiles.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class getPlanDetailScreen extends StatefulWidget {
   @override
   State<getPlanDetailScreen> createState() => _getPlanDetailScreenState();
 }
 
-class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
+class _getPlanDetailScreenState extends State<getPlanDetailScreen>
+    with NetworkRetryState {
   Future<List<pastPlanData>>? _futureReport;
   late Future<getPlanDetailModel?> _futurePlanDetails;
   final getPlanDetailService _service = getPlanDetailService();
@@ -320,13 +324,35 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
   String? globalPlanName;
   bool isPlanCancelling = false;
   ConnectivityResult? _connectivityResult ;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes — including the one it parks inside
+  /// the connectivity listener — and nothing that sets up controllers or
+  /// filter defaults, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _futureReport = _fetchPastPlans();;
+      _futurePlanDetails = _service.fetchPlanPurchaseDetails();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -347,6 +373,12 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
 
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -813,7 +845,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
         dropdown: false,
       ),
       body:
-      _connectivityResult !=ConnectivityResult.none ?
+      !isOffline ?
 
       globalPlanName == 'Free Plan'
           ? PlanPurchaseCard(isappbarShow: false)
@@ -2720,31 +2752,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen> {
                   ],
                 ),
               ),
-            ):SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            const Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
+            ):NoInternetView(onRetry: retryNow),
     );
   }
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel, String rightValue) {

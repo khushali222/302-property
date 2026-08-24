@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -783,7 +784,16 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger — a stale `none` from the
+      // plugin would strand this screen offline while requests
+      // succeed, so verify against the network first.
+      if (result == ConnectivityResult.none &&
+          await hasNetworkNow()) {
+        result = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
@@ -855,6 +865,15 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    startDateController.dispose();
+    endDateController.dispose();
+    super.dispose();
+  }
   final _scrollController = ScrollController();
   bool failureacknowledged = true;
   void _showAlertAcknowledgement(
@@ -2163,7 +2182,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ColabShimmerLoadingWidget();
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData ||
                     ((snapshot.data?.data?.isEmpty ?? true) &&
                         (snapshot.data?.failedPayments?.isEmpty ?? true))) {
@@ -2857,7 +2876,7 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
           //       if (snapshot.connectionState == ConnectionState.waiting) {
           //         return ShimmerTabletTable();
           //       } else if (snapshot.hasError) {
-          //         return Center(child: Text('Error: ${snapshot.error}'));
+          //         return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
           //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           //         return Container(
           //           height: MediaQuery.of(context).size.height * .5,

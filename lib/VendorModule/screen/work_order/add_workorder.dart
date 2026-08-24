@@ -196,6 +196,15 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
+
+  @override
+  void dispose() {
+    subject.dispose();
+    other.dispose();
+    perform.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
   bool form_valid = false;
   List<File> selectedImages = [];
   List<String?> uploaded_images = [];

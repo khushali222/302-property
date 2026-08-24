@@ -45,6 +45,7 @@ class PropertiesRepository {
     String search = '',
     String sortBy = 'createdAt',
     String sortOrder = 'asc',
+    bool throwOnFailure = false,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
@@ -68,6 +69,14 @@ class PropertiesRepository {
       },
     );
     if (response.statusCode != 200) {
+      // Returning an empty page here erases the difference between "this admin
+      // has no properties" and "the request failed", so a 401 or a proxy blip
+      // as the network comes back renders as "No Data Available" with no way
+      // to retry. Callers that can show an error state opt in; every existing
+      // caller keeps the previous behaviour untouched.
+      if (throwOnFailure) {
+        throw Exception('Properties request failed (${response.statusCode})');
+      }
       return RentalsPageResult(items: [], pagination: null);
     }
 

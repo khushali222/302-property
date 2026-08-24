@@ -213,7 +213,7 @@ class _ApplicantContentState extends State<ApplicantContent> {
               )),
             );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
           } else if (snapshot.hasData) {
             var data = snapshot.data!.data;
 

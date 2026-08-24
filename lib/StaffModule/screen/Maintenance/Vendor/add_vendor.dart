@@ -952,6 +952,19 @@ class _Add_vendorState extends State<Add_vendor> {
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   final TextEditingController passWord = TextEditingController();
   final TextEditingController conpassWord = TextEditingController();
+
+  @override
+  void dispose() {
+    firstName.dispose();
+    lastName.dispose();
+    phoneNumber.dispose();
+    workNumber.dispose();
+    email.dispose();
+    alterEmail.dispose();
+    passWord.dispose();
+    conpassWord.dispose();
+    super.dispose();
+  }
   bool isLoading = false;
   bool formValid = false;
   bool tradeError = false;
@@ -1272,7 +1285,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                             borderRadius: BorderRadius.circular(8.0),
                                           ),
                                         ),
-                                        onPressed: () async {
+                                        onPressed: isLoading ? null : () async {
                                           setState(() { formValid = true; });
                                           final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
                                           setState(() { tradeError = tradeMissing; });
@@ -1543,7 +1556,7 @@ class _Add_vendorState extends State<Add_vendor> {
                                         backgroundColor: blueColor,
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                                       ),
-                                      onPressed: () async {
+                                      onPressed: isLoading ? null : () async {
                                         setState(() { formValid = true; });
                                         final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
                                         setState(() { tradeError = tradeMissing; });

@@ -2413,7 +2413,7 @@ class _FinancialTableState extends State<FinancialTable> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData) {
                       return const Center(child: Text('No data found'));
                     } else {
@@ -4047,7 +4047,7 @@ class _FinancialTableState extends State<FinancialTable> {
                       ),
                     );
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData) {
                     return const Center(child: Text('No data available'));
                   } else {
@@ -4193,7 +4193,7 @@ class _FinancialTableState extends State<FinancialTable> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData ||
                       (snapshot.data?.data?.isEmpty ?? true)) {
                     return const Center(child: Text('No data available'));

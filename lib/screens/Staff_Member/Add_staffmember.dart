@@ -30,6 +30,17 @@ class _Add_staffmemberState extends State<Add_staffmember> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController conpassword = TextEditingController();
+
+  @override
+  void dispose() {
+    name.dispose();
+    designation.dispose();
+    phonenumber.dispose();
+    email.dispose();
+    password.dispose();
+    conpassword.dispose();
+    super.dispose();
+  }
   bool nameerror = false;
   bool designationerror = false;
   bool phonenumbererror = false;

@@ -1418,14 +1418,15 @@ class _edit_vendorState extends State<edit_vendor> {
                                             borderRadius: BorderRadius.circular(8.0),
                                           ),
                                         ),
-                                        onPressed: () async {
-                                          bool isFormValid = true;
-                                          if (firstName.text.isEmpty) setState(() { isFormValid = false; });
-                                          if (phoneNumber.text.isEmpty) setState(() { isFormValid = false; });
-                                          if (email.text.isEmpty) setState(() { isFormValid = false; });
+                                        onPressed: isLoading ? null : () async {
+                                          // Validate the form fields AND the trade
+                                          // dropdown together, so the trade error
+                                          // shows even when a Form field (e.g. an
+                                          // empty password) is also invalid.
+                                          final bool isValid = _formkey.currentState!.validate();
                                           final bool tradeMissing = selectedTradeType == null || selectedTradeType!.isEmpty;
                                           setState(() { tradeError = tradeMissing; });
-                                          if (tradeMissing) isFormValid = false;
+                                          if (!isValid || tradeMissing) return;
 
                                           bool hasChanges = firstName.text != initialVendorName ||
                                               phoneNumber.text != initialPhoneNumber ||
@@ -1434,7 +1435,6 @@ class _edit_vendorState extends State<edit_vendor> {
                                               selectedTradeType != initialTradeType;
 
                                           if (!hasChanges) { Navigator.of(context).pop(false); return; }
-                                          if (!isFormValid) return;
 
                                           setState(() { isLoading = true; });
                                           try {
@@ -1709,7 +1709,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                           borderRadius: BorderRadius.circular(8.0),
                                         ),
                                       ),
-                                      onPressed: () async {
+                                      onPressed: isLoading ? null : () async {
                                         // Validate the form fields AND the trade
                                         // dropdown together, so the trade error
                                         // shows even when a Form field (e.g. an

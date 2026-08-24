@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:developer';
@@ -36,6 +37,8 @@ import '../../../../widgets/appbar.dart';
 
 import '../../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class applicant_summery extends StatefulWidget {
   String? applicant_id;
@@ -46,7 +49,7 @@ class applicant_summery extends StatefulWidget {
 }
 
 class _applicant_summeryState extends State<applicant_summery>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, NetworkRetryState {
   List<String> applicantCheckedChecklist = [
     "CreditCheck",
     "EmploymentVerification",
@@ -72,13 +75,26 @@ class _applicant_summeryState extends State<applicant_summery>
   String? _selectedValue = "Select";
   TabController? _tabController;
   List<String> items = ["Select", "Approved", "Rejected"];
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — controllers, listeners and
+  /// filter defaults are not repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureLeaseSummary = ApplicantSummeryRepository.getApplicantSummary(widget.applicant_id!);;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futureLeaseSummary =
@@ -87,10 +103,26 @@ class _applicant_summeryState extends State<applicant_summery>
     super.initState();
   }
   ConnectivityResult? _connectivityResult ;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    startdateController.dispose();
+    enddateController.dispose();
+    checkvalue.dispose();
+    super.dispose();
+  }
   void checkInternet()async{
 
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -160,7 +192,7 @@ class _applicant_summeryState extends State<applicant_summery>
         currentpage: "Applicants",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none ?
+      body: !isOffline ?
       SingleChildScrollView(
         child: FutureBuilder<applicant_summery_details>(
             future: futureLeaseSummary,
@@ -939,31 +971,7 @@ class _applicant_summeryState extends State<applicant_summery>
                 );
               }
             }),
-      ): SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
+      ): NoInternetView(onRetry: retryNow),
     );
   }
   int _selectedIndex = 0;

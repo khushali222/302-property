@@ -50,6 +50,8 @@ import '../widgets/chart.dart';
 import '../../../../model/workordr.dart';
 import '../screen/Maintenance/Workorder/workorder_summery.dart';
 import 'profile.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class DashboardData {
   // int tenantCount = 0;
@@ -104,7 +106,7 @@ class Dashboard_staff extends StatefulWidget {
 }
 
 class _Dashboard_staffState extends State<Dashboard_staff>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, NetworkRetryState {
   String firstname = '';
   String lastname = '';
   bool loading = false;
@@ -444,15 +446,27 @@ class _Dashboard_staffState extends State<Dashboard_staff>
   List<int> countList = List.filled(5, 0);
   List<int> amountList = List.filled(5, 0);
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// fetchNearbyProperties() loads the counts, the data and the name itself,
+  /// so this one call is the whole dashboard. The lifecycle observer and the
+  /// location-service listener initState also sets up are NOT re-registered.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    fetchNearbyProperties();
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _listenForLocationServiceOn();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     dashboardData = DashboardData(countList: [0, 0], amountList: [0, 0]);
@@ -486,6 +500,7 @@ class _Dashboard_staffState extends State<Dashboard_staff>
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _serviceStatusSub?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -504,9 +519,18 @@ class _Dashboard_staffState extends State<Dashboard_staff>
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -858,7 +882,7 @@ class _Dashboard_staffState extends State<Dashboard_staff>
           dropdown: false,
         ),
         appBar: widget_302_Staff.App_Bar(context: context),
-        body: _connectivityResult != ConnectivityResult.none
+        body: !isOffline
             ? loading
             ? Center(
           child: Lottie.asset('assets/images/loader.json',
@@ -1501,31 +1525,7 @@ class _Dashboard_staffState extends State<Dashboard_staff>
             ],
           ),
         )
-            : SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/no_internet.json',
-                width: 200,
-                height: 200,
-                fit: BoxFit.fill,
-              ),
-              const Text(
-                'No Internet',
-                style:
-                TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                'Check your internet connection',
-                style:
-                TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
+            : NoInternetView(onRetry: retryNow),
       ),
     );
   }

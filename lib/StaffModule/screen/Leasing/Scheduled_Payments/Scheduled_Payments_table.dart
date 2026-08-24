@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,8 @@ import '../../../../widgets/titleBar.dart';
 import '../../../widgets/appbar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../RentalRoll/SummeryPageLease.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 // ignore: camel_case_types
 class Scheduled_Payments_table extends StatefulWidget {
@@ -36,7 +39,8 @@ class Scheduled_Payments_table extends StatefulWidget {
       _Scheduled_Payments_tableState();
 }
 
-class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
+class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<List<Scheduled_Payment>> futurescheduledpayment;
   int rowsPerPage = 5;
@@ -173,21 +177,50 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
   String? selectedValue;
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurescheduledpayment = Scheduled_Payment_repo().fetchScheduled_Payment();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futurescheduledpayment = Scheduled_Payment_repo().fetchScheduled_Payment();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -638,7 +671,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
         currentpage: "Scheduled Payment",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -1575,29 +1608,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table> {
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ import 'package:intl/intl.dart';
 import '../../../../repository/lease_rental_insurance_repo.dart';
 import 'Edit_Renters_insurance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Renters_Insurance_table extends StatefulWidget {
   final String leaseId;
@@ -38,7 +41,8 @@ class Renters_Insurance_table extends StatefulWidget {
       _Renters_Insurance_tableState();
 }
 
-class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
+class _Renters_Insurance_tableState extends State<Renters_Insurance_table>
+    with NetworkRetryState {
   late Future<List<lease_renter_insurance>> _futureRentersInsurance;
   List<lease_renter_insurance> rentersInsuranceModel = [];
   bool isLoading = true;
@@ -46,19 +50,40 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   // Web parity: "Show Deleted Policies" toggle (RenterInsurance tab). When on,
   // the list is re-fetched with ?include_deleted=1 so soft-deleted policies show.
   // Persisted under the same localStorage key web's list view uses, and read
   // back before the first fetch so the list opens already honouring it.
   static const String _showDeletedPrefKey = 'rentersInsurance:list:showDeleted';
   bool _showDeleted = false;
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _futureRentersInsurance = _loadShowDeletedPrefAndFetch();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _futureRentersInsurance = _loadShowDeletedPrefAndFetch();
@@ -92,8 +117,16 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -475,7 +508,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
-    return _connectivityResult != ConnectivityResult.none
+    return !isOffline
         ? Container(
             child: SingleChildScrollView(
               child: Column(
@@ -1862,29 +1895,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table> {
               ),
             ),
           )
-        : SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/no_internet.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fill,
-                ),
-                Text(
-                  'No Internet',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'Check your internet connection',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          );
+        : NoInternetView(onRetry: retryNow);
   }
 
 // List<TableRow> _buildExpandableRows(int rowIndex, RentersInsuranceData item) {

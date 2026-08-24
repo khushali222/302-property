@@ -35,6 +35,8 @@ import '../../../widgets/drawer_tiles.dart';
 import '../../../../widgets/titleBar.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
@@ -45,7 +47,7 @@ class Workorder_summery extends StatefulWidget {
 }
 
 class _Workorder_summeryState extends State<Workorder_summery>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, NetworkRetryState {
   List<String> applicantCheckedChecklist = [
     "CreditCheck",
     "EmploymentVerification",
@@ -71,6 +73,18 @@ class _Workorder_summeryState extends State<Workorder_summery>
   String? _selectedValue;
   TabController? _tabController;
   List<String> items = ["Approved", "Rejected"];
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — controllers, listeners and
+  /// filter defaults are not repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureworkorderSummary = widget.workorder_id != null ? WorkOrderRepository.getworkorderSummary(widget.workorder_id!) : Future<WorkOrderData_summery>.error('No work order id provided');;
+      _loadStaff();;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -78,9 +92,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (!mounted) return;
-      setState(() {
-        _connectivityResult = result;
-      });
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futureworkorderSummary = widget.workorder_id != null
@@ -116,6 +131,12 @@ class _Workorder_summeryState extends State<Workorder_summery>
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
@@ -248,7 +269,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
         currentpage: "Work Orders",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? Column(
               children: [
                 const SizedBox(
@@ -414,29 +435,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 ),
               ],
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

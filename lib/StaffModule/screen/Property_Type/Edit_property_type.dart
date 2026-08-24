@@ -50,6 +50,12 @@ class _Edit_property_typeState extends State<Edit_property_type> {
   bool isChecked = false;
   String selectedMonth = 'Residential';
   TextEditingController subtype = TextEditingController();
+
+  @override
+  void dispose() {
+    subtype.dispose();
+    super.dispose();
+  }
   bool iserror = false;
   @override
   Widget build(BuildContext context) {

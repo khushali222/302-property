@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:developer';
 
@@ -46,6 +47,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../Model/rentalownerreport.dart';
 import '../../../repository/rentalownerreport.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class AccountTotalsReports extends StatefulWidget {
   const AccountTotalsReports({super.key});
@@ -54,7 +57,8 @@ class AccountTotalsReports extends StatefulWidget {
   State<AccountTotalsReports> createState() => _AccountTotalsReportsState();
 }
 
-class _AccountTotalsReportsState extends State<AccountTotalsReports> {
+class _AccountTotalsReportsState extends State<AccountTotalsReports>
+    with NetworkRetryState {
   late Future<List<AccountTotalsReport>> _futureAccountTotals;
   List<AccountTotalsReport> DelinquentTenantsModel = [];
   bool isLoading = true;
@@ -62,15 +66,35 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    fromDate.dispose();
+    toDate.dispose();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this report's own load.
+  /// Lifted from the hand-written Retry this replaces, so it fetches
+  /// exactly what that button already fetched.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    _retryFetch();
+  }
+
   @override
   void initState() {
     super.initState();
     // Initialize notifier with empty list
     _selectedOwnersNotifier.value = [];
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     fetchRentalOwners();
@@ -102,8 +126,15 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that can
+    // stay `none` after the connection is back (reliably so on the iOS
+    // simulator), which made every freshly-opened report declare itself
+    // offline. Confirm with a real lookup before believing `none`.
+    if (connectiondata == ConnectivityResult.none && await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1208,7 +1239,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
         currentpage: "Report",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? Column(
               children: [
                 ReportHeader(title: "Account Totals Reports"),
@@ -2376,31 +2407,7 @@ class _AccountTotalsReportsState extends State<AccountTotalsReports> {
               children: [
                 ReportHeader(title: "Account Totals Reports"),
                 Expanded(
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Lottie.asset(
-                          'assets/no_internet.json',
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.fill,
-                        ),
-                        Text(
-                          'No Internet',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Check your internet connection',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: NoInternetView(onRetry: retryNow),
                 ),
               ],
             ),

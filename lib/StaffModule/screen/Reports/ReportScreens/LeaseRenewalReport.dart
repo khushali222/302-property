@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -21,6 +22,8 @@ import 'package:three_zero_two_property/StaffModule/repository/GetAdminAddressPd
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart' as widget_302_Staff;
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class LeaseRenewalReportScreen extends StatefulWidget {
   @override
@@ -28,7 +31,8 @@ class LeaseRenewalReportScreen extends StatefulWidget {
       _LeaseRenewalReportScreenState();
 }
 
-class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
+class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen>
+    with NetworkRetryState {
   final LeaseRenewalReportRepository _repository =
       LeaseRenewalReportRepository();
   final TextEditingController _searchController = TextEditingController();
@@ -39,6 +43,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
   bool _isLoading = false;
   String _searchQuery = '';
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   String? _selectedDateRange = 'Last Year';
   bool _showCustomDates = false;
 
@@ -47,13 +52,25 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
   // Expanded state for month-to-month leases
   Map<int, bool> _expandedMtmLeases = {};
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load,
+  /// called by the Retry button and when the connection comes back.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    // Just the fetch. initState also seeds the default date range, which a
+    // reload must NOT redo or it would throw away the user's chosen dates.
+    await _fetchReport();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     // Set default date range (last year)
@@ -63,6 +80,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _searchController.dispose();
     _startDateController.dispose();
     _endDateController.dispose();
@@ -71,6 +89,13 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
 
   void checkInternet() async {
     var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -995,7 +1020,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -1400,12 +1425,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen> {
                 ],
               ),
             )
-          : Center(
-              child: Text(
-                'No Internet Connection',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 }

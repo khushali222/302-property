@@ -1,0 +1,634 @@
+--- a/lib/provider/NetworkProvider.dart
++++ b/lib/provider/NetworkProvider.dart
+@@ -60,10 +60,53 @@
+     });
+   }
+ 
++  // ── Recovery announcements ──────────────────────────────────────────────
++  //
++  // This counter carries ONLY good news, and that is the whole point of it.
++  // It goes up when a request SUCCEEDS after something had failed, and it can
++  // never block anything: screens compare it against the value they last
++  // loaded at, and re-issue their own load when they next become visible.
++  //
++  // Blocking deliberately stays LOCAL — a screen shows the offline state only
++  // when its own request failed. So a wrong value here costs at most one
++  // unnecessary reload, where a shared "we are offline" flag would have locked
++  // every screen in the app at once.
++  int _successGeneration = 0;
++  int get successGeneration => _successGeneration;
++
++  /// True once a request has failed and no request has succeeded since. Only
++  /// used to recognise the NEXT success as a recovery worth announcing.
++  bool _sawFailure = false;
++
++  /// Counts request failures. Like [successGeneration] this is an
++  /// ANNOUNCEMENT, not a verdict: it says "a request just failed", and each
++  /// screen decides for itself what to do about it. Only the screen the user
++  /// is actually looking at reacts, so one failure can never black out the app.
++  int _failureGeneration = 0;
++  int get failureGeneration => _failureGeneration;
++
++  /// A request failed at the socket level. On its own this blocks nothing.
++  void noteRequestFailed() {
++    _sawFailure = true;
++    _failureGeneration++;
++    notifyListeners();
++  }
++
++  /// A request succeeded. Announced only when something had failed since the
++  /// last announcement, so ordinary traffic does not rebuild listening
++  /// screens — the notification means "we just came back", nothing else.
++  void noteRequestSucceeded() {
++    if (!_sawFailure) return;
++    _sawFailure = false;
++    _successGeneration++;
++    notifyListeners();
++  }
++
+   /// For the HTTP wrappers: a request just failed at the socket level. This is
+   /// the ONLY signal allowed to take the app offline — it is direct evidence,
+   /// where every probe we tried produced false alarms.
+   void reportNetworkFailure() {
++    noteRequestFailed();
+     _apply(false);
+   }
+ 
+--- a/lib/services/api_helpers.dart
++++ b/lib/services/api_helpers.dart
+@@ -87,7 +87,13 @@
+ Future<http.Response> _reportingNetworkFailures(
+     Future<http.Response> Function() send) async {
+   try {
+-    return await send();
++    final response = await send();
++    // A reply arrived, so the network carries traffic again. Announced only
++    // when something had failed since the last announcement, which is what
++    // lets stale screens reload themselves the next time they are visited.
++    // Any status counts: we are testing the connection, not the endpoint.
++    CheckConnection.instance?.noteRequestSucceeded();
++    return response;
+   } on SocketException {
+     CheckConnection.instance?.reportNetworkFailure();
+     rethrow;
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -1,4 +1,5 @@
+ import 'dart:async';
++import 'package:three_zero_two_property/provider/network_retry_state.dart';
+ import 'package:device_preview/device_preview.dart';
+ import 'package:flutter/foundation.dart';
+ import 'package:flutter/material.dart';
+@@ -27,7 +28,6 @@
+ import 'package:credit_card_validator/credit_card_validator.dart';
+ import 'package:timeago/timeago.dart' as timeago;
+ import 'provider/notification_provider.dart';
+-import 'widgets/network_guard.dart';
+ // void main() {
+ //   runApp(
+ //     MultiProvider(providers: [
+@@ -168,6 +168,10 @@
+     return MaterialApp(
+       debugShowCheckedModeBanner: false,
+       navigatorKey: ApiClient.navigatorKey,
++      // Lets a screen know when it becomes visible again, which is the only
++      // moment NetworkRetryState allows a silent reload — so stacked screens
++      // cannot all fire their requests at once.
++      navigatorObservers: [appRouteObserver],
+       theme: ThemeData(
+         fontFamily: "Poppins",
+         iconTheme: IconThemeData(color: blueColor),
+@@ -181,11 +185,15 @@
+         // live in one place instead of being re-implemented per screen. The
+         // blocked screen stays mounted underneath, so recovery returns the
+         // user to the same page, filters and scroll position.
+-        return NetworkGuard(
+-          child: ScrollConfiguration(
+-            behavior: NoGlowScrollBehavior(),
+-            child: child!,
+-          ),
++        // PILOT: the app-wide blocker is bypassed on purpose. It is the one
++        // thing that can lock all ~300 screens on a single wrong verdict, and
++        // the design being trialled replaces it with a per-screen offline
++        // state that can only be triggered by that screen's own failed
++        // request. To undo: re-add `import 'widgets/network_guard.dart';`
++        // and wrap the ScrollConfiguration below in NetworkGuard(child: ...).
++        return ScrollConfiguration(
++          behavior: NoGlowScrollBehavior(),
++          child: child!,
+         );
+       },
+     );
+--- a/lib/screens/Profile/Settings_screen.dart
++++ b/lib/screens/Profile/Settings_screen.dart
+@@ -57,6 +57,7 @@
+ import 'package:flutter/foundation.dart' show kIsWeb;
+ import 'package:flutter/services.dart';
+ import 'package:three_zero_two_property/widgets/no_internet_view.dart';
++import 'package:three_zero_two_property/provider/network_retry_state.dart';
+ 
+ // `kUsStateNames` now lives in constant/constant.dart (imported above) so the
+ // Profile screen's State dropdown shares the exact same 50-entry web list.
+@@ -87,7 +88,8 @@
+   State<TabBarExample> createState() => _TabBarExampleState();
+ }
+ 
+-class _TabBarExampleState extends State<TabBarExample> {
++class _TabBarExampleState extends State<TabBarExample>
++    with NetworkRetryState {
+   int _selectedRadio = 0;
+   TextEditingController credit = TextEditingController();
+   TextEditingController debit = TextEditingController();
+@@ -241,7 +243,32 @@
+   bool _hasLoadedNotifications =
+       false; // Track if notifications have been loaded
+ 
++  /// Every request this screen makes on open, in one place so that opening it
++  /// and reloading it can never drift apart.
++  void _loadEverything() {
++    fetchAccounts();
++    futureaccount = accountRepository().fetchAccounts();
++    fetchSurchargeData();
++    fetchlatefeeData();
++    fetchPropertyOwners();
++    fetchMailData();
++    // _loadColorPreference();
++    loadChargeSetting();
++    _loadVendor();
++    _loadStaff();
++    fetchWorkData();
++  }
++
++  /// Required by [NetworkRetryState]: re-issue this screen's own load. Called
++  /// by the Retry button, and silently when the connection came back while
++  /// this screen was in the background.
+   @override
++  Future<void> reloadData() async {
++    if (!mounted) return;
++    setState(_loadEverything);
++  }
++
++  @override
+   void initState() {
+     // TODO: implement initState
+     super.initState();
+@@ -262,17 +289,7 @@
+     });
+ 
+     checkInternet();
+-    fetchAccounts();
+-    futureaccount = accountRepository().fetchAccounts();
+-    fetchSurchargeData();
+-    fetchlatefeeData();
+-    fetchPropertyOwners();
+-    fetchMailData();
+-    // _loadColorPreference();
+-    loadChargeSetting();
+-    _loadVendor();
+-    _loadStaff();
+-    fetchWorkData();
++    _loadEverything();
+     // fetchWorkOrderNotificationSettings(); // Removed - will be called when workorder tab is clicked
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       final dateProvider = Provider.of<DateProvider>(context, listen: false);
+@@ -2859,9 +2876,12 @@
+       setState(() {
+         _isLoadingvendors = false;
+       });
+-      ScaffoldMessenger.of(context).showSnackBar(
+-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+-      );
++      // A network failure already flips this screen to the offline state,
++      // which says it better than a snackbar stacked on top of it.
++      if (!isNetworkError(e))
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
++        );
+     }
+   }
+ 
+@@ -2907,9 +2927,12 @@
+       setState(() {
+         _isLoadingstaff = false;
+       });
+-      ScaffoldMessenger.of(context).showSnackBar(
+-        SnackBar(content: Text('Failed to fetch vendors: $e')),
+-      );
++      // A network failure already flips this screen to the offline state,
++      // which says it better than a snackbar stacked on top of it.
++      if (!isNetworkError(e))
++        ScaffoldMessenger.of(context).showSnackBar(
++          SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
++        );
+     }
+   }
+ 
+@@ -4980,7 +5003,7 @@
+         //   currentpage: "Settings",
+         //   dropdown: false,
+         // ),
+-        body: _connectivityResult != ConnectivityResult.none
++        body: !isOffline
+             ? (_showSettingsMenu
+                 ? _buildSettingsMenu()
+                 : Container(
+@@ -8061,7 +8084,7 @@
+                   ),
+                 ),
+               ])))
+-            : NoInternetView(),
++            : NoInternetView(onRetry: retryNow),
+       ),
+     );
+   }
+--- a/lib/screens/Rental/Properties/Properties_table.dart
++++ b/lib/screens/Rental/Properties/Properties_table.dart
+@@ -35,6 +35,7 @@
+ import 'EditProperties.dart';
+ import '../../../widgets/custom_drawer.dart';
+ import 'package:three_zero_two_property/widgets/no_internet_view.dart';
++import 'package:three_zero_two_property/provider/network_retry_state.dart';
+ 
+ class _Dessert {
+   _Dessert(
+@@ -56,7 +57,8 @@
+   _PropertiesTableState createState() => _PropertiesTableState();
+ }
+ 
+-class _PropertiesTableState extends State<PropertiesTable> {
++class _PropertiesTableState extends State<PropertiesTable>
++    with NetworkRetryState {
+   late Future<RentalsPageResult> futurePropertiesLoad;
+   // late Future<List<propertytype>> futurePropertyTypes;
+   int _rowsPerPage = 10;
+@@ -240,6 +242,7 @@
+         search: searchvalue,
+         sortBy: sort.key,
+         sortOrder: sort.value,
++        throwOnFailure: true,
+       );
+       final p = result.pagination;
+       if (p != null && p.totalPages > 0 && _currentPage >= p.totalPages) {
+@@ -502,6 +505,21 @@
+   Timer? _searchDebounce;
+   ConnectivityResult? _connectivityResult;
+   StreamSubscription<ConnectivityResult>? _connectivitySub;
++  /// Required by [NetworkRetryState]: re-issue this screen's own load.
++  ///
++  /// Deliberately re-runs the SAME calls `initState` makes and touches no
++  /// filter, sort or page field, so a reload returns the user to the list they
++  /// were looking at rather than resetting them to an unfiltered page one.
++  @override
++  Future<void> reloadData() async {
++    if (!mounted) return;
++    setState(() {
++      futurePropertiesLoad = _loadProperties();
++      futureRentalOwnersList = RentalOwnerService().fetchRentalOwners(null);
++    });
++    if (mounted) fetchRentaladded();
++  }
++
+   @override
+   void initState() {
+     super.initState();
+@@ -787,7 +805,7 @@
+         currentpage: "Properties",
+         dropdown: true,
+       ),
+-      body: _connectivityResult != ConnectivityResult.none
++      body: !isOffline
+           ? SingleChildScrollView(
+               child: Column(
+                 children: [
+@@ -1511,6 +1529,12 @@
+                           if (snapshot.connectionState ==
+                               ConnectionState.waiting) {
+                             return ColabShimmerLoadingWidget();
++                          } else if (snapshot.hasError) {
++                            // A FAILED request has no data either, so without
++                            // this branch it fell through to "No Data
++                            // Available" below — a network failure disguised
++                            // as an empty list, with no way to retry.
++                            return NoInternetView(onRetry: retryNow);
+                           } else if (!snapshot.hasData ||
+                               snapshot.data!.items.isEmpty) {
+                             return Container(
+@@ -2274,7 +2298,7 @@
+                 ],
+               ),
+             )
+-          : NoInternetView(),
++          : NoInternetView(onRetry: retryNow),
+     );
+   }
+ 
+--- a/lib/screens/Reports/ReportScreens/RentRollReport.dart
++++ b/lib/screens/Reports/ReportScreens/RentRollReport.dart
+@@ -40,13 +40,15 @@
+ import 'package:http/http.dart' as http;
+ import 'package:three_zero_two_property/services/api_helpers.dart';
+ import 'package:three_zero_two_property/widgets/no_internet_view.dart';
++import 'package:three_zero_two_property/provider/network_retry_state.dart';
+ 
+ class RentersInsurances extends StatefulWidget {
+   @override
+   State<RentersInsurances> createState() => _RentersInsurancesState();
+ }
+ 
+-class _RentersInsurancesState extends State<RentersInsurances> {
++class _RentersInsurancesState extends State<RentersInsurances>
++    with NetworkRetryState {
+   late Future<rentrollreportmodel> _futureRentersInsurance;
+   rentrollreportmodel? rentersInsuranceModel;
+   bool isLoading = true;
+@@ -60,7 +62,18 @@
+   void dispose() {
+     _connectivitySub?.cancel();
+     super.dispose();
++  }
++  /// Required by [NetworkRetryState]: re-issue this report's own load. The
++  /// same two calls `initState` makes, with the owner filter left untouched.
++  @override
++  Future<void> reloadData() async {
++    if (!mounted) return;
++    fetchRentalOwners();
++    setState(() {
++      _futureRentersInsurance = fetchRentersInsuranceData();
++    });
+   }
++
+   @override
+   void initState() {
+     super.initState();
+@@ -2256,7 +2269,7 @@
+         currentpage: "Reports",
+         dropdown: false,
+       ),
+-      body: _connectivityResult != ConnectivityResult.none
++      body: !isOffline
+           ? SingleChildScrollView(
+               child: Column(
+                 children: [
+@@ -2705,25 +2718,7 @@
+                 ],
+               ),
+             )
+-          : NoInternetView(onRetry: () async {
+-                    // Probe the network for real. connectivity_plus can
+-                    // report a stale `none` after the connection is back,
+-                    // which left this view stuck; assuming the opposite
+-                    // would open the gate while offline and expose the
+-                    // previously-loaded data as if it were fresh.
+-                    if (!await hasNetworkNow()) {
+-                      Fluttertoast.showToast(
+-                          msg: "Still no internet connection");
+-                      return;
+-                    }
+-                    if (!mounted) return;
+-                    // Issue the fresh request BEFORE revealing the report. Opening
+-                    // the gate first showed the view still holding the request that
+-                    // failed while offline, so an empty state flashed for a frame.
+-                    setState(() { _futureRentersInsurance = fetchRentersInsuranceData();
+-                    setState(() =>
+-                        _connectivityResult = ConnectivityResult.wifi);
+-                  }); }),
++          : NoInternetView(onRetry: retryNow),
+     );
+   }
+ 
+--- a/lib/provider/network_retry_state.dart
++++ b/lib/provider/network_retry_state.dart
+@@ -0,0 +1,206 @@
++import 'package:fluttertoast/fluttertoast.dart';
++import 'package:flutter/material.dart';
++
++import 'NetworkProvider.dart';
++
++/// Watches route transitions so a screen can tell when it becomes visible
++/// again. Registered once, in `MaterialApp.navigatorObservers`.
++final RouteObserver<PageRoute> appRouteObserver = RouteObserver<PageRoute>();
++
++/// Gives a screen a working Retry button and silent recovery, without the
++/// screen having to know anything about connectivity.
++///
++/// WHY THE SCREEN NO LONGER ASKS THE PHONE
++/// Every screen used to call `connectivity_plus` itself. On iOS that reports
++/// `none` on a perfectly good network, so screens declared themselves offline
++/// while their requests would have succeeded — and, having decided once in
++/// `initState`, they stayed that way until the app was restarted. Nothing here
++/// asks the plugin. A screen shows the offline state only when its own request
++/// actually failed, which is direct evidence rather than a guess.
++///
++/// WHY RECOVERY IS SHARED BUT BLOCKING IS NOT
++/// [CheckConnection.successGeneration] only ever counts UP, and only when a
++/// request succeeds. It is an announcement — "traffic is flowing again" — and
++/// it cannot block anything. Blocking stays local to the screen that failed,
++/// so a wrong answer costs one needless reload instead of locking every screen
++/// in the app.
++///
++/// Usage:
++///
++/// ```dart
++/// class _MyScreenState extends State<MyScreen> with NetworkRetryState {
++///   @override
++///   Future<void> reloadData() async {
++///     setState(() => _future = MyRepo().fetch());   // this screen's own load
++///   }
++///
++///   // ... in build:
++///   NoInternetView(onRetry: retryNow)
++/// }
++/// ```
++///
++/// A screen overriding [initState], [didChangeDependencies] or [dispose] must
++/// call `super`.
++mixin NetworkRetryState<T extends StatefulWidget> on State<T>
++    implements RouteAware {
++  /// The announcement this screen last loaded at. Anything newer means the
++  /// connection came back after this screen's data was fetched.
++  int _seenGeneration = 0;
++
++  /// Failure announcements already accounted for, so the same failure cannot
++  /// be reacted to twice.
++  int _seenFailure = 0;
++
++  /// True when THIS screen's own request failed while the user was looking at
++  /// it. Deliberately per-screen: the app has no global "we are offline" flag
++  /// to get wrong, so one failure can never black out every screen at once.
++  bool _offline = false;
++
++  /// A Retry is in flight. Also the double-tap guard: repeated taps while a
++  /// retry is still running are ignored rather than stacking requests.
++  bool _retrying = false;
++
++  /// Gate a screen's body on this instead of asking `connectivity_plus`.
++  /// The plugin answers `none` on a working iOS network, and only updates on
++  /// OS events that the simulator frequently never sends — which is why a
++  /// screen could sit there showing raw errors with no offline state at all.
++  /// A failed request cannot be wrong in that way.
++  bool get isOffline => _offline;
++
++  /// Re-issue this screen's own data load. This is the ONLY thing a screen has
++  /// to supply — everything else about connectivity lives in this file, so a
++  /// later change to the design does not mean editing every screen again.
++  Future<void> reloadData();
++
++  int get _currentGeneration => CheckConnection.instance?.successGeneration ?? 0;
++
++  @override
++  void initState() {
++    super.initState();
++    // Loading now, so this screen is current as of these announcements.
++    _seenGeneration = _currentGeneration;
++    _seenFailure = CheckConnection.instance?.failureGeneration ?? 0;
++    CheckConnection.instance?.addListener(_onConnectionEvent);
++  }
++
++  /// A request somewhere in the app just failed or just succeeded.
++  ///
++  /// Only the screen the user is LOOKING AT reacts. A screen sitting in the
++  /// background must not flip itself offline, or one stale request would black
++  /// out pages the user is not even on — and would fight the Retry button on
++  /// the page they are.
++  void _onConnectionEvent() {
++    if (!mounted) return;
++    final conn = CheckConnection.instance;
++    if (conn == null) return;
++    if (ModalRoute.of(context)?.isCurrent != true) return;
++
++    if (conn.failureGeneration != _seenFailure) {
++      _seenFailure = conn.failureGeneration;
++      if (_retrying) {
++        // The user asked and it still did not work. Say so — a Retry that
++        // silently changes nothing reads as a broken button.
++        _retrying = false;
++        Fluttertoast.showToast(msg: 'Still no internet connection');
++      }
++      if (!_offline) setState(() => _offline = true);
++      return;
++    }
++    if (conn.successGeneration != _seenGeneration) {
++      // Marked BEFORE any reload is issued, so a reload that fails can never
++      // re-enter this branch and retrigger itself.
++      _seenGeneration = conn.successGeneration;
++      final wasRetrying = _retrying;
++      _retrying = false;
++      if (!_offline) return;
++      // Traffic is flowing again — but this screen is still holding the
++      // request that FAILED. Dropping the offline state without re-issuing it
++      // just reveals that dead result, which is what made a recovered screen
++      // read "No Data Available" instead of showing its rows.
++      setState(() => _offline = false);
++      // A Retry has already issued the load; reloading here as well would
++      // fetch the same data twice.
++      if (!wasRetrying) _reloadWhenSettled();
++    }
++  }
++
++  @override
++  void didChangeDependencies() {
++    super.didChangeDependencies();
++    final route = ModalRoute.of(context);
++    if (route is PageRoute) {
++      appRouteObserver.subscribe(this, route);
++    }
++  }
++
++  @override
++  void dispose() {
++    CheckConnection.instance?.removeListener(_onConnectionEvent);
++    appRouteObserver.unsubscribe(this);
++    super.dispose();
++  }
++
++  /// Reload once the connection has had a moment to settle.
++  ///
++  /// The recovery announcement fires on the FIRST request to succeed after a
++  /// failure, which is the earliest possible moment — the connection is back
++  /// but not necessarily steady. A reload issued on that exact edge came back
++  /// non-200 and rendered as an empty list, so the same off/on test showed
++  /// rows one time and "No Data Available" the next. This is a settle pause,
++  /// not a retry loop: it happens once per recovery, and a reload that still
++  /// fails leaves the screen on its offline state with a working Retry.
++  Future<void> _reloadWhenSettled() async {
++    await Future<void>.delayed(const Duration(milliseconds: 800));
++    if (!mounted) return;
++    await reloadData();
++  }
++
++  /// Reload, but only if the connection came back since this screen loaded.
++  ///
++  /// Two guards matter here, and both exist because of how this went wrong
++  /// before:
++  ///
++  /// * The generation is recorded BEFORE the reload is issued, so a reload
++  ///   that fails can never re-trigger itself. Failure is not an announcement,
++  ///   and only announcements cause reloads — there is no path back into this
++  ///   method from a failed request.
++  /// * This runs only when the screen becomes visible ([didPopNext]), never on
++  ///   the announcement itself, so ten stacked screens cannot all fire their
++  ///   requests at the same moment.
++  void _reloadIfStale() {
++    if (!mounted) return;
++    final generation = _currentGeneration;
++    if (generation == _seenGeneration) return;
++    _seenGeneration = generation;
++    reloadData();
++  }
++
++  /// What a Retry button calls. Re-issues this screen's load directly — the
++  /// same work that opening the screen fresh would do.
++  Future<void> retryNow() async {
++    if (!mounted || _retrying) return;
++    _retrying = true;
++    _seenGeneration = _currentGeneration;
++    _seenFailure = CheckConnection.instance?.failureGeneration ?? 0;
++    await reloadData();
++    // A reload that succeeded will have bumped the counter on its way back;
++    // absorb it here so returning to this screen later does not re-fetch data
++    // that is already fresh.
++    if (mounted) _seenGeneration = _currentGeneration;
++  }
++
++  /// The user came back to this screen from one pushed on top of it. This is
++  /// the moment the screen becomes visible again, and the only moment a silent
++  /// reload is allowed to happen.
++  @override
++  void didPopNext() => _reloadIfStale();
++
++  @override
++  void didPush() {}
++
++  @override
++  void didPop() {}
++
++  @override
++  void didPushNext() {}
++}
+diff --git a/lib/repository/properties.dart b/lib/repository/properties.dart
+index 9f13095b..dda28de0 100644
+--- a/lib/repository/properties.dart
++++ b/lib/repository/properties.dart
+@@ -45,6 +45,7 @@ class PropertiesRepository {
+     String search = '',
+     String sortBy = 'createdAt',
+     String sortOrder = 'asc',
++    bool throwOnFailure = false,
+   }) async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+     String? id = prefs.getString("adminId");
+@@ -68,6 +69,14 @@ class PropertiesRepository {
+       },
+     );
+     if (response.statusCode != 200) {
++      // Returning an empty page here erases the difference between "this admin
++      // has no properties" and "the request failed", so a 401 or a proxy blip
++      // as the network comes back renders as "No Data Available" with no way
++      // to retry. Callers that can show an error state opt in; every existing
++      // caller keeps the previous behaviour untouched.
++      if (throwOnFailure) {
++        throw Exception('Properties request failed (${response.statusCode})');
++      }
+       return RentalsPageResult(items: [], pagination: null);
+     }
+ 

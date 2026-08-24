@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -33,6 +34,8 @@ import 'Add_RentalOwners.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Rentalowner_table extends StatefulWidget {
   final bool
@@ -45,7 +48,8 @@ class Rentalowner_table extends StatefulWidget {
   State<Rentalowner_table> createState() => _Rentalowner_tableState();
 }
 
-class _Rentalowner_tableState extends State<Rentalowner_table> {
+class _Rentalowner_tableState extends State<Rentalowner_table>
+    with NetworkRetryState {
   late Future<List<RentalOwnerData>> futureRentalOwners;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
@@ -228,13 +232,34 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — controllers, listeners and
+  /// filter defaults are not repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureRentalOwners = RentalOwnerService().fetchRentalOwners("");;
+      fetchRentalOwneradded();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futureRentalOwners = RentalOwnerService().fetchRentalOwners("");
@@ -288,8 +313,16 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1161,58 +1194,14 @@ class _Rentalowner_tableState extends State<Rentalowner_table> {
     // Wrap in SingleChildScrollView only when NOT embedded (for standalone pages)
     // When embedded, return content directly - parent ListView handles scrolling
     if (widget.isEmbedded) {
-      return _connectivityResult != ConnectivityResult.none
+      return !isOffline
           ? content
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            );
+          : NoInternetView(onRetry: retryNow);
     }
 
     return _connectivityResult != ConnectivityResult.none
         ? SingleChildScrollView(child: content)
-        : SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/no_internet.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fill,
-                ),
-                const Text(
-                  'No Internet',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const Text(
-                  'Check your internet connection',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          );
+        : NoInternetView();
   }
 
   @override

@@ -28,13 +28,16 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'Tenant_summary.dart';
 import 'edit_tenants.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Tenants_table extends StatefulWidget {
   @override
   _Tenants_tableState createState() => _Tenants_tableState();
 }
 
-class _Tenants_tableState extends State<Tenants_table> {
+class _Tenants_tableState extends State<Tenants_table>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<TenantsV2ListResult> futureTenants;
   Timer? _searchDebounce;
@@ -284,14 +287,31 @@ class _Tenants_tableState extends State<Tenants_table> {
 
   final List<String> items = ['Residential', "Commercial", "All"];
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureTenants = _tenantsPageFuture();;
+      fetchtenantsadded();;
+      fetchCompany();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futureTenants = _tenantsPageFuture();
@@ -301,14 +321,23 @@ class _Tenants_tableState extends State<Tenants_table> {
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _searchDebounce?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -804,7 +833,7 @@ class _Tenants_tableState extends State<Tenants_table> {
         currentpage: "Tenants",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -2022,29 +2051,7 @@ GestureDetector(
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 }

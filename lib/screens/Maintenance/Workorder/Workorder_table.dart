@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -7,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../../widgets/no_internet_view.dart';
+import '../../../provider/network_retry_state.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:three_zero_two_property/repository/workorder.dart';
@@ -45,7 +47,8 @@ class Workorder_table extends StatefulWidget {
   State<Workorder_table> createState() => _Workorder_tableState();
 }
 
-class _Workorder_tableState extends State<Workorder_table> {
+class _Workorder_tableState extends State<Workorder_table>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<Map<String, dynamic>> futureworkorders;
   int rowsPerPage = 5;
@@ -265,6 +268,13 @@ class _Workorder_tableState extends State<Workorder_table> {
   ];
   String? selectedValue;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   String searchvalue = "";
 
   Widget _mobileWorkOrderColumnHeader() {
@@ -355,21 +365,38 @@ class _Workorder_tableState extends State<Workorder_table> {
     });
   }
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// Lifted from the hand-written _retryAfterOffline this replaces, so it
+  /// reloads exactly what that button already reloaded.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _loadWorkOrders();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _loadWorkOrders();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -892,17 +919,24 @@ class _Workorder_tableState extends State<Workorder_table> {
   final _scrollController = ScrollController();
 
   Widget _noInternetBody() {
-    return NoInternetView(onRetry: _retryAfterOffline);
+    return NoInternetView(onRetry: retryNow);
   }
 
   // Swipe-down on the offline state: re-check the connection first, then let
   // the screen load itself again. Nothing to load while still offline.
   Future<void> _retryAfterOffline() async {
     var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     if (!mounted) return;
-    setState(() {
-      _connectivityResult = connectiondata;
-    });
+    // The event is only a trigger: checkInternet() verifies
+    // against the network before deciding.
+    checkInternet();
     if (connectiondata == ConnectivityResult.none) return;
     await _loadWorkOrders();
   }
@@ -1793,7 +1827,7 @@ class _Workorder_tableState extends State<Workorder_table> {
             );
 
     if (widget.embeddedMode) {
-      return _connectivityResult != ConnectivityResult.none
+      return !isOffline
           ? scrollBody
           : _noInternetBody();
     }
@@ -1805,7 +1839,7 @@ class _Workorder_tableState extends State<Workorder_table> {
         currentpage: "Work Orders",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? scrollBody
           : _noInternetBody(),
     );

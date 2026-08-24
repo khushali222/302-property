@@ -541,7 +541,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData) {
                   return Center(child: Text('No data found'));
                 } else {

@@ -21,6 +21,14 @@ class _SignupState extends State<Signup> {
   TextEditingController lastname = TextEditingController();
   TextEditingController email = TextEditingController();
 
+  @override
+  void dispose() {
+    firstname.dispose();
+    lastname.dispose();
+    email.dispose();
+    super.dispose();
+  }
+
   bool firstnameerror = false;
   bool lastnameerror = false;
   bool emailerror = false;

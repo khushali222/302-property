@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -25,6 +26,8 @@ import '../../../../constant/constant.dart';
 import '../../../../provider/dateProvider.dart';
 import '../../../../repository/Communication/lease_communication_repo.dart';
 import '../../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class lease_communication extends StatefulWidget {
   String? lease_id;
@@ -33,7 +36,8 @@ class lease_communication extends StatefulWidget {
   _lease_communicationState createState() => _lease_communicationState();
 }
 
-class _lease_communicationState extends State<lease_communication> {
+class _lease_communicationState extends State<lease_communication>
+    with NetworkRetryState {
   int totalrecords = 0;
   Future<lease_communications>? futureEmailss;
   int rowsPerPage = 5;
@@ -198,10 +202,31 @@ class _lease_communicationState extends State<lease_communication> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes — including the one it parks inside
+  /// the connectivity listener — and nothing that sets up controllers or
+  /// filter defaults, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureEmailss = EmailLogRepository().fetchEmailLog(widget.lease_id!);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger — a stale `none` from the
+      // plugin would strand this screen offline while requests
+      // succeed, so verify against the network first.
+      if (result == ConnectivityResult.none &&
+          await hasNetworkNow()) {
+        result = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
@@ -214,6 +239,12 @@ class _lease_communicationState extends State<lease_communication> {
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -692,13 +723,20 @@ class _lease_communicationState extends State<lease_communication> {
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
-    return _connectivityResult != ConnectivityResult.none
+    return !isOffline
         ? SingleChildScrollView(
             child: Column(
               children: [
@@ -1324,29 +1362,7 @@ class _lease_communicationState extends State<lease_communication> {
               ],
             ),
           )
-        : SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/no_internet.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.fill,
-                ),
-                Text(
-                  'No Internet',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'Check your internet connection',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          );
+        : NoInternetView(onRetry: retryNow);
   }
 
   String extractText(String htmlString) {

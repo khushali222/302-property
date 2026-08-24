@@ -1087,7 +1087,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
     if (image != null) {
       final File file = File(image.path);
-      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      // Lowercased first: the iPhone camera names videos .MOV (uppercase), which
+      // failed this check and made a picked video vanish from the preview list.
+      bool isVideo = image.path.toLowerCase().endsWith('.mp4') ||
+          image.path.toLowerCase().endsWith('.mov');
       if (isVideo) {
         String? thumbnailPath = await _generateVideoThumbnail(image.path);
         if (thumbnailPath != null) {
@@ -1203,7 +1206,11 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   List<String> _imageUrls = [];
 
   bool isVideo(String url) {
-    return url.toLowerCase().endsWith(".mp4");
+    // .mov included: the iPhone camera records .mov by default, and the picker
+    // already accepts both (`.mp4` || `.mov`). Checking only .mp4 here meant a
+    // camera-recorded video was treated as a photo and failed to render.
+    final lower = url.toLowerCase();
+    return lower.endsWith(".mp4") || lower.endsWith(".mov");
   }
 
   void _showVideoDialog(String videoFile) {
@@ -1294,8 +1301,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
 
                           if (image != null) {
                             final File newFile = File(image.path);
-                            bool isNewVideo = image.path.endsWith('.mp4') ||
-                                image.path.endsWith('.mov');
+                            // Lowercased: iPhone camera videos are .MOV.
+                            bool isNewVideo =
+                                image.path.toLowerCase().endsWith('.mp4') ||
+                                    image.path.toLowerCase().endsWith('.mov');
 
                             if (isNewVideo) {
                               String? thumbnailPath =
@@ -4414,7 +4423,10 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
     if (image != null) {
       final File file = File(image.path);
-      bool isVideo = image.path.endsWith('.mp4') || image.path.endsWith('.mov');
+      // Lowercased first: the iPhone camera names videos .MOV (uppercase), which
+      // failed this check and made a picked video vanish from the preview list.
+      bool isVideo = image.path.toLowerCase().endsWith('.mp4') ||
+          image.path.toLowerCase().endsWith('.mov');
       if (isVideo) {
         String? thumbnailPath = await _generateVideoThumbnail(image.path);
         if (thumbnailPath != null) {
@@ -7103,8 +7115,10 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
 
                           if (image != null) {
                             final File newFile = File(image.path);
-                            bool isNewVideo = image.path.endsWith('.mp4') ||
-                                image.path.endsWith('.mov');
+                            // Lowercased: iPhone camera videos are .MOV.
+                            bool isNewVideo =
+                                image.path.toLowerCase().endsWith('.mp4') ||
+                                    image.path.toLowerCase().endsWith('.mov');
 
                             if (isNewVideo) {
                               String? thumbnailPath =

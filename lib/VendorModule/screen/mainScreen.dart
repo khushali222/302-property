@@ -14,6 +14,8 @@ import '../screen/profile.dart';
 import '../screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/VendorModule/screen/bid_room/vendor_bid_room_table.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class MainScreen extends StatefulWidget {
   String? workorder;
@@ -23,7 +25,11 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen>
+    with NetworkRetryState {
+  /// Re-keys the visible tab so a Retry remounts it and its own load runs.
+  int _tabReloadTick = 0;
+
   ConnectivityResult? _connectivityResult;
   StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   int _selectedIndex = 0;
@@ -35,15 +41,28 @@ class _MainScreenState extends State<MainScreen> {
     //  WorkOrderTable(),
     VendorBidRoomTable(),
   ];
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// This shell has no data of its own — its TABS do, and two of them
+  /// (Dashboard, Work Orders) carry no offline state, which is why the gate
+  /// lives here at all. Bumping the tick re-keys the visible tab so its own
+  /// initState runs again: the same thing leaving and re-entering the tab
+  /// would do, which is the only reload this shell can honestly offer.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() => _tabReloadTick++);
+  }
+
   void initState() {
     super.initState();
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (!mounted) return;
-      setState(() {
-        _connectivityResult = result;
-      });
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _screens = [
@@ -71,6 +90,12 @@ class _MainScreenState extends State<MainScreen> {
   void checkInternet() async {
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
@@ -176,33 +201,12 @@ class _MainScreenState extends State<MainScreen> {
         return false;
       },
       child: Scaffold(
-        body: _connectivityResult != ConnectivityResult.none
-            ? _screens[_selectedIndex]
-            : SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/no_internet.json',
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.fill,
-                    ),
-                    Text(
-                      'No Internet',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Check your internet connection',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ), // Display the selected screen
+        body: !isOffline
+            ? KeyedSubtree(
+                key: ValueKey(_tabReloadTick),
+                child: _screens[_selectedIndex],
+              )
+            : NoInternetView(onRetry: retryNow), // Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,

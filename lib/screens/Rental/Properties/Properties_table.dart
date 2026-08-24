@@ -34,6 +34,8 @@ import 'package:three_zero_two_property/services/api_helpers.dart';
 
 import 'EditProperties.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class _Dessert {
   _Dessert(
@@ -55,7 +57,8 @@ class PropertiesTable extends StatefulWidget {
   _PropertiesTableState createState() => _PropertiesTableState();
 }
 
-class _PropertiesTableState extends State<PropertiesTable> {
+class _PropertiesTableState extends State<PropertiesTable>
+    with NetworkRetryState {
   late Future<RentalsPageResult> futurePropertiesLoad;
   // late Future<List<propertytype>> futurePropertyTypes;
   int _rowsPerPage = 10;
@@ -239,6 +242,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         search: searchvalue,
         sortBy: sort.key,
         sortOrder: sort.value,
+        throwOnFailure: true,
       );
       final p = result.pagination;
       if (p != null && p.totalPages > 0 && _currentPage >= p.totalPages) {
@@ -500,13 +504,31 @@ class _PropertiesTableState extends State<PropertiesTable> {
   String searchvalue = "";
   Timer? _searchDebounce;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  ///
+  /// Deliberately re-runs the SAME calls `initState` makes and touches no
+  /// filter, sort or page field, so a reload returns the user to the list they
+  /// were looking at rather than resetting them to an unfiltered page one.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurePropertiesLoad = _loadProperties();
+      futureRentalOwnersList = RentalOwnerService().fetchRentalOwners(null);
+    });
+    if (mounted) fetchRentaladded();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futurePropertiesLoad = _loadProperties();
@@ -521,8 +543,16 @@ class _PropertiesTableState extends State<PropertiesTable> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -758,6 +788,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _searchDebounce?.cancel();
     super.dispose();
   }
@@ -774,7 +805,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
         currentpage: "Properties",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -1498,6 +1529,12 @@ class _PropertiesTableState extends State<PropertiesTable> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return ColabShimmerLoadingWidget();
+                          } else if (snapshot.hasError) {
+                            // A FAILED request has no data either, so without
+                            // this branch it fell through to "No Data
+                            // Available" below — a network failure disguised
+                            // as an empty list, with no way to retry.
+                            return NoInternetView(onRetry: retryNow);
                           } else if (!snapshot.hasData ||
                               snapshot.data!.items.isEmpty) {
                             return Container(
@@ -2261,29 +2298,7 @@ class _PropertiesTableState extends State<PropertiesTable> {
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

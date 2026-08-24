@@ -33,6 +33,18 @@ class _Signup2State extends State<Signup2> {
   TextEditingController phonenumber = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmpassword = TextEditingController();
+
+  @override
+  void dispose() {
+    firstname.dispose();
+    lastname.dispose();
+    email.dispose();
+    companyname.dispose();
+    phonenumber.dispose();
+    password.dispose();
+    confirmpassword.dispose();
+    super.dispose();
+  }
   bool isChecked = false;
   //bool isChecked = false;
   bool companynameerror = false;

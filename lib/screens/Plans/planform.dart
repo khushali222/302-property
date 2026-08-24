@@ -39,6 +39,23 @@ class _PlanformState extends State<Planform> {
   TextEditingController cvv = TextEditingController();
   TextEditingController cardholder = TextEditingController();
 
+  @override
+  void dispose() {
+    streetaddress1.dispose();
+    streetaddress2.dispose();
+    city.dispose();
+    state.dispose();
+    postalcode.dispose();
+    country.dispose();
+    cardtype.dispose();
+    cardnumber.dispose();
+    month.dispose();
+    year.dispose();
+    cvv.dispose();
+    cardholder.dispose();
+    super.dispose();
+  }
+
   bool streetaddress1error = false;
   bool streetaddress2error = false;
   bool cityerror = false;

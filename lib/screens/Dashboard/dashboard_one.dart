@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:core';
@@ -45,6 +46,8 @@ import 'RentPastDueReport.dart';
 import 'admin_dashboard_screen.dart';
 import 'cronjob_payment_table.dart';
 import 'dashboard_leaseExpiring.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class DashboardData {
   // int tenantCount = 0;
@@ -106,7 +109,8 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard>
+    with NetworkRetryState {
   String firstname = '';
   String lastname = '';
   bool loading = false;
@@ -196,17 +200,50 @@ class _DashboardState extends State<Dashboard> {
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   late DashboardData dashboardData;
   List<int> countList = List.filled(5, 0);
   List<int> amountList = List.filled(5, 0);
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      fetchchartdata();;
+      fetchDatacount();;
+      fetchData();;
+      _loadName();;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
 
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger. A stale `none` from the plugin would
+      // otherwise strand this screen on the offline view while requests
+      // succeed, so verify against the network before deciding.
+      var settled = result;
+      if (settled == ConnectivityResult.none && await hasNetworkNow()) {
+        settled = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
-        _connectivityResult = result;
+        _connectivityResult = settled;
       });
     });
     fetchchartdata();
@@ -231,6 +268,12 @@ class _DashboardState extends State<Dashboard> {
     // print("calling");
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
 
     setState(() {
       loading = true;
@@ -450,7 +493,7 @@ class _DashboardState extends State<Dashboard> {
             dropdown: false,
           ),
           appBar: widget_302.App_Bar(context: context),
-          body: _connectivityResult != ConnectivityResult.none
+          body: !isOffline
               ? Center(
                   child: loading
                       ? Lottie.asset('assets/images/loader.json',
@@ -1764,31 +1807,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                 )
-              : SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Lottie.asset(
-                        'assets/no_internet.json',
-                        width: 200,
-                        height: 200,
-                        fit: BoxFit.fill,
-                      ),
-                      Text(
-                        'No Internet',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Check your internet connection',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                )),
+              : NoInternetView(onRetry: retryNow)),
     );
   }
 

@@ -16,6 +16,8 @@ import 'package:three_zero_two_property/VendorModule/widgets/appbar.dart'
 import 'package:three_zero_two_property/widgets/titleBar.dart';
 // import 'package:three_zero_two_property/widgets/custom_drawer.dart'; // Depending on if we use the same drawer
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class VendorBidRoomTable extends StatefulWidget {
   const VendorBidRoomTable({super.key});
@@ -24,7 +26,8 @@ class VendorBidRoomTable extends StatefulWidget {
   State<VendorBidRoomTable> createState() => _VendorBidRoomTableState();
 }
 
-class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
+class _VendorBidRoomTableState extends State<VendorBidRoomTable>
+    with NetworkRetryState {
   final VendorBidRepository _repository = VendorBidRepository();
   List<BidRequest> _bidRequests = [];
   List<BidRequest> _filteredBidRequests = [];
@@ -45,6 +48,18 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   // Map<String, BidRequestDetail?> _bidRequestDetails = {};
   // Map<String, bool> _loadingDetails = {};
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _fetchBidRequests();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,9 +67,10 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (!mounted) return;
-      setState(() {
-        _connectivityResult = result;
-      });
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _fetchBidRequests();
@@ -68,8 +84,14 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
@@ -378,7 +400,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
         onDrawerIconPressed: () {},
       ),
       backgroundColor: Colors.white,
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -794,7 +816,7 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable> {
                 ],
               ),
             )
-          : Center(child: Text("No Internet Connection")),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

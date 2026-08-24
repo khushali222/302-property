@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -297,7 +298,16 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger — a stale `none` from the
+      // plugin would strand this screen offline while requests
+      // succeed, so verify against the network first.
+      if (result == ConnectivityResult.none &&
+          await hasNetworkNow()) {
+        result = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
@@ -473,6 +483,13 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   }
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   final _scrollController = ScrollController();
 
   @override
@@ -493,7 +510,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ColabShimmerLoadingWidget();
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       child: Column(
@@ -709,7 +726,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
           //       if (snapshot.connectionState == ConnectionState.waiting) {
           //         return ShimmerTabletTable();
           //       } else if (snapshot.hasError) {
-          //         return Center(child: Text('Error: ${snapshot.error}'));
+          //         return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
           //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           //         return Container(
           //           height: MediaQuery.of(context).size.height * .5,

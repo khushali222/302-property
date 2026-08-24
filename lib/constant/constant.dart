@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -25,7 +26,7 @@ String Api_url = "https://staging.cloudrentalmanager.com";
 //String image_upload_url = "https://saas.cloudrentalmanager.com";
 String image_upload_url = "https://staging.cloudrentalmanager.com";
 
-// ===================== Safe JSON coercion helpers =====================
+// ===================== Safe JSON coercion helpers =====================r
 // The backend is loosely typed — the same field can arrive as a String on one
 // environment and a number/bool on another (e.g. a phone number as "(555)…" on
 // staging but 5551234567 on production). A direct cast like
@@ -635,6 +636,48 @@ String formatPhoneNumberedit(String phoneNumber) {
 /// never mistaken for a different number than the stored "5551234567".
 String phoneDigitsOnly(String? phoneNumber) =>
     (phoneNumber ?? '').replaceAll(RegExp(r'\D'), '');
+
+/// True only when the API host actually resolves right now.
+///
+/// `connectivity_plus` answers from a cached reachability result, which can
+/// still report `none` after the network is back (reliably reproducible on the
+/// iOS simulator) — so a screen gated on it stays stuck on the offline view
+/// even though requests succeed. Equally, trusting the opposite and assuming
+/// we are online would reveal stale already-loaded data while genuinely
+/// offline. A real DNS lookup settles it either way.
+Future<bool> hasNetworkNow() async {
+  if (Api_url.isEmpty) return false;
+  // Probes over HTTP, deliberately — NOT InternetAddress.lookup. A raw DNS
+  // lookup takes a different path from the app's own requests and is
+  // unreliable inside the iOS sandbox: the app was reaching the API fine
+  // (status 200) while the lookup kept failing, so the whole app was declared
+  // offline on a perfectly good connection. Asking over the same transport
+  // the app actually uses is the only answer that means anything.
+  //
+  // ANY reply counts as online — 401, 404, 500 included. We are testing
+  // whether the network carries a request, not whether the endpoint is happy.
+  // The path matters: probing the bare origin failed inside the app (raw
+  // HttpClient, empty path) while the app's own package:http requests to
+  // /api/... succeeded on the same network. Use the SAME client library and
+  // the same kind of URL the app's real traffic uses, so the probe's verdict
+  // and the app's actual reachability cannot disagree.
+  final uri = Uri.parse('$Api_url/api/auth');
+  // ONE attempt, with a timeout generous enough for a slow server. Staging has
+  // been measured answering a bare request in over six seconds, so a tight
+  // budget here reports "offline" on a working connection — the very failure
+  // this probe exists to prevent. Tolerance for a single blip belongs in
+  // CheckConnection, which already requires two consecutive failures before
+  // it will block the app. ANY HTTP status counts as online — 401/404/500
+  // included — because this tests whether the network carries a request, not
+  // whether the endpoint is happy.
+  try {
+    await http.head(uri).timeout(const Duration(seconds: 10));
+    return true;
+  } catch (e) {
+    debugPrint('NETPROBE-ERR: $e');
+    return false;
+  }
+}
 
 /// Empty-state row for a table whose visible page has no records — normally
 /// because a search or filter matched nothing. The screens' own "No Data

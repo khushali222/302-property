@@ -56,6 +56,8 @@ import '../../StaffModule/screen/Maintenance/Vendor/Vendor_table.dart'
     as StaffVendor;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 // `kUsStateNames` now lives in constant/constant.dart (imported above) so the
 // Profile screen's State dropdown shares the exact same 50-entry web list.
@@ -86,7 +88,8 @@ class TabBarExample extends StatefulWidget {
   State<TabBarExample> createState() => _TabBarExampleState();
 }
 
-class _TabBarExampleState extends State<TabBarExample> {
+class _TabBarExampleState extends State<TabBarExample>
+    with NetworkRetryState {
   int _selectedRadio = 0;
   TextEditingController credit = TextEditingController();
   TextEditingController debit = TextEditingController();
@@ -240,6 +243,31 @@ class _TabBarExampleState extends State<TabBarExample> {
   bool _hasLoadedNotifications =
       false; // Track if notifications have been loaded
 
+  /// Every request this screen makes on open, in one place so that opening it
+  /// and reloading it can never drift apart.
+  void _loadEverything() {
+    fetchAccounts();
+    futureaccount = accountRepository().fetchAccounts();
+    fetchSurchargeData();
+    fetchlatefeeData();
+    fetchPropertyOwners();
+    fetchMailData();
+    // _loadColorPreference();
+    loadChargeSetting();
+    _loadVendor();
+    _loadStaff();
+    fetchWorkData();
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load. Called
+  /// by the Retry button, and silently when the connection came back while
+  /// this screen was in the background.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(_loadEverything);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -254,23 +282,14 @@ class _TabBarExampleState extends State<TabBarExample> {
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (!mounted) return;
-      setState(() {
-        _connectivityResult = result;
-      });
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
 
     checkInternet();
-    fetchAccounts();
-    futureaccount = accountRepository().fetchAccounts();
-    fetchSurchargeData();
-    fetchlatefeeData();
-    fetchPropertyOwners();
-    fetchMailData();
-    // _loadColorPreference();
-    loadChargeSetting();
-    _loadVendor();
-    _loadStaff();
-    fetchWorkData();
+    _loadEverything();
     // fetchWorkOrderNotificationSettings(); // Removed - will be called when workorder tab is clicked
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final dateProvider = Provider.of<DateProvider>(context, listen: false);
@@ -403,8 +422,16 @@ class _TabBarExampleState extends State<TabBarExample> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -2849,9 +2876,12 @@ class _TabBarExampleState extends State<TabBarExample> {
       setState(() {
         _isLoadingvendors = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
-      );
+      // A network failure already flips this screen to the offline state,
+      // which says it better than a snackbar stacked on top of it.
+      if (!isNetworkError(e))
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
+        );
     }
   }
 
@@ -2897,9 +2927,12 @@ class _TabBarExampleState extends State<TabBarExample> {
       setState(() {
         _isLoadingstaff = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch vendors: $e')),
-      );
+      // A network failure already flips this screen to the offline state,
+      // which says it better than a snackbar stacked on top of it.
+      if (!isNetworkError(e))
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch vendors: ${friendlyErrorMessage(e)}')),
+        );
     }
   }
 
@@ -4970,7 +5003,7 @@ class _TabBarExampleState extends State<TabBarExample> {
         //   currentpage: "Settings",
         //   dropdown: false,
         // ),
-        body: _connectivityResult != ConnectivityResult.none
+        body: !isOffline
             ? (_showSettingsMenu
                 ? _buildSettingsMenu()
                 : Container(
@@ -8051,31 +8084,7 @@ class _TabBarExampleState extends State<TabBarExample> {
                   ),
                 ),
               ])))
-            : SizedBox(
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Lottie.asset(
-                      'assets/no_internet.json',
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.fill,
-                    ),
-                    const Text(
-                      'No Internet',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text(
-                      'Check your internet connection',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
+            : NoInternetView(onRetry: retryNow),
       ),
     );
   }
@@ -8380,8 +8389,8 @@ class _TabBarExampleState extends State<TabBarExample> {
   String? _selectedFundtype;
   bool isError = false;
 
-  TextEditingController accountname = TextEditingController();
-  TextEditingController note = TextEditingController();
+  final TextEditingController accountname = TextEditingController();
+  final TextEditingController note = TextEditingController();
 
   // Add this function to handle category addition
   Future<void> addCategory() async {

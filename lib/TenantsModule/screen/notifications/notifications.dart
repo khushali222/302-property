@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
@@ -12,13 +13,15 @@ import 'package:three_zero_two_property/TenantsModule/screen/financial/financial
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constant/constant.dart';
-import '../../../screens/Maintenance/Workorder/workorder_summery.dart';
+import '../work_order/workorder_summery.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 
 class notifications extends StatefulWidget {
@@ -28,7 +31,8 @@ class notifications extends StatefulWidget {
   State<notifications> createState() => _notificationsState();
 }
 
-class _notificationsState extends State<notifications> {
+class _notificationsState extends State<notifications>
+    with NetworkRetryState {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   late Future<List<Map<String,dynamic>>> fetchnoti;
 
@@ -63,13 +67,34 @@ class _notificationsState extends State<notifications> {
   }
 
   ConnectivityResult? _connectivityResult ;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes — including the one it parks inside
+  /// the connectivity listener — and nothing that sets up controllers or
+  /// filter defaults, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      fetchnoti = fetchNotifications()!;;
+    });
+  }
+
   void initState() {
     super.initState();
 
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     fetchnoti = fetchNotifications()!;
@@ -95,6 +120,12 @@ class _notificationsState extends State<notifications> {
 
     var connectiondata;
     connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus can report a stale `none` after the
+    // connection is back; confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -194,7 +225,7 @@ class _notificationsState extends State<notifications> {
         // Scaffold.of(context).openDrawer();
       },),
       body:
-      _connectivityResult !=ConnectivityResult.none ?
+      !isOffline ?
       SingleChildScrollView(
         child: Column(
           children: [
@@ -481,31 +512,7 @@ class _notificationsState extends State<notifications> {
 
           ],
         ),
-      ):SizedBox(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Lottie.asset(
-              'assets/no_internet.json',
-              width: 200,
-              height: 200,
-              fit: BoxFit.fill,
-            ),
-            Text(
-              'No Internet',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Check your internet connection',
-              style: TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
-      ),
+      ):NoInternetView(onRetry: retryNow),
     );
   }
 }

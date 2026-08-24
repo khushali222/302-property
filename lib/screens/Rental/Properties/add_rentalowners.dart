@@ -76,6 +76,25 @@ class _AddRentalownersState extends State<AddRentalowners> {
   TextEditingController proid = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  @override
+  void dispose() {
+    firstname.dispose();
+    comname.dispose();
+    primaryemail.dispose();
+    alternativeemail.dispose();
+    phonenum.dispose();
+    homenum.dispose();
+    businessnum.dispose();
+    street2.dispose();
+    city2.dispose();
+    state2.dispose();
+    county2.dispose();
+    code2.dispose();
+    proid.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
   bool firstnameerror = false;
 
   bool comnameerror = false;

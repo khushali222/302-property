@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -167,6 +168,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       navigatorKey: ApiClient.navigatorKey,
+      // Lets a screen know when it becomes visible again, which is the only
+      // moment NetworkRetryState allows a silent reload — so stacked screens
+      // cannot all fire their requests at once.
+      navigatorObservers: [appRouteObserver],
       theme: ThemeData(
         fontFamily: "Poppins",
         iconTheme: IconThemeData(color: blueColor),
@@ -176,6 +181,16 @@ class MyApp extends StatelessWidget {
       // home: DashboardAdminSample(),
       home: SplashScreen(),
       builder: (context, child) {
+        // Mounted once, above every route, so the offline state and its Retry
+        // live in one place instead of being re-implemented per screen. The
+        // blocked screen stays mounted underneath, so recovery returns the
+        // user to the same page, filters and scroll position.
+        // PILOT: the app-wide blocker is bypassed on purpose. It is the one
+        // thing that can lock all ~300 screens on a single wrong verdict, and
+        // the design being trialled replaces it with a per-screen offline
+        // state that can only be triggered by that screen's own failed
+        // request. To undo: re-add `import 'widgets/network_guard.dart';`
+        // and wrap the ScrollConfiguration below in NetworkGuard(child: ...).
         return ScrollConfiguration(
           behavior: NoGlowScrollBehavior(),
           child: child!,

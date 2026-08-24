@@ -37,6 +37,13 @@ class MoveoutScreen extends StatefulWidget {
 class _MoveoutScreenState extends State<MoveoutScreen> {
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
+
+  @override
+  void dispose() {
+    startdateController.dispose();
+    enddateController.dispose();
+    super.dispose();
+  }
   late Future<List<LeaseTenant>> futureLeasetenant;
   bool isMovedOut = false;
   bool isLoading = false;

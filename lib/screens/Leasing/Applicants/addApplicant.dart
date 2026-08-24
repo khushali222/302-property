@@ -46,6 +46,19 @@ class _AddApplicantState extends State<AddApplicant> {
   final TextEditingController telePhoneNumber = TextEditingController();
   final TextEditingController referenceEmail = TextEditingController();
 
+  @override
+  void dispose() {
+    firstName.dispose();
+    lastName.dispose();
+    email.dispose();
+    mobileNumber.dispose();
+    homeNumber.dispose();
+    bussinessNumber.dispose();
+    telePhoneNumber.dispose();
+    referenceEmail.dispose();
+    super.dispose();
+  }
+
   bool _isLoading = true;
   bool _Loading = false;
   Map<String, String> properties = {}; // Mapping of rental_id to rental_address

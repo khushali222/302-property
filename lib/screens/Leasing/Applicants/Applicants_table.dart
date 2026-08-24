@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,6 +31,8 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import '../../../model/ApplicantModel.dart';
 import '../../../provider/dateProvider.dart';
 import '../../../widgets/custom_drawer.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class Applicants_table extends StatefulWidget {
   @override
@@ -37,7 +40,7 @@ class Applicants_table extends StatefulWidget {
 }
 
 class _Applicants_tableState extends State<Applicants_table>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, NetworkRetryState {
   int totalrecords = 0;
   late Future<List<propertytype>> futurePropertyTypes;
   late Future<List<Datum>> futureApplicantdata;
@@ -174,6 +177,7 @@ class _Applicants_tableState extends State<Applicants_table>
   String? selectedDateFilter = "Last 15 Days";
 
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
 
   // ── Tab controller ──
   late TabController _tabController;
@@ -188,13 +192,30 @@ class _Applicants_tableState extends State<Applicants_table>
   String _pendingSearch = '';
   String _deletedSearch = '';
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — controllers, listeners and
+  /// filter defaults are not repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();;
+      futureApplicantdata = ApplicantRepository().fetchApplicants();;
+      fetchapplicantadded();;
+      fetchPendingInvites();;
+      fetchDeletedInvites();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futurePropertyTypes = PropertyTypeRepository().fetchPropertyTypes();
@@ -208,13 +229,22 @@ class _Applicants_tableState extends State<Applicants_table>
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _tabController.dispose();
     super.dispose();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1332,7 +1362,7 @@ class _Applicants_tableState extends State<Applicants_table>
         currentpage: "Applicants",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? Column(
               children: [
                   const SizedBox(
@@ -2798,29 +2828,7 @@ class _Applicants_tableState extends State<Applicants_table>
           ),       // closes Expanded
         ],         // closes outer Column children
       )            // closes outer Column (connected body)
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

@@ -90,6 +90,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   TextEditingController email = TextEditingController();
+
+  @override
+  void dispose() {
+    email.dispose();
+    super.dispose();
+  }
   bool emailerror = false;
 
   final GlobalKey formkey = GlobalKey<FormState>();

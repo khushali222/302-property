@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -31,6 +32,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/appbar.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 // Sample data model class
 
 // Create a function to generate PDF
@@ -41,7 +44,8 @@ class DailyTransactions extends StatefulWidget {
   State<DailyTransactions> createState() => _DailyTransactionsState();
 }
 
-class _DailyTransactionsState extends State<DailyTransactions> {
+class _DailyTransactionsState extends State<DailyTransactions>
+    with NetworkRetryState {
   late Future<DailyTransactionReportData> _futureDailytrnsaction;
   DailyTransactionReportData? DelinquentTenantsModel;
   bool isLoading = true;
@@ -49,13 +53,33 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    fromDate.dispose();
+    toDate.dispose();
+    super.dispose();
+  }
+  /// Required by [NetworkRetryState]: re-issue this report's own load.
+  /// Lifted from the hand-written Retry this replaces, so it fetches
+  /// exactly what that button already fetched.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    fetchReport();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
 
@@ -64,8 +88,15 @@ class _DailyTransactionsState extends State<DailyTransactions> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that can
+    // stay `none` after the connection is back (reliably so on the iOS
+    // simulator), which made every freshly-opened report declare itself
+    // offline. Confirm with a real lookup before believing `none`.
+    if (connectiondata == ConnectivityResult.none && await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1256,7 +1287,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
         currentpage: "Report",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -2680,29 +2711,7 @@ class _DailyTransactionsState extends State<DailyTransactions> {
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  const Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -35,13 +36,16 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/drawer_tiles.dart';
 import 'AddCard/AddCard.dart';
 import 'AddAchAccount/AddAchAccount.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class FinancialTable extends StatefulWidget {
   @override
   _FinancialTableState createState() => _FinancialTableState();
 }
 
-class _FinancialTableState extends State<FinancialTable> {
+class _FinancialTableState extends State<FinancialTable>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<List<Data>> futureFinancial;
   int rowsPerPage = 5;
@@ -288,6 +292,13 @@ class _FinancialTableState extends State<FinancialTable> {
   String? selectedValue;
   String searchvalue = "";
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
 
   // WEB PARITY (TenantFinancial.jsx): the Ledger's Add Card / Add ACH buttons
   // render for every tenant — web gates them only on the financial_add
@@ -296,22 +307,44 @@ class _FinancialTableState extends State<FinancialTable> {
   // SELECTION, which Make Payment still honours (make_payment.dart
   // tenantAllowAch / tenantAllowCard, matching AddPaymentByTenant.jsx).
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// These are the data calls `initState` makes; nothing that sets up
+  /// controllers, filters or defaults is repeated, so a reload cannot
+  /// reset what the user is looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureFinancial = TenantFinancialRepository().fetchTenantFinancial();;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     futureFinancial = TenantFinancialRepository().fetchTenantFinancial();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -905,7 +938,7 @@ class _FinancialTableState extends State<FinancialTable> {
       drawer: CustomDrawer(
         currentpage: 'Ledger',
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -2095,29 +2128,7 @@ class _FinancialTableState extends State<FinancialTable> {
                 ],
               ),
             )
-          : SizedBox(
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Lottie.asset(
-                    'assets/no_internet.json',
-                    width: 200,
-                    height: 200,
-                    fit: BoxFit.fill,
-                  ),
-                  Text(
-                    'No Internet',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Check your internet connection',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 }

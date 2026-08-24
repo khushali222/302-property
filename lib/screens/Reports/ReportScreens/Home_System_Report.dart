@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -41,13 +42,16 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class HomeSystemReportScreen extends StatefulWidget {
   @override
   State<HomeSystemReportScreen> createState() => _HomeSystemReportScreenState();
 }
 
-class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
+class _HomeSystemReportScreenState extends State<HomeSystemReportScreen>
+    with NetworkRetryState {
   // Change from late Future to nullable Future
   Future<Home_system_report>? _futureRentersInsurance;
   rentrollreportmodel? rentersInsuranceModel;
@@ -56,6 +60,13 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   int? expandedRowIndex;
   Map<int, int?> expandedTenantIndex = {};
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
 
   // Major System categories
   final List<String> majorSystemCategories = [
@@ -407,14 +418,30 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
     );
   }
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load,
+  /// called by the Retry button and when the connection comes back.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _loadProperties();
+    // Re-run the report too, but only when a property was already chosen.
+    if (!mounted || _selectedPropertyId == null) return;
+    setState(() {
+      _futureRentersInsurance =
+          fetchRentersInsuranceData(id: _selectedPropertyId!);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _requestPermissions();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     _loadProperties();
     checkInternet();
@@ -430,8 +457,14 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1811,7 +1844,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
         currentpage: "Reports",
         dropdown: false,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -1904,9 +1937,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen> {
                 ],
               ),
             )
-          : const Center(
-              child: Text("No Internet Connection"),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

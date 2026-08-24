@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/Model/lease_term.dart';
 import 'dart:convert';
@@ -63,6 +64,8 @@ import 'package:three_zero_two_property/repository/tenants.dart';
 import 'package:three_zero_two_property/Model/tenants.dart' as tenant_model;
 import 'package:three_zero_two_property/screens/Rental/Tenants/Tenant_summary.dart'
     show ResponsiveTenantSummary;
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class SummeryPageLease extends StatefulWidget {
   bool? isredirectpayment;
@@ -87,7 +90,7 @@ class SummeryPageLease extends StatefulWidget {
 }
 
 class _SummeryPageLeaseState extends State<SummeryPageLease>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, NetworkRetryState {
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
   late Future<LeaseSummary> futureLeaseSummary;
@@ -99,6 +102,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   late Future<List<Map<String, dynamic>>> _leaseHistoryFuture;
   TabController? _tabController;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
 
   // Pagination variables for Lease History
   int _currentPage = 1;
@@ -108,12 +112,29 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   //String moveOutDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   String? moveOutDate;
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls from `initState` only — controllers, listeners and
+  /// filter defaults are not repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureLeasetenant = LeaseRepository.fetchLeaseTenants(widget.leaseId);;
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);;
+      _leaseChargesFuture = LeaseRepository().fetchLeaseCharges(widget.leaseId);;
+      _lateFeesFuture = fetchLateFees();;
+      _leaseHistoryFuture = fetchLeaseHistory();;
+    });
+  }
+
   @override
   void initState() {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     // Term history for the Lease Details row — supplies the "inferred" marker
@@ -161,8 +182,16 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back (reliably so on the
+    // iOS simulator), which made this screen declare itself offline
+    // while requests actually succeed. Confirm before believing it.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
+    if (!mounted) return;
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -170,6 +199,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     super.dispose();
   }
 
@@ -684,7 +714,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
         currentpage: "Leases",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: FutureBuilder<LeaseSummary>(
                   future: futureLeaseSummary,
@@ -711,18 +741,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
   }
 
   Widget _buildNoInternetWidget() {
-    return SizedBox(
-      width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Lottie.asset('assets/no_internet.json', width: 200, height: 200, fit: BoxFit.fill),
-          const Text('No Internet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const Text('Check your internet connection', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
+    return NoInternetView(onRetry: retryNow);
   }
 
   Widget _buildLeaseContent(LeaseSummary lease, BuildContext context, double screenWidth) {

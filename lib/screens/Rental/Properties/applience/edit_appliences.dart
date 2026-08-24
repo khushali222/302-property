@@ -257,6 +257,18 @@ class _Edit_applienceState extends State<Edit_applience> {
   ];
   final TextEditingController _customBrand = TextEditingController();
 
+  @override
+  void dispose() {
+    _type.dispose();
+    _model.dispose();
+    _serialNumber.dispose();
+    _warrantyExpiry.dispose();
+    _lastMaintenanceDate.dispose();
+    _maintenanceNotes.dispose();
+    _customBrand.dispose();
+    super.dispose();
+  }
+
   // Web parity: Category options are filtered by the selected Type (system_type).
   List<allcategories_model> get _filteredCategories {
     if (_selectedSystemType == null || _selectedSystemType!.isEmpty) {

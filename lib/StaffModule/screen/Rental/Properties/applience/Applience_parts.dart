@@ -50,6 +50,17 @@ class _AppliancesPartState extends State<AppliancesPart> {
   TextEditingController _lastMaintenanceDate = TextEditingController();
   TextEditingController _maintenanceNotes = TextEditingController();
 
+  @override
+  void dispose() {
+    _type.dispose();
+    _model.dispose();
+    _serialNumber.dispose();
+    _warrantyExpiry.dispose();
+    _lastMaintenanceDate.dispose();
+    _maintenanceNotes.dispose();
+    super.dispose();
+  }
+
   final UnitData leaseRepository = UnitData();
   List<unit_appliance> leases = [];
 
@@ -1675,7 +1686,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         size: 40.0,
                       ));
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return  Center(
                           child: Column(
@@ -2255,7 +2266,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         size: 40.0,
                       ));
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return  Center(
                           child: Column(

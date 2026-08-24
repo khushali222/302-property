@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -26,6 +27,7 @@ import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/screens/BidRoom/create_bid_room.dart';
 import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
 import 'package:three_zero_two_property/Model/All_categories_model.dart';
+import 'package:lottie/lottie.dart';
 
 class BidRoomTable extends StatefulWidget {
   /// When true, uses staff drawer, staff app bar, and staff repository.
@@ -49,6 +51,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
   int _rowsPerPage = 10;
   final TextEditingController _searchController = TextEditingController();
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
   bool sorting1 = false;
   bool ascending1 = false;
   int? expandedIndex;
@@ -62,10 +65,12 @@ class _BidRoomTableState extends State<BidRoomTable> {
     _repository = widget.useStaffLayout
         ? StaffBidRoomRepository()
         : BidRequestRepository();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     _fetchBidRequests();
@@ -74,13 +79,20 @@ class _BidRoomTableState extends State<BidRoomTable> {
 
   @override
   void dispose() {
+    _connectivitySub?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -1974,7 +1986,8 @@ class _BidRoomTableState extends State<BidRoomTable> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/images/no_internet.json"),
+                  Lottie.asset("assets/no_internet.json",
+                      width: 200, height: 200, fit: BoxFit.fill),
                   const SizedBox(height: 20),
                   Text(
                     "No Internet Connection",

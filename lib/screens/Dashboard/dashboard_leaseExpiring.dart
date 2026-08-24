@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -462,7 +463,16 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (!mounted) return;
+      // The event is only a trigger — a stale `none` from the
+      // plugin would strand this screen offline while requests
+      // succeed, so verify against the network first.
+      if (result == ConnectivityResult.none &&
+          await hasNetworkNow()) {
+        result = ConnectivityResult.wifi;
+      }
+      if (!mounted) return;
       setState(() {
         _connectivityResult = result;
         if (_connectivityResult != ConnectivityResult.none)
@@ -644,6 +654,13 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
     fontWeight: FontWeight.bold,
   );
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
   final _scrollController = ScrollController();
 
   // Add this card widget for displaying each lease in a card with expandable details
@@ -775,7 +792,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ColabShimmerLoadingWidget();
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     // height: MediaQuery.of(context).size.height * .5,
@@ -990,7 +1007,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
           //       if (snapshot.connectionState == ConnectionState.waiting) {
           //         return ShimmerTabletTable();
           //       } else if (snapshot.hasError) {
-          //         return Center(child: Text('Error: ${snapshot.error}'));
+          //         return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
           //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           //         return Container(
           //           height: MediaQuery.of(context).size.height * .5,

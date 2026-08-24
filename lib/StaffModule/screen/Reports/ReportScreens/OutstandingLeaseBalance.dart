@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../repository/GetAdminAddressPdf.dart';
 import 'package:three_zero_two_property/Model/profile.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class OutstandingLeaseBalance extends StatefulWidget {
   @override
@@ -35,13 +38,21 @@ class OutstandingLeaseBalance extends StatefulWidget {
       _OutstandingLeaseBalanceState();
 }
 
-class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
+class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance>
+    with NetworkRetryState {
   late Future<OutstandingLeaseBalanceModel> _futureOutstandingLeaseBalance;
   OutstandingLeaseBalanceModel? outstandingLeaseBalanceModel;
   bool isLoading = false;
   String? errorMessage;
   int? expandedRowIndex;
   ConnectivityResult? _connectivityResult;
+  StreamSubscription<ConnectivityResult>? _connectivitySub;
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
+  }
 
   // Pagination and filtering
   int _currentPage = 1;
@@ -58,13 +69,26 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   final ValueNotifier<List<String>> _selectedOwnersNotifier =
       ValueNotifier<List<String>>([]);
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load,
+  /// called by the Retry button and when the connection comes back.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    // Exactly what initState loads. The report itself waits for Run, by web
+    // parity, so a reload must not fire it with an owner scope that is not
+    // ready yet.
+    await _fetchRentalOwners();
+  }
+
   @override
   void initState() {
     super.initState();
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      setState(() {
-        _connectivityResult = result;
-      });
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      // The event is only a trigger: checkInternet() verifies
+      // against the network before deciding, so a stale `none`
+      // from the plugin cannot strand this screen offline.
+      checkInternet();
     });
     checkInternet();
     // Web parity: do not auto-load the report on open. The rental-owner scope
@@ -77,8 +101,14 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   }
 
   void checkInternet() async {
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
+    var connectiondata = await Connectivity().checkConnectivity();
+    // connectivity_plus answers from a cached reachability result that
+    // can stay `none` after the connection is back; confirm before
+    // believing it, or this screen strands itself offline.
+    if (connectiondata == ConnectivityResult.none &&
+        await hasNetworkNow()) {
+      connectiondata = ConnectivityResult.wifi;
+    }
     setState(() {
       _connectivityResult = connectiondata;
     });
@@ -315,7 +345,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
         dropdown: false,
       ),
       appBar: widget_302_Staff.App_Bar(context: context),
-      body: _connectivityResult == ConnectivityResult.none
+      body: isOffline
           ? _buildNoInternetWidget()
           : SingleChildScrollView(
               child: Column(
@@ -337,42 +367,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance> {
   }
 
   Widget _buildNoInternetWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset(
-            'assets/no_internet.json',
-            width: 200,
-            height: 200,
-          ),
-          Text(
-            'No Internet Connection',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Please check your internet connection and try again',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              checkInternet();
-              _refreshData();
-            },
-            child: Text('Retry'),
-          ),
-        ],
-      ),
-    );
+    return NoInternetView(onRetry: retryNow);
   }
 
   Widget _buildReportContent() {

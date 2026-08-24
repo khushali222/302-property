@@ -91,6 +91,14 @@ class _PreminumPlanFormState extends State<PreminumPlanForm> {
 
   @override
   void dispose() {
+    streetaddress1.dispose();
+    streetaddress2.dispose();
+    city.dispose();
+    state.dispose();
+    postalcode.dispose();
+    country.dispose();
+    cVV.dispose();
+    cardHolderName.dispose();
     cardNumberController.dispose();
     super.dispose();
   }

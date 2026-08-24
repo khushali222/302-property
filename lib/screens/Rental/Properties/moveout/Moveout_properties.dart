@@ -35,6 +35,13 @@ class Moveout_properties extends StatefulWidget {
 class _Moveout_propertiesState extends State<Moveout_properties> {
   TextEditingController startdateController = TextEditingController();
   TextEditingController enddateController = TextEditingController();
+
+  @override
+  void dispose() {
+    startdateController.dispose();
+    enddateController.dispose();
+    super.dispose();
+  }
   late Future<List<unit_properties>> futureUnitsummery;
   bool isMovedOut = false;
   bool isLoading = false;
