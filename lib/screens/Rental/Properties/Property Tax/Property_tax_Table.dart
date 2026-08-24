@@ -136,7 +136,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading tax : ${e.toString()}'),
+            content: Text('Error loading tax : ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -345,7 +345,7 @@ class _Property_tax_TableState extends State<Property_tax_Table> {
     } catch (e) {
       logError('Error deleting tax record: $e');
       Fluttertoast.showToast(
-        msg: 'Error deleting tax record: ${e.toString()}',
+        msg: 'Error deleting tax record: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );

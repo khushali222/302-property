@@ -16,10 +16,18 @@ import 'package:three_zero_two_property/constant/constant.dart';
 class NoInternetView extends StatelessWidget {
   final Future<void> Function()? onRetry;
 
-  const NoInternetView({super.key, this.onRetry});
+  /// Sized to sit INSIDE a tab, card or table area rather than take over the
+  /// screen. The full-size version centres a 200px animation and assumes it
+  /// owns the page; dropped into one tab of a summary screen that reads as
+  /// broken, because the rest of the page is fine and still visible around it.
+  /// Same message, same Retry, a fraction of the height.
+  final bool compact;
+
+  const NoInternetView({super.key, this.onRetry, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
+    if (compact) return _compact(context);
     final content = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,6 +99,35 @@ class NoInternetView extends StatelessWidget {
             child: Center(child: content),
           ),
         ),
+      ),
+    );
+  }
+
+  /// The inline variant: an icon instead of the animation, one line of text and
+  /// a text-button Retry, so it fits a tab without pushing the layout around.
+  Widget _compact(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.wifi_off_rounded, size: 40, color: Colors.grey.shade400),
+          const SizedBox(height: 12),
+          const Text(
+            'No internet connection',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 4),
+            TextButton.icon(
+              onPressed: () => onRetry!(),
+              icon: const Icon(Icons.refresh, size: 16),
+              label: const Text('Retry'),
+              style: TextButton.styleFrom(foregroundColor: navyClr),
+            ),
+          ],
+        ],
       ),
     );
   }

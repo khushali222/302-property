@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +19,8 @@ class manage_templates extends StatefulWidget {
   State<manage_templates> createState() => _manage_templatesState();
 }
 
-class _manage_templatesState extends State<manage_templates> {
+class _manage_templatesState extends State<manage_templates>
+    with NetworkRetryState {
   List<Templates> dummyTemplateList = [
     Templates(
       type: "Reset password",
@@ -93,6 +96,15 @@ class _manage_templatesState extends State<manage_templates> {
       isEnabled: true,
     ),
   ];
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The one load initState makes; the dummy template list it also seeds is
+  /// local state, not something a reload should rebuild.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await fetchTemplates();
+  }
 
   @override
   initState(){
@@ -188,6 +200,11 @@ class _manage_templatesState extends State<manage_templates> {
   
   @override
   Widget build(BuildContext context) {
+    // Lives inside another screen, so the compact offline state is what
+    // fits here rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

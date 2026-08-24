@@ -778,7 +778,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
         logError('Error uploading image: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to upload image: ${e.toString()}'),
+            content: Text('Failed to upload image: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -1524,7 +1524,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                       size: 40.0,
                                     ));
                                   } else if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
+                                    return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return const Text('No properties found');
@@ -3296,7 +3296,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                         size: 40.0,
                                       ));
                                     } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
+                                      return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
                                       return const Text(

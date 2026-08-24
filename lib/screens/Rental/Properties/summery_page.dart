@@ -651,7 +651,7 @@ class _Summery_pageState extends State<Summery_page>
                                           } catch (e) {
                                             if (mounted)
                                               Fluttertoast.showToast(
-                                                  msg: 'Failed to delete: $e');
+                                                  msg: 'Failed to delete: ${friendlyErrorMessage(e)}');
                                           }
                                         },
                                       ),
@@ -706,7 +706,7 @@ class _Summery_pageState extends State<Summery_page>
                                         } catch (e) {
                                           if (mounted)
                                             Fluttertoast.showToast(
-                                                msg: 'Failed to set cover: $e');
+                                                msg: 'Failed to set cover: ${friendlyErrorMessage(e)}');
                                         }
                                       },
                                     ),
@@ -3247,7 +3247,7 @@ class _Summery_pageState extends State<Summery_page>
                     child: SpinKitFadingCircle(color: Colors.black, size: 40),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     height: MediaQuery.of(context).size.height * .5,
@@ -3489,7 +3489,7 @@ class _Summery_pageState extends State<Summery_page>
                     child: SpinKitFadingCircle(color: Colors.black, size: 40),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return Container(
                     height: MediaQuery.of(context).size.height * .5,
@@ -3752,7 +3752,7 @@ class _Summery_pageState extends State<Summery_page>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/no_internet.json'),
-                Text('Error: ${snapshot.error}'),
+                Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center),
               ],
             ),
           );
@@ -4084,7 +4084,7 @@ class _Summery_pageState extends State<Summery_page>
                             ));
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                                child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Container(
@@ -4548,7 +4548,7 @@ class _Summery_pageState extends State<Summery_page>
                           ));
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -5881,7 +5881,7 @@ class _Summery_pageState extends State<Summery_page>
                 ),
               );
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
             } else {
               List<TenantData> tenants = snapshot.data ?? [];
               bool hasRecurringTenants =
@@ -6293,7 +6293,7 @@ class _Summery_pageState extends State<Summery_page>
                             },
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                          return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                         } else {
                           return const Center(
                             child: SpinKitFadingCircle(
@@ -7207,7 +7207,7 @@ class _Summery_pageState extends State<Summery_page>
                       size: 40.0,
                     ));
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('No data available'));
                   }
@@ -10019,7 +10019,7 @@ class _Summery_pageState extends State<Summery_page>
                           size: 40.0,
                         ));
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
+                        return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Container(
                           height: MediaQuery.of(context).size.height * .5,
@@ -12554,7 +12554,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     );
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,
@@ -15748,7 +15748,7 @@ class _Summery_pageState extends State<Summery_page>
                       ),
                     );
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,
@@ -17819,7 +17819,7 @@ class _LeasesTableState extends State<LeasesTable> {
                       size: 40.0,
                     ));
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(
                       child: Column(
@@ -18238,7 +18238,7 @@ class _LeasesTableState extends State<LeasesTable> {
                     size: 40.0,
                   ));
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(
                       child: Text(

@@ -1080,7 +1080,19 @@ class RentalownersSummeryForTablet extends StatefulWidget {
 }
 
 class _RentalownersSummeryForTabletState
-    extends State<RentalownersSummeryForTablet> {
+    extends State<RentalownersSummeryForTablet>
+    with NetworkRetryState {
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  ///
+  /// This layout builds its future INSIDE build() rather than in initState, so
+  /// rebuilding is what re-issues the request — there is no future field to
+  /// reassign here.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {});
+  }
+
   void initState() {
     super.initState();
     _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -1121,7 +1133,7 @@ class _RentalownersSummeryForTabletState
         currentpage: "Rental Owner",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? Center(
               child: FutureBuilder<List<RentalOwnerData>>(
                 future: RentalOwnerService()
@@ -1136,7 +1148,7 @@ class _RentalownersSummeryForTabletState
                       )),
                     );
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                   } else {
                     List<RentalOwnerData> rentalownersummery =
                         snapshot.data ?? [];
@@ -2002,7 +2014,7 @@ class _RentalownersSummeryForTabletState
                 },
               ),
             )
-          : NoInternetView(),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 }

@@ -1334,7 +1334,7 @@ class _Lease_tableState extends State<Lease_table>
                           return ColabShimmerLoadingWidget();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.items.isEmpty) {
                           return Container(
@@ -2168,7 +2168,7 @@ class _Lease_tableState extends State<Lease_table>
                   //         return ShimmerTabletTable();
                   //       } else if (snapshot.hasError) {
                   //         return Center(
-                  //             child: Text('Error: ${snapshot.error}'));
+                  //             child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   //       } else if (!snapshot.hasData ||
                   //           snapshot.data!.isEmpty) {
                   //         return Container(
@@ -3036,7 +3036,7 @@ class _Lease_tableState extends State<Lease_table>
         Fluttertoast.showToast(msg: 'Excel file saved');
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error generating Excel: $e');
+      Fluttertoast.showToast(msg: 'Error generating Excel: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -3090,7 +3090,7 @@ class _Lease_tableState extends State<Lease_table>
         Fluttertoast.showToast(msg: 'CSV file saved');
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error generating CSV: $e');
+      Fluttertoast.showToast(msg: 'Error generating CSV: ${friendlyErrorMessage(e)}');
     }
   }
 }

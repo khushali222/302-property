@@ -15,6 +15,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/Model/Recurring_Payments_Configuration_model.dart';
 import 'package:three_zero_two_property/repository/Recurring_Payments_Configuration_repo.dart';
@@ -40,12 +42,21 @@ class Recurring_Payments_Configuration_Report extends StatefulWidget {
 }
 
 class _Recurring_Payments_Configuration_ReportState
-    extends State<Recurring_Payments_Configuration_Report> {
+    extends State<Recurring_Payments_Configuration_Report>
+    with NetworkRetryState {
   Recurring_Payments_Configuration? recurringPaymentsConfiguration;
   bool isLoading = true;
   String? errorMessage;
   String? expandedRowIndex;
   Map<String, String?> expandedTenantIndex = {};
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The one fetch initState makes.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await fetchRecurringPaymentConfiguration();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -182,7 +193,11 @@ class _Recurring_Payments_Configuration_ReportState
           currentpage: "Reports",
           dropdown: false,
         ),
-        body: isLoading
+        // This screen had no offline state: any failure collapsed into a
+        // single 'Failed to load data' line with no way to retry.
+        body: isOffline
+            ? NoInternetView(onRetry: retryNow)
+            : isLoading
             ? Center(
                 child: SpinKitFadingCircle(
                 color: Colors.black,

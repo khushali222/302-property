@@ -453,6 +453,11 @@ class _Dashboard_staffState extends State<Dashboard_staff>
   @override
   Future<void> reloadData() async {
     if (!mounted) return;
+    // Permissions are fetched once, at Splash. If the app started offline
+    // that fetch failed, every gated drawer item vanished, and nothing ever
+    // tried again — so refetch here, the screen that recovers on reconnect.
+    Provider.of<StaffPermissionProvider>(context, listen: false)
+        .fetchPermissions();
     fetchNearbyProperties();
   }
 

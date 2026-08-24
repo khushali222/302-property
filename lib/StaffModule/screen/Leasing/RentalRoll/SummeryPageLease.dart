@@ -639,7 +639,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         ),
                       );
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData || snapshot.data == null) {
                       return const Center(child: Text('No data found.'));
                     } else {
@@ -1505,7 +1505,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
             ),
           );
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
         } else if (!snapshot.hasData || snapshot.data == null) {
           return const Center(child: Text('No data found.'));
         } else {
@@ -1753,7 +1753,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container();
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
+                        return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                       } else if (!snapshot.hasData ||
                           snapshot.data!.length < 2) {
                         return const Center(child: Text('No data found'));
@@ -2355,7 +2355,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                         //   size: 40.0,
                         // );
                       } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
+                        return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                       } else if (!snapshot.hasData) {
                         return const Center(child: Text('No data found'));
                       } else {
@@ -4906,7 +4906,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                 size: 40.0,
               );
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
             } else if (!snapshot.hasData || snapshot.data == null) {
               return const Center(child: Text('No data found.'));
             } else {

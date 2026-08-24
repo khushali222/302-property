@@ -1,5 +1,7 @@
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +35,8 @@ class ApplianceSummary extends StatefulWidget {
   _ApplianceSummaryState createState() => _ApplianceSummaryState();
 }
 
-class _ApplianceSummaryState extends State<ApplianceSummary> {
+class _ApplianceSummaryState extends State<ApplianceSummary>
+    with NetworkRetryState {
   Map<String, bool> _expandedItems = {};
   bool _isRefreshing = false;
   bool _isLoading = true;
@@ -52,6 +55,17 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
   void _toggleExpanded(String key) {
     setState(() {
       _expandedItems[key] = !(_expandedItems[key] ?? false);
+    });
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadApplianceData();
     });
   }
 
@@ -110,7 +124,7 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error refreshing data: ${e.toString()}'),
+          content: Text('Error refreshing data: ${friendlyErrorMessage(e)}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -198,7 +212,11 @@ class _ApplianceSummaryState extends State<ApplianceSummary> {
         currentpage: "Properties",
         dropdown: true,
       ),
-      body: SafeArea(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SafeArea(
         child: Column(
           children: [
             // Top Navigation Bar

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
@@ -15,10 +17,22 @@ class PortfolioOverviewReport extends StatefulWidget {
       _PortfolioOverviewReportState();
 }
 
-class _PortfolioOverviewReportState extends State<PortfolioOverviewReport> {
+class _PortfolioOverviewReportState extends State<PortfolioOverviewReport>
+    with NetworkRetryState {
   PortfolioOverviewData? _data;
   bool _isLoading = false;
   String? _error;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadData();
+    });
+  }
 
   @override
   void initState() {
@@ -74,7 +88,11 @@ class _PortfolioOverviewReportState extends State<PortfolioOverviewReport> {
         currentpage: 'Reports',
         dropdown: false,
       ),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ReportHeader(title: 'Portfolio Overview'),

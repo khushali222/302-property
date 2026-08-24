@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +35,8 @@ class CustomReportBuilder extends StatefulWidget {
   State<CustomReportBuilder> createState() => _CustomReportBuilderState();
 }
 
-class _CustomReportBuilderState extends State<CustomReportBuilder> {
+class _CustomReportBuilderState extends State<CustomReportBuilder>
+    with NetworkRetryState {
   final CustomReportService _service = CustomReportService();
   List<SavedReport> _savedReports = [];
   SavedReport? _selectedReport;
@@ -44,6 +47,17 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
   bool _reportDataLoading = false;
   String? _reportDataError;
   int? _expandedRowIndex;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadAdminAndReports();
+    });
+  }
 
   @override
   void initState() {
@@ -228,7 +242,11 @@ class _CustomReportBuilderState extends State<CustomReportBuilder> {
         dropdown: false,
       ),
       appBar: widget_302.App_Bar(context: context),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         children: [
           const ReportHeader(title: "Custom Report Builder"),
           Expanded(

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +27,8 @@ class AdminTenantInsuranceTable extends StatefulWidget {
       _AdminTenantInsuranceTableState();
 }
 
-class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
+class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<List<AdminTenantInsuranceModel>> futurePropertyTypes;
   int rowsPerPage = 5;
@@ -204,6 +207,17 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurePropertyTypes = AdminTenantInsuranceRepository().fetchTenantInsurance(widget.tenantid);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -471,7 +485,11 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable> {
         currentpage: "Tenants",
         dropdown: true,
       ),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         children: [
           const SizedBox(
             height: 20,

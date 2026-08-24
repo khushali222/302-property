@@ -70,7 +70,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
         });
       }
     } catch (e) {
-      if (mounted) Fluttertoast.showToast(msg: 'Upload failed: $e');
+      if (mounted) Fluttertoast.showToast(msg: 'Upload failed: ${friendlyErrorMessage(e)}');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -99,7 +99,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
-      Fluttertoast.showToast(msg: 'Failed to update: $e');
+      Fluttertoast.showToast(msg: 'Failed to update: ${friendlyErrorMessage(e)}');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

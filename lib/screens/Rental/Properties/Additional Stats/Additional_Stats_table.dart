@@ -97,7 +97,7 @@ class _Additional_Stats_tableState extends State<Additional_Stats_table> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading additional stats: ${e.toString()}'),
+            content: Text('Error loading additional stats: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -154,7 +154,7 @@ class _Additional_Stats_tableState extends State<Additional_Stats_table> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error deleting additional stat: ${e.toString()}'),
+            content: Text('Error deleting additional stat: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );

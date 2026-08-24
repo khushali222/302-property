@@ -113,7 +113,7 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
       } catch (e) {
         if (mounted) {
           setState(() => _isSubmitting = false);
-          Fluttertoast.showToast(msg: 'Failed to upload document: $e');
+          Fluttertoast.showToast(msg: 'Failed to upload document: ${friendlyErrorMessage(e)}');
         }
         return;
       }
@@ -170,7 +170,7 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSubmitting = false);
-        Fluttertoast.showToast(msg: 'Error submitting bid: $e');
+        Fluttertoast.showToast(msg: 'Error submitting bid: ${friendlyErrorMessage(e)}');
       }
     }
   }

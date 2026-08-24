@@ -840,7 +840,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table>
                           return ColabShimmerLoadingWidget();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -1447,7 +1447,7 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,

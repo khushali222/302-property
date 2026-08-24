@@ -1642,7 +1642,7 @@ class _FinancialTableState extends State<FinancialTable>
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return _noDataWidget();

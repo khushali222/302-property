@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -21,8 +23,19 @@ class notifications extends StatefulWidget {
   State<notifications> createState() => _notificationsState();
 }
 
-class _notificationsState extends State<notifications> {
+class _notificationsState extends State<notifications>
+    with NetworkRetryState {
   late Future<List<Map<String,dynamic>>> fetchnoti;
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The one fetch initState makes.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      fetchnoti = fetchNotifications()!;
+    });
+  }
+
   void initState() {
     super.initState();
     fetchnoti = fetchNotifications()!;
@@ -161,7 +174,12 @@ class _notificationsState extends State<notifications> {
         key.currentState!.openDrawer();
         // Scaffold.of(context).openDrawer();
       }),
-      body: SingleChildScrollView(
+      // Gated inside this screen's own Scaffold so the app bar stays put — see
+      // the vendor dashboard note: blocking above the header removes the only
+      // request that could report the connection coming back.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SingleChildScrollView(
         child: Column(
           children: [
             Padding(

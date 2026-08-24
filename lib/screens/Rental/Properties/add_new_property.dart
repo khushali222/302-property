@@ -948,7 +948,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                       size: 40.0,
                                     ));
                                   } else if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
+                                    return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return const Text('No properties found');
@@ -2656,7 +2656,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                         size: 40.0,
                                       ));
                                     } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
+                                      return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
                                       return const Text(

@@ -629,7 +629,7 @@ class _AddDocumentState extends State<AddDocument> {
     } catch (e) {
       logError('Error picking file: $e');
       Fluttertoast.showToast(
-        msg: 'Error selecting file: ${e.toString()}',
+        msg: 'Error selecting file: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
       );
     }

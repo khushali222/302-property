@@ -725,7 +725,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal>
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return ColabShimmerLoadingWidget();
                     } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return Container(
                         height: MediaQuery.of(context).size.height * .5,
@@ -1348,7 +1348,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,

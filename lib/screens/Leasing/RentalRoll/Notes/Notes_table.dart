@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +36,8 @@ class NotesTable extends StatefulWidget {
   State<NotesTable> createState() => _NotesTableState();
 }
 
-class _NotesTableState extends State<NotesTable> {
+class _NotesTableState extends State<NotesTable>
+    with NetworkRetryState {
   late Future<List<lease_notes>> _futureleasenotes;
   bool isLoading = true;
   int _rowsPerPage = 10;
@@ -60,6 +63,17 @@ class _NotesTableState extends State<NotesTable> {
     setState(() {
       _rowsPerPage = selectedRowsPerPage;
       _currentPage = 0; // Reset to the first page when changing rows per page
+    });
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _futureleasenotes = fetchleasenotedata();
     });
   }
 
@@ -750,6 +764,11 @@ class _NotesTableState extends State<NotesTable> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     return Container(
       child: SingleChildScrollView(

@@ -577,7 +577,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving tax record: ${e.toString()}'),
+            content: Text('Error saving tax record: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -669,7 +669,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       logError('Error picking file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error selecting file: ${e.toString()}'),
+          content: Text('Error selecting file: ${friendlyErrorMessage(e)}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -718,7 +718,7 @@ class _Add_property_TaxState extends State<Add_property_Tax> {
       logError('Image upload failed: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('File upload failed: ${e.toString()}'),
+          content: Text('File upload failed: ${friendlyErrorMessage(e)}'),
           backgroundColor: Colors.red,
         ),
       );

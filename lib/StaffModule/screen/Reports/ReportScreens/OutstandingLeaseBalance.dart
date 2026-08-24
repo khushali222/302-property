@@ -675,7 +675,7 @@ class _OutstandingLeaseBalanceState extends State<OutstandingLeaseBalance>
               } catch (e) {
                 Navigator.pop(context); // Close loading dialog
                 Fluttertoast.showToast(
-                  msg: 'Error exporting data: ${e.toString()}',
+                  msg: 'Error exporting data: ${friendlyErrorMessage(e)}',
                   toastLength: Toast.LENGTH_SHORT,
                 );
               }

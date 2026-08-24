@@ -139,7 +139,16 @@ void main() {
             ChangeNotifierProvider(create: (context) => ProfileProvider()),
             ChangeNotifierProvider(create: (_) => DateProvider()),
             ChangeNotifierProvider(create: (_) => DropdownProvider()),
-            ChangeNotifierProvider(create: (_) => CheckConnection()),
+            // lazy: false is REQUIRED, not a preference. Provider builds a
+            // lazy entry only when something reads it, and the HTTP wrappers
+            // reach this class through CheckConnection.instance — a static set
+            // in its constructor — never through the context. With the app-wide
+            // NetworkGuard no longer reading it, nothing constructed it, so
+            // instance stayed null, every reportNetworkFailure() call was a
+            // null-safe no-op, and no screen outside the Admin dashboard (the
+            // one place that reads it) could ever show its offline state.
+            ChangeNotifierProvider(
+                create: (_) => CheckConnection(), lazy: false),
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => VendorPermission()),

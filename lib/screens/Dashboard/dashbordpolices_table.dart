@@ -3,6 +3,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -22,7 +24,8 @@ class Dashboard_Policy_Table extends StatefulWidget {
   _Dashboard_Policy_TableState createState() => _Dashboard_Policy_TableState();
 }
 
-class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
+class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table>
+    with NetworkRetryState {
   int totalrecords = 0;
   Future<List<ExpiringRentersInsuranceData>>? futurepolices;
   int rowsPerPage = 5;
@@ -295,6 +298,17 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The fetch this view parks inside its connectivity listener.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurepolices =
+          RentersInsuranceExpiringService().fetchRentersPolicyInsurance();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -494,6 +508,11 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside another screen, so the compact offline state is what
+    // fits here rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(

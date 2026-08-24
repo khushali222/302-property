@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -33,7 +35,8 @@ class PropertyMortgageTable extends StatefulWidget {
   State<PropertyMortgageTable> createState() => _PropertyMortgageTableState();
 }
 
-class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
+class _PropertyMortgageTableState extends State<PropertyMortgageTable>
+    with NetworkRetryState {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _mortgages = [];
   List<Map<String, dynamic>> _filteredMortgages = [];
@@ -52,6 +55,17 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
   ];
 
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadMortgages();
+    });
+  }
 
   @override
   void initState() {
@@ -128,12 +142,16 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading mortgages: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        // A network failure already flips this screen to its offline state,
+        // which says it better than a red banner stacked on top of it.
+        if (!isNetworkError(e)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error loading mortgages: ${friendlyErrorMessage(e)}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
       // Load fallback data for development/testing
       _loadFallbackMortgages();
@@ -951,7 +969,11 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable> {
           dropdown: true,
         )
             : null,
-        body: _buildContent(),
+        // This screen had no offline state at all; a failed request used to
+        // leave it blank or showing an error string with no way to retry.
+        body: isOffline
+            ? NoInternetView(onRetry: retryNow)
+            : _buildContent(),
       );
     } else {
       return _buildContent();

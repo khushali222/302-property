@@ -934,7 +934,7 @@ class _Vendor_tableState extends State<Vendor_table>
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return ColabShimmerLoadingWidget();
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Container(
                   height: MediaQuery.of(context).size.height * .5,
@@ -1466,9 +1466,9 @@ class _Vendor_tableState extends State<Vendor_table>
         currentpage: "Vendors",
         dropdown: true,
       ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(child: content)
-          : NoInternetView(),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

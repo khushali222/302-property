@@ -75,8 +75,11 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _connectivityResult !=ConnectivityResult.none ?
-      LayoutBuilder(
+      // This wrapper only picks mobile vs tablet — it has no data of its
+      // own, so gating here produced an offline screen with a Retry that
+      // would have had nothing to reload. The summary screens it chooses
+      // between each own their own offline state.
+      body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 500) {
             return RentalownersSummeryForTablet(
@@ -90,7 +93,7 @@ class _ResponsiveRentalSummaryState extends State<ResponsiveRentalSummary> {
             );
           }
         },
-      ): NoInternetView(),
+      ),
     );
   }
 }
@@ -1101,7 +1104,7 @@ class _RentalownersSummeryForTabletState
                 )),
               );
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
             } else {
               List<RentalOwnerData> rentalownersummery = snapshot.data ?? [];
               if (rentalownersummery.isEmpty) {

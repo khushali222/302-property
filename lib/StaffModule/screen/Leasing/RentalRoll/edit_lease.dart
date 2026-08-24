@@ -317,7 +317,7 @@ class _Edit_leaseState extends State<Edit_lease>
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -405,7 +405,7 @@ class _Edit_leaseState extends State<Edit_lease>
         _selectedUnit = null;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
+        SnackBar(content: Text('Failed to fetch units: ${friendlyErrorMessage(e)}')),
       );
     }
   }

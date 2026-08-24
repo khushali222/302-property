@@ -18,8 +18,11 @@ class StaffPermissionProvider with ChangeNotifier {
           await StaffPermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
-      // Handle error - set default permissions if fetch fails
-      _permissions = StaffPermission();
+      // Offline-safe: only fall back to the locked-down default when we have
+      // nothing at all. Clobbering ALREADY-LOADED permissions on a transient
+      // network failure emptied the drawer (Properties/Tenants/Leasing all
+      // gone) with no way back short of restarting the app.
+      _permissions ??= StaffPermission();
     } finally {
       _isLoading = false;
       notifyListeners();

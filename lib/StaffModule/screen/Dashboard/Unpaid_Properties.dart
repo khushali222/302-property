@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -134,7 +136,8 @@ class Unpaid_Properties extends StatefulWidget {
   State<Unpaid_Properties> createState() => _Unpaid_PropertiesState();
 }
 
-class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
+class _Unpaid_PropertiesState extends State<Unpaid_Properties>
+    with NetworkRetryState {
   String? _adminId;
   String? _token;
   String? _staffId;
@@ -160,6 +163,17 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
     symbol: '\$',
     decimalDigits: 2,
   );
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadPrefsAndData();
+    });
+  }
 
   @override
   void initState() {
@@ -454,7 +468,11 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties> {
         currentpage: "Unpaid Properties",
         dropdown: true,
       ),
-      body: SingleChildScrollView(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

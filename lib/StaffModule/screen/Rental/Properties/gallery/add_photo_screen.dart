@@ -82,7 +82,7 @@ class _AddPhotoScreenState extends State<AddPhotoScreen> {
       widget.onAdded?.call();
       Navigator.of(context).pop(true);
     } catch (e) {
-      if (mounted) Fluttertoast.showToast(msg: 'Failed: $e');
+      if (mounted) Fluttertoast.showToast(msg: 'Failed: ${friendlyErrorMessage(e)}');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

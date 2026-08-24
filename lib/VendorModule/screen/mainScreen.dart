@@ -14,8 +14,6 @@ import '../screen/profile.dart';
 import '../screen/work_order/workorder_table.dart';
 import 'package:three_zero_two_property/VendorModule/screen/bid_room/vendor_bid_room_table.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:three_zero_two_property/widgets/no_internet_view.dart';
-import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 class MainScreen extends StatefulWidget {
   String? workorder;
@@ -25,10 +23,7 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen>
-    with NetworkRetryState {
-  /// Re-keys the visible tab so a Retry remounts it and its own load runs.
-  int _tabReloadTick = 0;
+class _MainScreenState extends State<MainScreen> {
 
   ConnectivityResult? _connectivityResult;
   StreamSubscription<ConnectivityResult>? _connectivitySubscription;
@@ -41,18 +36,6 @@ class _MainScreenState extends State<MainScreen>
     //  WorkOrderTable(),
     VendorBidRoomTable(),
   ];
-  /// Required by [NetworkRetryState]: re-issue this screen's own load.
-  /// This shell has no data of its own — its TABS do, and two of them
-  /// (Dashboard, Work Orders) carry no offline state, which is why the gate
-  /// lives here at all. Bumping the tick re-keys the visible tab so its own
-  /// initState runs again: the same thing leaving and re-entering the tab
-  /// would do, which is the only reload this shell can honestly offer.
-  @override
-  Future<void> reloadData() async {
-    if (!mounted) return;
-    setState(() => _tabReloadTick++);
-  }
-
   void initState() {
     super.initState();
     _connectivitySubscription = Connectivity()
@@ -201,12 +184,14 @@ class _MainScreenState extends State<MainScreen>
         return false;
       },
       child: Scaffold(
-        body: !isOffline
-            ? KeyedSubtree(
-                key: ValueKey(_tabReloadTick),
-                child: _screens[_selectedIndex],
-              )
-            : NoInternetView(onRetry: retryNow), // Display the selected screen
+        // The offline state deliberately does NOT live here any more. Gating the
+        // shell replaced the whole child, app bar included — and that app bar is
+        // what keeps fetching notifications, i.e. the only thing that could
+        // report the connection coming back. Blocked here, the module could
+        // never recover and lost its header at the same time. Each tab now owns
+        // its own offline state, which keeps the header on screen and keeps a
+        // request flowing.
+        body: _screens[_selectedIndex], // Display the selected screen
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,

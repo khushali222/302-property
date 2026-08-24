@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,7 +24,8 @@ class Utilities_table extends StatefulWidget {
   State<Utilities_table> createState() => _Utilities_tableState();
 }
 
-class _Utilities_tableState extends State<Utilities_table> {
+class _Utilities_tableState extends State<Utilities_table>
+    with NetworkRetryState {
   late Future<List<Map<String, dynamic>>> _futureUtilities;
   bool isLoading = true;
   String? errorMessage;
@@ -33,6 +36,18 @@ class _Utilities_tableState extends State<Utilities_table> {
   int? expandedRowIndex;
   String? expandedUnitKey;
   final Properies_summery_Repo _unitRepository = Properies_summery_Repo();
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadUnits();
+      _futureUtilities = fetchUtilitiesData();
+    });
+  }
 
   @override
   void initState() {
@@ -639,6 +654,11 @@ class _Utilities_tableState extends State<Utilities_table> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
@@ -946,7 +966,7 @@ class _Utilities_tableState extends State<Utilities_table> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-          msg: "Error deleting utility: ${e.toString()}",
+          msg: "Error deleting utility: ${friendlyErrorMessage(e)}",
           backgroundColor: Colors.red);
       throw Exception('Failed to delete utility: $e');
     }

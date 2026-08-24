@@ -136,7 +136,7 @@ class _summery_pageState extends State<summery_page>
                 )
               : _hasError
                   ? Center(
-                      child: Text('Error: $_errorMessage'),
+                      child: Text('Error: ${friendlyErrorMessage(_errorMessage)}'),
                     )
                   : profiledata == null
                       ? Center(child: Text('No data available'))

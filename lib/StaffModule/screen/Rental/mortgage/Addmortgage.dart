@@ -582,7 +582,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading properties: ${e.toString()}'),
+            content: Text('Error loading properties: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -673,7 +673,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading mortgage: ${e.toString()}'),
+            content: Text('Error loading mortgage: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -1394,7 +1394,7 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error saving mortgage: ${e.toString()}'),
+              content: Text('Error saving mortgage: ${friendlyErrorMessage(e)}'),
               backgroundColor: Colors.red,
             ),
           );

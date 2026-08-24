@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,7 +29,8 @@ class Loansummaryreport extends StatefulWidget {
   State<Loansummaryreport> createState() => _LoansummaryreportState();
 }
 
-class _LoansummaryreportState extends State<Loansummaryreport> {
+class _LoansummaryreportState extends State<Loansummaryreport>
+    with NetworkRetryState {
   final LoanSummaryReportService _service = LoanSummaryReportService();
 
   List<LoanSummaryItem> _allItems = [];
@@ -39,6 +42,17 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
   List<String> _lenderOptions = ['All Lenders'];
 
   int? _expandedIndex;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadData();
+    });
+  }
 
   @override
   void initState() {
@@ -196,7 +210,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
     }
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error generating PDF: $e');
+      Fluttertoast.showToast(msg: 'Error generating PDF: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -240,7 +254,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
       await Share.shareXFiles([XFile(file.path)], text: 'Loan Summary Report');
       Fluttertoast.showToast(msg: 'Excel exported successfully');
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error generating Excel: $e');
+      Fluttertoast.showToast(msg: 'Error generating Excel: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -260,7 +274,7 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
       await Share.shareXFiles([XFile(file.path)], text: 'Loan Summary Report');
       Fluttertoast.showToast(msg: 'CSV exported successfully');
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error generating CSV: $e');
+      Fluttertoast.showToast(msg: 'Error generating CSV: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -277,7 +291,11 @@ class _LoansummaryreportState extends State<Loansummaryreport> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(currentpage: 'Reports', dropdown: false),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ReportHeader(title: 'Loan Summary Report'),

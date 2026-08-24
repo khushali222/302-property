@@ -106,7 +106,7 @@ class _AddApplicantState extends State<AddApplicant> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch properties: $e')),
+        SnackBar(content: Text('Failed to fetch properties: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -146,7 +146,7 @@ class _AddApplicantState extends State<AddApplicant> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch units: $e')),
+        SnackBar(content: Text('Failed to fetch units: ${friendlyErrorMessage(e)}')),
       );
     }
   }

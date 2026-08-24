@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
@@ -35,7 +37,8 @@ class WorkOrderTable extends StatefulWidget {
   _WorkOrderTableState createState() => _WorkOrderTableState();
 }
 
-class _WorkOrderTableState extends State<WorkOrderTable> {
+class _WorkOrderTableState extends State<WorkOrderTable>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<List<WorkOrder>> futureworkorder;
   int rowsPerPage = 5;
@@ -233,6 +236,17 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
   ];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The work-order fetch only; the filter selectedValue is left as the user
+  /// set it, so a reload does not reset their view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureworkorder = WorkOrderRepository().fetchWorkOrders();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -610,7 +624,12 @@ class _WorkOrderTableState extends State<WorkOrderTable> {
         },
       ),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      // Gated here, not on the tab shell — see the note in the vendor
+      // dashboard: blocking on the shell removed the app bar and with it the
+      // only request that could report recovery.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(

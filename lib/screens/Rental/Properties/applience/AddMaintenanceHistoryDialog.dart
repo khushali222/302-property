@@ -363,7 +363,7 @@ class _AddMaintenanceHistoryDialogState
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error adding maintenance history: $e')),
+        SnackBar(content: Text('Error adding maintenance history: ${friendlyErrorMessage(e)}')),
       );
     } finally {
       setState(() {

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +31,8 @@ class DocumentRentalTable extends StatefulWidget {
   State<DocumentRentalTable> createState() => _DocumentRentalTableState();
 }
 
-class _DocumentRentalTableState extends State<DocumentRentalTable> {
+class _DocumentRentalTableState extends State<DocumentRentalTable>
+    with NetworkRetryState {
   late Future<List<Map<String, dynamic>>> _futureRentersInsurance;
   int _rowsPerPage = 10;
   int _currentPage = 0;
@@ -81,6 +84,18 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
       });
       return [];
     }
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _futureRentersInsurance = fetchRentersInsuranceData();
+      fetchSignatureTracking();
+    });
   }
 
   @override
@@ -168,6 +183,11 @@ class _DocumentRentalTableState extends State<DocumentRentalTable> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),

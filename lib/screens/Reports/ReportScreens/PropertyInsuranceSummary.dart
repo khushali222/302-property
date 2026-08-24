@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -23,7 +25,8 @@ class PropertyInsuranceSummary extends StatefulWidget {
       _PropertyInsuranceSummaryState();
 }
 
-class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
+class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary>
+    with NetworkRetryState {
   List<PropertyInsuranceData> insuranceData = [];
   List<PropertyInsuranceData> filteredData = [];
   bool isDataLoading = false;
@@ -79,6 +82,17 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
     }
   }
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadData();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -111,7 +125,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
         Fluttertoast.showToast(msg: 'Admin ID not found');
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error loading data: $e');
+      Fluttertoast.showToast(msg: 'Error loading data: ${friendlyErrorMessage(e)}');
     } finally {
       setState(() {
         isDataLoading = false;
@@ -731,7 +745,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error exporting PDF: $e');
+      Fluttertoast.showToast(msg: 'Error exporting PDF: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -821,7 +835,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error exporting Excel: $e');
+      Fluttertoast.showToast(msg: 'Error exporting Excel: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -860,7 +874,7 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error sharing report: $e');
+      Fluttertoast.showToast(msg: 'Error sharing report: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -873,7 +887,11 @@ class _PropertyInsuranceSummaryState extends State<PropertyInsuranceSummary> {
         dropdown: false,
       ),
       appBar: widget_302.App_Bar(context: context),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         children: [
           titleBar(
             title: 'Property Insurance Summary Report',

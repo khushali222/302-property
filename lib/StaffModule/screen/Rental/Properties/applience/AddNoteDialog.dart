@@ -64,7 +64,7 @@ class _AddNoteDialogState extends State<AddNoteDialog> {
       logError('Error updating note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error updating note: ${e.toString()}'),    
+          content: Text('Error updating note: ${friendlyErrorMessage(e)}'),    
         ),
       );
     } finally {
@@ -245,7 +245,7 @@ class _AddNoteDialogState extends State<AddNoteDialog> {
       logError('Error adding note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error adding note: ${e.toString()}'),
+          content: Text('Error adding note: ${friendlyErrorMessage(e)}'),
           backgroundColor: Colors.red,
         ),
       );

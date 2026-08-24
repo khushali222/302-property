@@ -7,6 +7,8 @@ import 'package:csv/csv.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -62,7 +64,8 @@ class FinancialTable extends StatefulWidget {
   _FinancialTableState createState() => _FinancialTableState();
 }
 
-class _FinancialTableState extends State<FinancialTable> {
+class _FinancialTableState extends State<FinancialTable>
+    with NetworkRetryState {
   int totalrecords = 0;
   late Future<List<propertytype>> futurePropertyTypes;
   int rowsPerPage = 5;
@@ -893,6 +896,19 @@ class _FinancialTableState extends State<FinancialTable> {
     } catch (e) {
       logError("Error fetching ACH settings: $e");
     }
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _leaseLedgerFuture = LeaseRepository().fetchLeaseLedger(leaseId: widget.leaseId);
+      _fetchAchAccepted();
+      _fetchPendingScheduled();
+    });
   }
 
   @override
@@ -2063,6 +2079,11 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     double screenWidth = MediaQuery.of(context).size.width;
     final dateProvider = Provider.of<DateProvider>(context);
     bool isFreePlan = Provider.of<checkPlanPurchaseProiver>(context)

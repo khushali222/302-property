@@ -2171,7 +2171,7 @@ class _ExpiringLeasesState extends State<ExpiringLeases>
                   //         return ShimmerTabletTable();
                   //       } else if (snapshot.hasError) {
                   //         return Center(
-                  //             child: Text('Error: ${snapshot.error}'));
+                  //             child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   //       } else if (!snapshot.hasData ||
                   //           snapshot.data!.isEmpty) {
                   //         return Container(

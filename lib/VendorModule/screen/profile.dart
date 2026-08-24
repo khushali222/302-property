@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -35,7 +37,8 @@ class _ZipDistanceEntry {
   TextEditingController distanceMiles = TextEditingController();
 }
 
-class _Profile_screenState extends State<Profile_screen> {
+class _Profile_screenState extends State<Profile_screen>
+    with NetworkRetryState {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
@@ -96,6 +99,19 @@ class _Profile_screenState extends State<Profile_screen> {
 
   /// Snapshot of profile data after load; used to skip API when nothing changed.
   Map<String, dynamic>? _initialProfileBody;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The profile fetch only; the contact and zip-distance rows initState seeds
+  /// are not re-added, or a reload would duplicate them.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _hasError = false;
+      _isLoading = true;
+    });
+    await _fetchProfile();
+  }
 
   @override
   void initState() {
@@ -419,7 +435,7 @@ class _Profile_screenState extends State<Profile_screen> {
     } catch (e) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -635,9 +651,14 @@ class _Profile_screenState extends State<Profile_screen> {
               ),
             )
           : _hasError
-              ? Center(
-                  child: Text('Error: $_errorMessage'),
-                )
+              ? (isNetworkError(_errorMessage)
+                  // Was dumping the raw exception text at the user; a network
+                  // failure now gets the app's standard offline state with a
+                  // working Retry instead.
+                  ? NoInternetView(onRetry: retryNow)
+                  : Center(
+                      child: Text(friendlyErrorMessage(_errorMessage)),
+                    ))
               : SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                   child: Form(

@@ -450,7 +450,7 @@ class _PropertyTableState extends State<PropertyTable>
                               child: ColabShimmerLoadingWidget(),
                             );
                           } else if (snapshot.hasError) {
-                            return Center(child: Text('Error: ${snapshot.error}'));
+                            return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                             return Container(
                               height: MediaQuery.of(context).size.height * .5,

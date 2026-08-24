@@ -60,7 +60,7 @@ class VendorBidRepository {
       }
     } catch (e) {
       logError('Error fetching vendor bid requests: $e');
-      Fluttertoast.showToast(msg: 'Error fetching bid requests: $e');
+      Fluttertoast.showToast(msg: 'Error fetching bid requests: ${friendlyErrorMessage(e)}');
       rethrow;
     }
   }

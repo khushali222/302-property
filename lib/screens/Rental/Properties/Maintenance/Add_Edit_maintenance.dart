@@ -209,7 +209,7 @@ class _Add_Edit_maintenanceState extends State<Add_Edit_maintenance> {
       if (mounted) {
         setState(() => _hasValidated = false);
         Fluttertoast.showToast(
-          msg: 'Error: $e',
+          msg: 'Error: ${friendlyErrorMessage(e)}',
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );

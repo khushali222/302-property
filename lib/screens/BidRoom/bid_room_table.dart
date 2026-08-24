@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -39,7 +41,8 @@ class BidRoomTable extends StatefulWidget {
   State<BidRoomTable> createState() => _BidRoomTableState();
 }
 
-class _BidRoomTableState extends State<BidRoomTable> {
+class _BidRoomTableState extends State<BidRoomTable>
+    with NetworkRetryState {
   late final dynamic _repository;
   List<BidRequest> _bidRequests = [];
   List<BidRequest> _filteredBidRequests = [];
@@ -58,6 +61,16 @@ class _BidRoomTableState extends State<BidRoomTable> {
   String? expandedBidRequestId;
   Map<String, BidRequestDetail?> _bidRequestDetails = {};
   Map<String, bool> _loadingDetails = {};
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The two loads initState makes; the repository choice it also makes is a
+  /// one-time decision, not something a reload should redo.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    _fetchBidRequests();
+    _loadAllTradeTypes();
+  }
 
   @override
   void initState() {
@@ -338,7 +351,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error deleting bid room: $e',
+        msg: 'Error deleting bid room: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -625,7 +638,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
               currentpage: "Bid Room",
               dropdown: false,
             ),
-      body: _connectivityResult != ConnectivityResult.none
+      body: !isOffline
           ? SingleChildScrollView(
               child: Column(
                 children: [
@@ -1982,23 +1995,7 @@ class _BidRoomTableState extends State<BidRoomTable> {
                 ],
               ),
             )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Lottie.asset("assets/no_internet.json",
-                      width: 200, height: 200, fit: BoxFit.fill),
-                  const SizedBox(height: 20),
-                  Text(
-                    "No Internet Connection",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: blueColor,
-                        fontSize: 18),
-                  )
-                ],
-              ),
-            ),
+          : NoInternetView(onRetry: retryNow),
     );
   }
 

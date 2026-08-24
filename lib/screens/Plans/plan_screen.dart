@@ -865,7 +865,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen>
                           return const CardShimmerCurrentPlan();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData || snapshot.data == null) {
                           return const Center(child: Text('No data available'));
                         }
@@ -2098,7 +2098,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen>
                               return ColabShimmerLoadingWidget();
                             } else if (snapshot.hasError) {
                               return Center(
-                                  child: Text('Error: ${snapshot.error}'));
+                                  child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                             } else if (!snapshot.hasData ||
                                 snapshot.data == null ||
                                 snapshot.data!.isEmpty) {
@@ -2588,7 +2588,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen>
                             return ShimmerTabletTable();
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                                child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return const Center(

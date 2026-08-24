@@ -1966,7 +1966,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                             } else if (snapshot.hasError) {
                                               return Center(
                                                   child: Text(
-                                                      'Error: ${snapshot.error}'));
+                                                      friendlyErrorMessage(snapshot.error)));
                                             } else if (!snapshot.hasData ||
                                                 snapshot.data!.isEmpty) {
                                               return Container(
@@ -2428,7 +2428,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                               } else if (snapshot.hasError) {
                                                 return Center(
                                                     child: Text(
-                                                        'Error: ${snapshot.error}'));
+                                                        friendlyErrorMessage(snapshot.error)));
                                               } else if (!snapshot.hasData ||
                                                   snapshot.data!.isEmpty) {
                                                 return Column(
@@ -3033,7 +3033,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                             } else if (snapshot.hasError) {
                                               return Center(
                                                   child: Text(
-                                                      'Error: ${snapshot.error}'));
+                                                      friendlyErrorMessage(snapshot.error)));
                                             } else if (!snapshot.hasData ||
                                                 snapshot.data!.isEmpty) {
                                               return const Center(
@@ -4293,7 +4293,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
             } catch (e) {
               if (mounted) {
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Error: $e')));
+                    .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
               }
             }
           },
@@ -4512,7 +4512,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Error: $e')));
+                      .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
                 }
               }
             },
@@ -5364,7 +5364,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
             } catch (e) {
               if (mounted) {
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Error: $e')));
+                    .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
               }
             }
           },
@@ -5574,7 +5574,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Error: $e')));
+                      .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
                 }
               }
             },
@@ -5864,7 +5864,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                 ),
               );
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
             } else {
               List<Tenant> tenantsummery = snapshot.data ?? [];
               //   Provider.of<Tenants_counts>(context).setOwnerDetails(tenants.length);
@@ -6554,7 +6554,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                     } else if (snapshot.hasError) {
                                       return Center(
                                           child:
-                                              Text('Error: ${snapshot.error}'));
+                                              Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
                                       return const Center(
@@ -6912,7 +6912,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
                                       );
                                     } else if (snapshot.hasError) {
                                       return Center(
-                                        child: Text('Error: ${snapshot.error}'),
+                                        child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center),
                                       );
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
@@ -7049,7 +7049,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet> {
       //     if (snapshot.connectionState == ConnectionState.waiting) {
       //       return CircularProgressIndicator();
       //     } else if (snapshot.hasError) {
-      //       return Text('Error: ${snapshot.error}');
+      //       return Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center);
       //     } else if (!snapshot.hasData || snapshot.data == null) {
       //       return Text('No Data Available');
       //     } else {

@@ -755,7 +755,7 @@ class _EditDocumentState extends State<EditDocument> {
     } catch (e) {
       logError('Error picking file: $e');
       Fluttertoast.showToast(
-        msg: 'Error selecting file: ${e.toString()}',
+        msg: 'Error selecting file: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -928,7 +928,7 @@ class _EditDocumentState extends State<EditDocument> {
       }
     } catch (e) {
       logError('Error updating document: $e');
-      Fluttertoast.showToast(msg: "Error updating document: ${e.toString()}");
+      Fluttertoast.showToast(msg: "Error updating document: ${friendlyErrorMessage(e)}");
       setState(() {
         isLoading = false;
       });

@@ -752,7 +752,7 @@ class _Tenant_communicationState extends State<Tenant_communication>
                           return ColabShimmerLoadingWidget();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.totalPages == null) {
                           return Container(

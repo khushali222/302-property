@@ -280,7 +280,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error picking files: $e',
+        msg: 'Error picking files: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );

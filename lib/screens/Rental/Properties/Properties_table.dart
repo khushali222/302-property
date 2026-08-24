@@ -2377,7 +2377,7 @@ class _PropertiesTableState extends State<PropertiesTable>
         Fluttertoast.showToast(msg: "Failed to publish rent amount");
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: "Error: $e");
+      Fluttertoast.showToast(msg: "Error: ${friendlyErrorMessage(e)}");
     }
   }
   // Widget _buildHeader<T>(String text, int columnIndex,

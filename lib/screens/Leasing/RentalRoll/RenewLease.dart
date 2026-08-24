@@ -401,7 +401,7 @@ class _RenewleaseState extends State<Renewlease> {
       }
     } catch (e) {
       logError('EXCEPTION: $e');
-      Fluttertoast.showToast(msg: "Network error: $e");
+      Fluttertoast.showToast(msg: "Network error: ${friendlyErrorMessage(e)}");
     }
   }
 

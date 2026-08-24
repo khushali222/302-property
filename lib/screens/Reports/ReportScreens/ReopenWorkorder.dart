@@ -888,7 +888,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder>
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error exporting Excel: $e');
+      Fluttertoast.showToast(msg: 'Error exporting Excel: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -939,7 +939,7 @@ class _ReopenWorkorderState extends State<ReopenWorkorder>
       setState(() {
         isDataLoading = false;
       });
-      Fluttertoast.showToast(msg: 'Error sharing report: $e');
+      Fluttertoast.showToast(msg: 'Error sharing report: ${friendlyErrorMessage(e)}');
     }
   }
 

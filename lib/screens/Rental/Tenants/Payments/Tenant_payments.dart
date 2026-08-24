@@ -1,5 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +52,8 @@ class FinancialTable extends StatefulWidget {
   State<FinancialTable> createState() => _FinancialTableState();
 }
 
-class _FinancialTableState extends State<FinancialTable> {
+class _FinancialTableState extends State<FinancialTable>
+    with NetworkRetryState {
   final _repo = TenantLeaseRepository();
 
   TenantLeaseData? _selectedLease;
@@ -68,6 +71,15 @@ class _FinancialTableState extends State<FinancialTable> {
   bool _loading = false;
   bool _hasFetched = false;
   bool _paymentsOpen = true;
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The ledger fetch. The lease selection and the date/search fields are
+  /// left exactly as the user set them.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _fetchPayments();
+  }
 
   @override
   void initState() {
@@ -399,6 +411,11 @@ class _FinancialTableState extends State<FinancialTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside another screen, so the compact offline state is what
+    // fits here rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final leases = widget.leases ?? [];
     final filteredAllLedger = _filterByPaymentDate(_allLedger);
     final filteredTenantLedger = _filterByPaymentDate(_tenantLedger);

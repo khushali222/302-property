@@ -126,7 +126,7 @@ class _MaintenanceTableState extends State<MaintenanceTable>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading maintenance: $e'),
+            content: Text('Error loading maintenance: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -169,7 +169,7 @@ class _MaintenanceTableState extends State<MaintenanceTable>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}'), backgroundColor: Colors.red),
         );
       }
     }

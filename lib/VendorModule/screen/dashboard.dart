@@ -14,6 +14,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,7 +93,7 @@ class Dashboard_vendors extends StatefulWidget {
 }
 
 class _Dashboard_vendorsState extends State<Dashboard_vendors>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, NetworkRetryState {
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   String firstname = '';
   String lastname = '';
@@ -435,6 +437,19 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
     }
   }
 
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The four loads initState makes. The lifecycle observer and the
+  /// location-service listener are not re-registered, and the dashboardData
+  /// seed is not repeated.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    fetchWorkOrdersAndRentalData();
+    fetchData();
+    fetchStats();
+    _loadName();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -593,7 +608,13 @@ class _Dashboard_vendorsState extends State<Dashboard_vendors>
           },
         ),
         drawer: Icon(Icons.menu,color: Colors.white,),
-        body: loading
+        // Gated HERE rather than on the tab shell: the shell's own Scaffold
+        // has no app bar, so blocking up there removed this screen's header —
+        // and with it the notification fetch that reports the connection
+        // coming back, leaving the module unable to recover.
+        body: isOffline
+            ? NoInternetView(onRetry: retryNow)
+            : loading
             ? Center(
           child: Lottie.asset('assets/images/loader.json',
               height: 150, width: 100),

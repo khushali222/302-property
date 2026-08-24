@@ -3230,7 +3230,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 15,
                           ),
-                          const Text('Due Date',
+                          const Text('Due Date *',
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
@@ -3238,64 +3238,92 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            // Match the "Enter here" fields (CustomTextField in
-                            // add_tenants.dart): 50 high, 16 horizontal inset.
-                            height: 50,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 0),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                // boxShadow: [
-                                //   const BoxShadow(
-                                //     color: Colors.black26,
-                                //     offset: Offset(1.0,
-                                //         1.0), // Shadow offset to the bottom right
-                                //     blurRadius:
-                                //     8.0, // How much to blur the shadow
-                                //     spreadRadius:
-                                //     0.0, // How much the shadow should spread
-                                //   ),
-                                // ],
-                                // Match the other fields on this form: 1.5px
-                                // #CED4DA outline, 8px radius. width: 0 drew a
-                                // hairline that read as no border at all.
-                                border: Border.all(
-                                  width: 1.5,
-                                  color: const Color(0xFFCED4DA),
+                          FormField<String>(
+                            // Web parity (AddWorkorder.js): due date is required. The error
+                            // renders below the box so the field keeps its 50px height.
+                            validator: (value) =>
+                                _dateController.text.trim().isEmpty
+                                    ? 'Please select due date'
+                                    : null,
+                            builder: (FormFieldState<String> state) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Container(
+                                  // Match the "Enter here" fields (CustomTextField in
+                                  // add_tenants.dart): 50 high, 16 horizontal inset.
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      // boxShadow: [
+                                      //   const BoxShadow(
+                                      //     color: Colors.black26,
+                                      //     offset: Offset(1.0,
+                                      //         1.0), // Shadow offset to the bottom right
+                                      //     blurRadius:
+                                      //     8.0, // How much to blur the shadow
+                                      //     spreadRadius:
+                                      //     0.0, // How much the shadow should spread
+                                      //   ),
+                                      // ],
+                                      // Match the other fields on this form: 1.5px
+                                      // #CED4DA outline, 8px radius. width: 0 drew a
+                                      // hairline that read as no border at all.
+                                      border: Border.all(
+                                        width: 1.5,
+                                        color: const Color(0xFFCED4DA),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8.0)),
+                                  child: TextFormField(
+                                    style: const TextStyle(
+                                      color: Color(0xFF8898aa), // Text color
+                                      fontSize: 16.0, // Text size
+                                      fontWeight: FontWeight.w400, // Text weight
+                                    ),
+                                    controller: _dateController,
+                                    decoration: InputDecoration(
+                                      // Same hint styling as the "Enter here" fields,
+                                      // and no contentPadding/isDense override — the
+                                      // Material default is what centres the text in
+                                      // those fields, so overriding it is what made
+                                      // this one sit differently.
+                                      hintStyle: const TextStyle(
+                                          fontSize: 13, color: Color(0xFFb0b6c3)),
+                                      border: InputBorder.none,
+                                      // labelText: 'Select Date',
+                                      hintText: Provider.of<DateProvider>(context)
+                                          .dateFormat,
+                                      suffixIcon: IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(
+                                            minWidth: 36, minHeight: 36),
+                                        visualDensity: VisualDensity.compact,
+                                        icon: const Icon(Icons.calendar_today, size: 18),
+                                        onPressed: () => _selectDate(context),
+                                      ),
+                                    ),
+                                    readOnly: true,
+                                    onTap: () {
+                                      _selectDate(context);
+                                    },
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(8.0)),
-                            child: TextFormField(
-                              style: const TextStyle(
-                                color: Color(0xFF8898aa), // Text color
-                                fontSize: 16.0, // Text size
-                                fontWeight: FontWeight.w400, // Text weight
-                              ),
-                              controller: _dateController,
-                              decoration: InputDecoration(
-                                // Same hint styling as the "Enter here" fields,
-                                // and no contentPadding/isDense override — the
-                                // Material default is what centres the text in
-                                // those fields, so overriding it is what made
-                                // this one sit differently.
-                                hintStyle: const TextStyle(
-                                    fontSize: 13, color: Color(0xFFb0b6c3)),
-                                border: InputBorder.none,
-                                // labelText: 'Select Date',
-                                hintText: Provider.of<DateProvider>(context)
-                                    .dateFormat,
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () {
-                                    _selectDate(context);
-                                  },
-                                ),
-                              ),
-                              readOnly: true,
-                              onTap: () {
-                                _selectDate(context);
-                              },
-                            ),
+                                  if (state.hasError)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 14, top: 8),
+                                      child: Text(
+                                        state.errorText!,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(
                             height: 10,
@@ -6765,7 +6793,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const Text('Due Date',
+                                            const Text('Due Date *',
                                                 style: TextStyle(
                                                     fontSize: 13,
                                                     fontWeight: FontWeight.bold,
@@ -6773,56 +6801,83 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            Container(
-                                              height: 46,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12.0,
-                                                      vertical: 0),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                    color:
-                                                        const Color(0xFFCED4DA),
-                                                    width: 1.5,
+                                            FormField<String>(
+                                              // Web parity (AddWorkorder.js): due date is required. The error
+                                              // renders below the box so the field keeps its 50px height.
+                                              validator: (value) =>
+                                                  _dateController.text.trim().isEmpty
+                                                      ? 'Please select due date'
+                                                      : null,
+                                              builder: (FormFieldState<String> state) {
+                                                return Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                  Container(
+                                                    height: 50,
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                            horizontal: 16.0,
+                                                            vertical: 0),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        border: Border.all(
+                                                          color:
+                                                              const Color(0xFFCED4DA),
+                                                          width: 1.5,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                8.0)),
+                                                    child: TextFormField(
+                                                      style: const TextStyle(
+                                                        color: Color(
+                                                            0xFF8898aa), // Text color
+                                                        fontSize: 16.0, // Text size
+                                                        fontWeight: FontWeight
+                                                            .w400, // Text weight
+                                                      ),
+                                                      controller: _dateController,
+                                                      decoration: InputDecoration(
+                                                        hintStyle: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 13,
+                                                            color: Color(0xFFb0b6c3)),
+                                                        border: InputBorder.none,
+                                                        // labelText: 'Select Date',
+                                                        hintText:
+                                                            Provider.of<DateProvider>(
+                                                                    context)
+                                                                .dateFormat,
+                                                        suffixIcon: IconButton(
+                                                          padding: EdgeInsets.zero,
+                                                          constraints: const BoxConstraints(
+                                                              minWidth: 36, minHeight: 36),
+                                                          visualDensity: VisualDensity.compact,
+                                                          icon: const Icon(Icons.calendar_today, size: 18),
+                                                          onPressed: () => _selectDate(context),
+                                                        ),
+                                                      ),
+                                                      readOnly: true,
+                                                      onTap: () {
+                                                        _selectDate(context);
+                                                      },
+                                                    ),
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          8.0)),
-                                              child: TextFormField(
-                                                style: const TextStyle(
-                                                  color: Color(
-                                                      0xFF8898aa), // Text color
-                                                  fontSize: 16.0, // Text size
-                                                  fontWeight: FontWeight
-                                                      .w400, // Text weight
-                                                ),
-                                                controller: _dateController,
-                                                decoration: InputDecoration(
-                                                  hintStyle: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 13,
-                                                      color: Color(0xFFb0b6c3)),
-                                                  border: InputBorder.none,
-                                                  // labelText: 'Select Date',
-                                                  hintText:
-                                                      Provider.of<DateProvider>(
-                                                              context)
-                                                          .dateFormat,
-                                                  suffixIcon: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.calendar_today),
-                                                    onPressed: () {
-                                                      _selectDate(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                readOnly: true,
-                                                onTap: () {
-                                                  _selectDate(context);
-                                                },
-                                              ),
+                                                    if (state.hasError)
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: 14, top: 8),
+                                                        child: Text(
+                                                          state.errorText!,
+                                                          style: const TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                );
+                                              },
                                             ),
                                           ],
                                         ),

@@ -311,7 +311,7 @@ class _AssignPropertiesDialogState extends State<AssignPropertiesDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        Fluttertoast.showToast(msg: 'Error: $e', backgroundColor: Colors.red, textColor: Colors.white);
+        Fluttertoast.showToast(msg: 'Error: ${friendlyErrorMessage(e)}', backgroundColor: Colors.red, textColor: Colors.white);
       }
     }
   }

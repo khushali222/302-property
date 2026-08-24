@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -37,7 +39,8 @@ class TeamAccessSection extends StatefulWidget {
   State<TeamAccessSection> createState() => _TeamAccessSectionState();
 }
 
-class _TeamAccessSectionState extends State<TeamAccessSection> {
+class _TeamAccessSectionState extends State<TeamAccessSection>
+    with NetworkRetryState {
   final TeamRepository _repo = TeamRepository();
 
   bool _loading = true;
@@ -52,6 +55,17 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
   bool _adminSortAsc = true;
 
   String? _expandedKey; // only one card expanded at a time (accordion)
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _init();
+    });
+  }
 
   @override
   void initState() {
@@ -115,6 +129,11 @@ class _TeamAccessSectionState extends State<TeamAccessSection> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

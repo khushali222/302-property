@@ -3,6 +3,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -23,7 +25,8 @@ class Dashboard_leaseExpiring extends StatefulWidget {
       _Dashboard_leaseExpiringState();
 }
 
-class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
+class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring>
+    with NetworkRetryState {
   int totalrecords = 0;
   Future<List<LeaseDataExpiring>>? futureleaseExpiring;
   int rowsPerPage = 5;
@@ -460,6 +463,17 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The fetch this view parks inside its connectivity listener.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureleaseExpiring =
+          Lease_expiring_tableService().fetchLease_expiring();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -774,6 +788,11 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside another screen, so the compact offline state is what
+    // fits here rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(

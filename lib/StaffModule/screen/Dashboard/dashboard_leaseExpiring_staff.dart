@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -53,13 +55,22 @@ class LeaseExpiryTable extends StatefulWidget {
   _LeaseExpiryTableState createState() => _LeaseExpiryTableState();
 }
 
-class _LeaseExpiryTableState extends State<LeaseExpiryTable> {
+class _LeaseExpiryTableState extends State<LeaseExpiryTable>
+    with NetworkRetryState {
   int currentPage = 1;
   int limit = 5;
   int totalRecords = 0;
   bool isLoading = true;
   List<LeaseDataExpiring> data = [];
   Set<int> expandedIndices = {};
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The one fetch initState makes; the page number is left as the user set it.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _fetchData();
+  }
 
   @override
   void initState() {
@@ -99,6 +110,11 @@ class _LeaseExpiryTableState extends State<LeaseExpiryTable> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside a dashboard card, so the compact offline state is
+    // what fits here — the page around it stays usable.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     int totalPages = (totalRecords / limit).ceil();
     if (totalPages == 0) totalPages = 1;

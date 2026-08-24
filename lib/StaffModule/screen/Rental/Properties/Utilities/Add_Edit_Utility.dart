@@ -245,7 +245,7 @@ class _Add_Edit_UtilityState extends State<Add_Edit_Utility> {
       }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error saving utility: ${e.toString()}',
+        msg: 'Error saving utility: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     } finally {

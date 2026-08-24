@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -24,8 +26,19 @@ class notifications extends StatefulWidget {
   State<notifications> createState() => _notificationsState();
 }
 
-class _notificationsState extends State<notifications> {
+class _notificationsState extends State<notifications>
+    with NetworkRetryState {
   late Future<List<Map<String,dynamic>>> fetchnoti;
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The one load initState makes.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      fetchnoti = fetchNotifications()!;
+    });
+  }
+
   void initState() {
     super.initState();
     fetchnoti = fetchNotifications()!;
@@ -253,7 +266,11 @@ class _notificationsState extends State<notifications> {
     return Scaffold(
       drawer:CustomDrawer(currentpage: "Dashboard",dropdown: false,),
       appBar: widget_302.App_Bar(context: context),
-      body: SingleChildScrollView(
+      // Gated inside this screen's own Scaffold so the app bar stays put
+      // and keeps a request flowing — that is what reports recovery.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SingleChildScrollView(
         child: Column(
           children: [
             Padding(

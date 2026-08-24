@@ -597,7 +597,7 @@ class _ActivityTableState extends State<ActivityTable>
                             return ColabShimmerLoadingWidget();
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                                child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.data!.isEmpty) {
                             return Container(
@@ -1107,7 +1107,7 @@ class _ActivityTableState extends State<ActivityTable>
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return ShimmerTabletTable();
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Container(
                       height: MediaQuery.of(context).size.height * .5,

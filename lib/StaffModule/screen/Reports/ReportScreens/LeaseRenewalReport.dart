@@ -139,7 +139,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen>
         _isLoading = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error loading report: $e',
+        msg: 'Error loading report: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -439,7 +439,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen>
       Fluttertoast.showToast(msg: 'PDF exported successfully');
     } catch (e) {
       logError('Error generating PDF: $e');
-      Fluttertoast.showToast(msg: 'Error generating PDF: $e');
+      Fluttertoast.showToast(msg: 'Error generating PDF: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -710,7 +710,7 @@ class _LeaseRenewalReportScreenState extends State<LeaseRenewalReportScreen>
       Fluttertoast.showToast(msg: 'Excel exported successfully');
     } catch (e) {
       logError('Error generating Excel: $e');
-      Fluttertoast.showToast(msg: 'Error generating Excel: $e');
+      Fluttertoast.showToast(msg: 'Error generating Excel: ${friendlyErrorMessage(e)}');
     }
   }
 

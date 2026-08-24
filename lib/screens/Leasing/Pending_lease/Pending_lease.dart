@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:intl/intl.dart';
@@ -95,7 +97,8 @@ class _PendingLeaseRow {
   }
 }
 
-class _Pending_leaseState extends State<Pending_lease> {
+class _Pending_leaseState extends State<Pending_lease>
+    with NetworkRetryState {
   static const double _kFontSize = 14;
 
   /// Shared leading geometry so the list header and each row line up exactly.
@@ -152,6 +155,15 @@ class _Pending_leaseState extends State<Pending_lease> {
         fontWeight: FontWeight.w600,
         color: blueColor,
       );
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The one load initState makes; the search text and page numbers _load()
+  /// resets are its own business, so a reload behaves exactly like reopening.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _load();
+  }
 
   @override
   void initState() {
@@ -818,7 +830,12 @@ class _Pending_leaseState extends State<Pending_lease> {
               currentpage: 'Pending Lease',
               dropdown: true,
             ),
-      body: _error != null
+      // A network failure gets the app's standard offline state; anything else
+      // keeps this screen's own message, run through friendlyErrorMessage so
+      // the raw exception text is never shown to the user.
+      body: _error != null && isNetworkError(_error)
+          ? NoInternetView(onRetry: retryNow)
+          : _error != null
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -826,7 +843,7 @@ class _Pending_leaseState extends State<Pending_lease> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _error!,
+                      friendlyErrorMessage(_error),
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: _kFontSize),
                     ),

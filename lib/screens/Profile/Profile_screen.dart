@@ -710,7 +710,7 @@ class _Profile_screenState extends State<Profile_screen>
               ? const ProfileShimmer()
               : _hasError
                   ? Center(
-                      child: Text('Error: $_errorMessage'),
+                      child: Text('Error: ${friendlyErrorMessage(_errorMessage)}'),
                     )
                   : SingleChildScrollView(
                       child: Padding(
@@ -3478,7 +3478,7 @@ class _Profile_screenState extends State<Profile_screen>
       }
 
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -3700,7 +3700,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -3854,7 +3854,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -3933,7 +3933,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -3999,7 +3999,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -4072,7 +4072,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -4332,7 +4332,7 @@ class _Profile_screenState extends State<Profile_screen>
       );
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error generating backup codes file: $e',
+        msg: 'Error generating backup codes file: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -35,7 +37,8 @@ class RecurringPayment extends StatefulWidget {
   State<RecurringPayment> createState() => _RecurringPaymentState();
 }
 
-class _RecurringPaymentState extends State<RecurringPayment> {
+class _RecurringPaymentState extends State<RecurringPayment>
+    with NetworkRetryState {
   List<int> customervaultid = [];
   List<BillingData> cardDetails = [];
   Map<int, List<Map<String?, dynamic?>>> tenantDropdowns = {};
@@ -47,6 +50,18 @@ class _RecurringPaymentState extends State<RecurringPayment> {
   void dispose() {
     _connectivitySub?.cancel();
     super.dispose();
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      fetchAccounts();
+      fetchExistingCards(widget.tenantId, widget.leaseId, 0);
+    });
   }
 
   @override
@@ -234,7 +249,11 @@ class _RecurringPaymentState extends State<RecurringPayment> {
         currentpage: "Leases",
         dropdown: true,
       ),
-      body: Padding(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [

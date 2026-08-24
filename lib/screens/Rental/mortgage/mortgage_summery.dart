@@ -1,6 +1,8 @@
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
@@ -34,7 +36,8 @@ class MortgageSummary extends StatefulWidget {
   State<MortgageSummary> createState() => _MortgageSummaryState();
 }
 
-class _MortgageSummaryState extends State<MortgageSummary> {
+class _MortgageSummaryState extends State<MortgageSummary>
+    with NetworkRetryState {
   Map<String, dynamic>? mortgageData;
   bool _isLoading = false;
   Set<int> _expandedPayoffIndices = {}; // Track which payoff rows are expanded
@@ -42,6 +45,14 @@ class _MortgageSummaryState extends State<MortgageSummary> {
   bool _isAddingEvent = false;
   int _lifecyclePage = 1;
   static const int _lifecycleItemsPerPage = 10;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The one load initState makes.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _loadMortgageData();
+  }
 
   @override
   void initState() {
@@ -369,9 +380,13 @@ class _MortgageSummaryState extends State<MortgageSummary> {
           currentpage: "Mortgage Summary",
           dropdown: true,
         ),
-        body: const Center(
-          child: Text('No mortgage data available'),
-        ),
+        // A failed load also leaves mortgageData null, so this branch used to
+        // report "no mortgage data" for what was really a network failure.
+        body: isOffline
+            ? NoInternetView(onRetry: retryNow)
+            : const Center(
+                child: Text('No mortgage data available'),
+              ),
       );
     }
 

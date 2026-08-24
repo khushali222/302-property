@@ -1167,7 +1167,7 @@ class _Tenants_tableState extends State<Tenants_table>
                           return ColabShimmerLoadingWidget();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData) {
                           return Container(
                             height: MediaQuery.of(context).size.height * .5,
@@ -1849,7 +1849,7 @@ GestureDetector(
                   //         return ShimmerTabletTable();
                   //       } else if (snapshot.hasError) {
                   //         return Center(
-                  //             child: Text('Error: ${snapshot.error}'));
+                  //             child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   //       } else if (!snapshot.hasData ||
                   //           snapshot.data!.isEmpty) {
                   //         return Container(

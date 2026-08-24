@@ -695,7 +695,7 @@ class _TabBarExampleState extends State<TabBarExample>
     } catch (e) {
       logError('Failed to update surcharge data: $e');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+          .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
     }
   }
 
@@ -736,7 +736,7 @@ class _TabBarExampleState extends State<TabBarExample>
     } catch (e) {
       logError('Failed to update surcharge data: $e');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+          .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
     }
   }
 
@@ -795,7 +795,7 @@ class _TabBarExampleState extends State<TabBarExample>
       logError('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
-      Fluttertoast.showToast(msg: 'Error: $e');
+      Fluttertoast.showToast(msg: 'Error: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -876,7 +876,7 @@ class _TabBarExampleState extends State<TabBarExample>
       logError('Failed to update Late Fee data: $e');
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text('Error: $e')));
-      Fluttertoast.showToast(msg: 'Error: $e');
+      Fluttertoast.showToast(msg: 'Error: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -935,7 +935,7 @@ class _TabBarExampleState extends State<TabBarExample>
       }
     } catch (e) {
       logError('Failed to save property owner override: $e');
-      Fluttertoast.showToast(msg: 'Error: $e');
+      Fluttertoast.showToast(msg: 'Error: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -1047,7 +1047,7 @@ class _TabBarExampleState extends State<TabBarExample>
     } catch (e) {
       logError('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+          .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
     }
   }
 
@@ -1120,7 +1120,7 @@ class _TabBarExampleState extends State<TabBarExample>
     } catch (e) {
       logError('Failed to update mail data: $e');
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+          .showSnackBar(SnackBar(content: Text('Error: ${friendlyErrorMessage(e)}')));
     }
   }
 
@@ -2832,7 +2832,7 @@ class _TabBarExampleState extends State<TabBarExample>
         _isLoadingtenant = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch tenants: $e')),
+        SnackBar(content: Text('Failed to fetch tenants: ${friendlyErrorMessage(e)}')),
       );
     }
   }
@@ -3133,7 +3133,7 @@ class _TabBarExampleState extends State<TabBarExample>
       }
     } catch (e) {
       logError('Exception loading workorder notification settings: $e');
-      Fluttertoast.showToast(msg: 'Failed to load notification settings: $e');
+      Fluttertoast.showToast(msg: 'Failed to load notification settings: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -5536,7 +5536,7 @@ class _TabBarExampleState extends State<TabBarExample>
                                       } else if (snapshot.hasError) {
                                         return Center(
                                             child: Text(
-                                                'Error: ${snapshot.error}'));
+                                                friendlyErrorMessage(snapshot.error)));
                                       } else if (!snapshot.hasData ||
                                           snapshot.data!.isEmpty) {
                                         return Container(
@@ -6037,7 +6037,7 @@ class _TabBarExampleState extends State<TabBarExample>
                                     } else if (snapshot.hasError) {
                                       return Center(
                                           child:
-                                              Text('Error: ${snapshot.error}'));
+                                              Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                                     } else if (!snapshot.hasData ||
                                         snapshot.data!.isEmpty) {
                                       return Container(
@@ -7641,7 +7641,7 @@ class _TabBarExampleState extends State<TabBarExample>
                                   } else if (snapshot.hasError) {
                                     return Center(
                                         child:
-                                            Text('Error: \\${snapshot.error}'));
+                                            Text('Error: \\${friendlyErrorMessage(snapshot.error)}'));
                                   } else if (!snapshot.hasData ||
                                       snapshot.data!.isEmpty) {
                                     return Column(

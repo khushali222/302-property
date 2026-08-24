@@ -927,7 +927,7 @@ class _StaffTableState extends State<StaffTable>
                           return ColabShimmerLoadingWidget();
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(
@@ -1607,7 +1607,7 @@ class _StaffTableState extends State<StaffTable>
                   //         return ShimmerTabletTable();
                   //       } else if (snapshot.hasError) {
                   //         return Center(
-                  //             child: Text('Error: ${snapshot.error}'));
+                  //             child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                   //       } else if (!snapshot.hasData ||
                   //           snapshot.data!.isEmpty) {
                   //         return Container(

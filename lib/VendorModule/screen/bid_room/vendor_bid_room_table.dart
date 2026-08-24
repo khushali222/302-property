@@ -134,7 +134,12 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable>
         setState(() {
           _isLoading = false;
         });
-        Fluttertoast.showToast(msg: 'Error loading bid requests: $e');
+        // A network failure already flips this screen to its offline state,
+        // which says it better than a toast of raw exception text on top of it.
+        if (!isNetworkError(e)) {
+          Fluttertoast.showToast(
+              msg: 'Error loading bid requests: ${friendlyErrorMessage(e)}');
+        }
       }
     }
   }

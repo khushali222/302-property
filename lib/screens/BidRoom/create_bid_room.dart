@@ -166,7 +166,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       setState(() {
         _isLoadingProperties = false;
       });
-      Fluttertoast.showToast(msg: 'Failed to load properties: $e');
+      Fluttertoast.showToast(msg: 'Failed to load properties: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -354,7 +354,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       setState(() {
         _isLoadingCategories = false;
       });
-      Fluttertoast.showToast(msg: 'Failed to load categories: $e');
+      Fluttertoast.showToast(msg: 'Failed to load categories: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -437,7 +437,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
 
       await _uploadImages(newImages);
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Failed to pick images: $e');
+      Fluttertoast.showToast(msg: 'Failed to pick images: ${friendlyErrorMessage(e)}');
     }
   }
 
@@ -454,7 +454,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
         }
       }
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Failed to upload some images: $e');
+      Fluttertoast.showToast(msg: 'Failed to upload some images: ${friendlyErrorMessage(e)}');
     } finally {
       setState(() {
         _isUploading = false;

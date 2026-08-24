@@ -1,5 +1,7 @@
 import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -32,7 +34,8 @@ class Insurance_premium_Table extends StatefulWidget {
       _Insurance_premium_TableState();
 }
 
-class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
+class _Insurance_premium_TableState extends State<Insurance_premium_Table>
+    with NetworkRetryState {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> _premiums = [];
   List<Map<String, dynamic>> _filteredPremiums = [];
@@ -43,6 +46,17 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
   int itemsPerPage = 10;
 
   List<int> itemsPerPageOptions = [10, 25, 50, 100];
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadInsurancePremiums();
+    });
+  }
 
   @override
   void initState() {
@@ -122,7 +136,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading insurance premiums: ${e.toString()}'),
+            content: Text('Error loading insurance premiums: ${friendlyErrorMessage(e)}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -275,7 +289,7 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
     } catch (e) {
       logError('Error deleting insurance premium record: $e');
       Fluttertoast.showToast(
-        msg: 'Error deleting insurance premium record: ${e.toString()}',
+        msg: 'Error deleting insurance premium record: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
@@ -855,6 +869,11 @@ class _Insurance_premium_TableState extends State<Insurance_premium_Table> {
 
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     return _buildContent();
   }
 }

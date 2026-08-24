@@ -1026,7 +1026,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable>
                             );
                           } else if (snapshot.hasError) {
                             return Center(
-                                child: Text('Error: ${snapshot.error}'));
+                                child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                           } else if (!snapshot.hasData ||
                               snapshot.data!.isEmpty) {
                             return Container(
@@ -1632,7 +1632,7 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable>
                           );
                         } else if (snapshot.hasError) {
                           return Center(
-                              child: Text('Error: ${snapshot.error}'));
+                              child: Text(friendlyErrorMessage(snapshot.error), textAlign: TextAlign.center));
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Container(

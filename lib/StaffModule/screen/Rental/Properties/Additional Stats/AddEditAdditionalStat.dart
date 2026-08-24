@@ -391,7 +391,7 @@ class _AddEditAdditionalStatState extends State<AddEditAdditionalStat> {
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error saving additional stat: ${e.toString()}'),
+              content: Text('Error saving additional stat: ${friendlyErrorMessage(e)}'),
               backgroundColor: Colors.red,
             ),
           );

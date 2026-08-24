@@ -10,6 +10,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,13 +55,25 @@ class ViewRentersDetails extends StatefulWidget {
   State<ViewRentersDetails> createState() => _ViewRentersDetailsState();
 }
 
-class _ViewRentersDetailsState extends State<ViewRentersDetails> {
+class _ViewRentersDetailsState extends State<ViewRentersDetails>
+    with NetworkRetryState {
   late Future<RentersEdit> _futureRentersDetails;
 
   // ─────────────────── Redesign palette ───────────────────
   static const Color _pageBg = Color(0xFFF4F6F9);
   static const Color _muted = Color(0xFF6B7A90);
   static const Color _innerBg = Color(0xFFF8FAFC);
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _futureRentersDetails = RentersInsuranceService().fetchRentersDetails( widget.renters_insurance_id, includeDeleted: widget.includeDeleted);
+    });
+  }
 
   @override
   void initState() {
@@ -82,7 +96,11 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
         currentpage: "Leases",
         dropdown: true,
       ),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         children: [
           _buildHeaderBar(),
           Expanded(
@@ -97,7 +115,7 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails> {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Center(child: Text("Error: ${snapshot.error}"));
+                  return Center(child: Text("Error: ${friendlyErrorMessage(snapshot.error)}"));
                 } else if (!snapshot.hasData) {
                   return const Center(child: Text("No data found"));
                 }

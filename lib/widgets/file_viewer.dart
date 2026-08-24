@@ -175,7 +175,7 @@ class FileViewer extends StatefulWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Error'),
-            content: Text('Failed to open document: ${e.toString()}'),
+            content: Text('Failed to open document: ${friendlyErrorMessage(e)}'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -743,7 +743,7 @@ class _FileViewerState extends State<FileViewer> {
 
           if (snapshot.hasError) {
             return _buildErrorWidget(
-              'Failed to read PDF file\nError: ${snapshot.error}',
+              'Failed to read PDF file\n${friendlyErrorMessage(snapshot.error)}',
               FontAwesomeIcons.filePdf,
             );
           }

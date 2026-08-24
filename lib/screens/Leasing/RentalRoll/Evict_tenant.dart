@@ -468,7 +468,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
           isEvicting = false;
         });
         Fluttertoast.showToast(
-            msg: "An error occurred: ${e.toString()}. Please try again.");
+            msg: "An error occurred: ${friendlyErrorMessage(e)}. Please try again.");
       }
     } catch (e) {
       logError("Error in evictTenant: $e");
@@ -476,7 +476,7 @@ class _Evict_tenantState extends State<Evict_tenant> {
         isEvicting = false;
       });
       Fluttertoast.showToast(
-          msg: "An error occurred: ${e.toString()}. Please try again.");
+          msg: "An error occurred: ${friendlyErrorMessage(e)}. Please try again.");
     }
   }
 

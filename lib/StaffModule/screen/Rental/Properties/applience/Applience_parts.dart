@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +38,8 @@ class AppliancesPart extends StatefulWidget {
   _AppliancesPartState createState() => _AppliancesPartState();
 }
 
-class _AppliancesPartState extends State<AppliancesPart> {
+class _AppliancesPartState extends State<AppliancesPart>
+    with NetworkRetryState {
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _description = TextEditingController();
@@ -109,6 +112,19 @@ class _AppliancesPartState extends State<AppliancesPart> {
         _isLoadingCategories = false;
       });
     }
+  }
+
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps what the user was looking at.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _loadDropdownCategories();
+      fetchLeases();
+      futureAppliences = UnitData().fetchApplianceData(widget.unit?.unitId ?? "");
+    });
   }
 
   @override
@@ -656,6 +672,11 @@ class _AppliancesPartState extends State<AppliancesPart> {
   bool showFiltersSection = false;
   @override
   Widget build(BuildContext context) {
+    // This view lives inside another screen's tab, so it shows the
+    // compact offline state rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;

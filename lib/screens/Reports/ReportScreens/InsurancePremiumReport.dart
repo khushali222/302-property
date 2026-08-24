@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,7 +33,8 @@ class InsurancePremiumReport extends StatefulWidget {
   State<InsurancePremiumReport> createState() => _InsurancePremiumReportState();
 }
 
-class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
+class _InsurancePremiumReportState extends State<InsurancePremiumReport>
+    with NetworkRetryState {
   final InsurancePremiumReportService _service =
       InsurancePremiumReportService();
 
@@ -45,6 +48,17 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
 
   // Track which property is expanded
   int? expandedPropertyIndex;
+
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      _initializeData();
+    });
+  }
 
   @override
   void initState() {
@@ -76,10 +90,14 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       });
     } catch (e) {
       setState(() {
-        errorMessage = 'Failed to load years: $e';
+        errorMessage = 'Failed to load years: ${friendlyErrorMessage(e)}';
         isLoadingYears = false;
       });
-      Fluttertoast.showToast(msg: 'Failed to load years');
+      // A network failure already flips this screen to its offline state; a
+      // toast on top of it just repeats the same news.
+      if (!isNetworkError(e)) {
+        Fluttertoast.showToast(msg: 'Failed to load years');
+      }
     }
   }
 
@@ -133,7 +151,11 @@ class _InsurancePremiumReportState extends State<InsurancePremiumReport> {
       appBar: widget_302.App_Bar(context: context),
       backgroundColor: Colors.white,
       drawer: CustomDrawer(currentpage: "Reports", dropdown: true),
-      body: Column(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : Column(
         children: [
           ReportHeader(title: 'Insurance Premium Report'),
           Expanded(

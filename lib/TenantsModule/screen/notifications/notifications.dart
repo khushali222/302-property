@@ -14,6 +14,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constant/constant.dart';
 import '../work_order/workorder_summery.dart';
+import '../property/summery_page.dart';
 import '../../../widgets/titleBar.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/appbar.dart';
@@ -197,6 +198,21 @@ class _notificationsState extends State<notifications>
               MaterialPageRoute(
                   builder: (context) =>
                       Workorder_summery(workorder_id: workOrderId)));
+        } else if (responseData['is_lease'] == true &&
+            '${responseData['notification_type']?['lease_id'] ?? ''}'
+                .isNotEmpty) {
+          // Web parity (Notificationmodal.js): for a tenant a lease
+          // notification opens the property detail for that lease; only
+          // everything else falls through to the Financial screen.
+          final String leaseId =
+              '${responseData['notification_type']['lease_id']}';
+          // Awaited so the caller can refresh the list once the user pops back.
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => summery_page(lease_id: leaseId),
+            ),
+          );
         } else {
           // String rentalId = responseData['rental_id'];
           // Awaited so the caller can refresh the list once the user pops back.

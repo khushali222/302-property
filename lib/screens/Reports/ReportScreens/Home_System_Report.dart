@@ -1288,7 +1288,7 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen>
     } catch (e) {
       logError('Error generating PDF: $e');
       Fluttertoast.showToast(
-        msg: 'Error generating PDF: ${e.toString()}',
+        msg: 'Error generating PDF: ${friendlyErrorMessage(e)}',
         toastLength: Toast.LENGTH_SHORT,
       );
     }

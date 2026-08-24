@@ -2,6 +2,8 @@ import 'package:three_zero_two_property/services/app_log.dart';
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -916,7 +918,8 @@ class UnpaidRentChartCard extends StatefulWidget {
   State<UnpaidRentChartCard> createState() => _UnpaidRentChartCardState();
 }
 
-class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
+class _UnpaidRentChartCardState extends State<UnpaidRentChartCard>
+    with NetworkRetryState {
   bool _loading = true;
   int _totalProperties = 0;
   double _totalUnpaidAmount = 0;
@@ -1035,6 +1038,14 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
     }
   }
 
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The one fetch initState makes.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    await _fetchUnpaidRentData();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1070,6 +1081,11 @@ class _UnpaidRentChartCardState extends State<UnpaidRentChartCard> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside a dashboard card, so the compact offline state is
+    // what fits here — the page around it stays usable.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final cardTextStyle = TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.bold,

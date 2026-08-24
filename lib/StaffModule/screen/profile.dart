@@ -639,7 +639,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -708,7 +708,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -785,7 +785,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -849,7 +849,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -910,7 +910,7 @@ class _Profile_screenState extends State<Profile_screen>
         isVerifyingCode = false;
       });
       Fluttertoast.showToast(
-        msg: 'Error: ${e.toString()}',
+        msg: 'Error: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
       );
     }
@@ -1178,7 +1178,7 @@ class _Profile_screenState extends State<Profile_screen>
       );
     } catch (e) {
       Fluttertoast.showToast(
-        msg: 'Error generating backup codes file: $e',
+        msg: 'Error generating backup codes file: ${friendlyErrorMessage(e)}',
         backgroundColor: Colors.red,
         toastLength: Toast.LENGTH_SHORT,
       );
@@ -1201,7 +1201,7 @@ class _Profile_screenState extends State<Profile_screen>
       )
           : _hasError
           ? Center(
-        child: Text('Error: $_errorMessage'),
+        child: Text('Error: ${friendlyErrorMessage(_errorMessage)}'),
       )
           : LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth > 500) {

@@ -3,6 +3,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +27,8 @@ class TempletTable extends StatefulWidget {
   _TempletTableState createState() => _TempletTableState();
 }
 
-class _TempletTableState extends State<TempletTable> {
+class _TempletTableState extends State<TempletTable>
+    with NetworkRetryState {
   late Future<List<EmailTemplate>> futureTemplet;
   int rowsPerPage = 5;
   int sortColumnIndex = 0;
@@ -210,6 +213,17 @@ class _TempletTableState extends State<TempletTable> {
     _connectivitySub?.cancel();
     super.dispose();
   }
+  /// Required by [NetworkRetryState]: re-issue this screen's own load.
+  /// The data calls `initState` makes; controllers and defaults are not
+  /// repeated, so a reload keeps the user's view.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futureTemplet = TempletRepository().fetchTemplets();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -412,7 +426,11 @@ class _TempletTableState extends State<TempletTable> {
         currentpage: "Templates",
         dropdown: true,
       ),
-      body: SingleChildScrollView(
+      // This screen had no offline state at all; a failed request used to
+      // leave it blank or showing an error string with no way to retry.
+      body: isOffline
+          ? NoInternetView(onRetry: retryNow)
+          : SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(

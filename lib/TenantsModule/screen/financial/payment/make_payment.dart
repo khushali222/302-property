@@ -956,7 +956,12 @@ class _MakePaymentState extends State<MakePayment> {
               (double.tryParse(lease_data!["total_due_amount"].toString()) ??
                       0.0)
                   .toStringAsFixed(2));
-          if (_selectedPaymentMethod == 'ACH') {
+          if (totalamount <= 0) {
+            // Web parity: no fee on a zero base — the flat ACH fee is
+            // amount-independent and must not create a fee-only total.
+            surchargeamount = 0.0;
+            totalpayamount = 0.0;
+          } else if (_selectedPaymentMethod == 'ACH') {
             final achPct = surChargeAchper != null
                 ? (double.tryParse(surChargeAchper.toString()) ?? 0.0)
                 : 0.0;
@@ -973,7 +978,12 @@ class _MakePaymentState extends State<MakePayment> {
           totalamount = selectedTenantRent;
           totalpayamount = selectedTenantRent;
           totalrent = selectedTenantRent;
-          if (_selectedPaymentMethod == 'ACH') {
+          if (totalamount <= 0) {
+            // Web parity: no fee on a zero base — the flat ACH fee is
+            // amount-independent and must not create a fee-only total.
+            surchargeamount = 0.0;
+            totalpayamount = 0.0;
+          } else if (_selectedPaymentMethod == 'ACH') {
             final achPct = surChargeAchper != null
                 ? (double.tryParse(surChargeAchper.toString()) ?? 0.0)
                 : 0.0;
@@ -1852,7 +1862,9 @@ class _MakePaymentState extends State<MakePayment> {
                                 AddFields();
                                 if (value == 'ACH') {
                                   selectedcardindex = null;
-                                  // Recalc ACH surcharge for current amount
+                                  // Recalc ACH surcharge for current amount.
+                                  // Web recomputes on every method change, so a
+                                  // zero amount must RESET the fee, not skip.
                                   if (totalamount > 0) {
                                     final achPct = surChargeAchper != null
                                         ? (double.tryParse(
@@ -1868,15 +1880,23 @@ class _MakePaymentState extends State<MakePayment> {
                                         totalamount * achPct / 100 + achFlat;
                                     totalpayamount =
                                         totalamount + surchargeamount;
+                                  } else {
+                                    surchargeamount = 0.0;
+                                    totalpayamount = 0.0;
                                   }
                                 } else if (value == 'Card') {
                                   selectedAchIndex = null;
-                                  // Recalc card surcharge for current amount
+                                  // Recalc card surcharge for current amount.
+                                  // The else is what stops an ACH flat fee
+                                  // surviving a switch back to Card.
                                   if (totalamount > 0 && surCharge != null) {
                                     surchargeamount =
                                         totalamount * surCharge! / 100;
                                     totalpayamount =
                                         totalamount + surchargeamount;
+                                  } else {
+                                    surchargeamount = 0.0;
+                                    totalpayamount = 0.0;
                                   }
                                 }
                               });
@@ -2686,7 +2706,10 @@ class _MakePaymentState extends State<MakePayment> {
                                               .toString()) ??
                                       0.0)
                                   .toStringAsFixed(2));
-                              if (_selectedPaymentMethod == 'ACH') {
+                              if (totalamount <= 0) {
+                                // Web parity: no fee on a zero base.
+                                surchargeamount = 0.0;
+                              } else if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
                                     ? (double.tryParse(
                                             surChargeAchper.toString()) ??
@@ -2720,7 +2743,10 @@ class _MakePaymentState extends State<MakePayment> {
                             if (amountController.text.isNotEmpty) {
                               totalamount =
                                   double.tryParse(amountController.text) ?? 0.0;
-                              if (_selectedPaymentMethod == 'ACH') {
+                              if (totalamount <= 0) {
+                                // Web parity: no fee on a zero base.
+                                surchargeamount = 0.0;
+                              } else if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
                                     ? (double.tryParse(
                                             surChargeAchper.toString()) ??
@@ -2797,7 +2823,14 @@ class _MakePaymentState extends State<MakePayment> {
                                   // tenant may overpay (prepay). Mobile no longer caps it.
                                   totalamount = inputAmount;
                                   totalpayamount = inputAmount;
-                                  if (_selectedPaymentMethod == 'ACH') {
+                                  if (inputAmount <= 0) {
+                                    // A zero amount attracts no fee. The ACH
+                                    // flat fee is amount-independent, so
+                                    // without this it turned $0 into a
+                                    // fee-only payment.
+                                    surchargeamount = 0.0;
+                                    totalpayamount = 0.0;
+                                  } else if (_selectedPaymentMethod == 'ACH') {
                                     final achPct = surChargeAchper != null
                                         ? (double.tryParse(
                                                 surChargeAchper.toString()) ??
@@ -2852,7 +2885,10 @@ class _MakePaymentState extends State<MakePayment> {
                             partialamount = false;
                             if (lease_data != null) {
                               totalamount = selectedTenantRent;
-                              if (_selectedPaymentMethod == 'ACH') {
+                              if (totalamount <= 0) {
+                                // Web parity: no fee on a zero base.
+                                surchargeamount = 0.0;
+                              } else if (_selectedPaymentMethod == 'ACH') {
                                 final achPct = surChargeAchper != null
                                     ? (double.tryParse(
                                             surChargeAchper.toString()) ??
@@ -3032,7 +3068,21 @@ class _MakePaymentState extends State<MakePayment> {
                           if (_saleInFlight) return;
                           if ((_formKey.currentState?.validate() ?? false) &&
                               (!partialamount || _amountLimitError == null)) {
-                            if (totalpayamount > 0.0) {
+                            // Web parity (AddPaymentByTenant.jsx handleSubmit):
+                            // the gate is the ENTERED amount, never base + fee.
+                            // Gating on totalpayamount let a stale surcharge
+                            // stand in for the amount and submit a $0 payment
+                            // that still charged the convenience fee.
+                            if (totalamount <= 0.0) {
+                              // Same message as web and as Admin/Staff
+                              // make_payment; the field's own validator is
+                              // ignored by this CustomTextField, so the
+                              // refusal has to be stated here.
+                              Fluttertoast.showToast(
+                                  msg: "Please enter a valid amount");
+                              return;
+                            }
+                            if (totalamount > 0.0) {
                               setState(() {
                                 iserror = false;
                                 IsLoading = true;

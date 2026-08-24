@@ -1134,7 +1134,7 @@ class _DailyTransactionsState extends State<DailyTransactions>
     }
     } catch (e, st) {
       logError('PDF export error: $e\n$st');
-      Fluttertoast.showToast(msg: 'Could not generate PDF: $e');
+      Fluttertoast.showToast(msg: 'Could not generate PDF: ${friendlyErrorMessage(e)}');
       if (mounted) setState(() => istenantDataLoading = false);
     }
   }

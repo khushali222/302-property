@@ -3,6 +3,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/widgets/no_internet_view.dart';
+import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -33,7 +35,8 @@ class Cronjob_payment_table extends StatefulWidget {
   _Cronjob_payment_tableState createState() => _Cronjob_payment_tableState();
 }
 
-class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
+class _Cronjob_payment_tableState extends State<Cronjob_payment_table>
+    with NetworkRetryState {
   int totalrecords = 0;
   Future<LeaseResponse>? futurecronjobpayment;
   int rowsPerPage = 5;
@@ -316,6 +319,17 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+  /// Required by [NetworkRetryState]: re-issue this view's own load.
+  /// The fetch this view parks inside its connectivity listener.
+  @override
+  Future<void> reloadData() async {
+    if (!mounted) return;
+    setState(() {
+      futurecronjobpayment = cronjob_payment_tableService()
+          .fetchCronjob_payment(limit: 5, page: 1);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -2353,6 +2367,11 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table> {
 
   @override
   Widget build(BuildContext context) {
+    // Lives inside another screen, so the compact offline state is what
+    // fits here rather than taking over the whole page.
+    if (isOffline) {
+      return NoInternetView(compact: true, onRetry: retryNow);
+    }
     final dateProvider = Provider.of<DateProvider>(context);
     //final themeProvider = Provider.of<ThemeProvider>(context);
     return SingleChildScrollView(
