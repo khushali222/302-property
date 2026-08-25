@@ -16881,7 +16881,7 @@ class _Summery_pageState extends State<Summery_page>
                         if (ctx.mounted)
                           Fluttertoast.showToast(
                               msg:
-                                  e.toString().replaceFirst('Exception: ', ''));
+                                  friendlyErrorMessage(e));
                       }
                     },
                     child: Text('Delete'),

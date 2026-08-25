@@ -1342,7 +1342,7 @@ class _AddApplienceState extends State<AddApplience> {
                                 logError('Error adding appliance: $e');
                                 setState(() => isLoading = false);
                                 final cleanMsg =
-                                    e.toString().replaceFirst('Exception: ', '');
+                                    friendlyErrorMessage(e);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(cleanMsg)),
                                 );

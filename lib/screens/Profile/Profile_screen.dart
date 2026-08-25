@@ -709,9 +709,12 @@ class _Profile_screenState extends State<Profile_screen>
           ? _isLoading
               ? const ProfileShimmer()
               : _hasError
-                  ? Center(
-                      child: Text('Error: ${friendlyErrorMessage(_errorMessage)}'),
-                    )
+                  ? isNetworkError(_errorMessage)
+                      ? NoInternetView(onRetry: retryNow)
+                      : Center(
+                          child:
+                              Text(friendlyErrorMessage(_errorMessage)),
+                        )
                   : SingleChildScrollView(
                       child: Padding(
                         padding: EdgeInsets.all(

@@ -1955,7 +1955,7 @@ class _AddCardState extends State<AddCard> {
     }
 
     return Slidable(
-      endActionPane: ActionPane(
+      startActionPane: ActionPane(
         motion: const ScrollMotion(),
         children: [
           SlidableAction(

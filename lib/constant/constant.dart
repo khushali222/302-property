@@ -645,7 +645,50 @@ String phoneDigitsOnly(String? phoneNumber) =>
 /// even though requests succeed. Equally, trusting the opposite and assuming
 /// we are online would reveal stale already-loaded data while genuinely
 /// offline. A real DNS lookup settles it either way.
+/// In-flight probe, shared by every caller that asks while it is running.
+///
+/// 122 call sites still reach this from the legacy per-screen `checkInternet()`
+/// and its connectivity listener. Opening the app offline fired TWENTY-FIVE
+/// separate probes — one per screen that mounted — each holding a 10-second
+/// timeout, all asking the identical question and all already answered by the
+/// first. The verdict is the same for every caller in that instant, so they
+/// share one request instead of each making their own.
+Future<bool>? _probeInFlight;
+
+/// The last verdict, and when it was reached. Kept for one second only: long
+/// enough to absorb a burst of screens mounting together, short enough that a
+/// human tapping Retry always gets a fresh answer rather than a stale "still
+/// offline" from a moment ago.
+bool? _lastProbe;
+DateTime? _lastProbeAt;
+
 Future<bool> hasNetworkNow() async {
+  if (Api_url.isEmpty) return false;
+  final last = _lastProbeAt;
+  if (_lastProbe != null &&
+      last != null &&
+      DateTime.now().difference(last) < const Duration(seconds: 1)) {
+    return _lastProbe!;
+  }
+  final running = _probeInFlight;
+  if (running != null) return running;
+  final future = _probeNetwork();
+  _probeInFlight = future;
+  try {
+    return await future;
+  } finally {
+    _probeInFlight = null;
+  }
+}
+
+Future<bool> _probeNetwork() async {
+  final result = await _probeNetworkOnce();
+  _lastProbe = result;
+  _lastProbeAt = DateTime.now();
+  return result;
+}
+
+Future<bool> _probeNetworkOnce() async {
   if (Api_url.isEmpty) return false;
   // Probes over HTTP, deliberately — NOT InternetAddress.lookup. A raw DNS
   // lookup takes a different path from the app's own requests and is

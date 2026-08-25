@@ -1478,7 +1478,7 @@ class _Change_passwordState extends State<Change_password> {
       String errorMsg = 'An error occurred: $e';
       // Remove the exception prefix if it's already in the message
       if (e.toString().contains('Exception:')) {
-        errorMsg = e.toString().replaceFirst('Exception: ', '');
+        errorMsg = friendlyErrorMessage(e);
       }
       Fluttertoast.showToast(msg: errorMsg);
       logError('Error: $e');

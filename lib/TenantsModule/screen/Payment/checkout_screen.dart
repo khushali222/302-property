@@ -373,7 +373,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       setState(() {
         _isProcessingPayment = false;
         _currentError = PaymentErrorType.unknownError;
-        _errorMessage = 'An unexpected error occurred: ${e.toString()}';
+        _errorMessage = friendlyErrorMessage(e);
       });
 
       _showErrorSnackBar(PaymentErrorType.unknownError, _errorMessage!);
@@ -800,7 +800,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return PaymentResponse(
         isSuccess: false,
         errorType: PaymentErrorType.unknownError,
-        errorMessage: 'An unexpected error occurred: ${e.toString()}',
+        errorMessage: friendlyErrorMessage(e),
         errorCode: 'UNKNOWN_ERROR',
       );
     }

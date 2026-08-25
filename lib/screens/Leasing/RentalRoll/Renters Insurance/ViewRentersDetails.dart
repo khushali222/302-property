@@ -142,10 +142,10 @@ class _ViewRentersDetailsState extends State<ViewRentersDetails>
                     ? dateProvider.formatCurrentDate(
                         '${rentersData.expirationDate?.split('T').first}')
                     : 'N/A';
-                final liability = (rentersData.liabilityCoverage != null &&
-                        rentersData.liabilityCoverage! > 0)
-                    ? formatMoney(rentersData.liabilityCoverage!)
-                    : 'N/A';
+                // formatMoney already renders null/zero as "$0.00", so the old
+                // `!= null && > 0` guard only served to bypass it and print the
+                // placeholder "N/A" — including for a genuinely zero coverage.
+                final liability = formatMoney(rentersData.liabilityCoverage);
                 final hasDoc =
                     rentersData.insurancePolicyDocument?.isNotEmpty == true;
                 final tenants = rentersData.tenantDetails ?? [];

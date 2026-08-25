@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 /// App-wide answer to "are we online?", plus the hook a screen uses to reload
 /// itself when the connection comes back.
@@ -55,8 +56,25 @@ class CheckConnection extends ChangeNotifier {
     // socket level, does. A connectivity event is used solely as good news:
     // the OS says a network appeared, so lift the block and let the app's own
     // requests be the judge again.
-    _sub = Connectivity().onConnectivityChanged.listen((result) {
-      if (result != ConnectivityResult.none) _apply(true);
+    _sub = Connectivity().onConnectivityChanged.listen((result) async {
+      if (result != ConnectivityResult.none) {
+        _apply(true);
+        return;
+      }
+      // The OS says the network went away. That alone is NOT enough to act on —
+      // connectivity_plus reports `none` on a perfectly good iOS network, which
+      // is the whole reason screens stopped asking it. So confirm with one real
+      // request first, and only then announce a failure.
+      //
+      // This is what makes the offline state appear straight away instead of
+      // waiting for the screen to happen to make a request of its own. Without
+      // it, sitting still on a screen with no traffic meant nothing failed and
+      // nothing flipped, so whether the offline state appeared depended on
+      // which screen you were on. Event-driven, so it cannot flap the way a
+      // periodic timer did, and hasNetworkNow() shares one probe between all
+      // callers however many screens are listening.
+      if (await hasNetworkNow()) return;
+      noteRequestFailed();
     });
   }
 

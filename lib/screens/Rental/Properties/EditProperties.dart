@@ -6393,7 +6393,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                  'Failed to update property: ${e.toString()}'),
+                                  'Failed to update property: ${friendlyErrorMessage(e)}'),
                               backgroundColor: Colors.red,
                             ),
                           );

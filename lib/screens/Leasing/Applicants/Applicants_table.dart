@@ -2910,7 +2910,7 @@ class _Applicants_tableState extends State<Applicants_table>
                 }
               } catch (e) {
                 Fluttertoast.showToast(
-                  msg: e.toString().replaceFirst('Exception: ', ''),
+                  msg: friendlyErrorMessage(e),
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   toastLength: Toast.LENGTH_LONG,

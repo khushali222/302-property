@@ -788,7 +788,11 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     );
   }
 
-  String _selectedOption = 'button 1';
+  // Web parity (AddWorkorder.js:758 `priority: "Normal"`): the Add form
+  // opens with Normal selected. The old 'button 1' sentinel matched no
+  // radio, so a fresh form showed nothing selected while a form refreshed
+  // by "Add Another Work Order" showed Normal — the two disagreed.
+  String _selectedOption = 'Normal';
 
   void _handleRadioValueChange(String? value) {
     setState(() {
@@ -3625,7 +3629,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       // (setSelectedCategoryId("")). Leaving these would show the previous
       // property's units, its due date, and its category on the "blank" form.
       units.clear();
-      _dateController.clear();
+      // Due Date is required now, and web's resetForm() puts it back to its
+      // initial value (today) rather than blank — clearing it left the
+      // refreshed form with an empty required field.
+      _dateController.text = DateFormat(
+              Provider.of<DateProvider>(context, listen: false).dateFormat)
+          .format(DateTime.now());
       _selectedDropdownCategory = null;
 
       _uploadedFileNames.clear();
@@ -4282,7 +4291,11 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
     );
   }
 
-  String _selectedOption = 'button 1';
+  // Web parity (AddWorkorder.js:758 `priority: "Normal"`): the Add form
+  // opens with Normal selected. The old 'button 1' sentinel matched no
+  // radio, so a fresh form showed nothing selected while a form refreshed
+  // by "Add Another Work Order" showed Normal — the two disagreed.
+  String _selectedOption = 'Normal';
 
   void _handleRadioValueChange(String? value) {
     setState(() {
@@ -7002,7 +7015,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
       // (setSelectedCategoryId("")). Leaving these would show the previous
       // property's units, its due date, and its category on the "blank" form.
       units.clear();
-      _dateController.clear();
+      // Due Date is required now, and web's resetForm() puts it back to its
+      // initial value (today) rather than blank — clearing it left the
+      // refreshed form with an empty required field.
+      _dateController.text = DateFormat(
+              Provider.of<DateProvider>(context, listen: false).dateFormat)
+          .format(DateTime.now());
       _selectedDropdownCategory = null;
 
       _uploadedFileNames.clear();

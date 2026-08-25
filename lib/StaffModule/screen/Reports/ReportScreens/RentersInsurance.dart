@@ -1775,13 +1775,11 @@ class _RentersInsuranceState extends State<RentersInsurance>
                                                                   ),
                                                                   buildTableRow(
                                                                       'Liability Coverage :',
-                                                                      getDisplayValue(item.rentersInsurance?.liabilityCoverage !=
-                                                                              null
-                                                                          ? formatCurrency(item
-                                                                              .rentersInsurance!
-                                                                              .liabilityCoverage
-                                                                              .toDouble())
-                                                                          : 'N/A'),
+                                                                      // formatMoney renders null/zero as "$0.00", so no
+                                                                      // "N/A" placeholder is needed for this figure.
+                                                                      getDisplayValue(formatMoney(item
+                                                                          .rentersInsurance
+                                                                          ?.liabilityCoverage)),
                                                                       '',
                                                                       '')
                                                                 ],

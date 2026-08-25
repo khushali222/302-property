@@ -812,7 +812,7 @@ class _AddDocumentState extends State<AddDocument> {
       }
     } catch (error) {
       logError('Error: $error');
-      Fluttertoast.showToast(msg: 'Something went wrong: ${error.toString()}');
+      Fluttertoast.showToast(msg: friendlyErrorMessage(error));
       setState(() {
         isLoading = false;
       });

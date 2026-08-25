@@ -138,7 +138,7 @@ class _BidRoomTableState extends State<BidRoomTable>
         // Single, consistent toast — show the error's message (server text or
         // a clean fallback), stripped of the "Exception:" prefix.
         Fluttertoast.showToast(
-            msg: e.toString().replaceFirst('Exception: ', ''));
+            msg: friendlyErrorMessage(e));
       }
     }
   }
@@ -278,7 +278,7 @@ class _BidRoomTableState extends State<BidRoomTable>
           _loadingDetails[bidRequestId] = false;
         });
         Fluttertoast.showToast(
-            msg: e.toString().replaceFirst('Exception: ', ''));
+            msg: friendlyErrorMessage(e));
       }
     }
   }

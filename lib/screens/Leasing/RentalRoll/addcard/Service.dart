@@ -306,6 +306,10 @@ class AddCardService {
         success: false,
         message: ((data is Map ? data['error'] : null) ??
                 json?['error'] ??
+                // Middleware refusals (e.g. the idempotency guard) put the
+                // reason in a top-level `message`, so without this the real
+                // cause was replaced by the generic fallback.
+                json?['message'] ??
                 (data is String ? data : null) ??
                 'Failed to add card.')
             .toString(),

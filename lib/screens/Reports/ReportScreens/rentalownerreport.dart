@@ -739,15 +739,19 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
                 cellAlignment: pw.Alignment.centerLeft,
                 headerAlignment: pw.Alignment.centerLeft,
                 columnWidths: {
-                  0: pw.FlexColumnWidth(2), // Date
-                  1: pw.FlexColumnWidth(1.5), // Address
-                  2: pw.FlexColumnWidth(1), // Work
-                  3: pw.FlexColumnWidth(.8), // Performed
-                  4: pw.FlexColumnWidth(1.3), // Performed
-                  5: pw.FlexColumnWidth(1.5), // Performed
-                  6: pw.FlexColumnWidth(.8), // Performed
-                  7: pw.FlexColumnWidth(1.5), // Performed
-                  8: pw.FlexColumnWidth(1), // Performed
+                  // Widths follow the header row above. Date and Total were
+                  // sized for the old raw values and split a formatted date
+                  // across two lines ("07/13/2" / "026"); the slack comes from
+                  // Property and Reference, which wrap acceptably.
+                  0: pw.FlexColumnWidth(1.7), // Property
+                  1: pw.FlexColumnWidth(1.5), // Tenant
+                  2: pw.FlexColumnWidth(1.4), // Date
+                  3: pw.FlexColumnWidth(.8), // Pmt Type
+                  4: pw.FlexColumnWidth(1.3), // Txn ID
+                  5: pw.FlexColumnWidth(1.4), // Reference
+                  6: pw.FlexColumnWidth(.8), // Crd Type
+                  7: pw.FlexColumnWidth(1.5), // Crd No
+                  8: pw.FlexColumnWidth(1.3), // Total
                 },
                 border: null),
             pw.Divider(thickness: 3),
@@ -818,7 +822,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
           ), // Property Name
           // Tenant Name
           pw.Text(
-            DateFormat("yyyy-MM-dd").format(property.createdAt).toString(),
+            _transactionDate(property),
             style: pw.TextStyle(
               fontWeight: pw.FontWeight.bold,
               fontSize: 10,
@@ -1013,7 +1017,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
             '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}');
         sheet
             .getRangeByIndex(rowIndex, 3)
-            .setText(property.createdAt.toString());
+            .setText(_transactionDate(property));
         sheet.getRangeByIndex(rowIndex, 4).setText(property.paymentType ?? '');
         sheet
             .getRangeByIndex(rowIndex, 5)
@@ -1122,7 +1126,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
         csvBuffer.writeln([
           sanitizedAddress,
           '${property.tenantData!.tenantFirstName ?? 'N/A'} ${property.tenantData!.tenantLastName ?? 'N/A'}',
-          property.createdAt.toString(),
+          _transactionDate(property),
           property.paymentType ?? '',
           property.transactionId ?? '',
           property.paymentId ?? '',
@@ -1909,7 +1913,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
                                                                                   ),
                                                                                   'Transaction Type:',
                                                                                   _getDisplayValue(tenant.paymentType)),
-                                                                              _buildTableRow('Payment Details:', _getDisplayValue("${tenant.ccType} ${tenant.ccNumber}"), 'Payment Amount:', _getDisplayValue(formatCurrency(tenant.totalAmount))),
+                                                                              _buildTableRow('Payment Details:', _getDisplayValue(_paymentDetails(tenant.ccType, tenant.ccNumber)), 'Payment Amount:', _getDisplayValue(formatCurrency(tenant.totalAmount))),
                                                                             ],
                                                                           ),
                                                                         ),
@@ -3014,9 +3018,31 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
     );
   }
 
+  /// Single source for the Transaction Date column across every output —
+  /// screen, PDF, Excel and CSV. Web does the same with one `formatDateTime`
+  /// helper (Client/src/views/source/Rentalownerreport.js), which is why its
+  /// four outputs agree. Here the exports each formatted the raw DateTime
+  /// themselves, so the same payment read four different ways and ignored the
+  /// account's chosen date format.
+  String _transactionDate(Payment payment) {
+    final dateProvider = Provider.of<DateProvider>(context, listen: false);
+    return dateProvider.formatCurrentDate('${payment.createdAt}');
+  }
   String _getDisplayValue(String? value) {
     // Return 'N/A' if the value is null or empty, otherwise return the value
     return (value == null || value.trim().isEmpty) ? 'N/A' : value;
+  }
+
+  /// Card type + masked number as one label. The model already substitutes
+  /// 'N/A' for each field individually, so joining them blindly produced
+  /// "N/A N/A" on non-card payments (cash, check). Only real values are
+  /// joined; when neither is present this returns empty so the caller's
+  /// _getDisplayValue renders a single 'N/A'.
+  String _paymentDetails(String? ccType, String? ccNumber) {
+    bool hasValue(String? v) =>
+        v != null && v.trim().isNotEmpty && v.trim() != 'N/A';
+    final parts = [ccType, ccNumber].where(hasValue).map((v) => v!.trim());
+    return parts.join(' ');
   }
 
   TableRow _buildTableRow(String leftLabel, String leftValue, String rightLabel,

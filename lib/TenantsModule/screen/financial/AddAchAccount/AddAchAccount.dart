@@ -916,7 +916,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            'Note: Swipe left on an account to delete',
+                            'Note: Swipe right on an account to delete',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: blueColor,
@@ -975,7 +975,7 @@ class _AddAchAccountState extends State<AddAchAccount> {
                                 padding:
                                     const EdgeInsets.only(bottom: 8, top: 8),
                                 child: Slidable(
-                                endActionPane: ActionPane(
+                                startActionPane: ActionPane(
                                   motion: const ScrollMotion(),
                                   extentRatio: 0.25,
                                   children: [

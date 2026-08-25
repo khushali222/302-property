@@ -1298,7 +1298,7 @@ class _DocumentRentalTableState extends State<DocumentRentalTable>
         } else if (e.toString().length > 50) {
           errorMsg = "Download failed - please try again";
         } else {
-          errorMsg = "Error: ${e.toString()}";
+          errorMsg = friendlyErrorMessage(e);
         }
         Fluttertoast.showToast(
           msg: errorMsg,

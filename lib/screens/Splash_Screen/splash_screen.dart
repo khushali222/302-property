@@ -39,12 +39,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-  ConnectivityResult? _connectivityResult ;
   StreamSubscription<ConnectivityResult>? _connectivitySub;
 
   @override
   void dispose() {
-    _connectivitySub?.cancel();
     super.dispose();
   }
 
@@ -53,30 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
 
-    _connectivitySub = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (!mounted) return;
-      // The event is only a trigger: checkInternet() verifies
-      // against the network before deciding, so a stale `none`
-      // from the plugin cannot strand this screen offline.
-      checkInternet();
-    });
-    checkInternet();
     _navigateToCorrectScreen();
-  }
-  void checkInternet()async{
-
-    var connectiondata;
-    connectiondata = await Connectivity().checkConnectivity();
-    // connectivity_plus can report a stale `none` after the
-    // connection is back; confirm before believing it.
-    if (connectiondata == ConnectivityResult.none &&
-        await hasNetworkNow()) {
-      connectiondata = ConnectivityResult.wifi;
-    }
-    setState(() {
-      _connectivityResult = connectiondata;
-    });
-
   }
 
 
@@ -351,7 +326,26 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
+  /// Launch must always end somewhere. This is called fire-and-forget from
+  /// initState, so anything that throws inside used to vanish as an unhandled
+  /// async error with `Navigator.pushReplacement` never reached — leaving the
+  /// splash screen up forever, unrecoverable without a restart. Every known
+  /// cause is fixed at its source; this wrapper exists so an unknown one can
+  /// never strand a user on the splash screen again.
   _navigateToCorrectScreen() async {
+    try {
+      await _routeAfterSplash();
+    } catch (e, st) {
+      debugPrint('SPLASH: launch failed, falling back to login: $e\n$st');
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login_Screen()),
+      );
+    }
+  }
+
+  Future<void> _routeAfterSplash() async {
 
     await Future.delayed(Duration(seconds: 5)); // Simulate splash screen delay
 
@@ -504,11 +498,17 @@ class _SplashScreenState extends State<SplashScreen> {
       //         : Login_Screen(),
       //   ),
       // );
+      // A plan check that could not REACH the server must not be read as "no
+      // plan". Without this, an Admin opening the app offline was sent to the
+      // login screen — CRM-4675 is explicit that poor connectivity can never
+      // lock a signed-in user out. The session is still valid; the server
+      // enforces plan limits on the requests that follow.
+      final planUnknown = provider.planCheckFailed;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => isAuthenticated == true
-              ? isPlanActive!
+              ? (isPlanActive! || planUnknown)
               ? Dashboard()
               : provider.checkplanpurchaseModel != null ? PlanPurchaseCard() : Login_Screen()
               : Login_Screen(),
@@ -577,9 +577,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      // No offline gate here, deliberately. _navigateToCorrectScreen() proceeds
+      // whatever the network does — CRM-4675: "poor connectivity can never lock
+      // a signed-in user out of the app" — so painting "No Internet" during the
+      // splash delay showed a dead end, with no Retry, for a launch that was
+      // going to continue anyway. The loader tells the truth.
       body:
-      _connectivityResult !=ConnectivityResult.none ?
-
       Container(
         child: Center(
           child: Column(
@@ -600,7 +603,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ],
           ),
         ),
-      ):NoInternetView(),
+      ),
     );
   }
 }

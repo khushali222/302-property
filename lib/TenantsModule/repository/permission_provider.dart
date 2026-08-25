@@ -30,7 +30,12 @@ class PermissionProvider with ChangeNotifier {
       _permissions = fetchedPermissions;
     } catch (e) {
       logError(e);
-      // Handle error
+      // Opening the app offline used to leave this null, and the drawer gates on
+      // `permissions?.propertyView == true` — so Property, Financial, Work
+      // Orders and Documents all vanished with no way back short of a restart.
+      // Fall back to this account's last known permissions; a later successful
+      // fetch overwrites them.
+      _permissions ??= await PermissionService.cachedPermissions();
     } finally {
       _isLoading = false;
       _inFlight = null;

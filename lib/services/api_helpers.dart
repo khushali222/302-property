@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'dart:io';
 
@@ -20,6 +21,41 @@ import 'force_update_helper.dart';
 /// The signatures match `package:http` exactly and the returned
 /// `http.Response` is identical, so the surrounding parsing code keeps
 /// working unchanged.
+
+/// Routes protected by the server's `requireIdempotencyKey` middleware
+/// (Server/middleware/idempotency.js). A POST to one of these without a
+/// `X-Idempotency-Key` UUID v4 header is refused with
+/// "Missing X-Idempotency-Key header...".
+///
+/// Mirrors `IDEMPOTENT_PAYMENT_PATHS` in the web client's axios interceptor
+/// (Client/src/plugins/axios.js) — keep the two lists in step. The last two
+/// were added in the 2026-08 incident follow-up: adds succeed again post-fix,
+/// so a double submit would otherwise mint two NMI billings for one card.
+const List<String> _idempotentPaymentPaths = [
+  '/api/payment/payment',
+  '/api/payment/tenant-payment',
+  '/api/nmipayment/sale',
+  '/api/nmipayment/ACH_sale',
+  '/api/nmipayment/process-application-fee-payment',
+  '/api/nmipayment/tenant/add-tenant-payment',
+  '/api/nmipayment/tenant/add-tenant-ach',
+];
+
+bool _needsIdempotencyKey(Uri url) =>
+    _idempotentPaymentPaths.any((path) => url.path.endsWith(path));
+
+/// Adds a fresh key for a protected payment POST. A caller-supplied key always
+/// wins — an explicit retry (e.g. `_saleIdempotencyKey` in make_payment.dart)
+/// replays against the server's cached response instead of being treated as a
+/// second attempt. Same rule as the web interceptor.
+Map<String, String> _withIdempotencyKey(
+    Uri url, Map<String, String> headers) {
+  if (!_needsIdempotencyKey(url)) return headers;
+  final bool alreadySet = headers.keys
+      .any((k) => k.toLowerCase() == 'x-idempotency-key');
+  if (alreadySet) return headers;
+  return {...headers, 'X-Idempotency-Key': const Uuid().v4()};
+}
 
 Map<String, String> _mergeHeaders(Map<String, String>? userHeaders) {
   final merged = <String, String>{};
@@ -121,7 +157,7 @@ Future<http.Response> apiPost(
   _logOutgoing('POST', url);
   final response = await _reportingNetworkFailures(() => http.post(
     url,
-    headers: _mergeHeaders(headers),
+    headers: _withIdempotencyKey(url, _mergeHeaders(headers)),
     body: body,
     encoding: encoding,
   ).timeout(Duration(seconds: 30)));

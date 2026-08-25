@@ -18,7 +18,9 @@ class VendorPermission with ChangeNotifier {
       UserPermissions fetchedPermissions = await PermissionService.fetchPermissions();
       _permissions = fetchedPermissions;
     } catch (e) {
-      // Handle error
+      // Same reason as the tenant provider: leaving this null offline hides
+      // every permission-gated control until the app is restarted online.
+      _permissions ??= await PermissionService.cachedPermissions();
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -135,9 +135,12 @@ class _summery_pageState extends State<summery_page>
                   ),
                 )
               : _hasError
-                  ? Center(
-                      child: Text('Error: ${friendlyErrorMessage(_errorMessage)}'),
-                    )
+                  ? isNetworkError(_errorMessage)
+                      ? NoInternetView(onRetry: retryNow)
+                      : Center(
+                          child:
+                              Text(friendlyErrorMessage(_errorMessage)),
+                        )
                   : profiledata == null
                       ? Center(child: Text('No data available'))
                       : LayoutBuilder(

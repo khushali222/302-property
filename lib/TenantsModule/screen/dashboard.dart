@@ -24,6 +24,7 @@ import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import '../../constant/constant.dart';
 import 'financial/financial_table.dart';
+import 'property/property_table.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
 
@@ -501,7 +502,13 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants>
           leftValue: formatMoney(countList[2]),
           rightLabel: "Next Due Date",
           rightValue: countList[3].toString(),
-          onTap: () {},
+          // Web parity (TenantDashBoard.js): the Monthly Rent card opens the
+          // tenant's Property page. Ungated, as web only guards on !loader.
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => PropertyTable()),
+            );
+          },
         ),
 
         const SizedBox(height: 16),
@@ -515,7 +522,13 @@ class _Dashboard_tenantsState extends State<Dashboard_tenants>
           leftValue: countList[5].toString(),
           rightLabel: "End Date",
           rightValue: countList[4].toString(),
-          onTap: () {},
+          // Web parity (TenantDashBoard.js): the Lease card points at the same
+          // Property page as Monthly Rent — not a separate lease screen.
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => PropertyTable()),
+            );
+          },
         ),
 
         const SizedBox(height: 16),
