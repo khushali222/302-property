@@ -593,7 +593,7 @@ class _Change_passwordState extends State<Change_password> {
                                                           });
                                                         },
                                                         obscureText:
-                                                            visiable_password_confirm,
+                                                            visiable_passwordcurrent,
                                                         controller:
                                                             currentpassword,
                                                         cursorColor: blueColor,
@@ -629,12 +629,12 @@ class _Change_passwordState extends State<Change_password> {
                                                           suffixIcon: InkWell(
                                                             onTap: () {
                                                               setState(() {
-                                                                visiable_password_confirm =
-                                                                    !visiable_password_confirm;
+                                                                visiable_passwordcurrent =
+                                                                    !visiable_passwordcurrent;
                                                               });
                                                             },
                                                             child: Icon(
-                                                              visiable_password_confirm
+                                                              visiable_passwordcurrent
                                                                   ? Icons
                                                                       .remove_red_eye_outlined
                                                                   : Icons

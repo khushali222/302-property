@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -276,7 +277,15 @@ class _add_insuranceState extends State<add_insurance> {
       if (files.isEmpty) {
         throw Exception('Upload succeeded but no file was returned');
       }
-      Fluttertoast.showToast(msg: 'PDF added successfully');
+      // Reflect the actual uploaded file type in the toast (was always "PDF",
+      // so a JPEG/PNG wrongly said "PDF added successfully").
+      final String ext = pdfFile.path.split('.').last.toLowerCase();
+      final String typeLabel = ext == 'pdf'
+          ? 'PDF'
+          : (['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp'].contains(ext)
+              ? 'Image'
+              : 'File');
+      Fluttertoast.showToast(msg: '$typeLabel added successfully');
       return files.first["filename"];
     } else {
       throw Exception('Failed to upload file: ${responseBody['message']}');
@@ -680,15 +689,25 @@ class _add_insuranceState extends State<add_insurance> {
                                     const Icon(Icons.insert_drive_file,
                                         color: Color(0xFF748097), size: 20),
                                     const SizedBox(width: 10),
+                                    // Tapping the filename opens the document
+                                    // (web parity: the filename is the tap
+                                    // target there too). Kept separate from the
+                                    // remove button so the X still clears it.
                                     Expanded(
-                                      child: Text(
-                                        _uploadedFileNames.first,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF748097),
+                                      child: GestureDetector(
+                                        onTap: () => viewInsuranceDocument(
+                                            context, _uploadedFileNames.first),
+                                        child: Text(
+                                          _uploadedFileNames.first,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF152B51),
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     IconButton(

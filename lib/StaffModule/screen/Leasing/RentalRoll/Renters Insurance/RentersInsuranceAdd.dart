@@ -440,12 +440,10 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
         'rental_adress': data['data']['rental_adress'] ?? "",
       };
       setState(() {
+        // Web parity (and Admin parity): Covered Tenants start unchecked and
+        // the user picks who the policy covers. The old pre-check-all here
+        // silently attached every tenant on the lease to the policy.
         tenants = fetchedTenants;
-        // Prefill: pre-check all covered tenants by default (like Admin auto-checks the tenant).
-        selectedTenants = fetchedTenants
-            .map((t) => t['tenant_id'] ?? '')
-            .where((id) => id.isNotEmpty)
-            .toList();
       });
     } else {
       throw Exception('Failed to load tenants');

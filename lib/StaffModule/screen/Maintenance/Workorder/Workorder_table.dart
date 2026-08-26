@@ -646,7 +646,7 @@ class _Workorder_tableState extends State<Workorder_table>
           ),
         ),
       ],
-    ).show();
+    ).show().then((_) => reason.dispose());  // dialog closed -> release the field
   }
  
   void handleClose(Data workorder) {
@@ -723,7 +723,7 @@ class _Workorder_tableState extends State<Workorder_table>
           ),
         ),
       ],
-    ).show();
+    ).show().then((_) => reason.dispose());  // dialog closed -> release the field
   }
   List<Data> _tableData = [];
   int _rowsPerPage = 10;

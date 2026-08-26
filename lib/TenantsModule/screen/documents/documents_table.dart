@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/widgets/insurance_document_viewer.dart';
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -1365,6 +1366,57 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable>
                                                               MainAxisAlignment
                                                                   .end,
                                                           children: [
+                                                            // Web parity: the
+                                                            // document icon
+                                                            // shows only when a
+                                                            // document is
+                                                            // attached, and
+                                                            // sits ahead of
+                                                            // Edit/Delete.
+                                                            if ((Propertytype
+                                                                        .policy ??
+                                                                    '')
+                                                                .trim()
+                                                                .isNotEmpty) ...[
+                                                              InkWell(
+                                                                onTap: () =>
+                                                                    viewInsuranceDocument(
+                                                                        context,
+                                                                        Propertytype
+                                                                            .policy),
+                                                                child: Container(
+                                                                  height: 35,
+                                                                  width: 35,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      color: Colors
+                                                                          .blue
+                                                                          .shade50),
+                                                                  child:
+                                                                      const Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FaIcon(
+                                                                        FontAwesomeIcons
+                                                                            .fileLines,
+                                                                        size: 15,
+                                                                        color: Color(
+                                                                            0xFF152B51),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 5),
+                                                            ],
                                                             // if (Propertytype
                                                             //         .status ==
                                                             //     'ACTIVE')

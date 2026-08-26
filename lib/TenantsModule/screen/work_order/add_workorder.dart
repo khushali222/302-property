@@ -217,9 +217,12 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   @override
   void dispose() {
-    subject.dispose();
+    // `subject` and `perform` are handed to CustomTextField, whose State
+    // disposes whatever controller it is given (CustomTextFieldState in
+    // screens/Maintenance/Vendor/add_vendor.dart). Releasing them here as
+    // well threw "used after being disposed" when this screen closed.
+    // `other` goes to a plain TextFormField, so it stays ours to release.
     other.dispose();
-    perform.dispose();
     _dateController.dispose();
     super.dispose();
   }
@@ -521,10 +524,6 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               return null;
                             },
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          _buildImageUploadSection(),
                           SizedBox(
                             height: 10,
                           ),
@@ -965,6 +964,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             controller: perform,
                             optional: true,
                           ),
+                          // Web parity (TAddWork.js): Photos sit after Work To
+                          // Be Performed, as the last section before the
+                          // buttons — same as the Edit screen.
+                          SizedBox(
+                            height: 10,
+                          ),
+                          _buildImageUploadSection(),
                           SizedBox(
                             height: 10,
                           ),

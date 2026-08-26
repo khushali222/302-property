@@ -20,7 +20,12 @@ import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:three_zero_two_property/provider/getAdminAddress.dart';
-import 'package:three_zero_two_property/screens/Leasing/RentalRoll/Renters%20Insurance/RentersInsuranceAdd.dart';
+// Staff must open the StaffModule copy: it sends the signed-in staff member's
+// own id in the request header (web parity), so the Covered Tenants list loads.
+// The Admin copy (same class name) sends the admin id, which the server
+// rejects for a staff session — the checkboxes never appeared and Add was
+// blocked on "Please select at least one tenant".
+import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Renters%20Insurance/RentersInsuranceAdd.dart';
 import 'package:three_zero_two_property/StaffModule/screen/Leasing/RentalRoll/Renters%20Insurance/ViewRentersDetails.dart';
 
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';

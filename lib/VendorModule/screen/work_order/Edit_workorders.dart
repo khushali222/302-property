@@ -92,10 +92,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
   @override
   void dispose() {
-    subject.dispose();
+    // Controllers handed to CustomTextField are released by that widget
+    // (CustomTextFieldState in screens/Maintenance/Vendor/add_vendor.dart
+    // disposes whatever controller it is given), so releasing them here as
+    // well threw "used after being disposed" on close. Only the ones this
+    // screen owns outright are released below.
     other.dispose();
-    perform.dispose();
-    vendornote.dispose();
     _dateController.dispose();
     // Each parts-and-labour row owns its own controllers (addRow creates six,
     // the API mapping in fetchWorkordersDetails creates four), and the qty /

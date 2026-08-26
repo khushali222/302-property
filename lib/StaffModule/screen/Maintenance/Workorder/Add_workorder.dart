@@ -154,11 +154,13 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
 
   @override
   void dispose() {
+    // Controllers handed to CustomTextField are released by that widget
+    // (CustomTextFieldState in screens/Maintenance/Vendor/add_vendor.dart
+    // disposes whatever controller it is given), so releasing them here as
+    // well threw "used after being disposed" on close. Only what this
+    // screen owns outright is released below.
     routeObserver.unsubscribe(this);
-    subject.dispose();
     other.dispose();
-    perform.dispose();
-    vendornote.dispose();
     _dateController.dispose();
     for (final row in partsAndLabor) {
       (row['qtyController'] as TextEditingController?)?.dispose();
@@ -3273,7 +3275,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                                       borderRadius: BorderRadius.circular(8.0)),
                                   child: TextFormField(
                                     style: const TextStyle(
-                                      color: Color(0xFF8898aa), // Text color
+                                      // A selected date is a VALUE, not a hint: #8898aa is the
+                                      // placeholder grey, which made a chosen date read as
+                                      // unfilled next to Status and the "Enter here" fields.
+                                      color: Colors.black87,
                                       fontSize: 16.0, // Text size
                                       fontWeight: FontWeight.w400, // Text weight
                                     ),
@@ -3675,11 +3680,13 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
 
   @override
   void dispose() {
+    // Controllers handed to CustomTextField are released by that widget
+    // (CustomTextFieldState in screens/Maintenance/Vendor/add_vendor.dart
+    // disposes whatever controller it is given), so releasing them here as
+    // well threw "used after being disposed" on close. Only what this
+    // screen owns outright is released below.
     routeObserver.unsubscribe(this);
-    subject.dispose();
     other.dispose();
-    perform.dispose();
-    vendornote.dispose();
     _dateController.dispose();
     for (final row in partsAndLabor) {
       (row['qtyController'] as TextEditingController?)?.dispose();
@@ -6494,7 +6501,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                         borderRadius: BorderRadius.circular(8.0)),
                                     child: TextFormField(
                                       style: const TextStyle(
-                                        color: Color(0xFF8898aa), // Text color
+                                        // A selected date is a VALUE, not a hint: #8898aa is the
+                                        // placeholder grey, which made a chosen date read as
+                                        // unfilled next to Status and the "Enter here" fields.
+                                        color: Colors.black87,
                                         fontSize: 16.0, // Text size
                                         fontWeight: FontWeight.w400, // Text weight
                                       ),

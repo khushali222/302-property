@@ -199,9 +199,12 @@ class _Add_WorkorderState extends State<Add_Workorder> {
 
   @override
   void dispose() {
-    subject.dispose();
+    // Controllers handed to CustomTextField are released by that widget
+    // (CustomTextFieldState in screens/Maintenance/Vendor/add_vendor.dart
+    // disposes whatever controller it is given), so releasing them here as
+    // well threw "used after being disposed" on close. Only the ones this
+    // screen owns outright are released below.
     other.dispose();
-    perform.dispose();
     _dateController.dispose();
     super.dispose();
   }

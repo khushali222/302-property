@@ -5372,7 +5372,13 @@ class _Workorder_summeryState extends State<Workorder_summery>
         );
       },
       ),
-    );
+    ).then((_) {
+      // The update form is a pushed route, so its fields live until it
+      // closes; release them once it has.
+      message.dispose();
+      privateNotes.dispose();
+      selectedDate.dispose();
+    });
   }
 
   final labelStyle = const TextStyle(

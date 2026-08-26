@@ -52,22 +52,24 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   List<allcategories_model> _dropdownCategories = [];
   allcategories_model? _selectedDropdownCategory;
   String? _selectedEntry;
-  String? _selectedStatus;
   final List<String> _entry = ['Yes', 'No'];
-  final List<String> _statusOptions = [
-    'New',
-    'In Progress',
-    'Completed',
-    'On Hold',
-    'Cancelled',
-    'Closed'
-  ];
 
   @override
   void initState() {
     super.initState();
     _loadData();
     _loadDropdownCategories();
+  }
+
+  @override
+  void dispose() {
+    // `subject` and `perform` are handed to CustomTextField, whose State
+    // disposes whatever controller it is given (CustomTextFieldState in
+    // screens/Maintenance/Vendor/add_vendor.dart). Releasing them here as
+    // well threw "used after being disposed" when this screen closed.
+    // `other` goes to a plain TextFormField, so it stays ours to release.
+    other.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -85,7 +87,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                 s.workOrderImages!.map((e) => e?.toString()).toList();
           }
           _selectedEntry = s.entryAllowed == true ? 'Yes' : 'No';
-          _selectedStatus = s.status ?? 'New';
           _isLoading = false;
         });
         _applyCategoryFromSummery();
@@ -211,7 +212,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         'entry_allowed': _selectedEntry == 'Yes',
         'work_performed': perform.text.trim(),
         'workOrder_images': uploaded_images,
-        'status': _selectedStatus ?? summery!.status,
+        // Web parity (TAddWork.js): the tenant Edit payload omits `status` —
+        // status changes belong to the Update flow, not Edit.
         'rental_id': summery!.rentalId,
         'unit_id': summery!.unitId,
         'rental_adress': summery!.propertyData?.rentaladress ?? summery!.rentalAddressDisplay ?? '',
@@ -303,8 +305,6 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                           },
                         ),
                         const SizedBox(height: 10),
-                        _buildImageUploadSection(),
-                        const SizedBox(height: 10),
                         _label('Property'),
                         _readOnlyField(
                           summery!.propertyData?.rentaladress ??
@@ -313,14 +313,14 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               '—',
                         ),
                         const SizedBox(height: 10),
-                        _label('Unit'),
-                        _readOnlyField(
-                          summery!.unitData?.rental_unit ??
-                              summery!.rentalUnitDisplay ??
-                              summery!.unitId ??
-                              '—',
-                        ),
-                        const SizedBox(height: 10),
+                        // Web parity (TAddWork.js): the Unit field renders only
+                        // when the property actually has a unit, rather than
+                        // showing a placeholder row on single-unit properties.
+                        if (_unitDisplay.isNotEmpty) ...[
+                          _label('Unit'),
+                          _readOnlyField(_unitDisplay),
+                          const SizedBox(height: 10),
+                        ],
                         _label('Category'),
                         DropdownButtonHideUnderline(
                           child: DropdownButton2<allcategories_model>(
@@ -404,33 +404,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        _label('Status'),
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            hint: const Text('Select here'),
-                            value: _selectedStatus,
-                            items: _statusOptions
-                                .map((e) => DropdownMenuItem<String>(
-                                value: e, child: Text(e,style: TextStyle(fontSize: 14, color: Colors.black87),)))
-                                .toList(),
-                            onChanged: (v) =>
-                                setState(() => _selectedStatus = v),
-                            buttonStyleData: ButtonStyleData(
-                              height: 50,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 0, vertical: 1),
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(6),
-                                color: Colors.white,
-                                border: Border.all(color: Color(0xFFb0b6c3)),
-                              ),
-                              elevation: 0,
-                            ),
-                          ),
-                        ),
+                        // Status is deliberately absent (web parity,
+                        // TAddWork.js): tenants change status via the Update
+                        // flow, never from Edit.
                         const SizedBox(height: 10),
                         _label('Work To Be Performed'),
                         // const SizedBox(height: 10),
@@ -443,6 +419,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                           borderWidth: 1.5,
                           optional: true,
                         ),
+                        // Web parity (TAddWork.js): Photos sit after Work To Be
+                        // Performed, as the last section before the buttons.
+                        const SizedBox(height: 10),
+                        _buildImageUploadSection(),
                         const SizedBox(height: 20),
                         Row(
                           children: [
@@ -673,6 +653,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   }
 
   /// Same look as dropdowns: border, rounded corners, padding
+  /// Unit as shown on the form. Empty when the property has no unit, which is
+  /// what hides the field (web guards on `unitData[0].rental_unit`).
+  String get _unitDisplay =>
+      (summery?.unitData?.rental_unit ?? summery?.rentalUnitDisplay ?? '')
+          .trim();
+
   Widget _readOnlyField(String text) {
     return Container(
       height: 50,

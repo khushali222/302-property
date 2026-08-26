@@ -885,16 +885,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports>
     for (int i = 0; i < rentalOwnerReports.length; i++) {
       final workOrder = rentalOwnerReports[i];
 
-      // Safe date parsing with default/fallback value
-      String formattedDate;
-      try {
-        formattedDate = workOrder.entry!.first.date != null
-            ? DateFormat('yyyy-MM-dd').format(
-                DateFormat('yyyy-MM-dd').parse(workOrder.createdAt.toString()))
-            : 'Invalid Date';
-      } catch (e) {
-        formattedDate = 'Invalid Date';
-      }
+      final String formattedDate = _paymentDate(workOrder, dateProvider);
 
       sheet
           .getRangeByIndex(2 + i, 1)
@@ -980,16 +971,7 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports>
     for (final workOrder in rentalOwnerReports) {
       final List<String> row = []; // Stores data for a single row
 
-      // Safe date parsing with default/fallback value
-      String formattedDate;
-      try {
-        formattedDate = workOrder.entry!.first.date != null
-            ? DateFormat('yyyy-MM-dd').format(DateFormat('yyyy-MM-dd')
-                .parse(workOrder.entry!.first.date ?? ""))
-            : 'Invalid Date';
-      } catch (e) {
-        formattedDate = 'Invalid Date';
-      }
+      final String formattedDate = _paymentDate(workOrder, dateProvider);
 
       row.add("${workOrder.rentalData?.rentalAdress}" ?? '');
       row.add(workOrder.paymentType ?? '');
@@ -2567,6 +2549,20 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports>
             )
           : NoInternetView(onRetry: retryNow),
     );
+  }
+
+  /// Transaction date for every output — screen, PDF, Excel and CSV. Takes the
+  /// entry's own date and formats it with the account's chosen format, exactly
+  /// as the on-screen table does. Excel used to format `createdAt` while CSV
+  /// formatted the entry date, and both hardcoded yyyy-MM-dd, so the same
+  /// report disagreed with itself between outputs.
+  String _paymentDate(Data row, DateProvider dateProvider) {
+    final String? raw = (row.entry != null && row.entry!.isNotEmpty)
+        ? row.entry!.first.date
+        : null;
+    if (raw == null || raw.trim().isEmpty) return 'N/A';
+    final String formatted = dateProvider.formatCurrentDate(raw);
+    return formatted.trim().isEmpty ? 'N/A' : formatted;
   }
 
   String _getDisplayValue(String? value) {

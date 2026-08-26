@@ -85,6 +85,13 @@ class _UpdateWorkOrderTenantState extends State<UpdateWorkOrderTenant> {
     _loadStaff();
   }
 
+  @override
+  void dispose() {
+    _notes.dispose();
+    _dueDate.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadStaff() async {
     setState(() => _loadingStaff = true);
     try {
