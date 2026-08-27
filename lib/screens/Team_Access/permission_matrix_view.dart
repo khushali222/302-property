@@ -183,10 +183,11 @@ class _PermissionMatrixViewState extends State<PermissionMatrixView>
 
   @override
   Widget build(BuildContext context) {
-    // This view lives inside another screen's tab, so it shows the
-    // compact offline state rather than taking over the whole page.
+    // Full-size, so this reads the same as every other screen's offline state.
+    // Safe inside this screen's SingleChildScrollView because NoInternetView
+    // now drops its RefreshIndicator when the height is unbounded.
     if (isOffline) {
-      return NoInternetView(compact: true, onRetry: retryNow);
+      return NoInternetView(onRetry: retryNow);
     }
     if (_loading) return _buildLoading();
 

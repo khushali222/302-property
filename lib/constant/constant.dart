@@ -722,6 +722,25 @@ Future<bool> _probeNetworkOnce() async {
   }
 }
 
+/// Web parity (`plugins/helpers.jsx: makeRentalAddress`): the lease Property
+/// Details card shows the address alone unless the unit is a real, distinct
+/// value. Ported verbatim so mobile stops showing "215 -  " (empty/blank
+/// unit) or "1321 Creek St  -  1321 Creek St" (unit duplicates the address —
+/// a data quirk on non-multi-unit properties) instead of just the address.
+String formatLeasePropertyLine(String? rentalAddress, String? rentalUnit) {
+  final address = rentalAddress ?? "";
+  if (address.isEmpty) return "";
+  final unit = rentalUnit?.trim() ?? "";
+  if (unit.isEmpty ||
+      unit == "-" ||
+      unit == "null" ||
+      unit == "undefined") {
+    return address;
+  }
+  if (unit.contains(address)) return unit;
+  return "$address - $unit";
+}
+
 /// Empty-state row for a table whose visible page has no records — normally
 /// because a search or filter matched nothing. The screens' own "No Data
 /// Available" branch only tests the list the server returned, so it never fires

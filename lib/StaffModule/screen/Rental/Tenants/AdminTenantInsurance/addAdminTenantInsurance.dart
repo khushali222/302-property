@@ -46,6 +46,12 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   TextEditingController liablity = TextEditingController();
   GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   bool isLoading = false;
+
+  /// Web parity: on the tenant-scoped Add Policy form web lists the one tenant
+  /// with the box UNCHECKED and marks Covered Tenants required, so the user
+  /// selects deliberately. This screen previously showed a locked, always-
+  /// checked box and sent the tenant regardless.
+  bool _tenantSelected = false;
   List<File> _pdfFiles = [];
 
   List<String> _uploadedFileNames = [];
@@ -600,7 +606,7 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               },
                             ),
                             SizedBox(height: 10),
-                            Text('Covered Tenants:',
+                            Text('Covered Tenants: *',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -612,8 +618,9 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                                   height: 24,
                                   width: 24,
                                   child: Checkbox(
-                                    value: true,
-                                    onChanged: null,
+                                    value: _tenantSelected,
+                                    onChanged: (v) => setState(
+                                        () => _tenantSelected = v ?? false),
                                     activeColor: blueColor,
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
@@ -746,6 +753,13 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                               ),
                               onPressed: () {
                                 if (_formkey.currentState!.validate()) {
+                                  // Covered Tenants is required (web parity).
+                                  if (!_tenantSelected) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            'Please select at least one tenant');
+                                    return;
+                                  }
                                   if (_validateDates()) {
                                     addinsurance();
                                   }
@@ -808,7 +822,12 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
       "policy_id": policy.text.trim(),
       "effective_date": _convertToApiFormat(effective.text.trim()),
       "expiration_date": _convertToApiFormat(expiration.text.trim()),
-      "liability_coverage": num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
+      // Web parity: web submits this field as the raw string, so "0"
+      // reaches the server truthy and is accepted. Sending a numeric 0
+      // tripped the server's required-field check (!0 is true in JS) and
+      // surfaced "Missing required fields". Mongoose casts to Number on
+      // save either way, so stored data is unchanged.
+      "liability_coverage": liablity.text.trim(),
       "insurance_policy_document": _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
       "tenants": [widget.tenantid],
     };

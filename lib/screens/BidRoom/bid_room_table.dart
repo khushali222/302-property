@@ -135,10 +135,12 @@ class _BidRoomTableState extends State<BidRoomTable>
         setState(() {
           _isLoading = false;
         });
-        // Single, consistent toast — show the error's message (server text or
-        // a clean fallback), stripped of the "Exception:" prefix.
-        Fluttertoast.showToast(
-            msg: friendlyErrorMessage(e));
+        // A network failure already flips this screen to its offline state,
+        // which says it better than a toast stacked on top of it. Anything
+        // else still gets the clean message.
+        if (!isNetworkError(e)) {
+          Fluttertoast.showToast(msg: friendlyErrorMessage(e));
+        }
       }
     }
   }
@@ -277,8 +279,9 @@ class _BidRoomTableState extends State<BidRoomTable>
         setState(() {
           _loadingDetails[bidRequestId] = false;
         });
-        Fluttertoast.showToast(
-            msg: friendlyErrorMessage(e));
+        if (!isNetworkError(e)) {
+          Fluttertoast.showToast(msg: friendlyErrorMessage(e));
+        }
       }
     }
   }

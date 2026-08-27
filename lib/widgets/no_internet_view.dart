@@ -84,7 +84,18 @@ class NoInternetView extends StatelessWidget {
       );
     }
 
-    return RefreshIndicator(
+    return LayoutBuilder(builder: (context, outer) {
+      // Placed inside another scrollable, height is unbounded. RefreshIndicator
+      // needs its OWN scroll view, and nesting those asserted on an infinite
+      // height. Same look, minus the swipe gesture — the Retry button is still
+      // there, which is what matters.
+      if (!outer.maxHeight.isFinite) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Center(child: content),
+        );
+      }
+      return RefreshIndicator(
       onRefresh: onRetry!,
       color: Colors.blue,
       backgroundColor: Colors.white,
@@ -95,12 +106,22 @@ class NoInternetView extends StatelessWidget {
         builder: (context, constraints) => SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            // maxHeight is INFINITE when this is placed inside another
+            // scrollable — dropping it straight into minHeight asserted
+            // ("BoxConstraints forces an infinite height") and then repeated
+            // every frame until the screen was left. Fall back to no minimum
+            // there: the content simply sizes itself instead of stretching.
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight.isFinite
+                  ? constraints.maxHeight
+                  : 0.0,
+            ),
             child: Center(child: content),
           ),
         ),
       ),
-    );
+      );
+    });
   }
 
   /// The inline variant: an icon instead of the animation, one line of text and
@@ -108,7 +129,10 @@ class NoInternetView extends StatelessWidget {
   Widget _compact(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+      // Full width so the message sits centred in the area it is given; without
+      // it the column shrank to its content and drifted to the left edge.
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.wifi_off_rounded, size: 40, color: Colors.grey.shade400),

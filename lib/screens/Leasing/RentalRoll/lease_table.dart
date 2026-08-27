@@ -902,7 +902,10 @@ class _Lease_tableState extends State<Lease_table>
     }
   }
 
-  String selectedStatus = "Active";
+  // Web parity (RentRoll.jsx: filterStatus defaults to "all" on both Admin
+  // and Staff, which share this component) — the Leases table opens showing
+  // every lease, not just Active ones.
+  String selectedStatus = "All";
   final List<String> statusOptions = ["Active", "Expired", "Future", "All"];
   List<String> selectedRentalOwners = [];
   List<String> availableRentalOwners = [];

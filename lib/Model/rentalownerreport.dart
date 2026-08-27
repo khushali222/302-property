@@ -56,8 +56,11 @@ class Payment {
   String? paymentType;
   String? type;
   List<dynamic>? paymentAttachment;
-  DateTime createdAt;
-  DateTime updatedAt;
+  // Nullable on purpose: substituting DateTime.now() for a missing value
+  // showed today's date in the reports as if it were the real transaction
+  // date. Web renders "N/A" instead (Rentalownerreport.js formatDateTime).
+  DateTime? createdAt;
+  DateTime? updatedAt;
   bool isDelete;
   TenantData? tenantData;
   RentalData? rentalData;
@@ -83,8 +86,8 @@ class Payment {
      this.paymentType,
      this.type,
      this.paymentAttachment,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.isDelete,
      this.tenantData,
      this.rentalData,
@@ -128,8 +131,8 @@ class Payment {
         paymentType: json['payment_type'] ?? '',
         type: json['type'] ?? '',
         paymentAttachment: List<dynamic>.from(json['payment_attachment'] ?? []),
-         createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-         updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+         createdAt: DateTime.tryParse(json['createdAt'] ?? ''),
+         updatedAt: DateTime.tryParse(json['updatedAt'] ?? ''),
          isDelete: json['is_delete'] ?? false,
         tenantData: TenantData.fromJson(json['tenant_data'] ?? {}),
         rentalData: RentalData.fromJson(json['rental_data'] ?? {}),
@@ -166,8 +169,8 @@ class Payment {
       'payment_type': paymentType,
       'type': type,
       'payment_attachment': paymentAttachment,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'is_delete': isDelete,
       'tenant_data': tenantData!.toJson(),
       'rental_data': rentalData!.toJson(),

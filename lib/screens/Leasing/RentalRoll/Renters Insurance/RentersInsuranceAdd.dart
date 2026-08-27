@@ -953,7 +953,12 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
         "policy_id": policy.text.trim(),
         "effective_date": _convertToApiFormat(effective.text.trim()),
         "expiration_date": _convertToApiFormat(expiration.text.trim()),
-        "liability_coverage": num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
+        // Web parity: web submits this field as the raw string, so "0"
+        // reaches the server truthy and is accepted. Sending a numeric 0
+        // tripped the server's required-field check (!0 is true in JS) and
+        // surfaced "Missing required fields". Mongoose casts to Number on
+        // save either way, so stored data is unchanged.
+        "liability_coverage": liablity.text.trim(),
         "tenants": selectedTenantsList, // Ensure it's properly formatted
         "insurance_policy_document":
             _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",

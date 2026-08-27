@@ -1665,34 +1665,28 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                /// Unit
+                                /// Property address (web parity: no "Unit"
+                                /// label — the address line is the heading).
                                 Row(
                                   children: [
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
-                                          "Unit",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
                                         SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width -
                                               100,
                                           child: Text(
-                                            '${snapshot.data!.data!.rentalAddress}  -  ${snapshot.data!.data!.rentalUnit ?? "N/A"}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.grey.shade600,
+                                            formatLeasePropertyLine(
+                                              snapshot.data!.data!.rentalAddress,
+                                              snapshot.data!.data!.rentalUnit,
+                                            ),
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 2,

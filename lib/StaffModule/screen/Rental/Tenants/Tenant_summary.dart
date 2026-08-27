@@ -1076,6 +1076,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                           tenantid: widget.tenantId,
                           leaseId: policy.leaseId ?? '',
                           renters_insurance_id: policy.rentersInsuranceId!,
+                          embeddedInTenantSummary: true,
                         ),
                       ),
                     );
@@ -4126,6 +4127,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                           tenantid: widget.tenantId,
                                                                                           leaseId: policy.leaseId ?? '',
                                                                                           renters_insurance_id: policy.rentersInsuranceId!,
+                                                                                          embeddedInTenantSummary: true,
                                                                                         )));
                                                                                 if (check == true) {
                                                                                   setState(() {
@@ -4170,6 +4172,7 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                                                                                   tenantid: widget.tenantId,
                                                                                                   leaseId: policy.leaseId ?? '',
                                                                                                   renters_insurance_id: policy.rentersInsuranceId!,
+                                                                                                  embeddedInTenantSummary: true,
                                                                                                 )));
                                                                                     if (check == true) {
                                                                                       setState(() {
@@ -5623,6 +5626,7 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet>
                           tenantid: widget.tenantId,
                           leaseId: policy.leaseId ?? '',
                           renters_insurance_id: policy.rentersInsuranceId!,
+                          embeddedInTenantSummary: true,
                         ),
                       ),
                     );

@@ -182,11 +182,21 @@ mixin NetworkRetryState<T extends StatefulWidget> on State<T>
     _retrying = true;
     _seenGeneration = _currentGeneration;
     _seenFailure = CheckConnection.instance?.failureGeneration ?? 0;
-    await reloadData();
-    // A reload that succeeded will have bumped the counter on its way back;
-    // absorb it here so returning to this screen later does not re-fetch data
-    // that is already fresh.
-    if (mounted) _seenGeneration = _currentGeneration;
+    try {
+      await reloadData();
+      // A reload that succeeded will have bumped the counter on its way back;
+      // absorb it here so returning to this screen later does not re-fetch
+      // data that is already fresh.
+      if (mounted) _seenGeneration = _currentGeneration;
+    } finally {
+      // Cleared HERE, not only when an announcement arrives. Relying on the
+      // announcement left this stuck true whenever the reload succeeded
+      // WITHOUT producing one — noteRequestSucceeded() stays silent if some
+      // other request had already cleared the failure flag — and equally if
+      // reloadData() threw. Once stuck, `if (_retrying) return` above swallowed
+      // every later tap and the Retry button was dead for good.
+      _retrying = false;
+    }
   }
 
   /// The user came back to this screen from one pushed on top of it. This is

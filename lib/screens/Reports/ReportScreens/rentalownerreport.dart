@@ -1869,9 +1869,8 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
                                                                   Expanded(
                                                                       child:
                                                                           Text(
-                                                                    dateProvider
-                                                                        .formatCurrentDate(
-                                                                            '${tenant.createdAt}'),
+                                                                    _transactionDate(
+                                                                        tenant),
                                                                     // "${formatDate(tenant.createdAt.toString())}",
                                                                     style: TextStyle(
                                                                         fontWeight:
@@ -1906,7 +1905,7 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
                                                                               _buildTableRow(
                                                                                   'Transaction Date:',
                                                                                   _getDisplayValue(
-                                                                                    dateProvider.formatCurrentDate('${tenant.createdAt.toString()}'),
+                                                                                    _transactionDate(tenant),
                                                                                     // formatDate(tenant
                                                                                     //     .createdAt
                                                                                     //     .toString())
@@ -3025,8 +3024,13 @@ class _RentalOwnerReportsState extends State<RentalOwnerReports>
   /// themselves, so the same payment read four different ways and ignored the
   /// account's chosen date format.
   String _transactionDate(Payment payment) {
+    // Web parity (Rentalownerreport.js formatDateTime): a record with no date
+    // reads "N/A" rather than borrowing today's date.
+    final DateTime? raw = payment.createdAt;
+    if (raw == null) return 'N/A';
     final dateProvider = Provider.of<DateProvider>(context, listen: false);
-    return dateProvider.formatCurrentDate('${payment.createdAt}');
+    final String formatted = dateProvider.formatCurrentDate(raw.toString());
+    return formatted.trim().isEmpty ? 'N/A' : formatted;
   }
   String _getDisplayValue(String? value) {
     // Return 'N/A' if the value is null or empty, otherwise return the value

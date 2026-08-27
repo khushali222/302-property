@@ -38,10 +38,17 @@ class EditRentersInsurance extends StatefulWidget {
   final String tenantid;
   final String leaseId;
   final String renters_insurance_id;
+
+  /// Web parity: opened from a tenant's summary, Covered Tenants is scoped to
+  /// that one tenant (web's tenant-scoped mode passes a single-tenant list).
+  /// Opened from the lease, every tenant on the lease is listed. Defaults to
+  /// the lease behaviour so existing call sites are unaffected.
+  final bool embeddedInTenantSummary;
   const EditRentersInsurance(
       {required this.tenantid,
       required this.leaseId,
-      required this.renters_insurance_id});
+      required this.renters_insurance_id,
+      this.embeddedInTenantSummary = false});
 
   @override
   State<EditRentersInsurance> createState() => _EditRentersInsuranceState();
@@ -512,7 +519,15 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         'rental_adress': data['data']['rental_adress'] ?? "",
       };
       setState(() {
-        tenants = fetchedTenants;
+        // Tenant-scoped: show only the tenant whose summary we came from.
+        // `selectedTenants` is deliberately NOT narrowed — a policy covering
+        // other tenants keeps them in the save payload rather than silently
+        // dropping them.
+        tenants = widget.embeddedInTenantSummary
+            ? fetchedTenants
+                .where((t) => t['tenant_id'] == widget.tenantid)
+                .toList()
+            : fetchedTenants;
       });
     } else {
       throw Exception('Failed to load tenants');
@@ -1032,7 +1047,12 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         "policy_id": policy.text.trim(),
         "effective_date": _convertToApiFormat(effective.text.trim()),
         "expiration_date": _convertToApiFormat(expiration.text.trim()),
-        "liability_coverage": num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
+        // Web parity: web submits this field as the raw string, so "0"
+        // reaches the server truthy and is accepted. Sending a numeric 0
+        // tripped the server's required-field check (!0 is true in JS) and
+        // surfaced "Missing required fields". Mongoose casts to Number on
+        // save either way, so stored data is unchanged.
+        "liability_coverage": liablity.text.trim(),
         "tenants": selectedTenantsList, // Ensure it's properly formatted
         "insurance_policy_document":
             _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",
