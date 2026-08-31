@@ -299,7 +299,14 @@ class _AddCardState extends State<AddCard> {
         if (customerData != null) {
           setState(() {
             customervaultid = jsonResponse['customer_vault_id'];
-            cardDetails = customerData.billing;
+            // The gateway keeps cards AND ACH accounts in one `billing` list;
+            // an ACH entry has no card number. Assigning the list unfiltered
+            // rendered each ACH account as a blank card tile in the Cards
+            // list. Same filter the Admin and Staff copies already apply.
+            cardDetails = customerData.billing.where((b) {
+              final cn = b.ccNumber?.trim() ?? '';
+              return cn.isNotEmpty;
+            }).toList();
             messageCardAvailable = cardDetails.isEmpty ? 'No cards added.' : '';
             isLoading = false;
           });

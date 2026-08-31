@@ -911,8 +911,11 @@ class _MakePaymentState extends State<MakePayment> {
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        totalAmount = rows.fold(
-            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        // 'amount' is the row's applied-amount key (web sums the same field).
+        // This previously indexed the map with the TEXT typed in the amount
+        // box — row[""] at load — which only worked because rows start at 0.0.
+        totalAmount =
+            rows.fold(0.0, (sum, row) => sum + (row['amount'] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -968,11 +971,17 @@ class _MakePaymentState extends State<MakePayment> {
             final achFlat = surChargeAchflat != null
                 ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0)
                 : 0.0;
-            surchargeamount = totalamount * achPct / 100 + achFlat;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * achPct / 100 + achFlat);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           } else if (surCharge != null) {
-            surchargeamount = totalamount * surCharge! / 100;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * surCharge! / 100);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           }
         } else if (selected_account == "rent") {
           totalamount = selectedTenantRent;
@@ -990,11 +999,17 @@ class _MakePaymentState extends State<MakePayment> {
             final achFlat = surChargeAchflat != null
                 ? (double.tryParse(surChargeAchflat.toString()) ?? 0.0)
                 : 0.0;
-            surchargeamount = totalamount * achPct / 100 + achFlat;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * achPct / 100 + achFlat);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           } else if (surCharge != null) {
-            surchargeamount = totalamount * surCharge! / 100;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * surCharge! / 100);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           } else {
             totalpayamount = totalamount;
           }
@@ -1410,8 +1425,11 @@ class _MakePaymentState extends State<MakePayment> {
                   (surchargeData['surcharge_percent'] ?? 0).toString()) ??
               0;
           if (totalamount > 0.0) {
-            surchargeamount = totalamount * surCharge! / 100;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * surCharge! / 100);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           }
         });
       } else if (cardType == "DEBIT") {
@@ -1426,8 +1444,11 @@ class _MakePaymentState extends State<MakePayment> {
                   0);
           surCharge = effectivePercent;
           if (totalamount > 0.0) {
-            surchargeamount = totalamount * surCharge! / 100;
-            totalpayamount = totalamount + surchargeamount;
+            // Web parity: round the surcharge ONCE, then build the total
+            // from that rounded value so the displayed total matches the
+            // amount actually charged (the payload sends the rounded fee).
+            surchargeamount = roundCurrency(totalamount * surCharge! / 100);
+            totalpayamount = roundCurrency(totalamount + surchargeamount);
           }
         });
       } else {
@@ -1771,8 +1792,11 @@ class _MakePaymentState extends State<MakePayment> {
                             DateTime? pickedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime(2101),
+                              // Web parity (CRM-4270): manual methods back-date only,
+                              // card/ACH forward-date only.
+                              firstDate:
+                                  paymentFirstSelectableDate(_selectedPaymentMethod),
+                              lastDate: paymentLastSelectableDate(_selectedPaymentMethod),
                               locale: const Locale('en', 'US'),
                               builder: (BuildContext context, Widget? child) {
                                 return Theme(

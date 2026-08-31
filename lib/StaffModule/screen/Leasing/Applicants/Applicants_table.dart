@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:three_zero_two_property/provider/dateProvider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -1318,6 +1319,7 @@ class _Applicants_tableState extends State<Applicants_table>
   @override
   Widget build(BuildContext context) {
     final permissionProvider = Provider.of<StaffPermissionProvider>(context);
+    final dateProvider = Provider.of<DateProvider>(context);
     StaffPermission? permissions = permissionProvider.permissions;
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
@@ -1857,15 +1859,37 @@ class _Applicants_tableState extends State<Applicants_table>
                                               .toLowerCase() ??
                                           '')
                                       .contains(q) ||
+                                  // Dates are matched in BOTH forms: the raw
+                                  // stored value AND the format the table
+                                  // actually shows (per the user's date
+                                  // setting). Matching only the ISO string
+                                  // meant typing the visible date — e.g.
+                                  // 08/25/2026 — found nothing.
                                   (applicant.createdAt
                                               ?.toIso8601String()
                                               .toLowerCase() ??
                                           '')
                                       .contains(q) ||
+                                  (applicant.createdAt != null
+                                          ? dateProvider
+                                              .formatCurrentDate(
+                                                  applicant.createdAt
+                                                      .toString())
+                                              .toLowerCase()
+                                          : '')
+                                      .contains(q) ||
                                   (applicant.updatedAt
                                               ?.toIso8601String()
                                               .toLowerCase() ??
                                           '')
+                                      .contains(q) ||
+                                  (applicant.updatedAt != null
+                                          ? dateProvider
+                                              .formatCurrentDate(
+                                                  applicant.updatedAt
+                                                      .toString())
+                                              .toLowerCase()
+                                          : '')
                                       .contains(q) ||
                                   addresses.contains(q);
                             }).toList();

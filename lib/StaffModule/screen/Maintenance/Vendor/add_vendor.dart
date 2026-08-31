@@ -968,6 +968,11 @@ class _Add_vendorState extends State<Add_vendor> {
   bool isLoading = false;
   bool formValid = false;
   bool tradeError = false;
+
+  /// Web parity: the 1099 reporting checkbox on Add Vendor. The server schema
+  /// defaults is_1099 to false, so a vendor added from mobile was never
+  /// flagged for 1099 tax reporting. Web defaults the box to CHECKED.
+  bool is1099 = true;
   String? selectedTradeType;
   final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   final VendorRepository vendorRepository =
@@ -1272,6 +1277,31 @@ class _Add_vendorState extends State<Add_vendor> {
                               const SizedBox(
                                 height: 16,
                               ),
+                              // Web parity: the 1099 flag sits after Confirm Password,
+                              // as the last field on the form.
+                              InkWell(
+                                onTap: () => setState(() => is1099 = !is1099),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: is1099,
+                                        onChanged: (v) => setState(() => is1099 = v ?? false),
+                                        activeColor: blueColor,
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Flexible(
+                                      child: Text('This vendor receives 1099 forms',
+                                          style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 18),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -1545,6 +1575,31 @@ class _Add_vendorState extends State<Add_vendor> {
                               ),
                             ),
                             const SizedBox(height: 35),
+                            // Web parity: the 1099 flag sits after Confirm Password,
+                            // as the last field on the form.
+                            InkWell(
+                              onTap: () => setState(() => is1099 = !is1099),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: is1099,
+                                      onChanged: (v) => setState(() => is1099 = v ?? false),
+                                      activeColor: blueColor,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Flexible(
+                                    child: Text('This vendor receives 1099 forms',
+                                        style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 18),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1619,6 +1674,7 @@ class _Add_vendorState extends State<Add_vendor> {
         vendorEmail: email.text.trim(),
         vendorPassword: passWord.text.trim(),
         trade: selectedTradeType,
+        is1099: is1099,
       );
 
       final success = await vendorRepository.addVendor(vendor);
@@ -1728,7 +1784,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     if (widget.controller != null) {
       widget.controller!.removeListener(_validateConfirmPassword);
     }
-    _textController.dispose(); // Dispose the controller when not needed anymore
+    // Only dispose the controller this widget CREATED. When the caller
+    // passes one in it belongs to them — disposing it here double-disposed
+    // it (the screen's own dispose() releases it too), which threw
+    // "A TextEditingController was used after being disposed" on teardown.
+    if (widget.controller == null) {
+      _textController.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }

@@ -980,8 +980,11 @@ class _MakePaymentState extends State<MakePayment> {
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        totalAmount = rows.fold(
-            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        // 'amount' is the row's applied-amount key (web sums the same field).
+        // This previously indexed the map with the TEXT typed in the amount
+        // box — row[""] at load — which only worked because rows start at 0.0.
+        totalAmount =
+            rows.fold(0.0, (sum, row) => sum + (row['amount'] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -1652,8 +1655,11 @@ class _MakePaymentState extends State<MakePayment> {
                                   DateTime? pickedDate = await showDatePicker(
                                     context: context,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2101),
+                                    // Web parity (CRM-4270): manual methods back-date only,
+                                    // card/ACH forward-date only.
+                                    firstDate:
+                                        paymentFirstSelectableDate(_selectedPaymentMethod),
+                                    lastDate: paymentLastSelectableDate(_selectedPaymentMethod),
                                     locale: const Locale('en', 'US'),
                                     builder:
                                         (BuildContext context, Widget? child) {
@@ -1862,8 +1868,11 @@ class _MakePaymentState extends State<MakePayment> {
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate: DateTime.now(),
-                                                firstDate: DateTime.now(),
-                                                lastDate: DateTime(2101),
+                                                // Web parity (CRM-4270): manual methods back-date only,
+                                                // card/ACH forward-date only.
+                                                firstDate:
+                                                    paymentFirstSelectableDate(_selectedPaymentMethod),
+                                                lastDate: paymentLastSelectableDate(_selectedPaymentMethod),
                                                 locale:
                                                     const Locale('en', 'US'),
                                                 builder: (BuildContext context,
@@ -3991,11 +4000,17 @@ class _MakePaymentState extends State<MakePayment> {
                                     buildAmountContainer(
                                         'Total Amount',
                                         (_selectedPaymentMethod == "Card")
-                                            ? double.parse(((_safeParseAmountText() *
+                                            // Web parity: round the surcharge
+                                            // ONCE, then add it. Rounding the
+                                            // raw sum instead showed a Total a
+                                            // cent under what is charged, since
+                                            // the payload sends the rounded fee.
+                                            ? roundCurrency(
+                                                _safeParseAmountText() +
+                                                    roundCurrency(
+                                                        _safeParseAmountText() *
                                                             (surCharge ?? 0.0) /
-                                                            100) +
-                                                        _safeParseAmountText())
-                                                    .toStringAsFixed(2))
+                                                            100))
                                             : (_selectedPaymentMethod == "ACH")
                                                 ? (finaltotal ?? 0.0)
                                                 : _safeParseAmountText()),
@@ -4922,8 +4937,10 @@ class _MakePaymentState extends State<MakePayment> {
         if (achFlat > 0) surcharge += achFlat;
       }
       setState(() {
-        surchargecount = double.parse(surcharge.toStringAsFixed(2));
-        finaltotal = double.parse((amount + surcharge).toStringAsFixed(2));
+        // Web parity: round the surcharge ONCE and build the total from that
+        // rounded value, so the displayed total matches the amount charged.
+        surchargecount = roundCurrency(surcharge);
+        finaltotal = roundCurrency(amount + surchargecount!);
       });
     }
   }

@@ -527,6 +527,64 @@ String formatCurrency(double? amount) {
 /// figure can never surface as a bare number.
 ///
 /// Use for every on-screen amount; API payloads keep their raw values.
+/// Round to whole cents, half-up — web parity with `roundCurrency` in
+/// plugins/helpers.jsx (`Math.round((n + Number.EPSILON) * 100) / 100`).
+///
+/// Payment screens must round a surcharge ONCE with this and build every
+/// other figure (displayed total, payload) from that rounded value. Rounding
+/// the raw surcharge into the total separately is what made the on-screen
+/// Total disagree with the charged amount by a cent on half-cent fees.
+double roundCurrency(num value) {
+  final double v = value.toDouble();
+  if (!v.isFinite) return 0;
+  return ((v + 2.220446049250313e-16) * 100).round() / 100;
+}
+
+/// True for the payment methods that record money ALREADY RECEIVED.
+///
+/// Web parity — `AddPayment.jsx` (CRM-4270) splits the methods into the same
+/// two groups: "A manual payment records money already received — it can't be
+/// dated in the future." Card/ACH is the mirror image: it collects money later,
+/// so it may be scheduled forward but not back-dated.
+///
+/// Matching is whitespace- and case-tolerant on purpose: legacy records hold
+/// "Cashier 's Check" with a stray space (the same quirk Edit Payment already
+/// works around), and Admin/Staff swap in "ACH (not available)" when ACH is
+/// switched off — that variant must stay in the card/ACH group, not fall into
+/// this one.
+bool isManualPaymentMethod(String? method) {
+  if (method == null) return false;
+  final normalized = method
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(" 's", "'s")
+      .trim()
+      .toLowerCase();
+  return const {
+    'cash',
+    'check',
+    'manual',
+    'money order',
+    "cashier's check",
+  }.contains(normalized);
+}
+
+DateTime _todayDateOnly() {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, now.day);
+}
+
+/// Earliest date selectable for a payment, per [isManualPaymentMethod].
+/// Manual methods may be back-dated (a cheque received last week must carry
+/// last week's date); card/ACH may not.
+DateTime paymentFirstSelectableDate(String? method) =>
+    isManualPaymentMethod(method) ? DateTime(2000) : _todayDateOnly();
+
+/// Latest date selectable for a payment. Manual methods cannot be dated in the
+/// future (the server rejects it); card/ACH can, which is how a scheduled
+/// payment is created.
+DateTime paymentLastSelectableDate(String? method) =>
+    isManualPaymentMethod(method) ? _todayDateOnly() : DateTime(2101);
+
 String formatMoney(dynamic amount) {
   if (amount is num) return formatCurrency(amount.toDouble());
   final cleaned = amount?.toString().replaceAll(RegExp(r'[^0-9.-]'), '') ?? '';

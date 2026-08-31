@@ -1894,15 +1894,37 @@ class _Applicants_tableState extends State<Applicants_table>
                                               .toLowerCase() ??
                                           '')
                                       .contains(q) ||
+                                  // Dates are matched in BOTH forms: the raw
+                                  // stored value AND the format the table
+                                  // actually shows (per the user's date
+                                  // setting). Matching only the ISO string
+                                  // meant typing the visible date — e.g.
+                                  // 08/25/2026 — found nothing.
                                   (applicant.createdAt
                                               ?.toIso8601String()
                                               .toLowerCase() ??
                                           '')
                                       .contains(q) ||
+                                  (applicant.createdAt != null
+                                          ? dateProvider
+                                              .formatCurrentDate(
+                                                  applicant.createdAt
+                                                      .toString())
+                                              .toLowerCase()
+                                          : '')
+                                      .contains(q) ||
                                   (applicant.updatedAt
                                               ?.toIso8601String()
                                               .toLowerCase() ??
                                           '')
+                                      .contains(q) ||
+                                  (applicant.updatedAt != null
+                                          ? dateProvider
+                                              .formatCurrentDate(
+                                                  applicant.updatedAt
+                                                      .toString())
+                                              .toLowerCase()
+                                          : '')
                                       .contains(q) ||
                                   addresses.contains(q);
                             }).toList();

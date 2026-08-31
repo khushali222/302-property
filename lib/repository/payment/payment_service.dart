@@ -98,6 +98,9 @@ class PaymentService {
           'charge_type': e['charge_type'],
         }).toList(),
         // NEW: added to match web payload — backend uses these to identify source
+        // Web sends the attachment on the sale itself; the server records the
+        // payment from THIS payload, so omitting it lost the file entirely.
+        'uploaded_file': uploadedFile ?? [],
         'user_active_recently': true,
       };
       log(paymentDetails.toString());
@@ -181,7 +184,7 @@ class PaymentService {
             // entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
-            uploadedFile: [],
+            uploadedFile: uploadedFile ?? [],
             transactionId: "",
             responseText: "PENDING",
             surcharge: surcharge,
@@ -352,6 +355,9 @@ class PaymentService {
           'date': e['date'],
           'charge_type': e['charge_type'],
         }).toList(),
+        // Web sends the attachment on the sale itself; the server records the
+        // payment from THIS payload, so omitting it lost the file entirely.
+        'uploaded_file': uploadedFile ?? [],
         'user_active_recently': true,
       };
       if (billingId != null &&
@@ -445,7 +451,7 @@ class PaymentService {
               // entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
-              uploadedFile: [],
+              uploadedFile: uploadedFile ?? [],
               transactionId: "",
               responseText: "PENDING",
               surcharge: surcharge,
@@ -611,6 +617,9 @@ class PaymentService {
           'charge_type': e['charge_type'],
         }).toList(),
         // 'notificationTime':notificationTime,
+        // Web sends the attachment on the sale itself; the server records the
+        // payment from THIS payload, so omitting it lost the file entirely.
+        'uploaded_file': uploadedFile ?? [],
         'user_active_recently': true,
       };
 
@@ -642,7 +651,7 @@ class PaymentService {
             //entries: entries,
             totalAmount: amount,
             isLeaseAdded: false,
-            uploadedFile: [],
+            uploadedFile: uploadedFile ?? [],
             transactionId: jsonData["data"]["transactionid"],
             responseText: jsonData["data"]["responsetext"],
             surcharge: surcharge,
@@ -682,7 +691,7 @@ class PaymentService {
               //entries: entries,
               totalAmount: amount,
               isLeaseAdded: false,
-              uploadedFile: "",
+              uploadedFile: (uploadedFile != null && uploadedFile.isNotEmpty) ? uploadedFile.first : "",
               checknumber: Check_number,
               responseText: "PENDING",
               surcharge: surcharge,

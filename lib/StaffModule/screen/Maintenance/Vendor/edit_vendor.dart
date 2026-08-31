@@ -1037,6 +1037,7 @@ class _edit_vendorState extends State<edit_vendor> {
   String? initialEmail;
   String? initialPassword;
   String? initialTradeType;
+  bool? initialIs1099;
   String? selectedTradeType;
   final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   bool isloading = false;
@@ -1064,6 +1065,8 @@ class _edit_vendorState extends State<edit_vendor> {
       conpassWord.text =
           vendor.vendorPassword ?? ''; // Pre-fill confirm password field
       initialTradeType = vendor.trade;
+      initialIs1099 = vendor.is1099 ?? false;
+      is1099 = vendor.is1099 ?? false;
       // Only pre-select when the saved value maps to a dropdown option,
       // otherwise DropdownButton asserts ("exactly one item with value").
       if (vendor.trade != null && vendor.trade!.trim().isNotEmpty) {
@@ -1096,6 +1099,11 @@ class _edit_vendorState extends State<edit_vendor> {
   bool isLoading = false;
   bool formValid = false;
   bool tradeError = false;
+
+  /// Web parity: the 1099 reporting checkbox. Prefilled from the fetched
+  /// vendor in _fetchVendor so an edit never silently clears a flag that was
+  /// set on web (the update payload always includes this field).
+  bool is1099 = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -1405,6 +1413,31 @@ class _edit_vendorState extends State<edit_vendor> {
                               const SizedBox(
                                 height: 16,
                               ),
+                              // Web parity: the 1099 flag sits after Confirm Password,
+                              // as the last field on the form.
+                              InkWell(
+                                onTap: () => setState(() => is1099 = !is1099),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: Checkbox(
+                                        value: is1099,
+                                        onChanged: (v) => setState(() => is1099 = v ?? false),
+                                        activeColor: blueColor,
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Flexible(
+                                      child: Text('This vendor receives 1099 forms',
+                                          style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 18),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
@@ -1432,7 +1465,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                               phoneNumber.text != initialPhoneNumber ||
                                               email.text != initialEmail ||
                                               passWord.text != initialPassword ||
-                                              selectedTradeType != initialTradeType;
+                                              selectedTradeType != initialTradeType ||
+                                                  is1099 != (initialIs1099 ?? false);
 
                                           if (!hasChanges) { Navigator.of(context).pop(false); return; }
 
@@ -1448,6 +1482,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                               vendorEmail: email.text,
                                               vendorPassword: passWord.text,
                                               trade: selectedTradeType,
+                                              is1099: is1099,
                                             );
                                             final success = await vendorRepository.update_vendor(vendor, widget.vender_id!);
                                             if (!mounted) return;
@@ -1696,6 +1731,31 @@ class _edit_vendorState extends State<edit_vendor> {
                               ),
                             ),
                             const SizedBox(height: 35),
+                            // Web parity: the 1099 flag sits after Confirm Password,
+                            // as the last field on the form.
+                            InkWell(
+                              onTap: () => setState(() => is1099 = !is1099),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: is1099,
+                                      onChanged: (v) => setState(() => is1099 = v ?? false),
+                                      activeColor: blueColor,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  const Flexible(
+                                    child: Text('This vendor receives 1099 forms',
+                                        style: TextStyle(fontSize: 13, color: Colors.black87)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 18),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -1723,7 +1783,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                             phoneNumber.text != initialPhoneNumber ||
                                             email.text != initialEmail ||
                                             passWord.text != initialPassword ||
-                                            selectedTradeType != initialTradeType;
+                                            selectedTradeType != initialTradeType ||
+                                                is1099 != (initialIs1099 ?? false);
 
                                         if (!hasChanges) { Navigator.of(context).pop(false); return; }
 
@@ -1739,6 +1800,7 @@ class _edit_vendorState extends State<edit_vendor> {
                                             vendorEmail: email.text.trim(),
                                             vendorPassword: passWord.text.trim(),
                                             trade: selectedTradeType,
+                                            is1099: is1099,
                                           );
                                           final success = await vendorRepository
                                               .update_vendor(vendor, widget.vender_id!);
@@ -2997,7 +3059,13 @@ class CustomTextFieldState extends State<CustomTextField> {
     if (widget.controller != null) {
       widget.controller!.removeListener(_validateConfirmPassword);
     }
-    _textController.dispose();
+    // Only dispose the controller this widget CREATED. When the caller
+    // passes one in it belongs to them — disposing it here double-disposed
+    // it (the screen's own dispose() releases it too), which threw
+    // "A TextEditingController was used after being disposed" on teardown.
+    if (widget.controller == null) {
+      _textController.dispose();
+    }
     _focusNode.dispose();
     super.dispose();
   }

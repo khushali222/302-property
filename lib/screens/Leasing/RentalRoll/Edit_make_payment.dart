@@ -272,6 +272,15 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         checknumber.text = c_data!.check_number ?? "";
       reference.text = c_data!.reference ?? "";
       billingID = c_data.billing_id ?? "";
+      // Carry the payment's existing attachments into the form, as web does
+      // (AddPayment.jsx seeds payments_attachment on edit-load). Without this
+      // the list starts empty and is submitted as `uploaded_file: []`, which
+      // the server $sets over the stored value — an unrelated edit such as a
+      // memo change silently destroyed the receipt.
+      _uploadedFileNames = (c_data.uploadedFile ?? [])
+          .map((f) => f?.toString() ?? '')
+          .where((f) => f.isNotEmpty)
+          .toList();
       rows = c_data.entry?.map((entry) {
             String? chargeType = (entry.account == "Late Fee Income" ||
                     entry.account == "Pre-payments" ||
@@ -731,8 +740,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
         controllers = rows.map((row) {
           return TextEditingController(text: "".toString());
         }).toList();
-        totalAmount = rows.fold(
-            0.0, (sum, row) => sum + (row[amountController.text] ?? 0));
+        // 'amount' is the row's applied-amount key (web sums the same field).
+        // This previously indexed the map with the TEXT typed in the amount
+        // box — row[""] at load — which only worked because rows start at 0.0.
+        totalAmount =
+            rows.fold(0.0, (sum, row) => sum + (row['amount'] ?? 0));
         isLoading = false;
       });
     } catch (e) {
@@ -871,7 +883,17 @@ class _EditMakePaymentState extends State<EditMakePayment> {
 
       if (customerData != null) {
         setState(() {
-          cardDetails = customerData.billing;
+          // The gateway returns cards AND ACH accounts in one `billing` list;
+          // an ACH entry carries no card number. Leaving it in shifted the
+          // indexes behind this list, and selectedcardindex feeds the
+          // surcharge lookup below (binResult) — so an ACH row could be read
+          // as the selected card. Filtered on card number only, matching the
+          // Add Card screens; deliberately NOT on CREDIT/DEBIT, so prepaid
+          // and charge cards stay selectable here.
+          cardDetails = customerData.billing.where((b) {
+            final cn = (b.ccNumber ?? '').toString().trim();
+            return cn.isNotEmpty;
+          }).toList();
         });
       }
     } else if (response.statusCode == 404) {
@@ -1268,8 +1290,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                   DateTime? pickedDate = await showDatePicker(
                                     context: context,
                                     initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2101),
+                                    // Web parity (CRM-4270): manual methods back-date only,
+                                    // card/ACH forward-date only.
+                                    firstDate:
+                                        paymentFirstSelectableDate(_selectedPaymentMethod),
+                                    lastDate: paymentLastSelectableDate(_selectedPaymentMethod),
                                     locale: const Locale('en', 'US'),
                                     builder:
                                         (BuildContext context, Widget? child) {
@@ -1475,8 +1500,11 @@ class _EditMakePaymentState extends State<EditMakePayment> {
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate: DateTime.now(),
-                                                firstDate: DateTime.now(),
-                                                lastDate: DateTime(2101),
+                                                // Web parity (CRM-4270): manual methods back-date only,
+                                                // card/ACH forward-date only.
+                                                firstDate:
+                                                    paymentFirstSelectableDate(_selectedPaymentMethod),
+                                                lastDate: paymentLastSelectableDate(_selectedPaymentMethod),
                                                 locale:
                                                     const Locale('en', 'US'),
                                                 builder: (BuildContext context,

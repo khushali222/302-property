@@ -120,7 +120,11 @@ class Data {
     totalAmount = (json['total_amount'] as num?)?.toDouble(); // Parse as double
     isLeaseAdded = json['is_leaseAdded'];
     type = json['type'];
-    uploadedFile = json['uploaded_file'] ?? [];
+    // The server's canonical column is `payment_attachment` (Payment.js copies
+    // uploaded_file into it on save), and that is what web reads back when it
+    // opens a payment for editing. `uploaded_file` is only the request-side
+    // name, so read the canonical field first and fall back for older records.
+    uploadedFile = json['payment_attachment'] ?? json['uploaded_file'] ?? [];
     createdAt = json['createdAt'];
     surcharge = json['surcharge'] != null
         ? (double.tryParse(json['surcharge'].toString()) ?? 0.0)

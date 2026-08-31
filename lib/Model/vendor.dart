@@ -7,6 +7,10 @@ class Vendor {
   String? vendorPassword;
   String? trade;
 
+  /// Web parity: "This vendor receives 1099 forms" on Add/Edit Vendor.
+  /// Server schema defaults it to false, so a vendor created without it was
+  /// silently never flagged for 1099 tax reporting.
+  bool? is1099;
 
   Vendor({
     this.adminId,
@@ -17,6 +21,7 @@ class Vendor {
     this.vendorEmail,
     this.vendorPassword,
     this.trade,
+    this.is1099,
   });
 
   factory Vendor.fromJson(Map<String, dynamic> json) {
@@ -28,6 +33,7 @@ class Vendor {
       vendorEmail: json['vendor_email'],
       vendorPassword: json['vendor_password'],
       trade: json['trade'],
+      is1099: json['is_1099'] is bool ? json['is_1099'] : null,
     );
   }
 
@@ -39,6 +45,7 @@ class Vendor {
       'vendor_email': vendorEmail,
       'vendor_password': vendorPassword,
       'trade': trade,
+      'is_1099': is1099 ?? false,
     };
   }
 }
