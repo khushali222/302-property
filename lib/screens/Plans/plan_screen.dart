@@ -2116,7 +2116,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen>
                             } else if (searchvalue.isNotEmpty) {
                               data = snapshot.data!
                                   .where((workOrder) =>
-                                      workOrder.planName!
+                                      (workOrder.planName ?? '')
                                           .toLowerCase()
                                           .contains(
                                               searchvalue.toLowerCase()) ||
@@ -2605,7 +2605,7 @@ class _getPlanDetailScreenState extends State<getPlanDetailScreen>
                           } else if (searchvalue.isNotEmpty) {
                             data = snapshot.data!
                                 .where((workOrder) =>
-                                    workOrder.planName!
+                                    (workOrder.planName ?? '')
                                         .toLowerCase()
                                         .contains(searchvalue.toLowerCase()) ||
                                     (workOrder.isActive!

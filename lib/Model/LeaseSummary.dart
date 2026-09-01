@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:three_zero_two_property/Model/tenants.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class LeaseSummary {
   Data? data;
@@ -51,7 +52,11 @@ class Data {
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerPhoneNumber;
   List<RecurringEntry>? entry;
-  int? amount;
+  /// `num?` + asNumN: the API can return this as an int, a decimal or a
+  /// numeric string. A raw assignment to `int?` threw on anything but an
+  /// int, and because it throws inside fromJson it took the whole list
+  /// down, not just the one row.
+  num? amount;
   // Web parity (FinancialSummaryCard): the rent row label is driven by
   // rent_cycle ("Weekly Rent", "Monthly Rent"), and Due Date reads N/A
   // when rentDueDate is absent — common on At-will leases.
@@ -128,7 +133,7 @@ class Data {
       });
     }
 
-    amount = json['amount'];
+    amount = asNumN(json['amount']);
     rentCycle = json['rent_cycle'];
     rentDueDate = json['rentDueDate']?.toString();
     date = json['date'];
@@ -383,7 +388,10 @@ class RecurringEntry {
   RecurringEntry.fromJson(Map<String, dynamic> json) {
     entryId = json['entry_id'];
     account = json['account'];
-    amount = json['amount'].toDouble();
+    // asDoubleN, not `.toDouble()`: the raw call had no null guard, so a
+    // missing amount threw NoSuchMethodError — and a string amount threw
+    // too. Type stays double?, so every caller is unaffected.
+    amount = asDoubleN(json['amount']);
     date = json['date'];
     chargeType = json['charge_type'];
     memo = json['memo'];

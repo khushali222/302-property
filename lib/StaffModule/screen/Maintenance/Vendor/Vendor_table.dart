@@ -67,8 +67,8 @@ class _Vendor_tableState extends State<Vendor_table>
   void sortData(List<Vendor> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
-          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
+          ? (a.vendorName ?? '').toLowerCase().compareTo((b.vendorName ?? '').toLowerCase())
+          : (b.vendorName ?? '').toLowerCase().compareTo((a.vendorName ?? '').toLowerCase()));
     } else if (sorting2) {
       // Was previously safe only because vendorPhoneNumber could never be
       // null (a missing phone came through as the literal string "null").
@@ -79,8 +79,8 @@ class _Vendor_tableState extends State<Vendor_table>
           : (b.vendorPhoneNumber ?? '').compareTo(a.vendorPhoneNumber ?? ''));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
-          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
+          ? (a.vendorName ?? '').toLowerCase().compareTo((b.vendorName ?? '').toLowerCase())
+          : (b.vendorName ?? '').toLowerCase().compareTo((a.vendorName ?? '').toLowerCase()));
     }
   }
 
@@ -721,6 +721,10 @@ class _Vendor_tableState extends State<Vendor_table>
                             futurePropertyTypes =
                                 VendorRepository(baseUrl: '').getVendors();
                           });
+                          // The header count comes from its own request, so
+                          // refreshing only the list left the total stale
+                          // until the screen was rebuilt from scratch.
+                          fetchvendoradded();
                         }
                       },
                       child: Container(
@@ -967,13 +971,13 @@ class _Vendor_tableState extends State<Vendor_table>
                 if (searchvalue != "") {
                   data = snapshot.data!
                       .where((property) =>
-                          property.vendorName!
+                          (property.vendorName ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()) ||
                           (property.vendorPhoneNumber ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()) ||
-                          property.vendorEmail!
+                          (property.vendorEmail ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()))
                       .toList();

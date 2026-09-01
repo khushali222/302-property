@@ -816,13 +816,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table>
                 } else if (searchValue!.isNotEmpty) {
                   data = snapshot.data!
                       .where((rentals) =>
-                          rentals.rentalOwnername!
+                          (rentals.rentalOwnername ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()) ||
-                          rentals.rentalOwnerPhoneNumber!
+                          (rentals.rentalOwnerPhoneNumber ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()) ||
-                          rentals.rentalOwnerPrimaryEmail!
+                          (rentals.rentalOwnerPrimaryEmail ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()))
                       .toList();

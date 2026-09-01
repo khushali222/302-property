@@ -1171,10 +1171,10 @@ class _RentersInsuranceState extends State<RentersInsurance>
                       } else if (searchvalue.isNotEmpty) {
                         data = snapshot.data!
                             .where((item) =>
-                                item.rentalAddress!
+                                (item.rentalAddress ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue.toLowerCase()) ||
-                                item.tenantName!
+                                (item.tenantName ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue.toLowerCase()))
                             .toList();

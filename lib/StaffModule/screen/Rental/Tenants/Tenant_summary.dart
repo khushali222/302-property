@@ -3348,11 +3348,11 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
                                               } else if (searchvalueTenantLease!
                                                   .isNotEmpty) {
                                                 data = snapshot.data!
-                                                    .where((property) => property
-                                                        .startDate!
+                                                    .where((property) =>
+                                                        (property.startDate ?? '')
                                                         .toLowerCase()
                                                         .contains(
-                                                            searchvalueTenantLease!
+                                                            searchvalueTenantLease
                                                                 .toLowerCase()))
                                                     .toList();
                                               }

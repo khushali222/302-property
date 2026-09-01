@@ -479,7 +479,7 @@ class _PropertyTableState extends State<PropertyTable>
                               data = snapshot.data!;
                             } else if (searchvalue!.isNotEmpty) {
                               data = snapshot.data!
-                                  .where((property) => property.rentalAdress!
+                                  .where((property) => (property.rentalAdress ?? '')
                                       .toLowerCase()
                                       .contains(searchvalue!.toLowerCase()))
                                   .toList();

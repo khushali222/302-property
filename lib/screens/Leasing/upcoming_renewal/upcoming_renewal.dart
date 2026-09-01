@@ -739,7 +739,7 @@ class _UpcomingrenewalState extends State<Upcomingrenewal>
                             } else if (searchvalue.isNotEmpty) {
                               data = snapshot.data!
                                   .where((applicant) =>
-                                      applicant.rentalAddress!
+                                      (applicant.rentalAddress ?? '')
                                           .toLowerCase()
                                           .contains(
                                               searchvalue.toLowerCase()) ||
@@ -767,10 +767,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal>
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((property) =>
-                        property.propertyType!
+                        (property.propertyType ?? '')
                             .toLowerCase()
                             .contains(searchvalue!.toLowerCase()) ||
-                            property.propertysubType!
+                            (property.propertysubType ?? '')
                                 .toLowerCase()
                                 .contains(searchvalue!.toLowerCase()))
                             .toList();
@@ -1411,10 +1411,10 @@ class _UpcomingrenewalState extends State<Upcomingrenewal>
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.propertyType!
+                      (property.propertyType ?? '')
                           .toLowerCase()
                           .contains(searchvalue.toLowerCase()) ||
-                          property.propertysubType!
+                          (property.propertysubType ?? '')
                               .toLowerCase()
                               .contains(searchvalue.toLowerCase()))
                           .toList();

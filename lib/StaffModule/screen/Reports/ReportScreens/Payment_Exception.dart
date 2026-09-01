@@ -1911,10 +1911,10 @@ class _PaymentExceptionReportsState extends State<PaymentExceptionReports>
                   } else if (searchvalue.isNotEmpty) {
                     data = snapshot.data!
                         .where((item) =>
-                    item.rentalAddress!
+                    (item.rentalAddress ?? '')
                         .toLowerCase()
                         .contains(searchvalue.toLowerCase()) ||
-                        item.tenants!.any((tenant) => tenant.tenantName!
+                        item.tenants!.any((tenant) => (tenant.tenantName ?? '')
                             .toLowerCase()
                             .contains(searchvalue.toLowerCase())))
                         .toList();

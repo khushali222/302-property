@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/constant/constant.dart';
 String formatAmount(double? amount) {
   if (amount == null) return '';
 
@@ -528,7 +529,11 @@ class TenantDataa {
   String? comments;
   EmergencyContact? emergencyContact;
   bool? enableOverrideFee;
-  int? overrideFee;
+  /// `num?` + asNumN: the API can return this as an int, a decimal or a
+  /// numeric string. A raw assignment to `int?` threw on anything but an
+  /// int, and because it throws inside fromJson it took the whole list
+  /// down, not just the one row.
+  num? overrideFee;
   String? createdAt;
   String? updatedAt;
   bool? isDelete;
@@ -575,7 +580,7 @@ class TenantDataa {
         ? new EmergencyContact.fromJson(json['emergency_contact'])
         : null;
     enableOverrideFee = json['enable_override_fee'];
-    overrideFee = json['override_fee'];
+    overrideFee = asNumN(json['override_fee']);
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     isDelete = json['is_delete'];

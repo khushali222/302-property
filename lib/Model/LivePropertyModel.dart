@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/constant/constant.dart';
 class LivePropertyResponse {
   int? statusCode;
   String? message;
@@ -41,7 +42,11 @@ class LivePropertyData {
   String? relationshipManagerEmail;
   String? mortgageNumber;
   String? mortgageNo;
-  int? loanAmount;
+  /// `num?` + asNumN: the API can return this as an int, a decimal or a
+  /// numeric string. A raw assignment to `int?` threw on anything but an
+  /// int, and because it throws inside fromJson it took the whole list
+  /// down, not just the one row.
+  num? loanAmount;
   double? interestRate;
   String? startDate;
   String? endDate;
@@ -156,7 +161,7 @@ class LivePropertyData {
     relationshipManagerEmail = json['relationship_manager_email'];
     mortgageNumber = json['mortgage_number'];
     mortgageNo = json['mortgage_no'];
-    loanAmount = json['loan_amount'];
+    loanAmount = asNumN(json['loan_amount']);
 
     // Properly cast to double if type is int for interestRate and other double fields
     interestRate = json['interest_rate'] != null

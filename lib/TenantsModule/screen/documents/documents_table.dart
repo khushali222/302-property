@@ -1722,10 +1722,10 @@ class _DocumentsInsuranceTableState extends State<DocumentsInsuranceTable>
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.propertyType!
+                      (property.propertyType ?? '')
                           .toLowerCase()
                           .contains(searchvalue.toLowerCase()) ||
-                          property.propertysubType!
+                          (property.propertysubType ?? '')
                               .toLowerCase()
                               .contains(searchvalue.toLowerCase()))
                           .toList();

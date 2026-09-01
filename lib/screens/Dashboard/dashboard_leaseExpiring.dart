@@ -878,7 +878,7 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring>
                     data = snapshot.data!;
                   } else if (searchvalue!.isNotEmpty) {
                     data = snapshot.data!
-                        .where((property) => property.rentalAddress!
+                        .where((property) => (property.rentalAddress ?? '')
                             .toLowerCase()
                             .contains(searchvalue!.toLowerCase()))
                         .toList();

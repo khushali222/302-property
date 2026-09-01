@@ -33,6 +33,13 @@ class _edit_vendorState extends State<edit_vendor> {
   String? initialPassword;
   String? initialTradeType;
   bool? initialIs1099;
+
+  /// Web parity: "Tax ID (EIN/SSN)". The server returns this MASKED, so the
+  /// mask is shown as a hint and the controller starts empty — anything typed
+  /// is a genuine replacement. Saving an untouched form must not write the
+  /// mask back over the real number.
+  final TextEditingController taxId = TextEditingController();
+  String? maskedTaxId;
   String? selectedTradeType;
   final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   Future<void> _fetchVendor() async {
@@ -49,6 +56,9 @@ class _edit_vendorState extends State<edit_vendor> {
       initialTradeType = vendor.trade;
       initialIs1099 = vendor.is1099 ?? false;
       is1099 = vendor.is1099 ?? false;
+      // Requested separately so a 403 (non-admin) leaves the rest of the form
+      // intact — exactly how web loads it.
+      maskedTaxId = await vendorRepository.getVendorTaxId(widget.vender_id!);
       // Null-safe assignment: a vendor with no password (setup-email flow)
       // previously threw here on `!`, aborting before Trade Type was set and
       // showing "Failed to fetch vendor data". Match web (null-safe pre-fill).
@@ -62,7 +72,7 @@ class _edit_vendorState extends State<edit_vendor> {
       // Only pre-select when the saved value maps to a dropdown option,
       // otherwise DropdownButton asserts ("exactly one item with value").
       if (vendor.trade != null && vendor.trade!.trim().isNotEmpty) {
-        final String t = vendor.trade!.toLowerCase().trim();
+        final String t = (vendor.trade ?? '').toLowerCase().trim();
         if (_tradeTypes.any((type) => type.toLowerCase() == t)) {
           selectedTradeType = t;
         }
@@ -409,7 +419,10 @@ class _edit_vendorState extends State<edit_vendor> {
                               // Web parity: the 1099 flag sits after Confirm Password,
                               // as the last field on the form.
                               InkWell(
-                                onTap: () => setState(() => is1099 = !is1099),
+                                onTap: () => setState(() {
+                                  is1099 = !is1099;
+                                  if (!is1099) taxId.clear();
+                                }),
                                 child: Row(
                                   children: [
                                     SizedBox(
@@ -417,7 +430,10 @@ class _edit_vendorState extends State<edit_vendor> {
                                       width: 24,
                                       child: Checkbox(
                                         value: is1099,
-                                        onChanged: (v) => setState(() => is1099 = v ?? false),
+                                        onChanged: (v) => setState(() {
+                                          is1099 = v ?? false;
+                                          if (!is1099) taxId.clear();
+                                        }),
                                         activeColor: blueColor,
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       ),
@@ -430,6 +446,29 @@ class _edit_vendorState extends State<edit_vendor> {
                                   ],
                                 ),
                               ),
+                              // Web parity: Tax ID shows only while the 1099 box is ticked.
+                              // The stored value arrives MASKED, so it is shown as the hint and
+                              // the box starts empty — typing replaces it, leaving it alone
+                              // keeps the real number (the model omits a blank tax_id).
+                              if (is1099) ...[
+                                const SizedBox(height: 14),
+                                Text('Tax ID (EIN/SSN)',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
+                                const SizedBox(height: 10),
+                                CustomTextField(
+                                  keyboardType: TextInputType.text,
+                                  hintText: maskedTaxId != null
+                                      ? 'Current: $maskedTaxId — enter a new value to replace'
+                                      : 'Enter Tax ID (e.g., XX-XXXXXXX)',
+                                  controller: taxId,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
+                                  ],
+                                ),
+                              ],
                               const SizedBox(height: 18),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -459,7 +498,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                               email.text != initialEmail ||
                                               passWord.text != initialPassword ||
                                               selectedTradeType != initialTradeType ||
-                                              is1099 != (initialIs1099 ?? false);
+                                              is1099 != (initialIs1099 ?? false) ||
+                                              (is1099 && taxId.text.trim().isNotEmpty);
 
                                           if (!hasChanges) { Navigator.of(context).pop(false); return; }
 
@@ -476,16 +516,21 @@ class _edit_vendorState extends State<edit_vendor> {
                                               vendorPassword: passWord.text,
                                               trade: selectedTradeType,
                                               is1099: is1099,
+                                              taxId: is1099 ? taxId.text.trim() : null,
                                             );
-                                            final success = await vendorRepository.update_vendor(vendor, widget.vender_id!);
+                                            // Web parity: surface the server's own reason
+                                            // (duplicate phone/email) instead of a generic failure.
+                                            final saveError = await vendorRepository.update_vendor(vendor, widget.vender_id!);
                                             if (!mounted) return;
-                                            if (success) {
+                                            if (saveError == null) {
                                               Fluttertoast.showToast(msg: "Vendor Edited successfully");
                                               Navigator.of(context).pop(true);
                                             } else {
-                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(saveError)));
                                             }
                                           } catch (e) {
+                                            // Suppressed in release by the zone-level print filter in main().
+                                            print('[vendor save] exception: $e');
                                             if (mounted) {
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
                                             }
@@ -539,14 +584,17 @@ class _edit_vendorState extends State<edit_vendor> {
                     //   title: 'Edit Vendor',
                     // ),
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      // Align the header's side inset with the form card below
+                      // (both 12) and drop the bottom inset so the two sit as
+                      // one block instead of floating apart.
+                      padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 50.0,
                           padding: EdgeInsets.only(top: 9, left: 10),
                           width: MediaQuery.of(context).size.width * .99,
-                          margin: const EdgeInsets.only(bottom: 6.0),
+                          margin: EdgeInsets.zero,
                           //Same as `blurRadius` i guess
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
@@ -925,7 +973,10 @@ class _edit_vendorState extends State<edit_vendor> {
                             // Web parity: the 1099 flag sits after Confirm Password,
                             // as the last field on the form.
                             InkWell(
-                              onTap: () => setState(() => is1099 = !is1099),
+                              onTap: () => setState(() {
+                                  is1099 = !is1099;
+                                  if (!is1099) taxId.clear();
+                                }),
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -933,7 +984,10 @@ class _edit_vendorState extends State<edit_vendor> {
                                     width: 24,
                                     child: Checkbox(
                                       value: is1099,
-                                      onChanged: (v) => setState(() => is1099 = v ?? false),
+                                      onChanged: (v) => setState(() {
+                                          is1099 = v ?? false;
+                                          if (!is1099) taxId.clear();
+                                        }),
                                       activeColor: blueColor,
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     ),
@@ -946,6 +1000,29 @@ class _edit_vendorState extends State<edit_vendor> {
                                 ],
                               ),
                             ),
+                            // Web parity: Tax ID shows only while the 1099 box is ticked.
+                            // The stored value arrives MASKED, so it is shown as the hint and
+                            // the box starts empty — typing replaces it, leaving it alone
+                            // keeps the real number (the model omits a blank tax_id).
+                            if (is1099) ...[
+                              const SizedBox(height: 14),
+                              Text('Tax ID (EIN/SSN)',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
+                              const SizedBox(height: 10),
+                              CustomTextField(
+                                keyboardType: TextInputType.text,
+                                hintText: maskedTaxId != null
+                                    ? 'Current: $maskedTaxId — enter a new value to replace'
+                                    : 'Enter Tax ID (e.g., XX-XXXXXXX)',
+                                controller: taxId,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
+                                ],
+                              ),
+                            ],
                             const SizedBox(height: 18),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -976,7 +1053,8 @@ class _edit_vendorState extends State<edit_vendor> {
                                             email.text != initialEmail ||
                                             passWord.text != initialPassword ||
                                             selectedTradeType != initialTradeType ||
-                                              is1099 != (initialIs1099 ?? false);
+                                              is1099 != (initialIs1099 ?? false) ||
+                                              (is1099 && taxId.text.trim().isNotEmpty);
 
                                         if (!hasChanges) {
                                           Navigator.of(context).pop(false);
@@ -997,21 +1075,26 @@ class _edit_vendorState extends State<edit_vendor> {
                                             vendorPassword: passWord.text.trim(),
                                             trade: selectedTradeType,
                                             is1099: is1099,
+                                            taxId: is1099 ? taxId.text.trim() : null,
                                           );
 
-                                          final success = await vendorRepository
+                                          // Web parity: surface the server's own reason
+                                          // (duplicate phone/email) instead of a generic failure.
+                                          final saveError = await vendorRepository
                                               .update_vendor(
                                                   vendor, widget.vender_id!);
                                           if (!mounted) return;
-                                          if (success) {
+                                          if (saveError == null) {
                                             Fluttertoast.showToast(
                                                 msg:
                                                     "Vendor Edited successfully");
                                             Navigator.of(context).pop(true);
                                           } else {
-                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(saveError)));
                                           }
                                         } catch (e) {
+                                          // Suppressed in release by the zone-level print filter in main().
+                                          print('[vendor save] exception: $e');
                                           if (mounted) {
                                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to edit vendor')));
                                           }
@@ -1085,19 +1168,19 @@ class _edit_vendorState extends State<edit_vendor> {
       vendorPassword: passWord.text,
     );
 
-    final success =
+    final saveError =
         await vendorRepository.update_vendor(vendor, widget.vender_id!);
-    if (success) {
+    if (saveError == null) {
       //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Vendor added successfully')));
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Failed to add vendor')));
+          .showSnackBar(SnackBar(content: Text(saveError)));
     }
     setState(() {
       isLoading = false;
     });
 
-    if (success) {
+    if (saveError == null) {
       Fluttertoast.showToast(msg: "Vendor Edited successfully");
       Navigator.of(context).pop(true);
     } else {

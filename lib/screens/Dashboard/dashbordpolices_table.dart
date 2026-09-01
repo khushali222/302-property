@@ -593,7 +593,7 @@ class _Dashboard_Policy_TableState extends State<Dashboard_Policy_Table>
                       data = snapshot.data!;
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
-                          .where((property) => property.insuranceCompany!
+                          .where((property) => (property.insuranceCompany ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()))
                           .toList();

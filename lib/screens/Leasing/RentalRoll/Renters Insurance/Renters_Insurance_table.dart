@@ -645,7 +645,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table>
                           data = snapshot.data!;
                         } else if (searchvalue.isNotEmpty) {
                           data = snapshot.data!
-                              .where((item) => item.insuranceCompany!
+                              .where((item) => (item.insuranceCompany ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
                               .toList();
@@ -1307,7 +1307,7 @@ class _Renters_Insurance_tableState extends State<Renters_Insurance_table>
                           data = snapshot.data!;
                         } else if (searchvalue.isNotEmpty) {
                           data = snapshot.data!
-                              .where((item) => item.insuranceCompany!
+                              .where((item) => (item.insuranceCompany ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
                               .toList();

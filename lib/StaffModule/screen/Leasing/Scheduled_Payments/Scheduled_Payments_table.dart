@@ -930,10 +930,10 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table>
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((property) =>
-                        property.propertyType!
+                        (property.propertyType ?? '')
                             .toLowerCase()
                             .contains(searchvalue!.toLowerCase()) ||
-                            property.propertysubType!
+                            (property.propertysubType ?? '')
                                 .toLowerCase()
                                 .contains(searchvalue!.toLowerCase()))
                             .toList();
@@ -1460,10 +1460,10 @@ class _Scheduled_Payments_tableState extends State<Scheduled_Payments_table>
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
                           .where((property) =>
-                      property.propertyType!
+                      (property.propertyType ?? '')
                           .toLowerCase()
                           .contains(searchvalue.toLowerCase()) ||
-                          property.propertysubType!
+                          (property.propertysubType ?? '')
                               .toLowerCase()
                               .contains(searchvalue.toLowerCase()))
                           .toList();

@@ -51,6 +51,7 @@ class _Add_vendorState extends State<Add_vendor> {
     alterEmail.dispose();
     passWord.dispose();
     conpassWord.dispose();
+    taxId.dispose();
     super.dispose();
   }
   bool isLoading = false;
@@ -60,7 +61,14 @@ class _Add_vendorState extends State<Add_vendor> {
   /// Web parity: the 1099 reporting checkbox on Add Vendor. The server schema
   /// defaults is_1099 to false, so a vendor added from mobile was never
   /// flagged for 1099 tax reporting. Web defaults the box to CHECKED.
-  bool is1099 = true;
+  // Web parity (AddVendor.jsx `is_1099: vendorData?.is_1099 || false`):
+  // a brand-new vendor starts UNTICKED, so 1099 reporting is only ever
+  // set deliberately.
+  bool is1099 = false;
+
+  /// Web parity: "Tax ID (EIN/SSN)", revealed only while the 1099 box is
+  /// ticked. Admin-only — the server 403s this field for any other role.
+  final TextEditingController taxId = TextEditingController();
   String? selectedTradeType;
   final List<String> _tradeTypes = ['General', 'Drywall', 'Electrical', 'HVAC', 'Landscaping', 'Painting', 'Plumbing', 'Roofing'];
   final VendorRepository vendorRepository =
@@ -369,7 +377,13 @@ class _Add_vendorState extends State<Add_vendor> {
                               // Web parity: the 1099 flag sits after Confirm Password,
                               // as the last field on the form.
                               InkWell(
-                                onTap: () => setState(() => is1099 = !is1099),
+                                onTap: () => setState(() {
+                                  is1099 = !is1099;
+                                  // Web clears the value when the box
+                                  // is unticked; keeps a stale tax id
+                                  // from being submitted.
+                                  if (!is1099) taxId.clear();
+                                }),
                                 child: Row(
                                   children: [
                                     SizedBox(
@@ -377,7 +391,10 @@ class _Add_vendorState extends State<Add_vendor> {
                                       width: 24,
                                       child: Checkbox(
                                         value: is1099,
-                                        onChanged: (v) => setState(() => is1099 = v ?? false),
+                                        onChanged: (v) => setState(() {
+                                          is1099 = v ?? false;
+                                          if (!is1099) taxId.clear();
+                                        }),
                                         activeColor: blueColor,
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       ),
@@ -390,6 +407,29 @@ class _Add_vendorState extends State<Add_vendor> {
                                   ],
                                 ),
                               ),
+                              // Web parity: the Tax ID appears only while the
+                              // 1099 box is ticked, and clearing the box drops
+                              // any value already typed.
+                              if (is1099) ...[
+                                const SizedBox(height: 14),
+                                Text('Tax ID (EIN/SSN)',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: blueColor)),
+                                const SizedBox(height: 10),
+                                CustomTextField(
+                                  keyboardType: TextInputType.text,
+                                  hintText: 'Enter Tax ID (e.g., XX-XXXXXXX)',
+                                  controller: taxId,
+                                  // Digits and hyphens only, matching web's
+                                  // replace(/[^0-9-]/g, "") on this field.
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9-]')),
+                                  ],
+                                ),
+                              ],
                               const SizedBox(height: 18),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -459,14 +499,17 @@ class _Add_vendorState extends State<Add_vendor> {
                     //   title: 'Add Vendor',
                     // ),
                     Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      // Align the header's side inset with the form card below
+                      // (both 12) and drop the bottom inset so the two sit as
+                      // one block instead of floating apart.
+                      padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(5.0),
                         child: Container(
                           height: 50.0,
                           padding: EdgeInsets.only(top: 9, left: 10),
                           width: MediaQuery.of(context).size.width * .99,
-                          margin: const EdgeInsets.only(bottom: 6.0),
+                          margin: EdgeInsets.zero,
                           //Same as `blurRadius` i guess
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
@@ -845,7 +888,13 @@ class _Add_vendorState extends State<Add_vendor> {
                             // Web parity: the 1099 flag sits after Confirm Password,
                             // as the last field on the form.
                             InkWell(
-                              onTap: () => setState(() => is1099 = !is1099),
+                              onTap: () => setState(() {
+                                  is1099 = !is1099;
+                                  // Web clears the value when the box
+                                  // is unticked; keeps a stale tax id
+                                  // from being submitted.
+                                  if (!is1099) taxId.clear();
+                                }),
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -853,7 +902,10 @@ class _Add_vendorState extends State<Add_vendor> {
                                     width: 24,
                                     child: Checkbox(
                                       value: is1099,
-                                      onChanged: (v) => setState(() => is1099 = v ?? false),
+                                      onChanged: (v) => setState(() {
+                                          is1099 = v ?? false;
+                                          if (!is1099) taxId.clear();
+                                        }),
                                       activeColor: blueColor,
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     ),
@@ -866,6 +918,29 @@ class _Add_vendorState extends State<Add_vendor> {
                                 ],
                               ),
                             ),
+                            // Web parity: the Tax ID appears only while the
+                            // 1099 box is ticked, and clearing the box drops
+                            // any value already typed.
+                            if (is1099) ...[
+                              const SizedBox(height: 14),
+                              Text('Tax ID (EIN/SSN)',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: blueColor)),
+                              const SizedBox(height: 10),
+                              CustomTextField(
+                                keyboardType: TextInputType.text,
+                                hintText: 'Enter Tax ID (e.g., XX-XXXXXXX)',
+                                controller: taxId,
+                                // Digits and hyphens only, matching web's
+                                // replace(/[^0-9-]/g, "") on this field.
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9-]')),
+                                ],
+                              ),
+                            ],
                             const SizedBox(height: 18),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -946,18 +1021,25 @@ class _Add_vendorState extends State<Add_vendor> {
         vendorPassword: passWord.text.trim(),
         trade: selectedTradeType,
         is1099: is1099,
+        // Only meaningful when the 1099 box is ticked; the model drops the
+        // key entirely when the value is blank.
+        taxId: is1099 ? taxId.text.trim() : null,
       );
 
-      final success = await vendorRepository.addVendor(vendor);
+      // Web parity: show the server's own reason (duplicate phone/email)
+      // rather than a generic failure.
+      final saveError = await vendorRepository.addVendor(vendor);
       if (!mounted) return;
-      if (success) {
+      if (saveError == null) {
         Fluttertoast.showToast(msg: "Vendor added successfully");
         Navigator.of(context).pop(true);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to add vendor')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(saveError)));
       }
     } catch (e) {
+      // Suppressed in release by the zone-level print filter in main().
+      print('[vendor save] exception: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Failed to add vendor')));

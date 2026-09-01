@@ -5580,7 +5580,7 @@ class _TabBarExampleState extends State<TabBarExample>
                                           data = snapshot.data!;
                                         } else if (searchValue!.isNotEmpty) {
                                           data = snapshot.data!
-                                              .where((staff) => staff.account!
+                                              .where((staff) => (staff.account ?? '')
                                                   .toLowerCase()
                                                   .contains(searchValue!
                                                       .toLowerCase()))
@@ -6080,11 +6080,11 @@ class _TabBarExampleState extends State<TabBarExample>
                                       } else if (searchValue.isNotEmpty) {
                                         filteredData = snapshot.data!
                                             .where((staff) =>
-                                                staff.account!
+                                                (staff.account ?? '')
                                                     .toLowerCase()
                                                     .contains(searchValue
                                                         .toLowerCase()) ||
-                                                staff.accountType!
+                                                (staff.accountType ?? '')
                                                     .toLowerCase()
                                                     .contains(searchValue
                                                         .toLowerCase()))
@@ -9162,8 +9162,8 @@ class _TabBarExampleState extends State<TabBarExample>
   void vendorSortData(List<Vendor> data) {
     if (vendorSorting1) {
       data.sort((a, b) => vendorAscending1
-          ? a.vendorName!.toLowerCase().compareTo(b.vendorName!.toLowerCase())
-          : b.vendorName!.toLowerCase().compareTo(a.vendorName!.toLowerCase()));
+          ? (a.vendorName ?? '').toLowerCase().compareTo((b.vendorName ?? '').toLowerCase())
+          : (b.vendorName ?? '').toLowerCase().compareTo((a.vendorName ?? '').toLowerCase()));
     } else if (vendorSorting2) {
       // Was previously safe only because vendorPhoneNumber could never be
       // null (a missing phone came through as the literal string "null").

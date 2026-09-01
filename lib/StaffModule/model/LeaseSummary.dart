@@ -1,4 +1,5 @@
 import 'package:three_zero_two_property/Model/tenants.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class LeaseSummary {
   Data? data;
@@ -45,7 +46,11 @@ class Data {
   String? rentalOwnerCompanyName;
   String? rentalOwnerPrimaryEmail;
   String? rentalOwnerPhoneNumber;
-  int? amount;
+  /// `num?` + asNumN: the API can return this as an int, a decimal or a
+  /// numeric string. A raw assignment to `int?` threw on anything but an
+  /// int, and because it throws inside fromJson it took the whole list
+  /// down, not just the one row.
+  num? amount;
   // Web parity (FinancialSummaryCard): the rent row label is driven by
   // rent_cycle ("Weekly Rent", "Monthly Rent"), and Due Date reads N/A
   // when rentDueDate is absent — common on At-will leases.
@@ -108,7 +113,7 @@ class Data {
     rentalOwnerCompanyName = json['rentalOwner_companyName'];
     rentalOwnerPrimaryEmail = json['rentalOwner_primaryEmail'];
     rentalOwnerPhoneNumber = json['rentalOwner_phoneNumber'];
-    amount = json['amount'];
+    amount = asNumN(json['amount']);
     rentCycle = json['rent_cycle'];
     rentDueDate = json['rentDueDate']?.toString();
     date = json['date'];

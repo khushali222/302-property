@@ -1220,7 +1220,7 @@ class _EditTenantsState extends State<EditTenants> {
 //                       if (widget.label == null)
 //                         _errorMessage = 'Please ${widget.hintText.toLowerCase()}';
 //                       else
-//                         _errorMessage = 'Please ${widget.label!.toLowerCase()}';
+//                         _errorMessage = 'Please ${(widget.label ?? '').toLowerCase()}';
 //                     });
 //                     return '';
 //                   } else if (widget.phone != null) {
@@ -1624,7 +1624,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                       if (widget.label == null)
                         _errorMessage = 'Please ${widget.hintText.toLowerCase()}';
                       else
-                        _errorMessage = 'Please ${widget.label!.toLowerCase()}';
+                        _errorMessage = 'Please ${(widget.label ?? '').toLowerCase()}';
                     });
                     return '';
                   } else if (widget.phone != null) {

@@ -91,20 +91,20 @@ class _StaffTableState extends State<StaffTable>
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
-          ? a.staffmemberName!
+          ? (a.staffmemberName ?? '')
               .toLowerCase()
-              .compareTo(b.staffmemberName!.toLowerCase())
-          : b.staffmemberName!
+              .compareTo((b.staffmemberName ?? '').toLowerCase())
+          : (b.staffmemberName ?? '')
               .toLowerCase()
-              .compareTo(a.staffmemberName!.toLowerCase()));
+              .compareTo((a.staffmemberName ?? '').toLowerCase()));
     } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
-          ? a.staffmemberDesignation!
+          ? (a.staffmemberDesignation ?? '')
               .toLowerCase()
-              .compareTo(b.staffmemberDesignation!.toLowerCase())
-          : b.staffmemberDesignation!
+              .compareTo((b.staffmemberDesignation ?? '').toLowerCase())
+          : (b.staffmemberDesignation ?? '')
               .toLowerCase()
-              .compareTo(a.staffmemberDesignation!.toLowerCase()));
+              .compareTo((a.staffmemberDesignation ?? '').toLowerCase()));
     } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
@@ -965,7 +965,7 @@ class _StaffTableState extends State<StaffTable>
                           } else if (searchValue!.isNotEmpty) {
                             data = snapshot.data!
                                 .where((staff) =>
-                                    staff.staffmemberName!
+                                    (staff.staffmemberName ?? '')
                                         .toLowerCase()
                                         .contains(searchValue!.toLowerCase()) ||
                                     staff.staffmemberDesignation

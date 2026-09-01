@@ -495,7 +495,7 @@ class _FileViewerState extends State<FileViewer> {
     if (widget.mimeType == null) return null;
 
     // Extract extension from mime type
-    final mimeType = widget.mimeType!.toLowerCase();
+    final mimeType = (widget.mimeType ?? '').toLowerCase();
     if (mimeType.contains('/')) {
       final parts = mimeType.split('/');
       if (parts.length == 2) {
@@ -530,7 +530,7 @@ class _FileViewerState extends State<FileViewer> {
 
     // Check image mime types
     if (widget.mimeType != null) {
-      final mimeType = widget.mimeType!.toLowerCase();
+      final mimeType = (widget.mimeType ?? '').toLowerCase();
       if (mimeType.startsWith('image/')) {
         return true;
       }
@@ -621,7 +621,7 @@ class _FileViewerState extends State<FileViewer> {
 
     // Check PDF mime type
     if (widget.mimeType != null) {
-      final mimeType = widget.mimeType!.toLowerCase();
+      final mimeType = (widget.mimeType ?? '').toLowerCase();
       if (mimeType == 'application/pdf') {
         return true;
       }

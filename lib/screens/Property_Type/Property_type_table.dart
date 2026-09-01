@@ -63,20 +63,20 @@ class _PropertyTableState extends State<PropertyTable>
     // Apply user-selected sorting only if explicitly chosen
     if (sorting1 && !sorting2 && !sorting3) {
       data.sort((a, b) => ascending1
-          ? a.propertyType!
+          ? (a.propertyType ?? '')
               .toLowerCase()
-              .compareTo(b.propertyType!.toLowerCase())
-          : b.propertyType!
+              .compareTo((b.propertyType ?? '').toLowerCase())
+          : (b.propertyType ?? '')
               .toLowerCase()
-              .compareTo(a.propertyType!.toLowerCase()));
+              .compareTo((a.propertyType ?? '').toLowerCase()));
     } else if (sorting2 && !sorting1 && !sorting3) {
       data.sort((a, b) => ascending2
-          ? a.propertysubType!
+          ? (a.propertysubType ?? '')
               .toLowerCase()
-              .compareTo(b.propertysubType!.toLowerCase())
-          : b.propertysubType!
+              .compareTo((b.propertysubType ?? '').toLowerCase())
+          : (b.propertysubType ?? '')
               .toLowerCase()
-              .compareTo(a.propertysubType!.toLowerCase()));
+              .compareTo((a.propertysubType ?? '').toLowerCase()));
     } else if (sorting3 && !sorting1 && !sorting2) {
       data.sort((a, b) => ascending3
           ? a.createdAt!.compareTo(b.createdAt!)
@@ -1028,7 +1028,7 @@ class _PropertyTableState extends State<PropertyTable>
                 if (searchvalue!.isNotEmpty) {
                   data = data
                       .where((property) =>
-                          property.propertyType!
+                          (property.propertyType ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()) ||
                           property.propertysubType

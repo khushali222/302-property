@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class TenantResponse {
   int? statusCode;
@@ -325,7 +326,11 @@ class TenantLeaseData {
   String? rentalownerId;
   String? unitId;
   String? rentalUnit;
-  int? rentAmount;
+  /// `num?` + asNumN: the API can return this as an int, a decimal or a
+  /// numeric string. A raw assignment to `int?` threw on anything but an
+  /// int, and because it throws inside fromJson it took the whole list
+  /// down, not just the one row.
+  num? rentAmount;
 
   TenantLeaseData(
       {this.leaseId,
@@ -349,7 +354,7 @@ class TenantLeaseData {
     rentalownerId = json['rentalowner_id'];
     unitId = json['unit_id'];
     rentalUnit = json['rental_unit'];
-    rentAmount = json['rent_amount'];
+    rentAmount = asNumN(json['rent_amount']);
   }
 
   Map<String, dynamic> toJson() {

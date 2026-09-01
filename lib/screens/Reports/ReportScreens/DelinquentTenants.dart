@@ -1029,15 +1029,25 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
                       } else if (selectedValue == "All") {
                         data = snapshot.data!;
                       } else if (searchvalue.isNotEmpty) {
-                        data = snapshot.data!
-                            .where((item) =>
-                                item.rentalAddress!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase()) ||
-                                item.tenants!.any((tenant) => tenant.tenantName!
-                                    .toLowerCase()
-                                    .contains(searchvalue.toLowerCase())))
-                            .toList();
+                        // Every field here is nullable: rental_address is a
+                        // derived lease -> unit -> rental value, `tenants` is
+                        // left null by the model when the key is absent, and
+                        // tenant_name can be missing. Force-unwrapping them
+                        // threw inside .where() during build, which took the
+                        // whole report down instead of skipping one row.
+                        final String query = searchvalue.toLowerCase();
+                        data = snapshot.data!.where((item) {
+                          final bool matchesAddress =
+                              (item.rentalAddress ?? '')
+                                  .toLowerCase()
+                                  .contains(query);
+                          final bool matchesTenant =
+                              (item.tenants ?? const []).any((tenant) =>
+                                  (tenant.tenantName ?? '')
+                                      .toLowerCase()
+                                      .contains(query));
+                          return matchesAddress || matchesTenant;
+                        }).toList();
                       } else {
                         data = snapshot.data!
                             .where(

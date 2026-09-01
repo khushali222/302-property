@@ -968,7 +968,7 @@ class _InfrastructurePartState extends State<InfrastructurePart>
                             searchValue.isNotEmpty &&
                             searchValue != "All") {
                           data = _currentFilteredData
-                              .where((rentals) => rentals.applianceName!
+                              .where((rentals) => (rentals.applianceName ?? '')
                               .toLowerCase()
                               .contains(searchValue.toLowerCase()))
                               .toList();
@@ -1478,10 +1478,10 @@ class _InfrastructurePartState extends State<InfrastructurePart>
                       } else if (searchValue.isNotEmpty) {
                         filteredData = _currentFilteredData
                             .where((staff) =>
-                        staff.applianceName!
+                        (staff.applianceName ?? '')
                             .toLowerCase()
                             .contains(searchValue.toLowerCase()) ||
-                            staff.applianceDescription!
+                            (staff.applianceDescription ?? '')
                                 .toLowerCase()
                                 .contains(searchValue.toLowerCase()))
                             .toList();

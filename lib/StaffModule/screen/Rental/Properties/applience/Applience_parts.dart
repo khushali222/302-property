@@ -1731,7 +1731,7 @@ class _AppliancesPartState extends State<AppliancesPart>
                         data = snapshot.data!;
                       } else if (searchValue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((rentals) => rentals.applianceName!
+                            .where((rentals) => (rentals.applianceName ?? '')
                                 .toLowerCase()
                                 .contains(searchValue!.toLowerCase()))
                             .toList();
@@ -2312,10 +2312,10 @@ class _AppliancesPartState extends State<AppliancesPart>
                       } else if (searchValue.isNotEmpty) {
                         filteredData = snapshot.data!
                             .where((staff) =>
-                                staff.applianceName!
+                                (staff.applianceName ?? '')
                                     .toLowerCase()
                                     .contains(searchValue.toLowerCase()) ||
-                                staff.applianceDescription!
+                                (staff.applianceDescription ?? '')
                                     .toLowerCase()
                                     .contains(searchValue.toLowerCase()))
                             .toList();

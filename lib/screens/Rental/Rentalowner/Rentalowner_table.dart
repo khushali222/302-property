@@ -79,28 +79,28 @@ class _Rentalowner_tableState extends State<Rentalowner_table>
   void sortData(List<RentalOwnerData> data) {
     if (sorting1) {
       data.sort((a, b) => ascending1
-          ? a.rentalOwnername!
+          ? (a.rentalOwnername ?? '')
               .toLowerCase()
-              .compareTo(b.rentalOwnername!.toLowerCase())
-          : b.rentalOwnername!
+              .compareTo((b.rentalOwnername ?? '').toLowerCase())
+          : (b.rentalOwnername ?? '')
               .toLowerCase()
-              .compareTo(a.rentalOwnername!.toLowerCase()));
+              .compareTo((a.rentalOwnername ?? '').toLowerCase()));
     } else if (sorting2) {
       data.sort((a, b) => ascending2
-          ? a.rentalOwnerPhoneNumber!
+          ? (a.rentalOwnerPhoneNumber ?? '')
               .toLowerCase()
-              .compareTo(b.rentalOwnerPhoneNumber!.toLowerCase())
-          : b.rentalOwnerPhoneNumber!
+              .compareTo((b.rentalOwnerPhoneNumber ?? '').toLowerCase())
+          : (b.rentalOwnerPhoneNumber ?? '')
               .toLowerCase()
-              .compareTo(a.rentalOwnerPhoneNumber!.toLowerCase()));
+              .compareTo((a.rentalOwnerPhoneNumber ?? '').toLowerCase()));
     } else if (sorting3) {
       data.sort((a, b) => ascending3
-          ? a.rentalOwnerPrimaryEmail!
+          ? (a.rentalOwnerPrimaryEmail ?? '')
               .toLowerCase()
-              .compareTo(b.rentalOwnerPrimaryEmail!.toLowerCase())
-          : b.rentalOwnerPrimaryEmail!
+              .compareTo((b.rentalOwnerPrimaryEmail ?? '').toLowerCase())
+          : (b.rentalOwnerPrimaryEmail ?? '')
               .toLowerCase()
-              .compareTo(a.rentalOwnerPrimaryEmail!.toLowerCase()));
+              .compareTo((a.rentalOwnerPrimaryEmail ?? '').toLowerCase()));
     }
   }
 
@@ -684,13 +684,13 @@ class _Rentalowner_tableState extends State<Rentalowner_table>
                 } else if (searchValue!.isNotEmpty) {
                   data = snapshot.data!
                       .where((rentals) =>
-                          rentals.rentalOwnername!
+                          (rentals.rentalOwnername ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()) ||
-                          rentals.rentalOwnerPhoneNumber!
+                          (rentals.rentalOwnerPhoneNumber ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()) ||
-                          rentals.rentalOwnerPrimaryEmail!
+                          (rentals.rentalOwnerPrimaryEmail ?? '')
                               .toLowerCase()
                               .contains(searchValue!.toLowerCase()))
                       .toList();

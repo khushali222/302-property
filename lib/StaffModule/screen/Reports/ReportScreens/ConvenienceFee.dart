@@ -1324,13 +1324,13 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports>
                         } else if (searchvalue.isNotEmpty) {
                           data = snapshot.data!
                               .where((lease) =>
-                                  lease.rentalData!.rentalAddress!
+                                  (lease.rentalData!.rentalAddress ?? '')
                                       .toLowerCase()
                                       .contains(searchvalue.toLowerCase()) ||
-                                  lease.tenantData!.first.tenantFirstName!
+                                  (lease.tenantData!.first.tenantFirstName ?? '')
                                       .toLowerCase()
                                       .contains(searchvalue.toLowerCase()) ||
-                                  lease.tenantData!.first.tenantLastName!
+                                  (lease.tenantData!.first.tenantLastName ?? '')
                                       .toLowerCase()
                                       .contains(searchvalue.toLowerCase()))
                               .toList();
@@ -1728,10 +1728,10 @@ class _ConvenienceFeeReportsState extends State<ConvenienceFeeReports>
                   } else if (searchvalue.isNotEmpty) {
                     data = snapshot.data!
                         .where((item) =>
-                    item.rentalAddress!
+                    (item.rentalAddress ?? '')
                         .toLowerCase()
                         .contains(searchvalue.toLowerCase()) ||
-                        item.tenants!.any((tenant) => tenant.tenantName!
+                        item.tenants!.any((tenant) => (tenant.tenantName ?? '')
                             .toLowerCase()
                             .contains(searchvalue.toLowerCase())))
                         .toList();

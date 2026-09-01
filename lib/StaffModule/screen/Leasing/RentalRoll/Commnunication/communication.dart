@@ -702,7 +702,7 @@ class _lease_communicationState extends State<lease_communication>
                             data = snapshot.data!.emails;
                           } else if (searchvalue!.isNotEmpty) {
                             data = snapshot.data!.emails!
-                                .where((property) => property.subject!
+                                .where((property) => (property.subject ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()))
                                 .toList();

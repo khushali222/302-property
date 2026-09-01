@@ -546,10 +546,10 @@ class _TempletTableState extends State<TempletTable>
                       } else if (searchValue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((rentals) =>
-                                rentals.name!
+                                (rentals.name ?? '')
                                     .toLowerCase()
                                     .contains(searchValue!.toLowerCase()) ||
-                                rentals.subject!
+                                (rentals.subject ?? '')
                                     .toLowerCase()
                                     .contains(searchValue!.toLowerCase()))
                             .toList();

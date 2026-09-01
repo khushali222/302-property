@@ -590,7 +590,7 @@ class _AdminTenantInsuranceTableState extends State<AdminTenantInsuranceTable>
                       data = snapshot.data!;
                     } else if (searchvalue!.isNotEmpty) {
                       data = snapshot.data!
-                          .where((property) => property.provider!
+                          .where((property) => (property.provider ?? '')
                               .toLowerCase()
                               .contains(searchvalue!.toLowerCase()))
                           .toList();

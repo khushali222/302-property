@@ -4278,7 +4278,7 @@ class _Summery_pageState extends State<Summery_page>
                     data = data
                         .where((e) =>
                             e.tenantNames != null &&
-                            e.tenantNames!
+                            (e.tenantNames ?? '')
                                 .toLowerCase()
                                 .contains(searchValuerent!.toLowerCase()))
                         .toList();
@@ -4520,7 +4520,7 @@ class _Summery_pageState extends State<Summery_page>
                     data = data
                         .where((e) =>
                             e != null &&
-                            e.response!
+                            (e.response ?? '')
                                 .toLowerCase()
                                 .contains(searchValuerent!.toLowerCase()))
                         .toList();
@@ -4991,8 +4991,8 @@ class _Summery_pageState extends State<Summery_page>
                               data = snapshot.data!;
                             } else if (searchValuerent!.isNotEmpty) {
                               data = snapshot.data!
-                                  .where((rentals) => rentals
-                                      .rentalOwnerData!.rentalOwnerName!
+                                  .where((rentals) =>
+                                      (rentals.rentalOwnerData?.rentalOwnerName ?? '')
                                       .toLowerCase()
                                       .contains(searchValuerent!.toLowerCase()))
                                   .toList();
@@ -15689,10 +15689,10 @@ class _Summery_pageState extends State<Summery_page>
                     } else if (searchvalue.isNotEmpty) {
                       _tableDatamulti = snapshot.data!
                           .where((property) =>
-                              property.rentalunit!
+                              (property.rentalunit ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()) ||
-                              property.rentalunitadress!
+                              (property.rentalunitadress ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
                           .toList();
@@ -17529,10 +17529,10 @@ class _Summery_pageState extends State<Summery_page>
                       } else if (searchvalue!.isNotEmpty) {
                         data = snapshot.data!
                             .where((workorder) =>
-                                workorder.workSubject!
+                                (workorder.workSubject ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()) ||
-                                workorder.workCategory!
+                                (workorder.workCategory ?? '')
                                     .toLowerCase()
                                     .contains(searchvalue!.toLowerCase()))
                             .toList();
@@ -18194,10 +18194,10 @@ class _Summery_pageState extends State<Summery_page>
                     } else if (searchvalue.isNotEmpty) {
                       _tableData = snapshot.data!
                           .where((property) =>
-                              property.workSubject!
+                              (property.workSubject ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()) ||
-                              property.workCategory!
+                              (property.workCategory ?? '')
                                   .toLowerCase()
                                   .contains(searchvalue.toLowerCase()))
                           .toList();
@@ -20313,10 +20313,10 @@ class _LeasesTableState extends State<LeasesTable> {
                   } else if (searchValue.isNotEmpty) {
                     filteredData = snapshot.data!
                         .where((staff) =>
-                            staff.tenantFirstName!
+                            (staff.tenantFirstName ?? '')
                                 .toLowerCase()
                                 .contains(searchValue.toLowerCase()) ||
-                            staff.leaseType!
+                            (staff.leaseType ?? '')
                                 .toLowerCase()
                                 .contains(searchValue.toLowerCase()))
                         .toList();
@@ -21354,7 +21354,7 @@ class _AppliancesPartState extends State<AppliancesPart> {
                         data = snapshot.data!;
                       } else if (searchValue!.isNotEmpty) {
                         data = snapshot.data!
-                            .where((rentals) => rentals.applianceName!
+                            .where((rentals) => (rentals.applianceName ?? '')
                                 .toLowerCase()
                                 .contains(searchValue!.toLowerCase()))
                             .toList();
@@ -21972,10 +21972,10 @@ class _AppliancesPartState extends State<AppliancesPart> {
                       } else if (searchValue.isNotEmpty) {
                         filteredData = snapshot.data!
                             .where((staff) =>
-                                staff.applianceName!
+                                (staff.applianceName ?? '')
                                     .toLowerCase()
                                     .contains(searchValue.toLowerCase()) ||
-                                staff.applianceDescription!
+                                (staff.applianceDescription ?? '')
                                     .toLowerCase()
                                     .contains(searchValue.toLowerCase()))
                             .toList();

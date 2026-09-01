@@ -1059,31 +1059,31 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
     // Try to find bath value
     if (unit.rentalbath != null &&
-        unit.rentalbath!.toLowerCase().contains('bath')) {
+        (unit.rentalbath ?? '').toLowerCase().contains('bath')) {
       result['bath'] = unit.rentalbath!;
     } else if (unit.rentalunit != null &&
-        unit.rentalunit!.toLowerCase().contains('bath')) {
+        (unit.rentalunit ?? '').toLowerCase().contains('bath')) {
       result['bath'] = unit.rentalunit!;
     } else if (unit.rentalunitadress != null &&
-        unit.rentalunitadress!.toLowerCase().contains('bath')) {
+        (unit.rentalunitadress ?? '').toLowerCase().contains('bath')) {
       result['bath'] = unit.rentalunitadress!;
     } else if (unit.rentalsqft != null &&
-        unit.rentalsqft!.toLowerCase().contains('bath')) {
+        (unit.rentalsqft ?? '').toLowerCase().contains('bath')) {
       result['bath'] = unit.rentalsqft!;
     }
 
     // Try to find bed value
     if (unit.rentalbed != null &&
-        unit.rentalbed!.toLowerCase().contains('bed')) {
+        (unit.rentalbed ?? '').toLowerCase().contains('bed')) {
       result['bed'] = unit.rentalbed!;
     } else if (unit.rentalunit != null &&
-        unit.rentalunit!.toLowerCase().contains('bed')) {
+        (unit.rentalunit ?? '').toLowerCase().contains('bed')) {
       result['bed'] = unit.rentalunit!;
     } else if (unit.rentalunitadress != null &&
-        unit.rentalunitadress!.toLowerCase().contains('bed')) {
+        (unit.rentalunitadress ?? '').toLowerCase().contains('bed')) {
       result['bed'] = unit.rentalunitadress!;
     } else if (unit.rentalsqft != null &&
-        unit.rentalsqft!.toLowerCase().contains('bed')) {
+        (unit.rentalsqft ?? '').toLowerCase().contains('bed')) {
       result['bed'] = unit.rentalsqft!;
     }
 

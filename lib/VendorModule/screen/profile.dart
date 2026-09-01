@@ -341,7 +341,7 @@ class _Profile_screenState extends State<Profile_screen>
           .toList(),
       'trade': _selectedTradeType != null
           ? (_tradeToApiValue[_selectedTradeType!] ??
-              _selectedTradeType!.toLowerCase().replaceAll(' ', '_'))
+              (_selectedTradeType ?? '').toLowerCase().replaceAll(' ', '_'))
           : null,
       'region_covered': _zipDistancePairs
           .map((z) => {
@@ -396,7 +396,7 @@ class _Profile_screenState extends State<Profile_screen>
             .toList(),
         'trade': _selectedTradeType != null
             ? (_tradeToApiValue[_selectedTradeType!] ??
-                _selectedTradeType!.toLowerCase().replaceAll(' ', '_'))
+                (_selectedTradeType ?? '').toLowerCase().replaceAll(' ', '_'))
             : null,
         'region_covered': _zipDistancePairs
             .map((z) => {
