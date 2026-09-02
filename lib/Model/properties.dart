@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:three_zero_two_property/Model/json_parse.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,14 +100,10 @@ class Rentals {
           .toList(),
       isDelete: json['is_delete'] ?? false,
       is_available: json["is_available"] ?? false,
-      publishedRentAmount: (json['published_rent_amount'] is int)
-          ? (json['published_rent_amount'] as int).toDouble()
-          : (json['published_rent_amount'] as num?)?.toDouble(),
+      publishedRentAmount: asDoubleOrNull(json['published_rent_amount']),
       parcelNumber: json['parcel_number'] ?? "",
       purchaseDate: json['purchase_date'] ?? "",
-      purchasePrice: (json['purchase_price'] is int)
-          ? (json['purchase_price'] as int).toDouble()
-          : (json['purchase_price'] as num?)?.toDouble(),
+      purchasePrice: asDoubleOrNull(json['purchase_price']),
       placedInService: json['placed_in_service'] ?? "",
       subdivision: json['subdivision'] ?? "",
       rentalOwnerData:
@@ -146,9 +143,7 @@ class PropertyValueItem {
   factory PropertyValueItem.fromJson(Map<String, dynamic> json) {
     return PropertyValueItem(
       id: json['_id']?.toString(),
-      estimatedValue: json['estimatedValue'] is int
-          ? (json['estimatedValue'] as int).toDouble()
-          : (json['estimatedValue'] as num?)?.toDouble(),
+      estimatedValue: asDoubleOrNull(json['estimatedValue']),
       valueSource: json['valueSource']?.toString(),
       valueAsOfDate: json['valueAsOfDate']?.toString(),
     );

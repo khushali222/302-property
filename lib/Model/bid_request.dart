@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class BidRequestResponse {
   int? statusCode;
   List<BidRequest>? data;
@@ -381,11 +383,7 @@ class Submission {
       adminId: json['admin_id'],
       submissionFile: json['submission_file'] ?? '',
       priceBreakdown: json['price_breakdown'] ?? '',
-      totalPrice: json['total_price'] != null
-          ? (json['total_price'] is int
-              ? (json['total_price'] as int).toDouble()
-              : json['total_price'] as double)
-          : null,
+      totalPrice: asDoubleOrNull(json['total_price']),
       status: json['status'],
       submittedAt: json['submitted_at'],
       createdAt: json['createdAt'],

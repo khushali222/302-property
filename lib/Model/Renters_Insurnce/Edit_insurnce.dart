@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class RentersEdit {
   final String? id;
   final String? rentersInsuranceId;
@@ -46,7 +48,7 @@ class RentersEdit {
       policyId: json['policy_id'] as String?,
       effectiveDate: json['effective_date'] ?? "",
       expirationDate: json['expiration_date'] ?? "",
-      liabilityCoverage: json['liability_coverage'] as int?,
+      liabilityCoverage: asIntOrNull(json['liability_coverage']),
       insurancePolicyDocument: json['insurance_policy_document'] as String?,
       active: json['active'] as bool?,
       dateCreated: json['date_created'] as String?,

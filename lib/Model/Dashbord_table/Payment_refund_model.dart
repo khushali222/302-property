@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class PaymentRefund {
   final String? id;
   final String? paymentId;
@@ -54,30 +56,40 @@ class PaymentRefund {
   });
 
   static PaymentRefund fromJson(Map<String, dynamic> json) {
+    // Every field below used to read `json["0"][...]` directly, so a response
+    // without the "0" key threw "The method '[]' was called on null" on the
+    // very first line and took the whole refund table down. Resolve it once,
+    // falling back to an empty map so a missing block yields empty fields.
+    final Map<String, dynamic> row =
+        json["0"] is Map<String, dynamic> ? json["0"] as Map<String, dynamic> : const {};
     return PaymentRefund(
-      id: json["0"]['_id'] as String?,
-      paymentId: json["0"]['payment_id'] as String?,
-      adminId: json["0"]['admin_id'] as String?,
-      leaseId: json["0"]['lease_id'] as String?,
-      tenantId: json["0"]['tenant_id'] as String?,
-      customerVaultId: json["0"]['customer_vault_id'] as int?,
-      billingId: json["0"]['billing_id'] as int?,
-      surcharge: (json["0"]['surcharge'] as num?)?.toDouble(),
-      paymentType: json["0"]['payment_type'] as String?,
-      transactionId: json["0"]['transaction_id'] as String?,
-      response: json["0"]['response'] as String?,
-      authCode: json["0"]['authcode'] as String?,
-      responseCode: json["0"]['responseCode'] as String?,
-      avsResponse: json["0"]['avsresponse'] as String?,
-      cvvResponse: json["0"]['cvvresponse'] as String?,
-      state: json["0"]['state'] as String?,
-      entry: (json["0"]['entry'] as List?)?.map((e) => Entry.fromJson(e as Map<String, dynamic>)).toList(),
-      totalAmount: (json["0"]['total_amount'] as num?)?.toDouble(),
-      type: json["0"]['type'] as String?,
-      paymentAttachment: json["0"]['payment_attachment'] as List<dynamic>?,
-      createdAt: json["0"]['createdAt'] as String?,
-      updatedAt: json["0"]['updatedAt'] as String?,
-      isDelete: json["0"]['is_delete'] as bool?,
+      id: row['_id'] as String?,
+      paymentId: row['payment_id'] as String?,
+      adminId: row['admin_id'] as String?,
+      leaseId: row['lease_id'] as String?,
+      tenantId: row['tenant_id'] as String?,
+      // The gateway returns these ids as strings on some responses.
+      customerVaultId: asIntOrNull(row['customer_vault_id']),
+      billingId: asIntOrNull(row['billing_id']),
+      surcharge: asDoubleOrNull(row['surcharge']),
+      paymentType: row['payment_type'] as String?,
+      transactionId: row['transaction_id'] as String?,
+      response: row['response'] as String?,
+      authCode: row['authcode'] as String?,
+      responseCode: row['responseCode'] as String?,
+      avsResponse: row['avsresponse'] as String?,
+      cvvResponse: row['cvvresponse'] as String?,
+      state: row['state'] as String?,
+      entry: (row['entry'] as List?)
+          ?.whereType<Map<String, dynamic>>()
+          .map((e) => Entry.fromJson(e))
+          .toList(),
+      totalAmount: asDoubleOrNull(row['total_amount']),
+      type: row['type'] as String?,
+      paymentAttachment: row['payment_attachment'] as List<dynamic>?,
+      createdAt: row['createdAt'] as String?,
+      updatedAt: row['updatedAt'] as String?,
+      isDelete: row['is_delete'] as bool?,
       tenantData: json['tenant_data'] != null ? TenantData.fromJson(json['tenant_data']) : null,
       leaseData: json['lease_data'] != null ? LeaseData.fromJson(json['lease_data']) : null,
     );
@@ -186,7 +198,7 @@ class Entry {
       account: json['account'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       date: json['date'] as String?,
-      duePaid: json['due_paid'] as int?,
+      duePaid: asIntOrNull(json['due_paid']),
       isPrepaid: json['is_prepaid'] as bool?,
       memo: json['memo'] as String?,
       chargeType: json['charge_type'] as String?,

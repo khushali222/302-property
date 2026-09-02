@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class ExpiringRentersInsuranceResponse {
   final int? statusCode;
   final List<ExpiringRentersInsuranceData>? data;
@@ -13,7 +15,7 @@ class ExpiringRentersInsuranceResponse {
 
   factory ExpiringRentersInsuranceResponse.fromJson(Map<String, dynamic> json) {
     return ExpiringRentersInsuranceResponse(
-      statusCode: json['statusCode'] as int?,
+      statusCode: asIntOrNull(json['statusCode']),
       data: (json['data'] as List<dynamic>?)
           ?.map((e) =>
               ExpiringRentersInsuranceData.fromJson(e as Map<String, dynamic>))

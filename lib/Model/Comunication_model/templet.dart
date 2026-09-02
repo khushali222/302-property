@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class EmailTemplatesResponse {
   final int? statusCode;
   final List<EmailTemplate>? templates;
@@ -15,13 +17,13 @@ class EmailTemplatesResponse {
 
   factory EmailTemplatesResponse.fromJson(Map<String, dynamic> json) {
     return EmailTemplatesResponse(
-      statusCode: json['statusCode'] as int?,
+      statusCode: asIntOrNull(json['statusCode']),
       templates: (json['templates'] as List?)
           ?.map((e) => EmailTemplate.fromJson(e as Map<String, dynamic>))
           .toList(),
-      currentPage: json['currentPage'] as int?,
-      totalPages: json['totalPages'] as int?,
-      limit: json['limit'] as int?,
+      currentPage: asIntOrNull(json['currentPage']),
+      totalPages: asIntOrNull(json['totalPages']),
+      limit: asIntOrNull(json['limit']),
     );
   }
 }

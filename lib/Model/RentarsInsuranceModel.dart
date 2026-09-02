@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class RentersInsuranceModel {
   List<RentersInsuranceData>? data;
   int? statusCode;
@@ -12,7 +14,7 @@ class RentersInsuranceModel {
         data!.add(RentersInsuranceData.fromJson(v));
       });
     }
-    statusCode = json['statusCode'] as int?;
+    statusCode = asIntOrNull(json['statusCode']);
     message = json['message'] as String?;
   }
 

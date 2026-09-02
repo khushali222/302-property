@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/Model/json_parse.dart';
+
 class upcoming_renewal {
   String? sId;
   String? leaseId;
@@ -56,7 +58,7 @@ class upcoming_renewal {
     leaseType = json['lease_type'];
     startDate = json['start_date'];
     endDate = json['end_date'];
-    leaseAmount = json['lease_amount']?.toDouble();
+    leaseAmount = asDoubleOrNull(json['lease_amount']);
 
     if (json['entry'] != null) {
       entry = <Entry>[];
@@ -76,9 +78,9 @@ class upcoming_renewal {
       });
     }
 
-    iV = json['__v']?.toDouble();
+    iV = asDoubleOrNull(json['__v']);
     isRenewing = json['is_renewing'];
-    remainingDays = json['remainingDays']?.toDouble();
+    remainingDays = asDoubleOrNull(json['remainingDays']);
     rentalAddress = json['rental_address'];
     unit = json['unit'];
 
@@ -152,7 +154,7 @@ class Entry {
     chargeType = json['charge_type'];
     account = json['account'];
     rentCycle = json['rent_cycle'];
-    amount = json['amount']?.toDouble();
+    amount = asDoubleOrNull(json['amount']);
     sId = json['_id'];
   }
 
