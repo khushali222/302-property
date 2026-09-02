@@ -753,7 +753,11 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              onPressed: () {
+                              // Web parity (CRM-2448): guard against double-tap
+                              // creating duplicate policies — disable the button
+                              // once a save is in flight, on top of the same
+                              // check inside addinsurance() itself.
+                              onPressed: isLoading ? null : () {
                                 if (_formkey.currentState!.validate()) {
                                   // Covered Tenants is required (web parity).
                                   if (!_tenantSelected) {
@@ -813,6 +817,15 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
   }
 
   addinsurance() async {
+    // Second layer: the button is disabled while isLoading, but this stops
+    // any other caller (or a tap that lands in the same frame) from starting
+    // a second concurrent submit. isLoading was declared here but never set,
+    // so neither the guard nor the button spinner was doing anything.
+    if (isLoading) return;
+    setState(() {
+      isLoading = true;
+    });
+    try {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? token = prefs.getString('token');
@@ -854,6 +867,14 @@ class _AdminAddTenantInsuranceState extends State<AdminAddTenantInsurance> {
     } else {
       Fluttertoast.showToast(msg: responseData["message"] ?? 'Failed to save');
       throw Exception('Failed to add Insurance');
+    }
+    } finally {
+      // Always release the guard so a failed save can be retried.
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 }

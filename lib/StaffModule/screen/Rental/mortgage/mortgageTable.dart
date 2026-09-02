@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -300,11 +301,29 @@ class _MortgageTableState extends State<MortgageTable>
   }
 
   void _deleteMortgage(String id) {
+    TextEditingController reason = TextEditingController();
     Alert(
       context: context,
       type: AlertType.warning,
       title: "Are you sure?",
       desc: "Once deleted, you will not be able to recover this Mortgage!",
+      content: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            height: 45,
+            child: TextField(
+              controller: reason,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.only(top: 8, left: 15)),
+            ),
+          ),
+        ],
+      ),
       style: const AlertStyle(
         backgroundColor: Colors.white,
       ),
@@ -315,13 +334,15 @@ class _MortgageTableState extends State<MortgageTable>
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            setState(() {
-              _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
-              _filteredMortgages
-                  .removeWhere((mortgage) => mortgage['_id'] == id);
-            });
+            // Web (Mortgage.jsx handleDeleteMortgage) keeps Delete disabled
+            // until a reason is entered, and the server stores it as
+            // deletion_reason for the audit log, so it can't be skipped here.
+            if (reason.text.trim().isEmpty) {
+              Fluttertoast.showToast(msg: "Please enter a reason for deletion");
+              return;
+            }
             Navigator.pop(context);
-            Fluttertoast.showToast(msg: "Mortgage deleted successfully");
+            await _deleteMortgageRecord(id, reason.text.trim());
           },
           color: blueColor,
         ),
@@ -341,6 +362,59 @@ class _MortgageTableState extends State<MortgageTable>
         ),
       ],
     ).show();
+  }
+
+  /// The row used to be dropped from the in-memory list with a success toast
+  /// and no request at all, so the mortgage returned on the next refresh and
+  /// stayed live on web. Mirror web: only report success once the server
+  /// confirms it, and refetch so the list and the count stay truthful.
+  Future<void> _deleteMortgageRecord(String id, String reason) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? staffId = prefs.getString("staff_id");
+
+      final response = await apiDelete(
+        Uri.parse('${Api_url}/api/mortgage/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $staffId',
+        },
+        body: json.encode({'reason': reason}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          Fluttertoast.showToast(
+            msg: "Mortgage deleted successfully",
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+          await _loadMortgages();
+        } else {
+          Fluttertoast.showToast(
+            msg: data['message'] ?? 'Failed to delete mortgage',
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Failed to delete mortgage',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } catch (e) {
+      logError('Error deleting mortgage: $e');
+      Fluttertoast.showToast(
+        msg: 'Error deleting mortgage: ${friendlyErrorMessage(e)}',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
   void _editMortgage(Map<String, dynamic> mortgage) {

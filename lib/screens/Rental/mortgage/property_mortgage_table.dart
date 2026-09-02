@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -274,31 +275,50 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable>
   }
 
   void _deleteMortgage(String id) {
+    final TextEditingController reason = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Delete Mortgage'),
-          content: const Text('Are you sure you want to delete this mortgage?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Are you sure you want to delete this mortgage?'),
+              const SizedBox(height: 12),
+              TextField(
+                controller: reason,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter reason for deletion',
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 12),
+                ),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  _mortgages.removeWhere((mortgage) => mortgage['_id'] == id);
-                  _filteredMortgages
-                      .removeWhere((mortgage) => mortgage['_id'] == id);
-                });
+              onPressed: () async {
+                // Web (Mortgage.jsx handleDeleteMortgage) keeps Delete
+                // disabled until a reason is entered, and the server stores
+                // it as deletion_reason for the audit log.
+                if (reason.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a reason for deletion'),
+                      backgroundColor: Colors.orange,
+                    ),
+                  );
+                  return;
+                }
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Mortgage deleted successfully'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                await _deleteMortgageRecord(id, reason.text.trim());
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
@@ -306,6 +326,68 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable>
         );
       },
     );
+  }
+
+  /// The row used to be dropped from the in-memory list with a success
+  /// message and no request at all, so the mortgage returned on the next
+  /// refresh and stayed live on web. Mirror web: only report success once the
+  /// server confirms it, and refetch so the list stays truthful.
+  Future<void> _deleteMortgageRecord(String id, String reason) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      String? adminId = prefs.getString('adminId');
+
+      final response = await apiDelete(
+        Uri.parse('${Api_url}/api/mortgage/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': 'CRM $token',
+          'id': 'CRM $adminId',
+        },
+        body: json.encode({'reason': reason}),
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Mortgage deleted successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          await _loadMortgages();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text(data['message'] ?? 'Failed to delete mortgage'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to delete mortgage'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      logError('Error deleting mortgage: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('Error deleting mortgage: ${friendlyErrorMessage(e)}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _editMortgage(Map<String, dynamic> mortgage) {

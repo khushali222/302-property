@@ -827,7 +827,11 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              onPressed: () {
+                              // Web parity (CRM-2448): guard against double-tap
+                              // creating duplicate policies — disable the button
+                              // once a save is in flight, on top of the same
+                              // check inside addinsurance() itself.
+                              onPressed: isLoading ? null : () {
                                 if (_formkey.currentState!.validate()) {
                                   final dateError = validateInsuranceDateRange(
                                       effectiveDate, expirationDate);
@@ -944,6 +948,10 @@ class _LeaseAddRentersInsuranceState extends State<LeaseAddRentersInsurance> {
   //   }
   // }
   addinsurance() async {
+    // Second layer: the button is disabled while isLoading, but this stops
+    // any other caller (or a tap that lands in the same frame) from starting
+    // a second concurrent submit.
+    if (isLoading) return;
     setState(() {
       isLoading = true; // Start loading
     });

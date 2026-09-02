@@ -682,8 +682,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                       await Navigator.of(context)
                                           .push(MaterialPageRoute(
                                               builder: (context) => send_email(
-                                                  lease: snapshot
-                                                      .data!.data!.tenantId!)));
+                                                  lease: lease.data!.tenantId!)));
                                     },
                                     child: Container(
                                       height: 38,
@@ -712,8 +711,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => Edit_lease(
-                                                    leaseId: snapshot
-                                                        .data!.data!.leaseId!,
+                                                    leaseId: lease.data!.leaseId!,
                                                   )));
                                     },
                                     child: Container(
@@ -1019,16 +1017,49 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       case 0:
         return SummaryPage();
       case 1:
+        // Web parity (LeaseFinancialTab.jsx): the Financial tab opens with the
+        // same Property Details + Balance Overview pair the Summary tab shows,
+        // above the ledger. Web renders both cards unconditionally here; the
+        // balance card keeps its own Active-only rule, which is where mobile
+        // already differs from web on the Summary tab too.
+        // Vertical inset only: every child below carries its own 15pt side
+        // inset (the cards and the quick-actions panel bring theirs with
+        // them), so adding a horizontal one here would inset them twice and
+        // leave the ledger sitting wider than everything above it.
         return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: FinancialTable(
-            rentalUnit: snapshot.data?.rentalUnit,
-            rentalAddress: snapshot.data?.rentalAddress,
-            leaseId: widget.leaseId,
-            status: determineStatus(
-                    snapshot.data?.startDate, snapshot.data?.endDate)
-                .toString(),
-            tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _propertyDetailsCard(snapshot),
+              const SizedBox(height: 10),
+              // _balanceOverviewCard deliberately has no horizontal margin of
+              // its own — the caller supplies the shared 15pt inset.
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: _balanceOverviewCard(snapshot.data),
+              ),
+              // Web parity: LeaseFinanceBlock renders on the Financial tab as
+              // well as the Summary tab — same component, same gating.
+              _leaseQuickActions(snapshot),
+              const SizedBox(height: 10),
+              // FinancialTable brings its own 11pt side margin (Financial.dart,
+              // and it is shared with Applicant/Tenant summaries so that value
+              // is not ours to change). Add only the 4pt difference so the
+              // ledger lands on the same 15pt edge as the cards above it.
+              Padding(
+                padding: const EdgeInsets.only(left: 4, right: 4),
+                child: FinancialTable(
+                rentalUnit: snapshot.data?.rentalUnit,
+                rentalAddress: snapshot.data?.rentalAddress,
+                leaseId: widget.leaseId,
+                status: determineStatus(
+                        snapshot.data?.startDate, snapshot.data?.endDate)
+                    .toString(),
+                  tenantId: snapshot.data?.tenantId?.isNotEmpty == true ? snapshot.data!.tenantId!.first : '',
+                ),
+              ),
+            ],
           ),
         );
       case 2:
@@ -1491,6 +1522,550 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     }
   }
 
+  /// Web parity (LeaseFinancialTab.jsx): the Property Details card is
+  /// shared by the Summary tab and the Financial tab, so it lives in one
+  /// place rather than being duplicated per tab.
+  Widget _propertyDetailsCard(LeaseSummary lease) {
+    final dateProvider = Provider.of<DateProvider>(context);
+    var width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFDBE0E5)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 15, right: 15, top: 15, bottom: 20),
+            child: Column(
+              children: [
+                //Tenant Details
+                Row(
+                  children: [
+                    const SizedBox(width: 8),
+                    Text(
+                      "Property Details",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const Spacer(),
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(235, 245, 255,
+                            1), // Background color of the circle
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(
+                          5), // Padding around the icon
+                      child: Icon(
+                        Icons.home_outlined, // Home Icon
+                        color: Colors.grey.shade600, // Icon color
+                        size: 24, // Icon size
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Column(
+                    children: [
+                      /// Property address (web parity: no "Unit"
+                      /// label — the address line is the heading).
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context)
+                                        .size
+                                        .width -
+                                    100,
+                                child: Text(
+                                  formatLeasePropertyLine(
+                                    lease.data!.rentalAddress,
+                                    lease.data!.rentalUnit,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// Lease status + Active date range (web parity)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${_leaseStatusWithType(lease.data!.startDate, lease.data!.endDate, lease.data!.leaseType, lease.data!.isEvicted)}'
+                              '${(lease.data!.renewLeases != null && lease.data!.renewLeases!.isNotEmpty) ? " - Renewed" : ""}',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: _getStatusColor(
+                                    _leaseStatusWithType(
+                                        lease.data!.startDate,
+                                        lease.data!.endDate,
+                                        lease.data!.leaseType, lease.data!.isEvicted)),
+                              ),
+                            ),
+                            if (lease.data!.startDate !=
+                                    null &&
+                                lease.data!.endDate !=
+                                    null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                '${dateProvider.formatCurrentDate(lease.data!.startDate!)} – ${_isAtWill(lease.data!.leaseType) ? "At Will" : dateProvider.formatCurrentDate(lease.data!.endDate!)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      /// Rental Owner & Tenants
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          /// Rental Owner
+                          Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Rental Owner",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${lease.data!.rentalOwnerName ?? 'N/A'}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      //Tenants
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tenants',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                lease.data!.tenantData!
+                                    .map((tenant) =>
+                                        '${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}')
+                                    .join(', '),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Web parity (LeaseFinanceBlock): the lease quick actions render on
+  /// BOTH the Summary and Financial tabs — web mounts the same shared
+  /// component in each. The card shell lives here too, so the two tabs
+  /// cannot drift apart visually.
+  Widget _leaseQuickActions(LeaseSummary leasesummery) {
+    var width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: 15, right: 15),
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: const Color(0xFFDBE0E5)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 15,
+                right: 15,
+                top: 15,
+                bottom: 20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(width: 10),
+                    Text(
+                      "Quick Actions",
+                      style: TextStyle(
+                        color: blueColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                      // Make Payment Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MakePayment(
+                                  leaseId: widget.leaseId,
+                                  tenantId:
+                                      '${leasesummery.data?.tenantId}',
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: Colors.grey[300]!),
+                              borderRadius:
+                                  BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets
+                                  .symmetric(
+                                  horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.grey[700],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Make Payment',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color:
+                                          Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Configure Recurring Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    RecurringPayment(
+                                  leaseData:
+                                      leasesummery.data!,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: Colors.grey[300]!),
+                              borderRadius:
+                                  BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets
+                                  .symmetric(
+                                  horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.refresh,
+                                    color: Colors.grey[700],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Configure Autopay',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight:
+                                            FontWeight.w500,
+                                        color: Colors
+                                            .grey[700],
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Scheduled Charges Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ScheduledChargeTable(
+                                  leaseID: widget.leaseId,
+                                  leaseRentalAddress:
+                                      _leaseRentalAddress,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: Colors.grey[300]!),
+                              borderRadius:
+                                  BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets
+                                  .symmetric(
+                                  horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.grey[700],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Scheduled Charges',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color:
+                                          Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Scheduled Payments Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Add your navigation here
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: Colors.grey[300]!),
+                              borderRadius:
+                                  BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets
+                                  .symmetric(
+                                  horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.attach_money,
+                                    color: Colors.grey[700],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Scheduled Payments',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color:
+                                          Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+                      // Add Recurring Charges Button
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            showRecurringChargeDialog(
+                              context: context,
+                              leaseId: widget.leaseId,
+                              isStaff: true,
+                              onSuccess: () {
+                                setState(() {
+                                  _leaseChargesFuture =
+                                      LeaseRepository().fetchLeaseCharges(widget.leaseId);
+                                });
+                              },
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: Colors.grey[300]!),
+                              borderRadius:
+                                  BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.grey[700],
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Add Recurring Charges',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      ],
+                    ),
+                const SizedBox(height: 5),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   SummaryPage() {
     final dateProvider = Provider.of<DateProvider>(context);
     var width = MediaQuery.of(context).size.width;
@@ -1515,208 +2090,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
               const SizedBox(
                 height: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: Material(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFDBE0E5)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 15, bottom: 20),
-                      child: Column(
-                        children: [
-                          //Tenant Details
-                          Row(
-                            children: [
-                              const SizedBox(width: 8),
-                              Text(
-                                "Property Details",
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              const Spacer(),
-                              Container(
-                                decoration: const BoxDecoration(
-                                  color: Color.fromRGBO(235, 245, 255,
-                                      1), // Background color of the circle
-                                  shape: BoxShape.circle,
-                                ),
-                                padding: const EdgeInsets.all(
-                                    5), // Padding around the icon
-                                child: Icon(
-                                  Icons.home_outlined, // Home Icon
-                                  color: Colors.grey.shade600, // Icon color
-                                  size: 24, // Icon size
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              children: [
-                                /// Property address (web parity: no "Unit"
-                                /// label — the address line is the heading).
-                                Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100,
-                                          child: Text(
-                                            formatLeasePropertyLine(
-                                              snapshot.data!.data!.rentalAddress,
-                                              snapshot.data!.data!.rentalUnit,
-                                            ),
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                /// Lease status + Active date range (web parity)
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${_leaseStatusWithType(snapshot.data!.data!.startDate, snapshot.data!.data!.endDate, snapshot.data!.data!.leaseType, snapshot.data!.data!.isEvicted)}'
-                                        '${(snapshot.data!.data!.renewLeases != null && snapshot.data!.data!.renewLeases!.isNotEmpty) ? " - Renewed" : ""}',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: _getStatusColor(
-                                              _leaseStatusWithType(
-                                                  snapshot.data!.data!.startDate,
-                                                  snapshot.data!.data!.endDate,
-                                                  snapshot
-                                                      .data!.data!.leaseType, snapshot.data!.data!.isEvicted)),
-                                        ),
-                                      ),
-                                      if (snapshot.data!.data!.startDate !=
-                                              null &&
-                                          snapshot.data!.data!.endDate !=
-                                              null) ...[
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '${dateProvider.formatCurrentDate(snapshot.data!.data!.startDate!)} – ${_isAtWill(snapshot.data!.data!.leaseType) ? "At Will" : dateProvider.formatCurrentDate(snapshot.data!.data!.endDate!)}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-
-                                const SizedBox(height: 20),
-
-                                /// Rental Owner & Tenants
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    /// Rental Owner
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "Rental Owner",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          '${snapshot.data!.data!.rentalOwnerName ?? 'N/A'}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                //Tenants
-                                const SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Tenants',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          snapshot.data!.data!.tenantData!
-                                              .map((tenant) =>
-                                                  '${tenant.tenantFirstName ?? ''} ${tenant.tenantLastName ?? ''}')
-                                              .join(', '),
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _propertyDetailsCard(leasesummery),
 
               const SizedBox(
                 height: 10,
@@ -2003,328 +2377,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 15, right: 15),
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          color: const Color(0xFFDBE0E5)),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15,
-                                          right: 15,
-                                          top: 15,
-                                          bottom: 20),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(width: 10),
-                                              Text(
-                                                "Quick Actions",
-                                                style: TextStyle(
-                                                  color: blueColor,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-
-                                          // Make Payment Button
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MakePayment(
-                                                      leaseId: widget.leaseId,
-                                                      tenantId:
-                                                          '${leasesummery.data?.tenantId}',
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Colors.grey[300]!),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.add,
-                                                        color: Colors.grey[700],
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Text(
-                                                        'Make Payment',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color:
-                                                              Colors.grey[700],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-
-                                          // Configure Recurring Button
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RecurringPayment(
-                                                      leaseData:
-                                                          leasesummery.data!,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Colors.grey[300]!),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.refresh,
-                                                        color: Colors.grey[700],
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Expanded(
-                                                        child: Text(
-                                                          'Configure Autopay',
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: Colors
-                                                                .grey[700],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Icon(
-                                                        Icons.check_circle,
-                                                        color: Colors.green,
-                                                        size: 18,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-
-                                          // Scheduled Charges Button
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ScheduledChargeTable(
-                                                      leaseID: widget.leaseId,
-                                                      leaseRentalAddress:
-                                                          _leaseRentalAddress,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Colors.grey[300]!),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.calendar_today,
-                                                        color: Colors.grey[700],
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Text(
-                                                        'Scheduled Charges',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color:
-                                                              Colors.grey[700],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-
-                                          // Scheduled Payments Button
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                // Add your navigation here
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Colors.grey[300]!),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.attach_money,
-                                                        color: Colors.grey[700],
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Text(
-                                                        'Scheduled Payments',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color:
-                                                              Colors.grey[700],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-
-                                          const SizedBox(height: 12),
-                                          // Add Recurring Charges Button
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                showRecurringChargeDialog(
-                                                  context: context,
-                                                  leaseId: widget.leaseId,
-                                                  isStaff: true,
-                                                  onSuccess: () {
-                                                    setState(() {
-                                                      _leaseChargesFuture =
-                                                          LeaseRepository().fetchLeaseCharges(widget.leaseId);
-                                                    });
-                                                  },
-                                                );
-                                              },
-                                              child: Container(
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  border: Border.all(
-                                                      color: Colors.grey[300]!),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      horizontal: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.add,
-                                                        color: Colors.grey[700],
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 12),
-                                                      Text(
-                                                        'Add Recurring Charges',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.grey[700],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 5),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              _leaseQuickActions(leasesummery),
                             ],
                           ),
                         );
@@ -3732,8 +3785,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                                                 formatCurrency(
                                                                   (_currentTerm != null
                                                                           ? _currentTerm!.rent
-                                                                          : snapshot
-                                                                              .data!.data!.amount)
+                                                                          : snapshot.data!.data!.amount)
                                                                       ?.toDouble() ??
                                                                       0.0,
                                                                 ),
@@ -4365,8 +4417,7 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
                                     //   border: Border.all(color: blueColor),
                                     // ),
                                     child: Column(
-                                      children: snapshot
-                                          .data!.data!.renewLeases!
+                                      children: snapshot.data!.data!.renewLeases!
                                           .asMap()
                                           .entries
                                           .map((entry) {

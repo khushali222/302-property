@@ -1119,6 +1119,23 @@ class _edit_vendorState extends State<edit_vendor> {
 
   final VendorRepository vendorRepository =
       VendorRepository(baseUrl: 'https://yourapiurl.com');
+
+  /// Phone numbers are shown formatted but stored as digits, so the two forms
+  /// can only be compared once the formatting is stripped.
+  String _digitsOnly(String? value) =>
+      (value ?? '').replaceAll(RegExp(r'\D'), '');
+
+  @override
+  void dispose() {
+    firstName.dispose();
+    phoneNumber.dispose();
+    email.dispose();
+    passWord.dispose();
+    conpassWord.dispose();
+    taxId.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1491,11 +1508,21 @@ class _edit_vendorState extends State<edit_vendor> {
                                           setState(() { tradeError = tradeMissing; });
                                           if (!isValid || tradeMissing) return;
 
-                                          bool hasChanges = firstName.text != initialVendorName ||
-                                              phoneNumber.text != initialPhoneNumber ||
-                                              email.text != initialEmail ||
-                                              passWord.text != initialPassword ||
-                                              selectedTradeType != initialTradeType ||
+                                          // Same fields and the same trimmed comparison as
+                                          // web (AddVendor.jsx checkForChanges). The one
+                                          // difference is forced: web never reformats the
+                                          // loaded phone, this form does — the field is
+                                          // filled as "(555) 123-4567" while
+                                          // initialPhoneNumber holds raw digits — so a
+                                          // trimmed compare read every untouched form as
+                                          // changed and fired a real PUT. Comparing digits
+                                          // restores web's behaviour.
+                                          bool hasChanges = firstName.text.trim() != (initialVendorName ?? '').trim() ||
+                                              _digitsOnly(phoneNumber.text) != _digitsOnly(initialPhoneNumber) ||
+                                              email.text.trim() != (initialEmail ?? '').trim() ||
+                                              passWord.text.trim() != (initialPassword ?? '').trim() ||
+                                              (selectedTradeType ?? '').trim() !=
+                                                  (initialTradeType ?? '').trim() ||
                                                   is1099 != (initialIs1099 ?? false) ||
                                                   (is1099 && taxId.text.trim().isNotEmpty);
 
@@ -1506,12 +1533,17 @@ class _edit_vendorState extends State<edit_vendor> {
                                             SharedPreferences prefs = await SharedPreferences.getInstance();
                                             String adminId = prefs.getString("adminId")!;
 
+                                            // Web trims every string in the payload
+                                            // (AddVendor.jsx handleSubmit), and the
+                                            // narrow layout below already did — this
+                                            // one didn't, so the same edit saved with
+                                            // stray spaces depending on screen width.
                                             final vendor = Vendor(
                                               adminId: adminId,
-                                              vendorName: firstName.text,
-                                              vendorPhoneNumber: phoneNumber.text,
-                                              vendorEmail: email.text,
-                                              vendorPassword: passWord.text,
+                                              vendorName: firstName.text.trim(),
+                                              vendorPhoneNumber: phoneNumber.text.trim(),
+                                              vendorEmail: email.text.trim(),
+                                              vendorPassword: passWord.text.trim(),
                                               trade: selectedTradeType,
                                               is1099: is1099,
                                               taxId: is1099 ? taxId.text.trim() : null,
@@ -1839,11 +1871,16 @@ class _edit_vendorState extends State<edit_vendor> {
                                         setState(() { tradeError = tradeMissing; });
                                         if (!isValid || tradeMissing) return;
 
-                                        bool hasChanges = firstName.text != initialVendorName ||
-                                            phoneNumber.text != initialPhoneNumber ||
-                                            email.text != initialEmail ||
-                                            passWord.text != initialPassword ||
-                                            selectedTradeType != initialTradeType ||
+                                        // Same normalisation as the wide layout above:
+                                        // the formatted phone field never matched the
+                                        // raw stored digits, so this guard was always
+                                        // true and every Update fired a real PUT.
+                                        bool hasChanges = firstName.text.trim() != (initialVendorName ?? '').trim() ||
+                                            _digitsOnly(phoneNumber.text) != _digitsOnly(initialPhoneNumber) ||
+                                            email.text.trim() != (initialEmail ?? '').trim() ||
+                                            passWord.text.trim() != (initialPassword ?? '').trim() ||
+                                            (selectedTradeType ?? '').trim() !=
+                                                (initialTradeType ?? '').trim() ||
                                                 is1099 != (initialIs1099 ?? false) ||
                                                   (is1099 && taxId.text.trim().isNotEmpty);
 

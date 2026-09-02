@@ -673,6 +673,28 @@ String formatPhoneNumber(String phoneNumber) {
   }
 }
 
+/// Display label for a stored vendor trade value, mirroring web's
+/// `getTradeLabel` / `TRADE_OPTIONS` (`Client/src/views/source/AddVendor.jsx`).
+/// Trades are stored lowercase on both platforms, so capitalising the first
+/// letter rendered "hvac" as "Hvac" instead of "HVAC". Falls back to the raw
+/// value, exactly like web, so an unknown trade still shows something.
+const Map<String, String> kVendorTradeLabels = {
+  'general': 'General',
+  'drywall': 'Drywall',
+  'electrical': 'Electrical',
+  'hvac': 'HVAC',
+  'landscaping': 'Landscaping',
+  'painting': 'Painting',
+  'plumbing': 'Plumbing',
+  'roofing': 'Roofing',
+};
+
+String vendorTradeLabel(String? value) {
+  final String raw = (value ?? '').trim();
+  if (raw.isEmpty) return '';
+  return kVendorTradeLabels[raw.toLowerCase()] ?? raw;
+}
+
 String formatPhoneNumberedit(String phoneNumber) {
   if (phoneNumber == null || phoneNumber.isEmpty) {
     return ""; // Return "N/A" if the phone number is null or empty

@@ -1387,12 +1387,12 @@ class _Vendor_tableState extends State<Vendor_table>
                                                                         blueColor),
                                                               ),
                                                               TextSpan(
-                                                                // Capitalize the first letter for display (web parity:
-                                                                // trade.charAt(0).toUpperCase() + trade.slice(1)).
-                                                                text: (Propertytype.trade == null ||
-                                                                        Propertytype.trade!.trim().isEmpty)
+                                                                // Web parity (Vendor.jsx): getTradeLabel(vendor.trade)
+                                                                // || "---". Capitalising only the first letter showed
+                                                                // the stored "hvac" as "Hvac" instead of "HVAC".
+                                                                text: vendorTradeLabel(Propertytype.trade).isEmpty
                                                                     ? '---'
-                                                                    : '${Propertytype.trade!.trim()[0].toUpperCase()}${Propertytype.trade!.trim().substring(1)}',
+                                                                    : vendorTradeLabel(Propertytype.trade),
                                                                 style: TextStyle(
                                                                     fontWeight:
                                                                         FontWeight

@@ -945,39 +945,52 @@ class _WorkOrderTableState extends State<WorkOrderTable>
                                     .contains(searchvalue!.toLowerCase()))
                             .toList();
                       }
-                      if (data.length == 0) {
+                      if (data.isEmpty) {
+                        // "No Work Order Added" is only true when the vendor
+                        // genuinely has none. A search or status filter that
+                        // matches nothing was showing the same message, which
+                        // read to a vendor with active jobs as though their
+                        // work orders had been removed.
+                        final bool isFiltered =
+                            (searchvalue?.isNotEmpty ?? false) ||
+                                (selectedValue != null &&
+                                    selectedValue != "All");
                         return SingleChildScrollView(
                           child: Column(
                             children: [
                               const SizedBox(height: 20),
                               _buildHeaders(),
                               const SizedBox(height: 10),
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * .4,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/no_data.jpg",
-                                        height: 200,
-                                        width: 200,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        "No Work Order Added",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 16),
-                                      ),
-                                    ],
+                              if (isFiltered)
+                                kNoSearchResults(context)
+                              else
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .4,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/no_data.jpg",
+                                          height: 200,
+                                          width: 200,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          "No Work Order Added",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: blueColor,
+                                              fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         );

@@ -118,6 +118,10 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders>
   void _fetchCompletedWorkOrders(
       {String? fromDate, String? toDate, String? status}) {
     setState(() {
+      // Re-running with new filters can return fewer pages than the page the
+      // user was already on, which left the view skipped past all the new
+      // rows and showing "No results found" even though data came back.
+      currentPage = 0;
       _futureReport = CompletedWorkOrderService().fetchCompletedWorkOrders(
         fromDate: fromDate,
         toDate: toDate,
@@ -1811,6 +1815,7 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders>
                         return SingleChildScrollView(
                           child: Column(
                             children: [
+                              const SizedBox(height: 10),
                               Padding(
                                 padding: EdgeInsets.only(
                                   left: MediaQuery.of(context).size.width > 500
@@ -1868,12 +1873,21 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders>
                                     // ),
 
                                     // Button takes only the space it needs
-                                    Padding(
+                                    Expanded(
+                                      child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: FractionallySizedBox(
+                                        widthFactor: 0.5,
+                                        child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 5.0),
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: blueColor,
+                                          minimumSize:
+                                              const Size(double.infinity, 44),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 12),
                                         ),
                                         onPressed: () {},
                                         child: PopupMenuButton<String>(
@@ -1898,15 +1912,26 @@ class _CompletedWorkOrdersState extends State<CompletedWorkOrders>
                                                 value: 'CSV',
                                                 child: Text('CSV')),
                                           ],
-                                          child: Row(
+                                          child: const Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text('Export'),
-                                              Icon(Icons.arrow_drop_down),
+                                              Text(
+                                                'Export',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Icon(Icons.arrow_drop_down,
+                                                  color: Colors.white),
                                             ],
                                           ),
                                         ),
                                       ),
+                                    ),
+                                    ),
+                                    ),
                                     ),
                                   ],
                                 ),
