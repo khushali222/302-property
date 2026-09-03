@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class checkPlanPurchaseModel {
   int? statusCode;
   String? message;
@@ -6,7 +8,7 @@ class checkPlanPurchaseModel {
   checkPlanPurchaseModel({this.statusCode, this.message, this.data});
 
   checkPlanPurchaseModel.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     message = json['message'];
     data = json['data'] != null
         ? new checkPlanPurchaseData.fromJson(json['data'])
@@ -176,22 +178,22 @@ class PlanDetail {
       });
     }
     planDays = json['plan_days'];
-    dayOfMonth = json['day_of_month'];
+    dayOfMonth = asIntN(json['day_of_month']);
     planPeriods = json['plan_periods'];
     billingOption = json['billingOption'];
     isAnnualDiscount = json['is_annual_discount'];
-    propertyCount = json['property_count'];
-    tenantCount = json['tenant_count'];
-    leaseCount = json['lease_count'];
-    rentalownerCount = json['rentalowner_count'];
-    applicantCount = json['applicant_count'];
-    staffmemberCount = json['staffmember_count'];
+    propertyCount = asIntN(json['property_count']);
+    tenantCount = asIntN(json['tenant_count']);
+    leaseCount = asIntN(json['lease_count']);
+    rentalownerCount = asIntN(json['rentalowner_count']);
+    applicantCount = asIntN(json['applicant_count']);
+    staffmemberCount = asIntN(json['staffmember_count']);
     paymentFunctionality = json['payment_functionality'];
-    annualDiscount = json['annual_discount'];
+    annualDiscount = asIntN(json['annual_discount']);
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
 
-    vendorCount = json['vendor_count'];
+    vendorCount = asIntN(json['vendor_count']);
   }
 
   Map<String, dynamic> toJson() {

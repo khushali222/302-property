@@ -1,4 +1,5 @@
-import 'package:three_zero_two_property/Model/json_parse.dart';
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class Recurring_Payments_Configuration {
   int? statusCode;
@@ -22,7 +23,7 @@ class Recurring_Payments_Configuration {
         data!.add(Data.fromJson(v));
       });
     }
-    grandTotal = asDoubleOrNull(json['grandTotal']);
+    grandTotal = asDoubleN(json['grandTotal']);
   }
 
   Map<String, dynamic> toJson() {

@@ -15,6 +15,7 @@ import 'package:three_zero_two_property/StaffModule/widgets/appbar.dart';
 import 'package:three_zero_two_property/StaffModule/widgets/custom_drawer.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 import 'package:three_zero_two_property/widgets/titleBar.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 /// Preview late letter row from GET /api/leases/preview-late-letters/{adminId}
 class PreviewLateLetter {
@@ -391,71 +392,24 @@ class _Unpaid_PropertiesState extends State<Unpaid_Properties>
     );
   }
 
+  /// Shared dashboard footer. Client-side paging with a 0-based
+  /// _currentPage, so it is offset by one for display.
   Widget _buildPagination() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<int>(
-              value: _itemsPerPage,
-              isExpanded: false,
-              items: _itemsPerPageOptions.map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _itemsPerPage = newValue;
-                    _currentPage = 0;
-                  });
-                }
-              },
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        IconButton(
-          icon: FaIcon(
-            FontAwesomeIcons.circleChevronLeft,
-            size: 24,
-            color: _currentPage == 0 ? Colors.grey : blueColor,
-          ),
-          onPressed: _currentPage == 0
-              ? null
-              : () {
-                  setState(() => _currentPage--);
-                },
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text(
-            'Page ${_currentPage + 1} of $_totalPages',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ),
-        IconButton(
-          icon: FaIcon(
-            FontAwesomeIcons.circleChevronRight,
-            size: 24,
-            color: _currentPage >= _totalPages - 1 ? Colors.grey : blueColor,
-          ),
-          onPressed: _currentPage >= _totalPages - 1
-              ? null
-              : () {
-                  setState(() => _currentPage++);
-                },
-        ),
-      ],
+    return DashboardPaginationFooter(
+      currentPage: _currentPage + 1,
+      totalPages: _totalPages,
+      rowsPerPage: _itemsPerPage,
+      rowsPerPageOptions: _itemsPerPageOptions,
+      onRowsPerPageChanged: (v) => setState(() {
+        _itemsPerPage = v;
+        _currentPage = 0;
+      }),
+      onPrev: _currentPage == 0
+          ? null
+          : () => setState(() => _currentPage--),
+      onNext: _currentPage >= _totalPages - 1
+          ? null
+          : () => setState(() => _currentPage++),
     );
   }
 

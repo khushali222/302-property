@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class Send_email_table {
   int? statusCode;
   List<Emailss>? emails;
@@ -13,16 +15,16 @@ class Send_email_table {
       this.totalPages});
 
   Send_email_table.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     if (json['emails'] != null) {
       emails = <Emailss>[];
       json['emails'].forEach((v) {
         emails!.add(new Emailss.fromJson(v));
       });
     }
-    totalEmails = json['totalEmails'];
-    currentPage = json['currentPage'];
-    totalPages = json['totalPages'];
+    totalEmails = asIntN(json['totalEmails']);
+    currentPage = asIntN(json['currentPage']);
+    totalPages = asIntN(json['totalPages']);
   }
 
   Map<String, dynamic> toJson() {

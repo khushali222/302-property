@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class pastPlansHistoryModel {
   int? statusCode;
@@ -8,7 +9,7 @@ class pastPlansHistoryModel {
   pastPlansHistoryModel({this.statusCode, this.message, this.data});
 
   pastPlansHistoryModel.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     message = json['message'];
     if (json['data'] != null) {
       data = <pastPlanData>[];
@@ -133,7 +134,7 @@ class pastPlanData {
     cvv = json['cvv'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+    iV = asIntN(json['__v']);
     isActive = json['is_active'];
     planName = json['plan_name'];
 
@@ -149,23 +150,23 @@ class pastPlanData {
       });
     }
     planDays = json['plan_days'];
-    dayOfMonth = json['day_of_month'];
+    dayOfMonth = asIntN(json['day_of_month']);
     planPeriods = json['plan_periods'];
     billingOption = json['billingOption'];
     isAnnualDiscount = json['is_annual_discount'];
-    propertyCount = json['property_count'];
-    tenantCount = json['tenant_count'];
-    leaseCount = json['lease_count'];
-    rentalownerCount = json['rentalowner_count'];
-    applicantCount = json['applicant_count'];
-    staffmemberCount = json['staffmember_count'];
+    propertyCount = asIntN(json['property_count']);
+    tenantCount = asIntN(json['tenant_count']);
+    leaseCount = asIntN(json['lease_count']);
+    rentalownerCount = asIntN(json['rentalowner_count']);
+    applicantCount = asIntN(json['applicant_count']);
+    staffmemberCount = asIntN(json['staffmember_count']);
     paymentFunctionality = json['payment_functionality'];
 
     annualDiscount = json['annual_discount'] != null
         ? (json['annual_discount'] as num).toDouble()
         : 0.0;
 
-    vendorCount = json['vendor_count'];
+    vendorCount = asIntN(json['vendor_count']);
     subscriptionId = json['subscription_id'];
   }
 

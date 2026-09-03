@@ -793,6 +793,10 @@ class _AddMortgageScreenState extends State<AddMortgageScreen> {
         final status = mortgageData['status'].toString();
         final formattedStatus = status
             .split('_') // split into ['paid', 'off']
+            // An empty or underscore-edged status splits to an empty segment,
+            // and `word[0]` on it threw RangeError, breaking the Edit Mortgage
+            // prefill before the form could render.
+            .where((word) => word.isNotEmpty)
             .map((word) =>
                 word[0].toUpperCase() + word.substring(1)) // capitalize each
             .join(' '); // join back with space

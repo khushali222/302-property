@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class CardsDetailModel {
   int? statusCode;
   List<CardData>? data;
@@ -7,14 +9,14 @@ class CardsDetailModel {
   CardsDetailModel({this.statusCode, this.data, this.count, this.message});
 
   CardsDetailModel.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     if (json['data'] != null) {
       data = <CardData>[];
       json['data'].forEach((v) {
         data!.add(new CardData.fromJson(v));
       });
     }
-    count = json['count'];
+    count = asIntN(json['count']);
     message = json['message'];
   }
 
@@ -84,7 +86,7 @@ class CardData {
     sId = json['_id'];
     planId = json['plan_id'];
     planName = json['plan_name'];
-    planPrice = json['plan_price'];
+    planPrice = asIntN(json['plan_price']);
     billingInterval = json['billing_interval'];
     if (json['features'] != null) {
       features = <Features>[];
@@ -93,22 +95,22 @@ class CardData {
       });
     }
     planDays = json['plan_days'].toString();
-    dayOfMonth = json['day_of_month'];
+    dayOfMonth = asIntN(json['day_of_month']);
     planPeriods = json['plan_periods'];
     billingOption = json['billingOption'];
     isAnnualDiscount = json['is_annual_discount'];
-    propertyCount = json['property_count'];
-    tenantCount = json['tenant_count'];
-    leaseCount = json['lease_count'];
-    rentalownerCount = json['rentalowner_count'];
-    applicantCount = json['applicant_count'];
-    staffmemberCount = json['staffmember_count'];
-    vendorCount = json['vendor_count'];
+    propertyCount = asIntN(json['property_count']);
+    tenantCount = asIntN(json['tenant_count']);
+    leaseCount = asIntN(json['lease_count']);
+    rentalownerCount = asIntN(json['rentalowner_count']);
+    applicantCount = asIntN(json['applicant_count']);
+    staffmemberCount = asIntN(json['staffmember_count']);
+    vendorCount = asIntN(json['vendor_count']);
     paymentFunctionality = json['payment_functionality'];
     annualDiscount = json['annual_discount'].toString();
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    iV = json['__v'];
+    iV = asIntN(json['__v']);
   }
 
   Map<String, dynamic> toJson() {

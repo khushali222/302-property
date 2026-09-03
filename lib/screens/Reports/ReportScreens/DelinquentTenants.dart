@@ -538,8 +538,13 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
     String? token = prefs.getString('token');
 
     try {
-      final response = await http
-          .get(Uri.parse('$Api_url/api/charge/delinquent/$adminId'), headers: {
+      // apiGet, not a raw http.get: this call used to bypass the shared
+      // network layer, so when it failed the app never learned about it. The
+      // table still rendered and the screen looked healthy while the report
+      // totals were quietly missing — the only symptom was a broken export.
+      final response = await apiGet(
+          Uri.parse('$Api_url/api/charge/delinquent/$adminId'),
+          headers: {
         "authorization": "CRM $token",
         "id": "CRM $adminId",
       });
@@ -712,16 +717,24 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
         formatMoney(item.alltotalamount!.last91PlusDays),
       ]);
     }
-    tableData.add([
-      'Grand Total of all Properties',
-      '',
-      formatCurrency(
-          double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')),
-      formatMoney(globalDelinquentTenantsData!.last30Days),
-      formatMoney(globalDelinquentTenantsData!.last31To60Days),
-      formatMoney(globalDelinquentTenantsData!.last61To90Days),
-      formatMoney(globalDelinquentTenantsData!.last91PlusDays),
-    ]);
+    // The totals fetch returns null when that request fails (its catch
+    // swallows the error and the table still renders), so this used to throw
+    // "Null check operator used on a null value" mid-export — no file and no
+    // message. Omit just the grand-total row instead; the per-property totals
+    // above are still worth exporting. Matches how the Staff CSV already
+    // handles it.
+    final grandTotal = globalDelinquentTenantsData;
+    if (grandTotal != null) {
+      tableData.add([
+        'Grand Total of all Properties',
+        '',
+        formatCurrency(double.tryParse(grandTotal.totalDaysAmount ?? '0')),
+        formatMoney(grandTotal.last30Days),
+        formatMoney(grandTotal.last31To60Days),
+        formatMoney(grandTotal.last61To90Days),
+        formatMoney(grandTotal.last91PlusDays),
+      ]);
+    }
 
     return tableData;
   }
@@ -824,23 +837,30 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
       rowIndex++; // Move to the next row
     }
 
-    // Add grand total row
-    sheet.getRangeByIndex(rowIndex, 1).setText('Grand Total of all Properties');
-    sheet.getRangeByIndex(rowIndex, 2).setText('');
-    sheet.getRangeByIndex(rowIndex, 3).setText(formatCurrency(
-        double.tryParse(globalDelinquentTenantsData!.totalDaysAmount ?? '0')));
-    sheet
-        .getRangeByIndex(rowIndex, 4)
-        .setText(formatMoney(globalDelinquentTenantsData!.last30Days));
-    sheet
-        .getRangeByIndex(rowIndex, 5)
-        .setText(formatMoney(globalDelinquentTenantsData!.last31To60Days));
-    sheet
-        .getRangeByIndex(rowIndex, 6)
-        .setText(formatMoney(globalDelinquentTenantsData!.last61To90Days));
-    sheet
-        .getRangeByIndex(rowIndex, 7)
-        .setText(formatMoney(globalDelinquentTenantsData!.last91PlusDays));
+    // Add grand total row — only when the totals fetch actually returned.
+    // Force-unwrapping it threw mid-export when that request had failed,
+    // leaving no file and no message.
+    final grandTotal = globalDelinquentTenantsData;
+    if (grandTotal != null) {
+      sheet
+          .getRangeByIndex(rowIndex, 1)
+          .setText('Grand Total of all Properties');
+      sheet.getRangeByIndex(rowIndex, 2).setText('');
+      sheet.getRangeByIndex(rowIndex, 3).setText(
+          formatCurrency(double.tryParse(grandTotal.totalDaysAmount ?? '0')));
+      sheet
+          .getRangeByIndex(rowIndex, 4)
+          .setText(formatMoney(grandTotal.last30Days));
+      sheet
+          .getRangeByIndex(rowIndex, 5)
+          .setText(formatMoney(grandTotal.last31To60Days));
+      sheet
+          .getRangeByIndex(rowIndex, 6)
+          .setText(formatMoney(grandTotal.last61To90Days));
+      sheet
+          .getRangeByIndex(rowIndex, 7)
+          .setText(formatMoney(grandTotal.last91PlusDays));
+    }
 
     // Save workbook as a byte stream
     final List<int> bytes = workbook.saveAsStream();
@@ -1083,7 +1103,9 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
                                   children: [
                                     Expanded(
                                       child: Material(
-                                        elevation: 3,
+                                        // Flat: the elevation-3 shadow made the search field
+                                        // sit proud of the flat Export button beside it.
+                                        elevation: 0,
                                         borderRadius: BorderRadius.circular(8),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(

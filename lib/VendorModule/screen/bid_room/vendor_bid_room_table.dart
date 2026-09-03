@@ -18,6 +18,7 @@ import 'package:three_zero_two_property/widgets/titleBar.dart';
 import 'package:three_zero_two_property/widgets/CustomTableShimmer.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class VendorBidRoomTable extends StatefulWidget {
   const VendorBidRoomTable({super.key});
@@ -272,24 +273,29 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable>
     );
   }
 
+  int get _totalPages =>
+      (_filteredBidRequests.length / _rowsPerPage).ceil().clamp(1, 1 << 30);
+
+  /// CRM-4362 / CRM-4837: the page actually shown. If a filter or delete
+  /// shrinks the list past the current page, this clamps for DISPLAY only —
+  /// it never writes `_currentPage`. The old getter assigned to it here,
+  /// which is a state mutation inside a build pass; the real reset belongs in
+  /// the handlers, which all set `_currentPage = 0` when the list changes.
+  int get _safePage => _currentPage.clamp(0, _totalPages - 1);
+
   List<BidRequest> get _pagedData {
     if (_filteredBidRequests.isEmpty) return [];
-
-    int startIndex = _currentPage * _rowsPerPage;
-    int endIndex = startIndex + _rowsPerPage;
-
-    if (startIndex >= _filteredBidRequests.length) {
-      _currentPage = (_filteredBidRequests.length / _rowsPerPage).floor() - 1;
-      if (_currentPage < 0) _currentPage = 0;
-      startIndex = _currentPage * _rowsPerPage;
-      endIndex = startIndex + _rowsPerPage;
-    }
-
-    endIndex = endIndex > _filteredBidRequests.length
-        ? _filteredBidRequests.length
-        : endIndex;
-
+    final int startIndex = _safePage * _rowsPerPage;
+    final int endIndex =
+        (startIndex + _rowsPerPage).clamp(0, _filteredBidRequests.length);
     return _filteredBidRequests.sublist(startIndex, endIndex);
+  }
+
+  void _changeRowsPerPage(int selectedRowsPerPage) {
+    setState(() {
+      _rowsPerPage = selectedRowsPerPage;
+      _currentPage = 0;
+    });
   }
 
    Widget _buildHeaders() {
@@ -818,6 +824,27 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable>
                                 ],
                               ),
                             ),
+                            // CRM-4837: the list slices to a page, so without this control the
+                            // records past the first page were unreachable. Same shared footer
+                            // the dashboard tables use. Sits AFTER the list, not inside the row
+                            // builder — one footer per list, not one per row.
+                            if (!_isLoading && _filteredBidRequests.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 11),
+                                child: DashboardPaginationFooter(
+                                  currentPage: _currentPage + 1,
+                                  totalPages: _totalPages,
+                                  rowsPerPage: _rowsPerPage,
+                                  rowsPerPageOptions: const [10, 25, 50, 100],
+                                  onRowsPerPageChanged: _changeRowsPerPage,
+                                  onPrev: _currentPage == 0
+                                      ? null
+                                      : () => setState(() => _currentPage--),
+                                  onNext: _currentPage < _totalPages - 1
+                                      ? () => setState(() => _currentPage++)
+                                      : null,
+                                ),
+                              ),
                 ],
               ),
             )

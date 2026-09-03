@@ -106,7 +106,8 @@
 //   }
 // }
 
-import 'package:three_zero_two_property/Model/json_parse.dart';
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class ChargeResponses {
   int? statusCode;
@@ -130,7 +131,7 @@ class ChargeResponses {
   factory ChargeResponses.fromJson(Map<String, dynamic> json) {
 
     return ChargeResponses(
-      statusCode: asIntOrNull(json['statusCode']),
+      statusCode: asIntN(json['statusCode']),
       chargeId: json['charge_id'] as String?,
       adminId: json['admin_id'] as String?,
       tenantId: json['tenant_id'] as String?,

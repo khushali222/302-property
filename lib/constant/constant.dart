@@ -841,11 +841,25 @@ Widget kNoSearchResults(BuildContext context) {
         ),
         const SizedBox(height: 10),
         Text(
-          "No Data Available",
+          // CRM-4365: this widget is the SEARCH/FILTER empty state — the name
+          // says so — but it rendered the same "No Data Available" as a
+          // genuinely empty list. A user who had filtered to nothing was told
+          // their records were gone. Distinct wording, plus a hint at the
+          // action that clears it.
+          "No Results Found",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: blueColor,
             fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "Try adjusting your search or filters.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: blueColor.withOpacity(0.6),
+            fontSize: 13,
           ),
         ),
       ],

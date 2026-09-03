@@ -377,18 +377,33 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
       oldValues.forEach((key, oldValue) {
         // Skip ID fields
         if (_isIdField(key)) return;
+        if (!newValues.containsKey(key)) return;
 
-        if (newValues.containsKey(key) && oldValue != newValues[key]) {
-          metadataWidgets.add(
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                '${_formatKey(key)}: ${_formatValue(oldValue, key: key)} → ${_formatValue(newValues[key], key: key)}',
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
-              ),
+        // CRM-4373: compare what the user will actually SEE, not the raw JSON.
+        //
+        // The two sides often arrive in different shapes for the same value —
+        // the stored side as a number or an ISO date, the submitted side as the
+        // string the form posted. A raw `oldValue != newValue` then reports a
+        // change for a field nobody touched, and because both sides are run
+        // through _formatValue for display it renders as an obvious no-op like
+        // "$100.00 → $100.00" or "06/25/2026 → 06/25/2026".
+        //
+        // Formatting first collapses those equivalent shapes, so a row is only
+        // listed when the displayed values genuinely differ. A real edit still
+        // formats differently on each side and is still reported.
+        final String oldText = _formatValue(oldValue, key: key);
+        final String newText = _formatValue(newValues[key], key: key);
+        if (oldText == newText) return;
+
+        metadataWidgets.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              '${_formatKey(key)}: $oldText → $newText',
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
             ),
-          );
-        }
+          ),
+        );
       });
 
       // Add any new fields that don't exist in old_values
@@ -744,8 +759,14 @@ class _CustomHistoryTableState extends State<CustomHistoryTable> {
   }
 
   String _formatKey(String key) {
+    // These keys come straight from the server's audit metadata, so a leading,
+    // trailing or doubled underscore is possible — "__v" splits to ["", "", "v"]
+    // and `word[0]` on an empty segment threw RangeError during build, taking
+    // the whole History section down with a red screen. Drop empty segments so
+    // the spacing stays clean too.
     return key
         .split('_')
+        .where((word) => word.isNotEmpty)
         .map((word) => word[0].toUpperCase() + word.substring(1))
         .join(' ');
   }

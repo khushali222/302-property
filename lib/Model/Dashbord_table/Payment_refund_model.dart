@@ -1,4 +1,5 @@
-import 'package:three_zero_two_property/Model/json_parse.dart';
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class PaymentRefund {
   final String? id;
@@ -69,9 +70,9 @@ class PaymentRefund {
       leaseId: row['lease_id'] as String?,
       tenantId: row['tenant_id'] as String?,
       // The gateway returns these ids as strings on some responses.
-      customerVaultId: asIntOrNull(row['customer_vault_id']),
-      billingId: asIntOrNull(row['billing_id']),
-      surcharge: asDoubleOrNull(row['surcharge']),
+      customerVaultId: asIntN(row['customer_vault_id']),
+      billingId: asIntN(row['billing_id']),
+      surcharge: asDoubleN(row['surcharge']),
       paymentType: row['payment_type'] as String?,
       transactionId: row['transaction_id'] as String?,
       response: row['response'] as String?,
@@ -84,7 +85,7 @@ class PaymentRefund {
           ?.whereType<Map<String, dynamic>>()
           .map((e) => Entry.fromJson(e))
           .toList(),
-      totalAmount: asDoubleOrNull(row['total_amount']),
+      totalAmount: asDoubleN(row['total_amount']),
       type: row['type'] as String?,
       paymentAttachment: row['payment_attachment'] as List<dynamic>?,
       createdAt: row['createdAt'] as String?,
@@ -198,7 +199,7 @@ class Entry {
       account: json['account'] as String?,
       amount: (json['amount'] as num?)?.toDouble(),
       date: json['date'] as String?,
-      duePaid: asIntOrNull(json['due_paid']),
+      duePaid: asIntN(json['due_paid']),
       isPrepaid: json['is_prepaid'] as bool?,
       memo: json['memo'] as String?,
       chargeType: json['charge_type'] as String?,

@@ -5526,6 +5526,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet>
   void handleEdit(lease_renter_insurance property) async {}
 
   void _showAlert(BuildContext context, String id) {
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -5555,12 +5558,27 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet>
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () async {
-            await RentersInsuranceService()
-                .deleteInsurance(renters_insurance_id: id);
-            setState(() {
-              futureRenterPolicies = _fetchRenterPolicies();
-            });
-            Navigator.pop(context);
+            if (deleting) return;
+            deleting = true;
+            // The service toasts the server's own reason and then throws when
+            // the delete is rejected. Nothing caught it, so Navigator.pop was
+            // never reached — the dialog stayed open with no explanation and
+            // the exception escaped into the framework. Close the dialog
+            // either way; the message has already been shown.
+            try {
+              await RentersInsuranceService()
+                  .deleteInsurance(renters_insurance_id: id);
+              if (!mounted) return;
+              // Only refresh when the delete actually succeeded.
+              setState(() {
+                futureRenterPolicies = _fetchRenterPolicies();
+              });
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
+              Navigator.pop(context);
+            }
           },
           color: Colors.red,
         )
@@ -5570,6 +5588,9 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet>
 
   void _showRenterInsuranceDeleteAlert(
       BuildContext context, String rentersInsuranceId) {
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -5590,14 +5611,25 @@ class _TenantSummaryTabletState extends State<TenantSummaryTablet>
           child: const Text("Delete",
               style: TextStyle(color: Colors.white, fontSize: 18)),
           onPressed: () async {
-            final ok = await RentersInsuranceService()
-                .deleteInsurance(renters_insurance_id: rentersInsuranceId);
-            if (mounted && ok == true) {
-              setState(() {
-                futureRenterPolicies = _fetchRenterPolicies();
-              });
+            if (deleting) return;
+            deleting = true;
+            // This checked the returned flag but not for a throw: the service
+            // throws when the delete is rejected, so Navigator.pop was never
+            // reached and the dialog stayed open with no explanation. Close it
+            // either way; the message has already been shown.
+            try {
+              final ok = await RentersInsuranceService()
+                  .deleteInsurance(renters_insurance_id: rentersInsuranceId);
+              if (mounted && ok == true) {
+                setState(() {
+                  futureRenterPolicies = _fetchRenterPolicies();
+                });
+              }
+              if (mounted) Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (mounted) Navigator.pop(context);
             }
-            if (mounted) Navigator.pop(context);
           },
           color: Colors.red,
         ),

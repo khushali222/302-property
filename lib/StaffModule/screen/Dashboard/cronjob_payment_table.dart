@@ -25,6 +25,7 @@ import '../../repository/Payment_cronjob/cronjob_payment_table.dart';
 import '../../repository/tenants.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -2335,104 +2336,25 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table>
                               }).toList(),
                             ),
                           ),
-                        const SizedBox(height: 20),
-                        if (data.length > 5)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  const SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: (snapshot.data?.metadata
-                                                          ?.total ??
-                                                      0) >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue ??
-                                                        itemsPerPage;
-                                                    currentPage = 1;
-                                                    futurecronjobpayment =
-                                                        cronjob_payment_tableService()
-                                                            .fetchCronjob_payment(
-                                                                limit:
-                                                                    itemsPerPage,
-                                                                page:
-                                                                    currentPage);
-                                                  });
-                                                }
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
-                                    ),
-                                    onPressed: currentPage == 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          },
-                                  ),
-                                  Text('Page ${currentPage} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages
-                                          ? blueColor
-                                          : Colors.grey,
-                                    ),
-                                    onPressed: currentPage < totalPages
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
+                        // Shared dashboard footer — replaces this table's own older
+                        // square-cornered elevation-3 copy. It carries its own spacing,
+                        // so the SizedBox(20) that used to sit above it is gone.
+                        if (data.length > itemsPerPageOptions.first)
+                          DashboardPaginationFooter(
+                            currentPage: currentPage + 1,
+                            totalPages: totalPages,
+                            rowsPerPage: itemsPerPage,
+                            rowsPerPageOptions: itemsPerPageOptions,
+                            onRowsPerPageChanged: (v) => setState(() {
+                              itemsPerPage = v;
+                              currentPage = 0;
+                            }),
+                            onPrev: currentPage == 0
+                                ? null
+                                : () => setState(() => currentPage--),
+                            onNext: currentPage < totalPages - 1
+                                ? () => setState(() => currentPage++)
+                                : null,
                           ),
 
                         // // Failed Payments Section

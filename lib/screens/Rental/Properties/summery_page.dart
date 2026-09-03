@@ -1949,6 +1949,9 @@ class _Summery_pageState extends State<Summery_page>
 
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -1983,13 +1986,28 @@ class _Summery_pageState extends State<Summery_page>
           onPressed: () async {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
+              return;
+            }
+            if (deleting) return;
+            deleting = true;
+            // The repository toasts the server's own reason and then throws
+            // when the delete is rejected. Nothing caught it, so
+            // Navigator.pop was never reached — the dialog stayed open with no
+            // explanation and the exception escaped into the framework. Close
+            // the dialog either way; the message has already been shown.
+            try {
               var data = await WorkOrderRepository()
                   .DeleteWorkOrder(workOrderid: id, reason: reason.text);
+              if (!mounted) return;
+              // Only refresh when the delete actually succeeded.
               setState(() {
                 futureworkordersummery = Properies_summery_Repo()
                     .fetchWorkOrders(widget.properties.rentalId!);
               });
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
               Navigator.pop(context);
             }
           },
@@ -13520,6 +13538,9 @@ class _Summery_pageState extends State<Summery_page>
   }
 
   unitScreen1(BuildContext context, unit_properties unit) {
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -13595,18 +13616,30 @@ class _Summery_pageState extends State<Summery_page>
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0))),
                             onPressed: () async {
-                              var data = await Properies_summery_Repo()
-                                  .Deleteunit(unitId: unit?.unitId!);
-                              // Add your delete logic here
-                              setState(() {
-                                futureUnitsummery = Properies_summery_Repo()
-                                    .fetchunit(
-                                        widget.properties.rentalId ?? "");
-                                showdetails = false;
-                                // Update unit count after deletion
-                                unitCount = unitCount > 0 ? unitCount - 1 : 0;
-                              });
-                              //Navigator.pop(context);
+                              if (deleting) return;
+                              deleting = true;
+                              // The repository toasts the server's own reason
+                              // and then throws when the delete is rejected.
+                              // Nothing caught it, so the exception escaped
+                              // into the framework. The message has already
+                              // been shown.
+                              try {
+                                var data = await Properies_summery_Repo()
+                                    .Deleteunit(unitId: unit?.unitId!);
+                                if (!mounted) return;
+                                // Only refresh when the delete actually succeeded.
+                                setState(() {
+                                  futureUnitsummery = Properies_summery_Repo()
+                                      .fetchunit(
+                                          widget.properties.rentalId ?? "");
+                                  showdetails = false;
+                                  // Update unit count after deletion
+                                  unitCount = unitCount > 0 ? unitCount - 1 : 0;
+                                });
+                                //Navigator.pop(context);
+                              } catch (_) {
+                                deleting = false;
+                              }
                             },
                             child: Text(
                               'Delete unit',

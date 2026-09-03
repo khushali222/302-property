@@ -418,6 +418,9 @@ class _Workorder_tableState extends State<Workorder_table>
 
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -452,11 +455,26 @@ class _Workorder_tableState extends State<Workorder_table>
           onPressed: () async {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
+              return;
+            }
+            if (deleting) return;
+            deleting = true;
+            // The repository toasts the server's own reason and then throws
+            // when the delete is rejected. Nothing caught it, so
+            // Navigator.pop was never reached — the dialog stayed open with no
+            // explanation and the exception escaped into the framework. Close
+            // the dialog either way; the message has already been shown.
+            try {
               var data = await WorkOrderRepository()
                   .DeleteWorkOrder(workOrderid: id, reason: reason.text);
+              if (!mounted) return;
               // Add your delete logic here
+              // Only refresh when the delete actually succeeded.
               _loadWorkOrders();
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
               Navigator.pop(context);
             }
           },

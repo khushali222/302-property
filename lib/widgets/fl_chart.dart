@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:three_zero_two_property/services/app_log.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -59,8 +60,12 @@ class _FlChartAppState extends State<FlChartApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? id = prefs.getString("adminId");
     String? token = prefs.getString('token');
-    final response = await http
-        .get(Uri.parse('${Api_url}/api/rentals/occupied_properties/$id'), headers: {
+    // apiGet, not a raw http.get: this call used to bypass the shared network
+    // layer entirely, so a failure here never reached the offline/retry
+    // handling the rest of the app relies on.
+    final response = await apiGet(
+        Uri.parse('${Api_url}/api/rentals/occupied_properties/$id'),
+        headers: {
       "authorization": "CRM $token",
       "id": "CRM $id",
       "Content-Type": "application/json"
@@ -93,11 +98,27 @@ class _FlChartAppState extends State<FlChartApp> {
           }
           loading = false;
         });
-      } else {
-        throw Exception('Failed to load dataaaaaaaa');
       }
-    } else {
-      throw Exception('Failed to load datawwwwww');
+    }
+  }
+
+  /// The fetch above used to `throw` on any non-200 (with placeholder messages)
+  /// while being called from initState with no await and no catch, so the
+  /// exception escaped into the framework — red screen in debug, and `loading`
+  /// was only cleared on the success path so the chart span forever. Swallow
+  /// the failure here and always clear `loading`, leaving whatever series is
+  /// already on screen.
+  Future<void> _loadChartData() async {
+    try {
+      await fetchchartdata();
+    } catch (e) {
+      logError('Property Summary chart failed to load: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 
@@ -110,9 +131,12 @@ class _FlChartAppState extends State<FlChartApp> {
 
   @override
   void initState() {
-    data = widget.data!;
+    // `widget.data!` force-unwrapped a nullable field, so building this chart
+    // without passing data crashed immediately. Fall back to the existing
+    // series instead.
+    data = widget.data ?? data;
     super.initState();
-    fetchchartdata();
+    _loadChartData();
 
 
   }

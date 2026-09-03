@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class lease_communications {
   int? statusCode;
   List<Emails>? emails;
@@ -13,16 +15,16 @@ class lease_communications {
       this.totalPages});
 
   lease_communications.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     if (json['emails'] != null) {
       emails = <Emails>[];
       json['emails'].forEach((v) {
         emails!.add(new Emails.fromJson(v));
       });
     }
-    totalEmails = json['totalEmails'];
-    currentPage = json['currentPage'];
-    totalPages = json['totalPages'];
+    totalEmails = asIntN(json['totalEmails']);
+    currentPage = asIntN(json['currentPage']);
+    totalPages = asIntN(json['totalPages']);
   }
 
   Map<String, dynamic> toJson() {

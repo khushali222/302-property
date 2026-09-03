@@ -365,6 +365,9 @@ class _PropertyTableState extends State<PropertyTable>
   bool _errorText = false;
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same id.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -404,19 +407,30 @@ class _PropertyTableState extends State<PropertyTable>
           ),
           onPressed: () async {
             if (reason.text.isEmpty) {
-              // setState(() {
-              //  _errorText == true;
-              // });
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              var data = await PropertyTypeRepository()
+              return;
+            }
+            if (deleting) return;
+            deleting = true;
+            // The repository toasts the server's own reason and then throws
+            // when the delete is rejected (e.g. the type is still in use).
+            // Nothing caught it, so Navigator.pop was never reached — the
+            // dialog stayed open with no explanation and the exception escaped
+            // into the framework. Close the dialog either way; the message has
+            // already been shown.
+            try {
+              await PropertyTypeRepository()
                   .DeletePropertyType(pro_id: id, reason: reason.text);
-              // Add your delete logic here
-              if (data != null)
-                setState(() {
-                  futurePropertyTypes =
-                      PropertyTypeRepository().fetchPropertyTypes();
-                });
+              if (!mounted) return;
+              // Only refresh when the delete actually succeeded.
+              setState(() {
+                futurePropertyTypes =
+                    PropertyTypeRepository().fetchPropertyTypes();
+              });
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
               Navigator.pop(context);
             }
           },

@@ -60,7 +60,10 @@ class WorkOrderRepository {
     String? vendorId,
     String? vendorNotes,
     String? priority,
-    bool? workChargeTo,
+    // String, not bool: the server declares work_charge_to as a String and web
+    // sends "Tenant" or "" (AddWorkorder.jsx). Sending a bool here meant the
+    // field was stored as "false" no matter what the user picked.
+    String? workChargeTo,
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,
@@ -158,7 +161,10 @@ class WorkOrderRepository {
     String? vendorId,
     String? vendorNotes,
     String? priority,
-    bool? workChargeTo,
+    // String, not bool: the server declares work_charge_to as a String and web
+    // sends "Tenant" or "" (AddWorkorder.jsx). Sending a bool here meant the
+    // field was stored as "false" no matter what the user picked.
+    String? workChargeTo,
     String? date,
     bool? isBillable,
     List<Map<String, dynamic>>? parts,

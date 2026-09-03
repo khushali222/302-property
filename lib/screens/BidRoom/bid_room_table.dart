@@ -30,6 +30,7 @@ import 'package:three_zero_two_property/screens/BidRoom/create_bid_room.dart';
 import 'package:three_zero_two_property/repository/fetch_allcategories.dart';
 import 'package:three_zero_two_property/Model/All_categories_model.dart';
 import 'package:lottie/lottie.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class BidRoomTable extends StatefulWidget {
   /// When true, uses staff drawer, staff app bar, and staff repository.
@@ -286,23 +287,21 @@ class _BidRoomTableState extends State<BidRoomTable>
     }
   }
 
+  int get _totalPages =>
+      (_filteredBidRequests.length / _rowsPerPage).ceil().clamp(1, 1 << 30);
+
+  /// CRM-4362 / CRM-4837: the page actually shown. If a filter or delete
+  /// shrinks the list past the current page, this clamps for DISPLAY only —
+  /// it never writes `_currentPage`. The old getter assigned to it here,
+  /// which is a state mutation inside a build pass; the real reset belongs in
+  /// the handlers, which all set `_currentPage = 0` when the list changes.
+  int get _safePage => _currentPage.clamp(0, _totalPages - 1);
+
   List<BidRequest> get _pagedData {
     if (_filteredBidRequests.isEmpty) return [];
-
-    int startIndex = _currentPage * _rowsPerPage;
-    int endIndex = startIndex + _rowsPerPage;
-
-    if (startIndex >= _filteredBidRequests.length) {
-      _currentPage = (_filteredBidRequests.length / _rowsPerPage).floor() - 1;
-      if (_currentPage < 0) _currentPage = 0;
-      startIndex = _currentPage * _rowsPerPage;
-      endIndex = startIndex + _rowsPerPage;
-    }
-
-    endIndex = endIndex > _filteredBidRequests.length
-        ? _filteredBidRequests.length
-        : endIndex;
-
+    final int startIndex = _safePage * _rowsPerPage;
+    final int endIndex =
+        (startIndex + _rowsPerPage).clamp(0, _filteredBidRequests.length);
     return _filteredBidRequests.sublist(startIndex, endIndex);
   }
 
@@ -1407,6 +1406,29 @@ class _BidRoomTableState extends State<BidRoomTable>
                                   ),
                                 ),
                     ),
+                    // CRM-4837: the list slices to a page, so without this control the
+                    // records past the first page were unreachable. Same shared footer
+                    // the dashboard tables use. Sits AFTER the list, not inside the row
+                    // builder — one footer per list, not one per row.
+                    if (MediaQuery.of(context).size.width < 500 &&
+                        !_isLoading &&
+                        _filteredBidRequests.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 11),
+                        child: DashboardPaginationFooter(
+                          currentPage: _currentPage + 1,
+                          totalPages: _totalPages,
+                          rowsPerPage: _rowsPerPage,
+                          rowsPerPageOptions: const [10, 25, 50, 100],
+                          onRowsPerPageChanged: _changeRowsPerPage,
+                          onPrev: _currentPage == 0
+                              ? null
+                              : () => setState(() => _currentPage--),
+                          onNext: _currentPage < _totalPages - 1
+                              ? () => setState(() => _currentPage++)
+                              : null,
+                        ),
+                      ),
                   if (MediaQuery.of(context).size.width > 500)
                     Padding(
                       padding: const EdgeInsets.only(left: 11, right: 11),
@@ -1933,68 +1955,29 @@ class _BidRoomTableState extends State<BidRoomTable>
                                   ),
                                 ),
                     ),
-                  // Pagination
-                  // if (!_isLoading && _filteredBidRequests.isNotEmpty)
-                  //   Padding(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         DropdownButtonHideUnderline(
-                  //           child: DropdownButton2<int>(
-                  //             value: _rowsPerPage,
-                  //             items: [10, 25, 50, 100].map((value) {
-                  //               return DropdownMenuItem<int>(
-                  //                 value: value,
-                  //                 child: Text('$value'),
-                  //               );
-                  //             }).toList(),
-                  //             onChanged: (value) {
-                  //               if (value != null) {
-                  //                 _changeRowsPerPage(value);
-                  //               }
-                  //             },
-                  //             buttonStyleData: ButtonStyleData(
-                  //               height: 40,
-                  //               padding: EdgeInsets.symmetric(horizontal: 16),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         Row(
-                  //           children: [
-                  //             IconButton(
-                  //               icon: Icon(Icons.chevron_left),
-                  //               onPressed: _currentPage > 0
-                  //                   ? () {
-                  //                       setState(() {
-                  //                         _currentPage--;
-                  //                       });
-                  //                     }
-                  //                   : null,
-                  //             ),
-                  //             Text(
-                  //               'Page ${_currentPage + 1} of ${(_filteredBidRequests.length / _rowsPerPage).ceil()}',
-                  //               style: TextStyle(fontWeight: FontWeight.w500),
-                  //             ),
-                  //             IconButton(
-                  //               icon: Icon(Icons.chevron_right),
-                  //               onPressed: (_currentPage + 1) <
-                  //                       (_filteredBidRequests.length /
-                  //                               _rowsPerPage)
-                  //                           .ceil()
-                  //                   ? () {
-                  //                       setState(() {
-                  //                         _currentPage++;
-                  //                       });
-                  //                     }
-                  //                   : null,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // const SizedBox(height: 20),
+                    // CRM-4837: the list slices to a page, so without this control the
+                    // records past the first page were unreachable. Same shared footer
+                    // the dashboard tables use. Sits AFTER the list, not inside the row
+                    // builder — one footer per list, not one per row.
+                    if (MediaQuery.of(context).size.width > 500 &&
+                        !_isLoading &&
+                        _filteredBidRequests.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 11),
+                        child: DashboardPaginationFooter(
+                          currentPage: _currentPage + 1,
+                          totalPages: _totalPages,
+                          rowsPerPage: _rowsPerPage,
+                          rowsPerPageOptions: const [10, 25, 50, 100],
+                          onRowsPerPageChanged: _changeRowsPerPage,
+                          onPrev: _currentPage == 0
+                              ? null
+                              : () => setState(() => _currentPage--),
+                          onNext: _currentPage < _totalPages - 1
+                              ? () => setState(() => _currentPage++)
+                              : null,
+                        ),
+                      ),
                 ],
               ),
             )

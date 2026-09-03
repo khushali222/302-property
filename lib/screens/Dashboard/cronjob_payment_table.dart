@@ -29,6 +29,7 @@ import '../../widgets/payment_action_dialogs.dart';
 import '../../widgets/titleBar.dart';
 import '../Leasing/RentalRoll/SummeryPageLease.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class Cronjob_payment_table extends StatefulWidget {
   @override
@@ -2558,104 +2559,26 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table>
                               }, Propertytype));
                             }).toList(),
                           ),
-                        if (data.length > 5) const SizedBox(height: 20),
-                        if (data.length > 5)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  const SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: (snapshot.data?.metadata
-                                                          ?.total ??
-                                                      0) >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue ??
-                                                        itemsPerPage;
-                                                    currentPage = 1;
-                                                    futurecronjobpayment =
-                                                        cronjob_payment_tableService()
-                                                            .fetchCronjob_payment(
-                                                                limit:
-                                                                    itemsPerPage,
-                                                                page:
-                                                                    currentPage);
-                                                  });
-                                                }
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
-                                    ),
-                                    onPressed: currentPage == 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          },
-                                  ),
-                                  Text('Page ${currentPage} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages
-                                          ? blueColor
-                                          : Colors.grey,
-                                    ),
-                                    onPressed: currentPage < totalPages
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                              futurecronjobpayment =
-                                                  cronjob_payment_tableService()
-                                                      .fetchCronjob_payment(
-                                                          limit: itemsPerPage,
-                                                          page: currentPage);
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
+                        // Shared dashboard footer. This section previously used the older
+                        // square-cornered elevation-3 style while the Failed Payments
+                        // section below already used the modern one — same screen, two
+                        // different footers. Both now come from one widget.
+                        if (data.length > itemsPerPageOptions.first)
+                          DashboardPaginationFooter(
+                            currentPage: currentPage + 1,
+                            totalPages: totalPages,
+                            rowsPerPage: itemsPerPage,
+                            rowsPerPageOptions: itemsPerPageOptions,
+                            onRowsPerPageChanged: (v) => setState(() {
+                              itemsPerPage = v;
+                              currentPage = 0;
+                            }),
+                            onPrev: currentPage == 0
+                                ? null
+                                : () => setState(() => currentPage--),
+                            onNext: currentPage < totalPages - 1
+                                ? () => setState(() => currentPage++)
+                                : null,
                           ),
 
                         // Failed Payments Section
@@ -2997,115 +2920,24 @@ class _Cronjob_payment_tableState extends State<Cronjob_payment_table>
                                       : null);
                             }).toList(),
                           ),
-                        // Pagination for Failed Payments
-                        if (failedData.isNotEmpty &&
-                            failedData.length >= 5) ...[
-                          const SizedBox(height: 20),
-                          // Pagination - Side by side layout
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              // Left side: Rows per page dropdown
-                              Material(
-                                elevation: 2,
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.white,
-                                child: Container(
-                                  height: 40,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<int>(
-                                      value: failedItemsPerPage,
-                                      isExpanded: false,
-                                      items:
-                                          itemsPerPageOptions.map((int value) {
-                                        return DropdownMenuItem<int>(
-                                          value: value,
-                                          child: Text(
-                                            value.toString(),
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: failedData.length >= 5
-                                          ? (newValue) {
-                                              setState(() {
-                                                failedItemsPerPage = newValue ??
-                                                    failedItemsPerPage;
-                                                failedCurrentPage = 1;
-                                              });
-                                            }
-                                          : null,
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: blueColor,
-                                        size: 24,
-                                      ),
-                                      style: const TextStyle(
-                                          fontSize: 14, color: Colors.black),
-                                      dropdownColor: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              // Page navigation
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: failedCurrentPage == 1
-                                          ? Colors.grey
-                                          : blueColor,
-                                    ),
-                                    onPressed: failedCurrentPage == 1
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              failedCurrentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
-                                    child: Text(
-                                      'Page ${failedCurrentPage} of $failedTotalPages',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color:
-                                          failedCurrentPage < failedTotalPages
-                                              ? blueColor
-                                              : Colors.grey,
-                                    ),
-                                    onPressed:
-                                        failedCurrentPage < failedTotalPages
-                                            ? () {
-                                                setState(() {
-                                                  failedCurrentPage++;
-                                                });
-                                              }
-                                            : null,
-                                  ),
-                                ],
-                              ),
-                            ],
+                        // Pagination for Failed Payments — same shared footer as every
+                        // other dashboard table, including the Payments section above.
+                        if (failedData.isNotEmpty && failedData.length >= 5)
+                          DashboardPaginationFooter(
+                            currentPage: failedCurrentPage,
+                            totalPages: failedTotalPages,
+                            rowsPerPage: failedItemsPerPage,
+                            onRowsPerPageChanged: (v) => setState(() {
+                              failedItemsPerPage = v;
+                              failedCurrentPage = 1;
+                            }),
+                            onPrev: failedCurrentPage == 1
+                                ? null
+                                : () => setState(() => failedCurrentPage--),
+                            onNext: failedCurrentPage < failedTotalPages
+                                ? () => setState(() => failedCurrentPage++)
+                                : null,
                           ),
-                        ],
                       ],
                     ),
                   );

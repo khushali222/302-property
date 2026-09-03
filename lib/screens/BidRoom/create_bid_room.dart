@@ -67,6 +67,11 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   // Loading states
   bool _isLoading = false;
   bool _isLoadingProperties = false;
+
+  /// Type-to-filter for the Property dropdown, which lists every property on
+  /// the account and is impractical to scroll once there are more than a few.
+  final TextEditingController _propertySearchController =
+      TextEditingController();
   bool _isLoadingCategories = false;
 
   // File upload
@@ -109,6 +114,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   void dispose() {
     _descriptionController.dispose();
     _dueDateController.dispose();
+    _propertySearchController.dispose();
     _selectedVendorIdsNotifier.dispose();
     super.dispose();
   }
@@ -127,8 +133,14 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
         widget.useStaffLayout ? prefs.getString("staff_id") : id;
 
     try {
+      // `limit=0` is the server's own "no limit" flag
+      // (Rentals.js: `req.query.limit === "0" ? 0 : (parseInt(...) || 10)`).
+      // Without it the route falls back to its default page of 10, so the
+      // dropdown only ever listed the first 10 properties and the rest were
+      // unreachable — there is no pagination or server-side search here.
+      // Web parity: AddBidRequest.jsx requests `?limit=0` for this same list.
       final response = await apiGet(
-        Uri.parse('${Api_url}/api/rentals/rentals/$id'),
+        Uri.parse('${Api_url}/api/rentals/rentals/$id?limit=0'),
         headers: {
           "authorization": "CRM $token",
           "id": "CRM $headerId",
@@ -136,17 +148,33 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
       );
 
       if (response.statusCode == 200) {
-        List jsonResponse = json.decode(response.body)['data'];
+        // Same shaping as web's fetchProperties (AddBidRequest.jsx):
+        // skip deleted rentals, accept either address spelling, drop entries
+        // with no address at all, then sort case-insensitively on the trimmed
+        // value. Previously a missing address became the literal string
+        // "null" via .toString() and showed up as a "null" row in the list.
+        final List jsonResponse =
+            (json.decode(response.body)['data'] as List?) ?? const [];
         Map<String, String> addresses = {};
-        jsonResponse.forEach((data) {
-          addresses[data['rental_id'].toString()] =
-              data['rental_adress'].toString();
-        });
+        for (final data in jsonResponse) {
+          if (data is! Map) continue;
+          if (data['is_delete'] == true) continue;
+          final String address =
+              (data['rental_adress'] ?? data['rental_address'] ?? '')
+                  .toString()
+                  .trim();
+          if (address.isEmpty) continue;
+          final String rentalId = (data['rental_id'] ?? '').toString();
+          if (rentalId.isEmpty) continue;
+          addresses[rentalId] = address;
+        }
 
         // Sort properties alphabetically
         final sortedEntries = addresses.entries.toList()
-          ..sort(
-              (a, b) => a.value.toLowerCase().compareTo(b.value.toLowerCase()));
+          ..sort((a, b) => a.value
+              .toLowerCase()
+              .trim()
+              .compareTo(b.value.toLowerCase().trim()));
         final sortedAddresses = Map<String, String>.fromEntries(sortedEntries);
 
         setState(() {
@@ -685,6 +713,15 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                   },
                   hint: 'Select Property',
                   isLoading: _isLoadingProperties,
+                  searchController: _propertySearchController,
+                  searchHint: 'Search property',
+                  // Match on the address shown in the row, so typing any part
+                  // of it narrows the list.
+                  searchMatchFn: (item, searchValue) {
+                    final String address =
+                        (properties[item.value] ?? '').toLowerCase();
+                    return address.contains(searchValue.toLowerCase().trim());
+                  },
                 ),
                 // Unit Dropdown (Optional) - Only show if property has units
                 if (_selectedPropertyId != null && units.isNotEmpty) ...[
@@ -850,6 +887,13 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     required Function(String?) onChanged,
     required String hint,
     bool isLoading = false,
+    // Optional type-to-filter. Only the Property list opts in — it can hold
+    // well over a hundred entries, which is impractical to scroll. The other
+    // dropdowns on this screen are short and pass nothing, so they are
+    // unchanged.
+    TextEditingController? searchController,
+    String? searchHint,
+    bool Function(DropdownMenuItem<String>, String)? searchMatchFn,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -951,6 +995,44 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                     height: 40,
                     padding: EdgeInsets.symmetric(horizontal: 16),
                   ),
+                  dropdownSearchData: searchController == null
+                      ? null
+                      : DropdownSearchData(
+                          searchController: searchController,
+                          searchInnerWidgetHeight: 60,
+                          searchInnerWidget: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8, bottom: 4, left: 8, right: 8),
+                            child: TextFormField(
+                              controller: searchController,
+                              maxLines: 1,
+                              cursorColor: blueColor,
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.black),
+                              decoration: InputDecoration(
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                hintText: searchHint ?? 'Search',
+                                hintStyle: const TextStyle(
+                                    fontSize: 13, color: Color(0xFFb0b6c3)),
+                                prefixIcon:
+                                    const Icon(Icons.search, size: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          searchMatchFn: searchMatchFn,
+                        ),
+                  // Leave the field clean for the next open, matching how the
+                  // searchable dropdown on Send E-mail behaves.
+                  onMenuStateChange: (isOpen) {
+                    if (!isOpen) {
+                      searchController?.clear();
+                    }
+                  },
                 ),
               ),
       ],

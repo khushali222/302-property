@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:three_zero_two_property/Model/json_parse.dart';
 import 'package:http/http.dart' as http;
 import 'package:three_zero_two_property/services/api_helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,10 +99,10 @@ class Rentals {
           .toList(),
       isDelete: json['is_delete'] ?? false,
       is_available: json["is_available"] ?? false,
-      publishedRentAmount: asDoubleOrNull(json['published_rent_amount']),
+      publishedRentAmount: asDoubleN(json['published_rent_amount']),
       parcelNumber: json['parcel_number'] ?? "",
       purchaseDate: json['purchase_date'] ?? "",
-      purchasePrice: asDoubleOrNull(json['purchase_price']),
+      purchasePrice: asDoubleN(json['purchase_price']),
       placedInService: json['placed_in_service'] ?? "",
       subdivision: json['subdivision'] ?? "",
       rentalOwnerData:
@@ -143,7 +142,7 @@ class PropertyValueItem {
   factory PropertyValueItem.fromJson(Map<String, dynamic> json) {
     return PropertyValueItem(
       id: json['_id']?.toString(),
-      estimatedValue: asDoubleOrNull(json['estimatedValue']),
+      estimatedValue: asDoubleN(json['estimatedValue']),
       valueSource: json['valueSource']?.toString(),
       valueAsOfDate: json['valueAsOfDate']?.toString(),
     );

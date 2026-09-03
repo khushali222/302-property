@@ -888,7 +888,10 @@ class _WorkOrderTableState extends State<WorkOrderTable>
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
-                                      "No Data Available",
+                                      // CRM-4365: this branch is the API returning nothing, i.e. the
+                                      // vendor genuinely has no work orders — distinct from a filter
+                                      // matching nothing, which renders kNoSearchResults instead.
+                                      "No Work Orders Yet",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: blueColor,

@@ -18,6 +18,7 @@ import '../../provider/dateProvider.dart';
 
 import '../../repository/dashboard_table_repo/lease_expiring_table.dart';
 import '../../widgets/CustomTableShimmer.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class Dashboard_leaseExpiring extends StatefulWidget {
   @override
@@ -932,85 +933,25 @@ class _Dashboard_leaseExpiringState extends State<Dashboard_leaseExpiring>
                             );
                           }).toList(),
                         ),
-                        if (data.length > 5) SizedBox(height: 20),
-                        if (data.length > 5)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(width: 10),
-                                  Material(
-                                    elevation: 3,
-                                    child: Container(
-                                      height: 40,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<int>(
-                                          value: itemsPerPage,
-                                          items: itemsPerPageOptions
-                                              .map((int value) {
-                                            return DropdownMenuItem<int>(
-                                              value: value,
-                                              child: Text(value.toString()),
-                                            );
-                                          }).toList(),
-                                          onChanged: data.length >
-                                                  itemsPerPageOptions.first
-                                              ? (newValue) {
-                                                  setState(() {
-                                                    itemsPerPage = newValue!;
-                                                    currentPage = 0;
-                                                  });
-                                                }
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronLeft,
-                                      color: currentPage == 0
-                                          ? Colors.grey
-                                          : blueColor,
-                                    ),
-                                    onPressed: currentPage == 0
-                                        ? null
-                                        : () {
-                                            setState(() {
-                                              currentPage--;
-                                            });
-                                          },
-                                  ),
-                                  Text(
-                                      'Page ${currentPage + 1} of $totalPages'),
-                                  IconButton(
-                                    icon: FaIcon(
-                                      FontAwesomeIcons.circleChevronRight,
-                                      color: currentPage < totalPages - 1
-                                          ? blueColor
-                                          : Colors.grey,
-                                    ),
-                                    onPressed: currentPage < totalPages - 1
-                                        ? () {
-                                            setState(() {
-                                              currentPage++;
-                                            });
-                                          }
-                                        : null,
-                                  ),
-                                ],
-                              ),
-                            ],
+                        // Shared dashboard footer — replaces this table's own copy,
+                        // which used the older square-cornered elevation-3 style. It
+                        // carries its own spacing, so the SizedBox(20) is gone too.
+                        if (data.length > itemsPerPageOptions.first)
+                          DashboardPaginationFooter(
+                            currentPage: currentPage + 1,
+                            totalPages: totalPages,
+                            rowsPerPage: itemsPerPage,
+                            rowsPerPageOptions: itemsPerPageOptions,
+                            onRowsPerPageChanged: (v) => setState(() {
+                              itemsPerPage = v;
+                              currentPage = 0;
+                            }),
+                            onPrev: currentPage == 0
+                                ? null
+                                : () => setState(() => currentPage--),
+                            onNext: currentPage < totalPages - 1
+                                ? () => setState(() => currentPage++)
+                                : null,
                           ),
                       ],
                     ),

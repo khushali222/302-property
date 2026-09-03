@@ -1,4 +1,3 @@
-import 'package:three_zero_two_property/Model/json_parse.dart';
 import 'package:three_zero_two_property/constant/constant.dart';
 String formatAmount(double? amount) {
   if (amount == null) return '';
@@ -89,11 +88,11 @@ class Properties_Revenu_model {
     // strings on some responses, which threw a NoSuchMethodError and took the
     // whole table down. Same for surcharge: the field is a double, but the
     // else-branch assigned the raw value, so a string amount threw on assign.
-    customerVaultId = asIntOrNull(json['customer_vault_id']);
-    billingId = asIntOrNull(json['billing_id']);
+    customerVaultId = asIntN(json['customer_vault_id']);
+    billingId = asIntN(json['billing_id']);
     // Keep the original type (int or double) from API
     totalAmount = json['total_amount'];
-    surcharge = asDoubleOrNull(json['surcharge']);
+    surcharge = asDoubleN(json['surcharge']);
     paymentType = json['payment_type'];
     // transactionId = json['transaction_id'];
     transactionId = json.containsKey('transaction_id') ? json['transaction_id'] : null;
@@ -196,7 +195,7 @@ class Entry {
   Entry.fromJson(Map<String, dynamic> json) {
     entryId = json['entry_id'];
     account = json['account'];
-    amount = asDoubleOrNull(json['amount']);
+    amount = asDoubleN(json['amount']);
     date = json['date'] ?? "";
     // Handle numeric conversion for integer fields
     duePaid = json['due_paid'] != null ? json['due_paid'].toInt() : null;
@@ -385,7 +384,7 @@ class Entry_revenu {
   Entry_revenu.fromJson(Map<String, dynamic> json) {
     entryId = json['entry_id'];
     account = json['account'];
-    amount = asDoubleOrNull(json['amount']);
+    amount = asDoubleN(json['amount']);
     date = json['date'] ?? "";
     chargeType = json['charge_type'];
     memo = json['memo'];

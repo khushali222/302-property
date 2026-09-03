@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class OutstandingLeaseBalanceModel {
   bool? success;
   List<OutstandingLeaseBalanceData>? data;
@@ -34,13 +36,13 @@ class OutstandingLeaseBalanceModel {
         ? OutstandingLeaseBalanceTotals.fromJson(json['totals'])
         : null;
 
-    count = json['count'];
+    count = asIntN(json['count']);
 
     pagination = json['pagination'] != null
         ? OutstandingLeaseBalancePagination.fromJson(json['pagination'])
         : null;
 
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     message = json['message'];
   }
 
@@ -106,19 +108,11 @@ class OutstandingLeaseBalanceData {
     leaseId = json['lease_id'];
     rentalId = json['rental_id'];
     unitId = json['unit_id'];
-    leaseAmount = json['lease_amount'] != null
-        ? (json['lease_amount'] as num).toDouble()
-        : null;
+    leaseAmount = asDoubleN(json['lease_amount']);
     tenantNames = json['tenant_names'];
-    totalCharges = json['total_charges'] != null
-        ? (json['total_charges'] as num).toDouble()
-        : null;
-    totalPayments = json['total_payments'] != null
-        ? (json['total_payments'] as num).toDouble()
-        : null;
-    outstandingBalance = json['outstanding_balance'] != null
-        ? (json['outstanding_balance'] as num).toDouble()
-        : null;
+    totalCharges = asDoubleN(json['total_charges']);
+    totalPayments = asDoubleN(json['total_payments']);
+    outstandingBalance = asDoubleN(json['outstanding_balance']);
     propertyAddress = json['property_address'];
 
     if (json['account_breakdown'] != null) {
@@ -128,18 +122,10 @@ class OutstandingLeaseBalanceData {
       });
     }
 
-    balance030 = json['balance_0_30'] != null
-        ? (json['balance_0_30'] as num).toDouble()
-        : null;
-    balance3160 = json['balance_31_60'] != null
-        ? (json['balance_31_60'] as num).toDouble()
-        : null;
-    balance6190 = json['balance_61_90'] != null
-        ? (json['balance_61_90'] as num).toDouble()
-        : null;
-    balance90Plus = json['balance_90_plus'] != null
-        ? (json['balance_90_plus'] as num).toDouble()
-        : null;
+    balance030 = asDoubleN(json['balance_0_30']);
+    balance3160 = asDoubleN(json['balance_31_60']);
+    balance6190 = asDoubleN(json['balance_61_90']);
+    balance90Plus = asDoubleN(json['balance_90_plus']);
   }
 
   Map<String, dynamic> toJson() {
@@ -179,7 +165,7 @@ class AccountBreakdown {
 
   AccountBreakdown.fromJson(Map<String, dynamic> json) {
     accountName = json['account_name'];
-    amount = json['amount'] != null ? (json['amount'] as num).toDouble() : null;
+    amount = asDoubleN(json['amount']);
     buckets = json['buckets'] != null
         ? BalanceBuckets.fromJson(json['buckets'])
         : null;
@@ -210,12 +196,10 @@ class BalanceBuckets {
   });
 
   BalanceBuckets.fromJson(Map<String, dynamic> json) {
-    bucket030 = json['0-30'] != null ? (json['0-30'] as num).toDouble() : null;
-    bucket3160 =
-        json['31-60'] != null ? (json['31-60'] as num).toDouble() : null;
-    bucket6190 =
-        json['61-90'] != null ? (json['61-90'] as num).toDouble() : null;
-    bucket90Plus = json['90+'] != null ? (json['90+'] as num).toDouble() : null;
+    bucket030 = asDoubleN(json['0-30']);
+    bucket3160 = asDoubleN(json['31-60']);
+    bucket6190 = asDoubleN(json['61-90']);
+    bucket90Plus = asDoubleN(json['90+']);
   }
 
   Map<String, dynamic> toJson() {
@@ -244,21 +228,11 @@ class OutstandingLeaseBalanceTotals {
   });
 
   OutstandingLeaseBalanceTotals.fromJson(Map<String, dynamic> json) {
-    outstandingBalance = json['outstanding_balance'] != null
-        ? (json['outstanding_balance'] as num).toDouble()
-        : null;
-    balance030 = json['balance_0_30'] != null
-        ? (json['balance_0_30'] as num).toDouble()
-        : null;
-    balance3160 = json['balance_31_60'] != null
-        ? (json['balance_31_60'] as num).toDouble()
-        : null;
-    balance6190 = json['balance_61_90'] != null
-        ? (json['balance_61_90'] as num).toDouble()
-        : null;
-    balance90Plus = json['balance_90_plus'] != null
-        ? (json['balance_90_plus'] as num).toDouble()
-        : null;
+    outstandingBalance = asDoubleN(json['outstanding_balance']);
+    balance030 = asDoubleN(json['balance_0_30']);
+    balance3160 = asDoubleN(json['balance_31_60']);
+    balance6190 = asDoubleN(json['balance_61_90']);
+    balance90Plus = asDoubleN(json['balance_90_plus']);
   }
 
   Map<String, dynamic> toJson() {
@@ -286,10 +260,10 @@ class OutstandingLeaseBalancePagination {
   });
 
   OutstandingLeaseBalancePagination.fromJson(Map<String, dynamic> json) {
-    currentPage = json['current_page'];
-    totalPages = json['total_pages'];
-    totalCount = json['total_count'];
-    limit = json['limit'];
+    currentPage = asIntN(json['current_page']);
+    totalPages = asIntN(json['total_pages']);
+    totalCount = asIntN(json['total_count']);
+    limit = asIntN(json['limit']);
   }
 
   Map<String, dynamic> toJson() {

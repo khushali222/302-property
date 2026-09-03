@@ -1,3 +1,4 @@
+import 'package:three_zero_two_property/constant/constant.dart';
 class DelinquentTenantsModel {
   List<DelinquentTenantsData>? data;
   PdfDelinquentTenantsData? grandtotal;
@@ -285,12 +286,20 @@ class PdfDelinquentTenantsData {
   String? last91PlusDays;
   String? totalDaysAmount;
 
+  /// Web parity (LedgerSourceBadge): the dashboard widget tags each balance
+  /// with where it came from — "legacy" or "ledger" — and, for a ledger
+  /// balance, how far it drifts from the legacy figure.
+  String? balanceSource;
+  num? balanceDiff;
+
   PdfDelinquentTenantsData({
     this.last30Days,
     this.last31To60Days,
     this.last61To90Days,
     this.last91PlusDays,
     this.totalDaysAmount,
+    this.balanceSource,
+    this.balanceDiff,
   });
 
   PdfDelinquentTenantsData.fromJson(Map<String, dynamic> json) {
@@ -301,6 +310,8 @@ class PdfDelinquentTenantsData {
     last61To90Days = json['last_61_to_90_days'].toString();
     last91PlusDays = json['last_91_plus_days'].toString();
     totalDaysAmount = json['totalDaysAmount'].toString();
+    balanceSource = json['balance_source']?.toString();
+    balanceDiff = asNumN(json['balance_diff']);
   }
 
   Map<String, dynamic> toJson() {
@@ -310,6 +321,8 @@ class PdfDelinquentTenantsData {
     data['last_61_to_90_days'] = this.last61To90Days;
     data['last_91_plus_days'] = this.last91PlusDays;
     data['totalDaysAmount'] = this.totalDaysAmount;
+    data['balance_source'] = this.balanceSource;
+    data['balance_diff'] = this.balanceDiff;
     return data;
   }
 }

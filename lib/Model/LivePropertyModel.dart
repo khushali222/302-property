@@ -7,7 +7,7 @@ class LivePropertyResponse {
   LivePropertyResponse({this.statusCode, this.message, this.data});
 
   LivePropertyResponse.fromJson(Map<String, dynamic> json) {
-    statusCode = json['statusCode'];
+    statusCode = asIntN(json['statusCode']);
     message = json['message'];
     if (json['data'] != null) {
       data = <LivePropertyData>[];
@@ -184,7 +184,7 @@ class LivePropertyData {
                 : json['monthly_payment'])
         : null;
 
-    remainingBalance = json['remaining_balance'];
+    remainingBalance = asIntN(json['remaining_balance']);
 
     lastPaymentDate = json['last_payment_date'];
     nextPaymentDate = json['next_payment_date'];
@@ -199,7 +199,7 @@ class LivePropertyData {
     isDelete = json['is_delete'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    v = json['__v'];
+    v = asIntN(json['__v']);
     property = json['property'] != null
         ? PropertyInfo.fromJson(json['property'])
         : null;
@@ -211,13 +211,13 @@ class LivePropertyData {
         : null;
     rentalFlip = json['rental_flip'];
     placedInService = json['placed_in_service'];
-    insuredYear = json['insured_year'];
-    insuredValue = json['insured_value'];
-    taxBill = json['tax_bill'];
-    monthlyRent = json['monthly_rent'];
+    insuredYear = asIntN(json['insured_year']);
+    insuredValue = asIntN(json['insured_value']);
+    taxBill = asIntN(json['tax_bill']);
+    monthlyRent = asIntN(json['monthly_rent']);
     hasMortgage = json['has_mortgage'];
     mortgageBank = json['mortgage_bank'];
-    mortgageBalance = json['mortgage_balance'];
+    mortgageBalance = asIntN(json['mortgage_balance']);
     interest = json['interest'] != null
         ? (json['interest'] is int
             ? (json['interest'] as int).toDouble()
@@ -225,7 +225,7 @@ class LivePropertyData {
                 ? double.tryParse(json['interest'])
                 : json['interest'])
         : null;
-    principal = json['principal'];
+    principal = asIntN(json['principal']);
     payment = json['payment'] != null
         ? (json['payment'] is int
             ? (json['payment'] as int).toDouble()
@@ -393,7 +393,7 @@ class PurchaseInfo {
 
   PurchaseInfo.fromJson(Map<String, dynamic> json) {
     purchaseDate = json['purchase_date'];
-    purchasePrice = json['purchase_price'];
+    purchasePrice = asIntN(json['purchase_price']);
     parcelNumber = json['parcel_number'];
   }
 

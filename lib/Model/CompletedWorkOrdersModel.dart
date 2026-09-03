@@ -1,4 +1,5 @@
-import 'package:three_zero_two_property/Model/json_parse.dart';
+
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class CompletedWorkOrdersModel {
   int? statusCode;
@@ -13,7 +14,7 @@ class CompletedWorkOrdersModel {
 
   factory CompletedWorkOrdersModel.fromJson(Map<String, dynamic> json) {
     return CompletedWorkOrdersModel(
-      statusCode: asIntOrNull(json['statusCode']),
+      statusCode: asIntN(json['statusCode']),
       data: (json['data'] as List<dynamic>?)
           ?.map((item) =>
               CompletedWorkData.fromJson(item as Map<String, dynamic>))

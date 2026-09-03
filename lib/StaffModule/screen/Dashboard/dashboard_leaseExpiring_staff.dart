@@ -10,6 +10,7 @@ import '../../../provider/dateProvider.dart';
 import '../../repository/lease_expiry_service.dart';
 import '../../repository/tenants.dart';
 import '../Rental/Tenants/Tenant_summary.dart';
+import 'package:three_zero_two_property/widgets/dashboard_pagination_footer.dart';
 
 class Dashboard_leaseExpiringStaff extends StatefulWidget {
   @override
@@ -315,81 +316,36 @@ class _LeaseExpiryTableState extends State<LeaseExpiryTable>
     );
   }
 
+  /// Shared dashboard footer. This table pages on the SERVER, so every
+  /// control refetches — currentPage is already 1-based here, so it is
+  /// passed through rather than offset.
   Widget _buildPaginationControls(int totalPages) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Material(
-            elevation: 3,
-            child: Container(
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  value: limit,
-                  items: [5, 10, 25, 50].map((int value) {
-                    return DropdownMenuItem<int>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                  onChanged: totalRecords > 5
-                      ? (newValue) {
-                          if (newValue != null) {
-                            setState(() {
-                              limit = newValue;
-                              currentPage = 1;
-                            });
-                            _fetchData();
-                          }
-                        }
-                      : null,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 10),
-          IconButton(
-            icon: FaIcon(
-              FontAwesomeIcons.circleChevronLeft,
-              size: 24,
-              color: currentPage == 1 ? Colors.grey : blueColor,
-            ),
-            onPressed: currentPage == 1
-                ? null
-                : () {
-                    setState(() {
-                      currentPage--;
-                    });
-                    _fetchData();
-                  },
-          ),
-          Text(
-            'Page $currentPage of $totalPages',
-            style: TextStyle(fontSize: 14),
-          ),
-          IconButton(
-            icon: FaIcon(
-              size: 24,
-              FontAwesomeIcons.circleChevronRight,
-              color: currentPage >= totalPages ? Colors.grey : blueColor,
-            ),
-            onPressed: currentPage >= totalPages
-                ? null
-                : () {
-                    setState(() {
-                      currentPage++;
-                    });
-                    _fetchData();
-                  },
-          ),
-        ],
-      ),
+    return DashboardPaginationFooter(
+      currentPage: currentPage,
+      totalPages: totalPages,
+      rowsPerPage: limit,
+      rowsPerPageOptions: const [5, 10, 25, 50],
+      onRowsPerPageChanged: totalRecords > 5
+          ? (v) {
+              setState(() {
+                limit = v;
+                currentPage = 1;
+              });
+              _fetchData();
+            }
+          : null,
+      onPrev: currentPage == 1
+          ? null
+          : () {
+              setState(() => currentPage--);
+              _fetchData();
+            },
+      onNext: currentPage >= totalPages
+          ? null
+          : () {
+              setState(() => currentPage++);
+              _fetchData();
+            },
     );
   }
 }

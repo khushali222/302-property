@@ -114,10 +114,14 @@ class Entrydata {
       entryId: json['entry_id'],
       memo: json['memo'],
       account: json['account'],
-      amount: json['amount'].toDouble(),
+      // Same guard due_amount already has: `.toDouble()` on a missing or
+      // string amount threw NoSuchMethodError, and DateTime.parse on a
+      // missing/odd date threw FormatException — either one during the list
+      // parse failed the whole charge screen. Both fields are nullable.
+      amount: asDoubleN(json['amount']),
       dueAmount:
           json['due_amount'] != null ? json['due_amount'].toDouble() : 0.0,
-      date: DateTime.parse(json['date']),
+      date: json['date'] == null ? null : DateTime.tryParse(json['date'].toString()),
       isPaid: json['is_paid'],
       isLateFee: json['is_lateFee'],
       isRepeatable: json['is_repeatable'],

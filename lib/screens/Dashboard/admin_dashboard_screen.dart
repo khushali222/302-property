@@ -11,6 +11,7 @@ import '../../widgets/fl_chart.dart';
 import 'cronjob_payment_table.dart';
 import 'dashboard_leaseExpiring.dart';
 import 'dashbordpolices_table.dart';
+import 'dashboard_delinquent_tenants.dart';
 import 'package:three_zero_two_property/screens/Rental/Properties/Properties_table.dart';
 import 'package:three_zero_two_property/screens/Rental/Tenants/Tenants_table.dart';
 import 'package:three_zero_two_property/screens/Leasing/Applicants/Applicants_table.dart';
@@ -219,18 +220,20 @@ class _DashboardAdminSampleState extends State<DashboardAdminSample> {
             const SizedBox(height: 24),
             // Web order (dashboardConfig.js): Payments (Last 7 Days + Failed)
             // first, then Insurance, then Leases.
+            // Sections sit 8dp apart (DashboardPaginationFooter.kSectionGap).
+            // Each table's footer supplies its own 4dp of breathing room, so a
+            // 20dp gap here stacked on top of that and left a visible hole.
             Cronjob_payment_table(),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 8),
             Dashboard_Policy_Table(),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 8),
             Dashboard_leaseExpiring(),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 8),
+            // Web parity: DelinquentTenantsWidget (CRM-4501) is Admin-only —
+            // the Staff dashboard does not carry it. Placed last so it closes
+            // the table stack rather than splitting Payments from Insurance.
+            const DashboardDelinquentTenants(),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Center(

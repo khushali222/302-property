@@ -1,3 +1,5 @@
+import 'package:three_zero_two_property/constant/constant.dart';
+
 class Home_system_report {
   String? rentalId;
   int? totalUnits;
@@ -14,8 +16,8 @@ class Home_system_report {
 
   Home_system_report.fromJson(Map<String, dynamic> json) {
     rentalId = json['rental_id'];
-    totalUnits = json['total_units'];
-    totalAppliances = json['total_appliances'];
+    totalUnits = asIntN(json['total_units']);
+    totalAppliances = asIntN(json['total_appliances']);
     if (json['units'] != null) {
       units = <Units>[];
       json['units'].forEach((v) {
@@ -59,7 +61,7 @@ class Units {
     unitId = json['unit_id'];
     unitAddress = json['unit_address'];
     unitNumber = json['unit_number'];
-    totalAppliances = json['total_appliances'];
+    totalAppliances = asIntN(json['total_appliances']);
     if (json['appliances'] != null) {
       appliances = <Appliances>[];
       json['appliances'].forEach((v) {
@@ -171,7 +173,7 @@ class Appliances {
         maintenanceHistory!.add(new MaintenanceHistory.fromJson(v));
       });
     }
-    iV = json['__v'];
+    iV = asIntN(json['__v']);
     category = json['category'];
   }
 
@@ -346,9 +348,9 @@ class Summary {
         this.categoriesUsed});
 
   Summary.fromJson(Map<String, dynamic> json) {
-    unitsWithAppliances = json['units_with_appliances'];
-    unitsWithoutAppliances = json['units_without_appliances'];
-    categoriesUsed = json['categories_used'];
+    unitsWithAppliances = asIntN(json['units_with_appliances']);
+    unitsWithoutAppliances = asIntN(json['units_without_appliances']);
+    categoriesUsed = asIntN(json['categories_used']);
   }
 
   Map<String, dynamic> toJson() {

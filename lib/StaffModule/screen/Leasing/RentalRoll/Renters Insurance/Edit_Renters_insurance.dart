@@ -1060,7 +1060,16 @@ class _EditRentersInsuranceState extends State<EditRentersInsurance> {
         // tripped the server's required-field check (!0 is true in JS) and
         // surfaced "Missing required fields". Mongoose casts to Number on
         // save either way, so stored data is unchanged.
-        "liability_coverage": liablity.text.trim(),
+        // CRM-4373: send a NUMBER on edit, not the text field's string.
+        // The server compares stored-vs-submitted with JSON.stringify, so a
+        // stored number 10 against our "10" counted as a change and the audit
+        // log grew a phantom "Liability Coverage: $10.00 -> $10.00" line for a
+        // field nobody touched. Web never hits this because it posts back the
+        // number the API gave it. The falsy required-field check that forced a
+        // string here is on POST /add-policy only — PUT /edit-policy has none,
+        // so 0 is still accepted.
+        "liability_coverage":
+            num.tryParse(liablity.text.trim()) ?? liablity.text.trim(),
         "tenants": selectedTenantsList, // Ensure it's properly formatted
         "insurance_policy_document":
             _uploadedFileNames.isNotEmpty ? _uploadedFileNames.first : "",

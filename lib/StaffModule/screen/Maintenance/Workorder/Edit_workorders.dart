@@ -3532,7 +3532,10 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
           vendorNotes: vendornote.text.trim(),
           priority: _selectedOption,
           isBillable: isChecked,
-          workChargeTo: isChecked == 'Tenants',
+          // Web parity (AddWorkorder.jsx): the string "Tenant" when billable,
+          // otherwise "". This compared a bool to a String, which is always
+          // false, so work_charge_to was stored as false every time.
+          workChargeTo: isChecked ? 'Tenant' : '',
           date: reverseFormatDate(_dateController.text.trim()),
           entry: _selectedEntry == 'Yes',
           parts: parts,
@@ -7058,7 +7061,10 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
         vendorNotes: vendornote.text.trim(),
         priority: _selectedOption,
         isBillable: isChecked,
-        workChargeTo: isChecked == 'Tenants',
+        // Web parity (AddWorkorder.jsx): the string "Tenant" when billable,
+        // otherwise "". This compared a bool to a String, which is always
+        // false, so work_charge_to was stored as false every time.
+        workChargeTo: isChecked ? 'Tenant' : '',
         date: reverseFormatDate(_dateController.text.trim()),
         entry: _selectedEntry == 'true',
         parts: parts,

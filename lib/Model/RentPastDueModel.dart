@@ -438,7 +438,7 @@
 // }
 
 import 'dart:convert';
-import 'package:three_zero_two_property/Model/json_parse.dart';
+import 'package:three_zero_two_property/constant/constant.dart';
 
 class RentPastDue {
   final double? currentMonthRentDue;
@@ -763,10 +763,10 @@ class Pagination {
   factory Pagination.fromJson(Map<String, dynamic>? json) {
     if (json == null) return Pagination();
     return Pagination(
-      currentPage: asIntOrNull(json['currentPage']),
-      totalPages: asIntOrNull(json['totalPages']),
-      totalItems: asIntOrNull(json['totalItems']),
-      itemsPerPage: asIntOrNull(json['itemsPerPage']),
+      currentPage: asIntN(json['currentPage']),
+      totalPages: asIntN(json['totalPages']),
+      totalItems: asIntN(json['totalItems']),
+      itemsPerPage: asIntN(json['itemsPerPage']),
     );
   }
 

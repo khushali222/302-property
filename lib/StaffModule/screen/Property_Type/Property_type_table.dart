@@ -364,6 +364,9 @@ class _PropertyTableState extends State<PropertyTable>
 
   void _showAlert(BuildContext context, String id) {
     TextEditingController reason = TextEditingController();
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same id.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -398,14 +401,28 @@ class _PropertyTableState extends State<PropertyTable>
           onPressed: () async {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              var data = PropertyTypeRepository()
+              return;
+            }
+            if (deleting) return;
+            deleting = true;
+            // This call was not awaited, so the list was refetched while the
+            // delete was still in flight — the deleted row could come back in
+            // the refreshed list even on success — and a rejected delete
+            // surfaced as an unhandled async error. Await it, refresh only on
+            // success, and close the dialog either way (the repository has
+            // already toasted the server's own reason).
+            try {
+              await PropertyTypeRepository()
                   .DeletePropertyType(pro_id: id, reason: reason.text);
-              // Add your delete logic here
+              if (!mounted) return;
               setState(() {
                 futurePropertyTypes =
                     PropertyTypeRepository().fetchPropertyTypes();
               });
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
               Navigator.pop(context);
             }
           },

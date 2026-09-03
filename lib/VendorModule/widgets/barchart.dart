@@ -94,14 +94,76 @@ class _VendorStatisticsCardState extends State<VendorStatisticsCard> {
           ),
         ),
         const SizedBox(height: 14),
-        // Legend chips — two equal, full-width
-        Row(
-          children: [
-            Expanded(child: _legendChip("New Work Orders", _kNewColor, chipFont)),
-            const SizedBox(width: 12),
-            Expanded(
-                child: _legendChip("Overdue Work Orders", _kOverdueColor, chipFont)),
-          ],
+        // Legend chips — two equal, full-width side by side when both labels
+        // fit, stacked when they do not.
+        //
+        // CRM-4358: side-by-side Expanded chips pin each to exactly half the
+        // row. On a phone that leaves ~86dp for "Overdue Work Orders", which
+        // needs ~133dp, so the ellipsis clipped it to "Overdue Work...". It is
+        // not device-specific — the same happens on a large phone. Measuring
+        // the real text and stacking when it will not fit keeps both labels
+        // whole at every width, which is what the design asks for.
+        LayoutBuilder(
+          builder: (context, constraints) {
+            const double chipPadding = 14 * 2;
+            const double swatch = 18;
+            const double swatchGap = 10;
+            const double betweenChips = 12;
+
+            double textWidth(String label) {
+              final tp = TextPainter(
+                text: TextSpan(
+                  text: label,
+                  style: TextStyle(
+                    fontSize: chipFont,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                maxLines: 1,
+                textDirection: TextDirection.ltr,
+              )..layout();
+              return tp.width;
+            }
+
+            final double widest = [
+              textWidth("New Work Orders"),
+              textWidth("Overdue Work Orders"),
+            ].reduce((a, b) => a > b ? a : b);
+
+            final double sideBySideChip =
+                (constraints.maxWidth - betweenChips) / 2;
+            final bool fitsSideBySide =
+                sideBySideChip - chipPadding - swatch - swatchGap >= widest;
+
+            if (fitsSideBySide) {
+              return Row(
+                children: [
+                  Expanded(
+                      child: _legendChip(
+                          "New Work Orders", _kNewColor, chipFont)),
+                  const SizedBox(width: betweenChips),
+                  Expanded(
+                      child: _legendChip(
+                          "Overdue Work Orders", _kOverdueColor, chipFont)),
+                ],
+              );
+            }
+
+            return Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: _legendChip("New Work Orders", _kNewColor, chipFont),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: _legendChip(
+                      "Overdue Work Orders", _kOverdueColor, chipFont),
+                ),
+              ],
+            );
+          },
         ),
         const SizedBox(height: 14),
         // Flat chart card — no elevation, rounded, light border. Tap a bar = popup.
