@@ -632,7 +632,13 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable>
                                   ),
                                   const SizedBox(height: 10),
                                   Text(
-                                    "No Data Available",
+                                    // CRM-4365 parity: this state is reached BOTH when there are no
+                                    // bid rooms at all and when a search or filter matched none of
+                                    // them. Telling a user with 12 records "No Data Available"
+                                    // reads as data loss, so the two cases now say different things.
+                                    (_searchQuery.isNotEmpty || _selectedStatus != 'All')
+                                        ? "No Results Found"
+                                        : "No Bid Rooms Yet",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: blueColor,

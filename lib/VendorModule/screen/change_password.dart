@@ -217,7 +217,10 @@ class _Change_passwordState extends State<Change_password> {
 
     String? pass = prefs.getString("vendor_password");
     setState(() {
-      oldPassword = pass!; // Fetch the old password
+      // Same nullable as the validation below — `pass!` threw on a
+      // session with no stored copy. Empty string instead; the check
+      // itself now treats absence as a failure.
+      oldPassword = pass ?? '';
     });
   }
 
@@ -964,7 +967,13 @@ class _Change_passwordState extends State<Change_password> {
                                           currentpasswordmessage =
                                               "Current password is required";
                                         });
-                                      } else if (pass != null &&
+                                      // A missing stored copy must FAIL this check, not skip it. With
+                                      // `pass != null &&` a null fell through to the
+                                      // else below and marked the field valid, so a
+                                      // session restored without the password re-stored
+                                      // let the password be changed without knowing the
+                                      // old one. Any non-empty box passed.
+                                      } else if (pass == null ||
                                           currentpassword.text != pass) {
                                         setState(() {
                                           currentpassworderror = true;

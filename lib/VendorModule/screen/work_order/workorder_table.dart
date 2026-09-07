@@ -984,7 +984,7 @@ class _WorkOrderTableState extends State<WorkOrderTable>
                                         ),
                                         const SizedBox(height: 10),
                                         Text(
-                                          "No Work Order Added",
+                                          "No Work Orders Yet",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: blueColor,
