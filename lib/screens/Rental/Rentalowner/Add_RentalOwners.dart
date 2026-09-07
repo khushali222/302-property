@@ -98,6 +98,42 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
     _controllers[0] = TextEditingController();
   }
 
+  @override
+  void dispose() {
+    // Every controller created by this State is released here. These
+    // screens use plain TextField, which never disposes a controller it
+    // is given, so the State owns them outright — nothing else can free
+    // them and nothing else can double-free them.
+    name.dispose();
+    lastname.dispose();
+    comname.dispose();
+    primaryemail.dispose();
+    alternativeemail.dispose();
+    phonenum.dispose();
+    homenum.dispose();
+    businessnum.dispose();
+    officenum.dispose();
+    street2.dispose();
+    city2.dispose();
+    state2.dispose();
+    county2.dispose();
+    code2.dispose();
+    proid.dispose();
+    taxtype.dispose();
+    taxid.dispose();
+    achProcessorId.dispose();
+    birthdateController.dispose();
+    startdateController.dispose();
+    enddateController.dispose();
+    // The dynamically added rows keep their controllers in this map.
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    _controllers.clear();
+    super.dispose();
+  }
+
+
   // Add a text field
   void _addTextField() {
     int nextIndex = _controllers.length;
@@ -109,6 +145,9 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
   // Remove a text field
   void _removeTextField(int index) {
     setState(() {
+      // Free it before dropping the reference, otherwise the
+      // controller for a removed row leaks for the screen's lifetime.
+      _controllers[index]?.dispose();
       _controllers.remove(index);
     });
   }

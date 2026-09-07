@@ -50,6 +50,30 @@ class _EditRentalownersState extends State<EditRentalowners> {
     fetchDetails1(widget.rentalId);
   }
 
+  @override
+  void dispose() {
+    // Every controller created by this State is released here. These
+    // screens use plain TextField, which never disposes a controller it
+    // is given, so the State owns them outright — nothing else can free
+    // them and nothing else can double-free them.
+    firstname.dispose();
+    comname.dispose();
+    primaryemail.dispose();
+    alternativeemail.dispose();
+    phonenum.dispose();
+    homenum.dispose();
+    businessnum.dispose();
+    street2.dispose();
+    city2.dispose();
+    state2.dispose();
+    county2.dispose();
+    code2.dispose();
+    proid.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
+
   Future<void> fetchDetails1(String rentalId) async {
     //   try {
     Rentals fetchedDetails =
