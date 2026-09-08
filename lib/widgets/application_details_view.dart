@@ -368,12 +368,18 @@ class ApplicationDetailsView extends StatelessWidget {
     List<Map<String, dynamic>> items,
     String entryLabel,
     List<_F> Function(Map<String, dynamic> item) entryFields, {
-    String? Function(Map<String, dynamic> item)? entryChip,
+    String? Function(Map<String, dynamic> item, int index)? entryChip,
   }) {
+    // A section with no data still renders one placeholder entry of N/A fields.
+    // That placeholder must never carry a chip: an index-based chip (see the
+    // Address History call site) would otherwise mark the empty placeholder
+    // "Current", which is worse than the flag-based chip it replaced — an
+    // absent flag simply produced no chip.
+    final bool hasData = items.isNotEmpty;
     if (items.isEmpty) items = [<String, dynamic>{}];
     final children = <Widget>[];
     for (int i = 0; i < items.length; i++) {
-      final chip = entryChip?.call(items[i]);
+      final chip = hasData ? entryChip?.call(items[i], i) : null;
       children.add(_entryBox(
         title: items.length > 1 || chip != null
             ? '$entryLabel ${items.length > 1 ? i + 1 : 1}'
@@ -524,8 +530,17 @@ class ApplicationDetailsView extends StatelessWidget {
           _F('Landlord', _str(a['landlord'])),
           _F('Landlord Phone', _str(a['landlord_phone'])),
         ],
-        entryChip: (a) =>
-            _isTrue(a['is_current_address']) ? 'Current' : null,
+        // Web parity: the FIRST address entry is always the current one, and
+        // web ignores `is_current_address` entirely when deciding this
+        // (ApplicationTab.jsx, both the desktop grid and the mobile accordion,
+        // each carry the comment "First address (index 0) is always current"
+        // above an `index === 0` test). Reading the flag instead was wrong
+        // because the server schema defaults it to false, so any record where
+        // the backend never set it showed no current-address marker at all.
+        //
+        // Employment below is deliberately NOT changed to match: web really
+        // does read `is_current_employment` there. The two sections differ.
+        entryChip: (a, index) => index == 0 ? 'Current' : null,
       ),
     );
   }
@@ -545,7 +560,7 @@ class ApplicationDetailsView extends StatelessWidget {
           _F('Salary', _money(e['salary'])),
           _F('Salary Frequency', _str(e['salary_frequency'])),
         ],
-        entryChip: (e) =>
+        entryChip: (e, _) =>
             _isTrue(e['is_current_employment']) ? 'Current' : null,
       ),
     );

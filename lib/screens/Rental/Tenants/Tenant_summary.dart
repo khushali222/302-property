@@ -150,17 +150,33 @@ class _TenantSummaryMobileState extends State<TenantSummaryMobile>
   bool expandedTenantInfo = false;
 
   Future<void> _refreshTenantDetails() async {
+    // Every failure here used to be discarded: `catch (_) {}` ate the error and
+    // an empty list simply fell through the `if`. Either way the screen kept
+    // the pre-edit values while the caller had already shown "updated
+    // successfully" — so a user saw a success message next to unchanged data
+    // and had no way to tell whether the edit had saved. Callers can't cover
+    // this either: their own catch never fires, because this method has
+    // already swallowed the error.
     try {
       final list = await _tenantService.fetchTenantsummery(widget.tenantId);
-      if (mounted && list != null && list.isNotEmpty) {
-        setState(() {
-          _tenantDetails = list.first;
-          // Also refresh the passed-in tenant so every direct widget.tenants
-          // read (e.g. the header name) reflects the edit immediately.
-          widget.tenants = list.first;
-        });
+      if (!mounted) return;
+      if (list == null || list.isEmpty) {
+        Fluttertoast.showToast(
+            msg: "Couldn't reload tenant details. Pull down to refresh.");
+        return;
       }
-    } catch (_) {}
+      setState(() {
+        _tenantDetails = list.first;
+        // Also refresh the passed-in tenant so every direct widget.tenants
+        // read (e.g. the header name) reflects the edit immediately.
+        widget.tenants = list.first;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      Fluttertoast.showToast(
+          msg: friendlyErrorMessage(e,
+              fallbackMessage: "Couldn't reload tenant details."));
+    }
   }
 
   final TenantsRepository _tenantService = TenantsRepository();

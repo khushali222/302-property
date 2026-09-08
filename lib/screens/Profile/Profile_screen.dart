@@ -32,6 +32,7 @@ import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_switch.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
+import 'package:email_validator/email_validator.dart';
 
 class Profile_screen extends StatefulWidget {
   // final String email;
@@ -2266,7 +2267,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'First Name',
                                           _firstNameController,
-                                          _validateFirstName,
+                                          (v) => _validateRequired(v, 'a first name'),
                                           isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -2282,7 +2283,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'Last Name',
                                           _lastNameController,
-                                          _validateFirstName,
+                                          (v) => _validateRequired(v, 'a last name'),
                                           isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -2298,7 +2299,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'Email Address',
                                           _emailController,
-                                          _validateFirstName,
+                                          _validateEmailAddress,
                                           isEnabled: false,
                                           isRequired: true,
                                         ),
@@ -2315,7 +2316,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'Phone Number',
                                           _phoneNumberController,
-                                          _validateFirstName,
+                                          _validatePhoneNumber,
                                           isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -2331,7 +2332,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'Company Name',
                                           _companyNameController,
-                                          _validateFirstName,
+                                          (v) => _validateRequired(v, 'a company name'),
                                           isRequired: true,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -2364,7 +2365,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                           'Company Address',
                                           _companyAddressController,
-                                          _validateFirstName,
+                                          (v) => _validateRequired(v, 'a company address'),
                                           isRequired: false,
                                         ),
                                         const SizedBox(height: 16.0),
@@ -2380,7 +2381,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                             'Postal Code',
                                             _companyPostalCodeController,
-                                            _validateFirstName),
+                                            (v) => _validateRequired(v, 'a postal code')),
                                         const SizedBox(height: 16.0),
                                         const Text(
                                           'City',
@@ -2394,7 +2395,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                             'City',
                                             _companyCityController,
-                                            _validateFirstName),
+                                            (v) => _validateRequired(v, 'a city')),
                                         const SizedBox(height: 16.0),
                                         const Text(
                                           'State',
@@ -2419,7 +2420,7 @@ class _Profile_screenState extends State<Profile_screen>
                                         buildTextField(
                                             'Country',
                                             _companyCountryController,
-                                            _validateFirstName),
+                                            (v) => _validateRequired(v, 'a country')),
                                         const SizedBox(height: 16.0),
 
                                         // ElevatedButton(
@@ -3632,6 +3633,39 @@ class _Profile_screenState extends State<Profile_screen>
   String? _validateFirstName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a valid name';
+    }
+    return null;
+  }
+
+  /// Every field on this form — including Email and Phone Number — was wired
+  /// to _validateFirstName, which only checks for emptiness. So `abc` saved as
+  /// the admin's email address and `12` as the phone number, and a blank
+  /// Email reported "Please enter a valid name". Same shape as the vendor
+  /// profile's validators (VendorModule/screen/profile.dart).
+  String? _validateRequired(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter $fieldName';
+    }
+    return null;
+  }
+
+  String? _validateEmailAddress(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter an email address';
+    }
+    if (!EmailValidator.validate(value.trim())) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePhoneNumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter a phone number';
+    }
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    if (digits.length != 10) {
+      return 'Phone number must be 10 digits';
     }
     return null;
   }

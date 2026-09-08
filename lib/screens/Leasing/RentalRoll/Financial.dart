@@ -649,6 +649,42 @@ class _FinancialTableState extends State<FinancialTable>
   final List<String> items = ['Residential', "Commercial", "All"];
   String? selectedValue;
   String searchvalue = "";
+
+  /// Single empty state for the transaction table. Previously two independent
+  /// checks both fired when a search matched nothing — `currentPageData.isEmpty`
+  /// rendered kNoSearchResults ("No Results Found") and a second
+  /// `if (data.isEmpty)` block right below it rendered "No Data Available" —
+  /// so the two stacked on top of each other. Show one, chosen by whether a
+  /// search or date range is active: a filtered-to-nothing list is not the
+  /// same thing as a ledger with no transactions at all.
+  Widget _ledgerEmptyState(BuildContext context) {
+    final bool isFiltered = searchvalue.isNotEmpty ||
+        _fromDateApiFormat.isNotEmpty ||
+        _toDateApiFormat.isNotEmpty;
+    if (isFiltered) return kNoSearchResults(context);
+    return Container(
+      height: MediaQuery.of(context).size.height * .3,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/no_data.jpg",
+              height: 100,
+              width: 100,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "No Data Available",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: blueColor, fontSize: 16),
+            )
+          ],
+        ),
+      ),
+    );
+  }
   late Future<LeaseLedger?> _leaseLedgerFuture;
   List<bool> _expanded = [];
   bool _leaseAchAccepted = false;
@@ -2624,7 +2660,7 @@ class _FinancialTableState extends State<FinancialTable>
                               // ),
                               child: Column(
                                 children: currentPageData.isEmpty
-                                    ? [kNoSearchResults(context)]
+                                    ? [_ledgerEmptyState(context)]
                                     : currentPageData
                                     .asMap()
                                     .entries
@@ -3918,34 +3954,6 @@ class _FinancialTableState extends State<FinancialTable>
                                 }).toList(),
                               ),
                             ),
-                            if (data.isEmpty)
-                              Container(
-                                height: MediaQuery.of(context).size.height * .3,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/no_data.jpg",
-                                        height: 100,
-                                        width: 100,
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "No Data Available",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: blueColor,
-                                            fontSize: 16),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
                             const SizedBox(height: 20),
                             if (data.isNotEmpty)
                               Row(

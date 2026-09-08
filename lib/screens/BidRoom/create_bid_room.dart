@@ -58,6 +58,11 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
   String? _selectedUnitId;
   String? _selectedTradeType;
   String? _selectedStatus = 'Open';
+
+  /// The only statuses this screen can show — and the only two the server
+  /// accepts from a client (BidRequest.js guards on Open/Closed for both
+  /// create and update). Any other stored value falls back to Open on load.
+  static const List<String> _statusOptions = ['Open', 'Closed'];
   List<String> _selectedVendorIds = [];
   final ValueNotifier<List<String>> _selectedVendorIdsNotifier =
       ValueNotifier<List<String>>([]);
@@ -93,7 +98,17 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
     if (_isEditMode) {
       final b = widget.existingBidRequest!;
       _descriptionController.text = b.description ?? '';
-      _selectedStatus = b.status ?? 'Open';
+      // The dropdown below offers only Open/Closed, and DropdownButton2 throws
+      // on a `value:` it has no matching item for — so anything else here
+      // stopped the Edit screen from opening at all. Two ways that happened:
+      // an empty stored status (web guards this with `|| "Open"`; `??` alone
+      // does not catch ""), and "Awarded", which the server sets itself when a
+      // bid is awarded (BidRequest.js: `bidRequest.status = "Awarded"`).
+      // Falling back to Open is safe: the server only accepts Open or Closed
+      // from the client anyway, so a server-set status is never written back.
+      final String storedStatus = (b.status ?? '').trim();
+      _selectedStatus =
+          _statusOptions.contains(storedStatus) ? storedStatus : 'Open';
       _selectedTradeType = b.workCategory;
       _selectedVendorIds = List<String>.from(b.selectedVendorIds ?? []);
       _selectedVendorIdsNotifier.value = List.from(_selectedVendorIds);
@@ -579,7 +594,11 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
           "bid_request_images": _uploadedImageNames,
           "due_date":
               _selectedDueDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDueDate!) : "",
-          "status": _selectedStatus,
+          // Web parity (AddBidRequest.jsx): `status: selectedStatus || "Open"`.
+          // The change-detector at _getCurrentPayload already coerced this the
+          // same way, so without the fallback the sent body and the detector
+          // could disagree about the same record.
+          "status": _selectedStatus ?? 'Open',
           "selected_vendor_ids": _selectedVendorIds,
         }
       };
@@ -798,7 +817,7 @@ class _CreateBidRoomState extends State<CreateBidRoom> {
                   label: 'Status',
                   isRequired: true,
                   value: _selectedStatus,
-                  items: ['Open', 'Closed'].map((status) {
+                  items: _statusOptions.map((status) {
                     return DropdownMenuItem<String>(
                       value: status,
                       child: Text(status),

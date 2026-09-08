@@ -222,7 +222,14 @@ class _Edit_rentalownersState extends State<Edit_rentalowners> {
 
   // Add a text field
   void _addTextField() {
-    int nextIndex = _controllers.length;
+    // Next unused key, not the row count. `.length` collided after any
+    // middle removal: keys {0,1,2,3} minus 1 leaves {0,2,3}, whose length is
+    // 3, so the new row reused key 3 and overwrote the live controller for
+    // that row — silently wiping an email the user had typed, both on screen
+    // and in the saved payload, and leaking the replaced controller.
+    int nextIndex = _controllers.isEmpty
+        ? 0
+        : (_controllers.keys.reduce((a, b) => a > b ? a : b) + 1);
     setState(() {
       _controllers[nextIndex] = TextEditingController();
     });

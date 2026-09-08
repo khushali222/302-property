@@ -735,7 +735,10 @@ class _VendorBidRoomTableState extends State<VendorBidRoomTable>
                                                   Expanded(
                                                             flex: 2,
                                                             child: Text(
-                                                              "BR",
+                                                              // Web parity (BidRequests.jsx:700): `BR${bid_request_no}`.
+                                                              // Falls back to a bare "BR" when the number is absent, as
+                                                              // web does, so older records without one still render.
+                                                              "BR${request.bidRequestNo ?? ''}",
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   fontWeight:

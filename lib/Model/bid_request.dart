@@ -30,6 +30,13 @@ class BidRequestResponse {
 class BidRequest {
   String? id;
   String? bidRequestId;
+
+  /// Web parity: the list's "#" column renders `BR{bid_request_no}` — BR1,
+  /// BR2 (BidRequests.jsx:700). The server auto-increments this per admin
+  /// (BidRequest.js:39-45) and declares it as a Number, so it is parsed
+  /// defensively: a whole number arrives as an int, and this must not throw
+  /// if it ever arrives as a decimal or a string.
+  num? bidRequestNo;
   String? adminId;
   String? rentalId;
   String? unitId;
@@ -52,6 +59,7 @@ class BidRequest {
   BidRequest({
     this.id,
     this.bidRequestId,
+    this.bidRequestNo,
     this.adminId,
     this.rentalId,
     this.unitId,
@@ -76,6 +84,7 @@ class BidRequest {
     return BidRequest(
       id: json['_id'],
       bidRequestId: json['bid_request_id'],
+      bidRequestNo: asNumN(json['bid_request_no']),
       adminId: json['admin_id'],
       rentalId: json['rental_id'],
       unitId: json['unit_id'],

@@ -367,65 +367,19 @@ class _DelinquentTenantsState extends State<DelinquentTenants>
                   color: Colors.transparent,
                 ),
               ),
+              // Web parity: the web Delinquent Tenants report has no column
+              // sorting, so this header is a plain label. The sort arrow that
+              // used to sit here flipped on tap but never reordered anything —
+              // its handler ended in a "// Sorting logic here" placeholder —
+              // which read as a broken filter. The label itself is unchanged.
               Expanded(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      if (sorting1 == true) {
-                        sorting2 = false;
-                        sorting3 = false;
-                        ascending1 = sorting1 ? !ascending1 : true;
-                        ascending2 = false;
-                        ascending3 = false;
-                      } else {
-                        sorting1 = !sorting1;
-                        sorting2 = false;
-                        sorting3 = false;
-                        ascending1 = sorting1 ? !ascending1 : true;
-                        ascending2 = false;
-                        ascending3 = false;
-                      }
-
-                      // Sorting logic here
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 24),
-                    child: Row(
-                      children: [
-                        width < 400
-                            ? Text("Leases",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15))
-                            : Text("Leases",
-                                style: TextStyle(
-                                    color: blueColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15)),
-                        // Text("Property", style: TextStyle(color: Colors.white)),
-                        const SizedBox(width: 3),
-                        ascending1
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortUp,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              )
-                            : Padding(
-                                padding: EdgeInsets.only(bottom: 7, left: 2),
-                                child: FaIcon(
-                                  FontAwesomeIcons.sortDown,
-                                  size: 20,
-                                  color: blueColor,
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 24),
+                  child: Text("Leases",
+                      style: TextStyle(
+                          color: blueColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15)),
                 ),
               ),
               // Expanded(

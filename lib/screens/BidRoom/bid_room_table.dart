@@ -1073,7 +1073,10 @@ class _BidRoomTableState extends State<BidRoomTable>
                                                           Expanded(
                                                             flex: 3,
                                                             child: Text(
-                                                              "BR",
+                                                              // Web parity (BidRequests.jsx:700): `BR${bid_request_no}`.
+                                                              // Falls back to a bare "BR" when the number is absent, as
+                                                              // web does, so older records without one still render.
+                                                              "BR${request.bidRequestNo ?? ''}",
                                                               style: TextStyle(
                                                                   fontSize: 13,
                                                                   fontWeight:
@@ -1565,6 +1568,20 @@ class _BidRoomTableState extends State<BidRoomTable>
                                                             CrossAxisAlignment
                                                                 .center,
                                                         children: <Widget>[
+                                                          // The shared _buildHeaders() renders a "#" column for this layout
+                                                          // too, but the row had no cell beneath it — so the header sat over an
+                                                          // empty column. Same reference the narrow layout shows.
+                                                          Expanded(
+                                                            flex: 3,
+                                                            child: Text(
+                                                              "BR${request.bidRequestNo ?? ''}",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight: FontWeight.bold,
+                                                                  color: blueColor),
+                                                            ),
+                                                          ),
                                                           InkWell(
                                                             onTap: () {
                                                               setState(() {
