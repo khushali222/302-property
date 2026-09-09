@@ -2691,7 +2691,7 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                             height: 10,
                           ),
                           CustomTextField(
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.text,
                             hintText: 'Enter here',
                             controller: perform,
                             optional: true,
@@ -5772,7 +5772,7 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                                         ),
                                         CustomTextField(
                                           keyboardType:
-                                              TextInputType.emailAddress,
+                                              TextInputType.text,
                                           hintText: 'Enter here',
                                           controller: perform,
                                           optional: true,

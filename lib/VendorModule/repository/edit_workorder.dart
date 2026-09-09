@@ -221,7 +221,16 @@ class WorkOrderRepository {
     // print(workOrderid);
     var responseData = json.decode(response.body);
     if (responseData["statusCode"] == 200) {
-      Fluttertoast.showToast(msg: responseData["message"]);
+      // No success toast here on purpose. Edit_workorders.dart already shows
+      // its own styled confirmation in the `.then(...)` after this call, so
+      // raising the server's raw `message` as well put TWO toasts on screen at
+      // once when saving — the server's "Work-Order updated Successfully" and
+      // the screen's "Work order updated successfully". The Admin and Staff
+      // copies of this method suppress it for the same reason (see
+      // repository/workorder.dart and
+      // StaffModule/repository/repository/workorder.dart), so Vendor now
+      // matches them. The failure toast below stays: that `throw` is caught by
+      // the screen's `.catchError`, which builds its own message from it.
       return responseData;
     } else {
       Fluttertoast.showToast(msg: responseData["message"]);

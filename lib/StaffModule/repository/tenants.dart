@@ -270,8 +270,11 @@ class TenantsRepository {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (responseData['statusCode'] == 200) {
-          Fluttertoast.showToast(
-              msg: responseData['message'] ?? 'Successfully added tenant');
+          // No success toast here on purpose. add_tenants.dart already shows its
+          // own "Tenant added successfully" confirmation, so raising the
+          // server's message as well put TWO toasts on screen at once. The
+          // screen owns the success message; this repository owns only the
+          // failure message below, which the screen has no other source for.
           return true;
         } else {
           Fluttertoast.showToast(

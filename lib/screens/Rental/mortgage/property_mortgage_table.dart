@@ -370,9 +370,23 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable>
           );
         }
       } else {
+        // Web parity: `error.response?.data?.message || "Error deleting
+        // mortgage"`. A rejected delete comes back as a non-200 (the server
+        // answers 404 "Mortgage not found" for an already-deleted record), so
+        // reading the message only on a 200 meant the server's own reason was
+        // replaced by a generic line exactly when it mattered.
+        String serverMessage = '';
+        try {
+          final body = json.decode(response.body);
+          if (body is Map && body['message'] != null) {
+            serverMessage = body['message'].toString().trim();
+          }
+        } catch (_) {}
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to delete mortgage'),
+          SnackBar(
+            content: Text(serverMessage.isNotEmpty
+                ? serverMessage
+                : 'Failed to delete mortgage'),
             backgroundColor: Colors.red,
           ),
         );
@@ -411,7 +425,12 @@ class _PropertyMortgageTableState extends State<PropertyMortgageTable>
       context,
       MaterialPageRoute(
           builder: (context) => MortgageSummary(mortgageData: mortgage)),
-    );
+    ).then((_) {
+      // Refresh the mortgage list when returning from the summary. It can
+      // edit the mortgage and upload documents, so the row behind it goes
+      // stale without this — same treatment as the add and edit handlers.
+      _loadMortgages();
+    });
   }
 
   String _formatCurrency(dynamic amount) {

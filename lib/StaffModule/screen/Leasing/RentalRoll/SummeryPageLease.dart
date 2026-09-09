@@ -254,8 +254,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
     final ok = await TenantsRepository().sendSetupEmail(t.tenantId);
     if (!mounted) return;
     setState(() => _leaseTenantBusy.remove(t.tenantId));
-    Fluttertoast.showToast(
-        msg: ok ? 'Account setup email sent.' : 'Could not send the email.');
+    // No toast here on purpose. sendSetupEmail() in the tenants repository
+    // already reports both outcomes, and it must keep doing so because
+    // Tenant_summary.dart and Tenants_table.dart call it without any message of
+    // their own. Reporting here as well put TWO toasts on screen at once, so
+    // this screen defers to the repository rather than the other way round.
   }
 
   Future<void> _toggleLeaseTenant2Fa(LeaseTenant t) async {
@@ -296,10 +299,11 @@ class _SummeryPageLeaseState extends State<SummeryPageLease>
       _leaseTenantBusy.remove(t.tenantId);
       if (ok) _leaseTenant2Fa[t.tenantId] = enable;
     });
-    Fluttertoast.showToast(
-        msg: ok
-            ? (enable ? '2FA enabled.' : '2FA disabled.')
-            : 'Could not update 2FA.');
+    // No toast here on purpose. setTenant2FA() in the tenants repository
+    // already reports both outcomes, and it must keep doing so because
+    // Tenants_table.dart calls it without any message of its own. Reporting
+    // here as well put TWO toasts on screen at once, so this screen defers to
+    // the repository rather than the other way round.
   }
 
   // Lazily learn the tenant's current 2FA state so the menu label is truthful,

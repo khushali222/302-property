@@ -428,10 +428,26 @@ class _PropertyTableState extends State<PropertyTable>
                     PropertyTypeRepository().fetchPropertyTypes();
               });
               Navigator.pop(context);
-            } catch (_) {
+            } catch (e) {
               deleting = false;
               if (!mounted) return;
               Navigator.pop(context);
+              // Shown here rather than by the repository: a SnackBar wraps, so
+              // the server's full reason stays readable where a toast cut it
+              // off after two lines.
+              final String reason = e is PropertyTypeDeleteException
+                  ? e.serverMessage
+                  : friendlyErrorMessage(e,
+                      fallbackMessage: 'Failed to delete property type');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(reason.isNotEmpty
+                      ? reason
+                      : 'Failed to delete property type'),
+                  backgroundColor: Colors.red,
+                  duration: const Duration(seconds: 5),
+                ),
+              );
             }
           },
           color: blueColor,

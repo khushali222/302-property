@@ -62,9 +62,11 @@ class ApplicantSummeryRepository {
 
       if (response.statusCode == 200) {
         if (responseData['statusCode'] == 200) {
-          Fluttertoast.showToast(
-              msg: responseData['message'] ?? 'Successfully added tenant');
-
+          // No success toast here on purpose. The calling screen already shows its
+          // own confirmation for this action, so raising the server's message as
+          // well put TWO toasts on screen at once. The screen owns the success
+          // message (consistent wording/styling); this repository owns only the
+          // failure message below, which the screen has no other source for.
           return true;
         } else {
           Fluttertoast.showToast(

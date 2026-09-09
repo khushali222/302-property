@@ -133,8 +133,25 @@ class PropertyTypeRepository {
       return json.decode(response.body);
 
     } else {
-      Fluttertoast.showToast(msg: responseData["message"]);
-      throw Exception('Failed to delete property type');
+      // Don't toast here: Android's native toast caps at two lines, and the
+      // server's refusal ("Cannot delete Property-Type. The Property-Type is
+      // already assigned to a lease.") is long enough to be cut off mid-
+      // sentence. Carry the message on the exception so the screen can show it
+      // in a SnackBar, which wraps.
+      throw PropertyTypeDeleteException(
+          (responseData["message"] ?? '').toString().trim());
     }
   }
+}
+
+/// Carries the server's own refusal message out to the screen so it can be
+/// displayed in full.
+class PropertyTypeDeleteException implements Exception {
+  final String serverMessage;
+  const PropertyTypeDeleteException(this.serverMessage);
+
+  @override
+  String toString() => serverMessage.isNotEmpty
+      ? serverMessage
+      : 'Failed to delete property type';
 }

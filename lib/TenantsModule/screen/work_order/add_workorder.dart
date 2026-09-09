@@ -956,7 +956,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             height: 10,
                           ),
                           CustomTextField(
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.text,
                             hintText: 'Enter here',
                             showElevation: false,
                             borderColor: const Color(0xFFCED4DA),
@@ -1297,14 +1297,13 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
         );
 
-        Fluttertoast.showToast(
-            msg: "Work order added successfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        // No success toast here on purpose. addWorkOrder() in
+        // TenantsModule/repository/workorder.dart already raises the server's
+        // confirmation message, so showing this one as well put TWO toasts on
+        // screen at once when saving. The Admin, Staff and Vendor add screens
+        // all let the repository own that message, so Tenant now matches them.
+        // The failure toast in the catch below stays: the repository throws
+        // without toasting on failure, so this screen is its only source.
         Navigator.pop(context, true);
         // Handle success: Maybe navigate to another screen or reset the form
       } catch (e) {

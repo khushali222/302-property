@@ -66,29 +66,43 @@ class _Profile_screenState extends State<Profile_screen>
   // Trade & Service Area: one common trade type, multiple zip+distance pairs
   String? _selectedTradeType;
   List<_ZipDistanceEntry> _zipDistancePairs = [];
+  // Web's canonical trade list (AddVendor.jsx TRADE_OPTIONS), which is also
+  // what the Admin and Staff vendor screens use. This list previously differed
+  // on both sides: it labelled the stored value 'general' as "General
+  // Contractor" (web and Admin both show "General", so the same vendor read
+  // differently depending on who looked at it), it omitted Drywall, Painting
+  // and Roofing entirely, and it offered an "Other" option that stored
+  // 'other' — a value neither web nor the Admin list can label, so it
+  // displayed as raw lowercase text.
   static const Map<String, String> _tradeToApiValue = {
-    'Plumbing': 'plumbing',
+    'General': 'general',
+    'Drywall': 'drywall',
     'Electrical': 'electrical',
     'HVAC': 'hvac',
     'Landscaping': 'landscaping',
-    'General Contractor': 'general',
-    'Other': 'other',
+    'Painting': 'painting',
+    'Plumbing': 'plumbing',
+    'Roofing': 'roofing',
   };
   static const Map<String, String> _apiValueToTrade = {
-    'plumbing': 'Plumbing',
+    'general': 'General',
+    'drywall': 'Drywall',
     'electrical': 'Electrical',
     'hvac': 'HVAC',
     'landscaping': 'Landscaping',
-    'general': 'General Contractor',
-    'other': 'Other',
+    'painting': 'Painting',
+    'plumbing': 'Plumbing',
+    'roofing': 'Roofing',
   };
   final List<String> _tradeTypeOptions = [
-    'Plumbing',
+    'General',
+    'Drywall',
     'Electrical',
     'HVAC',
     'Landscaping',
-    'General Contractor',
-    'Other'
+    'Painting',
+    'Plumbing',
+    'Roofing',
   ];
 
   // Compliance & Legal

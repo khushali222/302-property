@@ -7416,7 +7416,7 @@ class _AddTenantState extends State<AddTenant> {
                                 showElevation: false,
                                 borderColor: const Color(0xFFCED4DA),
                                     keyboardType: TextInputType.text,
-                                    hintText: 'Enter contact name',
+                                    hintText: 'Enter TaxPayer ID',
                                     controller: taxPayerId,
                                     optional: true,
                                   ),

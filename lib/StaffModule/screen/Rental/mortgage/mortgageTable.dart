@@ -128,6 +128,12 @@ class _MortgageTableState extends State<MortgageTable>
             });
             _filteredMortgages = List.from(_mortgages);
           });
+          // Web parity: web recomputes its filtered list on every render
+          // (Mortgage.jsx `filterMortgagesBySearch`), so an active search
+          // survives a data refresh. Re-apply the current search here
+          // instead of dropping the user back to the unfiltered list while
+          // their search text is still on screen.
+          _filterMortgages();
         } else {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -401,8 +407,22 @@ class _MortgageTableState extends State<MortgageTable>
           );
         }
       } else {
+        // Web parity: `error.response?.data?.message || "Error deleting
+        // mortgage"`. A rejected delete comes back as a non-200 (the server
+        // answers 404 "Mortgage not found" for an already-deleted record), so
+        // reading the message only on a 200 meant the server's own reason was
+        // replaced by a generic line exactly when it mattered.
+        String serverMessage = '';
+        try {
+          final body = json.decode(response.body);
+          if (body is Map && body['message'] != null) {
+            serverMessage = body['message'].toString().trim();
+          }
+        } catch (_) {}
         Fluttertoast.showToast(
-          msg: 'Failed to delete mortgage',
+          msg: serverMessage.isNotEmpty
+              ? serverMessage
+              : 'Failed to delete mortgage',
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
@@ -438,7 +458,12 @@ class _MortgageTableState extends State<MortgageTable>
       context,
       MaterialPageRoute(
           builder: (context) => MortgageSummary(mortgageData: mortgage)),
-    );
+    ).then((_) {
+      // Refresh the mortgage list when returning from the summary. It can
+      // edit the mortgage and upload documents, so the row behind it goes
+      // stale without this — same treatment as the add and edit handlers.
+      _loadMortgages();
+    });
   }
 
   void _openAssignPropertiesDialog(Map<String, dynamic> mortgage) {

@@ -1018,7 +1018,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                             SizedBox(
                               height: 10,
                             ),
-                            Text('Welcome To Be Performed',
+                            Text('Work To Be Performed',
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -1027,7 +1027,7 @@ class _Add_WorkorderState extends State<Add_Workorder> {
                               height: 10,
                             ),
                             CustomTextField(
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.text,
                               hintText: 'Enter here',
                               controller: perform,
                             ),
@@ -1176,14 +1176,16 @@ class _Add_WorkorderState extends State<Add_Workorder> {
           entry: _selectedEntry == 'Yes',
         );
 
-        Fluttertoast.showToast(
-            msg: "Work order added successfully",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        // No success toast here on purpose. addWorkOrder() in
+        // VendorModule/repository/edit_workorder.dart already raises the
+        // server's confirmation message, so showing this one as well put TWO
+        // toasts on screen at once when saving. The Admin and Staff add screens
+        // suppress their own toast for the same reason and let the repository
+        // own it, so Vendor now matches them.
+        //
+        // Note this is the opposite side from the EDIT flow, where the screen
+        // owns the toast and the repository stays quiet. Either way exactly one
+        // confirmation is shown.
         Navigator.pop(context, true);
         // Handle success: Maybe navigate to another screen or reset the form
       } catch (e) {

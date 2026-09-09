@@ -52,7 +52,12 @@ class LivePropertyData {
   String? endDate;
   String? status;
   double? monthlyPayment;
-  int? remainingBalance;
+  /// `num?` + asNumN on every money field below: the API can return these as a
+  /// whole number, a decimal or a numeric string. The previous `int?` + asIntN
+  /// dropped the cents on a decimal (1450.50 rendered as $1,450.00) and turned a
+  /// decimal STRING into 0.00, which reads as missing data. Every reader passes
+  /// these straight to formatCurrency, so widening the type changes no caller.
+  num? remainingBalance;
   String? lastPaymentDate;
   String? nextPaymentDate;
   String? borrowerFirstName;
@@ -73,14 +78,14 @@ class LivePropertyData {
   String? rentalFlip;
   String? placedInService;
   int? insuredYear;
-  int? insuredValue;
-  int? taxBill;
-  int? monthlyRent;
+  num? insuredValue;
+  num? taxBill;
+  num? monthlyRent;
   bool? hasMortgage;
   String? mortgageBank;
-  int? mortgageBalance;
+  num? mortgageBalance;
   double? interest;
-  int? principal;
+  num? principal;
   double? payment;
   double? interestPercentage;
   String? interestType;
@@ -184,7 +189,7 @@ class LivePropertyData {
                 : json['monthly_payment'])
         : null;
 
-    remainingBalance = asIntN(json['remaining_balance']);
+    remainingBalance = asNumN(json['remaining_balance']);
 
     lastPaymentDate = json['last_payment_date'];
     nextPaymentDate = json['next_payment_date'];
@@ -212,12 +217,12 @@ class LivePropertyData {
     rentalFlip = json['rental_flip'];
     placedInService = json['placed_in_service'];
     insuredYear = asIntN(json['insured_year']);
-    insuredValue = asIntN(json['insured_value']);
-    taxBill = asIntN(json['tax_bill']);
-    monthlyRent = asIntN(json['monthly_rent']);
+    insuredValue = asNumN(json['insured_value']);
+    taxBill = asNumN(json['tax_bill']);
+    monthlyRent = asNumN(json['monthly_rent']);
     hasMortgage = json['has_mortgage'];
     mortgageBank = json['mortgage_bank'];
-    mortgageBalance = asIntN(json['mortgage_balance']);
+    mortgageBalance = asNumN(json['mortgage_balance']);
     interest = json['interest'] != null
         ? (json['interest'] is int
             ? (json['interest'] as int).toDouble()
@@ -225,7 +230,7 @@ class LivePropertyData {
                 ? double.tryParse(json['interest'])
                 : json['interest'])
         : null;
-    principal = asIntN(json['principal']);
+    principal = asNumN(json['principal']);
     payment = json['payment'] != null
         ? (json['payment'] is int
             ? (json['payment'] as int).toDouble()
@@ -382,7 +387,7 @@ class RentalOwner {
 
 class PurchaseInfo {
   String? purchaseDate;
-  int? purchasePrice;
+  num? purchasePrice;
   String? parcelNumber;
 
   PurchaseInfo({
@@ -393,7 +398,7 @@ class PurchaseInfo {
 
   PurchaseInfo.fromJson(Map<String, dynamic> json) {
     purchaseDate = json['purchase_date'];
-    purchasePrice = asIntN(json['purchase_price']);
+    purchasePrice = asNumN(json['purchase_price']);
     parcelNumber = json['parcel_number'];
   }
 

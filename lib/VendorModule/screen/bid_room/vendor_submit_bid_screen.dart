@@ -31,6 +31,11 @@ class _VendorSubmitBidScreenState extends State<VendorSubmitBidScreen> {
   File? _selectedFile;
   bool _isSubmitting = false;
 
+  // Upper bound for the bid amount. Web puts no ceiling on this field, but a
+  // value this large is junk either way, and an explicit limit lets the field
+  // say what actually went wrong instead of blaming the characters typed.
+  static const double _maxTotalPrice = 9999999999.99;
+
   @override
   void dispose() {
     _priceBreakdownController.dispose();
@@ -306,9 +311,10 @@ titleBar(title: 'Submit Bid',width: MediaQuery.of(context).size.width > 500
               const SizedBox(height: 8),
               TextFormField(
                 controller: _totalPriceController,
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 ],
                 decoration: InputDecoration(
                   hintText: 'Enter total price',
@@ -331,11 +337,26 @@ titleBar(title: 'Submit Bid',width: MediaQuery.of(context).size.width > 500
                   ),
                 ),
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) {
+                  final String raw = (v ?? '').trim();
+                  if (raw.isEmpty) {
                     return 'Total price is required';
                   }
-                  if (int.tryParse(v.trim()) == null) {
-                    return 'Enter numbers only';
+                  // Parsed as a double, not an int: web submits this field
+                  // with parseFloat and the server stores it as a Number, so
+                  // decimal amounts are valid (BidSubmissionModal.jsx). The
+                  // old int parse also overflowed past 19 digits and reported
+                  // that as non-numeric input.
+                  final double? amount = double.tryParse(raw);
+                  if (amount == null) {
+                    return 'Enter a valid amount';
+                  }
+                  // Same wording as web's min(0) rule. The formatter keeps the
+                  // minus key out, so this only fires if that ever changes.
+                  if (amount < 0) {
+                    return 'Price must be positive';
+                  }
+                  if (amount > _maxTotalPrice) {
+                    return 'Total price is too large';
                   }
                   return null;
                 },
