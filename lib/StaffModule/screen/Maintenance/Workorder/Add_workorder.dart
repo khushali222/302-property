@@ -248,7 +248,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
@@ -842,7 +844,10 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
   List<File> _images = [];
   List<File> videofiles = [];
   String? _uploadedFileName;
-  List<String> _uploadedFileNames = [];
+  // Index-aligned with _images: null until that row's upload lands. Appending
+  // only on success let the two lists drift, so a failed or removed picture
+  // could never be matched back to its filename.
+  List<String?> _uploadedFileNames = [];
   List<bool> isvideo = [];
 
   Future<String?> _generateVideoThumbnail(String videoPath) async {
@@ -1028,23 +1033,42 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       // failed this check and made a picked video vanish from the preview list.
       bool isVideo = image.path.toLowerCase().endsWith('.mp4') ||
           image.path.toLowerCase().endsWith('.mov');
+      File? preview;
       if (isVideo) {
         String? thumbnailPath = await _generateVideoThumbnail(image.path);
         if (thumbnailPath != null) {
+          final File thumb = File(thumbnailPath);
+          preview = thumb;
           setState(() {
-            _images.add(File(thumbnailPath));
+            _images.add(thumb);
             isvideo.add(true);
             videofiles.add(file);
+            _uploadedFileNames.add(null);
           });
+        } else {
+          // Before the alignment change this video was uploaded with no
+          // preview at all; now nothing is attached that cannot be shown,
+          // so the user has to be told.
+          Fluttertoast.showToast(
+            msg: 'Could not read that video. Please try again.',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
         }
       } else {
+        preview = file;
         setState(() {
           _images.add(file);
           isvideo.add(false);
           videofiles.add(file);
+          _uploadedFileNames.add(null);
         });
       }
-      _uploadImage(file);
+      if (preview != null) _uploadImage(file, preview);
     }
   }
 
@@ -1073,21 +1097,34 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                 _images.add(imageFile);
                 isvideo.add(false);
                 videofiles.add(imageFile);
+                _uploadedFileNames.add(null);
               });
-              _uploadImage(imageFile);
+              _uploadImage(imageFile, imageFile);
             },
             onVideoCaptured: (File videoFile) async {
               // Handle captured video
               String? thumbnailPath =
                   await _generateVideoThumbnail(videoFile.path);
               if (thumbnailPath != null) {
+                final File thumb = File(thumbnailPath);
                 setState(() {
-                  _images.add(File(thumbnailPath));
+                  _images.add(thumb);
                   isvideo.add(true);
                   videofiles.add(videoFile);
+                  _uploadedFileNames.add(null);
                 });
+                _uploadImage(videoFile, thumb);
+              } else {
+                Fluttertoast.showToast(
+                  msg: 'Could not read that video. Please try again.',
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
               }
-              _uploadImage(videoFile);
             },
           ),
         ),
@@ -1124,41 +1161,90 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
       // failed this check and made a picked video vanish from the preview list.
       bool isVideo = image.path.toLowerCase().endsWith('.mp4') ||
           image.path.toLowerCase().endsWith('.mov');
+      File? preview;
       if (isVideo) {
         String? thumbnailPath = await _generateVideoThumbnail(image.path);
         if (thumbnailPath != null) {
+          final File thumb = File(thumbnailPath);
+          preview = thumb;
           setState(() {
-            _images.add(File(thumbnailPath));
+            _images.add(thumb);
             isvideo.add(true);
             videofiles.add(file);
+            _uploadedFileNames.add(null);
           });
+        } else {
+          // Before the alignment change this video was uploaded with no
+          // preview at all; now nothing is attached that cannot be shown,
+          // so the user has to be told.
+          Fluttertoast.showToast(
+            msg: 'Could not read that video. Please try again.',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
         }
       } else {
+        preview = file;
         setState(() {
           _images.add(file);
           isvideo.add(false);
           videofiles.add(file);
+          _uploadedFileNames.add(null);
         });
       }
 
       setState(() {
-        _image = File(image.path);
-        // _images.add(File(image.path));
+        _image = file;
       });
-      _uploadImage(File(image.path));
+      if (preview != null) _uploadImage(file, preview);
     }
   }
 
-  Future<void> _uploadImage(File imageFile) async {
+  // `preview` is the File shown in _images for this pick; it is how the
+  // finished upload finds its own row, since uploads can complete in any order.
+  Future<void> _uploadImage(File imageFile, File preview) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (!mounted) return;
+      final int row = _images.indexOf(preview);
+      if (row == -1) return; // removed by the user while it was uploading
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames[row] = fileName;
         _uploadedFileName = fileName;
       });
     } catch (e) {
       logError('Image upload failed: $e');
+      if (!mounted) return;
+      // Offline (or any failure) used to leave the picture on screen with no
+      // filename behind it, so Save quietly attached fewer images than shown.
+      final int row = _images.indexOf(preview);
+      if (row != -1) {
+        setState(() => _removeImageRowAt(row));
+      }
+      Fluttertoast.showToast(
+        // No filename: the picker renames files to image_picker_<uuid>.jpg,
+        // which means nothing to the user and wrapped the toast over 4 lines.
+        msg: 'Failed to upload image. Please try again.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
+  }
+
+  // Keeps the four parallel image lists in step; call inside setState.
+  void _removeImageRowAt(int index) {
+    if (index < _images.length) _images.removeAt(index);
+    if (index < isvideo.length) isvideo.removeAt(index);
+    if (index < videofiles.length) videofiles.removeAt(index);
+    if (index < _uploadedFileNames.length) _uploadedFileNames.removeAt(index);
   }
 
   void _showVideoDialog(File videoFile) {
@@ -1314,30 +1400,60 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
                     ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
+                        if (imageIndex >= _images.length) return;
+
+                        // Remember what is being replaced so a failed upload
+                        // can put it back, instead of leaving the new picture
+                        // on screen with the old filename still behind it.
+                        final File oldPreview = _images[imageIndex];
+                        final bool oldIsVideo = isvideo[imageIndex];
+                        final File oldFile = videofiles[imageIndex];
+                        final String? oldName = _uploadedFileNames[imageIndex];
+                        final File newFile = originalFile ?? imageFile;
 
                         // Update the existing image in the list
                         setState(() {
                           _images[imageIndex] = imageFile;
                           isvideo[imageIndex] = isVideo;
-                          if (originalFile != null) {
-                            videofiles[imageIndex] = originalFile;
-                          } else {
-                            videofiles[imageIndex] = imageFile;
-                          }
+                          videofiles[imageIndex] = newFile;
+                          _uploadedFileNames[imageIndex] = null; // in flight
                         });
 
                         // Upload the new image
                         try {
-                          String? fileName =
-                              await uploadImage(originalFile ?? imageFile);
-                          if (fileName != null &&
-                              imageIndex < _uploadedFileNames.length) {
+                          String? fileName = await uploadImage(newFile);
+                          if (!mounted) return;
+                          if (fileName == null) {
+                            throw Exception('upload returned no filename');
+                          }
+                          // Rows may have shifted while uploading; find our own.
+                          final int row = _images.indexOf(imageFile);
+                          if (row != -1) {
                             setState(() {
-                              _uploadedFileNames[imageIndex] = fileName;
+                              _uploadedFileNames[row] = fileName;
                             });
                           }
                         } catch (e) {
                           logError('Image upload failed: $e');
+                          if (!mounted) return;
+                          final int row = _images.indexOf(imageFile);
+                          if (row != -1) {
+                            setState(() {
+                              _images[row] = oldPreview;
+                              isvideo[row] = oldIsVideo;
+                              videofiles[row] = oldFile;
+                              _uploadedFileNames[row] = oldName;
+                            });
+                          }
+                          Fluttertoast.showToast(
+                            msg: 'Failed to upload image. Please try again.',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 2,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -3493,7 +3609,9 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           tenant: finalTenantId,
           rentalid: rentalId,
           unitid: unitId,
-          workOrderImages: _uploadedFileNames,
+          // Placeholders belong to uploads still in flight; only landed
+          // filenames are sent, exactly as before.
+          workOrderImages: _uploadedFileNames.whereType<String>().toList(),
           vendorId: finalVendorId,
           vendorNotes: vendornote.text,
           priority: _selectedOption,
@@ -3645,6 +3763,12 @@ class _AddWorkOrderForMobileState extends State<AddWorkOrderForMobile>
           .format(DateTime.now());
       _selectedDropdownCategory = null;
 
+      // The picture lists are index-aligned, so they have to be cleared
+      // together. Clearing only the filenames left the previous work
+      // order's pictures on the fresh form and the rows out of step.
+      _images.clear();
+      isvideo.clear();
+      videofiles.clear();
       _uploadedFileNames.clear();
       partsAndLabor.clear();
 
@@ -3845,7 +3969,9 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
@@ -4352,7 +4478,10 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
   List<File> _images = [];
   List<File> videofiles = [];
   String? _uploadedFileName;
-  List<String> _uploadedFileNames = [];
+  // Index-aligned with _images: null until that row's upload lands. Appending
+  // only on success let the two lists drift, so a failed or removed picture
+  // could never be matched back to its filename.
+  List<String?> _uploadedFileNames = [];
   List<bool> isvideo = [];
 
   Future<String?> _generateVideoThumbnail(String videoPath) async {
@@ -4533,11 +4662,15 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
     final XFile? image = await _picker.pickImage(source: source);
 
     if (image != null) {
+      // One File instance for both the preview and the upload, so the
+      // finished upload can find its own row by identity.
+      final File picked = File(image.path);
       setState(() {
-        _image = File(image.path);
-        _images.add(File(image.path));
+        _image = picked;
+        _images.add(picked);
+        _uploadedFileNames.add(null);
       });
-      _uploadImage(File(image.path));
+      _uploadImage(picked, picked);
     }
   }
 
@@ -4565,16 +4698,18 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
               setState(() {
                 _image = imageFile;
                 _images.add(imageFile);
+                _uploadedFileNames.add(null);
               });
-              _uploadImage(imageFile);
+              _uploadImage(imageFile, imageFile);
             },
             onVideoCaptured: (File videoFile) async {
               // Handle captured video
               setState(() {
                 _image = videoFile;
                 _images.add(videoFile);
+                _uploadedFileNames.add(null);
               });
-              _uploadImage(videoFile);
+              _uploadImage(videoFile, videoFile);
             },
           ),
         ),
@@ -4606,24 +4741,59 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
+      // One File instance for both the preview and the upload, so the
+      // finished upload can find its own row by identity.
+      final File picked = File(image.path);
       setState(() {
-        _image = File(image.path);
-        _images.add(File(image.path));
+        _image = picked;
+        _images.add(picked);
+        _uploadedFileNames.add(null);
       });
-      _uploadImage(File(image.path));
+      _uploadImage(picked, picked);
     }
   }
 
-  Future<void> _uploadImage(File imageFile) async {
+  // `preview` is the File shown in _images for this pick; it is how the
+  // finished upload finds its own row, since uploads can complete in any order.
+  Future<void> _uploadImage(File imageFile, File preview) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (!mounted) return;
+      final int row = _images.indexOf(preview);
+      if (row == -1) return; // removed by the user while it was uploading
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames[row] = fileName;
         _uploadedFileName = fileName;
       });
     } catch (e) {
       logError('Image upload failed: $e');
+      if (!mounted) return;
+      // Offline (or any failure) used to leave the picture on screen with no
+      // filename behind it, so Save quietly attached fewer images than shown.
+      final int row = _images.indexOf(preview);
+      if (row != -1) {
+        setState(() => _removeImageRowAt(row));
+      }
+      Fluttertoast.showToast(
+        // No filename: the picker renames files to image_picker_<uuid>.jpg,
+        // which means nothing to the user and wrapped the toast over 4 lines.
+        msg: 'Failed to upload image. Please try again.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 2,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
+  }
+
+  // Keeps the parallel image lists in step; call inside setState.
+  void _removeImageRowAt(int index) {
+    if (index < _images.length) _images.removeAt(index);
+    if (index < isvideo.length) isvideo.removeAt(index);
+    if (index < videofiles.length) videofiles.removeAt(index);
+    if (index < _uploadedFileNames.length) _uploadedFileNames.removeAt(index);
   }
 
   @override
@@ -6888,28 +7058,58 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
                     ElevatedButton(
                       onPressed: () async {
                         Navigator.of(context).pop();
+                        if (imageIndex >= _images.length) return;
+
+                        // Remember what is being replaced so a failed upload
+                        // can put it back, instead of leaving the new picture
+                        // on screen with the old filename still behind it.
+                        final File oldPreview = _images[imageIndex];
+                        final bool oldIsVideo = isvideo[imageIndex];
+                        final File oldFile = videofiles[imageIndex];
+                        final String? oldName = _uploadedFileNames[imageIndex];
+                        final File newFile = originalFile ?? imageFile;
 
                         setState(() {
                           _images[imageIndex] = imageFile;
                           isvideo[imageIndex] = isVideo;
-                          if (originalFile != null) {
-                            videofiles[imageIndex] = originalFile;
-                          } else {
-                            videofiles[imageIndex] = imageFile;
-                          }
+                          videofiles[imageIndex] = newFile;
+                          _uploadedFileNames[imageIndex] = null; // in flight
                         });
 
                         try {
-                          String? fileName =
-                              await uploadImage(originalFile ?? imageFile);
-                          if (fileName != null &&
-                              imageIndex < _uploadedFileNames.length) {
+                          String? fileName = await uploadImage(newFile);
+                          if (!mounted) return;
+                          if (fileName == null) {
+                            throw Exception('upload returned no filename');
+                          }
+                          // Rows may have shifted while uploading; find our own.
+                          final int row = _images.indexOf(imageFile);
+                          if (row != -1) {
                             setState(() {
-                              _uploadedFileNames[imageIndex] = fileName;
+                              _uploadedFileNames[row] = fileName;
                             });
                           }
                         } catch (e) {
                           logError('Image upload failed: $e');
+                          if (!mounted) return;
+                          final int row = _images.indexOf(imageFile);
+                          if (row != -1) {
+                            setState(() {
+                              _images[row] = oldPreview;
+                              isvideo[row] = oldIsVideo;
+                              videofiles[row] = oldFile;
+                              _uploadedFileNames[row] = oldName;
+                            });
+                          }
+                          Fluttertoast.showToast(
+                            msg: 'Failed to upload image. Please try again.',
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 2,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -7039,6 +7239,12 @@ class _AddWorkOrderForTabletState extends State<AddWorkOrderForTablet>
           .format(DateTime.now());
       _selectedDropdownCategory = null;
 
+      // The picture lists are index-aligned, so they have to be cleared
+      // together. Clearing only the filenames left the previous work
+      // order's pictures on the fresh form and the rows out of step.
+      _images.clear();
+      isvideo.clear();
+      videofiles.clear();
       _uploadedFileNames.clear();
       partsAndLabor.clear();
 

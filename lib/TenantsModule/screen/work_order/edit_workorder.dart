@@ -54,20 +54,38 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   String? _selectedEntry;
   final List<String> _entry = ['Yes', 'No'];
 
+  // Snapshot of the record as loaded, so "Update Work Order" can refuse a
+  // no-op save. The server (PUT work-order/:id) mails the manager, staff and
+  // vendor on EVERY successful update and has no no-op detection of its own,
+  // so the client is the only place this can be stopped. Web parity:
+  // TAddWork.jsx gates its submit button on `isFormChanged`.
+  String? initialSubject;
+  String? initialWorkPerformed;
+  String? initialSelectedCategory;
+  String? initialSelectedEntry;
+  List<String?>? initialSelectedimage;
+  bool _dirtySnapshotReady = false;
+  bool _lastDirty = false;
+
   @override
   void initState() {
     super.initState();
+    // Text fields do not rebuild the screen on keystroke, so the dirty flag
+    // (and with it the Update button) has to be re-evaluated by hand.
+    subject.addListener(_onDirtyFieldChanged);
+    perform.addListener(_onDirtyFieldChanged);
     _loadData();
     _loadDropdownCategories();
   }
 
   @override
   void dispose() {
-    // `subject` and `perform` are handed to CustomTextField, whose State
-    // disposes whatever controller it is given (CustomTextFieldState in
-    // screens/Maintenance/Vendor/add_vendor.dart). Releasing them here as
-    // well threw "used after being disposed" when this screen closed.
-    // `other` goes to a plain TextFormField, so it stays ours to release.
+    // CustomTextField only disposes a controller it created itself
+    // (add_vendor.dart:1161), so `subject` and `perform` outlive it and the
+    // dirty listeners must be detached here. `other` goes to a plain
+    // TextFormField, so it stays ours to release.
+    subject.removeListener(_onDirtyFieldChanged);
+    perform.removeListener(_onDirtyFieldChanged);
     other.dispose();
     super.dispose();
   }
@@ -88,6 +106,14 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
           }
           _selectedEntry = s.entryAllowed == true ? 'Yes' : 'No';
           _isLoading = false;
+          // Same values the live fields were just seeded with, kept as plain
+          // strings so the diff never compares object identity.
+          initialSubject = s.workSubject ?? '';
+          initialWorkPerformed = s.workPerformed ?? '';
+          initialSelectedCategory = s.workCategory;
+          initialSelectedEntry = s.entryAllowed == true ? 'Yes' : 'No';
+          initialSelectedimage = List<String?>.from(uploaded_images);
+          _dirtySnapshotReady = true;
         });
         _applyCategoryFromSummery();
       }
@@ -193,11 +219,59 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
   bool isVideo(String url) => url.toLowerCase().endsWith(".mp4");
 
+  /// Web's `normalizeValue`: null and blank read the same, so a null that
+  /// loads as "" is not mistaken for an edit.
+  String _normDirty(dynamic v) => v == null ? '' : v.toString().trim();
+
+  bool _imagesDiffer() {
+    final cur = uploaded_images;
+    final was = initialSelectedimage ?? const <String?>[];
+    if (cur.length != was.length) return true;
+    for (var i = 0; i < cur.length; i++) {
+      if (_normDirty(cur[i]) != _normDirty(was[i])) return true;
+    }
+    return false;
+  }
+
+  /// Only the fields this screen can actually edit and that the payload
+  /// sends. Property and Unit are read-only here, and status/priority/vendor/
+  /// staff/billable/due date/parts are not on the tenant form at all.
+  bool _hasWorkOrderChanges() {
+    if (!_dirtySnapshotReady) return false; // nothing loaded yet => not dirty
+    return _normDirty(subject.text) != _normDirty(initialSubject) ||
+        _normDirty(_selectedDropdownCategory?.name ?? summery?.workCategory) !=
+            _normDirty(initialSelectedCategory) ||
+        _normDirty(_selectedEntry) != _normDirty(initialSelectedEntry) ||
+        _normDirty(perform.text) != _normDirty(initialWorkPerformed) ||
+        _imagesDiffer();
+  }
+
+  void _onDirtyFieldChanged() {
+    final v = _hasWorkOrderChanges();
+    if (v != _lastDirty) {
+      _lastDirty = v;
+      if (mounted) setState(() {});
+    }
+  }
+
   void _submitForm() async {
     if (summery == null) return;
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSaving = true);
+    // Backstop for the disabled button (web parity, TAddWork.jsx): a save with
+    // nothing changed would still fire the server's notification e-mails.
+    if (!_hasWorkOrderChanges()) {
+      setState(() => _isSaving = false);
+      Fluttertoast.showToast(
+        msg: 'Please change at least one field to update the Work Order',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
+      return;
+    }
     try {
       final prefs = await SharedPreferences.getInstance();
       final firstName = prefs.getString("first_name") ?? '';
@@ -251,6 +325,8 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
 
   @override
   Widget build(BuildContext context) {
+    final bool canSave = _hasWorkOrderChanges();
+    _lastDirty = canSave;
     return Scaffold(
       key: key,
       appBar: widget_302.App_Bar(
@@ -431,22 +507,28 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               width: 170,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
+                                  backgroundColor: canSave
+                                      ? blueColor
+                                      : const Color(0xFFE5E8ED),
+                                  disabledBackgroundColor:
+                                  const Color(0xFFE5E8ED),
                                   shape: RoundedRectangleBorder(
                                       borderRadius:
                                       BorderRadius.circular(8.0)),
                                 ),
-                                onPressed:
-                                _isSaving ? null : _submitForm,
+                                onPressed: (_isSaving || !canSave)
+                                    ? null
+                                    : _submitForm,
                                 child: _isSaving
                                     ? const Center(
                                     child: SpinKitFadingCircle(
                                         color: Colors.white,
                                         size: 30))
-                                    : const Text('Update Work Order',
+                                    : Text('Update Work Order',
                                     style: TextStyle(
-                                        color:
-                                        Color(0xFFf7f8f9), fontWeight: FontWeight.bold)),
+                                        color: canSave
+                                            ? const Color(0xFFf7f8f9)
+                                            : Colors.grey[600], fontWeight: FontWeight.bold)),
                               ),
                             ),
                             const SizedBox(width: 8),

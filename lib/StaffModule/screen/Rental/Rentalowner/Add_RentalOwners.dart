@@ -379,7 +379,7 @@ class _Add_rentalownersState extends State<Add_rentalowners> {
                           Text(
                             "Personal Information",
                             style: TextStyle(
-                                color: const Color(0xFF101828),
+                                color: const Color(0xFF152B51),
                                 fontWeight: FontWeight.bold,
                                 // fontSize: 18
                                 fontSize:

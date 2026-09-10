@@ -4365,6 +4365,21 @@ class _Login_ScreenState extends State<Login_Screen> {
   // successful verify must NOT read as expired.
   bool _twoFAExpired = false;
 
+  /// True while the 2FA step is on screen AND its code has expired.
+  ///
+  /// The code entry field and the submit button are shared with the ordinary
+  /// e-mail/password login, so they must only grey out when the 2FA step is the
+  /// thing actually being shown — gating on `_twoFAExpired` alone would disable
+  /// the normal login button too.
+  ///
+  /// Web disables both the field and the action the moment the countdown ends,
+  /// and the profile screen already does the same (Profile_screen.dart:
+  /// `enabled: !is2FACodeExpired` and `onPressed: … is2FACodeExpired ? null`).
+  /// The login screen previously stayed visually active and only rejected the
+  /// code on submit, so the two screens read differently for the same state.
+  /// Resending clears `_twoFAExpired`, which restores both automatically.
+  bool get _twoFALocked => requires2FA && _twoFAExpired;
+
   String OtpId = "";
 
   String _email = '';
@@ -5157,6 +5172,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 Positioned.fill(
                                   child: TextField(
                                     keyboardType: TextInputType.text,
+                                    // Greyed out once the countdown ends, the
+                                    // same as the profile screen and web.
+                                    // Resending clears the flag and re-enables
+                                    // it automatically.
+                                    enabled: !_twoFALocked,
                                     onChanged: (value) {
                                       setState(() {
                                         required2FA = false;
@@ -5335,7 +5355,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                           height: MediaQuery.of(context).size.height * 0.045,
                           width: MediaQuery.of(context).size.width * 0.8,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF152B51),
+                            // Greyed out while the 2FA code is expired, so the
+                            // action reads as unavailable rather than looking
+                            // tappable and failing on submit. Matches the
+                            // profile screen's disabled Verify button. The
+                            // guard inside onTap stays as the safety net.
+                            color: _twoFALocked
+                                ? Colors.grey
+                                : const Color(0xFF152B51),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(
@@ -5772,6 +5799,11 @@ class _Login_ScreenState extends State<Login_Screen> {
                                 Positioned.fill(
                                   child: TextField(
                                     keyboardType: TextInputType.text,
+                                    // Greyed out once the countdown ends, the
+                                    // same as the profile screen and web.
+                                    // Resending clears the flag and re-enables
+                                    // it automatically.
+                                    enabled: !_twoFALocked,
                                     onChanged: (value) {
                                       setState(() {
                                         required2FA = false;
@@ -5949,7 +5981,14 @@ class _Login_ScreenState extends State<Login_Screen> {
                           height: MediaQuery.of(context).size.height * 0.06,
                           width: MediaQuery.of(context).size.width * 0.8,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF152B51),
+                            // Greyed out while the 2FA code is expired, so the
+                            // action reads as unavailable rather than looking
+                            // tappable and failing on submit. Matches the
+                            // profile screen's disabled Verify button. The
+                            // guard inside onTap stays as the safety net.
+                            color: _twoFALocked
+                                ? Colors.grey
+                                : const Color(0xFF152B51),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(

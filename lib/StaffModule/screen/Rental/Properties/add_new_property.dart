@@ -1705,12 +1705,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                     ),
                                     Text(
                                       addressmessage,
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .04),
+                                      style: const TextStyle(color: Colors.red),
                                     ),
                                   ],
                                 )
@@ -1821,14 +1816,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           left: 5),
                                                   child: Text(
                                                     citymessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -1935,14 +1923,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           left: 5),
                                                   child: Text(
                                                     statemessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2060,14 +2041,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           left: 5),
                                                   child: Text(
                                                     countrymessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2179,14 +2153,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                                           left: 5),
                                                   child: Text(
                                                     postalcodemessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2341,11 +2308,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               padding: const EdgeInsets.only(left: 15, top: 5),
                               child: Text(
                                 datePlacedInServiceMessage,
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.04,
-                                ),
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ),
                           const SizedBox(height: 20),
@@ -4330,7 +4293,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'RECIDENTIAL UNIT',
+                                  'RESIDENTIAL UNIT',
                                   style: TextStyle(
                                     color: blueColor,
                                     fontSize: 16,
@@ -4349,7 +4312,7 @@ class _Add_new_propertyState extends State<Add_new_property> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'Enter Recidential Units',
+                                  'Enter Residential Units',
                                   style: TextStyle(
                                     color: blueColor,
                                     fontWeight: FontWeight.bold,
@@ -4709,11 +4672,25 @@ class _Add_new_propertyState extends State<Add_new_property> {
                               hasError = false;
                             });
                           }
+                          // Web marks this required (Rentals.jsx placed_in_service),
+                          // and the asterisk on the label already promises it.
+                          if (datePlacedInService.text.trim().isEmpty) {
+                            setState(() {
+                              datePlacedInServiceError = true;
+                              datePlacedInServiceMessage =
+                                  "Please enter date placed in service";
+                            });
+                          } else {
+                            setState(() {
+                              datePlacedInServiceError = false;
+                            });
+                          }
                           if (!addresserror &&
                               !cityerror &&
                               !stateerror &&
                               !countryerror &&
                               !postalcodeerror &&
+                              !datePlacedInServiceError &&
                               !hasError) {
                             setState(() {
                               loading = true;

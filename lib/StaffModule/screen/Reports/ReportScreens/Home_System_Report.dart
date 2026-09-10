@@ -1752,7 +1752,9 @@ class _HomeSystemReportScreenState extends State<HomeSystemReportScreen>
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });

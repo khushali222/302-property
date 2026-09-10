@@ -341,7 +341,7 @@ class WorkOrderRepository {
   }
 
   Future<Map<String, dynamic>> DeleteWorkOrder(
-      {required String? workOrderid}) async {
+      {required String? workOrderid, String? reason}) async {
     //print('$apiUrl/$id');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -354,6 +354,9 @@ class WorkOrderRepository {
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
         'Content-Type': 'application/json; charset=UTF-8',
       },
+      // The dialog collects a deletion reason but this copy of the repository
+      // never sent it, so Staff deletions reached the server without one.
+      body: jsonEncode({"reason": reason}),
     );
     var responseData = json.decode(response.body);
     //  print(response.body);

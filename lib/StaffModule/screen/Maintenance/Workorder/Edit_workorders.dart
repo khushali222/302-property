@@ -123,6 +123,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     _loadVendor();
     _loadStaff();
     partsAndLabor.clear();
+    // Typing does not rebuild on its own, so the Update button would stay
+    // disabled after a text-only edit without these.
+    subject.addListener(_onDirtyFieldChanged);
+    perform.addListener(_onDirtyFieldChanged);
+    vendornote.addListener(_onDirtyFieldChanged);
+    _dateController.addListener(_onDirtyFieldChanged);
   }
 
   Future<void> _initializeData() async {
@@ -195,9 +201,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   String? initialSelectedStaffId;
   String? initialSelectedTenantId;
   String? initialSelectedpriority;
+  String? initialSelectedEntry;
   bool? initialSelectedbillable;
   List<String>? initialSelectedimage;
-  List<Map<String, dynamic>>? initialSelectedparts;
+  // Plain values only: holding TextEditingControllers here made every parts
+  // comparison a fresh-object comparison (never equal) and leaked a set of
+  // controllers per row.
+  List<Map<String, String>>? initialSelectedparts;
+  // Nothing to diff against until fetchWorkordersDetails has seeded the
+  // initial* fields above.
+  bool _dirtySnapshotReady = false;
+  bool _lastDirty = false;
 
   Future<void> fetchWorkordersDetails(String workorderId) async {
     EditData fetchedDetails =
@@ -222,38 +236,24 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       initialSelectedUnitId = fetchedDetails.unitId;
       initialSelectedCategory = fetchedDetails.workCategory;
       initialSelectedStatus = fetchedDetails.status;
-      initialSelectedVendorId = fetchedDetails.vendorId.toString();
+      // Raw id, not .toString(): that turned a null vendor into the literal
+      // string "null", which never matched the live null.
+      initialSelectedVendorId = fetchedDetails.vendorId;
       initialSelectedStaffId = fetchedDetails.staffmemberId;
       initialSelectedTenantId = fetchedDetails.tenantId;
       initialSelectedpriority = fetchedDetails.priority;
       initialSelectedbillable = fetchedDetails.isBillable!;
       initialSelectedimage = fetchedDetails.workOrderImages;
+      // Same encoding as the live _selectedEntry seeded below ('Yes'/'No').
+      initialSelectedEntry = entryAllowedString;
       initialSelectedparts =
-          fetchedDetails.partsandchargeData?.map<Map<String, dynamic>>((data) {
-                TextEditingController qtyController =
-                    TextEditingController(text: data.partsQuantity!.toString());
-                TextEditingController priceController =
-                    TextEditingController(text: data.partsPrice!.toString());
-                TextEditingController totalController =
-                    TextEditingController(text: data.amount!.toString());
-                TextEditingController subtotalcontroller =
-                    TextEditingController();
-                qtyController.addListener(() {
-                  calculateTotal(qtyController, priceController,
-                      totalController, subtotalcontroller);
-                });
-                priceController.addListener(() {
-                  calculateTotal(qtyController, priceController,
-                      totalController, subtotalcontroller);
-                });
+          fetchedDetails.partsandchargeData?.map<Map<String, String>>((data) {
                 return {
-                  "parts_id": data.partsId,
-                  "qtyController": qtyController,
-                  "selectedAccount": data.account ?? '',
-                  "descriptionController":
-                      TextEditingController(text: data.description ?? ''),
-                  "priceController": priceController,
-                  "totalController": totalController,
+                  'qty': data.partsQuantity?.toString() ?? '',
+                  'account': data.account ?? '',
+                  'description': data.description ?? '',
+                  'price': data.partsPrice?.toString() ?? '',
+                  'total': data.amount?.toString() ?? '',
                 };
               }).toList() ??
               [];
@@ -305,7 +305,17 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                 };
               }).toList() ??
               [];
+      // Keep the Update button's dirty check in sync with the rows just built.
+      for (final row in partsAndLabor) {
+        (row['qtyController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+        (row['priceController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+        (row['descriptionController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+      }
       updateTotalAmount();
+      _dirtySnapshotReady = true;
     });
     // First load the units for the selected property
     if (_selectedPropertyId != null) {
@@ -337,7 +347,9 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -624,6 +636,7 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
       TextEditingController priceController = TextEditingController();
       TextEditingController totalController = TextEditingController();
       TextEditingController subtotalcontroller = TextEditingController();
+      TextEditingController descriptionController = TextEditingController();
 
       qtyController.addListener(() {
         calculateTotal(qtyController, priceController, totalController,
@@ -635,10 +648,14 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
             subtotalcontroller);
       });
 
+      qtyController.addListener(_onDirtyFieldChanged);
+      priceController.addListener(_onDirtyFieldChanged);
+      descriptionController.addListener(_onDirtyFieldChanged);
+
       partsAndLabor.add({
         'qtyController': qtyController,
         'accountController': TextEditingController(),
-        'descriptionController': TextEditingController(),
+        'descriptionController': descriptionController,
         'priceController': priceController,
         'totalController': totalController,
         'subtotalcontroller': subtotalcontroller,
@@ -654,9 +671,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
     // disposes whatever controller it is given), so releasing them here as
     // well threw "used after being disposed" on close. Only what this
     // screen owns outright is released below.
+    subject.removeListener(_onDirtyFieldChanged);
+    perform.removeListener(_onDirtyFieldChanged);
+    vendornote.removeListener(_onDirtyFieldChanged);
+    _dateController.removeListener(_onDirtyFieldChanged);
     other.dispose();
     _dateController.dispose();
     for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
+      (row['priceController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
+      (row['descriptionController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
       (row['qtyController'] as TextEditingController?)?.dispose();
       (row['accountController'] as TextEditingController?)?.dispose();
       (row['descriptionController'] as TextEditingController?)?.dispose();
@@ -1195,12 +1222,19 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Future<void> _uploadImage(File imageFile) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (fileName == null) {
+        Fluttertoast.showToast(msg: 'Failed to upload image');
+        return;
+      }
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames.add(fileName);
         _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
+        _imageUrls.add(fileName);
       });
     } catch (e) {
+      // Surface the failure — this used to fail silently, leaving the upload
+      // box unchanged with no indication anything went wrong.
+      Fluttertoast.showToast(msg: 'Failed to upload image');
       logError('Image upload failed: $e');
     }
   }
@@ -1378,29 +1412,36 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                       onPressed: () async {
                         Navigator.of(context).pop();
 
-                        // Update the existing image in the list
-                        setState(() {
-                          if (imageFile is String) {
-                            // This is a network image URL, update it
-                            _imageUrls[imageIndex] = imageFile;
-                          } else {
-                            _images[imageIndex] = imageFile;
-                          }
-                        });
+                        // The grid renders _imageUrls, so nothing changes on
+                        // screen until the new file has actually landed. The
+                        // old path wrote _images by an _imageUrls index (a list
+                        // never seeded on Edit) and never wrote the new
+                        // filename into _imageUrls, so a replacement was lost
+                        // even when the upload succeeded.
+                        if (imageIndex >= _imageUrls.length) return;
+                        final File? newFile =
+                            originalFile ?? (imageFile is File ? imageFile : null);
+                        if (newFile == null) return;
+                        final String oldName = _imageUrls[imageIndex];
 
-                        // Upload the new image if it's a file
-                        if (originalFile != null) {
-                          try {
-                            String? fileName = await uploadImage(originalFile);
-                            if (fileName != null &&
-                                imageIndex < _uploadedFileNames.length) {
-                              setState(() {
-                                _uploadedFileNames[imageIndex] = fileName;
-                              });
-                            }
-                          } catch (e) {
-                            logError('Image upload failed: $e');
+                        // Upload the new image
+                        try {
+                          String? fileName = await uploadImage(newFile);
+                          if (!mounted) return;
+                          if (fileName == null) {
+                            throw Exception('upload returned no filename');
                           }
+                          // Rows may have shifted while uploading; find our own.
+                          final int row = _imageUrls.indexOf(oldName);
+                          if (row != -1) {
+                            setState(() {
+                              _imageUrls[row] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          logError('Image upload failed: $e');
+                          if (!mounted) return;
+                          Fluttertoast.showToast(msg: 'Failed to upload image');
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -1431,6 +1472,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
+    final bool canSave = _hasWorkOrderChanges();
+    _lastDirty = canSave;
     return Scaffold(
       appBar: widget_302_Staff.App_Bar(context: context),
       backgroundColor: Colors.white,
@@ -1860,10 +1903,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                     children: [
                                       DropdownButtonHideUnderline(
                                         child: DropdownButtonFormField2<String>(
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             border: InputBorder.none,
-                                            errorText: state
-                                                .errorText, // Display validation error if present
                                           ),
                                           isExpanded: true,
                                           hint: const Row(
@@ -2010,10 +2051,8 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                             DropdownButtonHideUnderline(
                                               child: DropdownButtonFormField2<
                                                   String>(
-                                                decoration: InputDecoration(
+                                                decoration: const InputDecoration(
                                                   border: InputBorder.none,
-                                                  errorText: state
-                                                      .errorText, // Display validation error if present
                                                 ),
                                                 isExpanded: true,
                                                 hint: const Row(
@@ -3380,12 +3419,16 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                           ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: blueColor,
+                              backgroundColor:
+                                  canSave ? blueColor : const Color(0xFFE5E8ED),
+                              disabledBackgroundColor: const Color(0xFFE5E8ED),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            onPressed: _submitForm,
+                            // Web parity: disabled until something changed.
+                            onPressed:
+                                (isloading || !canSave) ? null : _submitForm,
                             child: isloading
                                 ? const Center(
                                     child: SpinKitFadingCircle(
@@ -3393,10 +3436,12 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
                                       size: 55.0,
                                     ),
                                   )
-                                : const Text(
+                                : Text(
                                     'Update Work Order',
                                     style: TextStyle(
-                                        color: Colors.white,
+                                        color: canSave
+                                            ? Colors.white
+                                            : Colors.grey,
                                         fontWeight: FontWeight.bold),
                                   ),
                           ),
@@ -3449,36 +3494,99 @@ class _EditWorkOrderForMobileState extends State<EditWorkOrderForMobile> {
   bool isloading = false;
   bool formValid = true;
 
+  // Web parity (AddWorkorder.jsx normalizeValue / checkForChanges): a no-op
+  // save must never reach the server, which mails everyone on every PUT.
+  String _normDirty(dynamic v) => v == null ? '' : v.toString().trim();
+
+  bool _imagesDiffer() {
+    final cur = _imageUrls;
+    final was = initialSelectedimage ?? const <String>[];
+    if (cur.length != was.length) return true;
+    for (var i = 0; i < cur.length; i++) {
+      if (_normDirty(cur[i]) != _normDirty(was[i])) return true;
+    }
+    return false;
+  }
+
+  bool _partsDiffer() {
+    final was = initialSelectedparts ?? const <Map<String, String>>[];
+    if (partsAndLabor.length != was.length) return true;
+    for (var i = 0; i < partsAndLabor.length; i++) {
+      final c = partsAndLabor[i];
+      final w = was[i];
+      if (_normDirty(c['qtyController']?.text) != _normDirty(w['qty'])) {
+        return true;
+      }
+      if (_normDirty(c['selectedAccount']) != _normDirty(w['account'])) {
+        return true;
+      }
+      if (_normDirty(c['descriptionController']?.text) !=
+          _normDirty(w['description'])) {
+        return true;
+      }
+      if (_normDirty(c['priceController']?.text) != _normDirty(w['price'])) {
+        return true;
+      }
+      if (_normDirty(c['totalController']?.text) != _normDirty(w['total'])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _hasWorkOrderChanges() {
+    if (!_dirtySnapshotReady) return false;
+    return _normDirty(subject.text) != _normDirty(initialSubject) ||
+        _normDirty(perform.text) != _normDirty(initialPerform) ||
+        _normDirty(vendornote.text) != _normDirty(initialVendorNote) ||
+        _normDirty(_dateController.text) != _normDirty(initialDate) ||
+        _normDirty(_selectedPropertyId) !=
+            _normDirty(initialSelectedPropertyId) ||
+        _normDirty(_selectedUnitId) != _normDirty(initialSelectedUnitId) ||
+        // The category dropdown only writes _selectedDropdownCategory, so the
+        // live dropdown value is what has to be compared here.
+        _normDirty(_selectedDropdownCategory?.name ?? _selectedCategory) !=
+            _normDirty(initialSelectedCategory) ||
+        _normDirty(_selectedStatus) != _normDirty(initialSelectedStatus) ||
+        _normDirty(_selectedvendorsId) != _normDirty(initialSelectedVendorId) ||
+        _normDirty(_selectedstaffId) != _normDirty(initialSelectedStaffId) ||
+        _normDirty(_selectedtenantId) != _normDirty(initialSelectedTenantId) ||
+        _normDirty(_selectedOption) != _normDirty(initialSelectedpriority) ||
+        _normDirty(_selectedEntry) != _normDirty(initialSelectedEntry) ||
+        isChecked != (initialSelectedbillable ?? false) ||
+        _imagesDiffer() ||
+        _partsDiffer();
+  }
+
+  void _onDirtyFieldChanged() {
+    final v = _hasWorkOrderChanges();
+    if (v != _lastDirty) {
+      _lastDirty = v;
+      if (mounted) setState(() {});
+    }
+  }
+
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
         isloading = true;
       });
 
-      // Check if any fields have changed
-      bool hasChanges = subject.text != initialSubject ||
-          perform.text != initialPerform ||
-          vendornote.text != initialVendorNote ||
-          _dateController.text != initialDate ||
-          _selectedPropertyId != initialSelectedPropertyId ||
-          _selectedUnitId != initialSelectedUnitId ||
-          _selectedCategory != initialSelectedCategory ||
-          _selectedStatus != initialSelectedStatus ||
-          _selectedvendorsId != initialSelectedVendorId ||
-          _selectedstaffId != initialSelectedStaffId ||
-          _selectedOption != initialSelectedpriority ||
-          isChecked != initialSelectedbillable ||
-          _imageUrls != initialSelectedimage ||
-          partsAndLabor != initialSelectedparts ||
-          _selectedtenantId != initialSelectedTenantId;
-
-      if (!hasChanges) {
-
+      // Submit-time backstop for the same check the button is gated on.
+      if (!_hasWorkOrderChanges()) {
         setState(() {
           isloading = false;
         });
-        Navigator.pop(context, false);
-        return; // Exit the method
+        Fluttertoast.showToast(
+          msg: "Please change at least one field to update the Work Order",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return;
       }
 
       // Proceed with API call
@@ -3640,7 +3748,34 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     // _loadTenant();
     fetchWorkordersDetails(widget.workorderId);
     partsAndLabor.clear();
+    // Typing does not rebuild on its own, so the Update button would stay
+    // disabled after a text-only edit without these.
+    subject.addListener(_onDirtyFieldChanged);
+    perform.addListener(_onDirtyFieldChanged);
+    vendornote.addListener(_onDirtyFieldChanged);
+    _dateController.addListener(_onDirtyFieldChanged);
   }
+
+  String? initialSubject;
+  String? initialPerform;
+  String? initialVendorNote;
+  String? initialDate;
+  String? initialSelectedPropertyId;
+  String? initialSelectedUnitId;
+  String? initialSelectedCategory;
+  String? initialSelectedStatus;
+  String? initialSelectedVendorId;
+  String? initialSelectedStaffId;
+  String? initialSelectedTenantId;
+  String? initialSelectedpriority;
+  String? initialSelectedEntry;
+  bool? initialSelectedbillable;
+  List<String>? initialSelectedimage;
+  List<Map<String, String>>? initialSelectedparts;
+  // Nothing to diff against until fetchWorkordersDetails has seeded the
+  // initial* fields above.
+  bool _dirtySnapshotReady = false;
+  bool _lastDirty = false;
 
   Future<void> fetchWorkordersDetails(String workorderId) async {
     //try {
@@ -3715,7 +3850,48 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
               }).toList() ??
               [];
 
+      // Keep the Update button's dirty check in sync with the rows just built.
+      for (final row in partsAndLabor) {
+        (row['qtyController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+        (row['priceController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+        (row['descriptionController'] as TextEditingController?)
+            ?.addListener(_onDirtyFieldChanged);
+      }
+
+      // Snapshot of the record as loaded, for the no-op-save guard. Read off
+      // the live fields seeded just above so the two cannot drift apart.
+      initialSubject = subject.text;
+      initialPerform = perform.text;
+      initialVendorNote = vendornote.text;
+      initialDate = _dateController.text;
+      initialSelectedPropertyId = _selectedPropertyId;
+      initialSelectedUnitId = _selectedUnitId;
+      initialSelectedCategory = _selectedCategory;
+      initialSelectedStatus = _selectedStatus;
+      initialSelectedVendorId = _selectedvendorsId;
+      initialSelectedStaffId = _selectedstaffId;
+      initialSelectedTenantId = _selectedtenantId;
+      initialSelectedpriority = _selectedOption;
+      // This class encodes entry allowed as 'true'/'false'.
+      initialSelectedEntry = _selectedEntry;
+      initialSelectedbillable = isChecked;
+      initialSelectedimage = List<String>.from(_imageUrls);
+      initialSelectedparts =
+          fetchedDetails.partsandchargeData?.map<Map<String, String>>((data) {
+                return {
+                  'qty': data.partsQuantity?.toString() ?? '',
+                  'account': data.account ?? '',
+                  'description': data.description ?? '',
+                  'price': data.partsPrice?.toString() ?? '',
+                  'total': data.amount?.toString() ?? '',
+                };
+              }).toList() ??
+              [];
+
       updateTotalAmount();
+      _dirtySnapshotReady = true;
 
       // totalAmount = calculateTotalAmount(partsAndLabor);
     });
@@ -3745,7 +3921,9 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     });
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM ${prefs.getString('staff_id') ?? id}",
       });
@@ -3999,6 +4177,7 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
       TextEditingController priceController = TextEditingController();
       TextEditingController totalController = TextEditingController();
       TextEditingController subtotalcontroller = TextEditingController();
+      TextEditingController descriptionController = TextEditingController();
 
       qtyController.addListener(() {
         calculateTotal(qtyController, priceController, totalController,
@@ -4009,10 +4188,14 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
             subtotalcontroller);
       });
 
+      qtyController.addListener(_onDirtyFieldChanged);
+      priceController.addListener(_onDirtyFieldChanged);
+      descriptionController.addListener(_onDirtyFieldChanged);
+
       partsAndLabor.add({
         'qtyController': qtyController,
         'accountController': TextEditingController(),
-        'descriptionController': TextEditingController(),
+        'descriptionController': descriptionController,
         'priceController': priceController,
         'totalController': totalController,
         'subtotalcontroller': subtotalcontroller,
@@ -4028,9 +4211,19 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
     // disposes whatever controller it is given), so releasing them here as
     // well threw "used after being disposed" on close. Only what this
     // screen owns outright is released below.
+    subject.removeListener(_onDirtyFieldChanged);
+    perform.removeListener(_onDirtyFieldChanged);
+    vendornote.removeListener(_onDirtyFieldChanged);
+    _dateController.removeListener(_onDirtyFieldChanged);
     other.dispose();
     _dateController.dispose();
     for (final row in partsAndLabor) {
+      (row['qtyController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
+      (row['priceController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
+      (row['descriptionController'] as TextEditingController?)
+          ?.removeListener(_onDirtyFieldChanged);
       (row['qtyController'] as TextEditingController?)?.dispose();
       (row['accountController'] as TextEditingController?)?.dispose();
       (row['descriptionController'] as TextEditingController?)?.dispose();
@@ -4563,12 +4756,19 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   Future<void> _uploadImage(File imageFile) async {
     try {
       String? fileName = await uploadImage(imageFile);
+      if (fileName == null) {
+        Fluttertoast.showToast(msg: 'Failed to upload image');
+        return;
+      }
       setState(() {
-        _uploadedFileNames.add(fileName!);
+        _uploadedFileNames.add(fileName);
         _uploadedFileName = fileName;
-        _imageUrls.add(fileName!);
+        _imageUrls.add(fileName);
       });
     } catch (e) {
+      // Surface the failure — this used to fail silently, leaving the upload
+      // box unchanged with no indication anything went wrong.
+      Fluttertoast.showToast(msg: 'Failed to upload image');
       logError('Image upload failed: $e');
     }
   }
@@ -4579,6 +4779,8 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
+    final bool canSave = _hasWorkOrderChanges();
+    _lastDirty = canSave;
     return Scaffold(
         appBar: widget_302_Staff.App_Bar(context: context),
         backgroundColor: Colors.white,
@@ -6922,12 +7124,19 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                 ),
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: blueColor,
+                                    backgroundColor: canSave
+                                        ? blueColor
+                                        : const Color(0xFFE5E8ED),
+                                    disabledBackgroundColor:
+                                        const Color(0xFFE5E8ED),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
                                   ),
-                                  onPressed: _submitForm,
+                                  // Web parity: disabled until something changed.
+                                  onPressed: (isLoading || !canSave)
+                                      ? null
+                                      : _submitForm,
                                   child: isLoading
                                       ? const Center(
                                           child: SpinKitFadingCircle(
@@ -6935,10 +7144,12 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                                             size: 55.0,
                                           ),
                                         )
-                                      : const Text(
+                                      : Text(
                                           'Edit Work Order',
                                           style: TextStyle(
-                                              color: Color(0xFFf7f8f9)),
+                                              color: canSave
+                                                  ? const Color(0xFFf7f8f9)
+                                                  : Colors.grey),
                                         ),
                                 ),
                               ),
@@ -7013,11 +7224,97 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
   bool isLoading = false;
   bool formValid = true;
 
+  // Web parity (AddWorkorder.jsx normalizeValue / checkForChanges): a no-op
+  // save must never reach the server, which mails everyone on every PUT.
+  String _normDirty(dynamic v) => v == null ? '' : v.toString().trim();
+
+  bool _imagesDiffer() {
+    final cur = _imageUrls;
+    final was = initialSelectedimage ?? const <String>[];
+    if (cur.length != was.length) return true;
+    for (var i = 0; i < cur.length; i++) {
+      if (_normDirty(cur[i]) != _normDirty(was[i])) return true;
+    }
+    return false;
+  }
+
+  bool _partsDiffer() {
+    final was = initialSelectedparts ?? const <Map<String, String>>[];
+    if (partsAndLabor.length != was.length) return true;
+    for (var i = 0; i < partsAndLabor.length; i++) {
+      final c = partsAndLabor[i];
+      final w = was[i];
+      if (_normDirty(c['qtyController']?.text) != _normDirty(w['qty'])) {
+        return true;
+      }
+      if (_normDirty(c['selectedAccount']) != _normDirty(w['account'])) {
+        return true;
+      }
+      if (_normDirty(c['descriptionController']?.text) !=
+          _normDirty(w['description'])) {
+        return true;
+      }
+      if (_normDirty(c['priceController']?.text) != _normDirty(w['price'])) {
+        return true;
+      }
+      if (_normDirty(c['totalController']?.text) != _normDirty(w['total'])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _hasWorkOrderChanges() {
+    if (!_dirtySnapshotReady) return false;
+    return _normDirty(subject.text) != _normDirty(initialSubject) ||
+        _normDirty(perform.text) != _normDirty(initialPerform) ||
+        _normDirty(vendornote.text) != _normDirty(initialVendorNote) ||
+        _normDirty(_dateController.text) != _normDirty(initialDate) ||
+        _normDirty(_selectedPropertyId) !=
+            _normDirty(initialSelectedPropertyId) ||
+        _normDirty(_selectedUnitId) != _normDirty(initialSelectedUnitId) ||
+        _normDirty(_selectedCategory) != _normDirty(initialSelectedCategory) ||
+        _normDirty(_selectedStatus) != _normDirty(initialSelectedStatus) ||
+        _normDirty(_selectedvendorsId) != _normDirty(initialSelectedVendorId) ||
+        _normDirty(_selectedstaffId) != _normDirty(initialSelectedStaffId) ||
+        _normDirty(_selectedtenantId) != _normDirty(initialSelectedTenantId) ||
+        _normDirty(_selectedOption) != _normDirty(initialSelectedpriority) ||
+        _normDirty(_selectedEntry) != _normDirty(initialSelectedEntry) ||
+        isChecked != (initialSelectedbillable ?? false) ||
+        _imagesDiffer() ||
+        _partsDiffer();
+  }
+
+  void _onDirtyFieldChanged() {
+    final v = _hasWorkOrderChanges();
+    if (v != _lastDirty) {
+      _lastDirty = v;
+      if (mounted) setState(() {});
+    }
+  }
+
   void _submitForm() async {
     if (_formkey.currentState!.validate()) {
       setState(() {
         isLoading = true;
       });
+
+      // Submit-time backstop for the same check the button is gated on.
+      if (!_hasWorkOrderChanges()) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(
+          msg: "Please change at least one field to update the Work Order",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        return;
+      }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");
@@ -7248,26 +7545,35 @@ class _EditWorkOrderForTabletState extends State<EditWorkOrderForTablet> {
                       onPressed: () async {
                         Navigator.of(context).pop();
 
-                        setState(() {
-                          if (imageFile is String) {
-                            _imageUrls[imageIndex] = imageFile;
-                          } else {
-                            _images[imageIndex] = imageFile;
-                          }
-                        });
+                        // The grid renders _imageUrls, so nothing changes on
+                        // screen until the new file has actually landed. The
+                        // old path wrote _images by an _imageUrls index (a list
+                        // never seeded on Edit) and never wrote the new
+                        // filename into _imageUrls, so a replacement was lost
+                        // even when the upload succeeded.
+                        if (imageIndex >= _imageUrls.length) return;
+                        final File? newFile =
+                            originalFile ?? (imageFile is File ? imageFile : null);
+                        if (newFile == null) return;
+                        final String oldName = _imageUrls[imageIndex];
 
-                        if (originalFile != null) {
-                          try {
-                            String? fileName = await uploadImage(originalFile);
-                            if (fileName != null &&
-                                imageIndex < _uploadedFileNames.length) {
-                              setState(() {
-                                _uploadedFileNames[imageIndex] = fileName;
-                              });
-                            }
-                          } catch (e) {
-                            logError('Image upload failed: $e');
+                        try {
+                          String? fileName = await uploadImage(newFile);
+                          if (!mounted) return;
+                          if (fileName == null) {
+                            throw Exception('upload returned no filename');
                           }
+                          // Rows may have shifted while uploading; find our own.
+                          final int row = _imageUrls.indexOf(oldName);
+                          if (row != -1) {
+                            setState(() {
+                              _imageUrls[row] = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          logError('Image upload failed: $e');
+                          if (!mounted) return;
+                          Fluttertoast.showToast(msg: 'Failed to upload image');
                         }
                       },
                       style: ElevatedButton.styleFrom(

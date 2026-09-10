@@ -542,8 +542,17 @@ class _Workorder_tableState extends State<Workorder_table>
   ConnectivityResult? _connectivityResult;
   StreamSubscription<ConnectivityResult>? _connectivitySub;
 
+  // Owned by the State, not by each dialog. Disposing these the moment
+  // Alert.show() resolved killed them while the dialog was still playing its
+  // exit animation, and the TextField rebuilding mid-animation then attached a
+  // listener to a dead controller.
+  final TextEditingController _deleteReasonController = TextEditingController();
+  final TextEditingController _closeReasonController = TextEditingController();
+
   @override
   void dispose() {
+    _deleteReasonController.dispose();
+    _closeReasonController.dispose();
     _connectivitySub?.cancel();
     super.dispose();
   }
@@ -587,7 +596,10 @@ class _Workorder_tableState extends State<Workorder_table>
   }
 
   void _showAlert(BuildContext context, String id) {
-    TextEditingController reason = TextEditingController();
+    final reason = _deleteReasonController..clear();
+    // The Delete button stayed live while the request was in flight, so a
+    // double tap fired two DELETE calls for the same record.
+    bool deleting = false;
     Alert(
       context: context,
       type: AlertType.warning,
@@ -622,10 +634,25 @@ class _Workorder_tableState extends State<Workorder_table>
           onPressed: () async {
             if (reason.text.isEmpty) {
               Fluttertoast.showToast(msg: "Please enter a reason for deletion");
-            } else {
-              var data = WorkOrderRepository().DeleteWorkOrder(workOrderid: id);
-              // Add your delete logic here
+              return;
+            }
+            if (deleting) return;
+            deleting = true;
+            // The DELETE was fired without being awaited, so the list refresh
+            // raced it and usually came back with the row still present; it
+            // only vanished on the next visit. Await it, refresh only on
+            // success, and send the reason the user typed (it was dropped).
+            // Close the dialog either way — the repository has already
+            // toasted the server's own message.
+            try {
+              await WorkOrderRepository()
+                  .DeleteWorkOrder(workOrderid: id, reason: reason.text);
+              if (!mounted) return;
               _loadWorkOrders();
+              Navigator.pop(context);
+            } catch (_) {
+              deleting = false;
+              if (!mounted) return;
               Navigator.pop(context);
             }
           },
@@ -646,7 +673,7 @@ class _Workorder_tableState extends State<Workorder_table>
           ),
         ),
       ],
-    ).show().then((_) => reason.dispose());  // dialog closed -> release the field
+    ).show();
   }
  
   void handleClose(Data workorder) {
@@ -654,7 +681,7 @@ class _Workorder_tableState extends State<Workorder_table>
   }
 
   void _showCloseAlert(BuildContext context, String workOrderId) {
-    final reason = TextEditingController();
+    final reason = _closeReasonController..clear();
     Alert(
       context: context,
       type: AlertType.warning,
@@ -723,7 +750,7 @@ class _Workorder_tableState extends State<Workorder_table>
           ),
         ),
       ],
-    ).show().then((_) => reason.dispose());  // dialog closed -> release the field
+    ).show();
   }
   List<Data> _tableData = [];
   int _rowsPerPage = 10;

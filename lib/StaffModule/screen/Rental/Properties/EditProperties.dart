@@ -238,6 +238,9 @@ class _Edit_propertiesState extends State<Edit_properties> {
   String? initialState;
   String? initialCountry;
   String? initialPostalCode;
+  // Snapshot of the loaded service date, so supplying a missing one counts
+  // as a change and is not swallowed by the "No changes detected" guard.
+  String? initialPlacedInService;
   String? initialFirstName;
   String? initialCompanyName;
   String? initialPrimaryEmail;
@@ -550,6 +553,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
             .setOwnerDetails(Ownersdetails!);
 
         initialAddress = fetchedDetails.rentalAddress!;
+        initialPlacedInService = datePlacedInService.text;
         initialselectedselectedStaff = (fetchedDetails.staffMemberId!.isEmpty
             ? null
             : fetchedDetails.staffMemberId ?? null)!;
@@ -2339,12 +2343,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                     ),
                                     Text(
                                       addressmessage,
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .04),
+                                      style: const TextStyle(color: Colors.red),
                                     ),
                                   ],
                                 )
@@ -2455,14 +2454,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           left: 5),
                                                   child: Text(
                                                     citymessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2569,14 +2561,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           left: 5),
                                                   child: Text(
                                                     statemessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2694,14 +2679,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           left: 5),
                                                   child: Text(
                                                     countrymessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -2814,14 +2792,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                                           left: 5),
                                                   child: Text(
                                                     postalcodemessage,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              .04,
-                                                    ),
+                                                    style: const TextStyle(color: Colors.red),
                                                   ),
                                                 ),
                                               ],
@@ -4739,11 +4710,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                               padding: const EdgeInsets.only(left: 15, top: 5),
                               child: Text(
                                 datePlacedInServiceMessage,
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize:
-                                  MediaQuery.of(context).size.width * 0.04,
-                                ),
+                                style: const TextStyle(color: Colors.red),
                               ),
                             ),
                           const SizedBox(height: 20),
@@ -5122,7 +5089,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'RECIDENTIAL UNIT',
+                                  'RESIDENTIAL UNIT',
                                   style: TextStyle(
                                     color: blueColor,
                                     fontSize: 16,
@@ -5141,7 +5108,7 @@ class _Edit_propertiesState extends State<Edit_properties> {
                                   width: 10,
                                 ),
                                 Text(
-                                  'Enter Recidential Units',
+                                  'Enter Residential Units',
                                   style: TextStyle(
                                     color: blueColor,
                                     fontWeight: FontWeight.bold,
@@ -5768,6 +5735,21 @@ class _Edit_propertiesState extends State<Edit_properties> {
                           });
                         }
 
+                        // Web marks this required (Rentals.jsx placed_in_service),
+                        // and the asterisk on the label already promises it.
+                        if (datePlacedInService.text.trim().isEmpty) {
+                          setState(() {
+                            datePlacedInServiceError = true;
+                            datePlacedInServiceMessage =
+                                "Please enter date placed in service";
+                          });
+                          return; // Exit if date placed in service is empty
+                        } else {
+                          setState(() {
+                            datePlacedInServiceError = false;
+                          });
+                        }
+
                         // Check for unit changes
 
                         bool hasUnitChanges = false;
@@ -5936,6 +5918,8 @@ class _Edit_propertiesState extends State<Edit_properties> {
 
                         bool hasChanges = hasUnitChanges ||
                             address.text != initialAddress ||
+                            datePlacedInService.text !=
+                                initialPlacedInService ||
                             city.text != initialCity ||
                             state.text != initialState ||
                             country.text != initialCountry ||

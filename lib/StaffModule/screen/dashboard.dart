@@ -234,7 +234,9 @@ class _Dashboard_staffState extends State<Dashboard_staff>
     String? token = prefs.getString('token');
 
     final response = await apiGet(
-      Uri.parse('${Api_url}/api/rentals/rentals/$adminid'),
+      // `limit=0` is the server's own no-limit flag; without it the API
+      // returns a page of 10 (Rentals.js) and this picker is truncated.
+      Uri.parse('${Api_url}/api/rentals/rentals/$adminid?limit=0'),
       headers: {"authorization": "CRM $token", "id": "CRM $id"},
     );
 

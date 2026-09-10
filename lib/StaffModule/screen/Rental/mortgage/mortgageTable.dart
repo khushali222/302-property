@@ -811,7 +811,11 @@ class _MortgageTableState extends State<MortgageTable>
                       text: TextSpan(
                         children: [
                           const TextSpan(text: 'Added : ', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
-                          TextSpan(text: '${_mortgages.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
+                          // Counts the filtered list, so the number agrees with the rows on
+                          // screen once a search term or status filter is applied.
+                          // With no filter active `_filteredMortgages` holds every
+                          // record, so this still reads as the full total.
+                          TextSpan(text: '${_filteredMortgages.length}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A2332))),
                         ],
                       ),
                     ),

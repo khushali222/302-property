@@ -88,6 +88,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     fetchWorkordersDetails(widget.workorderId);
     _loadDropdownCategories();
     partsAndLabor.clear();
+    // The two free-text fields a vendor can edit; typing has to re-evaluate
+    // whether anything actually changed.
+    vendornote.addListener(_onDirtyFieldChanged);
+    _dateController.addListener(_onDirtyFieldChanged);
   }
 
   @override
@@ -98,6 +102,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     // well threw "used after being disposed" on close. Only the ones this
     // screen owns outright are released below.
     other.dispose();
+    _dateController.removeListener(_onDirtyFieldChanged);
     _dateController.dispose();
     // Each parts-and-labour row owns its own controllers (addRow creates six,
     // the API mapping in fetchWorkordersDetails creates four), and the qty /
@@ -105,7 +110,10 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     // released here too, not just the fields above.
     for (final row in partsAndLabor) {
       for (final value in row.values) {
-        if (value is TextEditingController) value.dispose();
+        if (value is TextEditingController) {
+          value.removeListener(_onDirtyFieldChanged);
+          value.dispose();
+        }
       }
     }
     super.dispose();
@@ -196,7 +204,38 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
               [];
       //partsAndLabor.clear();
       _disposeRowsAfterFrame(replacedRows);
+      // The fetched rows carry no calculateTotal listener, so the dirty flag
+      // has to be driven straight off their controllers.
+      for (final row in partsAndLabor) {
+        (row['qtyController'] as TextEditingController)
+            .addListener(_onDirtyFieldChanged);
+        (row['priceController'] as TextEditingController)
+            .addListener(_onDirtyFieldChanged);
+        (row['descriptionController'] as TextEditingController)
+            .addListener(_onDirtyFieldChanged);
+      }
       updateTotalAmount();
+
+      // Snapshot for the no-op guard, taken from the same values that were
+      // just seeded above (parts as plain strings, no controllers).
+      initialVendorNote = fetchedDetails.vendorNotes ?? '';
+      initialDate = fetchedDetails.date ?? '';
+      initialSelectedStatus = fetchedDetails.status;
+      initialSelectedpriority = fetchedDetails.priority ?? 'Normal';
+      initialSelectedCategory = _selectedDropdownCategory?.name;
+      initialSelectedimage = List<String>.from(_imageUrls);
+      initialSelectedparts = fetchedDetails.partsandchargeData
+              ?.map<Map<String, String>>((data) {
+            return {
+              'qty': data.partsQuantity?.toString() ?? '0',
+              'account': data.account ?? '',
+              'description': data.description ?? '',
+              'price': data.partsPrice?.toString() ?? '0.0',
+              'total': data.amount?.toString() ?? '0.0',
+            };
+          }).toList() ??
+          <Map<String, String>>[];
+      _dirtySnapshotReady = true;
 
       // totalAmount = calculateTotalAmount(partsAndLabor);
     });
@@ -433,6 +472,86 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
     }
   }
 
+  // Snapshot of the loaded work order, scoped to the fields this screen lets a
+  // vendor change. The PUT mails the manager, staff, vendor and tenant on every
+  // success and has no server-side no-op detection, so the client has to refuse
+  // an unchanged save (web parity: VendorAddWork.jsx checkForChanges).
+  String? initialVendorNote;
+  String? initialDate;
+  String? initialSelectedCategory;
+  String? initialSelectedStatus;
+  String? initialSelectedpriority;
+  List<String>? initialSelectedimage;
+  // Plain values, not controllers: a controller snapshot could never compare
+  // equal to the live row and would leak four controllers per part.
+  List<Map<String, String>>? initialSelectedparts;
+  bool _dirtySnapshotReady = false;
+  bool _lastDirty = false;
+
+  String _normDirty(dynamic v) => v == null ? '' : v.toString().trim();
+
+  bool _imagesDiffer() {
+    final cur = _imageUrls;
+    final was = initialSelectedimage ?? const <String>[];
+    if (cur.length != was.length) return true;
+    for (var i = 0; i < cur.length; i++) {
+      if (_normDirty(cur[i]) != _normDirty(was[i])) return true;
+    }
+    return false;
+  }
+
+  bool _partsDiffer() {
+    final was = initialSelectedparts ?? const <Map<String, String>>[];
+    if (partsAndLabor.length != was.length) return true;
+    for (var i = 0; i < partsAndLabor.length; i++) {
+      final c = partsAndLabor[i];
+      final w = was[i];
+      if (_normDirty(c['qtyController']?.text) != _normDirty(w['qty'])) {
+        return true;
+      }
+      if (_normDirty(c['selectedAccount']) != _normDirty(w['account'])) {
+        return true;
+      }
+      if (_normDirty(c['descriptionController']?.text) !=
+          _normDirty(w['description'])) {
+        return true;
+      }
+      if (_normDirty(c['priceController']?.text) != _normDirty(w['price'])) {
+        return true;
+      }
+      if (_normDirty(c['totalController']?.text) != _normDirty(w['total'])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Only the fields a vendor can actually edit here. Subject, work performed,
+  /// property, unit, assigned-to and entry-allowed are hard-disabled, and the
+  /// billable / tenant block is commented out in both layouts, so none of them
+  /// can differ.
+  bool _hasWorkOrderChanges() {
+    if (!_dirtySnapshotReady) return false; // nothing loaded yet => not dirty
+    return _normDirty(_selectedDropdownCategory?.name) !=
+            _normDirty(initialSelectedCategory) ||
+        _normDirty(_selectedStatus) != _normDirty(initialSelectedStatus) ||
+        _normDirty(_selectedOption) != _normDirty(initialSelectedpriority) ||
+        _normDirty(vendornote.text) != _normDirty(initialVendorNote) ||
+        _normDirty(_dateController.text) != _normDirty(initialDate) ||
+        _imagesDiffer() ||
+        _partsDiffer();
+  }
+
+  /// Text fields do not rebuild the screen on a keystroke, so the Update
+  /// button would stay disabled while typing without this.
+  void _onDirtyFieldChanged() {
+    final v = _hasWorkOrderChanges();
+    if (v != _lastDirty) {
+      _lastDirty = v;
+      if (mounted) setState(() {});
+    }
+  }
+
   List<allcategories_model> _dropdownCategories = [];
   allcategories_model? _selectedDropdownCategory;
   String? _selectedEntry;
@@ -487,6 +606,7 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       TextEditingController priceController = TextEditingController();
       TextEditingController totalController = TextEditingController();
       TextEditingController subtotalcontroller = TextEditingController();
+      TextEditingController descriptionController = TextEditingController();
 
       qtyController.addListener(() {
         calculateTotal(qtyController, priceController, totalController,
@@ -496,12 +616,16 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
         calculateTotal(qtyController, priceController, totalController,
             subtotalcontroller);
       });
+      // Same dirty tracking the fetched rows get, for rows added later.
+      qtyController.addListener(_onDirtyFieldChanged);
+      priceController.addListener(_onDirtyFieldChanged);
+      descriptionController.addListener(_onDirtyFieldChanged);
 
       partsAndLabor.add({
         'parts_id': null,
         'qtyController': qtyController,
         'accountController': TextEditingController(),
-        'descriptionController': TextEditingController(),
+        'descriptionController': descriptionController,
         'priceController': priceController,
         'totalController': totalController,
         'subtotalcontroller': subtotalcontroller,
@@ -818,6 +942,9 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
   @override
   Widget build(BuildContext context) {
     final dateProvider = Provider.of<DateProvider>(context);
+    // Update stays disabled until something actually changed (web parity).
+    final bool canSave = _hasWorkOrderChanges();
+    _lastDirty = canSave;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -2566,13 +2693,19 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                   ),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: blueColor,
+                                      backgroundColor: canSave
+                                          ? blueColor
+                                          : const Color(0xFFE5E8ED),
+                                      disabledBackgroundColor:
+                                      const Color(0xFFE5E8ED),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                         BorderRadius.circular(8.0),
                                       ),
                                     ),
-                                    onPressed: _submitForm,
+                                    onPressed: (isloading || !canSave)
+                                        ? null
+                                        : _submitForm,
                                     child: isloading
                                         ? const Center(
                                       child: SpinKitFadingCircle(
@@ -2580,10 +2713,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                         size: 55.0,
                                       ),
                                     )
-                                        : const Text(
+                                        : Text(
                                       'Update Work Order',
                                       style: TextStyle(
-                                          color: Color(0xFFf7f8f9)),
+                                          color: canSave
+                                              ? const Color(0xFFf7f8f9)
+                                              : const Color(0xFF9AA3B0)),
                                     ),
                                   ),
                                 ),
@@ -3986,13 +4121,18 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                               height: 50,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: blueColor,
+                                  backgroundColor: canSave
+                                      ? blueColor
+                                      : const Color(0xFFE5E8ED),
+                                  disabledBackgroundColor:
+                                      const Color(0xFFE5E8ED),
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                 ),
-                                onPressed: _submitForm,
+                                onPressed:
+                                    (isloading || !canSave) ? null : _submitForm,
                                 child: isloading
                                     ? const Center(
                                         child: SpinKitFadingCircle(
@@ -4000,10 +4140,12 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
                                           size: 24.0,
                                         ),
                                       )
-                                    : const Text(
+                                    : Text(
                                         'Edit Work Order',
                                         style: TextStyle(
-                                            color: Color(0xFFf7f8f9),
+                                            color: canSave
+                                                ? const Color(0xFFf7f8f9)
+                                                : const Color(0xFF9AA3B0),
                                             fontWeight: FontWeight.bold),
                                       ),
                               ),
@@ -4089,6 +4231,21 @@ class _Edit_WorkorderState extends State<Edit_Workorder> {
       setState(() {
         isloading = true;
       });
+
+      // The PUT mails everyone and appends a history row on every success, so
+      // a save with nothing changed is refused here (web parity:
+      // VendorAddWork.jsx editworkorder).
+      if (!_hasWorkOrderChanges()) {
+        setState(() {
+          isloading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'Please change at least one field to update the Work Order')),
+        );
+        return;
+      }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? id = prefs.getString("adminId");

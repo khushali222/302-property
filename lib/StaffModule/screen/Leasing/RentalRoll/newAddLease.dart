@@ -380,6 +380,11 @@ class _addLease3State extends State<addLease3>
   List<bool> selected = [];
   bool _isLoading = true;
   List<Map<String, String>> properties = [];
+  // Search box inside the property dropdown. With the full rental list now
+  // loaded (?limit=0) a plain scroll list is unusable, so this mirrors the
+  // Bid Room property dropdown.
+  final TextEditingController _propertySearchController =
+      TextEditingController();
   List<Map<String, String>> units = [];
   String? _selectedProperty;
   String? _selectedUnit;
@@ -411,7 +416,12 @@ class _addLease3State extends State<addLease3>
 
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$adminid'), headers: {
+          .get(Uri.parse(
+              // Web parity: the lease form requests `?limit=0` for this
+              // list (RentRollLeasing.jsx / Staffaddrentroll.jsx).
+              // `limit=0` is the server's own no-limit flag; omitting it
+              // falls back to a page of 10 (Rentals.js).
+              '${Api_url}/api/rentals/rentals/$adminid?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $id",
       });
@@ -840,6 +850,7 @@ class _addLease3State extends State<addLease3>
 
   @override
   void dispose() {
+    _propertySearchController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -1331,6 +1342,49 @@ class _addLease3State extends State<addLease3>
                                                 padding: EdgeInsets.only(
                                                     left: 14, right: 14),
                                               ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: _propertySearchController,
+                                                searchInnerWidgetHeight: 60,
+                                                searchInnerWidget: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 8, bottom: 4, left: 8, right: 8),
+                                                  child: TextFormField(
+                                                    controller: _propertySearchController,
+                                                    maxLines: 1,
+                                                    cursorColor: blueColor,
+                                                    style: const TextStyle(
+                                                        fontSize: 14, color: Colors.black),
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                          horizontal: 10, vertical: 10),
+                                                      hintText: 'Search property',
+                                                      hintStyle: const TextStyle(
+                                                          fontSize: 13, color: Color(0xFFb0b6c3)),
+                                                      prefixIcon: const Icon(Icons.search, size: 20),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Match on the address shown in the row, so typing any part of
+                                                // it narrows the list.
+                                                searchMatchFn: (item, searchValue) {
+                                                  final Widget child = item.child;
+                                                  final String address =
+                                                      child is Text ? (child.data ?? '') : '';
+                                                  return address
+                                                      .toLowerCase()
+                                                      .contains(searchValue.toLowerCase().trim());
+                                                },
+                                              ),
+                                              // Leave the field clean for the next open.
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  _propertySearchController.clear();
+                                                }
+                                              },
                                             ),
                                           ),
                                           if (state.hasError)

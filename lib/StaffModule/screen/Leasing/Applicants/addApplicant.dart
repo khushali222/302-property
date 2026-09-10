@@ -81,7 +81,9 @@ class _AddApplicantState extends State<AddApplicant> {
 
     try {
       final response = await http
-          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id'), headers: {
+          // `limit=0` is the server's own no-limit flag; without it the API
+          // returns a page of 10 (Rentals.js) and this picker is truncated.
+          .get(Uri.parse('${Api_url}/api/rentals/rentals/$id?limit=0'), headers: {
         "authorization": "CRM $token",
         "id": "CRM $staffid",
       });
