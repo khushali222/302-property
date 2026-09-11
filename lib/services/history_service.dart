@@ -18,10 +18,22 @@ class HistoryService {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString("adminId");
       String? staffId = prefs.getString("staff_id");
+      String? role = prefs.getString("role");
 
-      // Check if user is staff or admin and use appropriate ID in header
-      // If staff_id exists and is not empty, use staff_id, otherwise use adminId
-      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+      // Pick the id from the ROLE of the current session, not from whether a
+      // staff_id happens to be stored.
+      //
+      // `staff_id` is written on staff login and only ever cleared by the
+      // logout path's prefs.clear(); login itself does not clear prefs. So a
+      // session that ended any other way (app killed, token expiry, switching
+      // accounts) leaves the previous staff_id behind. Preferring it whenever
+      // it was non-empty meant an Admin session sent a staff id against an
+      // admin token, and the server's verifyToken found no matching claim and
+      // answered 401 - while every other call on the same screen, which sends
+      // adminId, kept working.
+      String? id = (role == "Staffmember" && staffId != null && staffId.isNotEmpty)
+          ? staffId
+          : adminId;
 
       // print('🔵 HistoryService - Fetching history');
       // print('🔵 User Type: ${staffId != null && staffId.isNotEmpty ? "Staff" : "Admin"}');

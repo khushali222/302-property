@@ -2036,7 +2036,10 @@ class _Profile_screenState extends State<Profile_screen>
                                                           SizedBox(width: 8),
                                                           Flexible(
                                                             child: Text(
-                                                              "Backup Codes",
+                                                              // Web parity: the label reports whether codes already exist
+                                                              // (Profile.jsx gates on hasExistingBackupCodes = codes.length > 0),
+                                                              // so it is clear a second tap replaces the current set.
+                                                              codes.isEmpty ? "Backup Codes" : "Regenerate Backup Codes",
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -2190,7 +2193,10 @@ class _Profile_screenState extends State<Profile_screen>
                                                                   width: 8),
                                                               Flexible(
                                                                 child: Text(
-                                                                  "Backup Codes",
+                                                                  // Web parity: the label reports whether codes already exist
+                                                                  // (Profile.jsx gates on hasExistingBackupCodes = codes.length > 0),
+                                                                  // so it is clear a second tap replaces the current set.
+                                                                  codes.isEmpty ? "Backup Codes" : "Regenerate Backup Codes",
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:

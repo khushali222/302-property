@@ -288,7 +288,10 @@ class _FileViewerState extends State<FileViewer> {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
       String? staffId = prefs.getString('staff_id');
-      String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+      String? role = prefs.getString('role');
+      String? id = (role == 'Staffmember' && staffId != null && staffId.isNotEmpty)
+          ? staffId
+          : adminId;
 
       if (token == null || id == null) {
         throw Exception('Authentication tokens not found');

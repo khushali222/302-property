@@ -37,6 +37,7 @@ import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/appbar.dart';
 import 'package:three_zero_two_property/widgets/no_internet_view.dart';
 import 'package:three_zero_two_property/provider/network_retry_state.dart';
+import 'Edit_workorders.dart';
 
 class Workorder_summery extends StatefulWidget {
   String? workorder_id;
@@ -275,40 +276,55 @@ class _Workorder_summeryState extends State<Workorder_summery>
                 const SizedBox(
                   height: 15,
                 ),
+                // Back control reuses the Settings screens' treatment
+                // (Settings_screen.dart): a light rounded square with a
+                // chevron, leading the row. Same markup in the Admin and
+                // Staff copies of this screen so the two stay in step.
                 Row(
                   children: [
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Material(
-                        elevation: 3,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(5),
-                        ),
+                    const SizedBox(width: 20),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                         child: Container(
-                          height: 40,
-                          width: 80,
+                          width: 46,
+                          height: 46,
                           decoration: BoxDecoration(
-                            color: blueColor,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
-                            ),
+                            color: const Color(0xFFEFF1F5),
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Center(
-                              child: Text(
-                            "Back",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white),
-                          )),
+                          child: Icon(Icons.chevron_left,
+                              color: blueColor, size: 28),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 20,
+                    const Spacer(),
+                    // Edit sits at the trailing end of the same row, styled
+                    // like the Mortgage summary's header action
+                    // (mortgage_summery.dart) so detail screens share one
+                    // Back / Edit layout.
+                    ElevatedButton.icon(
+                      onPressed: _openEditWorkOrder,
+                      icon: const Icon(Icons.edit, size: 14, color: Colors.white),
+                      label: const Text('Edit',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF152B51),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                     ),
+                    const SizedBox(width: 20),
                   ],
                 ),
                 const SizedBox(
@@ -2904,7 +2920,10 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                         runSpacing: 10,
                                         children: summery.workOrderImages!
                                             .map((imageUrl) {
-                                          return Container(
+                                          return GestureDetector(
+                                            onTap: () => _openImagePreview(
+                                                "$image_url$imageUrl"),
+                                            child: Container(
                                             width:
                                                 summery.workOrderImages!
                                                             .length ==
@@ -2938,6 +2957,7 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
+                                          ),
                                           );
                                         }).toList(),
                                       ),
@@ -3367,26 +3387,32 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                               ],
                                                             ),
                                                           )
-                                                        : CachedNetworkImage(
-                                                            imageUrl:
-                                                                "$image_url$fileUrl",
-                                                            fit: BoxFit.fill,
-                                                            placeholder:
-                                                                (context,
-                                                                        url) =>
-                                                                    const Center(
-                                                              child:
-                                                                  SpinKitFadingCircle(
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 30.0,
+                                                        : GestureDetector(
+                                                            // Same full-screen preview the wider layout uses; without
+                                                            // this, tapping a photo on a phone did nothing while videos
+                                                            // beside it already opened.
+                                                            onTap: () => _openImagePreview('$image_url$fileUrl'),
+                                                            child: CachedNetworkImage(
+                                                                imageUrl:
+                                                                    "$image_url$fileUrl",
+                                                                fit: BoxFit.fill,
+                                                                placeholder:
+                                                                    (context,
+                                                                            url) =>
+                                                                        const Center(
+                                                                  child:
+                                                                      SpinKitFadingCircle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    size: 30.0,
+                                                                  ),
+                                                                ),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    const Icon(Icons
+                                                                        .error),
                                                               ),
-                                                            ),
-                                                            errorWidget: (context,
-                                                                    url,
-                                                                    error) =>
-                                                                const Icon(Icons
-                                                                    .error),
                                                           ),
                                                   ),
                                                 ),
@@ -5122,6 +5148,92 @@ class _Workorder_summeryState extends State<Workorder_summery>
       },
     );
   }
+  /// Full-screen, pinch-to-zoom preview for a work order image.
+  ///
+  /// Thumbnails in the Images section were display-only, so an attachment
+  /// could not be read at the size it was uploaded. Mirrors the preview the
+  /// Mortgage summary already uses (mortgage_summery.dart): dimmed backdrop,
+  /// InteractiveViewer for zoom, and a round close control.
+  void _openImagePreview(String url) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: InteractiveViewer(
+                minScale: 0.8,
+                maxScale: 5.0,
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  placeholder: (context, u) => const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, u, error) => const SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.broken_image,
+                              color: Colors.white54, size: 48),
+                          SizedBox(height: 8),
+                          Text('Could not load image',
+                              style: TextStyle(color: Colors.white70)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: -14,
+              right: -14,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(ctx),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  /// Opens the Edit Work Order screen for this work order and reloads the
+  /// summary when the edit was saved. Same destination and argument the
+  /// work order table uses (Workorder_table.dart), so behaviour matches.
+  Future<void> _openEditWorkOrder() async {
+    final String? id = widget.workorder_id;
+    if (id == null || id.isEmpty) return;
+    final dynamic saved = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResponsiveEditWorkOrder(workorderId: id),
+      ),
+    );
+    if (saved == true && mounted) {
+      setState(() {
+        futureworkorderSummary =
+            WorkOrderRepository.getworkorderSummary(id);
+      });
+    }
+  }
 }
 
 class PartWidget extends StatelessWidget {
@@ -5185,4 +5297,5 @@ class PartWidget extends StatelessWidget {
       ),
     );
   }
+
 }

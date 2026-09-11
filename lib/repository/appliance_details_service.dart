@@ -13,8 +13,11 @@ class ApplianceDetailsService {
       String? token = prefs.getString('token');
       String? adminId = prefs.getString('adminId');
       String? staffId = prefs.getString('staff_id');
+      String? role = prefs.getString('role');
       final String? idHeader =
-          (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+          (role == 'Staffmember' && staffId != null && staffId.isNotEmpty)
+              ? staffId
+              : adminId;
 
       if (token == null || idHeader == null) {
         throw Exception('Authentication credentials not found');
@@ -58,8 +61,11 @@ class ApplianceDetailsService {
     String? token = prefs.getString('token');
     String? adminId = prefs.getString('adminId');
     String? staffId = prefs.getString('staff_id');
+    String? role = prefs.getString('role');
     final String? idHeader =
-        (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+        (role == 'Staffmember' && staffId != null && staffId.isNotEmpty)
+            ? staffId
+            : adminId;
 
     if (token == null || idHeader == null) {
       throw Exception('Authentication credentials not found');

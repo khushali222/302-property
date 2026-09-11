@@ -78,7 +78,9 @@ class _TeamAccessSectionState extends State<TeamAccessSection>
   Future<void> _init() async {
     final prefs = await SharedPreferences.getInstance();
     final staffId = prefs.getString('staff_id');
-    final isStaff = staffId != null && staffId.isNotEmpty;
+    final isStaff = prefs.getString('role') == 'Staffmember' &&
+        staffId != null &&
+        staffId.isNotEmpty;
     if (!mounted) return;
     setState(() {
       _isStaff = isStaff;

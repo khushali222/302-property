@@ -3140,18 +3140,23 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                             child: ClipRRect(
                                               borderRadius:
                                               BorderRadius.circular(10),
-                                              child: CachedNetworkImage(
-                                                imageUrl: "$image_url$imageUrl",
-                                                placeholder: (context, url) =>
-                                                const Center(
-                                                    child:
-                                                    CircularProgressIndicator()),
-                                                errorWidget:
-                                                    (context, url, error) {
-                                                  return Container();
-                                                },
-                                                fit: BoxFit.cover,
-                                              ),
+                                              child: GestureDetector(
+                                                  // Opens the photo full screen, matching the video beside
+                                                  // it and the Admin/Staff copies of this screen.
+                                                  onTap: () => _openImagePreview('$image_url$imageUrl'),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: "$image_url$imageUrl",
+                                                    placeholder: (context, url) =>
+                                                    const Center(
+                                                        child:
+                                                        CircularProgressIndicator()),
+                                                    errorWidget:
+                                                        (context, url, error) {
+                                                      return Container();
+                                                    },
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                             ),
                                           );
                                         }).toList(),
@@ -3421,12 +3426,17 @@ class _Workorder_summeryState extends State<Workorder_summery>
                                                       ),
                                                     ),
                                                   )
-                                                : CachedNetworkImage(
-                                                    imageUrl: "$image_url$imageUrl",
-                                                    placeholder: (context, url) => const Center(
-                                                        child: SpinKitFadingCircle(color: Colors.black, size: 40.0)),
-                                                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                                                    fit: BoxFit.cover,
+                                                : GestureDetector(
+                                                    // Opens the photo full screen, matching the video beside
+                                                    // it and the Admin/Staff copies of this screen.
+                                                    onTap: () => _openImagePreview('$image_url$imageUrl'),
+                                                    child: CachedNetworkImage(
+                                                        imageUrl: "$image_url$imageUrl",
+                                                        placeholder: (context, url) => const Center(
+                                                            child: SpinKitFadingCircle(color: Colors.black, size: 40.0)),
+                                                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                   ),
                                           ),
                                         );
@@ -4587,6 +4597,73 @@ class _Workorder_summeryState extends State<Workorder_summery>
     fontSize: 13,
   );
 
+  /// Full-screen, pinch-to-zoom preview for a work order image.
+  ///
+  /// Thumbnails in the Images section were display-only, so a photo could not
+  /// be seen at the size it was uploaded — while a video beside it already
+  /// opened on tap. Mirrors the preview on the Admin and Staff copies of this
+  /// screen.
+  void _openImagePreview(String url) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: InteractiveViewer(
+                minScale: 0.8,
+                maxScale: 5.0,
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  placeholder: (context, u) => const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, u, error) => const SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.broken_image,
+                              color: Colors.white54, size: 48),
+                          SizedBox(height: 8),
+                          Text('Could not load image',
+                              style: TextStyle(color: Colors.white70)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: -14,
+              right: -14,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(ctx),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class PartWidget extends StatelessWidget {

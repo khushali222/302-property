@@ -13,7 +13,10 @@ class GalleryService {
     final token = prefs.getString('token');
     final staffId = prefs.getString('staff_id');
     final adminId = prefs.getString('adminId');
-    final id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+    final role = prefs.getString('role');
+    final id = (role == 'Staffmember' && staffId != null && staffId.isNotEmpty)
+        ? staffId
+        : adminId;
     return {
       'authorization': 'CRM $token',
       'Content-Type': 'application/json; charset=UTF-8',

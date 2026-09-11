@@ -44,7 +44,8 @@ class ContactRepository {
 
     // Check for staff module
     String? staffId = prefs.getString("staff_id");
-    if (staffId != null && staffId.isNotEmpty) {
+    String? role = prefs.getString("role");
+    if (role == "Staffmember" && staffId != null && staffId.isNotEmpty) {
       id = staffId;
     }
 

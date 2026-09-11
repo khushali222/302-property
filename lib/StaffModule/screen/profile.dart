@@ -2081,7 +2081,7 @@ Container(
                                                     width:
                                                     rowSpacing),
                                                 Flexible(
-                                                  child: !backupCode
+                                                  child: codes.isEmpty
                                                       ? Text(
                                                     "Backup Codes",
                                                     style: TextStyle(
@@ -2092,7 +2092,7 @@ Container(
                                                     overflow: TextOverflow.ellipsis,
                                                   )
                                                       : Text(
-                                                    "Backup Codes",
+                                                    "Regenerate Backup Codes",
                                                     style: TextStyle(
                                                       fontSize: fontSizeAction - 4,
                                                       fontWeight: FontWeight.w600,
@@ -2243,7 +2243,7 @@ Container(
                                                   width:
                                                   rowSpacing),
                                               Flexible(
-                                                child: !backupCode
+                                                child: codes.isEmpty
                                                     ? Text(
                                                   "Backup Codes",
                                                   style:
@@ -2257,7 +2257,7 @@ Container(
                                                   TextOverflow.ellipsis,
                                                 )
                                                     : Text(
-                                                  "Backup Codes",
+                                                  "Regenerate Backup Codes",
                                                   style:
                                                   TextStyle(
                                                     fontSize: fontSizeAction - 4,
@@ -3103,7 +3103,7 @@ Container(
                                                 width: 6),
                                             Flexible(
                                               child:
-                                              !backupCode
+                                              codes.isEmpty
                                                   ? Text(
                                                 "Backup Codes",
                                                 style: TextStyle(
@@ -3113,7 +3113,7 @@ Container(
                                                 textAlign: TextAlign.center,
                                               )
                                                   : Text(
-                                                "Backup Codes",
+                                                "Regenerate Backup Codes",
                                                 style: TextStyle(
                                                   fontSize: buttonFontSize - 2,
                                                   fontWeight: FontWeight.w600,
@@ -3259,7 +3259,7 @@ Container(
                                               SizedBox(
                                                   width: 8),
                                               Flexible(
-                                                child: !backupCode
+                                                child: codes.isEmpty
                                                     ? Text(
                                                   "Backup Codes",
                                                   style:
@@ -3271,7 +3271,7 @@ Container(
                                                   TextAlign.center,
                                                 )
                                                     : Text(
-                                                  "Backup Codes",
+                                                  "Regenerate Backup Codes",
                                                   style:
                                                   TextStyle(
                                                     fontSize: buttonFontSize - 2,

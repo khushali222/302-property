@@ -397,9 +397,12 @@ class _TabBarExampleState extends State<TabBarExample>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? staffId = prefs.getString('staff_id');
     String? adminId = prefs.getString('adminId');
+    String? role = prefs.getString('role');
 
-    // Use staff_id if it exists, otherwise use admin_id
-    return (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+    // Use staff_id only in a staff session, otherwise admin_id
+    return (role == 'Staffmember' && staffId != null && staffId.isNotEmpty)
+        ? staffId
+        : adminId;
   }
 
   fetchAccounts() async {
@@ -497,9 +500,12 @@ class _TabBarExampleState extends State<TabBarExample>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? adminId = prefs.getString("adminId");
     String? staffId = prefs.getString("staff_id");
+    String? role = prefs.getString("role");
 
-    // Use staff_id if it exists, otherwise use admin_id
-    String? id = (staffId != null && staffId.isNotEmpty) ? staffId : adminId;
+    // Use staff_id only in a staff session, otherwise admin_id
+    String? id = (role == "Staffmember" && staffId != null && staffId.isNotEmpty)
+        ? staffId
+        : adminId;
 
     try {
       Setting1 surcharges =
@@ -1270,7 +1276,11 @@ class _TabBarExampleState extends State<TabBarExample>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final adminId = prefs.getString('adminId');
     final token = prefs.getString('token');
-    final staffId = prefs.getString('staff_id');
+    // Role-gated so a stale staff_id cannot make an Admin session send
+    // staff headers to the company-profile endpoints.
+    final staffId = prefs.getString('role') == 'Staffmember'
+        ? prefs.getString('staff_id')
+        : null;
     if (adminId == null || token == null) return;
 
     setState(() => _cpLoading = true);
@@ -1355,7 +1365,11 @@ class _TabBarExampleState extends State<TabBarExample>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final adminId = prefs.getString('adminId');
     final token = prefs.getString('token');
-    final staffId = prefs.getString('staff_id');
+    // Role-gated so a stale staff_id cannot make an Admin session send
+    // staff headers to the company-profile endpoints.
+    final staffId = prefs.getString('role') == 'Staffmember'
+        ? prefs.getString('staff_id')
+        : null;
     if (adminId == null || token == null) {
       setState(() => _cpApiError = 'Missing session. Please sign in again.');
       return;

@@ -2962,7 +2962,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                               const SizedBox(
                                                                   width: 8),
                                                               Flexible(
-                                                                child: !backupCode
+                                                                child: codes.isEmpty
                                                                     ? const Text(
                                                                         "Backup Codes",
                                                                         style:
@@ -2976,7 +2976,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                                             TextAlign.center,
                                                                       )
                                                                     : const Text(
-                                                                        "Backup Codes",
+                                                                        "Regenerate Backup Codes",
                                                                         style:
                                                                             TextStyle(
                                                                           fontSize:
@@ -4360,7 +4360,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                                   const SizedBox(
                                                                       width: 8),
                                                                   Flexible(
-                                                                    child: !backupCode
+                                                                    child: codes.isEmpty
                                                                         ? const Text(
                                                                             "Backup Codes",
                                                                             style:
@@ -4372,7 +4372,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                                                 TextAlign.center,
                                                                           )
                                                                         : const Text(
-                                                                            "Backup Codes",
+                                                                            "Regenerate Backup Codes",
                                                                             style:
                                                                                 TextStyle(
                                                                               fontSize: 12,
@@ -4539,7 +4539,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                                         width:
                                                                             8),
                                                                     Flexible(
-                                                                      child: !backupCode
+                                                                      child: codes.isEmpty
                                                                           ? const Text(
                                                                               "Backup Codes",
                                                                               style: TextStyle(
@@ -4549,7 +4549,7 @@ class _Profile_screenState extends State<Profile_screen>
                                                                               textAlign: TextAlign.center,
                                                                             )
                                                                           : const Text(
-                                                                              "Backup Codes",
+                                                                              "Regenerate Backup Codes",
                                                                               style: TextStyle(
                                                                                 fontSize: 12,
                                                                                 fontWeight: FontWeight.w600,
